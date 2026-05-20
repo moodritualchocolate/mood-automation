@@ -1,0 +1,38 @@
+{
+  "reference_id": "fashion-aggressive-crop-attitude",
+  "category": "fashion",
+  "why_it_works": [
+    "subject is too close to be polite — chin out of frame, eyes intentional",
+    "single oversized word of type that nearly touches the body",
+    "saturated wall color behind — flat, declarative, no atmosphere",
+    "product cropped at the wrist — present, never the subject"
+  ],
+  "why_it_fails": [
+    "depends entirely on the subject's attitude — without it, reads as styled, not lived"
+  ],
+  "visual_confidence": 8.4,
+  "restraint_score": 6.0,
+  "ai_feel_risk": 3.0,
+  "humanity_score": 7.5,
+  "interruption_type": "staccato crop",
+  "product_behavior": "edge-of-wrist evidence",
+  "silence_ratio": 0.4,
+  "dna": {
+    "silence_ratio": 0.4,
+    "tension_map": 0.85,
+    "framing_behavior": 0.88,
+    "typography_confidence": 0.75,
+    "negative_space_usage": 0.45,
+    "emotional_density": 0.7,
+    "product_aggression_level": 0.55,
+    "interruption_style": 0.85,
+    "realism_type": 0.6,
+    "visual_temperature": 0.55,
+    "camera_energy": 0.6,
+    "editorial_level": 0.6,
+    "fashion_influence": 0.92,
+    "documentary_weight": 0.45,
+    "luxury_restraint": 0.5,
+    "anti_commercial_feel": 0.72
+  }
+}

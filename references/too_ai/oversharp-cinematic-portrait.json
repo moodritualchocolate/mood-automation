@@ -1,0 +1,37 @@
+{
+  "reference_id": "too-ai-oversharp-cinematic-portrait",
+  "category": "too_ai",
+  "why_it_works": [],
+  "why_it_fails": [
+    "subject sharp to the eyelash — but the room behind them is a single flat tone",
+    "no surface clutter — nobody actually lives here",
+    "headline placed in 'designed' position with zero relationship to the body's gravity",
+    "lighting is on every surface evenly — there is no window",
+    "asks to be called premium; nothing in the photograph has earned it"
+  ],
+  "visual_confidence": 2.8,
+  "restraint_score": 4.0,
+  "ai_feel_risk": 9.0,
+  "humanity_score": 2.2,
+  "interruption_type": "feigned — image stops nothing",
+  "product_behavior": "ghosted-in",
+  "silence_ratio": 0.55,
+  "dna": {
+    "silence_ratio": 0.55,
+    "tension_map": 0.35,
+    "framing_behavior": 0.35,
+    "typography_confidence": 0.4,
+    "negative_space_usage": 0.55,
+    "emotional_density": 0.3,
+    "product_aggression_level": 0.5,
+    "interruption_style": 0.3,
+    "realism_type": 0.2,
+    "visual_temperature": 0.55,
+    "camera_energy": 0.05,
+    "editorial_level": 0.45,
+    "fashion_influence": 0.35,
+    "documentary_weight": 0.1,
+    "luxury_restraint": 0.5,
+    "anti_commercial_feel": 0.25
+  }
+}

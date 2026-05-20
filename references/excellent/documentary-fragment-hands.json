@@ -1,0 +1,36 @@
+{
+  "reference_id": "excellent-documentary-fragment-hands",
+  "category": "excellent",
+  "why_it_works": [
+    "tight crop on hands holding something half-finished — the gesture carries the story",
+    "face out of frame — the viewer fills in what they need to",
+    "no decorative typography; one short line bottom-right",
+    "product cropped at edge of frame, treated as evidence"
+  ],
+  "why_it_fails": [],
+  "visual_confidence": 8.8,
+  "restraint_score": 8.6,
+  "ai_feel_risk": 1.6,
+  "humanity_score": 9.0,
+  "interruption_type": "gesture interruption",
+  "product_behavior": "partial-crop evidence",
+  "silence_ratio": 0.62,
+  "dna": {
+    "silence_ratio": 0.62,
+    "tension_map": 0.7,
+    "framing_behavior": 0.78,
+    "typography_confidence": 0.8,
+    "negative_space_usage": 0.6,
+    "emotional_density": 0.8,
+    "product_aggression_level": 0.42,
+    "interruption_style": 0.55,
+    "realism_type": 0.9,
+    "visual_temperature": 0.4,
+    "camera_energy": 0.55,
+    "editorial_level": 0.45,
+    "fashion_influence": 0.25,
+    "documentary_weight": 0.88,
+    "luxury_restraint": 0.65,
+    "anti_commercial_feel": 0.8
+  }
+}

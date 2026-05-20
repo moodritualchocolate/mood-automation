@@ -1,0 +1,36 @@
+{
+  "reference_id": "scrollstop-timestamp-2am",
+  "category": "scrollstop",
+  "why_it_works": [
+    "the time '02:47' alone earns the top of the frame — there is no slogan",
+    "every viewer recognises 2 AM as a specific mood — recognition is the interruption",
+    "subject mostly in shadow — only the phone-light on their face",
+    "no CTA visible — the time IS the message"
+  ],
+  "why_it_fails": [],
+  "visual_confidence": 9.0,
+  "restraint_score": 8.5,
+  "ai_feel_risk": 1.6,
+  "humanity_score": 9.2,
+  "interruption_type": "time as headline",
+  "product_behavior": "absent or background",
+  "silence_ratio": 0.7,
+  "dna": {
+    "silence_ratio": 0.7,
+    "tension_map": 0.82,
+    "framing_behavior": 0.6,
+    "typography_confidence": 0.88,
+    "negative_space_usage": 0.7,
+    "emotional_density": 0.88,
+    "product_aggression_level": 0.1,
+    "interruption_style": 0.75,
+    "realism_type": 0.82,
+    "visual_temperature": 0.5,
+    "camera_energy": 0.3,
+    "editorial_level": 0.78,
+    "fashion_influence": 0.3,
+    "documentary_weight": 0.7,
+    "luxury_restraint": 0.78,
+    "anti_commercial_feel": 0.9
+  }
+}

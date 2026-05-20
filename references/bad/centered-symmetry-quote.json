@@ -1,0 +1,36 @@
+{
+  "reference_id": "bad-centered-symmetry-quote",
+  "category": "bad",
+  "why_it_works": [],
+  "why_it_fails": [
+    "subject dead-center, both sides symmetrical — politely invisible",
+    "headline is a motivational quote, not an observation",
+    "product floats bottom-center as if pasted — no scene logic",
+    "could be any brand at any price point — template energy"
+  ],
+  "visual_confidence": 3.0,
+  "restraint_score": 2.5,
+  "ai_feel_risk": 7.5,
+  "humanity_score": 2.8,
+  "interruption_type": "none — passes through",
+  "product_behavior": "floating PNG",
+  "silence_ratio": 0.35,
+  "dna": {
+    "silence_ratio": 0.35,
+    "tension_map": 0.25,
+    "framing_behavior": 0.2,
+    "typography_confidence": 0.3,
+    "negative_space_usage": 0.3,
+    "emotional_density": 0.25,
+    "product_aggression_level": 0.85,
+    "interruption_style": 0.2,
+    "realism_type": 0.35,
+    "visual_temperature": 0.55,
+    "camera_energy": 0.1,
+    "editorial_level": 0.3,
+    "fashion_influence": 0.2,
+    "documentary_weight": 0.2,
+    "luxury_restraint": 0.25,
+    "anti_commercial_feel": 0.18
+  }
+}

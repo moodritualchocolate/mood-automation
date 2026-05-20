@@ -1,0 +1,37 @@
+{
+  "reference_id": "good-editorial-cinema-timestamp",
+  "category": "good",
+  "why_it_works": [
+    "timestamp earns its size — the time itself is the truth",
+    "single subject in mid-frame, slightly off-axis",
+    "cool clinical light on a warm body — temperature contrast does the work"
+  ],
+  "why_it_fails": [
+    "the layout has been seen — risks reading as template the second time it's used"
+  ],
+  "visual_confidence": 7.8,
+  "restraint_score": 7.2,
+  "ai_feel_risk": 2.6,
+  "humanity_score": 7.5,
+  "interruption_type": "timestamp anchor",
+  "product_behavior": "absent",
+  "silence_ratio": 0.58,
+  "dna": {
+    "silence_ratio": 0.58,
+    "tension_map": 0.78,
+    "framing_behavior": 0.6,
+    "typography_confidence": 0.75,
+    "negative_space_usage": 0.6,
+    "emotional_density": 0.78,
+    "product_aggression_level": 0.05,
+    "interruption_style": 0.65,
+    "realism_type": 0.72,
+    "visual_temperature": 0.65,
+    "camera_energy": 0.35,
+    "editorial_level": 0.7,
+    "fashion_influence": 0.45,
+    "documentary_weight": 0.55,
+    "luxury_restraint": 0.6,
+    "anti_commercial_feel": 0.78
+  }
+}

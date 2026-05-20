@@ -27,6 +27,9 @@ import type {
   ReferenceMatch,
   VisualPsychology,
 } from '@/core/types';
+import type { FatigueReport } from '@lib/visualFatigue';
+import type { ReactionCurve } from '@lib/humanReaction';
+import type { TasteVerdict } from '@lib/tasteJudge';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -38,10 +41,14 @@ export interface MetaInput {
   memory: MemorySnapshot;
   /** 0..1 — higher means more brutal. Default 0.7. */
   brutality?: number;
+  // Phase 2.5 — explicit taste system signals.
+  judge?: TasteVerdict;
+  reaction?: ReactionCurve;
+  fatigue?: FatigueReport;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
-  const { ctx, scrollStop, taste, psychology, productPresence, reference, memory } = input;
+  const { ctx, scrollStop, taste, psychology, productPresence, reference, memory, judge, reaction, fatigue } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -88,6 +95,31 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     verdict = 'reject-image';
   }
 
+  // ─── Phase 2.5 hard gates ─────────────────────────────────────
+  // The TasteJudge has its own hard verdict — when it says hard-refuse,
+  // the meta-critic refuses regardless of brutality. This is the
+  // "comfortable not generating" rule from the spec.
+  if (judge && judge.verdict === 'hard-refuse') {
+    reasons.push(`taste judge hard-refused: ${judge.punishments.slice(0, 2).join('; ')}`);
+    verdict = 'reject-taste';
+  }
+  // Soft-refuse from the judge fires at default brutality and up.
+  if (judge && judge.verdict === 'soft-refuse' && brutality >= 0.65 && verdict === 'approve') {
+    reasons.push(`taste judge soft-refused: ${judge.punishments.slice(0, 2).join('; ')}`);
+    verdict = 'reject-taste';
+  }
+  // The human-reaction simulator's scroll-past prediction is a HARD gate.
+  // If the prediction says the viewer scrolls past at 0.3s, refusal is mandatory.
+  if (reaction && reaction.scrollPast) {
+    reasons.push(`predicted scroll-past at 0.3s — ${reaction.at_0_3s} into ${reaction.at_1s}`);
+    verdict = 'reject-concept';
+  }
+  // Visual fatigue is a hard gate at brutal mode; soft pressure at default.
+  if (fatigue && fatigue.verdict === 'fatigued' && brutality >= 0.8) {
+    reasons.push(`campaign fatigue: ${fatigue.flags.slice(0, 2).join('; ')}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -97,6 +129,17 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`product presence ${productTotal.toFixed(1)} below floor ${floorProduct.toFixed(1)}`);
   if (reference.closeness < floorRefCloseness)
     softReasons.push(`reference closeness ${reference.closeness.toFixed(2)} below floor ${floorRefCloseness.toFixed(2)} — drifted from every taste anchor`);
+
+  // Phase 2.5 — soft pressure from the explicit taste system.
+  if (judge && judge.composite < (5.5 + brutality * 1.5)) {
+    softReasons.push(`taste judge composite ${judge.composite.toFixed(1)} below floor ${(5.5 + brutality * 1.5).toFixed(1)}`);
+  }
+  if (reaction && reaction.engagementQuality < (4 + brutality * 2)) {
+    softReasons.push(`predicted engagement ${reaction.engagementQuality.toFixed(1)} below floor`);
+  }
+  if (fatigue && fatigue.verdict === 'fatigued') {
+    softReasons.push(`campaign fatigue: ${fatigue.flags[0] ?? 'multi-axis'}`);
+  }
 
   // Memory-aware additional rejection: campaign overstimulation.
   if (memory.overstimulationFlag) {

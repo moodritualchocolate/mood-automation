@@ -1,0 +1,36 @@
+{
+  "reference_id": "excellent-quiet-restraint-window",
+  "category": "excellent",
+  "why_it_works": [
+    "subject is small in a wide frame — the room speaks before the body does",
+    "single short headline at lower-left earns its weight by not over-explaining",
+    "product visible as a table object — present, never staged",
+    "warm window light from one side leaves the typographic zone in honest shadow"
+  ],
+  "why_it_fails": [],
+  "visual_confidence": 9.0,
+  "restraint_score": 9.2,
+  "ai_feel_risk": 1.3,
+  "humanity_score": 9.1,
+  "interruption_type": "quiet realism",
+  "product_behavior": "environmental object",
+  "silence_ratio": 0.78,
+  "dna": {
+    "silence_ratio": 0.78,
+    "tension_map": 0.55,
+    "framing_behavior": 0.62,
+    "typography_confidence": 0.85,
+    "negative_space_usage": 0.82,
+    "emotional_density": 0.7,
+    "product_aggression_level": 0.22,
+    "interruption_style": 0.25,
+    "realism_type": 0.88,
+    "visual_temperature": 0.32,
+    "camera_energy": 0.15,
+    "editorial_level": 0.65,
+    "fashion_influence": 0.15,
+    "documentary_weight": 0.78,
+    "luxury_restraint": 0.85,
+    "anti_commercial_feel": 0.85
+  }
+}

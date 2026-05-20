@@ -155,39 +155,80 @@ function StudioInner() {
             </div>
 
             <div className="border-t hairline pt-3 space-y-2">
-              <div className="eyebrow">taste layer</div>
+              <div className="eyebrow">taste system</div>
               <Field
                 label="FINAL VERDICT"
                 value={`${banner.finalVerdict.verdict} @ brutality ${banner.finalVerdict.brutality.toFixed(2)}`}
               />
-              <Field label="TASTE CRITIC" value={banner.taste.verdict} />
               <Field
-                label="REFERENCE"
-                value={`${banner.referenceMatch.reference.id} · closeness ${banner.referenceMatch.closeness.toFixed(2)}`}
-                multiline
+                label="TASTE JUDGE"
+                value={`${banner.tasteSystem.judge.verdict} · composite ${banner.tasteSystem.judge.composite.toFixed(1)}/10`}
               />
               <Field
-                label="REFERENCE FEELING"
-                value={`"${banner.referenceMatch.reference.campaign_feeling}"`}
-                multiline
+                label="NEAREST REF"
+                value={`${banner.tasteSystem.judge.closestCategory ?? '—'} · ${banner.tasteSystem.judge.closestDistance.toFixed(2)} away`}
               />
-              <Field
-                label="PSYCHOLOGY"
-                value={`flow ${banner.psychology.eyeFlowIntegrity.toFixed(1)} · cta-resolution ${banner.psychology.ctaResolution.toFixed(1)} · interruption ${banner.psychology.focalInterruption.toFixed(1)}`}
-                multiline
-              />
-              {banner.productPresence && (
+              {banner.tasteSystem.judge.closestReference && (
                 <Field
-                  label="PRODUCT PRESENCE"
-                  value={`${banner.productPresence.verdict} (${Object.values(banner.productPresence.scores).reduce((a, b) => a + b, 0) / 7 | 0}/10)`}
+                  label="WHY THE REF WORKS"
+                  value={banner.tasteSystem.judge.closestReference.why_it_works[0] ?? '—'}
+                  multiline
                 />
               )}
-              {banner.referenceMatch.divergences.length > 0 && (
-                <div className="text-xs text-bone-200/55 leading-snug">
-                  <div className="eyebrow mb-1">divergences from anchor</div>
+              <Field
+                label="HUMAN REACTION"
+                value={`0.3s ${banner.tasteSystem.reaction.at_0_3s} → 1s ${banner.tasteSystem.reaction.at_1s} → 3s ${banner.tasteSystem.reaction.at_3s}`}
+                multiline
+              />
+              <Field
+                label="REACTION ARC"
+                value={banner.tasteSystem.reaction.arc}
+                multiline
+              />
+              <Field
+                label="ENGAGEMENT"
+                value={`${banner.tasteSystem.reaction.engagementQuality.toFixed(1)}/10`}
+              />
+              <Field
+                label="FATIGUE"
+                value={`${banner.tasteSystem.fatigue.verdict} · ${banner.tasteSystem.fatigue.totals.toFixed(1)}/10`}
+              />
+              <Field
+                label="DIRECTOR DIRECTIVE"
+                value={banner.tasteSystem.evolutionAtRunStart.move}
+              />
+              <Field
+                label="DIRECTOR NOTE"
+                value={banner.tasteSystem.evolutionAtRunStart.narrative}
+                multiline
+              />
+
+              {banner.tasteSystem.judge.rewards.length > 0 && (
+                <div className="text-xs text-bone-200/65 leading-snug">
+                  <div className="eyebrow mb-1">rewards</div>
                   <ul className="space-y-0.5">
-                    {banner.referenceMatch.divergences.map((d, i) => (
-                      <li key={i}>· {d}</li>
+                    {banner.tasteSystem.judge.rewards.slice(0, 5).map((d, i) => (
+                      <li key={i}>+ {d}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {banner.tasteSystem.judge.punishments.length > 0 && (
+                <div className="text-xs text-signal-warning/70 leading-snug">
+                  <div className="eyebrow mb-1">punishments</div>
+                  <ul className="space-y-0.5">
+                    {banner.tasteSystem.judge.punishments.slice(0, 5).map((d, i) => (
+                      <li key={i}>− {d}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {banner.tasteSystem.fatigue.flags.length > 0 && (
+                <div className="text-xs text-bone-200/55 leading-snug">
+                  <div className="eyebrow mb-1">fatigue flags</div>
+                  <ul className="space-y-0.5">
+                    {banner.tasteSystem.fatigue.flags.map((f, i) => (
+                      <li key={i}>· {f}</li>
                     ))}
                   </ul>
                 </div>

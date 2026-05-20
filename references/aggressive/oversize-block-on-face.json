@@ -1,0 +1,38 @@
+{
+  "reference_id": "aggressive-oversize-block-on-face",
+  "category": "aggressive",
+  "why_it_works": [
+    "headline block sits OVER part of the subject's face — refuses to be polite",
+    "the cover-up earns the interruption — viewer leans in to see what is hidden",
+    "saturated background contradicts the body's tiredness — temperature war"
+  ],
+  "why_it_fails": [
+    "if the truth under the type is not sharp, the gesture reads as design trick",
+    "if used twice in the same campaign it becomes a pose, not a posture"
+  ],
+  "visual_confidence": 7.6,
+  "restraint_score": 4.5,
+  "ai_feel_risk": 3.5,
+  "humanity_score": 6.8,
+  "interruption_type": "typographic intrusion",
+  "product_behavior": "absent or partial-crop",
+  "silence_ratio": 0.3,
+  "dna": {
+    "silence_ratio": 0.3,
+    "tension_map": 0.88,
+    "framing_behavior": 0.7,
+    "typography_confidence": 0.7,
+    "negative_space_usage": 0.4,
+    "emotional_density": 0.78,
+    "product_aggression_level": 0.35,
+    "interruption_style": 0.92,
+    "realism_type": 0.65,
+    "visual_temperature": 0.65,
+    "camera_energy": 0.5,
+    "editorial_level": 0.65,
+    "fashion_influence": 0.7,
+    "documentary_weight": 0.4,
+    "luxury_restraint": 0.35,
+    "anti_commercial_feel": 0.65
+  }
+}

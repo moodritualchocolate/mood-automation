@@ -1,0 +1,36 @@
+{
+  "reference_id": "documentary-observed-mid-action",
+  "category": "documentary",
+  "why_it_works": [
+    "subject did not know the photo was being taken — body language carries the truth",
+    "ordinary surface clutter visible — receipts, half-empty cup, phone face down",
+    "focus is slightly soft — the human hand held the camera",
+    "no typography — the image carries it alone"
+  ],
+  "why_it_fails": [],
+  "visual_confidence": 8.8,
+  "restraint_score": 7.8,
+  "ai_feel_risk": 1.2,
+  "humanity_score": 9.4,
+  "interruption_type": "documentary witness",
+  "product_behavior": "evidence among other ordinary objects",
+  "silence_ratio": 0.55,
+  "dna": {
+    "silence_ratio": 0.55,
+    "tension_map": 0.65,
+    "framing_behavior": 0.7,
+    "typography_confidence": 0.9,
+    "negative_space_usage": 0.5,
+    "emotional_density": 0.78,
+    "product_aggression_level": 0.3,
+    "interruption_style": 0.4,
+    "realism_type": 0.92,
+    "visual_temperature": 0.4,
+    "camera_energy": 0.4,
+    "editorial_level": 0.55,
+    "fashion_influence": 0.15,
+    "documentary_weight": 0.94,
+    "luxury_restraint": 0.65,
+    "anti_commercial_feel": 0.9
+  }
+}

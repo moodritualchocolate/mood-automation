@@ -1,0 +1,36 @@
+{
+  "reference_id": "boring-balanced-template",
+  "category": "boring",
+  "why_it_works": [],
+  "why_it_fails": [
+    "headline in the centre, product in the centre, CTA underneath",
+    "everything announced; nothing observed",
+    "no surface clutter, no asymmetry, no breath — the layout chose itself",
+    "could be photographed, generated, or made by an intern — it does not matter"
+  ],
+  "visual_confidence": 3.5,
+  "restraint_score": 3.0,
+  "ai_feel_risk": 6.0,
+  "humanity_score": 3.0,
+  "interruption_type": "none",
+  "product_behavior": "centered hero",
+  "silence_ratio": 0.32,
+  "dna": {
+    "silence_ratio": 0.32,
+    "tension_map": 0.2,
+    "framing_behavior": 0.18,
+    "typography_confidence": 0.35,
+    "negative_space_usage": 0.25,
+    "emotional_density": 0.2,
+    "product_aggression_level": 0.78,
+    "interruption_style": 0.15,
+    "realism_type": 0.4,
+    "visual_temperature": 0.55,
+    "camera_energy": 0.1,
+    "editorial_level": 0.3,
+    "fashion_influence": 0.2,
+    "documentary_weight": 0.25,
+    "luxury_restraint": 0.3,
+    "anti_commercial_feel": 0.18
+  }
+}

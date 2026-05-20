@@ -360,6 +360,18 @@ export interface GenerateRequest {
   maxAttempts?: number;
 }
 
+/**
+ * Phase 2.5 — explicit taste system (lib/*) outputs.
+ * Structural only; concrete shapes live in lib/.
+ */
+export interface BannerTasteSystem {
+  dna: import('@lib/referenceDNA').ReferenceDNA;
+  judge: import('@lib/tasteJudge').TasteVerdict;
+  reaction: import('@lib/humanReaction').ReactionCurve;
+  fatigue: import('@lib/visualFatigue').FatigueReport;
+  evolutionAtRunStart: import('@lib/campaignEvolution').EvolutionDirective;
+}
+
 export interface Banner {
   id: string;
   createdAt: number;
@@ -380,6 +392,8 @@ export interface Banner {
   productPresence: ProductPresence | null;
   referenceMatch: ReferenceMatch;
   finalVerdict: FinalVerdict;
+  // Phase 2.5 — explicit taste system
+  tasteSystem: BannerTasteSystem;
   attempts: number;
   rejectedAttempts: Array<{ stage: string; reason: string }>;
   memorySnapshot: MemorySnapshot;

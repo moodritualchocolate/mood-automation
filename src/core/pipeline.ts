@@ -46,6 +46,15 @@ import { tasteCritique } from '@/engines/taste-critic';
 import { analyzeVisualPsychology } from '@/engines/visual-psychology';
 import { analyzeProductPresence } from '@/engines/product-presence';
 import { decideFinalVerdict } from '@/engines/not-good-enough';
+// Phase 2.5 — explicit taste system (lib/*)
+import {
+  extractDNA,
+  loadReferences,
+  judgeTaste,
+  simulateHumanReaction,
+  evolveCampaign,
+  detectFatigue,
+} from '@lib/index';
 
 export interface RunOptions {
   onEvent?: (event: PipelineEvent) => void;
@@ -86,12 +95,26 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   let stateSeed = Date.now();
   let forceStateId: string | undefined = request.forceStateId;
 
+  // Phase 2.5 — compute the campaign-director directive once per run
+  // from the memory snapshot at run start. The Creative Director reads
+  // it on every attempt below.
+  const evolutionAtRunStart = evolveCampaign(memory);
+  emit({
+    stage: 'campaign-evolution',
+    message: `directive: ${evolutionAtRunStart.move} — ${evolutionAtRunStart.narrative}`,
+    data: evolutionAtRunStart,
+  });
+
+  // Phase 2.5 — references load once (cached on globalThis after).
+  const references = await loadReferences();
+  emit({ stage: 'references', message: `loaded ${references.length} reference analyses` });
+
   while (attempt < maxAttempts) {
     attempt += 1;
 
     const state: HumanState = selectHumanState({ ctx, memory, forceStateId, seed: stateSeed });
     const truth = await buildHumanTruth({ ctx, state });
-    const direction = await direct({ ctx, truth, campaignMode: ctx.campaignMode, memory });
+    const direction = await direct({ ctx, truth, campaignMode: ctx.campaignMode, memory, evolution: evolutionAtRunStart });
     const composition = planComposition({ ctx, direction });
     decideProductIntegration({ ctx, direction });
 
@@ -115,6 +138,31 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       const psychology = analyzeVisualPsychology({ ctx, direction, composition, typography });
       const productPresence = analyzeProductPresence({ ctx, truth, direction, composition, brief, image });
 
+      // ─── Phase 2.5 — explicit taste system ────────────────────
+      const dna = extractDNA({ direction, composition, typography, truth, brief, imageProvider: image.provider });
+      const judge = judgeTaste({ truth, direction, composition, typography, image, bannerDNA: dna, references });
+      emit({
+        stage: 'taste-judge',
+        message: `verdict: ${judge.verdict} · composite ${judge.composite.toFixed(1)} · nearest "${judge.closestCategory ?? 'none'}" (${judge.closestDistance.toFixed(2)})`,
+        data: { rewards: judge.rewards, punishments: judge.punishments },
+      });
+      const reaction = simulateHumanReaction({ truth, direction, bannerDNA: dna, taste: judge });
+      emit({
+        stage: 'human-reaction',
+        message: `${reaction.at_0_3s} → ${reaction.at_1s} → ${reaction.at_3s} (engagement ${reaction.engagementQuality.toFixed(1)})`,
+        data: { arc: reaction.arc, scrollPast: reaction.scrollPast },
+      });
+      const fatigue = detectFatigue({
+        banner: { direction, state, typography, hook: direction.hook },
+        memory,
+      });
+      emit({
+        stage: 'visual-fatigue',
+        message: `${fatigue.verdict} · totals ${fatigue.totals.toFixed(1)}`,
+        data: { flags: fatigue.flags, scores: fatigue.scores },
+      });
+      // ───────────────────────────────────────────────────────────
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -124,6 +172,9 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         reference,
         memory,
         brutality: opts.brutality,
+        judge,
+        reaction,
+        fatigue,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -137,6 +188,7 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           imageBrief: brief, image, typography, cta,
           critique: scrollStop,
           taste, psychology, productPresence, referenceMatch: reference, finalVerdict,
+          tasteSystem: { dna, judge, reaction, fatigue, evolutionAtRunStart },
           attempts: attempt,
           rejectedAttempts,
         };

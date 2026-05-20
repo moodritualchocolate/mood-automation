@@ -1,0 +1,37 @@
+{
+  "reference_id": "too-ai-gradient-glow-faux-cinema",
+  "category": "too_ai",
+  "why_it_works": [],
+  "why_it_fails": [
+    "rim light from nowhere — physics implied, not observed",
+    "soft purple-orange gradient sky behind product — the giveaway",
+    "headline in serif italics with kerning that 'feels premium' — nobody wrote it",
+    "subject too clean, too symmetric, too on-time — looks rendered, not photographed",
+    "could be any of a thousand generated banners this month"
+  ],
+  "visual_confidence": 2.4,
+  "restraint_score": 2.0,
+  "ai_feel_risk": 9.3,
+  "humanity_score": 1.8,
+  "interruption_type": "none — instantly recognised as machine",
+  "product_behavior": "hero placement with theatrical light",
+  "silence_ratio": 0.4,
+  "dna": {
+    "silence_ratio": 0.4,
+    "tension_map": 0.3,
+    "framing_behavior": 0.25,
+    "typography_confidence": 0.35,
+    "negative_space_usage": 0.45,
+    "emotional_density": 0.25,
+    "product_aggression_level": 0.8,
+    "interruption_style": 0.25,
+    "realism_type": 0.25,
+    "visual_temperature": 0.5,
+    "camera_energy": 0.05,
+    "editorial_level": 0.4,
+    "fashion_influence": 0.3,
+    "documentary_weight": 0.15,
+    "luxury_restraint": 0.3,
+    "anti_commercial_feel": 0.15
+  }
+}

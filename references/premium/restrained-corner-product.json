@@ -1,0 +1,36 @@
+{
+  "reference_id": "premium-restrained-corner-product",
+  "category": "premium",
+  "why_it_works": [
+    "the frame leaves 70% of itself empty — and pays for the silence",
+    "product cropped at the edge — present without arriving",
+    "single word of editorial type at the opposite corner — the eye finds it last",
+    "no rim light, no glow, no theatre — only window air"
+  ],
+  "why_it_fails": [],
+  "visual_confidence": 9.2,
+  "restraint_score": 9.5,
+  "ai_feel_risk": 1.0,
+  "humanity_score": 8.4,
+  "interruption_type": "luxury silence",
+  "product_behavior": "partial-crop edge",
+  "silence_ratio": 0.84,
+  "dna": {
+    "silence_ratio": 0.84,
+    "tension_map": 0.5,
+    "framing_behavior": 0.6,
+    "typography_confidence": 0.88,
+    "negative_space_usage": 0.92,
+    "emotional_density": 0.6,
+    "product_aggression_level": 0.45,
+    "interruption_style": 0.2,
+    "realism_type": 0.75,
+    "visual_temperature": 0.4,
+    "camera_energy": 0.15,
+    "editorial_level": 0.75,
+    "fashion_influence": 0.3,
+    "documentary_weight": 0.55,
+    "luxury_restraint": 0.92,
+    "anti_commercial_feel": 0.8
+  }
+}

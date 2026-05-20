@@ -13,6 +13,7 @@ import type { CampaignMode, CreativeDirection, EngineContext, HumanTruth, Memory
 import { CreativeDirectionSchema } from '@/core/types';
 import { cognitionEnabled, think } from '@/cognition/claude';
 import { MOOD_VOICE } from '@/cognition/voice';
+import type { EvolutionDirective } from '@lib/campaignEvolution';
 
 const SYSTEM = `
 ${MOOD_VOICE}
@@ -58,10 +59,12 @@ export interface DirectInput {
   truth: HumanTruth;
   campaignMode: CampaignMode | null;
   memory: MemorySnapshot;
+  /** Phase 2.5 — directive from the campaign-evolution engine. */
+  evolution?: EvolutionDirective;
 }
 
 export async function direct(input: DirectInput): Promise<CreativeDirection> {
-  const { ctx, truth, campaignMode, memory } = input;
+  const { ctx, truth, campaignMode, memory, evolution } = input;
 
   ctx.emit({ stage: 'creative-direction', message: 'composing creative direction' });
 
@@ -70,14 +73,15 @@ export async function direct(input: DirectInput): Promise<CreativeDirection> {
       const raw = await think<CreativeDirection>({
         model: 'judgement',
         system: SYSTEM,
-        user: buildPrompt(truth, campaignMode, memory),
+        user: buildPrompt(truth, campaignMode, memory, evolution),
         jsonShape: directionShape,
         temperature: 0.7,
         maxTokens: 600,
       });
       const parsed = CreativeDirectionSchema.parse(raw);
-      ctx.emit({ stage: 'creative-direction', message: parsed.hook, data: parsed });
-      return parsed;
+      const tuned = applyEvolution(parsed, evolution);
+      ctx.emit({ stage: 'creative-direction', message: tuned.hook, data: tuned });
+      return tuned;
     } catch (e) {
       ctx.emit({
         stage: 'creative-direction',
@@ -87,7 +91,39 @@ export async function direct(input: DirectInput): Promise<CreativeDirection> {
     }
   }
 
-  return fallbackDirection(ctx, truth, campaignMode);
+  return applyEvolution(fallbackDirection(ctx, truth, campaignMode, evolution), evolution);
+}
+
+/**
+ * Apply the evolution directive on top of the chosen direction.
+ * The fallback already incorporates it, but cognition output also
+ * passes through here so the brand-director nudges always land.
+ */
+function applyEvolution(d: CreativeDirection, e?: EvolutionDirective): CreativeDirection {
+  if (!e) return d;
+  let direction = d;
+
+  // Layout rerouting — only swap if the chosen layout was explicitly avoided.
+  if (e.avoidLayouts.includes(direction.layoutFamily) && e.preferLayouts.length > 0) {
+    direction = { ...direction, layoutFamily: e.preferLayouts[0] };
+  }
+  // Pacing rerouting.
+  if (e.avoidPacings.includes(direction.emotionalPacing) && e.preferPacings.length > 0) {
+    direction = { ...direction, emotionalPacing: e.preferPacings[0] };
+  }
+  // Restraint nudge.
+  if (e.restraintNudge !== 0) {
+    direction = { ...direction, restraint: Math.max(0.1, Math.min(0.95, direction.restraint + e.restraintNudge)) };
+  }
+  // Typography nudge.
+  if (e.typographyNudge === 'lower') {
+    if (direction.typographyDominance === 'loud') direction = { ...direction, typographyDominance: 'editorial' };
+    else if (direction.typographyDominance === 'editorial') direction = { ...direction, typographyDominance: 'whisper' };
+  } else if (e.typographyNudge === 'raise') {
+    if (direction.typographyDominance === 'absent') direction = { ...direction, typographyDominance: 'whisper' };
+    else if (direction.typographyDominance === 'whisper') direction = { ...direction, typographyDominance: 'editorial' };
+  }
+  return direction;
 }
 
 const directionShape = `{
@@ -101,7 +137,12 @@ const directionShape = `{
   "restraint": 0.0
 }`;
 
-function buildPrompt(truth: HumanTruth, mode: CampaignMode | null, memory: MemorySnapshot): string {
+function buildPrompt(
+  truth: HumanTruth,
+  mode: CampaignMode | null,
+  memory: MemorySnapshot,
+  evolution?: EvolutionDirective,
+): string {
   return [
     `STATE: ${truth.state.label}`,
     `FAMILY: ${truth.state.family}`,
@@ -111,20 +152,28 @@ function buildPrompt(truth: HumanTruth, mode: CampaignMode | null, memory: Memor
     `CAMPAIGN MODE: ${mode ?? 'unspecified'}`,
     `RECENT LAYOUTS (avoid): ${memory.recentLayouts.slice(0, 4).join(', ') || 'none yet'}`,
     `RECENT HOOKS (avoid echoing): ${memory.recentHooks.slice(0, 4).join(' | ') || 'none yet'}`,
+    evolution ? `CAMPAIGN DIRECTOR NOTE: ${evolution.narrative}` : '',
+    evolution && evolution.avoidLayouts.length ? `DIRECTOR SAYS AVOID LAYOUTS: ${evolution.avoidLayouts.join(', ')}` : '',
+    evolution && evolution.preferLayouts.length ? `DIRECTOR SAYS PREFER LAYOUTS: ${evolution.preferLayouts.join(', ')}` : '',
     '',
     'Output the JSON now.',
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 }
 
 /**
  * Heuristic fallback. Deterministically maps state family + mode to
  * a plausible direction. Not as nuanced as cognition, but enforces
  * the same rules (especially product role and timestamp earning).
+ *
+ * The evolution directive (when present) biases the fallback's choice
+ * of layout and pacing before the deterministic mapping runs, so the
+ * brand-director memory is honoured even without LLM cognition.
  */
 function fallbackDirection(
   ctx: EngineContext,
   truth: HumanTruth,
   mode: CampaignMode | null,
+  _evolution?: EvolutionDirective,
 ): CreativeDirection {
   const family = truth.state.family;
   const hasTime = !!truth.state.timeAnchor;

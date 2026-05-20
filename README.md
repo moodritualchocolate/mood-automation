@@ -52,10 +52,21 @@ human truth → emotional tension → campaign concept → composition
 | 10  | Memory V2              | Fatigue + rhythm intelligence: pacing history, silence/aggressive balance, overstimulation flag, campaign arc. |
 | 12  | Rejection              | Routes reject-image / reject-concept / reject-taste regens.       |
 
-**Reference bank** (`data/reference-bank.ts`) — 20 structured taste
-anchors. NOT images. Each anchor encodes composition mechanics,
-pacing, restraint, tension, and a one-line "campaign feeling" the
-Reference Intelligence engine matches against.
+**Taste system** (`lib/*`) — the explicit Phase 2.5 modules. These
+do not generate — they judge.
+
+| Module                | Role                                                       |
+|-----------------------|------------------------------------------------------------|
+| `lib/referenceDNA.ts` | Extracts 16-axis continuous DNA from any banner; provides distance + named divergence helpers. |
+| `lib/referenceLoader.ts` | Loads all reference analyses from `references/<category>/*.json`. |
+| `lib/tasteJudge.ts`   | 15-axis emotional-and-visual authenticity judge. Verdict: `ship` / `soft-refuse` / `hard-refuse`. |
+| `lib/humanReaction.ts`| Predicts the viewer's emotional curve at 0.3s, 1s, 3s. Scroll-past prediction is a hard gate. |
+| `lib/campaignEvolution.ts` | Reads memory, outputs the next-banner directive ("pivot to silence", "rotate layout", "cool the pressure"…). |
+| `lib/visualFatigue.ts`| Multi-axis fatigue detector (layout, color, hook, timestamp, typography, product placement, emotional). |
+
+**Reference bank** lives in two places:
+- `data/reference-bank.ts` — 20 categorical mechanics, used by the Phase 2 Reference Intelligence engine for layout/family matching.
+- `references/<category>/*.json` — 14 deep DNA analyses used by the Phase 2.5 TasteJudge. Categories: `excellent`, `good`, `bad`, `too_ai`, `premium`, `editorial`, `documentary`, `fashion`, `quiet`, `aggressive`, `scrollstop`, `boring`. Add a JSON file to the right folder; the loader picks it up.
 
 The cognition layer (`src/cognition/claude.ts`) wraps Anthropic's SDK
 and is used by the truth, direction, typography, scroll-stop critic

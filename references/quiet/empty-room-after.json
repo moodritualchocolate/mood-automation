@@ -1,0 +1,37 @@
+{
+  "reference_id": "quiet-empty-room-after",
+  "category": "quiet",
+  "why_it_works": [
+    "subject already left the frame — only the chair remembers them",
+    "no movement, no light theatre — daylight, dust, the held breath",
+    "a single small object on the table carries everything the image meant to say"
+  ],
+  "why_it_fails": [
+    "without a sharp truth in the typography this image reads as decorative emptiness"
+  ],
+  "visual_confidence": 8.0,
+  "restraint_score": 9.4,
+  "ai_feel_risk": 2.2,
+  "humanity_score": 7.8,
+  "interruption_type": "absence as interruption",
+  "product_behavior": "table evidence, post-event",
+  "silence_ratio": 0.9,
+  "dna": {
+    "silence_ratio": 0.9,
+    "tension_map": 0.45,
+    "framing_behavior": 0.55,
+    "typography_confidence": 0.82,
+    "negative_space_usage": 0.92,
+    "emotional_density": 0.6,
+    "product_aggression_level": 0.3,
+    "interruption_style": 0.25,
+    "realism_type": 0.82,
+    "visual_temperature": 0.35,
+    "camera_energy": 0.05,
+    "editorial_level": 0.75,
+    "fashion_influence": 0.15,
+    "documentary_weight": 0.78,
+    "luxury_restraint": 0.92,
+    "anti_commercial_feel": 0.85
+  }
+}
