@@ -7,9 +7,12 @@
  *   human truth → emotional tension → campaign concept → composition
  *   → image → typography → CTA → critique → rejection → export → memory
  *
- * The orchestrator also owns the regenerate loop the spec demands: when
- * the critic rejects, we either regenerate the image with a hardened
- * prompt, or throw out the concept entirely and pick a different state.
+ * Phase 2 adds the TASTE LAYER between generation and the rejection
+ * decision. The scroll-stop critic still runs first (cheap structural
+ * checks), then four taste engines weigh in (reference intelligence,
+ * taste critic, visual psychology, product presence), and finally the
+ * "Not Good Enough" meta-critic synthesises everything into the single
+ * verdict the pipeline acts on.
  *
  * Engines never call each other. The pipeline calls them. This keeps
  * each engine swappable and lets future formulas (CALM, FOCUS) and
@@ -19,9 +22,7 @@
 import { randomUUID } from 'crypto';
 import type {
   Banner,
-  CampaignMode,
   EngineContext,
-  Formula,
   GenerateRequest,
   HumanState,
   MemorySnapshot,
@@ -38,11 +39,18 @@ import { decideProductIntegration } from '@/engines/product-integration';
 import { buildTypography } from '@/engines/typography';
 import { buildCTA } from '@/engines/cta';
 import { critique } from '@/engines/scroll-stop-critic';
-import { decideRejection } from '@/engines/rejection';
 import { createMemoryStore } from '@/engines/memory';
+// Phase 2 — taste layer
+import { matchReference } from '@/engines/reference-intelligence';
+import { tasteCritique } from '@/engines/taste-critic';
+import { analyzeVisualPsychology } from '@/engines/visual-psychology';
+import { analyzeProductPresence } from '@/engines/product-presence';
+import { decideFinalVerdict } from '@/engines/not-good-enough';
 
 export interface RunOptions {
   onEvent?: (event: PipelineEvent) => void;
+  /** Override the meta-critic brutality for this run. 0..1. */
+  brutality?: number;
 }
 
 export interface RunResult {
@@ -69,99 +77,92 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   const memoryStore = createMemoryStore();
   let memory: MemorySnapshot = await memoryStore.read();
 
-  const maxAttempts = Math.max(1, Math.min(request.maxAttempts ?? 2, 4));
+  // Phase 2 raises the default attempts ceiling — the meta-critic is
+  // brutal, so the pipeline needs more room to converge.
+  const maxAttempts = Math.max(1, Math.min(request.maxAttempts ?? 3, 5));
   let attempt = 0;
   const rejectedAttempts: Banner['rejectedAttempts'] = [];
 
-  // The concept-level loop. State may change per iteration if the
-  // critic returns reject-concept. Within an iteration the image-level
-  // loop can also rerun.
   let stateSeed = Date.now();
   let forceStateId: string | undefined = request.forceStateId;
 
   while (attempt < maxAttempts) {
     attempt += 1;
 
-    const state: HumanState = selectHumanState({
-      ctx,
-      memory,
-      forceStateId,
-      seed: stateSeed,
-    });
-
+    const state: HumanState = selectHumanState({ ctx, memory, forceStateId, seed: stateSeed });
     const truth = await buildHumanTruth({ ctx, state });
     const direction = await direct({ ctx, truth, campaignMode: ctx.campaignMode, memory });
     const composition = planComposition({ ctx, direction });
-
-    // Product decision happens before image — informs the image prompt.
     decideProductIntegration({ ctx, direction });
 
     // Image-level inner loop (max 2 image regens before bumping to concept).
     let imageAttempts = 0;
-    let image, brief;
     while (true) {
       imageAttempts += 1;
-      ({ brief, image } = await generateImage({ ctx, truth, direction, composition }));
+      const { brief, image } = await generateImage({ ctx, truth, direction, composition });
 
       const typography = await buildTypography({ ctx, truth, direction });
       const cta = buildCTA({ ctx, direction, composition, seed: stateSeed + imageAttempts });
 
-      const c = await critique({
+      // ─── Critic stack ──────────────────────────────────────────
+      const scrollStop = await critique({
         ctx, truth, direction, composition,
-        imageBrief: brief, image,
-        typography, cta,
+        imageBrief: brief, image, typography, cta,
       });
 
-      const action = decideRejection(c);
+      const reference = matchReference({ ctx, truth, direction, composition, typography });
+      const taste = await tasteCritique({ ctx, truth, direction, composition, typography, image });
+      const psychology = analyzeVisualPsychology({ ctx, direction, composition, typography });
+      const productPresence = analyzeProductPresence({ ctx, truth, direction, composition, brief, image });
 
-      if (action.kind === 'approve') {
-        const memorySnapshot = await memoryStore.record({
+      const finalVerdict = decideFinalVerdict({
+        ctx,
+        scrollStop,
+        taste,
+        psychology,
+        productPresence,
+        reference,
+        memory,
+        brutality: opts.brutality,
+      });
+      // ───────────────────────────────────────────────────────────
+
+      if (finalVerdict.verdict === 'approve') {
+        const partial: Omit<Banner, 'memorySnapshot'> = {
           id: bannerId,
           createdAt: Date.now(),
           formula: ctx.formula,
           campaignMode: ctx.campaignMode,
           state, truth, direction, composition,
           imageBrief: brief, image, typography, cta,
-          critique: c,
+          critique: scrollStop,
+          taste, psychology, productPresence, referenceMatch: reference, finalVerdict,
           attempts: attempt,
           rejectedAttempts,
-          memorySnapshot: memory, // pre-record snapshot; overwritten below
-        });
-
-        const banner: Banner = {
-          id: bannerId,
-          createdAt: Date.now(),
-          formula: ctx.formula,
-          campaignMode: ctx.campaignMode,
-          state, truth, direction, composition,
-          imageBrief: brief, image, typography, cta,
-          critique: c,
-          attempts: attempt,
-          rejectedAttempts,
-          memorySnapshot,
         };
+        const memorySnapshot = await memoryStore.record({ ...partial, memorySnapshot: memory });
 
-        emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts } });
+        const banner: Banner = { ...partial, memorySnapshot };
+        emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
 
-      if (action.kind === 'regen-image' && imageAttempts < 2) {
-        rejectedAttempts.push({ stage: 'image', reason: action.reasons.join('; ') });
-        emit({ stage: 'rejection', message: 'regenerating image', data: { reasons: action.reasons } });
+      // Rejection routing.
+      if (finalVerdict.verdict === 'reject-image' && imageAttempts < 2) {
+        rejectedAttempts.push({ stage: 'image', reason: finalVerdict.reasons.join('; ') });
+        emit({ stage: 'rejection', message: 'regenerating image', data: { reasons: finalVerdict.reasons } });
         continue; // inner loop
       }
 
-      // Either reject-concept, or image-regens exhausted → break outer attempt.
       rejectedAttempts.push({
-        stage: action.kind === 'regen-image' ? 'image-exhausted' : 'concept',
-        reason: action.reasons.join('; '),
+        stage: finalVerdict.verdict === 'reject-image' ? 'image-exhausted' : finalVerdict.verdict,
+        reason: finalVerdict.reasons.join('; '),
       });
-      emit({ stage: 'rejection', message: 'regenerating concept', data: { reasons: action.reasons } });
+      emit({ stage: 'rejection', message: `regenerating concept (${finalVerdict.verdict})`, data: { reasons: finalVerdict.reasons } });
       stateSeed += 7919;
-      forceStateId = undefined; // let the selector choose fresh
-      // refresh memory snapshot in case other things wrote
+      forceStateId = undefined;
       memory = await memoryStore.read();
-      break; // exit inner loop, go to next outer attempt
+      break; // exit inner loop, next outer attempt
     }
   }
 

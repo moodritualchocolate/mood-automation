@@ -162,6 +162,25 @@ function fallbackDirection(
     'Product-focused': 'off-center-portrait',
   };
 
+  // Vary restraint per state so the fallback doesn't return the same
+  // template restraint level for every banner — otherwise the taste
+  // critic correctly flags every output as "template energy."
+  const stateNudge = hashString(truth.state.id) % 19 / 100 - 0.09;   // -0.09..+0.09
+  const familyBaseline =
+    family === 'collapse'        ? 0.78 :
+    family === 'fatigue'         ? 0.72 :
+    family === 'numbness'        ? 0.80 :
+    family === 'paralysis'       ? 0.75 :
+    family === 'pressure'        ? 0.55 :
+    family === 'fragmentation'   ? 0.50 :
+    family === 'overstimulation' ? 0.42 :
+    family === 'avoidance'       ? 0.62 :
+    0.65;
+  const baseRestraint = mode === 'Aggressive' ? 0.3
+                      : mode === 'Minimal'    ? 0.88
+                      : mode === 'Luxury'     ? 0.85
+                      : familyBaseline + stateNudge;
+
   const direction: CreativeDirection = {
     hook: hookFromTruth(truth),
     focalPoint: focalByFamily[family],
@@ -170,7 +189,7 @@ function fallbackDirection(
     typographyDominance: hasTime ? 'timestamp' : (mode === 'Editorial' ? 'editorial' : 'whisper'),
     ctaBehavior: mode === 'Aggressive' ? 'editorial' : 'quiet',
     layoutFamily: hasTime ? 'timestamp-anchor' : (layoutByMode[mode ?? 'Editorial'] ?? 'documentary-crop'),
-    restraint: mode === 'Aggressive' ? 0.3 : mode === 'Minimal' ? 0.85 : 0.65,
+    restraint: Math.max(0.1, Math.min(0.95, baseRestraint)),
   };
 
   ctx.emit({ stage: 'creative-direction', message: direction.hook, data: direction });
@@ -181,4 +200,13 @@ function hookFromTruth(truth: HumanTruth): string {
   // Strip the truth to a visual hook — first 12 words, ending cleanly.
   const words = truth.truth.replace(/[.,;:!?]+$/, '').split(/\s+/);
   return words.slice(0, 12).join(' ');
+}
+
+function hashString(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
 }

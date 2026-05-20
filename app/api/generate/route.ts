@@ -18,8 +18,13 @@ import { rememberBanner } from '@/core/banner-cache';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+interface GenerateBody extends GenerateRequest {
+  /** Optional override for the meta-critic brutality (0..1). */
+  brutality?: number;
+}
+
 export async function POST(req: NextRequest) {
-  const body = (await req.json()) as GenerateRequest;
+  const body = (await req.json()) as GenerateBody;
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -27,6 +32,7 @@ export async function POST(req: NextRequest) {
       const write = (obj: unknown) => controller.enqueue(encoder.encode(JSON.stringify(obj) + '\n'));
       try {
         const result = await runPipeline(body, {
+          brutality: body.brutality,
           onEvent: (event) => write({ type: 'event', event }),
         });
         rememberBanner(result.banner);

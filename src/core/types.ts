@@ -223,6 +223,131 @@ export const CritiqueSchema = z.object({
 export type Critique = z.infer<typeof CritiqueSchema>;
 
 // ───────────────────────────────────────────────────────────
+// TASTE LAYER (Phase 2)
+//
+// The taste layer does not generate. It judges. Each engine emits
+// scored opinions about the same banner; the Not-Good-Enough engine
+// synthesizes them into a single final verdict that the pipeline acts on.
+// ───────────────────────────────────────────────────────────
+
+// — Reference Intelligence —
+// Each reference is a structured taste anchor (NOT an image). The
+// engine computes the closest match for the current banner and reports
+// divergence on the axes that matter.
+export const ReferenceSchema = z.object({
+  id: z.string(),
+  family: z.enum([
+    'editorial-restraint',
+    'documentary-quiet',
+    'cinema-poster',
+    'fashion-aggressive',
+    'intimate-documentary',
+    'product-as-evidence',
+    'negative-space-luxury',
+    'campaign-overheard',
+  ]),
+  emotional_category: z.enum(['quiet', 'tense', 'collapsed', 'wired', 'observed', 'interrupted']),
+  composition_type: z.enum([
+    'bottom-heavy-asymmetry',
+    'off-center-portrait',
+    'environmental-wide',
+    'negative-space-corner',
+    'documentary-crop',
+    'timestamp-anchor',
+    'centered-restraint',
+  ]),
+  pacing: z.enum(['slow-interruption', 'quiet', 'wired', 'staccato', 'breath']),
+  product_behavior: z.enum(['evidence', 'hidden', 'partial-crop', 'environmental', 'hand-held', 'absent']),
+  typography_behavior: z.enum(['whisper', 'restrained-oversized', 'editorial-balanced', 'silence', 'interruption', 'timestamp-anchor']),
+  restraint_score: z.number().min(0).max(1),
+  tension_score: z.number().min(0).max(1),
+  realism_score: z.number().min(0).max(1),
+  campaign_feeling: z.string(),  // a short observed phrase describing what the reference "feels like"
+});
+export type Reference = z.infer<typeof ReferenceSchema>;
+
+export const ReferenceMatchSchema = z.object({
+  reference: ReferenceSchema,
+  distance: z.number(),                  // 0 = perfect alignment; ~1 = far
+  divergences: z.array(z.string()),      // named axes where the banner falls short of the reference
+  closeness: z.number().min(0).max(1),   // 1 - normalised distance
+});
+export type ReferenceMatch = z.infer<typeof ReferenceMatchSchema>;
+
+// — Aesthetic / Taste Critic —
+// Eleven taste signals — all are "higher = worse" (failure scores).
+export const AestheticCritiqueSchema = z.object({
+  failures: z.object({
+    fakePremium: z.number().min(0).max(10),
+    startupAIFeeling: z.number().min(0).max(10),
+    overdesigned: z.number().min(0).max(10),
+    genericGradients: z.number().min(0).max(10),
+    forcedCinematic: z.number().min(0).max(10),
+    fakeEmotion: z.number().min(0).max(10),
+    randomTypography: z.number().min(0).max(10),
+    predictableHierarchy: z.number().min(0).max(10),
+    templateEnergy: z.number().min(0).max(10),
+    safeComposition: z.number().min(0).max(10),
+    aiAdFeeling: z.number().min(0).max(10),
+  }),
+  verdict: z.enum(['cleared', 'taste-reject']),
+  notes: z.string(),
+  reasons: z.array(z.string()),
+});
+export type AestheticCritique = z.infer<typeof AestheticCritiqueSchema>;
+
+// — Visual Psychology —
+// Eye-flow / tension / release analysis on the composition.
+export const VisualPsychologySchema = z.object({
+  entryPoint: z.object({ x: z.number(), y: z.number() }),
+  focalInterruption: z.number().min(0).max(10),   // higher = better, stops the eye
+  tensionZone: z.tuple([z.number(), z.number()]).nullable(),
+  releaseZone: z.tuple([z.number(), z.number()]).nullable(),
+  emotionalHierarchyClear: z.number().min(0).max(10),
+  delayedProductReveal: z.number().min(0).max(10),
+  ctaResolution: z.number().min(0).max(10),
+  eyeFlowIntegrity: z.number().min(0).max(10),
+  notes: z.array(z.string()),
+});
+export type VisualPsychology = z.infer<typeof VisualPsychologySchema>;
+
+// — Product Presence Intelligence —
+// Scored only when productRole is not 'hidden'. When 'hidden' the engine
+// returns null (no product to score) and the meta-critic skips it.
+export const ProductPresenceSchema = z.object({
+  scores: z.object({
+    environmentalRealism: z.number().min(0).max(10),
+    naturalSceneIntegration: z.number().min(0).max(10),
+    emotionalRelevance: z.number().min(0).max(10),
+    physicalLogic: z.number().min(0).max(10),
+    lensConsistency: z.number().min(0).max(10),
+    shadowConsistency: z.number().min(0).max(10),
+    narrativeJustification: z.number().min(0).max(10),
+  }),
+  verdict: z.enum(['evidence', 'inserted-risk', 'pasted']),
+  reasons: z.array(z.string()),
+});
+export type ProductPresence = z.infer<typeof ProductPresenceSchema>;
+
+// — Not-Good-Enough meta-verdict —
+// Synthesizes every critic into a single decision. The pipeline acts
+// only on this verdict — the underlying critics are inputs, not voters.
+export const FinalVerdictSchema = z.object({
+  verdict: z.enum(['approve', 'reject-image', 'reject-concept', 'reject-taste']),
+  reasons: z.array(z.string()),
+  notes: z.string(),
+  totals: z.object({
+    scrollStop: z.number(),     // 0..10 composite of original critic
+    taste: z.number(),          // 0..10 (higher = worse)
+    psychology: z.number(),     // 0..10 (higher = better)
+    productPresence: z.number().nullable(),
+    referenceCloseness: z.number(),   // 0..1
+  }),
+  brutality: z.number().min(0).max(1),  // how brutally the meta-critic was set this run
+});
+export type FinalVerdict = z.infer<typeof FinalVerdictSchema>;
+
+// ───────────────────────────────────────────────────────────
 // PIPELINE I/O
 // ───────────────────────────────────────────────────────────
 
@@ -249,6 +374,12 @@ export interface Banner {
   typography: TypographyPlan;
   cta: CTA;
   critique: Critique;
+  // Taste layer (Phase 2)
+  taste: AestheticCritique;
+  psychology: VisualPsychology;
+  productPresence: ProductPresence | null;
+  referenceMatch: ReferenceMatch;
+  finalVerdict: FinalVerdict;
   attempts: number;
   rejectedAttempts: Array<{ stage: string; reason: string }>;
   memorySnapshot: MemorySnapshot;
@@ -261,6 +392,20 @@ export interface MemorySnapshot {
   recentHooks: string[];
   stateScores: Record<string, number>;
   layoutFatigue: Record<string, number>;
+  // Campaign Memory V2 — rhythm intelligence
+  pacingHistory: Array<'quiet' | 'tense' | 'interrupted' | 'collapsed' | 'wired'>;
+  silenceCount: number;             // banners with restraint > 0.7
+  aggressiveCount: number;          // banners with restraint < 0.4
+  typographyFatigue: Record<string, number>;       // by dominance
+  recurringEmotionalPatterns: Record<string, number>;  // by family
+  overstimulationFlag: boolean;     // raised when too many "wired" in a row
+  campaignArc: Array<{
+    bannerId: string;
+    family: string;
+    pacing: string;
+    restraint: number;
+    ts: number;
+  }>;
 }
 
 export interface PipelineEvent {

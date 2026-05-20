@@ -20,7 +20,7 @@ export function composeBannerSvg(banner: Banner): string {
   const w = banner.image.width;
   const h = banner.image.height;
   const seed = hash(banner.id);
-  const imp = imperfectionFor(banner.formula, banner.composition, seed);
+  const imp = imperfectionFor(banner.formula, banner.composition, seed, banner.state);
 
   const imageHref = banner.image.dataUrl ?? banner.image.url ?? '';
   const negBias = banner.composition.negativeSpaceBias;

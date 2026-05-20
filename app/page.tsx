@@ -18,11 +18,12 @@ export default function Landing() {
   const router = useRouter();
   const [formula] = useState<Formula>('ENERGY');
   const [mode, setMode] = useState<CampaignMode | null>(null);
+  const [brutality, setBrutality] = useState<'lenient' | 'default' | 'brutal'>('default');
   const [busy, setBusy] = useState(false);
 
   async function generate() {
     setBusy(true);
-    const params = new URLSearchParams({ formula });
+    const params = new URLSearchParams({ formula, brutality });
     if (mode) params.set('mode', mode);
     router.push(`/studio?${params.toString()}`);
   }
@@ -86,10 +87,32 @@ export default function Landing() {
           ))}
         </div>
 
+        <div className="mt-16 eyebrow mb-4">critic brutality</div>
+        <div className="flex gap-2 justify-center">
+          {(['lenient', 'default', 'brutal'] as const).map((b) => (
+            <button
+              key={b}
+              className={`px-4 py-2 text-xs tracking-wider border hairline transition-colors ${
+                brutality === b ? 'bg-bone-50 text-ink-900' : 'text-bone-50/70 hover:bg-white/5'
+              }`}
+              onClick={() => setBrutality(b)}
+              title={
+                b === 'lenient'
+                  ? 'fewer rejections — useful for first runs without API keys'
+                  : b === 'brutal'
+                  ? 'creative-director-level rejection — most banners will fail'
+                  : 'balanced — rejects safe and generic, accepts observed'
+              }
+            >
+              {b.toUpperCase()}
+            </button>
+          ))}
+        </div>
+
         <button
           disabled={busy}
           onClick={generate}
-          className="mt-20 px-10 py-4 bg-bone-50 text-ink-900 text-sm tracking-[0.3em] font-semibold disabled:opacity-50"
+          className="mt-12 px-10 py-4 bg-bone-50 text-ink-900 text-sm tracking-[0.3em] font-semibold disabled:opacity-50"
         >
           {busy ? 'COMPOSING…' : 'GENERATE'}
         </button>

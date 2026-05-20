@@ -23,7 +23,24 @@ const EMPTY: MemorySnapshot = {
   recentHooks: [],
   stateScores: {},
   layoutFatigue: {},
+  // V2 rhythm intelligence
+  pacingHistory: [],
+  silenceCount: 0,
+  aggressiveCount: 0,
+  typographyFatigue: {},
+  recurringEmotionalPatterns: {},
+  overstimulationFlag: false,
+  campaignArc: [],
 };
+
+/**
+ * Forward-migrate a snapshot loaded from disk that pre-dates the V2
+ * fields. Returns a snapshot with every V2 field defaulted, so older
+ * memory files stay readable without manual intervention.
+ */
+function migrate(raw: Partial<MemorySnapshot>): MemorySnapshot {
+  return { ...EMPTY, ...raw };
+}
 
 export interface MemoryStore {
   read(): Promise<MemorySnapshot>;
@@ -41,7 +58,7 @@ export function createMemoryStore(dir = process.env.MOOD_MEMORY_DIR || DEFAULT_D
   async function read(): Promise<MemorySnapshot> {
     try {
       const txt = await fs.readFile(filePath, 'utf8');
-      return JSON.parse(txt) as MemorySnapshot;
+      return migrate(JSON.parse(txt) as Partial<MemorySnapshot>);
     } catch {
       return { ...EMPTY };
     }
@@ -69,8 +86,12 @@ export function createMemoryStore(dir = process.env.MOOD_MEMORY_DIR || DEFAULT_D
 }
 
 const RECENT_WINDOW = 12;
+const ARC_WINDOW = 24;
 
 function updateSnapshot(current: MemorySnapshot, b: Banner): MemorySnapshot {
+  const pacing = b.direction.emotionalPacing;
+  const restraint = b.direction.restraint;
+
   const next: MemorySnapshot = {
     totalBanners: current.totalBanners + 1,
     recentStateIds: [b.state.id, ...current.recentStateIds].slice(0, RECENT_WINDOW),
@@ -78,12 +99,38 @@ function updateSnapshot(current: MemorySnapshot, b: Banner): MemorySnapshot {
     recentHooks: [b.direction.hook, ...current.recentHooks].slice(0, RECENT_WINDOW),
     stateScores: { ...current.stateScores },
     layoutFatigue: { ...current.layoutFatigue },
+    // V2
+    pacingHistory: [pacing, ...current.pacingHistory].slice(0, RECENT_WINDOW),
+    silenceCount: current.silenceCount + (restraint > 0.7 ? 1 : 0),
+    aggressiveCount: current.aggressiveCount + (restraint < 0.4 ? 1 : 0),
+    typographyFatigue: { ...current.typographyFatigue },
+    recurringEmotionalPatterns: { ...current.recurringEmotionalPatterns },
+    overstimulationFlag: false,
+    campaignArc: [
+      {
+        bannerId: b.id,
+        family: b.state.family,
+        pacing,
+        restraint,
+        ts: b.createdAt,
+      },
+      ...current.campaignArc,
+    ].slice(0, ARC_WINDOW),
   };
 
   const score = scoreFromCritique(b.critique);
   next.stateScores[b.state.id] = ((current.stateScores[b.state.id] ?? 1) * 0.7) + score * 0.3;
-
   next.layoutFatigue[b.direction.layoutFamily] = (current.layoutFatigue[b.direction.layoutFamily] ?? 0) + 1;
+
+  next.typographyFatigue[b.direction.typographyDominance] =
+    (current.typographyFatigue[b.direction.typographyDominance] ?? 0) + 1;
+  next.recurringEmotionalPatterns[b.state.family] =
+    (current.recurringEmotionalPatterns[b.state.family] ?? 0) + 1;
+
+  // Overstimulation: 3 or more "wired" / "tense" pacings in last 4 banners.
+  const recent4 = next.pacingHistory.slice(0, 4);
+  const hot = recent4.filter((p) => p === 'wired' || p === 'tense').length;
+  next.overstimulationFlag = hot >= 3;
 
   return next;
 }
