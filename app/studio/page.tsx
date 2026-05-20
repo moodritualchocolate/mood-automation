@@ -155,6 +155,50 @@ function StudioInner() {
             </div>
 
             <div className="border-t hairline pt-3 space-y-2">
+              <div className="eyebrow">campaign brain</div>
+              <Field
+                label="ASSET JOB"
+                value={`${banner.tasteSystem.campaignBrain.job.job.toUpperCase()} — ${banner.tasteSystem.campaignBrain.job.rationale}`}
+                multiline
+              />
+              <Field
+                label="CULTURAL MOMENT"
+                value={banner.tasteSystem.campaignBrain.culturalMoment.id}
+              />
+              <Field
+                label="READING"
+                value={`"${banner.tasteSystem.campaignBrain.culturalMoment.reading}"`}
+                multiline
+              />
+              <Field
+                label="COURAGE"
+                value={`${banner.tasteSystem.campaignBrain.courage.level.toUpperCase()} — ${banner.tasteSystem.campaignBrain.courage.reason}`}
+                multiline
+              />
+              <Field
+                label="RHYTHM HEALTH"
+                value={`${banner.tasteSystem.campaignBrain.rhythm.healthScore.toFixed(1)}/10 · imbalanced: ${banner.tasteSystem.campaignBrain.rhythm.mostImbalanced ?? 'none'}`}
+              />
+              <Field
+                label="ANTI-AI SMELL"
+                value={`${banner.tasteSystem.campaignBrain.antiAI.smell.toFixed(1)}/10 — signatures: [${banner.tasteSystem.campaignBrain.antiAI.signatures.join(', ') || 'none'}]`}
+                multiline
+              />
+              {banner.tasteSystem.campaignBrain.antiAI.driftSignatures.length > 0 && (
+                <Field
+                  label="CAMPAIGN DRIFT"
+                  value={banner.tasteSystem.campaignBrain.antiAI.driftSignatures.join(', ')}
+                  multiline
+                />
+              )}
+              <Field
+                label="EMOTIONAL RESIDUE"
+                value={banner.tasteSystem.campaignBrain.residue}
+                multiline
+              />
+            </div>
+
+            <div className="border-t hairline pt-3 space-y-2">
               <div className="eyebrow">taste system</div>
               <Field
                 label="FINAL VERDICT"

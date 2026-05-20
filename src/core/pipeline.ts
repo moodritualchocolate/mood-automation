@@ -54,6 +54,15 @@ import {
   simulateHumanReaction,
   evolveCampaign,
   detectFatigue,
+  // Phase 3 — campaign brain
+  selectCulturalMoment,
+  decideAssetJob,
+  decideCourage,
+  analyzeRhythm,
+  bannerWouldWorsenRhythm,
+  scanAntiAI,
+  createHumanMemoryStore,
+  entryFromBanner,
 } from '@lib/index';
 
 export interface RunOptions {
@@ -109,12 +118,54 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   const references = await loadReferences();
   emit({ stage: 'references', message: `loaded ${references.length} reference analyses` });
 
+  // ─── Phase 3 — campaign brain pre-generation decisions ────────
+  const jobDecision = decideAssetJob({ memory, campaignMode: ctx.campaignMode, seed: stateSeed });
+  emit({
+    stage: 'campaign-decision',
+    message: `asset job: "${jobDecision.job}" — ${jobDecision.rationale}`,
+    data: jobDecision,
+  });
+
+  const rhythmReport = analyzeRhythm(memory);
+  emit({
+    stage: 'campaign-rhythm',
+    message: `health ${rhythmReport.healthScore.toFixed(1)}/10 · imbalanced axis: ${rhythmReport.mostImbalanced ?? 'none'}`,
+    data: rhythmReport,
+  });
+
+  const humanMemoryStore = createHumanMemoryStore();
+  const emotionalTrail = await humanMemoryStore.read();
+  emit({ stage: 'human-memory', message: `${emotionalTrail.length} prior emotional traces` });
+
   while (attempt < maxAttempts) {
     attempt += 1;
 
     const state: HumanState = selectHumanState({ ctx, memory, forceStateId, seed: stateSeed });
     const truth = await buildHumanTruth({ ctx, state });
-    const direction = await direct({ ctx, truth, campaignMode: ctx.campaignMode, memory, evolution: evolutionAtRunStart });
+
+    // ─── Per-attempt campaign-brain decisions ────────────────────
+    const culturalMoment = selectCulturalMoment({ state, memory, seed: stateSeed + attempt });
+    emit({
+      stage: 'cultural-intelligence',
+      message: `moment: "${culturalMoment.id}" — ${culturalMoment.reading}`,
+      data: { forbidden: culturalMoment.forbiddenPatterns },
+    });
+
+    const courage = decideCourage({ state, job: jobDecision.job, culturalMoment: culturalMoment.id, memory, seed: stateSeed + attempt });
+    emit({
+      stage: 'visual-courage',
+      message: `${courage.level} — ${courage.reason}`,
+      data: courage.overrides,
+    });
+
+    const direction = await direct({
+      ctx, truth, campaignMode: ctx.campaignMode, memory,
+      evolution: evolutionAtRunStart,
+      job: jobDecision,
+      courage,
+      rhythm: rhythmReport,
+      culturalMoment,
+    });
     const composition = planComposition({ ctx, direction });
     decideProductIntegration({ ctx, direction });
 
@@ -161,6 +212,23 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         message: `${fatigue.verdict} · totals ${fatigue.totals.toFixed(1)}`,
         data: { flags: fatigue.flags, scores: fatigue.scores },
       });
+
+      // ─── Phase 3 — anti-AI scan + rhythm-worsen check ────────
+      const antiAI = scanAntiAI({ direction, typography, bannerDNA: dna, truth, memory, imageProvider: image.provider });
+      emit({
+        stage: 'anti-ai',
+        message: `smell ${antiAI.smell.toFixed(1)} · signatures [${antiAI.signatures.join(', ') || 'none'}] · drift [${antiAI.driftSignatures.join(', ') || 'none'}]`,
+        data: { notes: antiAI.notes, pushAwayFrom: antiAI.pushAwayFrom },
+      });
+
+      const rhythmWorsen = bannerWouldWorsenRhythm(rhythmReport, { direction, job: jobDecision.job });
+      if (rhythmWorsen.worsens) {
+        emit({
+          stage: 'campaign-rhythm',
+          message: `would worsen rhythm: ${rhythmWorsen.reason}`,
+          data: rhythmWorsen,
+        });
+      }
       // ───────────────────────────────────────────────────────────
 
       const finalVerdict = decideFinalVerdict({
@@ -175,10 +243,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         judge,
         reaction,
         fatigue,
+        antiAI,
+        rhythmWorsen,
+        job: jobDecision,
+        direction,
       });
       // ───────────────────────────────────────────────────────────
 
       if (finalVerdict.verdict === 'approve') {
+        // Build the campaign-brain block first; humanMemory uses the final
+        // banner shape (after reaction) to derive the residue.
         const partial: Omit<Banner, 'memorySnapshot'> = {
           id: bannerId,
           createdAt: Date.now(),
@@ -188,13 +262,35 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           imageBrief: brief, image, typography, cta,
           critique: scrollStop,
           taste, psychology, productPresence, referenceMatch: reference, finalVerdict,
-          tasteSystem: { dna, judge, reaction, fatigue, evolutionAtRunStart },
+          tasteSystem: {
+            dna, judge, reaction, fatigue, evolutionAtRunStart,
+            campaignBrain: {
+              job: jobDecision,
+              culturalMoment,
+              courage,
+              rhythm: rhythmReport,
+              antiAI,
+              residue: '', // filled by entryFromBanner below
+            },
+          },
           attempts: attempt,
           rejectedAttempts,
         };
-        const memorySnapshot = await memoryStore.record({ ...partial, memorySnapshot: memory });
 
+        // Persist emotional trace + main memory in parallel.
+        const provisional: Banner = { ...partial, memorySnapshot: memory };
+        const traceEntry = entryFromBanner(provisional, jobDecision.job, culturalMoment.id);
+        partial.tasteSystem.campaignBrain.residue = traceEntry.residue;
+        await humanMemoryStore.record(traceEntry);
+
+        const memorySnapshot = await memoryStore.record(provisional);
         const banner: Banner = { ...partial, memorySnapshot };
+
+        emit({
+          stage: 'human-memory',
+          message: `residue: ${traceEntry.residue}`,
+          data: { traceEntry },
+        });
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }

@@ -9,3 +9,10 @@ export * from './tasteJudge';
 export * from './humanReaction';
 export * from './campaignEvolution';
 export * from './visualFatigue';
+// Phase 3 — campaign brain
+export * from './culturalIntelligence';
+export * from './campaignDecision';
+export * from './campaignRhythm';
+export * from './visualCourage';
+export * from './antiAI';
+export * from './humanMemory';

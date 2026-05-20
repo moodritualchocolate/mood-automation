@@ -14,6 +14,12 @@ import { CreativeDirectionSchema } from '@/core/types';
 import { cognitionEnabled, think } from '@/cognition/claude';
 import { MOOD_VOICE } from '@/cognition/voice';
 import type { EvolutionDirective } from '@lib/campaignEvolution';
+import type { JobDecision } from '@lib/campaignDecision';
+import type { CourageDecision } from '@lib/visualCourage';
+import type { AntiAIReport } from '@lib/antiAI';
+import type { RhythmReport } from '@lib/campaignRhythm';
+import type { CulturalMoment } from '@lib/culturalIntelligence';
+// (no further imports)
 
 const SYSTEM = `
 ${MOOD_VOICE}
@@ -61,10 +67,16 @@ export interface DirectInput {
   memory: MemorySnapshot;
   /** Phase 2.5 — directive from the campaign-evolution engine. */
   evolution?: EvolutionDirective;
+  /** Phase 3 — campaign brain. */
+  job?: JobDecision;
+  courage?: CourageDecision;
+  antiAI?: AntiAIReport;
+  rhythm?: RhythmReport;
+  culturalMoment?: CulturalMoment;
 }
 
 export async function direct(input: DirectInput): Promise<CreativeDirection> {
-  const { ctx, truth, campaignMode, memory, evolution } = input;
+  const { ctx, truth, campaignMode, memory, evolution, job, courage, antiAI, rhythm, culturalMoment } = input;
 
   ctx.emit({ stage: 'creative-direction', message: 'composing creative direction' });
 
@@ -73,13 +85,13 @@ export async function direct(input: DirectInput): Promise<CreativeDirection> {
       const raw = await think<CreativeDirection>({
         model: 'judgement',
         system: SYSTEM,
-        user: buildPrompt(truth, campaignMode, memory, evolution),
+        user: buildPrompt(truth, campaignMode, memory, evolution, job, courage, antiAI, rhythm, culturalMoment),
         jsonShape: directionShape,
         temperature: 0.7,
         maxTokens: 600,
       });
       const parsed = CreativeDirectionSchema.parse(raw);
-      const tuned = applyEvolution(parsed, evolution);
+      const tuned = applyAllConstraints(parsed, evolution, job, courage, rhythm, antiAI);
       ctx.emit({ stage: 'creative-direction', message: tuned.hook, data: tuned });
       return tuned;
     } catch (e) {
@@ -91,7 +103,85 @@ export async function direct(input: DirectInput): Promise<CreativeDirection> {
     }
   }
 
-  return applyEvolution(fallbackDirection(ctx, truth, campaignMode, evolution), evolution);
+  const fb = fallbackDirection(ctx, truth, campaignMode, evolution);
+  return applyAllConstraints(fb, evolution, job, courage, rhythm, antiAI);
+}
+
+/** Applies evolution → job → courage → rhythm/anti-AI rescues, in order. */
+function applyAllConstraints(
+  d: CreativeDirection,
+  evolution?: EvolutionDirective,
+  job?: JobDecision,
+  courage?: CourageDecision,
+  rhythm?: RhythmReport,
+  antiAI?: AntiAIReport,
+): CreativeDirection {
+  let direction = applyEvolution(d, evolution);
+
+  if (job) {
+    const c = job.constraints;
+    if (c.productMustBeAbsent && direction.productRole !== 'hidden') {
+      direction = { ...direction, productRole: 'hidden' };
+    }
+    if (c.ctaShouldBeQuiet && direction.ctaBehavior !== 'quiet') {
+      direction = { ...direction, ctaBehavior: 'quiet' };
+    }
+    if (c.restraintFloor !== null && direction.restraint < c.restraintFloor) {
+      direction = { ...direction, restraint: c.restraintFloor };
+    }
+    if (c.restraintCeiling !== null && direction.restraint > c.restraintCeiling) {
+      direction = { ...direction, restraint: c.restraintCeiling };
+    }
+    if (c.forbidDominance.includes(direction.typographyDominance)) {
+      direction = { ...direction, typographyDominance: c.preferDominance[0] ?? 'editorial' };
+    }
+  }
+
+  if (courage && courage.overrides.restraintFloor !== null && direction.restraint < courage.overrides.restraintFloor) {
+    direction = { ...direction, restraint: courage.overrides.restraintFloor };
+  }
+  if (courage && courage.overrides.forceDominance) {
+    direction = { ...direction, typographyDominance: courage.overrides.forceDominance };
+  }
+  if (courage && courage.overrides.forceCtaQuiet) {
+    direction = { ...direction, ctaBehavior: 'quiet' };
+  }
+
+  // Rhythm rescues — when the campaign is heavily imbalanced, the
+  // director self-corrects rather than handing the problem to the
+  // meta-critic and getting rejected.
+  if (rhythm?.mostImbalanced && job?.job !== 'sell') {
+    const reading = rhythm.axes.find((a) => a.axis === rhythm.mostImbalanced);
+    if (reading) {
+      if (reading.axis === 'product-vs-no-product' && reading.bias > 0.4 && direction.productRole !== 'hidden') {
+        // product has been everywhere — go absent unless the job demands product
+        direction = { ...direction, productRole: 'hidden' };
+      }
+      if (reading.axis === 'silence-vs-impact' && reading.bias < -0.4) {
+        // campaign has been silent — earn an impact moment
+        if (direction.typographyDominance === 'whisper' || direction.typographyDominance === 'absent') {
+          direction = { ...direction, typographyDominance: 'editorial' };
+        }
+      }
+      if (reading.axis === 'loud-vs-quiet' && reading.bias < -0.4 && direction.restraint > 0.7) {
+        // already too quiet — lower restraint slightly
+        direction = { ...direction, restraint: 0.55 };
+      }
+    }
+  }
+
+  // Anti-AI rescue — when the campaign is drifting toward a known
+  // AI pattern, push the direction away from it.
+  if (antiAI?.pushAwayFrom.includes('startup-ad-template')) {
+    if (direction.layoutFamily === 'documentary-crop') {
+      direction = { ...direction, layoutFamily: 'off-center-portrait' };
+    }
+  }
+  if (antiAI?.pushAwayFrom.includes('generic-premium-beige') && direction.restraint > 0.82) {
+    direction = { ...direction, restraint: 0.65 };
+  }
+
+  return direction;
 }
 
 /**
@@ -142,6 +232,11 @@ function buildPrompt(
   mode: CampaignMode | null,
   memory: MemorySnapshot,
   evolution?: EvolutionDirective,
+  job?: JobDecision,
+  courage?: CourageDecision,
+  antiAI?: AntiAIReport,
+  rhythm?: RhythmReport,
+  culturalMoment?: CulturalMoment,
 ): string {
   return [
     `STATE: ${truth.state.label}`,
@@ -155,6 +250,16 @@ function buildPrompt(
     evolution ? `CAMPAIGN DIRECTOR NOTE: ${evolution.narrative}` : '',
     evolution && evolution.avoidLayouts.length ? `DIRECTOR SAYS AVOID LAYOUTS: ${evolution.avoidLayouts.join(', ')}` : '',
     evolution && evolution.preferLayouts.length ? `DIRECTOR SAYS PREFER LAYOUTS: ${evolution.preferLayouts.join(', ')}` : '',
+    '',
+    job ? `ASSET JOB: "${job.job}" — ${job.rationale}` : '',
+    job?.constraints.productMustBeAbsent ? `JOB CONSTRAINT: product MUST be absent (productRole = "hidden")` : '',
+    job?.constraints.ctaShouldBeQuiet ? `JOB CONSTRAINT: CTA must be quiet` : '',
+    job?.constraints.restraintFloor !== null && job?.constraints.restraintFloor !== undefined
+      ? `JOB CONSTRAINT: restraint >= ${job.constraints.restraintFloor}` : '',
+    courage?.courageous ? `VISUAL COURAGE: ${courage.level} — ${courage.reason}` : '',
+    antiAI?.pushAwayFrom.length ? `ANTI-AI: push away from ${antiAI.pushAwayFrom.join(', ')}` : '',
+    rhythm?.mostImbalanced ? `RHYTHM IMBALANCE: ${rhythm.mostImbalanced} — ${rhythm.axes.find(a => a.axis === rhythm.mostImbalanced)?.suggestion ?? ''}` : '',
+    culturalMoment ? `CULTURAL MOMENT: ${culturalMoment.id} — "${culturalMoment.reading}". Use as context, NEVER as literal copy. Avoid: ${culturalMoment.forbiddenPatterns.join('; ')}.` : '',
     '',
     'Output the JSON now.',
   ].filter(Boolean).join('\n');

@@ -19,6 +19,7 @@
 
 import type {
   AestheticCritique,
+  CreativeDirection,
   Critique,
   EngineContext,
   FinalVerdict,
@@ -30,6 +31,9 @@ import type {
 import type { FatigueReport } from '@lib/visualFatigue';
 import type { ReactionCurve } from '@lib/humanReaction';
 import type { TasteVerdict } from '@lib/tasteJudge';
+import type { AntiAIReport } from '@lib/antiAI';
+import type { JobDecision } from '@lib/campaignDecision';
+import type { RhythmAxis } from '@lib/campaignRhythm';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -45,10 +49,16 @@ export interface MetaInput {
   judge?: TasteVerdict;
   reaction?: ReactionCurve;
   fatigue?: FatigueReport;
+  // Phase 3 — campaign brain signals.
+  antiAI?: AntiAIReport;
+  rhythmWorsen?: { worsens: boolean; axis: RhythmAxis | null; reason: string | null };
+  job?: JobDecision;
+  direction?: CreativeDirection;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
-  const { ctx, scrollStop, taste, psychology, productPresence, reference, memory, judge, reaction, fatigue } = input;
+  const { ctx, scrollStop, taste, psychology, productPresence, reference, memory,
+          judge, reaction, fatigue, antiAI, rhythmWorsen, job, direction } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -120,6 +130,27 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ─── Phase 3 hard gates ───────────────────────────────────────
+  // Asset-job contract enforcement — a "no-product" job that ships
+  // a banner with a visible product is a contradiction.
+  if (job && job.constraints.productMustBeAbsent && direction && direction.productRole !== 'hidden') {
+    reasons.push(`job "${job.job}" requires productRole=hidden but direction is "${direction.productRole}"`);
+    verdict = 'reject-concept';
+  }
+
+  // Anti-AI smell is a HARD gate at brutal mode; soft pressure at default.
+  if (antiAI && antiAI.smell >= 6 && brutality >= 0.75) {
+    reasons.push(`anti-AI smell ${antiAI.smell.toFixed(1)} — signatures: ${antiAI.signatures.join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
+  // Rhythm worsening — when the campaign is imbalanced and this banner
+  // would push the imbalance further, reject at default brutality and up.
+  if (rhythmWorsen && rhythmWorsen.worsens && brutality >= 0.6) {
+    reasons.push(`rhythm: ${rhythmWorsen.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -139,6 +170,14 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (fatigue && fatigue.verdict === 'fatigued') {
     softReasons.push(`campaign fatigue: ${fatigue.flags[0] ?? 'multi-axis'}`);
+  }
+
+  // Phase 3 soft floors.
+  if (antiAI && antiAI.smell >= 4) {
+    softReasons.push(`anti-AI smell ${antiAI.smell.toFixed(1)}: ${antiAI.signatures.slice(0, 2).join(', ')}`);
+  }
+  if (antiAI && antiAI.driftSignatures.length >= 2) {
+    softReasons.push(`campaign drifting toward AI patterns: ${antiAI.driftSignatures.join(', ')}`);
   }
 
   // Memory-aware additional rejection: campaign overstimulation.

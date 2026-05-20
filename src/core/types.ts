@@ -370,6 +370,15 @@ export interface BannerTasteSystem {
   reaction: import('@lib/humanReaction').ReactionCurve;
   fatigue: import('@lib/visualFatigue').FatigueReport;
   evolutionAtRunStart: import('@lib/campaignEvolution').EvolutionDirective;
+  // Phase 3 — campaign brain
+  campaignBrain: {
+    job: import('@lib/campaignDecision').JobDecision;
+    culturalMoment: import('@lib/culturalIntelligence').CulturalMoment;
+    courage: import('@lib/visualCourage').CourageDecision;
+    rhythm: import('@lib/campaignRhythm').RhythmReport;
+    antiAI: import('@lib/antiAI').AntiAIReport;
+    residue: string;
+  };
 }
 
 export interface Banner {
@@ -420,6 +429,13 @@ export interface MemorySnapshot {
     restraint: number;
     ts: number;
   }>;
+  // Phase 3 — campaign brain
+  recentJobs?: string[];
+  jobFatigue?: Record<string, number>;
+  recentCulturalMoments?: string[];
+  recentProductRoles?: string[];
+  recentTypographyDominances?: string[];
+  recentCourageLevels?: Array<'none' | 'restrained' | 'radical'>;
 }
 
 export interface PipelineEvent {

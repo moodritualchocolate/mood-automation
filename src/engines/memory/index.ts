@@ -31,6 +31,13 @@ const EMPTY: MemorySnapshot = {
   recurringEmotionalPatterns: {},
   overstimulationFlag: false,
   campaignArc: [],
+  // Phase 3 — campaign brain
+  recentJobs: [],
+  jobFatigue: {},
+  recentCulturalMoments: [],
+  recentProductRoles: [],
+  recentTypographyDominances: [],
+  recentCourageLevels: [],
 };
 
 /**
@@ -131,6 +138,16 @@ function updateSnapshot(current: MemorySnapshot, b: Banner): MemorySnapshot {
   const recent4 = next.pacingHistory.slice(0, 4);
   const hot = recent4.filter((p) => p === 'wired' || p === 'tense').length;
   next.overstimulationFlag = hot >= 3;
+
+  // ─── Phase 3 — campaign-brain tracking ─────────────────────────
+  const brain = b.tasteSystem.campaignBrain;
+  next.recentJobs = [brain.job.job, ...(current.recentJobs ?? [])].slice(0, RECENT_WINDOW);
+  next.jobFatigue = { ...(current.jobFatigue ?? {}) };
+  next.jobFatigue[brain.job.job] = (next.jobFatigue[brain.job.job] ?? 0) + 1;
+  next.recentCulturalMoments = [brain.culturalMoment.id, ...(current.recentCulturalMoments ?? [])].slice(0, RECENT_WINDOW);
+  next.recentProductRoles = [b.direction.productRole, ...(current.recentProductRoles ?? [])].slice(0, RECENT_WINDOW);
+  next.recentTypographyDominances = [b.direction.typographyDominance, ...(current.recentTypographyDominances ?? [])].slice(0, RECENT_WINDOW);
+  next.recentCourageLevels = [brain.courage.level, ...(current.recentCourageLevels ?? [])].slice(0, RECENT_WINDOW);
 
   return next;
 }
