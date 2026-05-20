@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-editorial: 'EditorialNew', 'Times New Roman', serif;
+  --font-display: 'Helvetica Neue', 'Inter', system-ui, sans-serif;
+  --font-hebrew: 'Heebo', 'Arial Hebrew', 'Arial', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+html, body {
+  background: #050505;
+  color: #F7F5F2;
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+[dir="rtl"], .he {
+  font-family: var(--font-hebrew);
+}
+
+::selection { background: #F7F5F2; color: #050505; }
+
+.scanline {
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255,255,255,0.012) 0px,
+    rgba(255,255,255,0.012) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.hairline { border-color: rgba(247, 245, 242, 0.12); }
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(247,245,242,0.55);
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.pulse { animation: pulseSoft 1.6s ease-in-out infinite; }
