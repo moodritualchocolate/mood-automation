@@ -143,6 +143,12 @@ import {
   trackCollectiveDrift,
   readPrivateLanguage,
   weightReality,
+  // Phase 17 — systemic human pressure model
+  matchSystemicCause,
+  readAttentionFragmentation,
+  identifyEnvironmentalSystem,
+  readRecoveryFailure,
+  readCognitiveResidue,
 } from '@lib/index';
 import { SEED_INGESTED_SIGNALS } from '@data/seed-ingested-signals';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
@@ -1021,6 +1027,52 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           ? `WARNING generated from aesthetics — no deep signal resonates`
           : `discovered from reality ${realityWeightingReading.discovered_from_reality_score.toFixed(1)}/10 · ${realityWeightingReading.resonating_signals.length} signals resonate`,
       });
+
+      // ─── Phase 17 — systemic pressure model ───────────────────
+      const systemicCauseReading = matchSystemicCause({ state, truth, emotionalCore });
+      emit({
+        stage: 'systemic-cause',
+        message: systemicCauseReading.has_systemic_cause
+          ? `caused by: ${systemicCauseReading.matched_systems.primary!.id} (clarity ${systemicCauseReading.causal_clarity.toFixed(1)}/10)`
+          : `no systemic cause matched — banner is feeling without machinery`,
+      });
+      const attentionFragmentationReading = readAttentionFragmentation({
+        state, truth, emotionalCore, microMoment: culturalMicroMoment,
+      });
+      if (attentionFragmentationReading.patterns_detected.length > 0) {
+        emit({
+          stage: 'attention-fragmentation',
+          message: `${attentionFragmentationReading.attention_fragmentation_score.toFixed(1)}/10 · ${attentionFragmentationReading.patterns_detected.map((p) => p.id).join(', ')}`,
+        });
+      }
+      const environmentalSystemReading = identifyEnvironmentalSystem({
+        state, microMoment: culturalMicroMoment,
+        atmosphericLightBehavior: atmosphericLight.behavior,
+      });
+      if (environmentalSystemReading.primary) {
+        emit({
+          stage: 'environmental-machine',
+          message: `${environmentalSystemReading.primary.id} — ${environmentalSystemReading.primary.what_it_replaces}`,
+        });
+      }
+      const recoveryFailureReading = readRecoveryFailure({
+        state, truth, emotionalCore, microMoment: culturalMicroMoment,
+      });
+      if (recoveryFailureReading.primary_failure) {
+        emit({
+          stage: 'recovery-failure',
+          message: `${recoveryFailureReading.primary_failure.id} (${recoveryFailureReading.recovery_failure_score.toFixed(1)}/10)${recoveryFailureReading.rest_is_not_rest ? ' — REST IS NOT REST' : ''}`,
+        });
+      }
+      const cognitiveResidueReading = readCognitiveResidue({
+        state, truth, emotionalCore, worldContinuity,
+      });
+      if (cognitiveResidueReading.detected.length > 0) {
+        emit({
+          stage: 'cognitive-residue',
+          message: `load ${cognitiveResidueReading.residue_load.toFixed(1)}/10 · ${cognitiveResidueReading.detected.map((r) => r.id).join(', ')}`,
+        });
+      }
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -1133,6 +1185,12 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         // Phase 16
         privateLanguageReading,
         realityWeightingReading,
+        // Phase 17
+        systemicCauseReading,
+        attentionFragmentationReading,
+        environmentalSystemReading,
+        recoveryFailureReading,
+        cognitiveResidueReading,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -1246,6 +1304,13 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               collectiveDrift: collectiveDriftReport,
               privateLanguage: privateLanguageReading,
               weighting: realityWeightingReading,
+            },
+            systems: {
+              systemicCause: systemicCauseReading,
+              attentionFragmentation: attentionFragmentationReading,
+              environmentalSystem: environmentalSystemReading,
+              recoveryFailure: recoveryFailureReading,
+              cognitiveResidue: cognitiveResidueReading,
             },
           },
           attempts: attempt,

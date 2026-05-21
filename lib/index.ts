@@ -102,3 +102,9 @@ export { trackCollectiveDrift } from './collectiveDriftTracker';
 export type { CollectiveDriftReport as CollectiveDriftReportV16, DriftPeriod } from './collectiveDriftTracker';
 export * from './privateLanguageMap';
 export * from './realityWeighting';
+// Phase 17 — systemic human pressure model
+export * from './systemicPressureMap';
+export * from './attentionFragmentation';
+export * from './modernEnvironmentSystems';
+export * from './recoveryFailure';
+export * from './cognitiveResidue';

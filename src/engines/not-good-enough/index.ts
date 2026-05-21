@@ -86,6 +86,12 @@ import type { GenerationPressureReading } from '@lib/generationPressure';
 // Phase 16 — reality ingestion layer
 import type { PrivateLanguageReading } from '@lib/privateLanguageMap';
 import type { WeightingReading } from '@lib/realityWeighting';
+// Phase 17 — systemic human pressure model
+import type { SystemicCauseReading } from '@lib/systemicPressureMap';
+import type { FragmentationReading } from '@lib/attentionFragmentation';
+import type { EnvironmentalSystemReading } from '@lib/modernEnvironmentSystems';
+import type { RecoveryFailureReading } from '@lib/recoveryFailure';
+import type { CognitiveResidueReading } from '@lib/cognitiveResidue';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -161,6 +167,12 @@ export interface MetaInput {
   // Phase 16 — reality ingestion layer.
   privateLanguageReading?: PrivateLanguageReading;
   realityWeightingReading?: WeightingReading;
+  // Phase 17 — systemic human pressure model.
+  systemicCauseReading?: SystemicCauseReading;
+  attentionFragmentationReading?: FragmentationReading;
+  environmentalSystemReading?: EnvironmentalSystemReading;
+  recoveryFailureReading?: RecoveryFailureReading;
+  cognitiveResidueReading?: CognitiveResidueReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -178,7 +190,9 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           realityPressureReading, consequenceReading, invisibleStakesReading, functionalCollapseReading,
           avoidanceReading, numbingReading, maskingReading, unfeltReading,
           truthPersistenceReport, realityVerificationReading, emotionalDecayReading, generationPressureReading,
-          privateLanguageReading, realityWeightingReading } = input;
+          privateLanguageReading, realityWeightingReading,
+          systemicCauseReading, attentionFragmentationReading, environmentalSystemReading,
+          recoveryFailureReading, cognitiveResidueReading } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -586,7 +600,27 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-taste';
   }
 
-  // Soft gates — accumulate, then decide.
+  // ─── Phase 17 hard gates ──────────────────────────────────────
+  // THE NEW HEADLINE QUESTION:
+  //   "Does this emotional state feel CAUSED BY MODERN SYSTEMS,
+  //    or merely DESCRIBED AESTHETICALLY?"
+  // If no systemic cause matches AND there is also no cognitive
+  // residue AND no recovery failure pattern, the banner is feeling-
+  // without-machinery. Refuse at brutal.
+  if (systemicCauseReading && !systemicCauseReading.has_systemic_cause &&
+      cognitiveResidueReading && cognitiveResidueReading.detected.length === 0 &&
+      recoveryFailureReading && !recoveryFailureReading.primary_failure &&
+      brutality >= 0.8) {
+    reasons.push('systemic pressure: emotional state described aesthetically without any structural cause — no system, no residue, no recovery failure');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The truth describes successful recovery — suspicious in modern
+  // life. The system rarely produces banners with that texture; when
+  // it does, it is usually fake.
+  if (recoveryFailureReading && recoveryFailureReading.describes_successful_recovery && brutality >= 0.75) {
+    reasons.push('recovery failure: truth describes successful recovery — rare in modern life; reads as fake');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -772,6 +806,28 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('reality weighting: no deep signal resonates — banner may be aesthetically invented');
   }
 
+  // Phase 17 soft floors.
+  if (systemicCauseReading && !systemicCauseReading.has_systemic_cause) {
+    softReasons.push('systemic pressure: no structural cause identified — banner describes a feeling without naming why');
+  }
+  if (systemicCauseReading && systemicCauseReading.causal_clarity < 4 && systemicCauseReading.has_systemic_cause) {
+    softReasons.push(`systemic clarity low (${systemicCauseReading.causal_clarity.toFixed(1)}/10)`);
+  }
+  if (cognitiveResidueReading && cognitiveResidueReading.residue_load < 3) {
+    softReasons.push('cognitive residue load is low — modern life rarely produces a clear head');
+  }
+  if (attentionFragmentationReading && attentionFragmentationReading.attention_fragmentation_score < 3 &&
+      reaction && (reaction.at_1s === 'discomfort' || reaction.at_3s === 'confusion')) {
+    softReasons.push('attention fragmentation: discomfort/confusion reaction but no fragmentation pattern observed');
+  }
+  if (environmentalSystemReading && !environmentalSystemReading.environment_is_the_machine && cognitiveResidueReading?.residue_load && cognitiveResidueReading.residue_load >= 6) {
+    softReasons.push('environmental machine: residue is high but no machine identified — banner lacks structural anchor');
+  }
+  if (recoveryFailureReading && !recoveryFailureReading.primary_failure &&
+      reaction && (reaction.at_3s === 'recognition' || reaction.at_3s === 'emotional tension')) {
+    softReasons.push('recovery failure: reaction signals exhaustion but no failure mode identified');
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -801,12 +857,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 15 phases of judgement, every banner
-  // produces 4-7 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 8 soft reasons required to reject
-  //   default (0.65)   → 6 soft reasons required
-  //   brutal  (0.90)   → 4 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 4 : brutality >= 0.6 ? 6 : 8;
+  // the cognition stack. After 17 phases of judgement every banner
+  // produces 6-10 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 10 soft reasons required to reject
+  //   default (0.65)   → 8 soft reasons required
+  //   brutal  (0.90)   → 6 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 6 : brutality >= 0.6 ? 8 : 10;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

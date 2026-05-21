@@ -476,6 +476,14 @@ export interface BannerTasteSystem {
     privateLanguage: import('@lib/privateLanguageMap').PrivateLanguageReading;
     weighting: import('@lib/realityWeighting').WeightingReading;
   };
+  // Phase 17 — systemic human pressure model
+  systems: {
+    systemicCause: import('@lib/systemicPressureMap').SystemicCauseReading;
+    attentionFragmentation: import('@lib/attentionFragmentation').FragmentationReading;
+    environmentalSystem: import('@lib/modernEnvironmentSystems').EnvironmentalSystemReading;
+    recoveryFailure: import('@lib/recoveryFailure').RecoveryFailureReading;
+    cognitiveResidue: import('@lib/cognitiveResidue').CognitiveResidueReading;
+  };
 }
 
 export interface Banner {

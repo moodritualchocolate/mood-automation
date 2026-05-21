@@ -68,6 +68,23 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+**Systemic human pressure model** (`lib/*` Phase 17 modules) — the system stops describing emotional states and starts modeling the INVISIBLE MACHINERY producing them. Causality replaces aesthetic.
+
+| Module | Role |
+|---|---|
+| `lib/systemicPressureMap.ts` | **10 structural systems** the spec named: infinite-accessibility · algorithmic-interruption · optimization-culture · parenting-without-recovery · work-home-boundary-collapse · passive-entertainment-overload · notification-fragmentation · social-performance-pressure · productivity-identity · endless-self-improvement-loop. Each carries its mechanism, observable symptoms, emotional outputs, and a brief hint for making the cause visible. Matches state + core + truth to the primary causal system. |
+| `lib/attentionFragmentation.ts` | 5 fragmentation patterns (interrupted-focus · multi-tab-cognition · partial-presence · stimulation-switching · inability-to-complete-cognitive-landing) — the defining emotional mechanic of modern life. |
+| `lib/modernEnvironmentSystems.ts` | 6 environments as emotional MACHINES: phone-removes-transitions · laptop-extends-work-identity · bed-as-productivity-zone · streaming-destroys-silence · notifications-erase-recovery · open-plan-removes-private-recovery. Emits brief-line directives to make the machine visible in the scene. |
+| `lib/recoveryFailure.ts` | 5 modern recovery-failure modes (resting-while-stimulated · entertainment-without-restoration · passive-scrolling-as-fake-recovery · sleep-without-decompression · weekend-without-reset). The PREFERRED outcome — banners that catch "rest that is not rest" score high. Banners describing successful recovery are flagged as fake. |
+| `lib/cognitiveResidue.ts` | 5 residue kinds (unfinished-tabs · emotional-carryover · interrupted-thoughts · low-grade-urgency · inability-to-clear-state). Scores residue_load 0..10. Modern life rarely produces a clear head; low residue is suspicious. |
+
+Phase 17 meta-critic gates:
+- **the spec's new headline gate**: no systemic cause matched AND no cognitive residue AND no recovery failure → reject-concept at brutal (*"caused by modern systems, or merely described aesthetically?"*)
+- truth describes successful recovery → reject-taste at brutal (rare in modern life; reads as fake)
+- soft floors: no systemic cause identified, causal_clarity < 4, residue_load < 3, fragmentation absent when family suggests it, environment not identified while residue is high
+
+Soft-floor threshold recalibrated for the deeper stack: **lenient=10 · default=8 · brutal=6** (was 8/6/4 at Phase 15).
+
 **Reality ingestion layer** (`lib/*` Phase 16 modules) — the system stops learning only from itself and starts observing real humans continuously. Behavioral anthropology, NOT trend scraping.
 
 | Module | Role |
