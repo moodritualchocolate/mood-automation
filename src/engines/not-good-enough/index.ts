@@ -34,6 +34,9 @@ import type { TasteVerdict } from '@lib/tasteJudge';
 import type { AntiAIReport } from '@lib/antiAI';
 import type { JobDecision } from '@lib/campaignDecision';
 import type { RhythmAxis } from '@lib/campaignRhythm';
+import type { AftertasteRecord } from '@lib/aftertaste';
+import type { AtmosphereReport } from '@lib/atmosphereConsistency';
+import type { DriftReport } from '@lib/tasteDrift';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -54,6 +57,10 @@ export interface MetaInput {
   rhythmWorsen?: { worsens: boolean; axis: RhythmAxis | null; reason: string | null };
   job?: JobDecision;
   direction?: CreativeDirection;
+  // Phase 4 — reality-loop signals.
+  aftertastePrediction?: AftertasteRecord;
+  atmosphere?: AtmosphereReport;
+  drift?: DriftReport;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -151,6 +158,33 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ─── Phase 4 — reality-loop signals ───────────────────────────
+  // Aftertaste is the new primary success metric. A banner with a
+  // strong predicted scroll-stop but weak predicted aftertaste is
+  // exactly the "engagement spike with no brand residue" the spec
+  // told us to refuse.
+  if (input.aftertastePrediction) {
+    const a = input.aftertastePrediction;
+    const aftertasteFloor = 4.0 + brutality * 1.5;
+    if (a.residueStrength < aftertasteFloor) {
+      const note = `predicted aftertaste ${a.residueStrength.toFixed(1)} below floor ${aftertasteFloor.toFixed(1)} — "${a.memoryPhrase}"`;
+      if (brutality >= 0.75) {
+        reasons.push(note);
+        if (verdict === 'approve') verdict = 'reject-concept';
+      } else {
+        // soft pressure at default
+        // (handled in the softReasons collection below)
+      }
+    }
+  }
+
+  // Atmosphere — block banners that would collapse the brand into a
+  // single mood (uniformity penalty engaged).
+  if (input.atmosphere && input.atmosphere.uniformityPenalty >= 5 && brutality >= 0.7) {
+    reasons.push(`atmosphere uniformity penalty ${input.atmosphere.uniformityPenalty.toFixed(1)} — campaign collapsing into one mood`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -178,6 +212,22 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (antiAI && antiAI.driftSignatures.length >= 2) {
     softReasons.push(`campaign drifting toward AI patterns: ${antiAI.driftSignatures.join(', ')}`);
+  }
+
+  // Phase 4 soft floors — aftertaste + atmosphere.
+  if (input.aftertastePrediction) {
+    const a = input.aftertastePrediction;
+    const softFloor = 4.0 + brutality * 1.5;
+    if (a.residueStrength < softFloor && brutality < 0.75) {
+      softReasons.push(`aftertaste ${a.residueStrength.toFixed(1)} below soft floor`);
+    }
+    // Spike-vs-residue tradeoff — when spike dominates residue 3× over, flag.
+    if (a.spikeVsResidueRatio > 3) {
+      softReasons.push(`spike-over-residue: short-term engagement at the cost of brand memory`);
+    }
+  }
+  if (input.atmosphere && input.atmosphere.uniformityPenalty >= 3) {
+    softReasons.push(`atmosphere uniformity penalty ${input.atmosphere.uniformityPenalty.toFixed(1)}`);
   }
 
   // Memory-aware additional rejection: campaign overstimulation.

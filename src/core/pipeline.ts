@@ -63,7 +63,14 @@ import {
   scanAntiAI,
   createHumanMemoryStore,
   entryFromBanner,
+  // Phase 4 — reality loop
+  createEngagementStore,
+  createAftertasteStore,
+  predictAftertaste,
+  detectDrift,
+  analyzeAtmosphere,
 } from '@lib/index';
+import type { BannerFootprint } from '@lib/atmosphereConsistency';
 
 export interface RunOptions {
   onEvent?: (event: PipelineEvent) => void;
@@ -136,6 +143,34 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   const humanMemoryStore = createHumanMemoryStore();
   const emotionalTrail = await humanMemoryStore.read();
   emit({ stage: 'human-memory', message: `${emotionalTrail.length} prior emotional traces` });
+
+  // ─── Phase 4 — reality loop: drift + atmosphere readings ──────
+  const engagementStore = createEngagementStore();
+  const aftertasteStore = createAftertasteStore();
+  const allEngagements = await engagementStore.list();
+  // Join the engagement records with the emotional trace's banner facts
+  // — those carry the typography dominance / layout / product role /
+  // DNA fragments the drift detector needs.
+  const bannerFacts = emotionalTrail
+    .filter((e) => !!e.facts)
+    .map((e) => ({
+      bannerId: e.bannerId,
+      typographyDominance: e.facts!.typographyDominance as any,
+      layoutFamily: e.facts!.layoutFamily as any,
+      productRole: e.facts!.productRole as any,
+      documentary_weight: e.facts!.documentary_weight,
+      realism_type: e.facts!.realism_type,
+      silence_ratio: e.facts!.silence_ratio,
+      shippedAt: e.createdAt,
+    }));
+  const driftReport = detectDrift({ engagements: allEngagements, bannerFacts });
+  emit({
+    stage: 'taste-drift',
+    message: driftReport.active.length === 0
+      ? 'no drift yet — audience signal too thin'
+      : `${driftReport.active.length} drift signals active; guard ${driftReport.diversityGuardEngaged ? 'ENGAGED' : 'idle'}`,
+    data: driftReport,
+  });
 
   while (attempt < maxAttempts) {
     attempt += 1;
@@ -229,6 +264,45 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           data: rhythmWorsen,
         });
       }
+
+      // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
+      // computed pre-verdict so the meta-critic can gate on them. ──
+      const tentativeAftertaste = predictAftertaste({
+        bannerId,
+        shippedAt: Date.now(),
+        engagement: null,
+        bannerDNA: dna,
+        predictedReactionAt3s: reaction.at_3s,
+        tensionPhrase: truth.tension,
+        truthLength: truth.truth.length,
+      });
+      const tentativeFootprint: BannerFootprint = {
+        bannerId,
+        dna,
+        job: jobDecision.job,
+        family: state.family,
+        truth: truth.truth,
+        tension: truth.tension,
+      };
+      const priorFootprints: BannerFootprint[] = emotionalTrail.slice(0, 19).map((e) => ({
+        bannerId: e.bannerId,
+        dna: dnaFromFacts(e.facts),
+        job: e.job ?? 'sell',
+        family: e.family,
+        truth: e.truth,
+        tension: e.tension,
+      }));
+      const tentativeAtmosphere = analyzeAtmosphere([tentativeFootprint, ...priorFootprints]);
+      emit({
+        stage: 'aftertaste',
+        message: `predicted ${tentativeAftertaste.residueStrength.toFixed(1)}/10 · spike-vs-residue ${tentativeAftertaste.spikeVsResidueRatio.toFixed(2)}`,
+        data: tentativeAftertaste,
+      });
+      emit({
+        stage: 'atmosphere',
+        message: `consistency ${tentativeAtmosphere.consistency.toFixed(1)}/10 · uniformity penalty ${tentativeAtmosphere.uniformityPenalty.toFixed(1)}`,
+        data: tentativeAtmosphere,
+      });
       // ───────────────────────────────────────────────────────────
 
       const finalVerdict = decideFinalVerdict({
@@ -247,15 +321,23 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         rhythmWorsen,
         job: jobDecision,
         direction,
+        aftertastePrediction: tentativeAftertaste,
+        atmosphere: tentativeAtmosphere,
+        drift: driftReport,
       });
       // ───────────────────────────────────────────────────────────
 
       if (finalVerdict.verdict === 'approve') {
-        // Build the campaign-brain block first; humanMemory uses the final
-        // banner shape (after reaction) to derive the residue.
+        const shippedAt = Date.now();
+        // Phase 4 — the aftertaste + atmosphere already computed
+        // pre-verdict. Persist them.
+        const aftertastePrediction = { ...tentativeAftertaste, shippedAt };
+        await aftertasteStore.upsert(aftertastePrediction);
+        const atmosphere = tentativeAtmosphere;
+
         const partial: Omit<Banner, 'memorySnapshot'> = {
           id: bannerId,
-          createdAt: Date.now(),
+          createdAt: shippedAt,
           formula: ctx.formula,
           campaignMode: ctx.campaignMode,
           state, truth, direction, composition,
@@ -271,6 +353,11 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               rhythm: rhythmReport,
               antiAI,
               residue: '', // filled by entryFromBanner below
+            },
+            realityLoop: {
+              aftertastePrediction,
+              drift: driftReport,
+              atmosphere,
             },
           },
           attempts: attempt,
@@ -318,4 +405,46 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     maxAttempts,
     rejectedAttempts.slice(-3).map((r) => `${r.stage}: ${r.reason}`),
   );
+}
+
+/**
+ * Neutral DNA — used when the atmosphere analyser needs to score voice
+ * + job mix across banners whose DNA was not persisted (older runs).
+ * Every axis at 0.5 contributes nothing to spread, so older banners
+ * effectively count only toward voice and job-mix consistency.
+ */
+const NEUTRAL_DNA: import('@lib/referenceDNA').ReferenceDNA = {
+  silence_ratio: 0.5,
+  tension_map: 0.5,
+  framing_behavior: 0.5,
+  typography_confidence: 0.5,
+  negative_space_usage: 0.5,
+  emotional_density: 0.5,
+  product_aggression_level: 0.5,
+  interruption_style: 0.5,
+  realism_type: 0.5,
+  visual_temperature: 0.5,
+  camera_energy: 0.5,
+  editorial_level: 0.5,
+  fashion_influence: 0.5,
+  documentary_weight: 0.5,
+  luxury_restraint: 0.5,
+  anti_commercial_feel: 0.5,
+};
+
+/**
+ * Build a partial DNA from the emotional trace's stored facts. The
+ * trail persists 3 axes (silence_ratio, documentary_weight,
+ * realism_type) directly; the rest are filled with neutral midpoints,
+ * which means atmosphere spread reads honestly on the 3 stored axes
+ * and ignores the others.
+ */
+function dnaFromFacts(facts: { silence_ratio: number; documentary_weight: number; realism_type: number } | undefined) {
+  if (!facts) return NEUTRAL_DNA;
+  return {
+    ...NEUTRAL_DNA,
+    silence_ratio: facts.silence_ratio,
+    documentary_weight: facts.documentary_weight,
+    realism_type: facts.realism_type,
+  };
 }

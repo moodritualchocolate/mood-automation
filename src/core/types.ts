@@ -379,6 +379,13 @@ export interface BannerTasteSystem {
     antiAI: import('@lib/antiAI').AntiAIReport;
     residue: string;
   };
+  // Phase 4 — reality loop (predictions made at ship time; reality
+  // is appended later as engagement signals come in)
+  realityLoop: {
+    aftertastePrediction: import('@lib/aftertaste').AftertasteRecord;
+    drift: import('@lib/tasteDrift').DriftReport;
+    atmosphere: import('@lib/atmosphereConsistency').AtmosphereReport;
+  };
 }
 
 export interface Banner {

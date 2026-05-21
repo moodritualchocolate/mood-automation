@@ -39,6 +39,15 @@ export interface EmotionalTraceEntry {
   reaction: { at_0_3s: Reaction; at_1s: Reaction; at_3s: Reaction };
   engagement: number;
   residue: string;        // one-line "what the viewer is left thinking"
+  // Phase 4 — banner facts the drift detector needs to join across runs.
+  facts?: {
+    typographyDominance: string;
+    layoutFamily: string;
+    productRole: string;
+    documentary_weight: number;
+    realism_type: number;
+    silence_ratio: number;
+  };
 }
 
 const DEFAULT_DIR = path.resolve(process.cwd(), 'data', 'memory');
@@ -146,6 +155,7 @@ export function summariseTrail(trail: EmotionalTraceEntry[]): {
  */
 export function entryFromBanner(banner: Banner, job: string | null, culturalMoment: string | null): EmotionalTraceEntry {
   const r = banner.tasteSystem.reaction;
+  const dna = banner.tasteSystem.dna;
   return {
     bannerId: banner.id,
     createdAt: banner.createdAt,
@@ -158,5 +168,13 @@ export function entryFromBanner(banner: Banner, job: string | null, culturalMome
     reaction: { at_0_3s: r.at_0_3s, at_1s: r.at_1s, at_3s: r.at_3s },
     engagement: r.engagementQuality,
     residue: deriveResidue({ truth: banner.truth.truth, tension: banner.truth.tension, at_3s: r.at_3s }),
+    facts: {
+      typographyDominance: banner.direction.typographyDominance,
+      layoutFamily: banner.direction.layoutFamily,
+      productRole: banner.direction.productRole,
+      documentary_weight: dna.documentary_weight,
+      realism_type: dna.realism_type,
+      silence_ratio: dna.silence_ratio,
+    },
   };
 }
