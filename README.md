@@ -52,6 +52,22 @@ human truth → emotional tension → campaign concept → composition
 | 10  | Memory V2              | Fatigue + rhythm intelligence: pacing history, silence/aggressive balance, overstimulation flag, campaign arc. |
 | 12  | Rejection              | Routes reject-image / reject-concept / reject-taste regens.       |
 
+**Reality pressure** (`lib/*` Phase 13 modules) — the system stops producing beautiful observations and starts carrying real pressure. Stakes replace aesthetics. The structural rule: *the banner should feel "accidentally true", not "creatively impressive".*
+
+| Module | Role |
+|---|---|
+| `lib/realityPressure.ts` | Identifies the 7 pressures the spec named (emotional, social, economic, relational, expectation, performance, time) present in each banner. Scores `pressure_specificity` — high when the truth names a witness-able marker (a time like `01:13`, a count like `forty-three threads`, a named action, a named relation). Flags `reads_generic` when the truth uses only category words. |
+| `lib/consequenceEngine.ts` | Every banner now answers *"what happens if nothing changes?"* Emits the stakes_phrase, what_continues, what_gets_worse, and a stakes_clarity 0..10. Flags `decorative_emotion` when there is no real stake. |
+| `lib/invisibleStakes.ts` | 12 modern compulsions the spec named (`check-notifications-before-eyes-open`, `reopen-laptop-after-shutdown`, `refresh-feed-for-no-reason`, `rehearse-reply-then-not-send`, `productivity-loop-as-avoidance`, `work-late-because-stopping-feels-worse`, …). Each carries the observable behavior + the invisible cost. |
+| `lib/functionalCollapse.ts` | Distinguishes Type A (SHOWING collapse — visible breakdown, cinematic suffering) from Type B (FUNCTIONAL collapse — *the body is still typing, the person is gone*). The spec's central insight made measurable. Also scores `accidentally_true_score` against `creatively_impressive` failure mode. |
+
+Phase 13 meta-critic gates:
+- **the spec's new headline gate**: pressure reads generic AND consequence decorative → reject-concept at default mode and up (*"does this frame contain pressure, or only aesthetics?"*)
+- functional-collapse type='visible' → reject-taste at brutal (cinematic suffering risk)
+- accidentally-true score < 4 → reject-taste at brutal (*"creatively impressive instead of accidentally true"*)
+- stakes_clarity decorative_emotion → reject-concept at brutal
+- soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
+
 **Cultural memory engine** (`lib/*` Phase 12 modules) — the system evolves from single-viewer recognition to collective recognition. The campaign stops being "about him" and starts being "about us".
 
 | Module | Role |

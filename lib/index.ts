@@ -77,3 +77,8 @@ export * from './sharedCulturalMemory';
 export * from './collectiveRecognition';
 export * from './unspokenRituals';
 export * from './culturalDrift';
+// Phase 13 — reality pressure
+export * from './realityPressure';
+export * from './consequenceEngine';
+export * from './invisibleStakes';
+export * from './functionalCollapse';

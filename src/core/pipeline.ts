@@ -120,6 +120,11 @@ import {
   readCollectiveRecognition,
   selectUnspokenRitual,
   detectCulturalDrift,
+  // Phase 13 — reality pressure
+  readRealityPressure,
+  readConsequence,
+  readInvisibleStakes,
+  readFunctionalCollapse,
 } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -805,6 +810,44 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           ? `culturally consumed: ${culturalDriftReading.detected_cliches.join(', ')}`
           : `no drift — saturation ${culturalDriftReading.saturation_score.toFixed(1)}/10`,
       });
+
+      // ─── Phase 13 — reality pressure ──────────────────────────
+      const realityPressureReading = readRealityPressure({
+        truth, state, emotionalCore,
+      });
+      emit({
+        stage: 'reality-pressure',
+        message: `specificity ${realityPressureReading.pressure_specificity.toFixed(1)}/10 · signals: ${realityPressureReading.signals.map((s) => s.type).join(', ') || 'none'}` + (realityPressureReading.reads_generic ? ' · GENERIC' : ''),
+      });
+      const consequenceReading = readConsequence({
+        truth, state, emotionalCore,
+        pattern: sharedPatternMatch.pattern,
+        pressure: realityPressureReading,
+      });
+      emit({
+        stage: 'consequence',
+        message: consequenceReading.has_stakes
+          ? `stakes ${consequenceReading.stakes_clarity.toFixed(1)}/10 — "${consequenceReading.stakes_phrase.slice(0, 100)}…"`
+          : `decorative emotion — no stakes`,
+      });
+      const invisibleStakesReading = readInvisibleStakes({
+        state, emotionalCore,
+        pattern: sharedPatternMatch.pattern,
+        ritual: unspokenRitualPick.ritual,
+      });
+      emit({
+        stage: 'invisible-stakes',
+        message: invisibleStakesReading.compulsion
+          ? `${invisibleStakesReading.compulsion.id} — "${invisibleStakesReading.compulsion.daily_cost.slice(0, 80)}"`
+          : 'no modern compulsion mapped',
+      });
+      const functionalCollapseReading = readFunctionalCollapse({
+        state, truth, direction, emotionalCore, atmosphericLight,
+      });
+      emit({
+        stage: 'functional-collapse',
+        message: `${functionalCollapseReading.type} (functional ${functionalCollapseReading.functional_collapse_score.toFixed(1)}, accidentally-true ${functionalCollapseReading.accidentally_true_score.toFixed(1)}) — ${functionalCollapseReading.directorNote}`,
+      });
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -899,6 +942,11 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         collectiveRecognition,
         unspokenRitualPick,
         culturalDriftReading,
+        // Phase 13
+        realityPressureReading,
+        consequenceReading,
+        invisibleStakesReading,
+        functionalCollapseReading,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -987,6 +1035,12 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               collectiveRecognition,
               unspokenRitual: unspokenRitualPick,
               drift: culturalDriftReading,
+            },
+            pressure: {
+              reality: realityPressureReading,
+              consequence: consequenceReading,
+              invisibleStakes: invisibleStakesReading,
+              functionalCollapse: functionalCollapseReading,
             },
           },
           attempts: attempt,

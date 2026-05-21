@@ -447,6 +447,13 @@ export interface BannerTasteSystem {
     unspokenRitual: import('@lib/unspokenRituals').RitualSelection;
     drift: import('@lib/culturalDrift').DriftReading;
   };
+  // Phase 13 — reality pressure
+  pressure: {
+    reality: import('@lib/realityPressure').RealityPressureReading;
+    consequence: import('@lib/consequenceEngine').ConsequenceReading;
+    invisibleStakes: import('@lib/invisibleStakes').StakesReading;
+    functionalCollapse: import('@lib/functionalCollapse').FunctionalCollapseReading;
+  };
 }
 
 export interface Banner {

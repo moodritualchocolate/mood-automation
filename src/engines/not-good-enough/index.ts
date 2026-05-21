@@ -68,6 +68,11 @@ import type { CulturalPattern } from '@lib/sharedCulturalMemory';
 import type { CollectiveRecognitionReading } from '@lib/collectiveRecognition';
 import type { RitualSelection } from '@lib/unspokenRituals';
 import type { DriftReading as CulturalDriftReading } from '@lib/culturalDrift';
+// Phase 13 — reality pressure
+import type { RealityPressureReading } from '@lib/realityPressure';
+import type { ConsequenceReading } from '@lib/consequenceEngine';
+import type { StakesReading } from '@lib/invisibleStakes';
+import type { FunctionalCollapseReading } from '@lib/functionalCollapse';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -125,6 +130,11 @@ export interface MetaInput {
   collectiveRecognition?: CollectiveRecognitionReading;
   unspokenRitualPick?: RitualSelection;
   culturalDriftReading?: CulturalDriftReading;
+  // Phase 13 — reality pressure.
+  realityPressureReading?: RealityPressureReading;
+  consequenceReading?: ConsequenceReading;
+  invisibleStakesReading?: StakesReading;
+  functionalCollapseReading?: FunctionalCollapseReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -138,7 +148,8 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           contradictionReading, objectMemoryGraph,
           compressionReading, syntheticReading, cinematicVerdict,
           humanContradiction, nonPerformative, lifeNoise,
-          sharedPattern, collectiveRecognition, unspokenRitualPick, culturalDriftReading } = input;
+          sharedPattern, collectiveRecognition, unspokenRitualPick, culturalDriftReading,
+          realityPressureReading, consequenceReading, invisibleStakesReading, functionalCollapseReading } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -448,6 +459,35 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-taste';
   }
 
+  // ─── Phase 13 hard gates ──────────────────────────────────────
+  // THE NEW HEADLINE QUESTION:
+  //   "Does this frame contain pressure, or only aesthetics?"
+  // If pressure is decoratively emotional with no consequence and
+  // the truth reads as generic, the banner has no reason to exist.
+  if (realityPressureReading && realityPressureReading.reads_generic &&
+      consequenceReading && consequenceReading.decorative_emotion && brutality >= 0.7) {
+    reasons.push('reality pressure: only aesthetics, no pressure — banner is decoratively emotional with no real stakes');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Functional collapse mistake — banner is performing VISIBLE collapse
+  // (cinematic suffering) instead of capturing FUNCTIONAL collapse.
+  if (functionalCollapseReading && functionalCollapseReading.type === 'visible' && brutality >= 0.75) {
+    reasons.push(`functional collapse: showing collapse instead of functioning-while-collapsing — cinematic suffering risk`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // "Accidentally true" floor — at brutal mode, banners that score
+  // below 4 on accidentally-true reads as "creatively impressive"
+  // (the spec's named failure mode).
+  if (functionalCollapseReading && functionalCollapseReading.accidentally_true_score < 4 && brutality >= 0.85) {
+    reasons.push(`accidentally-true score ${functionalCollapseReading.accidentally_true_score.toFixed(1)}/10 — banner is creatively impressive, not accidentally true`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Stakes clarity floor — at brutal, banners with no stakes refuse.
+  if (consequenceReading && consequenceReading.decorative_emotion && brutality >= 0.85) {
+    reasons.push(`consequence engine: no real stake — what happens if nothing changes is uncomputable`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -578,6 +618,20 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (sharedPattern && unspokenRitualPick && !unspokenRitualPick.ritual) {
     softReasons.push(`shared pattern matched but no unspoken ritual selected — banner missed the gesture`);
+  }
+
+  // Phase 13 soft floors.
+  if (realityPressureReading && realityPressureReading.pressure_specificity < 4) {
+    softReasons.push(`reality pressure low specificity (${realityPressureReading.pressure_specificity.toFixed(1)}/10) — ${realityPressureReading.what_would_sharpen ?? 'add a witness-able marker'}`);
+  }
+  if (consequenceReading && consequenceReading.stakes_clarity < 5) {
+    softReasons.push(`stakes ${consequenceReading.stakes_clarity.toFixed(1)} below floor — banner does not answer what happens if nothing changes`);
+  }
+  if (functionalCollapseReading && functionalCollapseReading.functional_collapse_score < 4 && functionalCollapseReading.type !== 'visible') {
+    softReasons.push(`functional collapse score ${functionalCollapseReading.functional_collapse_score.toFixed(1)} — banner does not capture functioning-while-collapsing`);
+  }
+  if (invisibleStakesReading && !invisibleStakesReading.has_modern_compulsion && sharedPattern) {
+    softReasons.push('no modern compulsion mapped — banner has cultural pattern but no specific behavioral cost');
   }
 
   // Phase 4 soft floors — aftertaste + atmosphere.
