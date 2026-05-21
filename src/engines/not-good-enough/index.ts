@@ -99,6 +99,13 @@ import type { CompensationRitualReading } from '@lib/ritualCompensation';
 import type { FakeRecoveryReading } from '@lib/fakeRecovery';
 import type { SilentCopingReading } from '@lib/silentCopingMechanisms';
 import type { BehavioralResidueReading } from '@lib/behavioralResidue';
+// Phase 19 — social masking + identity performance engine
+import type { SocialMaskingEngineReading } from '@lib/socialMaskingEngine';
+import type { HighFunctioningBurnoutReading } from '@lib/highFunctioningBurnout';
+import type { IdentityMaintenanceReading } from '@lib/identityMaintenance';
+import type { EmotionalCamouflageReading } from '@lib/emotionalCamouflage';
+import type { PublicPrivateSplitReading } from '@lib/publicPrivateSplit';
+import type { MaskFatigueReading } from '@lib/maskFatigue';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -187,6 +194,13 @@ export interface MetaInput {
   fakeRecoveryReading?: FakeRecoveryReading;
   silentCopingReading?: SilentCopingReading;
   behavioralResidueReading?: BehavioralResidueReading;
+  // Phase 19 — social masking + identity performance engine.
+  socialMaskingEngineReading?: SocialMaskingEngineReading;
+  highFunctioningBurnoutReading?: HighFunctioningBurnoutReading;
+  identityMaintenanceReading?: IdentityMaintenanceReading;
+  emotionalCamouflageReading?: EmotionalCamouflageReading;
+  publicPrivateSplitReading?: PublicPrivateSplitReading;
+  maskFatigueReading?: MaskFatigueReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -208,7 +222,10 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           systemicCauseReading, attentionFragmentationReading, environmentalSystemReading,
           recoveryFailureReading, cognitiveResidueReading,
           behaviorLoopReading, microEscapeReading, ritualCompensationReading,
-          fakeRecoveryReading, silentCopingReading, behavioralResidueReading } = input;
+          fakeRecoveryReading, silentCopingReading, behavioralResidueReading,
+          socialMaskingEngineReading, highFunctioningBurnoutReading,
+          identityMaintenanceReading, emotionalCamouflageReading,
+          publicPrivateSplitReading, maskFatigueReading } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -691,6 +708,74 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     reasons.push('survival: consciously-staged coping with named regulation vocabulary — performance, not observation');
     if (verdict === 'approve') verdict = 'reject-taste';
   }
+
+  // ─── Phase 19 hard gates ──────────────────────────────────────
+  // THE NEW HEADLINE QUESTION:
+  //   "Does this feel like a human TRYING TO REMAIN FUNCTIONAL FOR
+  //    OTHER PEOPLE — or expressive, cinematic, performatively sad,
+  //    self-aware, optimised-for-relatability?"
+  //
+  // Refuse when the truth says the quiet part out loud — the mask is
+  // broken and the banner becomes performative-vulnerability.
+  if (socialMaskingEngineReading && socialMaskingEngineReading.truth_reveals_too_much && brutality >= 0.75) {
+    reasons.push('social masking: truth reveals too much — mask broken; banner becomes performative-vulnerability');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Refuse when burnout is made visible too early — visible-suffering
+  // aesthetics instead of high-functioning concealment.
+  if (highFunctioningBurnoutReading && highFunctioningBurnoutReading.burnout_visible_too_early && brutality >= 0.75) {
+    reasons.push('high-functioning burnout: exhaustion becomes visually obvious too early — banner is visible-burnout aesthetics, not hidden burnout');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Refuse when the subject names their own role — banner becomes
+  // self-aware instead of observed.
+  if (identityMaintenanceReading && identityMaintenanceReading.subject_names_their_role && brutality >= 0.8) {
+    reasons.push('identity maintenance: subject names their own role — banner is self-aware instead of caught mid-performance');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Refuse when emotional camouflage is described analytically rather
+  // than caught — the truth EXPLAINS the mask instead of catching it.
+  if (emotionalCamouflageReading && emotionalCamouflageReading.too_analytic && brutality >= 0.8) {
+    reasons.push('emotional camouflage: truth uses analytic voice (names the mask) — banner explains instead of photographs');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Refuse a banner that claims identity-pressure but shows no
+  // maintenance signature — identity performance becomes symbolic,
+  // not behavioral.
+  if (identityMaintenanceReading && brutality >= 0.85 &&
+      identityMaintenanceReading.identity_pressure >= 7 &&
+      !identityMaintenanceReading.maintenance_signature_visible) {
+    reasons.push('identity maintenance: identity pressure high but no maintenance signature observed — performance is symbolic, not behavioral');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Refuse when the truth misattributes mask fatigue to work fatigue —
+  // the banner mistakes one currency for another, missing the central
+  // Phase 19 insight.
+  if (maskFatigueReading && maskFatigueReading.fatigue_misattributed && brutality >= 0.8) {
+    reasons.push('mask fatigue: truth attributes fatigue to work but body is exhausted from the mask — banner misses the cause');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Refuse a banner that LACKS social consequence — high mask signal
+  // but no observable social cost. The mask must cost something or it
+  // is not a mask, it is decoration.
+  if (brutality >= 0.85 &&
+      socialMaskingEngineReading && socialMaskingEngineReading.mask_signature_strength >= 6 &&
+      maskFatigueReading && maskFatigueReading.mask_fatigue_score < 4 &&
+      identityMaintenanceReading && identityMaintenanceReading.identity_cost < 4) {
+    reasons.push('social masking: mask present but with no observed cost — banner shows the mask without showing what it costs to wear');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Refuse a banner that aestheticises collapse — collapse is
+  // photographed openly while the high-functioning-burnout signal is
+  // weak (output is NOT unchanged). That is theatrical burnout.
+  if (brutality >= 0.75 &&
+      highFunctioningBurnoutReading &&
+      highFunctioningBurnoutReading.burnout_visible_too_early &&
+      highFunctioningBurnoutReading.functional_output_unchanged < 4) {
+    reasons.push('high-functioning burnout: collapse is shown openly with no remaining functioning — banner is theatrical burnout');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -930,6 +1015,38 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('behavioral residue: body carries weight but residue is not physically visible in the scene');
   }
 
+  // Phase 19 soft floors — conditioned so they fire only when the
+  // banner's context actually demands Phase 19 evidence. The "no mask"
+  // soft floor only fires when an identity role IS being maintained
+  // (i.e. there should be a mask); the "ambiguous side" only fires
+  // when the campaign is one-sided.
+  if (socialMaskingEngineReading && !socialMaskingEngineReading.primary &&
+      identityMaintenanceReading && identityMaintenanceReading.identity_pressure >= 6) {
+    softReasons.push('social masking engine: identity is under pressure but no classified mask identified — performance layer missing');
+  }
+  if (socialMaskingEngineReading && socialMaskingEngineReading.primary &&
+      socialMaskingEngineReading.behavioral_not_symbolic < 4) {
+    softReasons.push('social masking engine: mask matched but truth uses symbolic / feeling-only language — performance layer not behavioral');
+  }
+  if (highFunctioningBurnoutReading && highFunctioningBurnoutReading.primary &&
+      !highFunctioningBurnoutReading.burnout_hidden_in_competence &&
+      highFunctioningBurnoutReading.hfb_score >= 5) {
+    softReasons.push('high-functioning burnout: signature matched but burnout is NOT hidden in competence — banner under-delivers Phase 19 thesis');
+  }
+  if (emotionalCamouflageReading && emotionalCamouflageReading.primary &&
+      emotionalCamouflageReading.concealment_intensity < 4 &&
+      emotionalCamouflageReading.hidden_exhaustion_probability >= 7) {
+    softReasons.push(`emotional camouflage: channel "${emotionalCamouflageReading.primary.id}" matched but concealment intensity low while exhaustion is high`);
+  }
+  if (publicPrivateSplitReading && publicPrivateSplitReading.one_sided_campaign) {
+    softReasons.push('public/private split: campaign has been one-sided — only one half of the human shown across recent banners');
+  }
+  if (maskFatigueReading && maskFatigueReading.primary &&
+      !maskFatigueReading.fatigue_is_from_performing &&
+      maskFatigueReading.mask_fatigue_score >= 5) {
+    softReasons.push('mask fatigue: signature matched but truth attributes the fatigue to work instead of to the performance');
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -959,12 +1076,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 18 phases of judgement every banner
-  // produces 7-12 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 11 soft reasons required to reject
-  //   default (0.65)   → 9 soft reasons required
-  //   brutal  (0.90)   → 7 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 7 : brutality >= 0.6 ? 9 : 11;
+  // the cognition stack. After 19 phases of judgement every banner
+  // produces 9-14 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 13 soft reasons required to reject
+  //   default (0.65)   → 11 soft reasons required
+  //   brutal  (0.90)   → 9 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 9 : brutality >= 0.6 ? 11 : 13;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

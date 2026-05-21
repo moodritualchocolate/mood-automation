@@ -115,3 +115,10 @@ export * from './ritualCompensation';
 export * from './fakeRecovery';
 export * from './silentCopingMechanisms';
 export * from './behavioralResidue';
+// Phase 19 — social masking + identity performance engine
+export * from './socialMaskingEngine';
+export * from './highFunctioningBurnout';
+export * from './identityMaintenance';
+export * from './emotionalCamouflage';
+export * from './publicPrivateSplit';
+export * from './maskFatigue';

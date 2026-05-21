@@ -493,6 +493,15 @@ export interface BannerTasteSystem {
     silentCoping: import('@lib/silentCopingMechanisms').SilentCopingReading;
     behavioralResidue: import('@lib/behavioralResidue').BehavioralResidueReading;
   };
+  // Phase 19 — social masking + identity performance engine
+  identity: {
+    socialMaskingEngine: import('@lib/socialMaskingEngine').SocialMaskingEngineReading;
+    highFunctioningBurnout: import('@lib/highFunctioningBurnout').HighFunctioningBurnoutReading;
+    identityMaintenance: import('@lib/identityMaintenance').IdentityMaintenanceReading;
+    emotionalCamouflage: import('@lib/emotionalCamouflage').EmotionalCamouflageReading;
+    publicPrivateSplit: import('@lib/publicPrivateSplit').PublicPrivateSplitReading;
+    maskFatigue: import('@lib/maskFatigue').MaskFatigueReading;
+  };
 }
 
 export interface Banner {

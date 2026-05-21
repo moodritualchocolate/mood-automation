@@ -68,6 +68,32 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+**Social masking + identity performance engine** (`lib/*` Phase 19 modules) — the system stops modelling only internal survival and starts modelling the SOCIAL IDENTITIES humans perform while surviving. Phase 19 is about *functioning while collapsing* — not visible suffering, not emotional expression, but the **maintenance of identity under pressure**.
+
+The new core question: *"What version of themselves must this human continuously perform in order to remain socially acceptable?"*
+
+| Module | Role |
+|---|---|
+| `lib/socialMaskingEngine.ts` | 10 classified masks across 5 classifications (conscious · survival · identity-preservation · socially-trained · collapse-concealment). Detects "I'm good", smiling while overloaded, conversational autopilot, functioning tone under exhaustion, public emotional suppression, efficient response under collapse, available-with-nothing-left, present-with-empty-eyes, on-tone-in-the-meeting, parent-voice-when-depleted. Scores `mask_signature_strength`, `mask_in_motion`, `behavioral_not_symbolic`, `camera_catches_the_tell`, `truth_reveals_too_much`. Differentiated from Phase 14 `socialMasking` (which measures the GAP) — Phase 19 CLASSIFIES the kind. |
+| `lib/highFunctioningBurnout.ts` | 6 signatures of competent collapse (productive-exhaustion · competent-collapse · over-functioning · excessive-responsiveness · hyper-availability · doing-well-while-cognitively-failing). Scores `functional_output_unchanged` (the body still ships at baseline), `internal_depletion`, `competence_as_load_bearing`, `recoverable` (low = body has rebuilt around the depletion). Detects **burnout hidden inside competence** — the cinematic ideal of Phase 19. |
+| `lib/identityMaintenance.ts` | 10 identities under pressure (parent · founder · employee · partner · strong-person · reliable-person · caretaker · fun-friend · good-host · capable-adult). Each carries `what_it_demands`, `what_it_forbids`, `maintenance_signatures`, `hidden_cost`. Detects when behavior exists to **preserve identity, not wellbeing**. |
+| `lib/emotionalCamouflage.ts` | 7 concealment channels (humor · productivity · politeness · efficiency · caretaking · perfectionism · social-energy-simulation). Scores `concealment_intensity`, `social_readability` (high = camouflage works), `hidden_exhaustion_probability`. Refuses "analytic voice" — banners that NAME the mask instead of catching it mid-action. |
+| `lib/publicPrivateSplit.ts` | Tracks identity drift across environments. 6 named pairs (energetic-meeting ↔ silent-car-collapse · parenting-performance ↔ nighttime-shutdown · social-responsiveness ↔ emotional-absence · doing-amazing ↔ residue-accumulation · host-energy ↔ collapse-after-door-closes · group-chat-warmth ↔ silence-in-the-kitchen). Reads the trail to flag one-sided campaigns and to suggest which side the next banner should photograph to **complete the diptych**. |
+| `lib/maskFatigue.ts` | Distinguishes WORK FATIGUE from PERFORMANCE FATIGUE. 5 kinds (conversation-fatigue · social-depletion · decision-exhaustion · forced-attentiveness · relational-over-presence). Flags `fatigue_misattributed` when the truth attributes mask-fatigue to work — one of Phase 19's central modern errors the camera must expose. |
+
+Phase 19 meta-critic gates:
+- **the spec's new headline gate**: socialMaskingEngine `truth_reveals_too_much` → reject-taste at brutal (*"does this feel like a human trying to remain functional for other people — or expressive, cinematic, performatively sad, self-aware, optimised-for-relatability?"*)
+- highFunctioningBurnout `burnout_visible_too_early` → reject-concept at brutal (exhaustion becomes visually obvious too early; banner is visible-burnout aesthetics, not hidden burnout)
+- identityMaintenance `subject_names_their_role` → reject-taste at brutal+ (banner is self-aware instead of caught mid-performance)
+- emotionalCamouflage `too_analytic` → reject-taste at brutal+ (truth EXPLAINS the mask instead of catching it)
+- identityMaintenance pressure≥7 without a `maintenance_signature_visible` → reject-concept at brutal+ (identity performance is symbolic, not behavioral)
+- maskFatigue `fatigue_misattributed` → reject-concept at brutal+ (banner misses the cause)
+- masking strong but `mask_fatigue<4` AND `identity_cost<4` → reject-concept at brutal+ (mask lacks social consequence — masking without cost is decoration)
+- visible-burnout-with-no-remaining-functioning → reject-taste at brutal (theatrical burnout)
+- soft floors: identity-under-pressure with no mask classified, mask matched but truth is symbolic, hfb signature but burnout not hidden in competence, camouflage matched with low concealment while exhaustion is high, one-sided campaign, mask-fatigue matched but truth misattributes to work
+
+Soft-floor threshold history: was 8/6/4 at Phase 15 → 10/8/6 at Phase 17 → 11/9/7 at Phase 18 → **13/11/9** at Phase 19 (after 19 phases, every banner routinely produces 9–14 soft signals).
+
 **Behavioral survival engine** (`lib/*` Phase 18 modules) — the system now models the *behaviors* humans quietly perform every day to survive modern pressure. Different from Phase 14 (suppression), Phase 17 (systemic causes), and Phase 13 (the COST): Phase 18 is the *behavioral footprint* of survival itself — the loops, the tiny escapes, the compensation rituals, the fake recoveries, the silent coping moves, and the residue all of it leaves behind in the body.
 
 | Module | Role |
@@ -88,7 +114,7 @@ Phase 18 meta-critic gates:
 - conscious-staged coping (primary loop classification = `conscious` AND silent coping is named) → reject-taste at brutal+
 - soft floors: no behavior loop identified, loop matched but truth uses feeling-words instead of behavioral verbs, micro-escape NEEDED but not shown, micro-escape matched but not in-the-act, ritual matched but honest_observation < 5, fake-recovery alibi language present, silent coping captures_real_humanity < 5, residue becoming campaign signature, body carries weight but residue is not physically visible
 
-Soft-floor threshold recalibrated for the deeper stack (18 phases now produce 7–12 soft signals routinely): **lenient=11 · default=9 · brutal=7**.
+Soft-floor threshold at Phase 18: **lenient=11 · default=9 · brutal=7** (further raised at Phase 19 — see above).
 
 **Systemic human pressure model** (`lib/*` Phase 17 modules) — the system stops describing emotional states and starts modeling the INVISIBLE MACHINERY producing them. Causality replaces aesthetic.
 

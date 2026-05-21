@@ -156,6 +156,13 @@ import {
   readFakeRecovery,
   readSilentCoping,
   readBehavioralResidue,
+  // Phase 19 — social masking + identity performance engine
+  readSocialMaskingEngine,
+  readHighFunctioningBurnout,
+  readIdentityMaintenance,
+  readEmotionalCamouflage,
+  readPublicPrivateSplit,
+  readMaskFatigue,
 } from '@lib/index';
 import { SEED_INGESTED_SIGNALS } from '@data/seed-ingested-signals';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
@@ -1137,6 +1144,51 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ───────────────────────────────────────────────────────────
 
+      // ─── Phase 19 — social masking + identity performance ─────
+      const socialMaskingEngineReading = readSocialMaskingEngine({ state, truth, emotionalCore });
+      if (socialMaskingEngineReading.primary) {
+        emit({
+          stage: 'social-masking-engine',
+          message: `${socialMaskingEngineReading.primary.id} (${socialMaskingEngineReading.classification}) — strength ${socialMaskingEngineReading.mask_signature_strength.toFixed(1)}/10${socialMaskingEngineReading.truth_reveals_too_much ? ' — MASK BROKEN' : ''}`,
+        });
+      }
+      const highFunctioningBurnoutReading = readHighFunctioningBurnout({ state, truth, emotionalCore });
+      if (highFunctioningBurnoutReading.primary) {
+        emit({
+          stage: 'high-functioning-burnout',
+          message: `${highFunctioningBurnoutReading.primary.id} — output ${highFunctioningBurnoutReading.functional_output_unchanged.toFixed(1)}/10 unchanged, internal ${highFunctioningBurnoutReading.internal_depletion.toFixed(1)}/10 depleted${highFunctioningBurnoutReading.burnout_hidden_in_competence ? ' — HIDDEN IN COMPETENCE' : ''}${highFunctioningBurnoutReading.burnout_visible_too_early ? ' — VISIBLE TOO EARLY' : ''}`,
+        });
+      }
+      const identityMaintenanceReading = readIdentityMaintenance({ state, truth, emotionalCore });
+      if (identityMaintenanceReading.primary) {
+        emit({
+          stage: 'identity-maintenance',
+          message: `identity: ${identityMaintenanceReading.primary.id} — pressure ${identityMaintenanceReading.identity_pressure.toFixed(1)}/10, cost ${identityMaintenanceReading.identity_cost.toFixed(1)}/10${identityMaintenanceReading.subject_names_their_role ? ' — SELF-CONSCIOUS' : ''}`,
+        });
+      }
+      const emotionalCamouflageReading = readEmotionalCamouflage({ state, truth, emotionalCore });
+      if (emotionalCamouflageReading.primary) {
+        emit({
+          stage: 'emotional-camouflage',
+          message: `${emotionalCamouflageReading.primary.id} · concealment ${emotionalCamouflageReading.concealment_intensity.toFixed(1)}/10 · readability ${emotionalCamouflageReading.social_readability.toFixed(1)}/10${emotionalCamouflageReading.too_analytic ? ' — ANALYTIC VOICE' : ''}`,
+        });
+      }
+      const publicPrivateSplitReading = readPublicPrivateSplit({
+        state, truth, emotionalCore, recentTrail: emotionalTrail,
+      });
+      emit({
+        stage: 'public-private-split',
+        message: `side: ${publicPrivateSplitReading.candidate_side} · split coverage ${publicPrivateSplitReading.split_coverage.toFixed(1)}/10${publicPrivateSplitReading.banner_completes_a_pair ? ' — COMPLETES PAIR' : ''}${publicPrivateSplitReading.one_sided_campaign ? ' — ONE-SIDED CAMPAIGN' : ''}`,
+      });
+      const maskFatigueReading = readMaskFatigue({ state, truth, emotionalCore });
+      if (maskFatigueReading.primary) {
+        emit({
+          stage: 'mask-fatigue',
+          message: `${maskFatigueReading.primary.id} · mask ${maskFatigueReading.mask_fatigue_score.toFixed(1)}/10 vs work ${maskFatigueReading.work_fatigue_score.toFixed(1)}/10${maskFatigueReading.fatigue_misattributed ? ' — MISATTRIBUTED' : ''}`,
+        });
+      }
+      // ───────────────────────────────────────────────────────────
+
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
       // computed pre-verdict so the meta-critic can gate on them. ──
       const tentativeAftertaste = predictAftertaste({
@@ -1260,6 +1312,13 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         fakeRecoveryReading,
         silentCopingReading,
         behavioralResidueReading,
+        // Phase 19
+        socialMaskingEngineReading,
+        highFunctioningBurnoutReading,
+        identityMaintenanceReading,
+        emotionalCamouflageReading,
+        publicPrivateSplitReading,
+        maskFatigueReading,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -1388,6 +1447,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               fakeRecovery: fakeRecoveryReading,
               silentCoping: silentCopingReading,
               behavioralResidue: behavioralResidueReading,
+            },
+            identity: {
+              socialMaskingEngine: socialMaskingEngineReading,
+              highFunctioningBurnout: highFunctioningBurnoutReading,
+              identityMaintenance: identityMaintenanceReading,
+              emotionalCamouflage: emotionalCamouflageReading,
+              publicPrivateSplit: publicPrivateSplitReading,
+              maskFatigue: maskFatigueReading,
             },
           },
           attempts: attempt,
