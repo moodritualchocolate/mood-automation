@@ -59,6 +59,10 @@ import type { RhythmAxis as TempoAxisName } from '@lib/campaignRhythm';
 import type { CompressionReading } from '@lib/emotionalCompression';
 import type { SyntheticReading } from '@lib/antiSyntheticBehavior';
 import type { CinematicVerdict } from '@lib/cinematicBrain';
+// Phase 11 — natural human chaos
+import type { HumanContradictionReading } from '@lib/humanContradiction';
+import type { PerformativeReading } from '@lib/nonPerformativeReality';
+import type { LifeNoisePlan } from '@lib/lifeNoise';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -107,6 +111,10 @@ export interface MetaInput {
   compressionReading?: CompressionReading;
   syntheticReading?: SyntheticReading;
   cinematicVerdict?: CinematicVerdict;
+  // Phase 11 — natural human chaos.
+  humanContradiction?: HumanContradictionReading;
+  nonPerformative?: PerformativeReading;
+  lifeNoise?: LifeNoisePlan;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -118,7 +126,8 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           productPresence8, framing8, directorVerdict,
           sequenceVerdict, tempoWorsen, absenceDecision,
           contradictionReading, objectMemoryGraph,
-          compressionReading, syntheticReading, cinematicVerdict } = input;
+          compressionReading, syntheticReading, cinematicVerdict,
+          humanContradiction, nonPerformative, lifeNoise } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -379,6 +388,28 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-taste';
   }
 
+  // ─── Phase 11 hard gates ──────────────────────────────────────
+  // THE NEW HEADLINE QUESTION:
+  //   "Does this feel like a human moment that happened, or a
+  //    creative system trying to simulate one?"
+  // If the simulation is stronger → refuse at default mode and up.
+  if (nonPerformative && nonPerformative.trying_to_simulate && brutality >= 0.65) {
+    reasons.push(`non-performative: simulating depth instead of observing it — ${nonPerformative.patterns.join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Contradiction resolved too cleanly — the system tried to wrap up
+  // what humans normally leave open.
+  if (humanContradiction && humanContradiction.resolved_too_cleanly && brutality >= 0.75) {
+    reasons.push('human contradiction resolved too cleanly — the truth tied a bow on what should stay open');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Life noise floor — at brutal, a banner with zero non-symbolic
+  // fragments reads as too-curated.
+  if (lifeNoise && lifeNoise.mess_score < 4 && brutality >= 0.85) {
+    reasons.push(`life noise ${lifeNoise.mess_score.toFixed(1)}/10 — no honest mess in the frame`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -487,6 +518,17 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (syntheticReading && syntheticReading.synthetic_score >= 5 && !syntheticReading.reads_as_designed) {
     softReasons.push(`anti-synthetic soft: ${syntheticReading.signatures[0] ?? 'cleanliness'}`);
+  }
+
+  // Phase 11 soft floors.
+  if (nonPerformative && nonPerformative.performativeness_score >= 4 && !nonPerformative.trying_to_simulate) {
+    softReasons.push(`non-performative soft: ${nonPerformative.patterns[0] ?? 'mild performance'}`);
+  }
+  if (humanContradiction && !humanContradiction.inhabits_contradiction && humanContradiction.pair) {
+    softReasons.push(`human contradiction: pair "${humanContradiction.pair.feeling} → ${humanContradiction.pair.behavior}" available but banner does not inhabit it`);
+  }
+  if (lifeNoise && lifeNoise.mess_score < 4) {
+    softReasons.push(`life noise low (${lifeNoise.mess_score.toFixed(1)}/10) — banner reads as too curated`);
   }
 
   // Phase 4 soft floors — aftertaste + atmosphere.

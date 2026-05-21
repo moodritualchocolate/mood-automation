@@ -68,3 +68,7 @@ export * from './emotionalCompression';
 export * from './subconsciousRecognition';
 export * from './antiSyntheticBehavior';
 export * from './cinematicBrain';
+// Phase 11 — natural human chaos
+export * from './lifeNoise';
+export * from './humanContradiction';
+export * from './nonPerformativeReality';

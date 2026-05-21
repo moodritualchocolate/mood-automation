@@ -52,6 +52,20 @@ human truth → emotional tension → campaign concept → composition
 | 10  | Memory V2              | Fatigue + rhythm intelligence: pacing history, silence/aggressive balance, overstimulation flag, campaign arc. |
 | 12  | Rejection              | Routes reject-image / reject-concept / reject-taste regens.       |
 
+**Natural human chaos** (`lib/*` Phase 11 modules) — the danger at this depth is the system trying TOO hard to be meaningful. These three modules calibrate the cognition AWAY from over-intelligent artificial taste and toward observed-not-composed reality.
+
+| Module | Role |
+|---|---|
+| `lib/lifeNoise.ts` | Adds NON-SYMBOLIC mess to the image brief — a sticker peeling off a laptop, a half-typed sentence on screen, a stripe of sun nobody designed. Different from worldContinuity (which adds meaningful artifacts) — lifeNoise adds details that mean NOTHING and just exist. |
+| `lib/humanContradiction.ts` | 10 BEHAVIORAL contradictions the system maps the emotional core onto: exhausted but scrolling · lonely but avoiding people · overstimulated but seeking stimulation · wants sleep but opens laptop · burnout but performs productivity · guilty but not replying · tired but not leaving · needs rest but cleans · wants quiet but keeps music on · craves stillness but walks. **Contradiction generates recognition, not clarity.** |
+| `lib/nonPerformativeReality.ts` | Detects the 6 spec-named performative patterns: trying-too-hard · obvious-sadness · aesthetic-loneliness · perfect-melancholy · cinematic-suffering · **beautiful-burnout**. Rewards: emotionally confusing reality, ordinary discomfort, flat lighting when correct, observed not composed. Answers the spec's headline question: *"Does this feel like a human moment that happened, or a creative system trying to simulate one?"* |
+
+Phase 11 meta-critic gates:
+- non-performative `trying_to_simulate` → reject-concept at default mode and up (**the spec's new headline gate**)
+- human contradiction `resolved_too_cleanly` → reject-taste at brutal mode (the truth tied a bow on what should stay open)
+- life noise mess_score < 4 → reject-taste at brutal mode (no honest mess in the frame)
+- soft floors: performative pattern present (not dominant), behavioral contradiction available but not inhabited, life noise low
+
 **Unified cinematic brain** (`lib/*` Phase 10 modules) — the cognition stops being distributed and becomes a single directorial mind. The system stops asking *"what should the next banner contain?"* and starts asking *"what emotional sentence is unfinished?"*
 
 | Module | Role |

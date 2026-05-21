@@ -111,6 +111,10 @@ import {
   analyzeSubconsciousRecognition,
   detectSyntheticBehavior,
   decideCinematicVerdict,
+  // Phase 11 — natural human chaos
+  planLifeNoise,
+  readHumanContradiction,
+  readNonPerformativeReality,
 } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -715,6 +719,41 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           aligned: cinematicVerdict.candidate_alignment.serves_thesis,
         },
       });
+
+      // ─── Phase 11 — natural human chaos ───────────────────────
+      const lifeNoise = planLifeNoise({ state, seed: stateSeed + attempt });
+      emit({
+        stage: 'life-noise',
+        message: `${lifeNoise.fragments.length} non-symbolic fragments · mess ${lifeNoise.mess_score.toFixed(1)}/10`,
+      });
+
+      const humanContradiction = readHumanContradiction({
+        state, emotionalCore, truthText: truth.truth,
+      });
+      emit({
+        stage: 'human-contradiction',
+        message: humanContradiction.pair
+          ? `${humanContradiction.pair.feeling} → ${humanContradiction.pair.behavior} (recognition ${humanContradiction.recognition_score.toFixed(1)}/10)`
+          : 'no behavioral contradiction mapped',
+      });
+
+      const nonPerformative = readNonPerformativeReality({
+        direction, typography, dna,
+        atmosphericLight,
+        aftertaste: emotionalAftertaste,
+        contradiction: humanContradiction,
+        truthText: truth.truth,
+        poeticOverloadHint: syntheticReading.synthetic_score,
+      });
+      emit({
+        stage: 'non-performative-reality',
+        message: nonPerformative.trying_to_simulate
+          ? `WARNING simulating depth — ${nonPerformative.patterns.join(', ')}`
+          : nonPerformative.feels_like_happened
+            ? 'feels like a moment that happened'
+            : `mild performance risk (${nonPerformative.performativeness_score.toFixed(1)}/10)`,
+        data: { rewards: nonPerformative.rewards },
+      });
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -800,6 +839,10 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         compressionReading,
         syntheticReading,
         cinematicVerdict,
+        // Phase 11
+        humanContradiction,
+        nonPerformative,
+        lifeNoise,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -877,6 +920,11 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               recognition: subconsciousRecognition,
               synthetic: syntheticReading,
               verdict: cinematicVerdict,
+            },
+            humanity: {
+              lifeNoise,
+              contradiction: humanContradiction,
+              nonPerformative,
             },
           },
           attempts: attempt,

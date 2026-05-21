@@ -434,6 +434,12 @@ export interface BannerTasteSystem {
     synthetic: import('@lib/antiSyntheticBehavior').SyntheticReading;
     verdict: import('@lib/cinematicBrain').CinematicVerdict;
   };
+  // Phase 11 — natural human chaos
+  humanity: {
+    lifeNoise: import('@lib/lifeNoise').LifeNoisePlan;
+    contradiction: import('@lib/humanContradiction').HumanContradictionReading;
+    nonPerformative: import('@lib/nonPerformativeReality').PerformativeReading;
+  };
 }
 
 export interface Banner {
