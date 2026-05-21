@@ -68,6 +68,25 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+**Reality ingestion layer** (`lib/*` Phase 16 modules) — the system stops learning only from itself and starts observing real humans continuously. Behavioral anthropology, NOT trend scraping.
+
+| Module | Role |
+|---|---|
+| `lib/realityIngestion.ts` | Persistent store at `data/memory/ingested-signals.json` seeded from `data/seed-ingested-signals.ts` (25 real-shape signals across TikTok / Reddit / YouTube / Twitter / IG saves / anonymous-confessions / Hebrew). Anti-trend filter built into the store — meme cycles (`its giving / main character / soft girl era / no cap`) get rejected at ingestion. |
+| `lib/humanSignalExtraction.ts` | Processes raw signals into recurring phrases (ngrams across ≥2 sources), contradiction markers, coping behaviors, private-truth markers (`literally me / cant mentally land / everything feels half-open / my brain feels interrupted / rest but never recover`). |
+| `lib/collectiveDriftTracker.ts` | Bins signals by 30-day periods and detects named drifts between consecutive periods: *productivity → overstimulation · ambition → invisible pressure · self-improvement → optimization fatigue · relaxation → passive consumption · connection → performance · achievement → numbness*. |
+| `lib/privateLanguageMap.ts` | Detects UNGUARDED register vs PERFORMATIVE register: rewards `cant mentally land / everything feels half-open / my brain feels interrupted` · refuses `boundaries / holding space / it's giving / main character / the weight of being / you are enough`. |
+| `lib/realityWeighting.ts` | The spec's rule made operational: **10 deep "this is literally me" comments outweigh 100k shallow likes.** Scores `discovered_from_reality_score` by jaccard overlap × emotional_weight (NOT × volume). Flags `generated_from_aesthetics_only` when no deep signal resonates. |
+
+Phase 16 surface:
+- `POST /api/ingest` — push external signals into the store (filtered against meme cycles)
+- `GET /api/ingest` — read the current store
+
+Phase 16 meta-critic gates:
+- **the spec's new headline gate**: reality weighting generated_from_aesthetics_only AND private_language not unguarded → reject-concept at brutal (*"was this truth discovered from reality, or generated from internal aesthetics?"*)
+- private language performative signatures (therapy / TikTok-aesthetic / self-aware-poetry / inspirational) → reject-taste at brutal
+- soft floors: private_language_score < 5, discovered_from_reality_score < 5, generated_from_aesthetics_only
+
 **Longitudinal reality memory** (`lib/*` Phase 15 modules) — the system stops evaluating campaigns inside the generation window and starts remembering what reality kept proving true over weeks/months. Persistence + timeline + verification + decay + recursion-pressure all keep the campaign honest.
 
 | Module | Role |

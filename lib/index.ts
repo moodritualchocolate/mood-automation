@@ -95,3 +95,10 @@ export type { TimelineBucket as CulturalTimelineBucket, CulturalTimelinePhase, C
 export * from './realityVerification';
 export * from './emotionalDecay';
 export * from './generationPressure';
+// Phase 16 — reality ingestion layer
+export * from './realityIngestion';
+export * from './humanSignalExtraction';
+export { trackCollectiveDrift } from './collectiveDriftTracker';
+export type { CollectiveDriftReport as CollectiveDriftReportV16, DriftPeriod } from './collectiveDriftTracker';
+export * from './privateLanguageMap';
+export * from './realityWeighting';

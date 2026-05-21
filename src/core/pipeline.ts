@@ -137,7 +137,14 @@ import {
   verifyReality,
   readEmotionalDecay,
   readGenerationPressure,
+  // Phase 16 — reality ingestion layer
+  createRealityIngestionStore,
+  extractHumanSignals,
+  trackCollectiveDrift,
+  readPrivateLanguage,
+  weightReality,
 } from '@lib/index';
+import { SEED_INGESTED_SIGNALS } from '@data/seed-ingested-signals';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
 import type { CulturalMicroMoment } from '@lib/culturalMemory';
@@ -302,6 +309,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: visualTempo.needs_breath_next ? 'needs breath next' : 'tempo healthy',
     data: visualTempo.axes,
   });
+
+  // ─── Phase 16 — reality ingestion (campaign-level) ────────────
+  const ingestionStore = createRealityIngestionStore(undefined, SEED_INGESTED_SIGNALS);
+  const ingestedSignals = await ingestionStore.read();
+  const humanSignalExtraction = extractHumanSignals(ingestedSignals);
+  const collectiveDriftReport = trackCollectiveDrift(ingestedSignals);
+  if (ingestedSignals.length > 0) {
+    emit({
+      stage: 'reality-ingestion',
+      message: `${ingestedSignals.length} observed signals · ${humanSignalExtraction.private_truth_markers.length} private-truth markers · ${humanSignalExtraction.coping_behaviors.length} coping behaviours`,
+      data: { drift: collectiveDriftReport.director_read },
+    });
+  }
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
   const truthPersistenceStore = createTruthPersistenceStore();
@@ -974,6 +994,33 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             ? `aging (${emotionalDecayReading.decay_score.toFixed(1)}/10)`
             : 'fresh',
       });
+
+      // ─── Phase 16 — per-banner reality reads ──────────────────
+      const privateLanguageReading = readPrivateLanguage({
+        truthText: truth.truth,
+        tensionText: truth.tension,
+        extraction: humanSignalExtraction,
+      });
+      emit({
+        stage: 'private-language',
+        message: privateLanguageReading.is_unguarded
+          ? `unguarded register (${privateLanguageReading.private_language_score.toFixed(1)}/10) — matched: ${privateLanguageReading.matched_private_phrases.slice(0, 2).join('; ') || 'none'}`
+          : privateLanguageReading.performative_signatures.length > 0
+            ? `WARNING performative — ${privateLanguageReading.performative_signatures.join(', ')}`
+            : `register ${privateLanguageReading.private_language_score.toFixed(1)}/10`,
+      });
+
+      const realityWeightingReading = weightReality({
+        truthText: truth.truth,
+        tensionText: truth.tension,
+        ingestedSignals,
+      });
+      emit({
+        stage: 'reality-weighting',
+        message: realityWeightingReading.generated_from_aesthetics_only
+          ? `WARNING generated from aesthetics — no deep signal resonates`
+          : `discovered from reality ${realityWeightingReading.discovered_from_reality_score.toFixed(1)}/10 · ${realityWeightingReading.resonating_signals.length} signals resonate`,
+      });
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -1083,6 +1130,9 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         realityVerificationReading,
         emotionalDecayReading,
         generationPressureReading,
+        // Phase 16
+        privateLanguageReading,
+        realityWeightingReading,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -1190,6 +1240,12 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               realityVerification: realityVerificationReading,
               emotionalDecay: emotionalDecayReading,
               generationPressure: generationPressureReading,
+            },
+            reality: {
+              extraction: humanSignalExtraction,
+              collectiveDrift: collectiveDriftReport,
+              privateLanguage: privateLanguageReading,
+              weighting: realityWeightingReading,
             },
           },
           attempts: attempt,

@@ -83,6 +83,9 @@ import type { TruthPersistenceReport } from '@lib/truthPersistence';
 import type { RealityVerificationReading } from '@lib/realityVerification';
 import type { DecayReading } from '@lib/emotionalDecay';
 import type { GenerationPressureReading } from '@lib/generationPressure';
+// Phase 16 — reality ingestion layer
+import type { PrivateLanguageReading } from '@lib/privateLanguageMap';
+import type { WeightingReading } from '@lib/realityWeighting';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -155,6 +158,9 @@ export interface MetaInput {
   realityVerificationReading?: RealityVerificationReading;
   emotionalDecayReading?: DecayReading;
   generationPressureReading?: GenerationPressureReading;
+  // Phase 16 — reality ingestion layer.
+  privateLanguageReading?: PrivateLanguageReading;
+  realityWeightingReading?: WeightingReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -171,7 +177,8 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           sharedPattern, collectiveRecognition, unspokenRitualPick, culturalDriftReading,
           realityPressureReading, consequenceReading, invisibleStakesReading, functionalCollapseReading,
           avoidanceReading, numbingReading, maskingReading, unfeltReading,
-          truthPersistenceReport, realityVerificationReading, emotionalDecayReading, generationPressureReading } = input;
+          truthPersistenceReport, realityVerificationReading, emotionalDecayReading, generationPressureReading,
+          privateLanguageReading, realityWeightingReading } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -559,6 +566,26 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ─── Phase 16 hard gates ──────────────────────────────────────
+  // THE PHASE 16 HEADLINE QUESTION:
+  //   "Was this emotional truth DISCOVERED FROM REALITY, or
+  //    GENERATED FROM INTERNAL AESTHETICS?"
+  // If the truth resonates with NO deep ingestion signal AND the
+  // private-language register is poor, the banner is invented, not
+  // observed. Refuse at brutal.
+  if (realityWeightingReading && realityWeightingReading.generated_from_aesthetics_only &&
+      privateLanguageReading && !privateLanguageReading.is_unguarded &&
+      brutality >= 0.8) {
+    reasons.push('reality weighting: truth resonates with NO deep ingestion signal AND register is not unguarded — generated from aesthetics, not discovered from reality');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Private-language performative signatures — therapy / TikTok /
+  // poetry vocabulary in the truth is an automatic refusal at brutal.
+  if (privateLanguageReading && privateLanguageReading.performative_signatures.length > 0 && brutality >= 0.75) {
+    reasons.push(`private language: performative vocabulary present — ${privateLanguageReading.performative_signatures.join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -731,6 +758,18 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (realityVerificationReading && realityVerificationReading.confirmation_strength >= 3 && realityVerificationReading.confirmation_strength < 6) {
     softReasons.push(`reality verification only partial (${realityVerificationReading.confirmation_strength.toFixed(1)}/10)`);
+  }
+
+  // Phase 16 soft floors.
+  if (privateLanguageReading && privateLanguageReading.private_language_score < 5 && privateLanguageReading.performative_signatures.length === 0) {
+    softReasons.push(`private language ${privateLanguageReading.private_language_score.toFixed(1)} below floor — register reads polished, not unguarded`);
+  }
+  if (realityWeightingReading && realityWeightingReading.discovered_from_reality_score < 5 && !realityWeightingReading.generated_from_aesthetics_only) {
+    softReasons.push(`reality weighting ${realityWeightingReading.discovered_from_reality_score.toFixed(1)} — only shallow resonance with ingestion signals`);
+  }
+  if (realityWeightingReading && realityWeightingReading.generated_from_aesthetics_only) {
+    // Soft pressure when the hard gate didn't fire (lower brutality).
+    softReasons.push('reality weighting: no deep signal resonates — banner may be aesthetically invented');
   }
 
   // Phase 4 soft floors — aftertaste + atmosphere.

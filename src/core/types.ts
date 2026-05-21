@@ -469,6 +469,13 @@ export interface BannerTasteSystem {
     emotionalDecay: import('@lib/emotionalDecay').DecayReading;
     generationPressure: import('@lib/generationPressure').GenerationPressureReading;
   };
+  // Phase 16 — reality ingestion layer
+  reality: {
+    extraction: import('@lib/humanSignalExtraction').ExtractionReport;
+    collectiveDrift: import('@lib/collectiveDriftTracker').CollectiveDriftReport;
+    privateLanguage: import('@lib/privateLanguageMap').PrivateLanguageReading;
+    weighting: import('@lib/realityWeighting').WeightingReading;
+  };
 }
 
 export interface Banner {
