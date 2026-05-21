@@ -68,6 +68,28 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+**Behavioral survival engine** (`lib/*` Phase 18 modules) — the system now models the *behaviors* humans quietly perform every day to survive modern pressure. Different from Phase 14 (suppression), Phase 17 (systemic causes), and Phase 13 (the COST): Phase 18 is the *behavioral footprint* of survival itself — the loops, the tiny escapes, the compensation rituals, the fake recoveries, the silent coping moves, and the residue all of it leaves behind in the body.
+
+| Module | Role |
+|---|---|
+| `lib/behaviorLoopEngine.ts` | 12 daily behavior LOOPS (doomscroll · reopen-laptop · refresh-inbox · fake-break · tab-switching · kitchen-standing-without-purpose · fridge-without-hunger · phone-during-family · one-more-thing-before-sleep · lock-screen-pull · reply-rehearsal · pacing-without-destination). Each is classified `conscious` / `subconscious` / `compulsive` / `recovery-seeking` / `avoidance-based` and named with its trigger, exit criteria, and the *invisible mark* — the thing the subject does not notice they are doing. |
+| `lib/microEscapeDetection.ts` | 10 tiny ephemeral withdrawals (bathroom-scrolling · parked-car-silence · fake-productivity · disappearing-into-phone · lingering-after-shower · unnecessary-errand · staring-moment · longer-walk-to-the-printer · extra-loop-around-the-block · extended-elevator-pause). Different from avoidance/numbing — micro-escapes are 90s–8min unsupervised pauses the world has not yet noticed. Scores `emotional_necessity`, `invisibility`, `recognizability`, `behavioral_truth`, and whether the banner catches it mid-execution. |
+| `lib/ritualCompensation.ts` | 10 compensation rituals (third-coffee · nighttime-snack · skipped-breakfast-overloaded-lunch · long-shower-as-pause · second-sleep-that-never-arrives · late-afternoon-sugar · post-bedtime-alcohol · predawn-coffee-alone · fridge-light-at-23:45 · energy-drink-at-15:30). Each carries the *honest phrase* and the FORBIDDEN *romanticised phrase* — the system rejects truths that use wellness vocabulary (`self-care · ritual · me-time · I deserve · little victory · sacred · cozy`). |
+| `lib/fakeRecovery.ts` | 10 culturally-endorsed activities that *look like* recovery but are not (spa-day-as-content · workation · workout-as-anxiety-burnoff · meditation-app-checklist · journaling-as-curation · nature-walk-on-a-call · rest-day-on-slack-from-bed · self-help-instead-of-resting · sunday-reset-as-second-workday · sleep-tracker-anxiety). Different from Phase 17 `recoveryFailure` (the physiology) — Phase 18 fakeRecovery is the CULTURAL PERFORMANCE of recovery. Refuses banners that use alibi language (`workation`, `sunday reset`, `treat yourself`, `walking meeting`). |
+| `lib/silentCopingMechanisms.ts` | 10 unnamed, internal, often-invisible coping moves (emotional-buffering · private-decompression · covert-reset-ritual · internal-monologue-muting · silent-withdrawal · emotional-time-stretching · breath-held-then-released · jaw-unclench · two-second-eye-close · face-wash-as-reset). Each is scored `below_the_named`, `visible_to_third_party`, `visible_to_subject`, `captures_real_humanity`. Refuses truths that name the move (`coping · regulation · nervous system · self-soothing · reset`) — silent coping must be **observed, not labelled**. |
+| `lib/behavioralResidue.ts` | Timeline-aware. Builds survival FINGERPRINTS across the emotional trail (loop/escape/ritual/fake-recovery/silent-coping ids matched in past truths + residue strings) and scores: `carryover_score` (how much past-survival is in the body now), `recurrence_density` (how much the campaign has repeated the same coping), `timeline_awareness` (does the truth photograph TIME, not just a moment), `sediment_visibility` (does the scene make the residue physically visible: jaw, shoulders, skin, posture). Flags `carries_weeks_not_minutes` and `residue_becoming_signature`. |
+
+Phase 18 meta-critic gates:
+- **the spec's new headline gate**: NO observed survival behavior (no loop, no escape, no ritual, no silent coping, no recovery failure) → reject-concept at brutal (*"does this behavior feel like something humans quietly do every day without noticing, or sadness aesthetics without behavioral evidence?"*)
+- ritual compensation `romanticisation_detected` (truth uses wellness vocabulary) → reject-taste at default+ (`brutality >= 0.7`)
+- fake recovery `performs_rest` (banner reads as PERFORMING rest, not actually resting) → reject-taste at brutal
+- silent coping `truth_names_the_move` (therapy / regulation vocabulary present) → reject-taste at brutal+
+- behavioral residue `carryover_score >= 7` AND `timeline_awareness < 4` → reject-concept at brutal (body claims to carry weeks but truth photographs only today)
+- conscious-staged coping (primary loop classification = `conscious` AND silent coping is named) → reject-taste at brutal+
+- soft floors: no behavior loop identified, loop matched but truth uses feeling-words instead of behavioral verbs, micro-escape NEEDED but not shown, micro-escape matched but not in-the-act, ritual matched but honest_observation < 5, fake-recovery alibi language present, silent coping captures_real_humanity < 5, residue becoming campaign signature, body carries weight but residue is not physically visible
+
+Soft-floor threshold recalibrated for the deeper stack (18 phases now produce 7–12 soft signals routinely): **lenient=11 · default=9 · brutal=7**.
+
 **Systemic human pressure model** (`lib/*` Phase 17 modules) — the system stops describing emotional states and starts modeling the INVISIBLE MACHINERY producing them. Causality replaces aesthetic.
 
 | Module | Role |
@@ -83,7 +105,7 @@ Phase 17 meta-critic gates:
 - truth describes successful recovery → reject-taste at brutal (rare in modern life; reads as fake)
 - soft floors: no systemic cause identified, causal_clarity < 4, residue_load < 3, fragmentation absent when family suggests it, environment not identified while residue is high
 
-Soft-floor threshold recalibrated for the deeper stack: **lenient=10 · default=8 · brutal=6** (was 8/6/4 at Phase 15).
+Soft-floor threshold history: was 8/6/4 at Phase 15 → 10/8/6 at Phase 17 → 11/9/7 at Phase 18 (see above).
 
 **Reality ingestion layer** (`lib/*` Phase 16 modules) — the system stops learning only from itself and starts observing real humans continuously. Behavioral anthropology, NOT trend scraping.
 

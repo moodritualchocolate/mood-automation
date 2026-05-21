@@ -149,6 +149,13 @@ import {
   identifyEnvironmentalSystem,
   readRecoveryFailure,
   readCognitiveResidue,
+  // Phase 18 — behavioral survival engine
+  readBehaviorLoop,
+  readMicroEscape,
+  readCompensationRitual,
+  readFakeRecovery,
+  readSilentCoping,
+  readBehavioralResidue,
 } from '@lib/index';
 import { SEED_INGESTED_SIGNALS } from '@data/seed-ingested-signals';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
@@ -1075,6 +1082,61 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ───────────────────────────────────────────────────────────
 
+      // ─── Phase 18 — behavioral survival engine ────────────────
+      const behaviorLoopReading = readBehaviorLoop({ state, truth, emotionalCore });
+      if (behaviorLoopReading.primary_loop) {
+        emit({
+          stage: 'behavior-loop',
+          message: `${behaviorLoopReading.primary_loop.id} (${behaviorLoopReading.primary_loop.classification}) — strength ${behaviorLoopReading.loop_signature_strength.toFixed(1)}/10${behaviorLoopReading.is_automatic ? ' — AUTOMATIC' : ''}`,
+        });
+      }
+      const microEscapeReading = readMicroEscape({
+        state, truth, emotionalCore, microMoment: culturalMicroMoment,
+      });
+      if (microEscapeReading.primary) {
+        emit({
+          stage: 'micro-escape',
+          message: `${microEscapeReading.primary.id} — "${microEscapeReading.primary.recognition_phrase}" (${microEscapeReading.micro_escape_score.toFixed(1)}/10)${microEscapeReading.in_the_act ? ' — IN THE ACT' : ''}`,
+        });
+      }
+      const ritualCompensationReading = readCompensationRitual({ state, truth, emotionalCore });
+      if (ritualCompensationReading.primary) {
+        emit({
+          stage: 'ritual-compensation',
+          message: `${ritualCompensationReading.primary.id} replaces "${ritualCompensationReading.primary.what_it_replaces}"${ritualCompensationReading.romanticisation_detected ? ' — ROMANTICISED' : ''}`,
+        });
+      }
+      const fakeRecoveryReading = readFakeRecovery({ state, truth, emotionalCore });
+      if (fakeRecoveryReading.primary) {
+        emit({
+          stage: 'fake-recovery',
+          message: `${fakeRecoveryReading.primary.id} (${fakeRecoveryReading.fake_recovery_score.toFixed(1)}/10)${fakeRecoveryReading.performs_rest ? ' — PERFORMS REST' : ''}`,
+        });
+      }
+      const silentCopingReading = readSilentCoping({ state, truth, emotionalCore });
+      if (silentCopingReading.primary) {
+        emit({
+          stage: 'silent-coping',
+          message: `${silentCopingReading.primary.id} — "${silentCopingReading.primary.cinematic_marker}"`,
+        });
+      }
+      const behavioralResidueReading = readBehavioralResidue({
+        state, truth, emotionalCore,
+        behaviorLoop: behaviorLoopReading,
+        microEscape: microEscapeReading,
+        ritualCompensation: ritualCompensationReading,
+        fakeRecovery: fakeRecoveryReading,
+        silentCoping: silentCopingReading,
+        recentTrail: emotionalTrail,
+      });
+      if (behavioralResidueReading.fingerprints.length > 0) {
+        emit({
+          stage: 'behavioral-residue',
+          message: `carryover ${behavioralResidueReading.carryover_score.toFixed(1)}/10 · recurrence ${behavioralResidueReading.recurrence_density.toFixed(1)}/10${behavioralResidueReading.carries_weeks_not_minutes ? ' — CARRIES WEEKS' : ''}${behavioralResidueReading.residue_becoming_signature ? ' — SIGNATURE FORMING' : ''}`,
+        });
+      }
+      // ───────────────────────────────────────────────────────────
+
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
       // computed pre-verdict so the meta-critic can gate on them. ──
       const tentativeAftertaste = predictAftertaste({
@@ -1191,6 +1253,13 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         environmentalSystemReading,
         recoveryFailureReading,
         cognitiveResidueReading,
+        // Phase 18
+        behaviorLoopReading,
+        microEscapeReading,
+        ritualCompensationReading,
+        fakeRecoveryReading,
+        silentCopingReading,
+        behavioralResidueReading,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -1311,6 +1380,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               environmentalSystem: environmentalSystemReading,
               recoveryFailure: recoveryFailureReading,
               cognitiveResidue: cognitiveResidueReading,
+            },
+            survival: {
+              behaviorLoop: behaviorLoopReading,
+              microEscape: microEscapeReading,
+              ritualCompensation: ritualCompensationReading,
+              fakeRecovery: fakeRecoveryReading,
+              silentCoping: silentCopingReading,
+              behavioralResidue: behavioralResidueReading,
             },
           },
           attempts: attempt,

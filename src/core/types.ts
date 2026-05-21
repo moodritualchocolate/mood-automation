@@ -484,6 +484,15 @@ export interface BannerTasteSystem {
     recoveryFailure: import('@lib/recoveryFailure').RecoveryFailureReading;
     cognitiveResidue: import('@lib/cognitiveResidue').CognitiveResidueReading;
   };
+  // Phase 18 — behavioral survival engine
+  survival: {
+    behaviorLoop: import('@lib/behaviorLoopEngine').BehaviorLoopReading;
+    microEscape: import('@lib/microEscapeDetection').MicroEscapeReading;
+    ritualCompensation: import('@lib/ritualCompensation').CompensationRitualReading;
+    fakeRecovery: import('@lib/fakeRecovery').FakeRecoveryReading;
+    silentCoping: import('@lib/silentCopingMechanisms').SilentCopingReading;
+    behavioralResidue: import('@lib/behavioralResidue').BehavioralResidueReading;
+  };
 }
 
 export interface Banner {

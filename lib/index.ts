@@ -108,3 +108,10 @@ export * from './attentionFragmentation';
 export * from './modernEnvironmentSystems';
 export * from './recoveryFailure';
 export * from './cognitiveResidue';
+// Phase 18 — behavioral survival engine
+export * from './behaviorLoopEngine';
+export * from './microEscapeDetection';
+export * from './ritualCompensation';
+export * from './fakeRecovery';
+export * from './silentCopingMechanisms';
+export * from './behavioralResidue';

@@ -92,6 +92,13 @@ import type { FragmentationReading } from '@lib/attentionFragmentation';
 import type { EnvironmentalSystemReading } from '@lib/modernEnvironmentSystems';
 import type { RecoveryFailureReading } from '@lib/recoveryFailure';
 import type { CognitiveResidueReading } from '@lib/cognitiveResidue';
+// Phase 18 — behavioral survival engine
+import type { BehaviorLoopReading } from '@lib/behaviorLoopEngine';
+import type { MicroEscapeReading } from '@lib/microEscapeDetection';
+import type { CompensationRitualReading } from '@lib/ritualCompensation';
+import type { FakeRecoveryReading } from '@lib/fakeRecovery';
+import type { SilentCopingReading } from '@lib/silentCopingMechanisms';
+import type { BehavioralResidueReading } from '@lib/behavioralResidue';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -173,6 +180,13 @@ export interface MetaInput {
   environmentalSystemReading?: EnvironmentalSystemReading;
   recoveryFailureReading?: RecoveryFailureReading;
   cognitiveResidueReading?: CognitiveResidueReading;
+  // Phase 18 — behavioral survival engine.
+  behaviorLoopReading?: BehaviorLoopReading;
+  microEscapeReading?: MicroEscapeReading;
+  ritualCompensationReading?: CompensationRitualReading;
+  fakeRecoveryReading?: FakeRecoveryReading;
+  silentCopingReading?: SilentCopingReading;
+  behavioralResidueReading?: BehavioralResidueReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -192,7 +206,9 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           truthPersistenceReport, realityVerificationReading, emotionalDecayReading, generationPressureReading,
           privateLanguageReading, realityWeightingReading,
           systemicCauseReading, attentionFragmentationReading, environmentalSystemReading,
-          recoveryFailureReading, cognitiveResidueReading } = input;
+          recoveryFailureReading, cognitiveResidueReading,
+          behaviorLoopReading, microEscapeReading, ritualCompensationReading,
+          fakeRecoveryReading, silentCopingReading, behavioralResidueReading } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -621,6 +637,60 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     reasons.push('recovery failure: truth describes successful recovery — rare in modern life; reads as fake');
     if (verdict === 'approve') verdict = 'reject-taste';
   }
+
+  // ─── Phase 18 hard gates ──────────────────────────────────────
+  // THE NEW HEADLINE QUESTION:
+  //   "Does this behavior feel like something humans QUIETLY DO every
+  //    day WITHOUT NOTICING — or does it feel cinematic, performative,
+  //    over-symbolic, written, inspirational, or socially performative?"
+  // Refuse when the banner romanticises survival behaviour.
+  if (ritualCompensationReading && ritualCompensationReading.romanticisation_detected && brutality >= 0.7) {
+    reasons.push('ritual compensation: truth romanticises a compensation ritual (uses wellness vocabulary) — banner sells self-care instead of observing reality');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Refuse when the banner PERFORMS rest (uses cultural alibi or
+  // performance verbs around a fake-recovery ritual).
+  if (fakeRecoveryReading && fakeRecoveryReading.performs_rest && brutality >= 0.75) {
+    reasons.push('fake recovery: banner reads as PERFORMING rest, not actually resting');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Refuse when the truth NAMES a silent-coping move that is supposed
+  // to be unnamed.
+  if (silentCopingReading && silentCopingReading.truth_names_the_move && brutality >= 0.8) {
+    reasons.push('silent coping: truth uses therapy / regulation vocabulary — silent coping must be observed, not labelled');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Refuse a banner that aestheticises sadness without showing any
+  // actual survival behavior — no loop, no escape, no ritual, no
+  // silent coping. That is "sadness aesthetics" without observation.
+  // Triggers when the recoveryFailure reading is empty AND the truth
+  // shows no behavioral evidence either — pure feeling, no body.
+  if (brutality >= 0.85 &&
+      behaviorLoopReading && !behaviorLoopReading.primary_loop &&
+      microEscapeReading && !microEscapeReading.primary &&
+      ritualCompensationReading && !ritualCompensationReading.primary &&
+      silentCopingReading && !silentCopingReading.primary &&
+      recoveryFailureReading && !recoveryFailureReading.primary_failure) {
+    reasons.push('survival: NO observed survival behavior (no loop, no escape, no ritual, no coping, no failure) — sadness aesthetics without behavioral evidence');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Refuse when the behavioral residue says "carries weeks" but the
+  // truth has no timeline awareness — the photograph claims weight it
+  // does not earn.
+  if (behavioralResidueReading && brutality >= 0.8 &&
+      behavioralResidueReading.carryover_score >= 7 &&
+      behavioralResidueReading.timeline_awareness < 4) {
+    reasons.push('behavioral residue: body claims to carry weeks but truth photographs only today');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Refuse a banner that shows a conscious-staged coping move — the
+  // primary loop is "conscious" and the silent-coping is named.
+  if (brutality >= 0.85 &&
+      behaviorLoopReading?.primary_loop?.classification === 'conscious' &&
+      silentCopingReading?.truth_names_the_move) {
+    reasons.push('survival: consciously-staged coping with named regulation vocabulary — performance, not observation');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -828,6 +898,38 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('recovery failure: reaction signals exhaustion but no failure mode identified');
   }
 
+  // Phase 18 soft floors.
+  if (behaviorLoopReading && !behaviorLoopReading.primary_loop) {
+    softReasons.push('behavior loop: no daily loop identified — the banner shows a state but not the behaviour it generates');
+  }
+  if (behaviorLoopReading && behaviorLoopReading.primary_loop && !behaviorLoopReading.truth_describes_loop) {
+    softReasons.push('behavior loop: loop matched but truth uses feeling-words, not behavioral verbs — the body is described, not photographed');
+  }
+  if (microEscapeReading && !microEscapeReading.primary && microEscapeReading.emotional_necessity >= 7) {
+    softReasons.push('micro-escape: the body NEEDS a micro-escape but the banner does not show one — withdrawal is unobserved');
+  }
+  if (microEscapeReading && microEscapeReading.primary && !microEscapeReading.in_the_act) {
+    softReasons.push(`micro-escape "${microEscapeReading.primary.id}" matched but banner does not catch it mid-execution`);
+  }
+  if (ritualCompensationReading && ritualCompensationReading.primary &&
+      ritualCompensationReading.honest_observation < 5) {
+    softReasons.push(`ritual compensation: "${ritualCompensationReading.primary.id}" matched but truth lacks honest observation language`);
+  }
+  if (fakeRecoveryReading && fakeRecoveryReading.uses_alibi_language) {
+    softReasons.push(`fake recovery soft: truth uses cultural-alibi language (e.g. "sunday reset")`);
+  }
+  if (silentCopingReading && silentCopingReading.primary &&
+      silentCopingReading.captures_real_humanity < 5) {
+    softReasons.push(`silent coping: "${silentCopingReading.primary.id}" matched but truth does not observe the body — names the move or stays at the feeling`);
+  }
+  if (behavioralResidueReading && behavioralResidueReading.residue_becoming_signature) {
+    softReasons.push(`behavioral residue becoming campaign signature — ${behavioralResidueReading.most_repeated!.kind}:${behavioralResidueReading.most_repeated!.id} appeared ×${behavioralResidueReading.most_repeated!.count}`);
+  }
+  if (behavioralResidueReading && behavioralResidueReading.carryover_score >= 6 &&
+      behavioralResidueReading.sediment_visibility < 4) {
+    softReasons.push('behavioral residue: body carries weight but residue is not physically visible in the scene');
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -857,12 +959,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 17 phases of judgement every banner
-  // produces 6-10 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 10 soft reasons required to reject
-  //   default (0.65)   → 8 soft reasons required
-  //   brutal  (0.90)   → 6 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 6 : brutality >= 0.6 ? 8 : 10;
+  // the cognition stack. After 18 phases of judgement every banner
+  // produces 7-12 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 11 soft reasons required to reject
+  //   default (0.65)   → 9 soft reasons required
+  //   brutal  (0.90)   → 7 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 7 : brutality >= 0.6 ? 9 : 11;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.
