@@ -395,6 +395,17 @@ export interface BannerTasteSystem {
     emotionalAftertaste: import('@lib/emotionalAftertaste').EmotionalAftertaste;
     campaignMemoryV2: import('@lib/campaignMemoryV2').CampaignMemoryV2Report;
   };
+  // Phase 7 — human perception + world continuity
+  perceptionV2: {
+    atmosphericLight: import('@lib/atmosphericLight').AtmosphericLight;
+    typographyPsychology: import('@lib/typographyPsychology').TypographyPsychologyPlan;
+    worldContinuity: import('@lib/worldContinuity').WorldContinuityPlan;
+    microHumanDetails: import('@lib/microHumanDetails').MicroDetailPlan;
+    invisibleStory: import('@lib/invisibleStory').InvisibleStory;
+    humanInterruption: import('@lib/humanInterruption').InterruptionPlan;
+    campaignIdentity: import('@lib/campaignIdentity').CampaignIdentity;
+    perceptionCritic: import('@lib/perceptionCritic').PerceptionVerdict;
+  };
 }
 
 export interface Banner {

@@ -52,6 +52,27 @@ human truth → emotional tension → campaign concept → composition
 | 10  | Memory V2              | Fatigue + rhythm intelligence: pacing history, silence/aggressive balance, overstimulation flag, campaign arc. |
 | 12  | Rejection              | Routes reject-image / reject-concept / reject-taste regens.       |
 
+**Human perception + world continuity** (`lib/*` Phase 7 modules) — the system stops generating images and starts capturing human conditions already happening. Every scene must imply a past and a next moment.
+
+| Module | Role |
+|---|---|
+| `lib/atmosphericLight.ts` | Lighting as psychology, not aesthetic. 12 named light behaviours (fluorescent-depletion · phone-glow-loneliness · refrigerator-isolation · late-office-warmth · sleepless-blue · train-stutter · amber-doorway · etc.). |
+| `lib/typographyPsychology.ts` | Typography modulation tied to mental state — fragmented placement for overstimulation, sunken position for collapse, compressed density for pressure, weak pressure for silent burnout. |
+| `lib/worldContinuity.ts` | Each scene gets 2-3 lived-in artifacts (unfinished tea, tabs already open, jacket on chair, half-open cabinet) plus an implied past and an implied next moment. |
+| `lib/microHumanDetails.ts` | 3-5 anti-AI human cues per banner (skin texture · tired eyes · jaw tension · uneven posture · imperfect clothing fold · breath shallow · micro-tic · shoulder asymmetry). |
+| `lib/invisibleStory.ts` | Answers five questions per frame: ten minutes before · two minutes after · what is the subject avoiding · what pressure exists outside the crop · what is unresolved. |
+| `lib/humanInterruption.ts` | The product NEVER dominates — it interrupts a human moment, or it doesn't appear at all. When the emotional core demands hidden product, hidden wins regardless of asset job. |
+| `lib/objectEmotionMemory.ts` | Per-campaign object→emotion store. Coffee cup appears in 3 depleted banners → motif `coffee cup → exhaustion`. Persisted at `data/memory/object-emotion.json`. |
+| `lib/campaignIdentity.ts` | Synthesises the campaign's dominantEmotionalVoice, silence/loudness balance, object motifs, emotional themes, pacing identity, typography voice, and a **recognisability** score (0..10 — would this campaign be recognised without a logo). |
+| `lib/perceptionCritic.ts` | The HIGHEST-LEVEL critic. 12 axes: emotionally_observed, culturally_honest, would_recognise_self, emotionally_manipulative (lower=better), trying_too_hard (lower=better), ai_aware (lower=better), atmosphere_lingers, emotionally_quiet_enough, humanity_believable, contradiction_real, art_director_keep, **saved_silently** (the spec's primary success metric). |
+| `data/cultural-states-extended.ts` | 60 structured cultural states across the 20 named categories — office, parenting, relationships, loneliness, nightlife fatigue, Israeli transportation, military reserve, startup culture, social anxiety, digital exhaustion, avoidance, emotional burnout, emotional numbness, doomscrolling, insomnia, overthinking, Saturday silence, emotional recovery, urban loneliness, overstimulation. Each carries physical truth, emotional contradiction, environment logic, silence behavior, object meaning, camera behavior, lighting behavior, pacing, product role, forbidden clichés. |
+
+Phase 7 meta-critic gates:
+- perception critic verdict 'refuse' → reject-concept at brutal mode
+- emotionally_manipulative ≥ 7 → reject-taste at default mode and up
+- ai_aware ≥ 8 → reject-taste at brutal mode
+- silent_emotional_recognition below floor → reject (this is the spec's primary success-metric gate)
+
 **Perceptual foundation** (`lib/*` Phase 5 modules) — the deepest layer beneath everything. Not creative automation. A creative cognition.
 
 | Module | Role |

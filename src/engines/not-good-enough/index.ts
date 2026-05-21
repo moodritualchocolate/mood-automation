@@ -40,6 +40,8 @@ import type { DriftReport } from '@lib/tasteDrift';
 import type { VisualTasteVerdict } from '@lib/visualTaste';
 import type { EmotionalAftertaste } from '@lib/emotionalAftertaste';
 import type { CampaignMemoryV2Report } from '@lib/campaignMemoryV2';
+import type { PerceptionVerdict } from '@lib/perceptionCritic';
+import type { CampaignIdentity } from '@lib/campaignIdentity';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -68,12 +70,16 @@ export interface MetaInput {
   visualTaste?: VisualTasteVerdict;
   emotionalAftertaste?: EmotionalAftertaste;
   campaignMemoryV2?: CampaignMemoryV2Report;
+  // Phase 7 — perception + world continuity.
+  perceptionCriticVerdict?: PerceptionVerdict;
+  campaignIdentity?: CampaignIdentity;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   const { ctx, scrollStop, taste, psychology, productPresence, reference, memory,
           judge, reaction, fatigue, antiAI, rhythmWorsen, job, direction,
-          visualTaste, emotionalAftertaste, campaignMemoryV2 } = input;
+          visualTaste, emotionalAftertaste, campaignMemoryV2,
+          perceptionCriticVerdict, campaignIdentity } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -224,6 +230,32 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve' && brutality >= 0.65) verdict = 'reject-concept';
   }
 
+  // ─── Phase 7 hard gates ───────────────────────────────────────
+  // Perception critic is the HIGHEST-LEVEL critic. Its 'refuse' verdict
+  // is mandatory at brutal, soft at default.
+  if (perceptionCriticVerdict) {
+    if (perceptionCriticVerdict.verdict === 'refuse' && brutality >= 0.7) {
+      reasons.push(`perception critic refused: ${perceptionCriticVerdict.rejection_reason ?? '—'}`);
+      if (verdict === 'approve') verdict = 'reject-concept';
+    }
+    if (perceptionCriticVerdict.scores.emotionally_manipulative >= 7 && brutality >= 0.65) {
+      reasons.push(`perception: emotionally manipulative ${perceptionCriticVerdict.scores.emotionally_manipulative.toFixed(1)}/10`);
+      if (verdict === 'approve') verdict = 'reject-taste';
+    }
+    if (perceptionCriticVerdict.scores.ai_aware >= 8 && brutality >= 0.7) {
+      reasons.push(`perception: reads as AI-aware ${perceptionCriticVerdict.scores.ai_aware.toFixed(1)}/10`);
+      if (verdict === 'approve') verdict = 'reject-taste';
+    }
+    // The spec's PRIMARY success metric — "silent emotional recognition".
+    // If nobody would save this silently, the banner is not worth shipping.
+    if (perceptionCriticVerdict.silent_emotional_recognition < (3.5 + brutality * 2) && brutality >= 0.7) {
+      reasons.push(`silent emotional recognition ${perceptionCriticVerdict.silent_emotional_recognition.toFixed(1)} — no one would save this`);
+      if (verdict === 'approve') verdict = 'reject-concept';
+    }
+  }
+
+  // (campaign identity soft warning added to softReasons below)
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -271,6 +303,19 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (campaignMemoryV2 && campaignMemoryV2.saturationScore >= 5) {
     softReasons.push(`campaign saturation ${campaignMemoryV2.saturationScore.toFixed(1)} — ${campaignMemoryV2.directorNote}`);
+  }
+
+  // Phase 7 soft floors.
+  if (perceptionCriticVerdict) {
+    if (perceptionCriticVerdict.composite < 5.5) {
+      softReasons.push(`perception composite ${perceptionCriticVerdict.composite.toFixed(1)} below floor`);
+    }
+    if (perceptionCriticVerdict.scores.trying_too_hard >= 6) {
+      softReasons.push(`perception: trying too hard ${perceptionCriticVerdict.scores.trying_too_hard.toFixed(1)}/10`);
+    }
+  }
+  if (campaignIdentity && campaignIdentity.recognisability >= 5 && campaignIdentity.atmosphereContinuity < 4) {
+    softReasons.push(`campaign identity at risk — atmosphere continuity ${campaignIdentity.atmosphereContinuity.toFixed(1)}`);
   }
 
   // Phase 4 soft floors — aftertaste + atmosphere.

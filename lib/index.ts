@@ -30,3 +30,13 @@ export * from './visualTaste';
 export * from './humanVisualBehavior';
 export * from './emotionalAftertaste';
 export * from './campaignMemoryV2';
+// Phase 7 — human perception + world continuity
+export * from './atmosphericLight';
+export * from './typographyPsychology';
+export * from './worldContinuity';
+export * from './microHumanDetails';
+export * from './invisibleStory';
+export * from './humanInterruption';
+export * from './objectEmotionMemory';
+export * from './campaignIdentity';
+export * from './perceptionCritic';

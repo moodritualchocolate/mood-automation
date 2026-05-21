@@ -76,6 +76,18 @@ import {
   planVisualBehavior,
   predictEmotionalAftertaste,
   synthesiseCampaignMemoryV2,
+  // Phase 7 — human perception + world continuity
+  selectAtmosphericLight,
+  planTypographyPsychology,
+  applyTypographyPsychology,
+  planWorldContinuity,
+  planMicroHumanDetails,
+  buildInvisibleStory,
+  decideHumanInterruption,
+  createObjectEmotionStore,
+  extractObjectsFromBrief,
+  synthesiseCampaignIdentity,
+  critiquePerception,
 } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -187,6 +199,20 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     trail: emotionalTrail,
     aftertaste: priorAftertaste,
     rhythm: rhythmReport,
+  });
+
+  // ─── Phase 7 — load object motifs + synthesise campaign identity
+  const objectEmotionStore = createObjectEmotionStore();
+  const motifs = await objectEmotionStore.list();
+  const campaignIdentity = synthesiseCampaignIdentity({
+    trail: emotionalTrail,
+    campaignMemoryV2,
+    motifs,
+  });
+  emit({
+    stage: 'campaign-identity',
+    message: campaignIdentity.directorNote,
+    data: { recognisability: campaignIdentity.recognisability, motifs: campaignIdentity.objectMotifs.slice(0, 3) },
   });
   emit({
     stage: 'campaign-memory-v2',
@@ -348,6 +374,66 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         stage: 'emotional-aftertaste',
         message: `composite ${emotionalAftertaste.composite.toFixed(1)} — ${emotionalAftertaste.post_view_emotional_state}`,
       });
+
+      // ─── Phase 7 — perception + world continuity layer ───────
+      const atmosphericLight = selectAtmosphericLight({
+        state, emotionalCore,
+        microMomentId: culturalMicroMoment?.state_id ?? null,
+      });
+      emit({ stage: 'atmospheric-light', message: `${atmosphericLight.behavior} — ${atmosphericLight.psychological_meaning}` });
+
+      const worldContinuity = planWorldContinuity({
+        state, emotionalCore,
+        microMoment: culturalMicroMoment,
+        seed: stateSeed + attempt,
+      });
+      emit({
+        stage: 'world-continuity',
+        message: `${worldContinuity.artifacts.length} artifacts: ${worldContinuity.artifacts.map((a) => a.id).join(', ')}`,
+      });
+
+      const microHumanDetails = planMicroHumanDetails({
+        state, emotionalCore,
+        seed: stateSeed + attempt,
+      });
+      emit({ stage: 'micro-human-details', message: microHumanDetails.details.join(', ') });
+
+      const invisibleStory = buildInvisibleStory({
+        state, emotionalCore,
+        microMoment: culturalMicroMoment,
+      });
+      emit({ stage: 'invisible-story', message: `before: ${invisibleStory.ten_minutes_before.slice(0, 70)}…` });
+
+      const humanInterruption = decideHumanInterruption({
+        job: jobDecision.job,
+        emotionalCore,
+        direction,
+      });
+      emit({
+        stage: 'human-interruption',
+        message: `${humanInterruption.intensity} (vis ${humanInterruption.visibility}/10) — ${humanInterruption.reasoning}`,
+      });
+
+      const typographyPsychology = planTypographyPsychology({
+        state, emotionalCore, direction, typography, composition,
+      });
+      emit({
+        stage: 'typography-psychology',
+        message: `${typographyPsychology.posture} — ${typographyPsychology.psychological_meaning}`,
+      });
+
+      const perceptionCriticVerdict = critiquePerception({
+        truth, direction, typography, bannerDNA: dna,
+        emotionalCore, emotionalAftertaste,
+        visualTaste, tasteJudge: judge,
+        worldContinuity, microDetails: microHumanDetails, invisibleStory,
+        hasCulturalGrounding: !!culturalMicroMoment,
+      });
+      emit({
+        stage: 'perception-critic',
+        message: `${perceptionCriticVerdict.verdict} — silent-recognition ${perceptionCriticVerdict.silent_emotional_recognition.toFixed(1)}/10` + (perceptionCriticVerdict.rejection_reason ? ` — ${perceptionCriticVerdict.rejection_reason}` : ''),
+        data: { notes: perceptionCriticVerdict.notes },
+      });
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -413,6 +499,9 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         visualTaste,
         emotionalAftertaste,
         campaignMemoryV2,
+        // Phase 7
+        perceptionCriticVerdict,
+        campaignIdentity,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -456,6 +545,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               emotionalAftertaste,
               campaignMemoryV2,
             },
+            perceptionV2: {
+              atmosphericLight,
+              typographyPsychology,
+              worldContinuity,
+              microHumanDetails,
+              invisibleStory,
+              humanInterruption,
+              campaignIdentity,
+              perceptionCritic: perceptionCriticVerdict,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -469,6 +568,21 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
 
         const memorySnapshot = await memoryStore.record(provisional);
         const banner: Banner = { ...partial, memorySnapshot };
+
+        // ─── Phase 7 — update object-emotion store from the scene ─
+        const detectedObjects = extractObjectsFromBrief(
+          brief.scene,
+          worldContinuity.artifacts.map((a) => a.description),
+        );
+        for (const objectId of detectedObjects) {
+          await objectEmotionStore.record(objectId, emotionalCore?.id ?? null);
+        }
+        if (detectedObjects.length > 0) {
+          emit({
+            stage: 'object-emotion-memory',
+            message: `${detectedObjects.length} objects updated: ${detectedObjects.slice(0, 4).join(', ')}`,
+          });
+        }
 
         emit({
           stage: 'human-memory',
