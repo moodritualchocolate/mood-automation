@@ -82,3 +82,16 @@ export * from './realityPressure';
 export * from './consequenceEngine';
 export * from './invisibleStakes';
 export * from './functionalCollapse';
+// Phase 14 — suppressed humanity
+export * from './emotionalAvoidance';
+export * from './modernNumbing';
+export * from './socialMasking';
+export * from './unfeltEmotion';
+// Phase 15 — longitudinal reality memory
+export { createTruthPersistenceStore, keyOfBanner as truthPersistenceKey } from './truthPersistence';
+export type { TruthPersistenceEntry, TruthPersistenceReport, TruthPersistenceStore } from './truthPersistence';
+export { createCulturalTimelineStore } from './culturalTimeline';
+export type { TimelineBucket as CulturalTimelineBucket, CulturalTimelinePhase, CulturalTimelineReport, CulturalTimelineStore } from './culturalTimeline';
+export * from './realityVerification';
+export * from './emotionalDecay';
+export * from './generationPressure';

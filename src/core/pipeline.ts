@@ -125,6 +125,18 @@ import {
   readConsequence,
   readInvisibleStakes,
   readFunctionalCollapse,
+  // Phase 14 — suppressed humanity
+  readEmotionalAvoidance,
+  readModernNumbing,
+  readSocialMasking,
+  readUnfeltEmotion,
+  // Phase 15 — longitudinal reality memory
+  createTruthPersistenceStore,
+  truthPersistenceKey,
+  createCulturalTimelineStore,
+  verifyReality,
+  readEmotionalDecay,
+  readGenerationPressure,
 } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -290,6 +302,38 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: visualTempo.needs_breath_next ? 'needs breath next' : 'tempo healthy',
     data: visualTempo.axes,
   });
+
+  // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
+  const truthPersistenceStore = createTruthPersistenceStore();
+  const culturalTimelineStore = createCulturalTimelineStore();
+  const culturalTimelineReport = await culturalTimelineStore.report();
+  if (culturalTimelineReport.buckets.length > 0) {
+    emit({
+      stage: 'cultural-timeline',
+      message: culturalTimelineReport.current_drift,
+      data: { phases: culturalTimelineReport.phases.length, buckets: culturalTimelineReport.buckets.length },
+    });
+  }
+  const recentLightBehaviors15 = emotionalTrail.slice(0, 6).map((t) => inferLightBehaviorFromTrail(t));
+  const recentLayouts15 = emotionalTrail.slice(0, 6).map((t) => t.facts?.layoutFamily ?? '').filter(Boolean) as string[];
+  const recentDominances15 = emotionalTrail.slice(0, 6).map((t) => t.facts?.typographyDominance ?? '').filter(Boolean) as string[];
+  const generationPressureReading = readGenerationPressure({
+    trail: emotionalTrail,
+    motifs,
+    recentAftertaste: priorAftertaste,
+    recentLightBehaviors: recentLightBehaviors15,
+    recentLayouts: recentLayouts15,
+    recentDominances: recentDominances15,
+  });
+  if (generationPressureReading.pressure_score >= 4 || generationPressureReading.force_disruption) {
+    emit({
+      stage: 'generation-pressure',
+      message: generationPressureReading.force_disruption
+        ? `FORCE DISRUPTION (${generationPressureReading.pressure_score.toFixed(1)}/10) — ${generationPressureReading.disruption_directives[0] ?? ''}`
+        : `pressure ${generationPressureReading.pressure_score.toFixed(1)}/10`,
+      data: generationPressureReading.axes,
+    });
+  }
 
   // ─── Phase 10 — unified cinematic brain (campaign-level signals)
   const unresolvedReport = analyzeUnresolvedEmotion({
@@ -848,6 +892,88 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         stage: 'functional-collapse',
         message: `${functionalCollapseReading.type} (functional ${functionalCollapseReading.functional_collapse_score.toFixed(1)}, accidentally-true ${functionalCollapseReading.accidentally_true_score.toFixed(1)}) — ${functionalCollapseReading.directorNote}`,
       });
+
+      // ─── Phase 14 — suppressed humanity ───────────────────────
+      const avoidanceReading = readEmotionalAvoidance({ state, truth, emotionalCore });
+      emit({
+        stage: 'emotional-avoidance',
+        message: avoidanceReading.pattern
+          ? `${avoidanceReading.pattern.id} — replacement: "${avoidanceReading.pattern.replacement_behavior}"` + (avoidanceReading.feeling_named_directly ? ' · WARNING: truth names feeling directly' : '')
+          : 'no avoidance pattern matched',
+      });
+      const numbingReading = readModernNumbing({ state, emotionalCore });
+      emit({
+        stage: 'modern-numbing',
+        message: numbingReading.pattern
+          ? `${numbingReading.pattern.id} — preventing "${numbingReading.pattern.what_it_prevents}"`
+          : 'no modern numbing detected',
+      });
+      const maskingReading = readSocialMasking({ truth, state, emotionalCore });
+      emit({
+        stage: 'social-masking',
+        message: maskingReading.is_mask_present
+          ? `surface ${maskingReading.surface_coherence_score.toFixed(1)} · fracture ${maskingReading.internal_fracture_score.toFixed(1)} · gap ${maskingReading.mask_gap.toFixed(1)}`
+          : 'no mask present — surface and internal aligned',
+      });
+      const unfeltReading = readUnfeltEmotion({ truth, emotionalCore });
+      emit({
+        stage: 'unfelt-emotion',
+        message: unfeltReading.reads_as_therapy_content
+          ? `WARNING therapy content — ${unfeltReading.therapy_signatures.join(', ')}`
+          : unfeltReading.viewer_realizes_before_character
+            ? 'viewer realises before the character — accidentally revealed'
+            : `character self-awareness ${unfeltReading.character_self_awareness.toFixed(1)}/10`,
+      });
+      // ───────────────────────────────────────────────────────────
+
+      // ─── Phase 15 — per-banner longitudinal reads ─────────────
+      const candidateTruthKey = (truth.tension?.trim().toLowerCase() || emotionalCore?.id || 'untracked');
+      const truthPersistenceReport = await truthPersistenceStore.report(candidateTruthKey);
+      emit({
+        stage: 'truth-persistence',
+        message: truthPersistenceReport.candidate_touches_persistent
+          ? `persistent truth (×${truthPersistenceReport.candidate_entry!.count}) · durability ${truthPersistenceReport.durability_score.toFixed(1)}/10`
+          : truthPersistenceReport.persistent.length > 0
+            ? `new truth — campaign has ${truthPersistenceReport.persistent.length} persistent truths so far`
+            : 'no persistent truths yet',
+      });
+
+      // Reality verification — read engagement for THIS banner if any
+      // signals have arrived. New banners have none; the persistence
+      // store contributes the historical signal.
+      const candidateEngagement = await engagementStore.get(bannerId);
+      const realityVerificationReading = verifyReality({
+        engagement: candidateEngagement,
+      });
+      if (realityVerificationReading.confirmation_strength > 0) {
+        emit({
+          stage: 'reality-verification',
+          message: realityVerificationReading.reality_confirmed
+            ? `reality confirmed (${realityVerificationReading.confirmation_strength.toFixed(1)}/10) — ${realityVerificationReading.recognition_signals[0] ?? ''}`
+            : `partial confirmation (${realityVerificationReading.confirmation_strength.toFixed(1)}/10)`,
+        });
+      }
+
+      const emotionalDecayReading = readEmotionalDecay({
+        persistenceEntry: truthPersistenceReport.candidate_entry,
+        truthAftertasteRecords: priorAftertaste
+          .filter((r) => {
+            const matched = emotionalTrail.find((e) => e.bannerId === r.bannerId);
+            if (!matched) return false;
+            const matchedKey = (matched.tension?.trim().toLowerCase() || candidateTruthKey);
+            return matchedKey === candidateTruthKey;
+          }),
+        culturalDrift: culturalDriftReading,
+        truthText: truth.truth,
+      });
+      emit({
+        stage: 'emotional-decay',
+        message: emotionalDecayReading.status === 'decorative'
+          ? `DECORATIVE${emotionalDecayReading.decorative_mode ? ` (${emotionalDecayReading.decorative_mode})` : ''} — truth has become aesthetic recognition`
+          : emotionalDecayReading.status === 'aging'
+            ? `aging (${emotionalDecayReading.decay_score.toFixed(1)}/10)`
+            : 'fresh',
+      });
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -947,6 +1073,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         consequenceReading,
         invisibleStakesReading,
         functionalCollapseReading,
+        // Phase 14
+        avoidanceReading,
+        numbingReading,
+        maskingReading,
+        unfeltReading,
+        // Phase 15
+        truthPersistenceReport,
+        realityVerificationReading,
+        emotionalDecayReading,
+        generationPressureReading,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -1042,6 +1178,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               invisibleStakes: invisibleStakesReading,
               functionalCollapse: functionalCollapseReading,
             },
+            suppression: {
+              avoidance: avoidanceReading,
+              numbing: numbingReading,
+              masking: maskingReading,
+              unfelt: unfeltReading,
+            },
+            longitudinal: {
+              truthPersistence: truthPersistenceReport,
+              culturalTimeline: culturalTimelineReport,
+              realityVerification: realityVerificationReading,
+              emotionalDecay: emotionalDecayReading,
+              generationPressure: generationPressureReading,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -1068,6 +1217,18 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           emit({
             stage: 'object-emotion-memory',
             message: `${detectedObjects.length} objects updated: ${detectedObjects.slice(0, 4).join(', ')}`,
+          });
+        }
+
+        // ─── Phase 15 — record into truth-persistence + cultural-
+        // timeline stores so the next campaign run sees this banner.
+        const engagementResidueAtShip = realityVerificationReading.confirmation_strength;
+        const persistenceUpdated = await truthPersistenceStore.record(banner, engagementResidueAtShip);
+        await culturalTimelineStore.record(banner);
+        if (persistenceUpdated.count >= 2) {
+          emit({
+            stage: 'truth-persistence',
+            message: `recorded — truth "${persistenceUpdated.display}" now at ×${persistenceUpdated.count}`,
           });
         }
 

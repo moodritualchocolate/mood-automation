@@ -68,6 +68,24 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+**Longitudinal reality memory** (`lib/*` Phase 15 modules) — the system stops evaluating campaigns inside the generation window and starts remembering what reality kept proving true over weeks/months. Persistence + timeline + verification + decay + recursion-pressure all keep the campaign honest.
+
+| Module | Role |
+|---|---|
+| `lib/truthPersistence.ts` | Persistent store at `data/memory/truth-persistence.json`. Keyed by tension phrase. Tracks count, first/last seen, sample truths, moving averages of aftertaste + engagement residue. Reports `durability_score` 0..10 — how true the truth has proven over its lifetime. |
+| `lib/culturalTimeline.ts` | Weekly buckets at `data/memory/cultural-timeline.json`. Groups consecutive weeks into named phases ("3-week phase — voice: silent-burnout · patterns: cannot-rest-without-guilt"). Reports `current_drift` — what the campaign has been quietly trending toward. |
+| `lib/realityVerification.ts` | Asks *"did real audience behaviour confirm this emotional truth?"* — reads engagement signals for save_rate / share_rate / replay_rate / emotional_comment_rate, and matches comment text patterns against `literally me / why is this so accurate / I thought I was the only one` (Hebrew + English). Recognition over engagement. |
+| `lib/emotionalDecay.ts` | Detects when a truth has become DECORATIVE. Decay sources: overuse (count ≥ 4 + declining aftertaste), aftertaste-trend (early avg vs late avg falling), cultural-consumed-treatment. Named decorative modes: `trendy-anxiety`, `aesthetic-burnout`, `cinematic-loneliness`, `overused-truth`, `consumed-treatment`. |
+| `lib/generationPressure.ts` | Tracks the recursion pressure across 5 axes: recursion (same layout repeating), aesthetic_recursion (same atmospheric light repeating), motif_over_convergence (same object motifs returning), symbolic_addiction (one motif dominates), over_clean_emotional_framing (aftertaste cluster too tight). When `force_disruption=true`, the meta-critic refuses banners that match the recursive pattern. |
+
+Phase 15 meta-critic gates:
+- **the spec's new headline gate**: emotional_decay status='decorative' → reject-concept at default mode and up (*"would this still feel psychologically true six months from now, or only creatively impressive today?"*)
+- generation_pressure force_disruption → reject-concept at default+ (campaign needs deliberate disruption)
+- reality_verification negative_rate ≥ 5% → reject-concept at brutal (audience has rejected this truth)
+- soft floors: persistent truth durability declining, decay status='aging', generation pressure 5+ without disruption, reality verification only partial
+
+Note: Phase 14 gates (suppressed humanity) are also now wired into the meta-critic in this commit — the "character knows what they feel" → reject at brutal, therapy-content vocabulary → reject at brutal, truth names feeling not substitute behaviour → reject at brutal. The soft-floor threshold was recalibrated for the deeper stack: lenient=8 · default=6 · brutal=4.
+
 **Cultural memory engine** (`lib/*` Phase 12 modules) — the system evolves from single-viewer recognition to collective recognition. The campaign stops being "about him" and starts being "about us".
 
 | Module | Role |

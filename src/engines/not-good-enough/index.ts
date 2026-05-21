@@ -73,6 +73,16 @@ import type { RealityPressureReading } from '@lib/realityPressure';
 import type { ConsequenceReading } from '@lib/consequenceEngine';
 import type { StakesReading } from '@lib/invisibleStakes';
 import type { FunctionalCollapseReading } from '@lib/functionalCollapse';
+// Phase 14 — suppressed humanity
+import type { AvoidanceReading } from '@lib/emotionalAvoidance';
+import type { NumbingReading } from '@lib/modernNumbing';
+import type { SocialMaskingReading } from '@lib/socialMasking';
+import type { UnfeltReading } from '@lib/unfeltEmotion';
+// Phase 15 — longitudinal reality memory
+import type { TruthPersistenceReport } from '@lib/truthPersistence';
+import type { RealityVerificationReading } from '@lib/realityVerification';
+import type { DecayReading } from '@lib/emotionalDecay';
+import type { GenerationPressureReading } from '@lib/generationPressure';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -135,6 +145,16 @@ export interface MetaInput {
   consequenceReading?: ConsequenceReading;
   invisibleStakesReading?: StakesReading;
   functionalCollapseReading?: FunctionalCollapseReading;
+  // Phase 14 — suppressed humanity.
+  avoidanceReading?: AvoidanceReading;
+  numbingReading?: NumbingReading;
+  maskingReading?: SocialMaskingReading;
+  unfeltReading?: UnfeltReading;
+  // Phase 15 — longitudinal reality memory.
+  truthPersistenceReport?: TruthPersistenceReport;
+  realityVerificationReading?: RealityVerificationReading;
+  emotionalDecayReading?: DecayReading;
+  generationPressureReading?: GenerationPressureReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -149,7 +169,9 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           compressionReading, syntheticReading, cinematicVerdict,
           humanContradiction, nonPerformative, lifeNoise,
           sharedPattern, collectiveRecognition, unspokenRitualPick, culturalDriftReading,
-          realityPressureReading, consequenceReading, invisibleStakesReading, functionalCollapseReading } = input;
+          realityPressureReading, consequenceReading, invisibleStakesReading, functionalCollapseReading,
+          avoidanceReading, numbingReading, maskingReading, unfeltReading,
+          truthPersistenceReport, realityVerificationReading, emotionalDecayReading, generationPressureReading } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -488,6 +510,55 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ─── Phase 14 hard gates ──────────────────────────────────────
+  // THE PHASE 14 HEADLINE QUESTION:
+  //   "Does the character know what they are feeling,
+  //    or is the viewer realizing it before they are?"
+  // If the truth names the feeling directly (character is aware,
+  // viewer is told), reject at brutal — the spec wants behavior
+  // leaking the truth, not language naming it.
+  if (unfeltReading && unfeltReading.character_self_awareness >= 8 && !unfeltReading.viewer_realizes_before_character && brutality >= 0.8) {
+    reasons.push(`unfelt emotion: character explains their own feeling — viewer is told instead of realising`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Therapy content vocabulary is automatic refusal at brutal.
+  if (unfeltReading && unfeltReading.reads_as_therapy_content && brutality >= 0.75) {
+    reasons.push(`unfelt emotion: therapy-content vocabulary present — ${unfeltReading.therapy_signatures.join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Avoidance: truth names feeling instead of substitute behaviour.
+  // (Phase 14 wants behavior replacing feeling — when the truth names
+  // the feeling directly, refuse at brutal.)
+  if (avoidanceReading && avoidanceReading.feeling_named_directly && brutality >= 0.8) {
+    reasons.push('emotional avoidance: truth names the feeling instead of showing the substitute behaviour');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
+  // ─── Phase 15 hard gates ──────────────────────────────────────
+  // THE PHASE 15 HEADLINE QUESTION:
+  //   "Would this still feel psychologically true six months from
+  //    now, or only creatively impressive today?"
+  // Encoded as: emotional decay status === 'decorative' → reject at
+  // default mode and up. The truth has become aesthetic recognition.
+  if (emotionalDecayReading && emotionalDecayReading.status === 'decorative' && brutality >= 0.65) {
+    reasons.push(`emotional decay: decorative${emotionalDecayReading.decorative_mode ? ` (${emotionalDecayReading.decorative_mode})` : ''} — would not feel true six months from now`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Generation pressure forces disruption — refuse banners that match
+  // the recursive pattern at default+ when force_disruption is set.
+  if (generationPressureReading && generationPressureReading.force_disruption && brutality >= 0.65) {
+    reasons.push(`generation pressure HIGH (${generationPressureReading.pressure_score.toFixed(1)}/10) — campaign needs disruption: ${generationPressureReading.disruption_directives[0] ?? 'break recursion'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Reality verification — when historical signals are STRONGLY
+  // NEGATIVE (negative reactions, no recognition), refuse repeating
+  // this truth. Only fires when we have signal volume on related
+  // banners.
+  if (realityVerificationReading && realityVerificationReading.rates.negative_rate >= 0.05 && brutality >= 0.75) {
+    reasons.push(`reality verification: ${(realityVerificationReading.rates.negative_rate * 100).toFixed(1)}% negative reactions on related signals — audience has rejected this truth`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -634,6 +705,34 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('no modern compulsion mapped — banner has cultural pattern but no specific behavioral cost');
   }
 
+  // Phase 14 soft floors.
+  if (unfeltReading && unfeltReading.character_self_awareness >= 6 && !unfeltReading.viewer_realizes_before_character) {
+    softReasons.push(`character self-awareness ${unfeltReading.character_self_awareness.toFixed(1)} — viewer is told, not realising`);
+  }
+  if (avoidanceReading && avoidanceReading.pattern && !avoidanceReading.behavior_replacing_feeling) {
+    softReasons.push(`avoidance "${avoidanceReading.pattern.id}" available but truth does not show the substitute behaviour`);
+  }
+  if (maskingReading && !maskingReading.is_mask_present && maskingReading.internal_fracture_score >= 6) {
+    softReasons.push(`social masking: internal fracture present but no visible mask — surface and internal are aligned`);
+  }
+  if (numbingReading && numbingReading.pattern && !numbingReading.is_numbing_active) {
+    softReasons.push(`numbing pattern weakly present — could be sharpened`);
+  }
+
+  // Phase 15 soft floors.
+  if (truthPersistenceReport && truthPersistenceReport.candidate_touches_persistent && truthPersistenceReport.durability_score < 5) {
+    softReasons.push(`truth has been said ${truthPersistenceReport.candidate_entry!.count}× but durability ${truthPersistenceReport.durability_score.toFixed(1)}/10 — weakening`);
+  }
+  if (emotionalDecayReading && emotionalDecayReading.status === 'aging') {
+    softReasons.push(`emotional decay aging (${emotionalDecayReading.decay_score.toFixed(1)}/10) — truth heading toward decorative`);
+  }
+  if (generationPressureReading && generationPressureReading.pressure_score >= 5 && !generationPressureReading.force_disruption) {
+    softReasons.push(`generation pressure ${generationPressureReading.pressure_score.toFixed(1)} — consider disrupting`);
+  }
+  if (realityVerificationReading && realityVerificationReading.confirmation_strength >= 3 && realityVerificationReading.confirmation_strength < 6) {
+    softReasons.push(`reality verification only partial (${realityVerificationReading.confirmation_strength.toFixed(1)}/10)`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -662,7 +761,13 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   lenient (0.50)   → 6 soft reasons required to reject
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 3 : brutality >= 0.6 ? 4 : 6;
+  // Soft-floor threshold scales with brutality AND with the depth of
+  // the cognition stack. After 15 phases of judgement, every banner
+  // produces 4-7 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 8 soft reasons required to reject
+  //   default (0.65)   → 6 soft reasons required
+  //   brutal  (0.90)   → 4 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 4 : brutality >= 0.6 ? 6 : 8;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

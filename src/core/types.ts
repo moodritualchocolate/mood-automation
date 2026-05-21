@@ -454,6 +454,21 @@ export interface BannerTasteSystem {
     invisibleStakes: import('@lib/invisibleStakes').StakesReading;
     functionalCollapse: import('@lib/functionalCollapse').FunctionalCollapseReading;
   };
+  // Phase 14 — suppressed humanity
+  suppression: {
+    avoidance: import('@lib/emotionalAvoidance').AvoidanceReading;
+    numbing: import('@lib/modernNumbing').NumbingReading;
+    masking: import('@lib/socialMasking').SocialMaskingReading;
+    unfelt: import('@lib/unfeltEmotion').UnfeltReading;
+  };
+  // Phase 15 — longitudinal reality memory
+  longitudinal: {
+    truthPersistence: import('@lib/truthPersistence').TruthPersistenceReport;
+    culturalTimeline: import('@lib/culturalTimeline').CulturalTimelineReport;
+    realityVerification: import('@lib/realityVerification').RealityVerificationReading;
+    emotionalDecay: import('@lib/emotionalDecay').DecayReading;
+    generationPressure: import('@lib/generationPressure').GenerationPressureReading;
+  };
 }
 
 export interface Banner {
