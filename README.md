@@ -52,6 +52,28 @@ human truth → emotional tension → campaign concept → composition
 | 10  | Memory V2              | Fatigue + rhythm intelligence: pacing history, silence/aggressive balance, overstimulation flag, campaign arc. |
 | 12  | Rejection              | Routes reject-image / reject-concept / reject-taste regens.       |
 
+**Temporal campaign cinema** (`lib/*` Phase 9 modules) — the system gains continuity across time. The campaign feels like moments from the same emotional film universe, not isolated banners.
+
+| Module | Role |
+|---|---|
+| `lib/campaignTimeline.ts` | 9 emotional notes (disorientation · denial · micro-collapse · ritual · quiet-control · aftermath · numbness · detachment · recovery). Tracks what has played, what is missing, and suggests the next note along the arc. |
+| `lib/emotionalSequence.ts` | **Hard rule made operational**: no two consecutive banners can solve the same emotion. Refuses banner N+1 when its closing reaction maps to the same note as banner N (at brutal mode). |
+| `lib/worldPersistence.ts` | Recurring environmental DNA — apartment kinds, lighting families, object scars, emotional temperature, average silence. Lighting fatigue detection: *warmth used too often becomes fake, darkness too often becomes aesthetic.* |
+| `lib/objectMemoryGraph.ts` | Objects accumulate meaning over time. coffee cup: first stimulation → later exhaustion → later avoidance → later loneliness. Reports emotional weight so the meta-critic refuses "this object has spoken too loudly". |
+| `lib/sceneContinuity.ts` | Cinematic memory — is this the same apartment? Has this lighting echoed before? Is this object now loaded? Is this plausibly the same human as before? Emits an invisible_context paragraph the image brief inherits. |
+| `lib/visualTempo.ts` | Pacing across the campaign — visual_loudness, emotional_density, typography_aggression, object_pressure, motion_implication, silence_weight. Sets `needs_breath_next` when the campaign is running hot. |
+| `lib/absenceIntelligence.ts` | Strategic omission — sometimes the strongest move is no copy / no product / no face / no CTA. Reports a curiosity_score from 0..10. |
+| `lib/emotionalContradiction.ts` | Detects two-truths-in-one banners (energized but lonely, productive but detached, calm but guilty, relieved but emotionally absent, etc.). Flags rhetorical "but" sentences as too literary. |
+
+Phase 9 meta-critic gates:
+- consecutive-emotion-repeat → reject-concept at brutal mode (the hard rule)
+- visual tempo would worsen → reject-concept at brutal mode
+- contradiction feels constructed → reject-taste at brutal mode
+- object spoken too loudly (emotional weight ≥ 9) → reject-taste at brutal mode
+- soft pressure: sequence redundant, sequence flat, tempo worsen, absence-curiosity high without absence applied
+
+Soft-floor threshold now scales with brutality (lenient=6 · default=4 · brutal=3) so the deeper cognition stack can still converge.
+
 **Visual composition intelligence** (`lib/*` Phase 8 modules) — the system gains spatial cognition. Composition is now emotional physics, not arranged elements.
 
 | Module | Role |

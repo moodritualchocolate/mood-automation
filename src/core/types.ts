@@ -415,6 +415,17 @@ export interface BannerTasteSystem {
     framing: import('@lib/humanFraming').FramingPlan;
     director: import('@lib/layoutDirector').DirectorVerdict;
   };
+  // Phase 9 — temporal campaign cinema
+  temporal: {
+    timeline: import('@lib/campaignTimeline').CampaignTimeline;
+    sequence: import('@lib/emotionalSequence').SequenceVerdict;
+    worldPersistence: import('@lib/worldPersistence').WorldPersistenceReport;
+    objectGraph: import('@lib/objectMemoryGraph').ObjectMemoryGraph;
+    sceneContinuity: import('@lib/sceneContinuity').SceneContinuityReport;
+    visualTempo: import('@lib/visualTempo').TempoReport;
+    absence: import('@lib/absenceIntelligence').AbsenceDecision;
+    contradiction: import('@lib/emotionalContradiction').ContradictionReading;
+  };
 }
 
 export interface Banner {

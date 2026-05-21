@@ -53,3 +53,12 @@ export type {
   CompositionArchetype as LayoutCompositionArchetype,
   DirectorInput as LayoutDirectorInput,
 } from './layoutDirector';
+// Phase 9 — temporal campaign cinema
+export * from './campaignTimeline';
+export * from './emotionalSequence';
+export * from './worldPersistence';
+export * from './objectMemoryGraph';
+export * from './sceneContinuity';
+export * from './visualTempo';
+export * from './absenceIntelligence';
+export * from './emotionalContradiction';

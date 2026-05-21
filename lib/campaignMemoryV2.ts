@@ -111,8 +111,13 @@ export function synthesiseCampaignMemoryV2(input: CampaignMemoryV2Input): Campai
   }
 
   // ─── atmosphere risk ─────────────────────────────────────────
+  // The rhythm-based check requires enough banners to be meaningful —
+  // a single-banner "imbalance" is just the cold-start, not the campaign
+  // drifting. Require >=4 banners before the rhythm signal can trip
+  // atmosphereAtRisk.
+  const rhythmTrip = trail.length >= 4 && rhythm.healthScore < 5 && rhythm.mostImbalanced !== null;
   const atmosphereAtRisk = emotionalFlatnessRisk || saturationScore >= 5 ||
-    (rhythm.healthScore < 5 && rhythm.mostImbalanced !== null) ||
+    rhythmTrip ||
     averageResidueFalling(aftertaste);
 
   // ─── director note ───────────────────────────────────────────

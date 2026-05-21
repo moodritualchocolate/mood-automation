@@ -49,6 +49,12 @@ import type { CompositionRhythmReport } from '@lib/compositionRhythm';
 import type { PresenceDecision } from '@lib/productPresence';
 import type { FramingPlan } from '@lib/humanFraming';
 import type { LayoutDirectorVerdict } from '@lib/index';
+// Phase 9 — temporal campaign cinema
+import type { SequenceVerdict } from '@lib/emotionalSequence';
+import type { AbsenceDecision } from '@lib/absenceIntelligence';
+import type { ContradictionReading } from '@lib/emotionalContradiction';
+import type { ObjectMemoryGraph } from '@lib/objectMemoryGraph';
+import type { RhythmAxis as TempoAxisName } from '@lib/campaignRhythm';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -87,6 +93,12 @@ export interface MetaInput {
   productPresence8?: PresenceDecision;
   framing8?: FramingPlan;
   directorVerdict?: LayoutDirectorVerdict;
+  // Phase 9 — temporal campaign cinema.
+  sequenceVerdict?: SequenceVerdict;
+  tempoWorsen?: { worsens: boolean; axis: TempoAxisName | string | null; reason: string | null };
+  absenceDecision?: AbsenceDecision;
+  contradictionReading?: ContradictionReading;
+  objectMemoryGraph?: ObjectMemoryGraph;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -95,7 +107,9 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           visualTaste, emotionalAftertaste, campaignMemoryV2,
           perceptionCriticVerdict, campaignIdentity,
           gravity, negativeSpace, compositionRhythm8,
-          productPresence8, framing8, directorVerdict } = input;
+          productPresence8, framing8, directorVerdict,
+          sequenceVerdict, tempoWorsen, absenceDecision,
+          contradictionReading, objectMemoryGraph } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -300,6 +314,38 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-taste';
   }
 
+  // ─── Phase 9 hard gates ───────────────────────────────────────
+  // The spec's HARD RULE: no two consecutive banners can solve the
+  // same emotion. Enforced as a hard gate at brutal+; at default it
+  // becomes soft pressure (below). When the state selector cannot
+  // honestly produce a different closing reaction we accept the
+  // repetition rather than exhaust the campaign.
+  if (sequenceVerdict && sequenceVerdict.redundant_with_previous && brutality >= 0.85) {
+    reasons.push(`emotional sequence: candidate "${sequenceVerdict.candidate_note}" repeats previous banner — campaign needs to evolve`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Tempo worsening — refuse at brutal mode only; soft pressure at
+  // default. The Creative Director's rhythm-rescue should already
+  // handle most cases before they reach here.
+  if (tempoWorsen && tempoWorsen.worsens && brutality >= 0.8) {
+    reasons.push(`visual tempo: ${tempoWorsen.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Contradiction feels constructed (over-literary, not observed) —
+  // refuse at brutal mode.
+  if (contradictionReading && contradictionReading.feels_constructed && brutality >= 0.75) {
+    reasons.push('emotional contradiction reads as rhetorical, not observed');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Object spoken too loudly — when the campaign's loudest object is
+  // already at emotional weight 9+ AND the candidate brief will use it
+  // again, refuse. (Object detection happens before this critic; we
+  // use the graph's loudest as a proxy.)
+  if (objectMemoryGraph && objectMemoryGraph.loudest && objectMemoryGraph.loudest.emotionalWeight >= 9 && brutality >= 0.75) {
+    reasons.push(`object "${objectMemoryGraph.loudest.objectId}" has spoken too loudly (${objectMemoryGraph.loudest.emotionalWeight.toFixed(1)}/10) — rest the motif`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -377,6 +423,25 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('hand-held product with low restraint — risk of "product-pasted"');
   }
 
+  // Phase 9 soft floors.
+  if (sequenceVerdict && sequenceVerdict.redundant_with_previous) {
+    // At brutal this is a hard gate; here it's soft pressure.
+    softReasons.push(`emotional sequence: repeats previous "${sequenceVerdict.candidate_note}" — campaign should evolve`);
+  }
+  if (sequenceVerdict && !sequenceVerdict.advances_arc && !sequenceVerdict.redundant_with_previous) {
+    softReasons.push(`emotional sequence flat — banner does not advance the arc; suggested: "${sequenceVerdict.suggested_alternative ?? '—'}"`);
+  }
+  if (tempoWorsen && tempoWorsen.worsens) {
+    softReasons.push(`visual tempo soft: ${tempoWorsen.reason}`);
+  }
+  if (contradictionReading && contradictionReading.depth >= 7 && !contradictionReading.feels_constructed) {
+    // POSITIVE — deepens the world. We do not push this to softReasons,
+    // but we DO mention it in the notes via the verdict's notes string.
+  }
+  if (absenceDecision && absenceDecision.curiosity_score >= 7 && !absenceDecision.drop_copy && !absenceDecision.drop_product) {
+    softReasons.push(`absence intelligence: curiosity ${absenceDecision.curiosity_score.toFixed(1)} — banner could remove copy/product to earn it`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -398,9 +463,17 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('campaign has overstimulated recently — this banner needs more silence');
   }
 
-  if (verdict === 'approve' && softReasons.length >= 2) {
-    // Two or more soft floors broken → reject. Decide what kind based
-    // on which floors broke first.
+  // Soft-floor threshold scales with brutality. As the cognition stack
+  // has grown (Phases 1-9) the system produces many soft signals on
+  // every banner. Requiring 2 to reject was honest at Phase 2; at
+  // Phase 9 it becomes unconvergeable. Threshold band:
+  //   lenient (0.50)   → 6 soft reasons required to reject
+  //   default (0.65)   → 4 soft reasons required
+  //   brutal  (0.90)   → 3 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 3 : brutality >= 0.6 ? 4 : 6;
+  if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
+    // Threshold broken → reject. Decide what kind based on which
+    // floors broke first.
     reasons.push(...softReasons);
     const tasteHeavy = tasteTotal > ceilingTaste;
     const psychHeavy = psychologyTotal < floorPsychology;

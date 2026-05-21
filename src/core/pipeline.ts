@@ -95,6 +95,16 @@ import {
   decideProductPresence,
   planHumanFraming,
   directLayout,
+  // Phase 9 — temporal campaign cinema
+  buildCampaignTimeline,
+  judgeSequence,
+  analyzeWorldPersistence,
+  buildObjectMemoryGraph,
+  analyzeSceneContinuity,
+  analyzeVisualTempo,
+  tempoWouldWorsen,
+  decideAbsence,
+  readEmotionalContradiction,
 } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -220,6 +230,45 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     stage: 'campaign-identity',
     message: campaignIdentity.directorNote,
     data: { recognisability: campaignIdentity.recognisability, motifs: campaignIdentity.objectMotifs.slice(0, 3) },
+  });
+
+  // ─── Phase 9 — campaign timeline + world DNA + object graph + tempo
+  const campaignTimeline = buildCampaignTimeline(emotionalTrail);
+  emit({ stage: 'campaign-timeline', message: campaignTimeline.directorRead });
+
+  // Build per-banner light history from the trail's facts (none persisted
+  // directly; we derive a stand-in by mapping the family to a typical
+  // light family using the same heuristics atmosphericLight uses).
+  const recentLightBehaviors = emotionalTrail.slice(0, 8).map((t) => ({
+    behavior: inferLightBehaviorFromTrail(t),
+    ts: t.createdAt,
+  }));
+  const worldPersistence = analyzeWorldPersistence({
+    trail: emotionalTrail,
+    recentLightBehaviors,
+    motifs,
+  });
+  emit({
+    stage: 'world-persistence',
+    message: worldPersistence.worldFeelsLivedIn
+      ? `world lived in: ${worldPersistence.dna_signature.objectScars.slice(0, 3).map((o) => o.objectId).join(', ')}`
+      : 'world still forming',
+    data: { evolve: worldPersistence.whatShouldEvolve, stay: worldPersistence.whatShouldStay },
+  });
+
+  const objectMemoryGraph = buildObjectMemoryGraph({ trail: emotionalTrail, motifs });
+  if (objectMemoryGraph.loudest) {
+    emit({
+      stage: 'object-memory-graph',
+      message: `loudest object: "${objectMemoryGraph.loudest.objectId}" (weight ${objectMemoryGraph.loudest.emotionalWeight.toFixed(1)})`,
+    });
+  }
+
+  const visualTempo = analyzeVisualTempo({ trail: emotionalTrail });
+  emit({
+    stage: 'visual-tempo',
+    message: visualTempo.needs_breath_next ? 'needs breath next' : 'tempo healthy',
+    data: visualTempo.axes,
   });
   emit({
     stage: 'campaign-memory-v2',
@@ -519,6 +568,73 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           rejections: directorVerdict.rejection_conditions,
         },
       });
+
+      // ─── Phase 9 — temporal cognition per candidate banner ─────
+      const candidateNote = inferCandidateNote(reaction.at_3s, state.family);
+      const sequenceVerdict = judgeSequence({
+        timeline: campaignTimeline,
+        candidate_note: candidateNote,
+      });
+      emit({
+        stage: 'emotional-sequence',
+        message: sequenceVerdict.redundant_with_previous
+          ? `REDUNDANT — candidate "${candidateNote}" repeats previous`
+          : sequenceVerdict.advances_arc
+            ? `advances arc → "${candidateNote}"`
+            : `flat — "${candidateNote}" does not advance the arc`,
+      });
+
+      const candidateApartmentKind = culturalMicroMoment?.state_id
+        ? APARTMENT_KIND_MAP[culturalMicroMoment.state_id] ?? null
+        : null;
+      const sceneContinuityReport = analyzeSceneContinuity({
+        trail: emotionalTrail,
+        worldDNA: worldPersistence.dna_signature,
+        objectGraph: objectMemoryGraph,
+        candidate: {
+          apartmentKind: candidateApartmentKind,
+          lightBehavior: atmosphericLight.behavior,
+          family: state.family,
+          objectIds: extractObjectsFromBrief(brief.scene, worldContinuity.artifacts.map((a) => a.description)),
+          isQuiet: direction.typographyDominance === 'whisper' || direction.typographyDominance === 'absent',
+        },
+        bannerIndex: emotionalTrail.length,
+      });
+      emit({
+        stage: 'scene-continuity',
+        message: sceneContinuityReport.invisible_context.slice(0, 120),
+      });
+
+      const tempoWorsen = tempoWouldWorsen(visualTempo, {
+        typographyDominance: direction.typographyDominance,
+        productRole: direction.productRole,
+        restraint: direction.restraint,
+      });
+      if (tempoWorsen.worsens) {
+        emit({ stage: 'visual-tempo', message: `would worsen ${tempoWorsen.axis} — ${tempoWorsen.reason}` });
+      }
+
+      const absenceDecision = decideAbsence({
+        emotionalCore,
+        microMoment: culturalMicroMoment,
+        tempo: visualTempo,
+        timeline: campaignTimeline,
+        bannerIndex: emotionalTrail.length,
+        jobId: jobDecision.job,
+      });
+      emit({
+        stage: 'absence-intelligence',
+        message: `curiosity ${absenceDecision.curiosity_score.toFixed(1)}/10 — ${absenceDecision.reasoning[0] ?? '—'}`,
+        data: { drop_copy: absenceDecision.drop_copy, drop_cta: absenceDecision.drop_cta, drop_product: absenceDecision.drop_product },
+      });
+
+      const contradictionReading = readEmotionalContradiction({ truth, emotionalCore });
+      emit({
+        stage: 'emotional-contradiction',
+        message: contradictionReading.the_contradiction
+          ? `"${contradictionReading.the_contradiction.name}" — depth ${contradictionReading.depth.toFixed(1)}/10`
+          : 'no named contradiction',
+      });
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -594,6 +710,12 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         productPresence8,
         framing8,
         directorVerdict,
+        // Phase 9
+        sequenceVerdict,
+        tempoWorsen,
+        absenceDecision,
+        contradictionReading,
+        objectMemoryGraph,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -654,6 +776,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               presence: productPresence8,
               framing: framing8,
               director: directorVerdict,
+            },
+            temporal: {
+              timeline: campaignTimeline,
+              sequence: sequenceVerdict,
+              worldPersistence,
+              objectGraph: objectMemoryGraph,
+              sceneContinuity: sceneContinuityReport,
+              visualTempo,
+              absence: absenceDecision,
+              contradiction: contradictionReading,
             },
           },
           attempts: attempt,
@@ -759,3 +891,70 @@ function dnaFromFacts(facts: { silence_ratio: number; documentary_weight: number
     realism_type: facts.realism_type,
   };
 }
+
+/** Phase 9 helper: derive a per-banner light behaviour from a trail
+ *  entry's family + closing reaction. Mirrors atmosphericLight's family
+ *  fallback so the worldPersistence reading stays honest across runs. */
+function inferLightBehaviorFromTrail(t: import('@lib/humanMemory').EmotionalTraceEntry): string {
+  switch (t.family) {
+    case 'fatigue':
+    case 'collapse':       return 'sunset-emotional-pause';
+    case 'overstimulation':return 'fluorescent-depletion';
+    case 'numbness':
+    case 'paralysis':      return 'overcast-flattening';
+    case 'pressure':       return 'late-office-warmth';
+    case 'fragmentation':  return 'monitor-cool-only';
+    case 'avoidance':      return 'cold-morning-detachment';
+    default:               return 'window-soft-warm';
+  }
+}
+
+/** Phase 9 helper: map closing reaction + family → an emotional note
+ *  for the current candidate banner. Mirrors campaignTimeline's
+ *  noteForEntry so the sequence engine and the timeline agree. */
+function inferCandidateNote(
+  at_3s: import('@lib/humanReaction').Reaction,
+  family: string,
+): import('@lib/campaignTimeline').EmotionalNote {
+  if (at_3s === 'rejection') return 'denial';
+  if (at_3s === 'indifference') return 'numbness';
+  if (at_3s === 'confusion') return 'disorientation';
+  if (at_3s === 'discomfort') return 'micro-collapse';
+  if (at_3s === 'intimacy' && (family === 'fatigue' || family === 'collapse')) return 'aftermath';
+  if (at_3s === 'intimacy') return 'recovery';
+  if (at_3s === 'validation') return 'quiet-control';
+  if (at_3s === 'recognition' && family === 'numbness') return 'detachment';
+  if (at_3s === 'recognition' && (family === 'fatigue' || family === 'collapse')) return 'ritual';
+  if (at_3s === 'recognition') return 'quiet-control';
+  if (at_3s === 'emotional tension' && family === 'pressure') return 'micro-collapse';
+  if (at_3s === 'emotional tension') return 'ritual';
+  if (at_3s === 'aspiration') return 'recovery';
+  if (at_3s === 'curiosity') return 'disorientation';
+  if (at_3s === 'interruption') return 'disorientation';
+  return 'ritual';
+}
+
+/** Phase 9: cultural micro-moment id → apartment kind (mirror of the
+ *  map in worldPersistence so scene-continuity stays consistent). */
+const APARTMENT_KIND_MAP: Record<string, string> = {
+  'fridge-open-at-night': 'apartment-kitchen-night',
+  'bed-scrolling': 'apartment-bedroom-night',
+  'saturday-stillness': 'apartment-living-room-day',
+  'late-kitchen-silence': 'apartment-kitchen-night',
+  'no-energy-for-people': 'apartment-entry',
+  'reserves-fatigue': 'apartment-kitchen-morning',
+  'parenting-overload': 'apartment-living-room-day',
+  'overstimulated-tabs': 'office-or-desk',
+  'office-fluorescent': 'office-floor',
+  'office-1647-brain-death': 'office-floor',
+  'startup-late-night': 'office-floor-night',
+  'train-ride-silence': 'transit-train',
+  'car-after-work': 'transit-car',
+  'post-meeting-emptiness': 'office-corridor',
+  'zoning-out': 'video-call-desk',
+  'staring-without-processing': 'desk',
+  'unread-whatsapp': 'apartment-table',
+  'avoiding-messages': 'apartment-surface',
+  'eating-without-hunger': 'apartment-kitchen-counter',
+  'coffee-machine-emptiness': 'office-kitchenette',
+};
