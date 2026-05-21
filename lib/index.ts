@@ -40,3 +40,16 @@ export * from './humanInterruption';
 export * from './objectEmotionMemory';
 export * from './campaignIdentity';
 export * from './perceptionCritic';
+// Phase 8 — visual composition intelligence
+export * from './visualGravity';
+export * from './negativeSpacePsychology';
+export { analyzeCompositionRhythm } from './compositionRhythm';
+export type { CompositionRhythmReport, RhythmInput as CompositionRhythmInput } from './compositionRhythm';
+export * from './productPresence';
+export * from './humanFraming';
+export { direct as directLayout } from './layoutDirector';
+export type {
+  DirectorVerdict as LayoutDirectorVerdict,
+  CompositionArchetype as LayoutCompositionArchetype,
+  DirectorInput as LayoutDirectorInput,
+} from './layoutDirector';

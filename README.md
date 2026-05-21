@@ -52,6 +52,24 @@ human truth → emotional tension → campaign concept → composition
 | 10  | Memory V2              | Fatigue + rhythm intelligence: pacing history, silence/aggressive balance, overstimulation flag, campaign arc. |
 | 12  | Rejection              | Routes reject-image / reject-concept / reject-taste regens.       |
 
+**Visual composition intelligence** (`lib/*` Phase 8 modules) — the system gains spatial cognition. Composition is now emotional physics, not arranged elements.
+
+| Module | Role |
+|---|---|
+| `lib/visualGravity.ts` | Where the eye lands first, second, third. Scores focal_dominance, tension_balance, dead_zones, accidental_crowding, competing_anchors, eye_escape_points. Hard rejects layouts where two anchors fight for the same eye. |
+| `lib/negativeSpacePsychology.ts` | Whitespace as emotion. ENERGY = compressed pressure (asymmetric, edges full); RELAX/FOCUS/SLEEP encoded for future formulas. Hard rejects centered-balanced layouts under ENERGY. |
+| `lib/compositionRhythm.ts` | Spatial-repetition tracker (separate from Phase 3 emotional rhythm). Detects repeated layout families, product positions, text anchors, and the "headline-top + product-bottom" template pattern. |
+| `lib/productPresence.ts` | Decides WHETHER the product belongs at all. Adds 4 new modes the spec named: `only-aftermath` (wrapper only) · `only-wrapper-corner` (edge of packaging) · `only-color-memory` (brand-color cameo) · `only-object-association` (the campaign's recurring scene object stands in). |
+| `lib/humanFraming.ts` | Imperfect cinematic framing. 8 named behaviours: accidental-crop-pressure · blocked-object · partial-face · shoulder-intrusion · off-balance-horizon · documentary-hesitation · handheld-asymmetry · near-missed-framing. Forbidden: perfect symmetry, clean influencer framing. |
+| `lib/layoutDirector.ts` | The senior art-director synthesizer. Reads every Phase 8 signal + Phase 1-7 outputs and outputs composition_archetype, typography_zone, emotional_crop_strategy, object_hierarchy, visual_silence_zones, framing_aggression, cta_permission_level, **plus the answer to "Would removing 40% improve this?"** When yes → meta-critic refuses. |
+
+Phase 8 meta-critic gates:
+- visual gravity rejection_reason → reject-concept at default mode and up
+- negative space reject_centered → reject-concept at default mode and up
+- composition rhythm would_repeat → reject-concept at brutal mode
+- director would_improve_with_subtraction → reject-concept at brutal mode (the spec's "would removing 40% improve this?")
+- director named conditions (looks-assembled, product-pasted, headline-behaving-like-template, composition-too-aware-of-itself, too-balanced-to-feel-human) → reject-taste at brutal mode
+
 **Human perception + world continuity** (`lib/*` Phase 7 modules) — the system stops generating images and starts capturing human conditions already happening. Every scene must imply a past and a next moment.
 
 | Module | Role |

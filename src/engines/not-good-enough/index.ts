@@ -42,6 +42,13 @@ import type { EmotionalAftertaste } from '@lib/emotionalAftertaste';
 import type { CampaignMemoryV2Report } from '@lib/campaignMemoryV2';
 import type { PerceptionVerdict } from '@lib/perceptionCritic';
 import type { CampaignIdentity } from '@lib/campaignIdentity';
+// Phase 8 — visual composition intelligence
+import type { GravityReading } from '@lib/visualGravity';
+import type { NegativeSpaceReading } from '@lib/negativeSpacePsychology';
+import type { CompositionRhythmReport } from '@lib/compositionRhythm';
+import type { PresenceDecision } from '@lib/productPresence';
+import type { FramingPlan } from '@lib/humanFraming';
+import type { LayoutDirectorVerdict } from '@lib/index';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -73,13 +80,22 @@ export interface MetaInput {
   // Phase 7 — perception + world continuity.
   perceptionCriticVerdict?: PerceptionVerdict;
   campaignIdentity?: CampaignIdentity;
+  // Phase 8 — visual composition intelligence.
+  gravity?: GravityReading;
+  negativeSpace?: NegativeSpaceReading;
+  compositionRhythm8?: CompositionRhythmReport;
+  productPresence8?: PresenceDecision;
+  framing8?: FramingPlan;
+  directorVerdict?: LayoutDirectorVerdict;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   const { ctx, scrollStop, taste, psychology, productPresence, reference, memory,
           judge, reaction, fatigue, antiAI, rhythmWorsen, job, direction,
           visualTaste, emotionalAftertaste, campaignMemoryV2,
-          perceptionCriticVerdict, campaignIdentity } = input;
+          perceptionCriticVerdict, campaignIdentity,
+          gravity, negativeSpace, compositionRhythm8,
+          productPresence8, framing8, directorVerdict } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -256,6 +272,34 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
 
   // (campaign identity soft warning added to softReasons below)
 
+  // ─── Phase 8 hard gates ───────────────────────────────────────
+  // Visual gravity — if the layout has competing anchors or no clear
+  // focal at all, the eye does not land anywhere on purpose.
+  if (gravity && gravity.rejection_reason && brutality >= 0.65) {
+    reasons.push(`visual gravity: ${gravity.rejection_reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Negative space — forbidden centered layouts under ENERGY/FOCUS.
+  if (negativeSpace && negativeSpace.reject_centered && brutality >= 0.65) {
+    reasons.push(`negative space: ${negativeSpace.rejection_reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Composition rhythm — repeated template-shape geometry.
+  if (compositionRhythm8 && compositionRhythm8.would_repeat && brutality >= 0.7) {
+    reasons.push(`composition rhythm: ${compositionRhythm8.repeated_pattern}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Layout director — the "would removing 40% improve this?" gate.
+  if (directorVerdict && directorVerdict.would_improve_with_subtraction && brutality >= 0.7) {
+    reasons.push(`director: would improve with subtraction — remove ${directorVerdict.subtraction_target ?? 'one visible element'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Layout director — named hard-reject conditions.
+  if (directorVerdict && directorVerdict.rejection_conditions.length > 0 && brutality >= 0.7) {
+    reasons.push(`director: ${directorVerdict.rejection_conditions.join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -316,6 +360,21 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (campaignIdentity && campaignIdentity.recognisability >= 5 && campaignIdentity.atmosphereContinuity < 4) {
     softReasons.push(`campaign identity at risk — atmosphere continuity ${campaignIdentity.atmosphereContinuity.toFixed(1)}`);
+  }
+
+  // Phase 8 soft floors.
+  if (gravity) {
+    if (gravity.composite < 5.5) softReasons.push(`visual gravity composite ${gravity.composite.toFixed(1)} below floor`);
+    if (gravity.dead_zones >= 6) softReasons.push(`dead zones ${gravity.dead_zones.toFixed(1)} — too much exhausted space`);
+  }
+  if (negativeSpace && negativeSpace.space_tension_score < 4) {
+    softReasons.push(`space tension ${negativeSpace.space_tension_score.toFixed(1)} below floor for ${negativeSpace.prescribed_behavior}`);
+  }
+  if (framing8 && framing8.behaviors.length <= 1 && direction && direction.restraint < 0.75) {
+    softReasons.push('framing has only one behavior — risk of "looks-assembled"');
+  }
+  if (productPresence8 && productPresence8.mode === 'hand-held' && direction && direction.restraint < 0.5) {
+    softReasons.push('hand-held product with low restraint — risk of "product-pasted"');
   }
 
   // Phase 4 soft floors — aftertaste + atmosphere.

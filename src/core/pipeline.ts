@@ -88,6 +88,13 @@ import {
   extractObjectsFromBrief,
   synthesiseCampaignIdentity,
   critiquePerception,
+  // Phase 8 — visual composition intelligence
+  analyzeVisualGravity,
+  analyzeNegativeSpace,
+  analyzeCompositionRhythm,
+  decideProductPresence,
+  planHumanFraming,
+  directLayout,
 } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -434,6 +441,84 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         message: `${perceptionCriticVerdict.verdict} — silent-recognition ${perceptionCriticVerdict.silent_emotional_recognition.toFixed(1)}/10` + (perceptionCriticVerdict.rejection_reason ? ` — ${perceptionCriticVerdict.rejection_reason}` : ''),
         data: { notes: perceptionCriticVerdict.notes },
       });
+
+      // ─── Phase 8 — visual composition intelligence ─────────────
+      const gravity = analyzeVisualGravity({ direction, composition, typography });
+      emit({
+        stage: 'visual-gravity',
+        message: `composite ${gravity.composite.toFixed(1)} · focal-dominance ${gravity.focal_dominance.toFixed(1)} · competing ${gravity.competing_anchors.toFixed(1)}` + (gravity.rejection_reason ? ` — ${gravity.rejection_reason}` : ''),
+      });
+
+      const negativeSpace = analyzeNegativeSpace({ formula: ctx.formula, direction, composition });
+      emit({
+        stage: 'negative-space',
+        message: `${negativeSpace.prescribed_behavior} · tension ${negativeSpace.space_tension_score.toFixed(1)}/10` + (negativeSpace.rejection_reason ? ` — ${negativeSpace.rejection_reason}` : ''),
+      });
+
+      const compositionRhythm8 = analyzeCompositionRhythm({
+        trail: emotionalTrail,
+        memory,
+        candidate: {
+          layoutFamily: direction.layoutFamily,
+          focalPoint: direction.focalPoint,
+          productRole: direction.productRole,
+          typographyDominance: direction.typographyDominance,
+          negativeSpaceBias: composition.negativeSpaceBias,
+        },
+      });
+      emit({
+        stage: 'composition-rhythm',
+        message: compositionRhythm8.would_repeat
+          ? `would repeat: ${compositionRhythm8.repeated_pattern} — suggested: ${compositionRhythm8.suggested_correction ?? '—'}`
+          : 'spatial rhythm healthy',
+      });
+
+      const productMotifs = await objectEmotionStore.list();
+      const rhythmSaysReduceProduct = !!rhythmReport.axes.find(
+        (a) => a.axis === 'product-vs-no-product' && a.bias > 0.4,
+      );
+      const productPresence8 = decideProductPresence({
+        emotionalCore,
+        job: jobDecision.job,
+        direction,
+        interruption: humanInterruption,
+        motifs: productMotifs,
+        rhythmSaysReduceProduct,
+        campaignBannerIndex: emotionalTrail.length,
+      });
+      emit({
+        stage: 'product-presence-v2',
+        message: `mode: ${productPresence8.mode} — ${productPresence8.reasoning}`,
+      });
+
+      const framing8 = planHumanFraming({
+        direction,
+        emotionalCore,
+        restraint: direction.restraint,
+        seed: stateSeed + attempt,
+      });
+      emit({
+        stage: 'human-framing',
+        message: `${framing8.camera_distance} · ${framing8.behaviors.join(', ')}`,
+      });
+
+      const directorVerdict = directLayout({
+        formula: ctx.formula,
+        direction, composition, emotionalCore,
+        gravity, negativeSpace, rhythm: compositionRhythm8,
+        presence: productPresence8, framing: framing8,
+        campaignIdentity, recentAftertaste: priorAftertaste,
+      });
+      emit({
+        stage: 'layout-director',
+        message: directorVerdict.director_note,
+        data: {
+          archetype: directorVerdict.composition_archetype,
+          would_subtract: directorVerdict.would_improve_with_subtraction,
+          subtract_target: directorVerdict.subtraction_target,
+          rejections: directorVerdict.rejection_conditions,
+        },
+      });
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -502,6 +587,13 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         // Phase 7
         perceptionCriticVerdict,
         campaignIdentity,
+        // Phase 8
+        gravity,
+        negativeSpace,
+        compositionRhythm8,
+        productPresence8,
+        framing8,
+        directorVerdict,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -554,6 +646,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               humanInterruption,
               campaignIdentity,
               perceptionCritic: perceptionCriticVerdict,
+            },
+            composition8: {
+              gravity,
+              negativeSpace,
+              rhythm: compositionRhythm8,
+              presence: productPresence8,
+              framing: framing8,
+              director: directorVerdict,
             },
           },
           attempts: attempt,

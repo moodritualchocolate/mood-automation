@@ -406,6 +406,15 @@ export interface BannerTasteSystem {
     campaignIdentity: import('@lib/campaignIdentity').CampaignIdentity;
     perceptionCritic: import('@lib/perceptionCritic').PerceptionVerdict;
   };
+  // Phase 8 — visual composition intelligence
+  composition8: {
+    gravity: import('@lib/visualGravity').GravityReading;
+    negativeSpace: import('@lib/negativeSpacePsychology').NegativeSpaceReading;
+    rhythm: import('@lib/compositionRhythm').CompositionRhythmReport;
+    presence: import('@lib/productPresence').PresenceDecision;
+    framing: import('@lib/humanFraming').FramingPlan;
+    director: import('@lib/layoutDirector').DirectorVerdict;
+  };
 }
 
 export interface Banner {
