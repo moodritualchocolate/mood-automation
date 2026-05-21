@@ -69,8 +69,17 @@ import {
   predictAftertaste,
   detectDrift,
   analyzeAtmosphere,
+  // Phase 5 — perceptual foundation
+  coresForState,
+  momentsForCore,
+  scoreVisualTaste,
+  planVisualBehavior,
+  predictEmotionalAftertaste,
+  synthesiseCampaignMemoryV2,
 } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
+import type { EmotionalCore } from '@lib/humanTruthEngine';
+import type { CulturalMicroMoment } from '@lib/culturalMemory';
 
 export interface RunOptions {
   onEvent?: (event: PipelineEvent) => void;
@@ -148,6 +157,7 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   const engagementStore = createEngagementStore();
   const aftertasteStore = createAftertasteStore();
   const allEngagements = await engagementStore.list();
+  const priorAftertaste = await aftertasteStore.read();
   // Join the engagement records with the emotional trace's banner facts
   // — those carry the typography dominance / layout / product role /
   // DNA fragments the drift detector needs.
@@ -170,6 +180,23 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       ? 'no drift yet — audience signal too thin'
       : `${driftReport.active.length} drift signals active; guard ${driftReport.diversityGuardEngaged ? 'ENGAGED' : 'idle'}`,
     data: driftReport,
+  });
+
+  // ─── Phase 5 — campaign memory v2 synthesised once per run ────
+  const campaignMemoryV2 = synthesiseCampaignMemoryV2({
+    trail: emotionalTrail,
+    aftertaste: priorAftertaste,
+    rhythm: rhythmReport,
+  });
+  emit({
+    stage: 'campaign-memory-v2',
+    message: campaignMemoryV2.directorNote,
+    data: {
+      coresCovered: campaignMemoryV2.coresCovered.slice(0, 3),
+      coresMissing: campaignMemoryV2.coresMissing.length,
+      saturation: campaignMemoryV2.saturationScore,
+      atmosphereAtRisk: campaignMemoryV2.atmosphereAtRisk,
+    },
   });
 
   while (attempt < maxAttempts) {
@@ -265,6 +292,64 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         });
       }
 
+      // ─── Phase 5 — perceptual layer ───────────────────────────
+      const cores = coresForState(state.id);
+      const emotionalCore: EmotionalCore | null = cores[0] ?? null;
+      const candidateMoments = emotionalCore ? momentsForCore(emotionalCore.id) : [];
+      const culturalMicroMoment: CulturalMicroMoment | null =
+        candidateMoments[(stateSeed + attempt) % Math.max(candidateMoments.length, 1)] ?? null;
+      emit({
+        stage: 'emotional-core',
+        message: emotionalCore ? `core: ${emotionalCore.id} — "${emotionalCore.silent_sentence}"` : 'no emotional core mapped',
+      });
+      if (culturalMicroMoment) {
+        emit({
+          stage: 'cultural-micro-moment',
+          message: `moment: ${culturalMicroMoment.state_id} — ${culturalMicroMoment.environment}`,
+        });
+      }
+
+      const imperfectionPlan = planVisualBehavior({
+        formula: ctx.formula,
+        plan: composition,
+        direction,
+        state,
+        emotionalCore,
+        seed: stateSeed + attempt,
+      });
+      emit({
+        stage: 'human-visual-behavior',
+        message: `${imperfectionPlan.behaviors.join(', ')} — ${imperfectionPlan.motivation}`,
+      });
+
+      const visualTaste = scoreVisualTaste({
+        direction, typography, bannerDNA: dna,
+        truth: { truth: truth.truth, tension: truth.tension },
+        timeAnchor: state.timeAnchor,
+        imageProvider: image.provider,
+        emotionalCore,
+        referenceCloseness: reference.closeness,
+        atmosphereConsistency: null, // computed alongside aftertaste below
+      });
+      emit({
+        stage: 'visual-taste',
+        message: `score ${visualTaste.score.toFixed(1)}/10 · AI prob ${(visualTaste.ai_detection_probability * 100).toFixed(0)}% · ${visualTaste.rejection_reason ?? 'cleared'}`,
+        data: { forbidden: visualTaste.forbiddenPatternsHit.map((p) => p.id) },
+      });
+
+      const emotionalAftertaste = predictEmotionalAftertaste({
+        bannerDNA: dna,
+        reactionAt3s: reaction.at_3s,
+        tensionPhrase: truth.tension,
+        truthText: truth.truth,
+        emotionalCore,
+      });
+      emit({
+        stage: 'emotional-aftertaste',
+        message: `composite ${emotionalAftertaste.composite.toFixed(1)} — ${emotionalAftertaste.post_view_emotional_state}`,
+      });
+      // ───────────────────────────────────────────────────────────
+
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
       // computed pre-verdict so the meta-critic can gate on them. ──
       const tentativeAftertaste = predictAftertaste({
@@ -324,6 +409,10 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         aftertastePrediction: tentativeAftertaste,
         atmosphere: tentativeAtmosphere,
         drift: driftReport,
+        // Phase 5
+        visualTaste,
+        emotionalAftertaste,
+        campaignMemoryV2,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -358,6 +447,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               aftertastePrediction,
               drift: driftReport,
               atmosphere,
+            },
+            perception: {
+              emotionalCore,
+              culturalMicroMoment,
+              visualTaste,
+              imperfection: imperfectionPlan,
+              emotionalAftertaste,
+              campaignMemoryV2,
             },
           },
           attempts: attempt,

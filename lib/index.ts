@@ -23,3 +23,10 @@ export * from './emotionalOutcome';
 export * from './aftertaste';
 export * from './tasteDrift';
 export * from './atmosphereConsistency';
+// Phase 5 — human truth foundation
+export * from './humanTruthEngine';
+export * from './culturalMemory';
+export * from './visualTaste';
+export * from './humanVisualBehavior';
+export * from './emotionalAftertaste';
+export * from './campaignMemoryV2';

@@ -386,6 +386,15 @@ export interface BannerTasteSystem {
     drift: import('@lib/tasteDrift').DriftReport;
     atmosphere: import('@lib/atmosphereConsistency').AtmosphereReport;
   };
+  // Phase 5 — perceptual foundation
+  perception: {
+    emotionalCore: import('@lib/humanTruthEngine').EmotionalCore | null;
+    culturalMicroMoment: import('@lib/culturalMemory').CulturalMicroMoment | null;
+    visualTaste: import('@lib/visualTaste').VisualTasteVerdict;
+    imperfection: import('@lib/humanVisualBehavior').ImperfectionPlan;
+    emotionalAftertaste: import('@lib/emotionalAftertaste').EmotionalAftertaste;
+    campaignMemoryV2: import('@lib/campaignMemoryV2').CampaignMemoryV2Report;
+  };
 }
 
 export interface Banner {

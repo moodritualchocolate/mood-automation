@@ -52,6 +52,24 @@ human truth → emotional tension → campaign concept → composition
 | 10  | Memory V2              | Fatigue + rhythm intelligence: pacing history, silence/aggressive balance, overstimulation flag, campaign arc. |
 | 12  | Rejection              | Routes reject-image / reject-concept / reject-taste regens.       |
 
+**Perceptual foundation** (`lib/*` Phase 5 modules) — the deepest layer beneath everything. Not creative automation. A creative cognition.
+
+| Module | Role |
+|---|---|
+| `lib/humanTruthEngine.ts` | 23 structured emotional cores (depletion · overstimulation · guilt · shame · avoidance · emotional-numbness · too-tired-to-rest · digital-fatigue · doomscrolling · social-performance-exhaustion · internal-contradiction · hyper-awareness · loneliness-in-public · decision-fatigue · inability-to-land · overstimulated-but-flat · silent-burnout · revenge-bedtime-procrastination · emotional-fragmentation · hidden-anxiety · invisible-pressure · functional-collapse · emotional-drift). Each carries 14 fields including silent_sentence, mental_loop, forbidden_tones, and the ENERGY state slugs it maps onto. |
+| `lib/culturalMemory.ts` | 20 cultural micro-moments — fridge-open-at-night, reserves-fatigue, office-1647-brain-death, saturday-stillness, etc. Each with environment, soundscape, body_language, lighting_behavior, object_meaning. Several are Israeli-specific. |
+| `lib/visualTaste.ts` | The 10-axis taste verdict from the spec: emotional_honesty, ai_detection_probability, restraint_score, silence_score, framing_realism, premium_authenticity, campaign_belonging, atmosphere_integrity, rejection_reason. |
+| `lib/humanVisualBehavior.ts` | Imperfection plan with 14 named behaviors. Choice is emotionally motivated per family — never random — and explicitly forbids influencer-aesthetic + fake-luxury when restraint is high. |
+| `lib/emotionalAftertaste.ts` | Decomposes residue into 8 named axes (remembered_contradiction, emotional_echo, atmosphere_persistence, identity_resonance, internal_recognition, emotional_stickiness, quiet_memorability, post_view_emotional_state). The new PRIMARY success metric. |
+| `lib/campaignMemoryV2.ts` | Synthesises everything the brain knows into one cognition: *"What has this campaign already emotionally said?"* Reports coresCovered, coresMissing, dominantClosingReaction, emotionalFlatnessRisk, tensionsAlreadySaid, atmosphereAtRisk, and a brand-director note. |
+| `data/forbidden-ai-patterns.ts` | The 17 named patterns from the spec (giant decorative timestamp · floating product PNG · centered symmetric layout · empty gradient · fake cinematic glow · fake lens flare · fake productivity scene · stock office smile · before/after cliché · giant typography unjustified · decorative clock · isolated packshot · empty buzzword · hyper-clean composition · template CTA placement · fake emotional intensity · fake luxury minimalism). Each is detected structurally. |
+
+Phase 5 meta-critic gates:
+- forbidden hard pattern hits → refuse at brutal mode
+- visual-taste rejection_reason → refuse at brutal mode
+- emotional aftertaste composite below floor → refuse at brutal mode
+- campaign atmosphere at risk AND this banner would repeat the dominant closing → refuse at default mode and up
+
 **Reality loop** (`lib/*` Phase 4 modules) — the system stops judging itself in isolation and starts learning from real-world signals. Aftertaste replaces engagement-spike as the primary success metric.
 
 | Module | Role |

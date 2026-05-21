@@ -37,6 +37,9 @@ import type { RhythmAxis } from '@lib/campaignRhythm';
 import type { AftertasteRecord } from '@lib/aftertaste';
 import type { AtmosphereReport } from '@lib/atmosphereConsistency';
 import type { DriftReport } from '@lib/tasteDrift';
+import type { VisualTasteVerdict } from '@lib/visualTaste';
+import type { EmotionalAftertaste } from '@lib/emotionalAftertaste';
+import type { CampaignMemoryV2Report } from '@lib/campaignMemoryV2';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -61,11 +64,16 @@ export interface MetaInput {
   aftertastePrediction?: AftertasteRecord;
   atmosphere?: AtmosphereReport;
   drift?: DriftReport;
+  // Phase 5 — perceptual foundation signals.
+  visualTaste?: VisualTasteVerdict;
+  emotionalAftertaste?: EmotionalAftertaste;
+  campaignMemoryV2?: CampaignMemoryV2Report;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   const { ctx, scrollStop, taste, psychology, productPresence, reference, memory,
-          judge, reaction, fatigue, antiAI, rhythmWorsen, job, direction } = input;
+          judge, reaction, fatigue, antiAI, rhythmWorsen, job, direction,
+          visualTaste, emotionalAftertaste, campaignMemoryV2 } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -185,6 +193,37 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ─── Phase 5 hard gates ───────────────────────────────────────
+  // Visual taste verdict — when the engine names a rejection reason,
+  // the meta-critic respects it. Hard at brutal, soft at default.
+  if (visualTaste && visualTaste.rejection_reason) {
+    if (brutality >= 0.75) {
+      reasons.push(`visual-taste: ${visualTaste.rejection_reason}`);
+      if (verdict === 'approve') verdict = 'reject-taste';
+    }
+  }
+  // Hard forbidden-AI patterns — automatic refusal at brutal.
+  if (visualTaste && visualTaste.forbiddenPatternsHit.some((p) => p.severity === 'hard') && brutality >= 0.7) {
+    const hard = visualTaste.forbiddenPatternsHit.filter((p) => p.severity === 'hard');
+    reasons.push(`forbidden-AI: ${hard.map((p) => p.name).join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Emotional aftertaste composite — the new primary success metric.
+  // Replaces engagement-spike with brand-residue.
+  if (emotionalAftertaste && emotionalAftertaste.composite < (4.0 + brutality * 1.5)) {
+    if (brutality >= 0.75) {
+      reasons.push(`emotional aftertaste ${emotionalAftertaste.composite.toFixed(1)} below floor — ${emotionalAftertaste.post_view_emotional_state}`);
+      if (verdict === 'approve') verdict = 'reject-concept';
+    }
+  }
+  // Campaign memory v2 — when the campaign is at risk of collapsing into
+  // one mood AND this banner would worsen it (same closing reaction as
+  // dominant), reject.
+  if (campaignMemoryV2 && campaignMemoryV2.atmosphereAtRisk && reaction && campaignMemoryV2.dominantClosingReaction === reaction.at_3s) {
+    reasons.push(`campaign atmosphere at risk — this banner would repeat the dominant "${reaction.at_3s}" closing`);
+    if (verdict === 'approve' && brutality >= 0.65) verdict = 'reject-concept';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -212,6 +251,26 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (antiAI && antiAI.driftSignatures.length >= 2) {
     softReasons.push(`campaign drifting toward AI patterns: ${antiAI.driftSignatures.join(', ')}`);
+  }
+
+  // Phase 5 soft floors — visual taste + emotional aftertaste.
+  if (visualTaste) {
+    if (visualTaste.score < 5.5) {
+      softReasons.push(`visual taste ${visualTaste.score.toFixed(1)} below floor`);
+    }
+    if (visualTaste.ai_detection_probability > 0.6) {
+      softReasons.push(`AI detection probability ${(visualTaste.ai_detection_probability * 100).toFixed(0)}%`);
+    }
+    const softHits = visualTaste.forbiddenPatternsHit.filter((p) => p.severity === 'soft');
+    if (softHits.length >= 2) {
+      softReasons.push(`forbidden-AI soft hits: ${softHits.map((p) => p.name).join(', ')}`);
+    }
+  }
+  if (emotionalAftertaste && emotionalAftertaste.composite < 5.5) {
+    softReasons.push(`emotional aftertaste ${emotionalAftertaste.composite.toFixed(1)} — ${emotionalAftertaste.post_view_emotional_state}`);
+  }
+  if (campaignMemoryV2 && campaignMemoryV2.saturationScore >= 5) {
+    softReasons.push(`campaign saturation ${campaignMemoryV2.saturationScore.toFixed(1)} — ${campaignMemoryV2.directorNote}`);
   }
 
   // Phase 4 soft floors — aftertaste + atmosphere.
