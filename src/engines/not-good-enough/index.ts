@@ -55,6 +55,10 @@ import type { AbsenceDecision } from '@lib/absenceIntelligence';
 import type { ContradictionReading } from '@lib/emotionalContradiction';
 import type { ObjectMemoryGraph } from '@lib/objectMemoryGraph';
 import type { RhythmAxis as TempoAxisName } from '@lib/campaignRhythm';
+// Phase 10 — unified cinematic brain
+import type { CompressionReading } from '@lib/emotionalCompression';
+import type { SyntheticReading } from '@lib/antiSyntheticBehavior';
+import type { CinematicVerdict } from '@lib/cinematicBrain';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -99,6 +103,10 @@ export interface MetaInput {
   absenceDecision?: AbsenceDecision;
   contradictionReading?: ContradictionReading;
   objectMemoryGraph?: ObjectMemoryGraph;
+  // Phase 10 — unified cinematic brain.
+  compressionReading?: CompressionReading;
+  syntheticReading?: SyntheticReading;
+  cinematicVerdict?: CinematicVerdict;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -109,7 +117,8 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           gravity, negativeSpace, compositionRhythm8,
           productPresence8, framing8, directorVerdict,
           sequenceVerdict, tempoWorsen, absenceDecision,
-          contradictionReading, objectMemoryGraph } = input;
+          contradictionReading, objectMemoryGraph,
+          compressionReading, syntheticReading, cinematicVerdict } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -346,6 +355,30 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-taste';
   }
 
+  // ─── Phase 10 hard gates ──────────────────────────────────────
+  // Cinematic brain refusal — the master mind says no.
+  if (cinematicVerdict && cinematicVerdict.refuses && brutality >= 0.7) {
+    reasons.push(`cinematic brain: ${cinematicVerdict.refusal_reason ?? '—'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The spec's new frontier metric — "would this stay inside someone
+  // for three seconds after they kept scrolling?" — hard gate at brutal.
+  if (cinematicVerdict && !cinematicVerdict.three_second_test.passes && brutality >= 0.85) {
+    reasons.push(`three-second test failed (${cinematicVerdict.three_second_test.score.toFixed(1)}/10) — ${cinematicVerdict.three_second_test.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Synthetic behaviour at brutal mode — designed-not-observed is
+  // automatically refused.
+  if (syntheticReading && syntheticReading.reads_as_designed && brutality >= 0.8) {
+    reasons.push(`anti-synthetic: reads as designed — ${syntheticReading.signatures.slice(0, 2).join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Literal storytelling — compression engine flagged it.
+  if (compressionReading && compressionReading.literal_storytelling && brutality >= 0.75) {
+    reasons.push('emotional compression: literal storytelling — banner is showing more than implying');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -440,6 +473,20 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (absenceDecision && absenceDecision.curiosity_score >= 7 && !absenceDecision.drop_copy && !absenceDecision.drop_product) {
     softReasons.push(`absence intelligence: curiosity ${absenceDecision.curiosity_score.toFixed(1)} — banner could remove copy/product to earn it`);
+  }
+
+  // Phase 10 soft floors.
+  if (cinematicVerdict && !cinematicVerdict.candidate_alignment.serves_thesis) {
+    softReasons.push(`cinematic brain: candidate does not serve thesis — ${cinematicVerdict.candidate_alignment.misalignment_reason ?? '—'}`);
+  }
+  if (cinematicVerdict && !cinematicVerdict.three_second_test.passes) {
+    softReasons.push(`three-second test soft: ${cinematicVerdict.three_second_test.reason}`);
+  }
+  if (compressionReading && compressionReading.score < 5) {
+    softReasons.push(`emotional compression ${compressionReading.score.toFixed(1)} below floor — too explicit`);
+  }
+  if (syntheticReading && syntheticReading.synthetic_score >= 5 && !syntheticReading.reads_as_designed) {
+    softReasons.push(`anti-synthetic soft: ${syntheticReading.signatures[0] ?? 'cleanliness'}`);
   }
 
   // Phase 4 soft floors — aftertaste + atmosphere.

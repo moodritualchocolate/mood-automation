@@ -105,6 +105,12 @@ import {
   tempoWouldWorsen,
   decideAbsence,
   readEmotionalContradiction,
+  // Phase 10 — unified cinematic brain
+  analyzeUnresolvedEmotion,
+  scoreEmotionalCompression,
+  analyzeSubconsciousRecognition,
+  detectSyntheticBehavior,
+  decideCinematicVerdict,
 } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -269,6 +275,31 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     stage: 'visual-tempo',
     message: visualTempo.needs_breath_next ? 'needs breath next' : 'tempo healthy',
     data: visualTempo.axes,
+  });
+
+  // ─── Phase 10 — unified cinematic brain (campaign-level signals)
+  const unresolvedReport = analyzeUnresolvedEmotion({
+    trail: emotionalTrail,
+    timeline: campaignTimeline,
+  });
+  emit({
+    stage: 'unresolved-emotion',
+    message: unresolvedReport.unfinished_sentence,
+    data: { signals: unresolvedReport.signals.length, most_active: unresolvedReport.most_active?.kind },
+  });
+
+  const subconsciousRecognition = analyzeSubconsciousRecognition({
+    trail: emotionalTrail,
+    worldDNA: worldPersistence.dna_signature,
+    objectGraph: objectMemoryGraph,
+    timeline: campaignTimeline,
+  });
+  emit({
+    stage: 'subconscious-recognition',
+    message: subconsciousRecognition.recognisable_without_logo
+      ? `recognisable without a logo — ${subconsciousRecognition.recognition_score.toFixed(1)}/10`
+      : `forming recognition — ${subconsciousRecognition.recognition_score.toFixed(1)}/10`,
+    data: { patterns: subconsciousRecognition.patterns.length, missing: subconsciousRecognition.missing_signatures },
   });
   emit({
     stage: 'campaign-memory-v2',
@@ -635,6 +666,55 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           ? `"${contradictionReading.the_contradiction.name}" — depth ${contradictionReading.depth.toFixed(1)}/10`
           : 'no named contradiction',
       });
+
+      // ─── Phase 10 — per-banner cinematic signals ──────────────
+      const compressionReading = scoreEmotionalCompression({
+        truth, direction, typography, emotionalCore,
+        worldContinuity,
+      });
+      emit({
+        stage: 'emotional-compression',
+        message: `score ${compressionReading.score.toFixed(1)}/10 · ratio ${compressionReading.compression_ratio.toFixed(2)} · implied ${compressionReading.implied_emotions.length} / shown ${compressionReading.shown_emotions.length}`,
+      });
+
+      const syntheticReading = detectSyntheticBehavior({
+        direction, composition, typography, dna,
+        framing: framing8, worldContinuity, gravity,
+        truthLength: truth.truth.length,
+      });
+      emit({
+        stage: 'anti-synthetic',
+        message: syntheticReading.reads_as_designed
+          ? `reads as designed — ${syntheticReading.signatures.join(', ')}`
+          : `observed (${syntheticReading.rewards.length} imperfection signals)`,
+        data: { score: syntheticReading.synthetic_score, signatures: syntheticReading.signatures },
+      });
+
+      const cinematicVerdict = decideCinematicVerdict({
+        trail: emotionalTrail,
+        timeline: campaignTimeline,
+        unresolved: unresolvedReport,
+        worldDNA: worldPersistence.dna_signature,
+        objectGraph: objectMemoryGraph,
+        campaignIdentity,
+        subconsciousRecognition,
+        tempo: visualTempo,
+        candidateAftertaste: emotionalAftertaste,
+        candidateContradiction: contradictionReading,
+        candidateCompression: compressionReading,
+        candidateSynthetic: syntheticReading,
+        candidateNote,
+      });
+      emit({
+        stage: 'cinematic-brain',
+        message: cinematicVerdict.director_voice,
+        data: {
+          thesis: cinematicVerdict.campaign_emotional_thesis,
+          trajectory: cinematicVerdict.emotional_trajectory,
+          three_second_pass: cinematicVerdict.three_second_test.passes,
+          aligned: cinematicVerdict.candidate_alignment.serves_thesis,
+        },
+      });
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -716,6 +796,10 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         absenceDecision,
         contradictionReading,
         objectMemoryGraph,
+        // Phase 10
+        compressionReading,
+        syntheticReading,
+        cinematicVerdict,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -786,6 +870,13 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               visualTempo,
               absence: absenceDecision,
               contradiction: contradictionReading,
+            },
+            cinematic: {
+              unresolved: unresolvedReport,
+              compression: compressionReading,
+              recognition: subconsciousRecognition,
+              synthetic: syntheticReading,
+              verdict: cinematicVerdict,
             },
           },
           attempts: attempt,

@@ -52,6 +52,23 @@ human truth → emotional tension → campaign concept → composition
 | 10  | Memory V2              | Fatigue + rhythm intelligence: pacing history, silence/aggressive balance, overstimulation flag, campaign arc. |
 | 12  | Rejection              | Routes reject-image / reject-concept / reject-taste regens.       |
 
+**Unified cinematic brain** (`lib/*` Phase 10 modules) — the cognition stops being distributed and becomes a single directorial mind. The system stops asking *"what should the next banner contain?"* and starts asking *"what emotional sentence is unfinished?"*
+
+| Module | Role |
+|---|---|
+| `lib/unresolvedEmotion.ts` | Tracks 6 unresolved signal kinds (unanswered tension, denied relief, incomplete ritual, interrupted comfort, unresolved silence, visual question) with pressure that decays over hours. Reports the single most-active unfinished sentence the next banner should continue. |
+| `lib/emotionalCompression.ts` | Scores implied-vs-shown emotion ratio. A short truth + 3 lived-in artifacts can imply 15+ emotions while showing 0. Rejects literal storytelling; rewards compressed density. |
+| `lib/subconsciousRecognition.ts` | Answers the spec's named question: *"Would someone recognize this world without the logo?"* — measures recurrence across 7 axes (emotional-geometry, silence-structure, lighting-memory, object-residue, emotional-pacing, framing-behavior, contradiction-pattern). |
+| `lib/antiSyntheticBehavior.ts` | Detects 8 synthetic signatures (composition-too-coherent, objects-too-intentional, arc-too-perfect, lighting-too-balanced, symbolism-too-obvious, designed-virality, polished-authenticity, over-curated-realism) and rewards observed-not-designed framing. |
+| `lib/cinematicBrain.ts` | **The master synthesis.** Reads every prior phase + the four Phase 10 modules and emits ONE directorial verdict: campaign_emotional_thesis (one sentence), emotional_trajectory (opening / escalating / quieting / drifting / resolving / re-opening / haunting), permissions (visual_restraint_floor, pacing, silence_permission, product_visibility_permission, typography_aggression_ceiling, emotional_temperature, world_decay_mode, memory_residue_strategy), candidate_alignment, **three_second_test** (would this stay inside someone 3 seconds after they scrolled past?), and the director's voice in one line. |
+
+Phase 10 meta-critic gates:
+- cinematic brain refuses → reject-concept at default mode and up
+- **three-second test failed → reject-concept at brutal mode** (the spec's new frontier metric)
+- anti-synthetic reads-as-designed → reject-taste at brutal mode
+- compression literal-storytelling → reject-taste at brutal mode
+- soft pressures: candidate does not serve thesis, three-second soft fail, compression < 5, synthetic ≥ 5
+
 **Temporal campaign cinema** (`lib/*` Phase 9 modules) — the system gains continuity across time. The campaign feels like moments from the same emotional film universe, not isolated banners.
 
 | Module | Role |

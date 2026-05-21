@@ -426,6 +426,14 @@ export interface BannerTasteSystem {
     absence: import('@lib/absenceIntelligence').AbsenceDecision;
     contradiction: import('@lib/emotionalContradiction').ContradictionReading;
   };
+  // Phase 10 — unified cinematic brain
+  cinematic: {
+    unresolved: import('@lib/unresolvedEmotion').UnresolvedReport;
+    compression: import('@lib/emotionalCompression').CompressionReading;
+    recognition: import('@lib/subconsciousRecognition').RecognitionReport;
+    synthetic: import('@lib/antiSyntheticBehavior').SyntheticReading;
+    verdict: import('@lib/cinematicBrain').CinematicVerdict;
+  };
 }
 
 export interface Banner {

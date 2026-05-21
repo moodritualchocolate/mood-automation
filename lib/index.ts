@@ -62,3 +62,9 @@ export * from './sceneContinuity';
 export * from './visualTempo';
 export * from './absenceIntelligence';
 export * from './emotionalContradiction';
+// Phase 10 — unified cinematic brain
+export * from './unresolvedEmotion';
+export * from './emotionalCompression';
+export * from './subconsciousRecognition';
+export * from './antiSyntheticBehavior';
+export * from './cinematicBrain';
