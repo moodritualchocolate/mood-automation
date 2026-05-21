@@ -440,6 +440,13 @@ export interface BannerTasteSystem {
     contradiction: import('@lib/humanContradiction').HumanContradictionReading;
     nonPerformative: import('@lib/nonPerformativeReality').PerformativeReading;
   };
+  // Phase 12 — cultural memory engine
+  culture: {
+    sharedPattern: import('@lib/sharedCulturalMemory').CulturalPattern | null;
+    collectiveRecognition: import('@lib/collectiveRecognition').CollectiveRecognitionReading;
+    unspokenRitual: import('@lib/unspokenRituals').RitualSelection;
+    drift: import('@lib/culturalDrift').DriftReading;
+  };
 }
 
 export interface Banner {

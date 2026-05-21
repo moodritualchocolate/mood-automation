@@ -115,6 +115,11 @@ import {
   planLifeNoise,
   readHumanContradiction,
   readNonPerformativeReality,
+  // Phase 12 — cultural memory engine
+  matchSharedCulturalPattern,
+  readCollectiveRecognition,
+  selectUnspokenRitual,
+  detectCulturalDrift,
 } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -754,6 +759,52 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             : `mild performance risk (${nonPerformative.performativeness_score.toFixed(1)}/10)`,
         data: { rewards: nonPerformative.rewards },
       });
+
+      // ─── Phase 12 — cultural memory engine ────────────────────
+      const sharedPatternMatch = matchSharedCulturalPattern({ state, emotionalCore });
+      emit({
+        stage: 'shared-cultural-pattern',
+        message: sharedPatternMatch.pattern
+          ? `pattern: "${sharedPatternMatch.pattern.named_tension}" (strength ${sharedPatternMatch.strength})`
+          : 'no shared cultural pattern matched',
+      });
+      const collectiveRecognition = readCollectiveRecognition({
+        truth, emotionalCore,
+        pattern: sharedPatternMatch.pattern,
+        pattern_strength: sharedPatternMatch.strength,
+      });
+      emit({
+        stage: 'collective-recognition',
+        message: collectiveRecognition.is_collective
+          ? `collective — recognition ${collectiveRecognition.recognition_score.toFixed(1)}/10`
+          : collectiveRecognition.is_individual_only
+            ? `reads as one specific person — ${collectiveRecognition.recognition_score.toFixed(1)}/10`
+            : `forming recognition (${collectiveRecognition.recognition_score.toFixed(1)}/10)`,
+      });
+      const unspokenRitualPick = selectUnspokenRitual({
+        state, emotionalCore,
+        pattern: sharedPatternMatch.pattern,
+        seed: stateSeed + attempt,
+      });
+      if (unspokenRitualPick.ritual) {
+        emit({
+          stage: 'unspoken-ritual',
+          message: `${unspokenRitualPick.ritual.id} — ${unspokenRitualPick.ritual.observable_action}`,
+        });
+      }
+      const culturalDriftReading = detectCulturalDrift({
+        direction,
+        emotionalCore,
+        pattern: sharedPatternMatch.pattern,
+        atmosphericLight,
+        truthText: truth.truth,
+      });
+      emit({
+        stage: 'cultural-drift',
+        message: culturalDriftReading.feels_culturally_consumed
+          ? `culturally consumed: ${culturalDriftReading.detected_cliches.join(', ')}`
+          : `no drift — saturation ${culturalDriftReading.saturation_score.toFixed(1)}/10`,
+      });
       // ───────────────────────────────────────────────────────────
 
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
@@ -843,6 +894,11 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         humanContradiction,
         nonPerformative,
         lifeNoise,
+        // Phase 12
+        sharedPattern: sharedPatternMatch.pattern,
+        collectiveRecognition,
+        unspokenRitualPick,
+        culturalDriftReading,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -925,6 +981,12 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               lifeNoise,
               contradiction: humanContradiction,
               nonPerformative,
+            },
+            culture: {
+              sharedPattern: sharedPatternMatch.pattern,
+              collectiveRecognition,
+              unspokenRitual: unspokenRitualPick,
+              drift: culturalDriftReading,
             },
           },
           attempts: attempt,

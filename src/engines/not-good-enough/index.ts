@@ -63,6 +63,11 @@ import type { CinematicVerdict } from '@lib/cinematicBrain';
 import type { HumanContradictionReading } from '@lib/humanContradiction';
 import type { PerformativeReading } from '@lib/nonPerformativeReality';
 import type { LifeNoisePlan } from '@lib/lifeNoise';
+// Phase 12 — cultural memory engine
+import type { CulturalPattern } from '@lib/sharedCulturalMemory';
+import type { CollectiveRecognitionReading } from '@lib/collectiveRecognition';
+import type { RitualSelection } from '@lib/unspokenRituals';
+import type { DriftReading as CulturalDriftReading } from '@lib/culturalDrift';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -115,6 +120,11 @@ export interface MetaInput {
   humanContradiction?: HumanContradictionReading;
   nonPerformative?: PerformativeReading;
   lifeNoise?: LifeNoisePlan;
+  // Phase 12 — cultural memory engine.
+  sharedPattern?: CulturalPattern | null;
+  collectiveRecognition?: CollectiveRecognitionReading;
+  unspokenRitualPick?: RitualSelection;
+  culturalDriftReading?: CulturalDriftReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -127,7 +137,8 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           sequenceVerdict, tempoWorsen, absenceDecision,
           contradictionReading, objectMemoryGraph,
           compressionReading, syntheticReading, cinematicVerdict,
-          humanContradiction, nonPerformative, lifeNoise } = input;
+          humanContradiction, nonPerformative, lifeNoise,
+          sharedPattern, collectiveRecognition, unspokenRitualPick, culturalDriftReading } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -410,6 +421,33 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-taste';
   }
 
+  // ─── Phase 12 hard gates ──────────────────────────────────────
+  // THE NEW HEADLINE QUESTION:
+  //   "Does this feel like culture quietly recognizing itself?"
+  // When no shared pattern matches AND the banner reads as individual-
+  // only, the campaign is "another ad about him", not "this is about us".
+  if (collectiveRecognition && collectiveRecognition.is_individual_only && !collectiveRecognition.pattern && brutality >= 0.7) {
+    reasons.push('collective recognition: reads as one specific person, not culture recognising itself');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Cultural drift — the treatment is already in mass circulation.
+  // Hard reject at brutal mode.
+  if (culturalDriftReading && culturalDriftReading.feels_culturally_consumed && brutality >= 0.75) {
+    reasons.push(`cultural drift: ${culturalDriftReading.detected_cliches.join(', ')} — treatment is already culturally consumed`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Collective recognition score floor — at brutal, banners that
+  // do not earn collective recognition refuse.
+  if (collectiveRecognition && collectiveRecognition.recognition_score < (3 + brutality * 3) && brutality >= 0.8) {
+    reasons.push(`collective recognition ${collectiveRecognition.recognition_score.toFixed(1)} below floor — would not produce "this is about us"`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Shared pattern present but truth phrased individually — soft refuse.
+  if (sharedPattern && collectiveRecognition && collectiveRecognition.inclusive_phrasing_score < 3 && brutality >= 0.8) {
+    reasons.push(`pattern "${sharedPattern.id}" is collective but truth phrased individually`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
   // Soft gates — accumulate, then decide.
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
@@ -529,6 +567,17 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   }
   if (lifeNoise && lifeNoise.mess_score < 4) {
     softReasons.push(`life noise low (${lifeNoise.mess_score.toFixed(1)}/10) — banner reads as too curated`);
+  }
+
+  // Phase 12 soft floors.
+  if (collectiveRecognition && collectiveRecognition.recognition_score < 5) {
+    softReasons.push(`collective recognition ${collectiveRecognition.recognition_score.toFixed(1)} — would not produce "this is about us"`);
+  }
+  if (culturalDriftReading && culturalDriftReading.saturation_score >= 3 && !culturalDriftReading.feels_culturally_consumed) {
+    softReasons.push(`cultural drift soft: ${culturalDriftReading.detected_cliches[0] ?? 'mild saturation'}`);
+  }
+  if (sharedPattern && unspokenRitualPick && !unspokenRitualPick.ritual) {
+    softReasons.push(`shared pattern matched but no unspoken ritual selected — banner missed the gesture`);
   }
 
   // Phase 4 soft floors — aftertaste + atmosphere.

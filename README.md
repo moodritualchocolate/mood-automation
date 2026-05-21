@@ -52,6 +52,22 @@ human truth → emotional tension → campaign concept → composition
 | 10  | Memory V2              | Fatigue + rhythm intelligence: pacing history, silence/aggressive balance, overstimulation flag, campaign arc. |
 | 12  | Rejection              | Routes reject-image / reject-concept / reject-taste regens.       |
 
+**Cultural memory engine** (`lib/*` Phase 12 modules) — the system evolves from single-viewer recognition to collective recognition. The campaign stops being "about him" and starts being "about us".
+
+| Module | Role |
+|---|---|
+| `lib/sharedCulturalMemory.ts` | 12 collective emotional patterns (a generation that cannot rest without guilt · people who open phones from anxiety · those who do not know if they are working or just unable to stop · achievement numbness · Sunday anxiety · post-notification emptiness · doomscroll dissociation · loneliness while connected · parent-of-young-children collapse · post-miluim re-entry · productivity-guilt-shabbat · overconnected-unreachable). Each pattern names the unspoken sentence + cultural symptoms + consumed treatments to avoid. |
+| `lib/collectiveRecognition.ts` | Scores **"would multiple strangers instantly feel: this is about us?"** Reads inclusive phrasing (`they`, `people who`, `a generation`) vs individual phrasing (`he`, `she`, `i feel`) and combines with shared-pattern match strength. |
+| `lib/unspokenRituals.ts` | 12 unconscious modern rituals (fridge-without-hunger · app-switching-without-intention · rechecking-notifications · laptop-reopen-after-shutdown · reels-while-exhausted · coffee-without-tasting · lying-in-bed-mentally-working · fake-productivity-loop · door-handle-pause · phone-down-then-up-again · reply-rehearsal · tab-graveyard). The camera should catch the subject MID-RITUAL — recognition is in the gesture. |
+| `lib/culturalDrift.ts` | Detects 8 culturally-consumed treatments (instagram-burnout-aesthetic · soft-sad-reels-loneliness · startup-core-fatigue-cliche · romanticised-exhaustion · detox-retreat-pitch · mom-burnout-self-care · hustle-vs-recovery-pitch · productivity-detox-motif). Different from Phase 4's audience taste drift — this catches the CAMPAIGN replaying language the culture already processed. |
+
+Phase 12 meta-critic gates:
+- collective recognition reads as individual-only (no shared pattern + individual phrasing) → reject-concept at default mode and up (**the spec's new headline gate: "does this feel like culture quietly recognizing itself?"**)
+- cultural drift feels culturally consumed → reject-taste at brutal mode
+- collective recognition score below floor → reject-concept at brutal mode
+- shared pattern matched but truth phrased individually → reject-taste at brutal mode
+- soft floors: collective recognition < 5, drift saturation ≥ 3, shared pattern matched but ritual not selected
+
 **Natural human chaos** (`lib/*` Phase 11 modules) — the danger at this depth is the system trying TOO hard to be meaningful. These three modules calibrate the cognition AWAY from over-intelligent artificial taste and toward observed-not-composed reality.
 
 | Module | Role |

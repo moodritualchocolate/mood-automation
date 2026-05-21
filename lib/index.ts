@@ -72,3 +72,8 @@ export * from './cinematicBrain';
 export * from './lifeNoise';
 export * from './humanContradiction';
 export * from './nonPerformativeReality';
+// Phase 12 — cultural memory engine
+export * from './sharedCulturalMemory';
+export * from './collectiveRecognition';
+export * from './unspokenRituals';
+export * from './culturalDrift';
