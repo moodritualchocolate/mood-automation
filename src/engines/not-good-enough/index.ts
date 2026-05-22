@@ -150,6 +150,11 @@ import type { CollectiveRealityTrackingReading } from '@lib/collectiveRealityTra
 import type { AdaptiveEmotionalIntelligenceReading } from '@lib/adaptiveEmotionalIntelligence';
 // Phases 20–25 — unified human cognition graph
 import type { UnifiedHumanGraphReading } from '@lib/unifiedHumanGraph';
+// Phase 26 — unified cognitive field (the nervous system)
+import type { CognitiveFieldState } from '@lib/cognitiveField';
+import type { EmotionalPhysicsReading } from '@lib/emotionalPhysics';
+import type { TensionTopologyReading } from '@lib/tensionTopology';
+import type { ContradictionResolverReading } from '@lib/cognitiveContradictionResolver';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -289,6 +294,11 @@ export interface MetaInput {
   adaptiveEmotionalIntelligenceReading?: AdaptiveEmotionalIntelligenceReading;
   // Phases 20–25 — unified human cognition graph.
   unifiedGraphReading?: UnifiedHumanGraphReading;
+  // Phase 26 — unified cognitive field (the nervous system).
+  cognitiveField?: CognitiveFieldState;
+  emotionalPhysicsReading?: EmotionalPhysicsReading;
+  tensionTopologyReading?: TensionTopologyReading;
+  contradictionResolution?: ContradictionResolverReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -327,7 +337,9 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           autonomousNarrativeReading, culturalSignalEvolutionReading,
           selfUpdatingPsychologyReading, emergentCampaignMemoryReading,
           collectiveRealityTrackingReading, adaptiveEmotionalIntelligenceReading,
-          unifiedGraphReading } = input;
+          unifiedGraphReading,
+          cognitiveField, emotionalPhysicsReading, tensionTopologyReading,
+          contradictionResolution } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -970,6 +982,34 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ PHASE 26 — UNIFIED COGNITIVE FIELD: THE MASTER GATE ══════
+  // THE MASTER META-CRITIC QUESTION:
+  //   "Did this output EMERGE from the world model, or was it merely
+  //    DECORATED by the intelligence modules?"
+  // If the cognitive field is confident but the banner barely
+  // connects to it, the banner was decorated — refuse it.
+  if (cognitiveField && cognitiveField.worldStateConfidence >= 6 &&
+      cognitiveField.emergence_score < 4 && brutality >= 0.7) {
+    reasons.push(`cognitive field: the banner was DECORATED by modules, not EMERGED from the world model (emergence ${cognitiveField.emergence_score}/10)`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // THE CRITICAL REJECTION RULE:
+  //   Reject if the final creative decision cannot be explained
+  //   through the cognitive field — i.e. it connects to no structural
+  //   dimension (truth / pressure / behavior / identity / ritual /
+  //   culture / campaign memory). "It looks good" is not a reason.
+  if (cognitiveField && cognitiveField.connected_dimensions.length === 0 && brutality >= 0.65) {
+    reasons.push('cognitive field: the creative decision connects to NO structural dimension — no truth, pressure, behavior, identity, ritual, culture, or memory. "It looks good" is not a reason.');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Aesthetic preference must NEVER override human truth. The
+  // contradiction resolver enforced the hierarchy; if aesthetics
+  // asserted harder than truth, the banner is refused at brutal.
+  if (contradictionResolution && contradictionResolution.aesthetic_tried_to_override_truth && brutality >= 0.8) {
+    reasons.push('contradiction resolver: aesthetic preference asserted harder than human truth — hierarchy violated');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -1333,6 +1373,27 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('unified human graph: the banner does not belong to the continuous human the campaign has been modelling');
   }
 
+  // Phase 26 soft floors — the unified cognitive field.
+  if (cognitiveField && cognitiveField.emergence_score < 6 &&
+      cognitiveField.worldStateConfidence >= 5) {
+    softReasons.push(`cognitive field: emergence is only ${cognitiveField.emergence_score}/10 — the banner leans on decoration more than on the world model`);
+  }
+  if (cognitiveField && cognitiveField.field_coherence < 5) {
+    softReasons.push('cognitive field: low coherence — the field is a loose set of categories, not a unified state');
+  }
+  if (emotionalPhysicsReading && !emotionalPhysicsReading.primary_chain &&
+      cognitiveField && cognitiveField.worldStateConfidence >= 6) {
+    softReasons.push('emotional physics: no causal chain active — the banner has emotional categories but no causality');
+  }
+  if (tensionTopologyReading && tensionTopologyReading.deepest_opportunity &&
+      !tensionTopologyReading.truth_inhabits_opportunity &&
+      tensionTopologyReading.opportunity_depth >= 7) {
+    softReasons.push(`tension topology: the deepest opportunity ("${tensionTopologyReading.deepest_opportunity.the_tension}") is available but the truth does not inhabit it`);
+  }
+  if (contradictionResolution && contradictionResolution.governing_voice === 'aesthetic-preference') {
+    softReasons.push('contradiction resolver: aesthetic preference is the governing voice — no human-truth / pressure / behavior assertion outranked it');
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -1362,12 +1423,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 25 phases of judgement every banner
-  // produces 13-20 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 18 soft reasons required to reject
-  //   default (0.65)   → 15 soft reasons required
-  //   brutal  (0.90)   → 12 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 12 : brutality >= 0.6 ? 15 : 18;
+  // the cognition stack. After 26 phases of judgement every banner
+  // produces 14-22 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 19 soft reasons required to reject
+  //   default (0.65)   → 16 soft reasons required
+  //   brutal  (0.90)   → 13 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 13 : brutality >= 0.6 ? 16 : 19;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

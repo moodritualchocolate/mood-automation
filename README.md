@@ -68,6 +68,30 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Phase 26 — Unified Cognitive Field (the nervous system)
+
+Until Phase 25 the system had many powerful intelligence layers, but they risked behaving like separate modules reporting in a line. Phase 26 adds **no new creative feature, no new output type, no new generator** — it builds the *nervous system* that makes every existing organ behave like one mind. The system stops running modules in a line and starts maintaining **a persistent psychological world-state**.
+
+The master principle: the engine no longer asks *"what does this module output?"* — it asks *"how does this change the human world model?"*
+
+| Module | Role |
+|---|---|
+| `lib/cognitiveField.ts` | The central shared state-space. Receives the signals every engine produced for a banner and unifies them into one `CognitiveFieldState` (dominant truths, unresolved tensions, active pressures, behavioral loops, masking patterns, desire forces, ritual attachments, identity narratives, cultural signals, emotional residue, future trajectories, symbolic objects, fatigue risks, truth persistence, decay signals, campaign atmosphere, world-state confidence). Computes `emergence_score` — *did the banner emerge from the field, or was it merely decorated by the modules?* |
+| `lib/worldStateSimulation.ts` | Maintains a persistent emotional reality over time. 10 evolving metrics (exhaustion, recovery capacity, ritual intensity, identity pressure, silence availability, attention fragmentation, cultural pressure, desire volatility, masking normalisation, behavioral adaptation). Every generation, every rejection, every reality signal nudges the weather. Not static. |
+| `lib/emotionalPhysics.ts` | Models causal CHAINS between emotional systems, not categories. e.g. *attention fragmentation → shallow recovery → cognitive residue → fake rest → masking fatigue → identity instability*. Detects which causal chain the field is sitting inside. |
+| `lib/tensionTopology.ts` | Maps unresolved tensions across the field (wanting rest / fearing stillness · wanting silence / filling it · seeking productivity / resenting productivity identity…) and locates the deepest campaign opportunity. |
+| `lib/causalMemoryGraph.ts` | Connects every memory node causally — cause → behavior → consequence → residue → adaptation → symbolic-object → future-drift — so the system can reason across time. |
+| `lib/selfEvolvingWorldModel.ts` | Lets the system evolve its model of modern life: strengthen persistent truths, weaken decayed truths, detect emerging pressures, retire dead clichés, identify new desire forces, and detect when the system is overfitting itself. |
+| `lib/symbolicObjects.ts` | Objects as psychological carriers, not props. 21 objects (phone, laptop, coffee, bed, fridge, charger, notification-bubble, unread-message, open-browser-tab…), each with emotional / cultural meanings, associated behaviors, pressures, ritual + identity links, and decay/overuse risk. |
+| `lib/lifeTrajectory.ts` | Understands where a human state is *moving* — unifies the Phase 24 predictions into one forward trajectory. The system generates from the trajectory, not the snapshot. |
+| `lib/cognitiveContradictionResolver.ts` | Resolves conflicting module outputs by a strict hierarchy: human truth → reality pressure → behavioral authenticity → cultural honesty → campaign atmosphere → product/commercial → aesthetic preference. **Aesthetic preference can never override human truth.** |
+| `lib/cognitionTrace.ts` | Makes the system explain its thinking — for every generation: primary human truth, dominant pressure, causal chain, chosen tension, rejected directions and why, product/typography/silence decisions, campaign-memory influence, world-state update, final creative reason, and an `explainability` score. |
+| `lib/worldStatePersistence.ts` | The single persistence layer (`data/memory/world-state.json`) for the world-state, the causal memory graph, cognition-trace snapshots, and field snapshots — long-term learning across sessions, not only the current one. |
+
+Phase 26 master meta-critic gate — **"Did this output emerge from the world model, or was it merely decorated by the intelligence modules?"** If `worldStateConfidence ≥ 6` and `emergence_score < 4` → reject-concept. The critical rejection rule: a creative decision that connects to **no** structural dimension (truth / pressure / behavior / identity / ritual / culture / campaign-memory) is refused — *"it looks good" is not a reason*. Aesthetic preference asserting harder than human truth → reject-taste at brutal. Soft-floor threshold for the 26-phase stack: **lenient=19 · default=16 · brutal=13**.
+
+Verified by `scripts/test-cognitive-field.ts` — an anti-fragmentation test (desire / pressure / behavior / identity / culture all feed one field; the cognition trace explains the banner; the resolver is governed by human-truth) and a soft-floor test (the pipeline runs with no prompt, no scene, no style, no product direction and still produces a coherent campaign decision from world-state context). 9/9 checks pass.
+
 ## Unified human desire + ritual intelligence architecture (Phases 20–25)
 
 The system stops being an ad engine, a banner generator, or a campaign optimizer and becomes **a living cognitive model of modern human behaviour, desire, pressure, identity, ritual, and emotional adaptation**. The campaign is no longer invented — it is *discovered*. Phases 20–25 are not isolated; they are one shared cognitive super-system bound by a single persistent longing graph.

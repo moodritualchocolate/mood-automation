@@ -208,7 +208,24 @@ import {
   readEmergentCampaignMemory,
   readCollectiveRealityTracking,
   readAdaptiveEmotionalIntelligence,
+  // Phase 26 — unified cognitive field (the nervous system)
+  createWorldStatePersistenceStore,
+  readSymbolicObjects,
+  buildCognitiveField,
+  readEmotionalPhysics,
+  mapTensionTopology,
+  projectLifeTrajectory,
+  resolveContradictions,
+  buildCognitionTrace,
+  evolveWorldModel,
+  evolveWorldStateFromBanner,
+  evolveWorldStateFromRejection,
+  evolveWorldStateFromSignals,
+  describeWorldState,
+  recordCausalChain,
 } from '@lib/index';
+import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
+import type { CausalChainLink } from '@lib/causalMemoryGraph';
 import { SEED_INGESTED_SIGNALS } from '@data/seed-ingested-signals';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -391,6 +408,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   // ─── Phases 20–25 — unified human desire memory (campaign-level) ─
   const humanDesireStore = createHumanDesireMemoryStore();
   const desireEntriesAtRunStart = await humanDesireStore.list();
+
+  // ─── Phase 26 — unified cognitive field: load the persistent
+  // world-state and causal graph the last run left behind. ─────────
+  const worldStateStore = createWorldStatePersistenceStore();
+  const worldStateBook = await worldStateStore.read();
+  let worldState = worldStateBook.worldState;
+  const causalGraph = worldStateBook.causalGraph;
+  emit({
+    stage: 'world-state',
+    message: `loaded — gen ${worldState.generationCount}, ${describeWorldState(worldState)}`,
+  });
+  // Reality signals also move the world-state weather.
+  worldState = evolveWorldStateFromSignals(worldState, ingestedSignals.length);
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
   const truthPersistenceStore = createTruthPersistenceStore();
@@ -1360,6 +1390,110 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       });
       // ───────────────────────────────────────────────────────────
 
+      // ═══ PHASE 26 — UNIFIED COGNITIVE FIELD ═══════════════════
+      // The nervous system. Every reading above is now unified into
+      // ONE living world-state. The system stops running modules in
+      // a line and starts maintaining a persistent psychological
+      // world. The meta-critic's central Phase 26 question:
+      //   "Did this output EMERGE from the world model, or was it
+      //    merely DECORATED by the intelligence modules?"
+      const symbolicObjectsReading = readSymbolicObjects({ truth, sceneText: brief.scene });
+      const cognitiveField = buildCognitiveField({
+        state, truth, emotionalCore,
+        culturalMicroMoment,
+        systemicCause: systemicCauseReading,
+        cognitiveResidue: cognitiveResidueReading,
+        behaviorLoop: behaviorLoopReading,
+        behavioralResidue: behavioralResidueReading,
+        socialMasking: socialMaskingEngineReading,
+        desire: desireArchitectureReading,
+        ritualFormation: ritualFormationReading,
+        attachmentLoops: attachmentLoopsReading,
+        internalNarrative: internalNarrativeReading,
+        selfStory: selfStoryReading,
+        forecast: emotionalForecastReading,
+        collectiveMovement: collectiveMovementReading,
+        truthPersistenceReport,
+        decay: emotionalDecayReading,
+        symbolicObjects: symbolicObjectsReading,
+        unifiedGraph: unifiedGraphReading,
+        worldState,
+      });
+      const emotionalPhysicsReading = readEmotionalPhysics({ field: cognitiveField });
+      const tensionTopologyReading = mapTensionTopology({ field: cognitiveField, truth });
+      const lifeTrajectoryReading = projectLifeTrajectory({
+        forecast: emotionalForecastReading,
+        behaviorPrediction: behaviorPredictionReading,
+        collapseProbability: collapseProbabilityReading,
+        recoveryAttempt: recoveryAttemptReading,
+        pressureTrajectory: pressureTrajectoryReading,
+        drift: emotionalDriftReading,
+      });
+      // Build the contradiction-resolver votes from the live cognition.
+      const contradictionVotes: ModuleVote[] = [
+        {
+          voice: 'human-truth',
+          position: emotionalCore ? `serve the core "${emotionalCore.id}"` : 'serve the observed truth',
+          strength: emotionalCore ? 9 : 6,
+        },
+        {
+          voice: 'reality-pressure',
+          position: systemicCauseReading.has_systemic_cause
+            ? `keep the systemic cause "${systemicCauseReading.matched_systems.primary!.id}" visible`
+            : 'no structural pressure to honour',
+          strength: systemicCauseReading.has_systemic_cause ? 8 : 2,
+        },
+        {
+          voice: 'behavioral-authenticity',
+          position: behaviorLoopReading.primary_loop
+            ? `keep the behaviour "${behaviorLoopReading.primary_loop.id}" observed, not performed`
+            : 'keep the body behaviour authentic',
+          strength: nonPerformative && nonPerformative.trying_to_simulate ? 8 : 5,
+        },
+        {
+          voice: 'cultural-honesty',
+          position: 'keep the register unguarded, not performative',
+          strength: privateLanguageReading.performative_signatures.length > 0 ? 8 : 4,
+        },
+        {
+          voice: 'campaign-atmosphere',
+          position: `stay continuous with: ${cognitiveField.campaignAtmosphere}`,
+          strength: unifiedGraphReading.human_coherence >= 6 ? 6 : 3,
+        },
+        {
+          voice: 'product-commercial',
+          position: `product role: ${direction.productRole}`,
+          strength: direction.productRole === 'hidden' || direction.productRole === 'environmental' ? 3 : 6,
+        },
+        {
+          voice: 'aesthetic-preference',
+          position: 'whatever reads as most visually striking',
+          strength: visualTaste.score >= 8 ? 6 : 4,
+        },
+      ];
+      const contradictionResolution = resolveContradictions({ votes: contradictionVotes });
+      emit({
+        stage: 'cognitive-field',
+        message: `unified — confidence ${cognitiveField.worldStateConfidence}/10 · coherence ${cognitiveField.field_coherence}/10 · emergence ${cognitiveField.emergence_score}/10 · governing voice "${contradictionResolution.governing_voice}"`,
+      });
+      if (emotionalPhysicsReading.primary_chain) {
+        emit({
+          stage: 'emotional-physics',
+          message: `${emotionalPhysicsReading.primary_chain.chain.join(' → ')} (clarity ${emotionalPhysicsReading.causal_clarity.toFixed(1)}/10)`,
+        });
+      }
+      if (tensionTopologyReading.deepest_opportunity) {
+        emit({
+          stage: 'tension-topology',
+          message: `deepest opportunity: "${tensionTopologyReading.deepest_opportunity.the_tension}" (depth ${tensionTopologyReading.opportunity_depth}/10)${tensionTopologyReading.truth_inhabits_opportunity ? ' — INHABITED' : ' — not inhabited'}`,
+        });
+      }
+      emit({
+        stage: 'life-trajectory',
+        message: lifeTrajectoryReading.trajectory_statement,
+      });
+      // ═══════════════════════════════════════════════════════════
+
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
       // computed pre-verdict so the meta-critic can gate on them. ──
       const tentativeAftertaste = predictAftertaste({
@@ -1534,6 +1668,11 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         adaptiveEmotionalIntelligenceReading,
         // Unified graph
         unifiedGraphReading,
+        // Phase 26 — unified cognitive field
+        cognitiveField,
+        emotionalPhysicsReading,
+        tensionTopologyReading,
+        contradictionResolution,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -1544,6 +1683,73 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         const aftertastePrediction = { ...tentativeAftertaste, shippedAt };
         await aftertasteStore.upsert(aftertastePrediction);
         const atmosphere = tentativeAtmosphere;
+
+        // ─── Phase 26 — the world model absorbs this banner ───────
+        // Record the banner's causal chain into the campaign-level
+        // causal memory graph, then evolve the persistent world-state.
+        const causalChainLinks: CausalChainLink[] = [];
+        if (systemicCauseReading.matched_systems.primary) {
+          causalChainLinks.push({ kind: 'cause', label: systemicCauseReading.matched_systems.primary.id });
+        }
+        if (behaviorLoopReading.primary_loop) {
+          causalChainLinks.push({ kind: 'behavior', label: behaviorLoopReading.primary_loop.id });
+        }
+        if (cognitiveResidueReading.detected[0]) {
+          causalChainLinks.push({ kind: 'residue', label: cognitiveResidueReading.detected[0].id });
+        }
+        if (socialMaskingEngineReading.primary) {
+          causalChainLinks.push({ kind: 'adaptation', label: socialMaskingEngineReading.primary.id });
+        }
+        if (symbolicObjectsReading.objects_present[0]) {
+          causalChainLinks.push({ kind: 'symbolic-object', label: symbolicObjectsReading.objects_present[0].object });
+        }
+        causalChainLinks.push({ kind: 'future-drift', label: emotionalForecastReading.direction });
+        recordCausalChain(causalGraph, causalChainLinks);
+
+        worldState = evolveWorldStateFromBanner(worldState, {
+          state,
+          attentionFragmentationScore: attentionFragmentationReading.attention_fragmentation_score,
+          recoveryFailing: recoveryFailureReading.rest_is_not_rest,
+          ritualIntensity: ritualCompensationReading.ritual_compulsion,
+          identityPressure: identityMaintenanceReading.identity_pressure,
+          maskingActive: socialMaskingEngineReading.primary !== null,
+          desireVolatile: desireArchitectureReading.uses_forbidden_framing,
+          culturalPressure: collectiveMovementReading.movement_confidence,
+        });
+
+        // Self-evolving world model — what the system should now
+        // strengthen, weaken, retire, or detect as emerging.
+        const worldModelEvolution = evolveWorldModel({
+          worldState, causalGraph,
+          desireEntries: desireEntriesAtRunStart,
+          truthPersistence: truthPersistenceReport,
+          decay: emotionalDecayReading,
+        });
+
+        // The cognition trace — the system explaining its thinking.
+        const cognitionTrace = buildCognitionTrace({
+          bannerId,
+          field: cognitiveField,
+          physics: emotionalPhysicsReading,
+          topology: tensionTopologyReading,
+          trajectory: lifeTrajectoryReading,
+          resolver: contradictionResolution,
+          rejectedAttempts,
+          productDecision: `productRole=${direction.productRole}`,
+          typographyDecision: `typographyDominance=${direction.typographyDominance}`,
+          silenceDecision: `restraint=${direction.restraint.toFixed(2)}`,
+          worldStateUpdate: describeWorldState(worldState),
+        });
+        emit({
+          stage: 'cognition-trace',
+          message: `explainability ${cognitionTrace.explainability}/10 — ${cognitionTrace.finalCreativeReason}`,
+        });
+        if (worldModelEvolution.evolution_pressure >= 5) {
+          emit({
+            stage: 'self-evolving-world-model',
+            message: `evolution pressure ${worldModelEvolution.evolution_pressure}/10 — ${worldModelEvolution.notes[0] ?? ''}`,
+          });
+        }
 
         const partial: Omit<Banner, 'memorySnapshot'> = {
           id: bannerId,
@@ -1720,6 +1926,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               adaptiveIntelligence: adaptiveEmotionalIntelligenceReading,
             },
             unifiedGraph: unifiedGraphReading,
+            cognition: {
+              field: cognitiveField,
+              physics: emotionalPhysicsReading,
+              tensionTopology: tensionTopologyReading,
+              lifeTrajectory: lifeTrajectoryReading,
+              contradictionResolution,
+              symbolicObjects: symbolicObjectsReading,
+              trace: cognitionTrace,
+              worldModelEvolution,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -1804,6 +2020,24 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           message: `longing graph updated — ${desireEntriesAtRunStart.length} prior entries · organism: ${adaptiveEmotionalIntelligenceReading.directive}`,
         });
 
+        // ─── Phase 26 — persist the unified cognitive field so the
+        // next run inherits the world the system has been building.
+        await worldStateStore.saveWorldState(worldState);
+        await worldStateStore.saveCausalGraph(causalGraph);
+        await worldStateStore.recordCognitionTrace(cognitionTrace);
+        await worldStateStore.recordFieldSnapshot({
+          bannerId,
+          ts: shippedAt,
+          worldStateConfidence: cognitiveField.worldStateConfidence,
+          field_coherence: cognitiveField.field_coherence,
+          emergence_score: cognitiveField.emergence_score,
+          campaignAtmosphere: cognitiveField.campaignAtmosphere,
+        });
+        emit({
+          stage: 'world-state',
+          message: `persisted — gen ${worldState.generationCount} · ${describeWorldState(worldState)}`,
+        });
+
         emit({
           stage: 'human-memory',
           message: `residue: ${traceEntry.residue}`,
@@ -1825,6 +2059,10 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         reason: finalVerdict.reasons.join('; '),
       });
       emit({ stage: 'rejection', message: `regenerating concept (${finalVerdict.verdict})`, data: { reasons: finalVerdict.reasons } });
+      // Phase 26 — a rejection is also an observation; the world-state
+      // absorbs it and the next run inherits the slightly raised bar.
+      worldState = evolveWorldStateFromRejection(worldState);
+      await worldStateStore.saveWorldState(worldState);
       stateSeed += 7919;
       forceStateId = undefined;
       memory = await memoryStore.read();

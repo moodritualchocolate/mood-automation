@@ -558,6 +558,17 @@ export interface BannerTasteSystem {
   };
   // Phases 20–25 — unified human cognition graph
   unifiedGraph: import('@lib/unifiedHumanGraph').UnifiedHumanGraphReading;
+  // Phase 26 — unified cognitive field (the nervous system)
+  cognition: {
+    field: import('@lib/cognitiveField').CognitiveFieldState;
+    physics: import('@lib/emotionalPhysics').EmotionalPhysicsReading;
+    tensionTopology: import('@lib/tensionTopology').TensionTopologyReading;
+    lifeTrajectory: import('@lib/lifeTrajectory').LifeTrajectoryReading;
+    contradictionResolution: import('@lib/cognitiveContradictionResolver').ContradictionResolverReading;
+    symbolicObjects: import('@lib/symbolicObjects').SymbolicObjectsReading;
+    trace: import('@lib/cognitionTrace').CognitionTrace;
+    worldModelEvolution: import('@lib/selfEvolvingWorldModel').WorldModelEvolution;
+  };
 }
 
 export interface Banner {

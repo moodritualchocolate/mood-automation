@@ -167,3 +167,15 @@ export * from './selfUpdatingPsychology';
 export * from './emergentCampaignMemory';
 export * from './collectiveRealityTracking';
 export * from './adaptiveEmotionalIntelligence';
+// Phase 26 — unified cognitive field (the nervous system)
+export * from './symbolicObjects';
+export * from './worldStateSimulation';
+export * from './causalMemoryGraph';
+export * from './cognitiveField';
+export * from './emotionalPhysics';
+export * from './tensionTopology';
+export * from './lifeTrajectory';
+export * from './cognitiveContradictionResolver';
+export * from './cognitionTrace';
+export * from './selfEvolvingWorldModel';
+export * from './worldStatePersistence';
