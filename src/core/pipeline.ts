@@ -272,6 +272,33 @@ import {
   updateInternalReputation,
   runExecutiveConsensus,
   readAutonomousStrategicConsciousness,
+  // Wave 6 — cognitive civilization infrastructure (Phases 56–70)
+  createCivilizationArchiveStore,
+  readInstitutionalMemory,
+  recordInstitutionalMemory,
+  readCulturalDrift,
+  recordCulturalTendency,
+  readBeliefPersistence,
+  reinforceBelief,
+  decayUnheldBeliefs,
+  readStrategicMythology,
+  considerMyth,
+  readReputationEconomy,
+  settleReputationEconomy,
+  readTrustAuthority,
+  readIdeologicalMutation,
+  readScarMemory,
+  recordScar,
+  healOldScars,
+  readDecisionArchive,
+  archiveDecision,
+  readCognitiveLaws,
+  considerLawFromHistory,
+  readExecutiveEthics,
+  readInternalPoliticalDynamics,
+  planAutonomousLongTerm,
+  readCivilizationStability,
+  readEmergentIdentityContinuity,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -536,6 +563,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   // ─── Wave 5 — load the council's persistent reputation book ───
   const councilReputationStore = createCouncilReputationStore();
   const councilReputationBook = await councilReputationStore.read();
+
+  // ─── Wave 6 — load the cognitive civilization's archive ───────
+  const civilizationStore = createCivilizationArchiveStore();
+  const civilization = await civilizationStore.read();
+  emit({
+    stage: 'civilization',
+    message: civilization.generation === 0
+      ? 'the cognitive civilization is being founded — generation 0'
+      : `the cognitive civilization is ${civilization.generation} generations old · ${civilization.beliefs.length} belief(s) · ${civilization.laws.length} law(s) · ${civilization.scars.filter((s) => !s.healed).length} active scar(s)`,
+  });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
   const truthPersistenceStore = createTruthPersistenceStore();
@@ -1980,6 +2017,65 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       });
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 6 — COGNITIVE CIVILIZATION (Phases 56–70) ════════
+      // Wave 5 created disagreement; Wave 6 reads it against HISTORY.
+      // The civilization's institutional memory, beliefs, myths,
+      // scars, laws, ethics, and stability all weigh on the decision.
+      const civCandidateDescriptor = `${state.family} ${truth.truth.slice(0, 90)}`;
+      // The governing priority — the highest-conviction council voice.
+      const decisiveOpinion = [...councilSession.opinions].sort((a, b) => b.conviction - a.conviction)[0];
+      const civGoverningPriority = decisiveOpinion?.priority_defended ?? 'unsettled';
+
+      const civInstitutionalMemory = readInstitutionalMemory(civilization);
+      const civCulturalDrift = readCulturalDrift(civilization);
+      const civBeliefs = readBeliefPersistence(civilization);
+      const civMythology = readStrategicMythology(civilization);
+      const civReputationEconomy = readReputationEconomy(civilization);
+      const civTrustAuthority = readTrustAuthority(civilization);
+      const civIdeologicalMutation = readIdeologicalMutation(civilization);
+      const civScars = readScarMemory({ state: civilization, candidateDescriptor: civCandidateDescriptor });
+      const civDecisionArchive = readDecisionArchive({ state: civilization, currentVerdict: strategicConsciousness.verdict });
+      const civLaws = readCognitiveLaws({ state: civilization, candidateDescriptor: civCandidateDescriptor });
+      const civEthics = readExecutiveEthics({
+        state: civilization,
+        manufacturesInadequacy: aspirationalGapReading.uses_marketing_vocab,
+        exploitsExhaustion: ritualCompensationReading.romanticisation_detected,
+        usesFalseUrgency: strategicPriorityReading.urgency_kind === 'false-urgency',
+        aestheticisesSuffering: nonPerformative ? nonPerformative.trying_to_simulate : false,
+        performsCare: fakeRecoveryReading.performs_rest,
+      });
+      const civPolitics = readInternalPoliticalDynamics({ opinions: councilSession.opinions });
+      const civStability = readCivilizationStability({
+        state: civilization, drift: civCulturalDrift,
+        mutation: civIdeologicalMutation, authority: civTrustAuthority,
+      });
+      const civLongTermPlan = planAutonomousLongTerm({
+        state: civilization, drift: civCulturalDrift, scars: civScars,
+      });
+      const civIdentityHeld =
+        !antiOptimizationReading.optimization_corrupts_truth &&
+        identityGovernanceReading.exhausted_human_would_trust;
+      const civIdentityContinuity = readEmergentIdentityContinuity({
+        state: civilization,
+        institutional: civInstitutionalMemory,
+        beliefs: civBeliefs,
+        stability: civStability,
+        laws: civLaws,
+        scars: civScars,
+        identityHeld: civIdentityHeld,
+      });
+      emit({
+        stage: 'civilization',
+        message: `${civStability.condition} (${civStability.stability}/10) · identity continuity ${civIdentityContinuity.identity_continuity}/10 · ${civIdentityContinuity.historical_explanation}`,
+      });
+      if (civLaws.violates_a_law) {
+        emit({ stage: 'cognitive-law', message: `the candidate violates a standing law — "${civLaws.violated_law!.law}"` });
+      }
+      if (civScars.touches_a_scar) {
+        emit({ stage: 'psychological-scar', message: `the candidate reopens an unhealed scar — "${civScars.reopened_scar!.wound}"` });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -2148,6 +2244,13 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         councilConflict,
         executiveConsensus,
         strategicConsciousness,
+        // Wave 6 — cognitive civilization infrastructure
+        civLaws,
+        civScars,
+        civEthics,
+        civStability,
+        civIdeologicalMutation,
+        civIdentityContinuity,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -2547,6 +2650,23 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               consensus: executiveConsensus,
               consciousness: strategicConsciousness,
             },
+            civilization: {
+              institutionalMemory: civInstitutionalMemory,
+              culturalDrift: civCulturalDrift,
+              beliefs: civBeliefs,
+              mythology: civMythology,
+              reputationEconomy: civReputationEconomy,
+              trustAuthority: civTrustAuthority,
+              ideologicalMutation: civIdeologicalMutation,
+              scars: civScars,
+              decisionArchive: civDecisionArchive,
+              laws: civLaws,
+              ethics: civEthics,
+              politics: civPolitics,
+              longTermPlan: civLongTermPlan,
+              stability: civStability,
+              identityContinuity: civIdentityContinuity,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -2665,6 +2785,46 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         emit({
           stage: 'cognitive-council',
           message: `internal reputation updated — ${reputationUpdate.rose.length} entities rose, ${reputationUpdate.fell.length} fell`,
+        });
+
+        // ─── Wave 6 — the civilization lives one more generation:
+        // institutional memory, beliefs, myths, scars, laws, and the
+        // decision archive all absorb this run, then persist.
+        civilization.generation += 1;
+        recordInstitutionalMemory(civilization, {
+          verdict: strategicConsciousness.verdict,
+          governingPriority: civGoverningPriority,
+          consensusQuality: executiveConsensus.consensus_quality,
+          debateTension: internalDebate.debate_tension,
+          emergedFromTension: strategicConsciousness.emerged_from_genuine_tension,
+        });
+        recordCulturalTendency(civilization, civGoverningPriority);
+        settleReputationEconomy(civilization, councilSession.opinions, true);
+        archiveDecision(civilization, {
+          verdict: strategicConsciousness.verdict,
+          dominantTruth: cognitiveField.dominantTruths[0] ?? state.id,
+          reason: strategicConsciousness.conscious_statement.slice(0, 140),
+          optimizationWon: antiOptimizationReading.optimization_corrupts_truth,
+        });
+        if (civIdentityHeld) {
+          reinforceBelief(civilization,
+            `governance by "${civGoverningPriority}" produces a banner the campaign can trust`);
+        } else {
+          recordScar(civilization, `${state.family} optimization drift`, 6);
+        }
+        considerMyth(civilization, {
+          verdict: strategicConsciousness.verdict,
+          consciousness: strategicConsciousness.consciousness_score,
+          emergedFromTension: strategicConsciousness.emerged_from_genuine_tension,
+          statement: truth.truth.slice(0, 90),
+        });
+        healOldScars(civilization);
+        considerLawFromHistory(civilization);
+        decayUnheldBeliefs(civilization);
+        await civilizationStore.save(civilization);
+        emit({
+          stage: 'civilization',
+          message: `the civilization lived generation ${civilization.generation} — ${civilization.beliefs.length} belief(s), ${civilization.laws.length} law(s), ${civilization.myths.length} myth(s)`,
         });
 
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });

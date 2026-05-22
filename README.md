@@ -68,6 +68,32 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 6 — Cognitive Civilization Infrastructure (Phases 56–70)
+
+Wave 5 created disagreement. Wave 6 creates **history**. The system stops behaving like a council of agents and becomes **a living civilization of minds — with memory, hierarchy, law, culture, and evolution**. No internal behaviour is agent theatre: every belief, scar, myth, and law emerges from accumulated decisions, persisted across generations to `data/runtime/civilization.json`. Each run is one more year in the civilization's life.
+
+| Phase | Module | Role |
+|---|---|---|
+| 56 | `institutionalMemory` | The civilization remembers its own council sessions — what governed, how earned the consensus was. |
+| 57 | `culturalDriftEngine` | Tracks where the culture has drifted; flags narrowing into a monoculture. |
+| 58 | `beliefPersistence` | A judgement reached and vindicated across generations becomes an inherited belief. |
+| 59 | `strategicMythology` | Defining, hard-won decisions become the founding myths the civilization governs by. |
+| 60 | `internalReputationEconomy` | Standing becomes a resource — entities earn and spend it on the positions they take. |
+| 61 | `trustAuthorityGraph` | Trust and authority among the entities; flags over-concentration. |
+| 62 | `ideologicalMutationDetection` | Compares recent reasoning against the founding character — catches the slow corruption of belief. |
+| 63 | `psychologicalScarMemory` | Wounds from past failures become scars the civilization flinches from. |
+| 64 | `historicalDecisionArchive` | Every decision archived with context — so any decision can be explained historically. |
+| 65 | `cognitiveLawSystem` | A pattern refused enough times becomes a standing law the civilization no longer re-debates. |
+| 66 | `executiveEthicsRuntime` | The moral constraints the civilization will not cross even when strategy permits them. |
+| 67 | `internalPoliticalDynamics` | Coalitions, opposition blocs; flags a one-party council. |
+| 68 | `autonomousLongTermPlanning` | Plans across generations from memory, beliefs, drift, and scars. |
+| 69 | `civilizationStabilityLayer` | Monitors decay — optimization beating identity, cultural narrowing, ideological mutation. |
+| 70 | `emergentIdentityContinuity` | The closing synthesis — has the identity persisted across the civilization's entire life? |
+
+Wave 6 meta-critic — the governing question: **"Did this decision emerge from accumulated civilization memory, or from temporary optimization pressure?"** A standing cognitive law is enforced without re-debate; an executive-ethics violation is a refused moral line; a candidate reopening a severe unhealed scar is refused at brutal; and when optimization repeatedly beats identity, the civilization is flagged as decaying. Soft-floor threshold recalibrated for the 70-phase stack: **lenient=38 · default=31 · brutal=26**.
+
+Verified by `scripts/test-cognitive-civilization.ts` — 9 checks: institutional memory accumulates across generations, cultural drift detects monoculture narrowing, beliefs persist and strengthen, laws are enacted from a repeated refusal pattern, the civilization decays when optimization beats identity, scars are recorded and flagged when reopened, executive ethics flags a moral violation, the archive survives a restart, and emergent identity continuity distinguishes memory-driven from optimization-driven decisions. 9/9 pass.
+
 ## Wave 5 — Autonomous Strategic Society (Phases 43–55)
 
 The deepest architectural transition so far: the engine stops being *one executive intelligence* and becomes **a society of cognitive entities with competing interpretations of reality**. Before Wave 5 the system thinks; after Wave 5 it **argues with itself before acting**. No single module controls reality alone — every campaign decision emerges from internal debate, conflicting priorities, identity defense, and recorded dissent.

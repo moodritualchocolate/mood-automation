@@ -183,6 +183,13 @@ import type { InternalDebateReading } from '@lib/internalDebateEngine';
 import type { CouncilConflictReading } from '@lib/councilConflictResolution';
 import type { ExecutiveConsensusReading } from '@lib/executiveConsensusRuntime';
 import type { StrategicConsciousnessReading } from '@lib/autonomousStrategicConsciousness';
+// Wave 6 — cognitive civilization infrastructure (Phases 56–70)
+import type { CognitiveLawReading } from '@lib/cognitiveLawSystem';
+import type { ScarMemoryReading } from '@lib/psychologicalScarMemory';
+import type { ExecutiveEthicsReading } from '@lib/executiveEthicsRuntime';
+import type { CivilizationStabilityReading } from '@lib/civilizationStabilityLayer';
+import type { IdeologicalMutationReading } from '@lib/ideologicalMutationDetection';
+import type { EmergentIdentityContinuityReading } from '@lib/emergentIdentityContinuity';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -356,6 +363,13 @@ export interface MetaInput {
   councilConflict?: CouncilConflictReading;
   executiveConsensus?: ExecutiveConsensusReading;
   strategicConsciousness?: StrategicConsciousnessReading;
+  // Wave 6 — cognitive civilization infrastructure (Phases 56–70).
+  civLaws?: CognitiveLawReading;
+  civScars?: ScarMemoryReading;
+  civEthics?: ExecutiveEthicsReading;
+  civStability?: CivilizationStabilityReading;
+  civIdeologicalMutation?: IdeologicalMutationReading;
+  civIdentityContinuity?: EmergentIdentityContinuityReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -405,7 +419,9 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           identityGovernanceReading, campaignLifecycleReading, executiveWorldState,
           worldUnderstanding, executiveDecision,
           councilSession, internalDebate, councilConflict, executiveConsensus,
-          strategicConsciousness } = input;
+          strategicConsciousness,
+          civLaws, civScars, civEthics, civStability, civIdeologicalMutation,
+          civIdentityContinuity } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1247,6 +1263,33 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 6 — COGNITIVE CIVILIZATION: THE HISTORY GATES ═══════
+  // A standing cognitive law is not re-debated — a candidate that
+  // violates one is refused without ceremony.
+  if (civLaws && civLaws.violates_a_law && brutality >= 0.6) {
+    reasons.push(`cognitive law: the candidate violates a standing law of the civilization — "${civLaws.violated_law!.law}"`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // An executive-ethics violation is a moral line — refused at default.
+  if (civEthics && civEthics.ethical_violation && brutality >= 0.65) {
+    reasons.push(`executive ethics: the candidate crosses an ethical line — ${civEthics.violated_constraints.join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // A candidate that reopens a severe unhealed scar is refused at brutal.
+  if (civScars && civScars.touches_a_scar && civScars.reopened_scar &&
+      civScars.reopened_scar.severity >= 6 && brutality >= 0.8) {
+    reasons.push(`psychological scar: the candidate reopens a severe unhealed scar — "${civScars.reopened_scar.wound}"`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // THE GLOBAL WAVE 6 META-CRITIC QUESTION:
+  //   "Did this decision emerge from accumulated civilization memory,
+  //    or from temporary optimization pressure?"
+  if (civIdentityContinuity && civIdentityContinuity.driven_by_optimization_pressure &&
+      civIdentityContinuity.civilization_age >= 4 && brutality >= 0.7) {
+    reasons.push(`emergent identity continuity: this decision was driven by temporary optimization pressure, not accumulated civilization memory — ${civIdentityContinuity.identity_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -1729,6 +1772,25 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`cognitive council: ${councilSession.objectors.length} entities object — the society is substantially against this`);
   }
 
+  // Wave 6 soft floors — the cognitive civilization.
+  if (civStability && civStability.is_decaying) {
+    softReasons.push(`civilization stability: the civilization is decaying — ${civStability.decay_signals[0] ?? 'optimization is overriding identity'}`);
+  }
+  if (civStability && !civStability.is_decaying && civStability.condition === 'strained') {
+    softReasons.push(`civilization stability: the civilization is strained (${civStability.stability}/10)`);
+  }
+  if (civIdeologicalMutation && civIdeologicalMutation.mutation_detected) {
+    softReasons.push(`ideological mutation: ${civIdeologicalMutation.mutation_description}`);
+  }
+  if (civScars && civScars.touches_a_scar && civScars.reopened_scar &&
+      civScars.reopened_scar.severity < 6) {
+    softReasons.push(`psychological scar: the candidate reopens a healing scar — "${civScars.reopened_scar.wound}"`);
+  }
+  if (civIdentityContinuity && civIdentityContinuity.civilization_age >= 4 &&
+      civIdentityContinuity.identity_continuity < 5) {
+    softReasons.push(`emergent identity continuity: identity continuity is only ${civIdentityContinuity.identity_continuity}/10 across the civilization's life`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -1758,12 +1820,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 55 phases of judgement every banner
-  // produces 26-42 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 34 soft reasons required to reject
-  //   default (0.65)   → 28 soft reasons required
-  //   brutal  (0.90)   → 23 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 23 : brutality >= 0.6 ? 28 : 34;
+  // the cognition stack. After 70 phases of judgement every banner
+  // produces 28-46 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 38 soft reasons required to reject
+  //   default (0.65)   → 31 soft reasons required
+  //   brutal  (0.90)   → 26 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 26 : brutality >= 0.6 ? 31 : 38;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

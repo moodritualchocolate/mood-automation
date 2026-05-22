@@ -618,6 +618,24 @@ export interface BannerTasteSystem {
     consensus: import('@lib/executiveConsensusRuntime').ExecutiveConsensusReading;
     consciousness: import('@lib/autonomousStrategicConsciousness').StrategicConsciousnessReading;
   };
+  // Wave 6 — cognitive civilization infrastructure (Phases 56–70)
+  civilization: {
+    institutionalMemory: import('@lib/institutionalMemory').InstitutionalMemoryReading;
+    culturalDrift: import('@lib/culturalDriftEngine').CulturalDriftReading;
+    beliefs: import('@lib/beliefPersistence').BeliefPersistenceReading;
+    mythology: import('@lib/strategicMythology').StrategicMythologyReading;
+    reputationEconomy: import('@lib/internalReputationEconomy').ReputationEconomyReading;
+    trustAuthority: import('@lib/trustAuthorityGraph').TrustAuthorityReading;
+    ideologicalMutation: import('@lib/ideologicalMutationDetection').IdeologicalMutationReading;
+    scars: import('@lib/psychologicalScarMemory').ScarMemoryReading;
+    decisionArchive: import('@lib/historicalDecisionArchive').DecisionArchiveReading;
+    laws: import('@lib/cognitiveLawSystem').CognitiveLawReading;
+    ethics: import('@lib/executiveEthicsRuntime').ExecutiveEthicsReading;
+    politics: import('@lib/internalPoliticalDynamics').InternalPoliticalReading;
+    longTermPlan: import('@lib/autonomousLongTermPlanning').LongTermPlanReading;
+    stability: import('@lib/civilizationStabilityLayer').CivilizationStabilityReading;
+    identityContinuity: import('@lib/emergentIdentityContinuity').EmergentIdentityContinuityReading;
+  };
 }
 
 export interface Banner {
