@@ -169,6 +169,14 @@ import type { AntiOptimizationReading } from '@lib/antiOptimization';
 import type { IdentityPersistenceReading } from '@lib/identityPersistence';
 import type { AutonomousCreativeDirectionReading } from '@lib/autonomousCreativeDirection';
 import type { RealityExecutionState } from '@lib/realityExecutionOrchestrator';
+// Wave 4 — executive cognition layer (Phases 36–42)
+import type { StrategicPriorityReading } from '@lib/strategicPriorityEngine';
+import type { CognitiveEnergyReading } from '@lib/cognitiveEnergyModel';
+import type { TemporalPsychologyReading } from '@lib/temporalPsychology';
+import type { IdentityGovernanceReading } from '@lib/identityGovernance';
+import type { CampaignLifecycleReading } from '@lib/campaignLifecycle';
+import type { ExecutiveWorldState, WorldUnderstandingReading } from '@lib/worldStateEngine';
+import type { ExecutiveDecision } from '@lib/executiveRuntime';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -327,6 +335,15 @@ export interface MetaInput {
   identityPersistenceReading?: IdentityPersistenceReading;
   autonomousDirectionReading?: AutonomousCreativeDirectionReading;
   realityExecution?: RealityExecutionState;
+  // Wave 4 — executive cognition layer (Phases 36–42).
+  strategicPriorityReading?: StrategicPriorityReading;
+  cognitiveEnergyReading?: CognitiveEnergyReading;
+  temporalPsychologyReading?: TemporalPsychologyReading;
+  identityGovernanceReading?: IdentityGovernanceReading;
+  campaignLifecycleReading?: CampaignLifecycleReading;
+  executiveWorldState?: ExecutiveWorldState;
+  worldUnderstanding?: WorldUnderstandingReading;
+  executiveDecision?: ExecutiveDecision;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -371,7 +388,10 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           cognitiveContinuity, runtimeDrift, priorNextRunDirective,
           nervousSystemReading, attentionPhysicsReading, visualCognitionReading,
           emotionalContinuityReading, audienceFeedbackReading, antiOptimizationReading,
-          identityPersistenceReading, autonomousDirectionReading, realityExecution } = input;
+          identityPersistenceReading, autonomousDirectionReading, realityExecution,
+          strategicPriorityReading, cognitiveEnergyReading, temporalPsychologyReading,
+          identityGovernanceReading, campaignLifecycleReading, executiveWorldState,
+          worldUnderstanding, executiveDecision } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1124,6 +1144,62 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 4 — EXECUTIVE COGNITION: THE GOVERNANCE GATES ═══════
+  // The executive runtime decided NOT to publish — silence, delay,
+  // archive, fragment, or merge. The system governs itself; when it
+  // rules against an output, the meta-critic enforces that ruling.
+  if (executiveDecision && !executiveDecision.is_an_output && brutality >= 0.6) {
+    reasons.push(`executive runtime: the system decided "${executiveDecision.action}" — ${executiveDecision.reasoning.executive_memo}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A decision that failed the self-governance loop must not ship.
+  if (executiveDecision && !executiveDecision.decision_is_governed && brutality >= 0.65) {
+    reasons.push('executive runtime: the decision failed the self-governance loop — the organism would not be governing itself');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Q1 — "is this strategically wise, or merely emotionally effective?"
+  if (strategicPriorityReading && strategicPriorityReading.strategically_unwise && brutality >= 0.7) {
+    reasons.push(`strategic priority: proceeding here is strategically unwise — ${strategicPriorityReading.executiveSummary}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Q5 — "does this campaign belong to the psychological state of the
+  // world?" — the Phase 42 headline gate.
+  if (worldUnderstanding && !worldUnderstanding.campaign_understands_world && brutality >= 0.7) {
+    reasons.push(`world-state: the campaign does not understand the psychological world it is entering — ${worldUnderstanding.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Q4 — "is the system speaking because it has something true to say,
+  // or because silence feels uncomfortable?"
+  if (cognitiveEnergyReading && cognitiveEnergyReading.recommend_silence &&
+      strategicPriorityReading && strategicPriorityReading.urgency_kind === 'false-urgency' && brutality >= 0.7) {
+    reasons.push('cognitive energy: the system would be speaking from discomfort with silence, not from a true thing to say — silence is wiser');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The Phase 37 hard gate — attention extraction exceeds emotional
+  // value: the banner depletes the audience.
+  if (cognitiveEnergyReading && cognitiveEnergyReading.depletes_attention && brutality >= 0.7) {
+    reasons.push('cognitive energy: the banner extracts more attention than it returns in emotional value — it depletes the audience');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // The Phase 38 gate — the moment is psychologically wrong.
+  if (temporalPsychologyReading && temporalPsychologyReading.timing_is_wrong && brutality >= 0.75) {
+    reasons.push(`temporal psychology: ${temporalPsychologyReading.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The Phase 39 governance gate — "would a real exhausted human
+  // trust this, or only admire its aesthetics?"
+  if (identityGovernanceReading && identityGovernanceReading.governance_blocks && brutality >= 0.65) {
+    reasons.push(`identity governance: ${identityGovernanceReading.only_aesthetic_admiration ? 'this only invites aesthetic admiration — a real exhausted human would not trust it' : 'the executive identity is violated'}${identityGovernanceReading.governanceCorrection ? ' — ' + identityGovernanceReading.governanceCorrection : ''}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Q3 — "would repeating this damage the organism?"
+  if (campaignLifecycleReading &&
+      (campaignLifecycleReading.lifecycle_state === 'overexposed' ||
+       campaignLifecycleReading.lifecycle_state === 'emotionally-drained') && brutality >= 0.75) {
+    reasons.push(`campaign lifecycle: the campaign is "${campaignLifecycleReading.lifecycle_state}" — repeating this direction would damage the organism`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -1555,6 +1631,36 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`reality execution: emergence ${realityExecution.emergence_from_reality}/10 — the move only partly emerged from reality + memory + identity + strategy`);
   }
 
+  // Wave 4 soft floors — executive cognition layer.
+  if (strategicPriorityReading && strategicPriorityReading.merely_emotionally_effective &&
+      !strategicPriorityReading.strategically_unwise) {
+    softReasons.push('strategic priority: the candidate is merely emotionally effective — not strategically wise');
+  }
+  if (strategicPriorityReading && strategicPriorityReading.priority_band === 'defer') {
+    softReasons.push('strategic priority: low strategic priority — this opportunity is better deferred than forced');
+  }
+  if (cognitiveEnergyReading && !cognitiveEnergyReading.should_speak && !cognitiveEnergyReading.recommend_silence) {
+    softReasons.push(`cognitive energy: low (${cognitiveEnergyReading.cognitive_energy}/10) — speak only if the truth genuinely demands it`);
+  }
+  if (temporalPsychologyReading && !temporalPsychologyReading.timing_is_wrong &&
+      temporalPsychologyReading.timing_truth_score < 5) {
+    softReasons.push(`temporal psychology: timing truth only ${temporalPsychologyReading.timing_truth_score}/10 — the moment is not strongly aligned`);
+  }
+  if (identityGovernanceReading && !identityGovernanceReading.governance_blocks &&
+      identityGovernanceReading.violationSeverity >= 4) {
+    softReasons.push(`identity governance: violation severity ${identityGovernanceReading.violationSeverity}/10 — watch the brand constitution`);
+  }
+  if (campaignLifecycleReading && campaignLifecycleReading.campaign_health < 5) {
+    softReasons.push(`campaign lifecycle: campaign health ${campaignLifecycleReading.campaign_health}/10 — the campaign is "${campaignLifecycleReading.lifecycle_state}"`);
+  }
+  if (executiveWorldState && executiveWorldState.world_tension >= 6 && worldUnderstanding &&
+      worldUnderstanding.campaign_understands_world && worldUnderstanding.world_alignment < 7) {
+    softReasons.push(`world-state: the world is strained (tension ${executiveWorldState.world_tension}/10) — the banner only partly fits it`);
+  }
+  if (executiveDecision && executiveDecision.is_an_output && executiveDecision.decision_confidence < 6) {
+    softReasons.push(`executive runtime: low decision confidence (${executiveDecision.decision_confidence}/10) — the executive decision is not firm`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -1584,12 +1690,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 35 phases of judgement every banner
-  // produces 18-30 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 25 soft reasons required to reject
-  //   default (0.65)   → 21 soft reasons required
-  //   brutal  (0.90)   → 17 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 17 : brutality >= 0.6 ? 21 : 25;
+  // the cognition stack. After 42 phases of judgement every banner
+  // produces 22-36 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 30 soft reasons required to reject
+  //   default (0.65)   → 25 soft reasons required
+  //   brutal  (0.90)   → 20 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 20 : brutality >= 0.6 ? 25 : 30;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

@@ -594,6 +594,16 @@ export interface BannerTasteSystem {
     autonomousDirection: import('@lib/autonomousCreativeDirection').AutonomousCreativeDirectionReading;
     orchestration: import('@lib/realityExecutionOrchestrator').RealityExecutionState;
   };
+  // Wave 4 — executive cognition layer (Phases 36–42)
+  executive: {
+    strategicPriority: import('@lib/strategicPriorityEngine').StrategicPriorityReading;
+    cognitiveEnergy: import('@lib/cognitiveEnergyModel').CognitiveEnergyReading;
+    temporalPsychology: import('@lib/temporalPsychology').TemporalPsychologyReading;
+    identityGovernance: import('@lib/identityGovernance').IdentityGovernanceReading;
+    campaignLifecycle: import('@lib/campaignLifecycle').CampaignLifecycleReading;
+    worldState: import('@lib/worldStateEngine').ExecutiveWorldState;
+    decision: import('@lib/executiveRuntime').ExecutiveDecision;
+  };
 }
 
 export interface Banner {

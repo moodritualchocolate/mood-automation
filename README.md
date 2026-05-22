@@ -68,6 +68,28 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 4 — Executive Cognition Layer (Phases 36–42)
+
+The system stops behaving like a reactive intelligence and begins behaving like an **executive organism** — capable of strategic judgment, prioritization, restraint, long-term adaptation, and business-aware cognition. Before Phase 36 the system reacts to signals; after Phase 42 it **governs itself**. The engine now optimizes for psychological truth, strategic continuity, identity integrity, emotional trust, cultural timing, and long-term resonance — *not* clicks. 42 modules across 7 phases.
+
+**Phase 36 — Strategic Priority Engine** (`strategicPriorityEngine` · `campaignPriorityScore` · `realityImportanceWeight` · `longTermVsShortTerm` · `executiveTradeoffEngine` · `cognitiveUrgencyMap`) — the system stops treating every opportunity equally. It distinguishes emotionally important / strategically important / algorithmically tempting / identity-dangerous, and is allowed to sacrifice engagement for truth. Gate: *"is this strategically wise, or merely emotionally effective?"*
+
+**Phase 37 — Cognitive Energy Management** (`cognitiveEnergyModel` · `outputFatigue` · `audienceExhaustionTracker` · `creativeRecoveryCycles` · `emotionalOverexposure` · `attentionDepletionEngine`) — the system understands exhaustion, its own and the audience's. It asks *"should we speak?"* not *"can we post?"* Hard gates: high fatigue + low novelty → recommend silence; attention extraction exceeds emotional value → reject.
+
+**Phase 38 — Temporal Intelligence** (`temporalPsychology` · `culturalTimingEngine` · `momentReadiness` · `attentionWindows` · `psychologicalSeasonality` · `contextSensitivity`) — timing understood psychologically: doomscroll windows, loneliness hours, Sunday dread, collective-exhaustion periods. A beautiful banner can be rejected because *"the audience psychologically cannot receive softness today."*
+
+**Phase 39 — Executive Identity Governance** (`identityGovernance` · `brandTruthConstitution` · `identityViolationDetector` · `aestheticCorruptionMap` · `voiceIntegrityEngine` · `psychologicalBrandAnchor`) — defends MOOD from mutation: supplement-hype, productivity-guru, fake spirituality, therapy-tone, luxury aesthetic, TikTok wellness, startup-bro, motivational poison. Hard gate: *"would a real exhausted human trust this, or only admire its aesthetics?"*
+
+**Phase 40 — Strategic Campaign Lifecycles** (`campaignLifecycle` · `campaignEvolutionEngine` · `narrativeMomentum` · `emotionalArcPersistence` · `campaignRetirement` · `reawakeningTriggers`) — campaigns become living entities with states (emerging · deepening · culturally-recognized · overexposed · emotionally-drained · identity-risk · dormant · recoverable · timeless). The lifecycle is derived from the persisted trail, so it survives a restart.
+
+**Phase 41 — Executive Decision Runtime** (`executiveRuntime` · `cognitiveDecisionEngine` · `actionSelection` · `executiveReasoningTrace` · `selfGovernanceLoop` · `strategicConflictResolution`) — the engine decides like a strategic creative director, selecting from a real action vocabulary (publish · delay · deepen · reverse · continue · fragment · merge · silence · archive · escalate). Every decision explains its WHY across identity, fatigue, timing, truth, strategic value, audience state, emotional continuity, and long-term memory impact, then passes a six-question self-governance loop.
+
+**Phase 42 — World-State Executive Brain** (`worldStateEngine` · `collectivePsychologyState` · `culturalClimateModel` · `environmentalStressMap` · `socialPressureSystems` · `worldTensionIndex`) — the engine maintains a living model of the psychological world it operates inside: collective exhaustion, emotional volatility, anxiety, social fragmentation, attention chaos, economic pressure, loneliness, digital overload, trust erosion. Persists to `data/runtime/world-psychology.json` and evolves slowly. Headline gate: *"does this campaign understand the psychological world it is entering?"*
+
+Wave 4 meta-critic — the executive runtime's decision is enforced: when the system decides `silence` / `delay` / `archive`, the meta-critic refuses the output; a decision that fails self-governance does not ship. Plus the six executive questions as gates. Soft-floor threshold recalibrated for the 42-phase stack: **lenient=30 · default=25 · brutal=20**.
+
+Verified by six test scripts — `test-strategic-priority.ts` (4/4), `test-fatigue-governance.ts` (3/3), `test-identity-constitution.ts` (4/4), `test-world-state.ts` (4/4, persists + survives restart), `test-campaign-lifecycle.ts` (5/5), `test-executive-runtime.ts` (6/6). The strategic engine overrides engagement temptation, the fatigue engine blocks over-posting, identity governance blocks drift, the timing engine changes decisions, and the executive runtime writes real, self-explained strategy.
+
 ## Wave 2 — Reality Execution Architecture (Phases 28–35)
 
 Phases 1–27 made the system think, remember, and persist. Wave 2 makes the mind **act in reality** — observe what it releases, protect its identity, learn from response, and evolve without becoming an engagement machine. The architectural shift: `memory → cognition → continuity → identity → evolution` now gains `execution → attention → feedback → anti-optimization → autonomous direction`. The system stops being only a living mind and becomes **a living creative organism operating in reality**. 42 modules across 8 phases, one connected execution layer.

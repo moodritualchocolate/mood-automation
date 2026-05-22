@@ -247,6 +247,16 @@ import {
   readIdentityPersistence,
   directAutonomousCreative,
   orchestrateRealityExecution,
+  // Wave 4 — executive cognition layer (Phases 36–42)
+  readStrategicPriority,
+  readCognitiveEnergy,
+  readTemporalPsychology,
+  readIdentityGovernance,
+  readCampaignLifecycle,
+  createWorldStateEngineStore,
+  readWorldState,
+  campaignUnderstandsWorld,
+  runExecutiveRuntime,
 } from '@lib/index';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
 import type { CausalChainLink } from '@lib/causalMemoryGraph';
@@ -492,6 +502,20 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       message: `the runtime is drifting: ${runtimeDrift.drift_signals.join(', ')} — next directive must correct it`,
     });
   }
+
+  // ─── Phase 42 — world-state executive brain (campaign-level) ──
+  // Load the persistent psychological world-state, advance it by one
+  // observation, persist it. Every run reads the world it enters.
+  const worldStateEngineStore = createWorldStateEngineStore();
+  const priorWorldState = await worldStateEngineStore.read();
+  const executiveWorldState = readWorldState({
+    ingestedSignals, trail: emotionalTrail, prior: priorWorldState,
+  });
+  await worldStateEngineStore.save(executiveWorldState);
+  emit({
+    stage: 'world-state-engine',
+    message: `${executiveWorldState.climate_description} · world tension ${executiveWorldState.world_tension}/10 · most acute: ${executiveWorldState.most_acute_pressure}`,
+  });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
   const truthPersistenceStore = createTruthPersistenceStore();
@@ -1754,6 +1778,112 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       });
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 4 — EXECUTIVE COGNITION LAYER (Phases 36–42) ═════
+      // The system stops reacting and begins to GOVERN itself —
+      // prioritising, deferring, protecting, and deciding like a
+      // strategic creative director operating inside a model of the
+      // psychological world.
+      const candidateRegister: 'soft' | 'intense' | 'neutral' =
+        direction.emotionalPacing === 'quiet' || direction.emotionalPacing === 'collapsed' ? 'soft'
+        : direction.emotionalPacing === 'tense' || direction.emotionalPacing === 'wired' ? 'intense'
+        : 'neutral';
+      const candidateEmotionalNovelty = Math.max(0, 10 - emotionalContinuityReading.emotionalRepetitionRisk);
+
+      // Phase 37 — cognitive energy management.
+      const cognitiveEnergyReading = readCognitiveEnergy({
+        trail: emotionalTrail,
+        engagements: allEngagements,
+        emotionalNovelty: candidateEmotionalNovelty,
+        hookStrength: attentionPhysicsReading.scrollStopProbability,
+        loudness: attentionPhysicsReading.attention_is_loud ? 8 : 3,
+        aftertaste: tentativeAftertaste.residueStrength,
+        recognition: recognitionScore,
+      });
+      emit({
+        stage: 'cognitive-energy',
+        message: `${cognitiveEnergyReading.should_speak ? 'SHOULD SPEAK' : 'should NOT speak'} · energy ${cognitiveEnergyReading.cognitive_energy}/10 — ${cognitiveEnergyReading.reason}`,
+      });
+
+      // Phase 38 — temporal psychology.
+      const temporalPsychologyReading = readTemporalPsychology({
+        candidateRegister,
+        collectiveTension: executiveWorldState.world_tension,
+        collectiveExhaustion: executiveWorldState.collective_exhaustion,
+      });
+      if (temporalPsychologyReading.timing_is_wrong) {
+        emit({
+          stage: 'temporal-psychology',
+          message: `timing is wrong — ${temporalPsychologyReading.reason}`,
+        });
+      }
+
+      // Phase 39 — executive identity governance.
+      const identityGovernanceReading = readIdentityGovernance({
+        truth,
+        realism: visualCognitionReading.realismScore,
+        restraint: direction.restraint * 10,
+        nonPerformative: nonPerformativeScore,
+        hasTension: truth.tension.trim().length > 8,
+        imperfection: lifeNoise ? lifeNoise.mess_score : 5,
+        productAsFix: false,
+        emergence: cognitiveField.emergence_score,
+        recognition: recognitionScore,
+        improvementPressure: aspirationalGapReading.uses_marketing_vocab ? 7 : 2,
+        copyText: typography.primary.text,
+      });
+      emit({
+        stage: 'identity-governance',
+        message: `${identityGovernanceReading.exhausted_human_would_trust ? 'a real exhausted human would TRUST this' : 'IDENTITY GOVERNANCE FLAG — only aesthetic admiration'}${identityGovernanceReading.governanceCorrection ? ' — ' + identityGovernanceReading.governanceCorrection : ''}`,
+      });
+
+      // Phase 40 — strategic campaign lifecycle.
+      const campaignLifecycleReading = readCampaignLifecycle({
+        trail: emotionalTrail,
+        recognitionDepth: audienceFeedbackReading.has_feedback ? audienceFeedbackReading.deepEngagement : recognitionScore,
+        identityRisk: identityGovernanceReading.violationSeverity,
+      });
+      emit({
+        stage: 'campaign-lifecycle',
+        message: campaignLifecycleReading.lifecycleSummary,
+      });
+
+      // Phase 36 — strategic priority engine.
+      const strategicPriorityReading = readStrategicPriority({
+        truthValue: cognitiveField.emergence_score,
+        resonance: recognitionScore,
+        identityRisk: identityGovernanceReading.violationSeverity,
+        saturationRisk: nervousSystemReading.saturationRisk,
+        optimizationRisk: antiOptimizationReading.optimizationRisk,
+        viralityRisk: antiOptimizationReading.viralityRisk,
+        engagementPull: reaction.engagementQuality,
+        engagementDepth: audienceFeedbackReading.has_feedback ? audienceFeedbackReading.deepEngagement : reaction.engagementQuality * 0.7,
+        emotionalNovelty: candidateEmotionalNovelty,
+        outputPressure: cognitiveEnergyReading.outputFatigue,
+        fatigue: Math.max(0, 10 - cognitiveEnergyReading.cognitive_energy),
+        culturalImportance: recognitionScore,
+      });
+      emit({
+        stage: 'strategic-priority',
+        message: strategicPriorityReading.executiveSummary,
+      });
+
+      // Phase 41 — executive decision runtime.
+      const worldUnderstanding = campaignUnderstandsWorld(executiveWorldState, candidateRegister);
+      const executiveDecision = runExecutiveRuntime({
+        strategicPriority: strategicPriorityReading,
+        cognitiveEnergy: cognitiveEnergyReading,
+        temporal: temporalPsychologyReading,
+        identityGovernance: identityGovernanceReading,
+        lifecycle: campaignLifecycleReading,
+        worldState: executiveWorldState,
+        worldUnderstanding,
+      });
+      emit({
+        stage: 'executive-runtime',
+        message: `DECISION: ${executiveDecision.action} (confidence ${executiveDecision.decision_confidence}/10, governing voice "${executiveDecision.governing_voice}") — ${executiveDecision.reasoning.executive_memo}`,
+      });
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -1907,6 +2037,15 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         identityPersistenceReading,
         autonomousDirectionReading,
         realityExecution,
+        // Wave 4 — executive cognition layer
+        strategicPriorityReading,
+        cognitiveEnergyReading,
+        temporalPsychologyReading,
+        identityGovernanceReading,
+        campaignLifecycleReading,
+        executiveWorldState,
+        worldUnderstanding,
+        executiveDecision,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -2283,6 +2422,15 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               identityPersistence: identityPersistenceReading,
               autonomousDirection: autonomousDirectionReading,
               orchestration: realityExecution,
+            },
+            executive: {
+              strategicPriority: strategicPriorityReading,
+              cognitiveEnergy: cognitiveEnergyReading,
+              temporalPsychology: temporalPsychologyReading,
+              identityGovernance: identityGovernanceReading,
+              campaignLifecycle: campaignLifecycleReading,
+              worldState: executiveWorldState,
+              decision: executiveDecision,
             },
           },
           attempts: attempt,

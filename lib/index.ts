@@ -242,3 +242,53 @@ export * from './doNotDoMemory';
 export * from './autonomousCreativeDirection';
 // Wave 2 — unified orchestration
 export * from './realityExecutionOrchestrator';
+// ─── WAVE 4 — Executive Cognition Layer (Phases 36–42) ───────
+// Phase 36 — strategic priority engine
+export * from './campaignPriorityScore';
+export * from './realityImportanceWeight';
+export * from './longTermVsShortTerm';
+export * from './executiveTradeoffEngine';
+export * from './cognitiveUrgencyMap';
+export * from './strategicPriorityEngine';
+// Phase 37 — cognitive energy management
+export * from './outputFatigue';
+export * from './audienceExhaustionTracker';
+export * from './creativeRecoveryCycles';
+export * from './emotionalOverexposure';
+export * from './attentionDepletionEngine';
+export * from './cognitiveEnergyModel';
+// Phase 38 — temporal intelligence
+export * from './attentionWindows';
+export * from './psychologicalSeasonality';
+export * from './culturalTimingEngine';
+export * from './momentReadiness';
+export * from './contextSensitivity';
+export * from './temporalPsychology';
+// Phase 39 — executive identity governance
+export * from './brandTruthConstitution';
+export * from './aestheticCorruptionMap';
+export * from './identityViolationDetector';
+export * from './voiceIntegrityEngine';
+export * from './psychologicalBrandAnchor';
+export * from './identityGovernance';
+// Phase 40 — strategic campaign lifecycles
+export * from './narrativeMomentum';
+export * from './emotionalArcPersistence';
+export * from './campaignEvolutionEngine';
+export * from './campaignRetirement';
+export * from './reawakeningTriggers';
+export * from './campaignLifecycle';
+// Phase 41 — executive decision runtime
+export * from './actionSelection';
+export * from './strategicConflictResolution';
+export * from './cognitiveDecisionEngine';
+export * from './executiveReasoningTrace';
+export * from './selfGovernanceLoop';
+export * from './executiveRuntime';
+// Phase 42 — world-state executive brain
+export * from './collectivePsychologyState';
+export * from './environmentalStressMap';
+export * from './socialPressureSystems';
+export * from './culturalClimateModel';
+export * from './worldTensionIndex';
+export * from './worldStateEngine';
