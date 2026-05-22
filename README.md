@@ -68,6 +68,47 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 11 — Strategic Future Intelligence (Phases 151–180)
+
+Wave 10 coupled the organism to *present* reality. Wave 11 lets it reason across **futures** — months, quarters, reputation arcs, cultural shifts, second-order consequences, identity continuity across the long horizon. The governing shift: the organism stops asking *"what works now?"* and starts asking **"what future are we compounding toward?"** The strategic state — compounding advantage, strategic debt, the future being built toward — persists to `data/runtime/strategic-future.json`.
+
+| Phase | Module | Role |
+|---|---|---|
+| 151 | `futureScenarioSimulation` | Simulates the best, worst, and most-likely futures the organism could walk into. |
+| 152 | `strategicTimelineBranching` | Lays out the branching timelines and names the one the organism can survive on. |
+| 153 | `narrativeFutureMapping` | Maps where the campaign narrative is heading and how far it has drifted from origin. |
+| 154 | `culturalShiftPrediction` | Predicts the cultural shift the organism will be speaking into. |
+| 155 | `reputationFutureModeling` | Projects reputation as an arc — rising, plateauing, eroding. |
+| 156 | `trustCompoundingEngine` | Models trust not as addition but as compounding. |
+| 157 | `marketTimingIntelligence` | Reads the timing of the moment — too early, ripe, closing, missed. |
+| 158 | `strategicPatienceRuntime` | Decides when the deliberate wait compounds more than acting. |
+| 159 | `secondOrderConsequenceEngine` | Traces past the first-order win into the hidden second-order cost. |
+| 160 | `antiFragilityFutureArchitecture` | Reads whether disorder would strengthen the future or break it. |
+| 161 | `blackSwanSensitivityMapping` | Maps exposure to the unmodelled, low-probability shock. |
+| 162 | `competitorEvolutionSimulation` | Simulates where the competitive field is heading. |
+| 163 | `ecosystemPressureForecasting` | Forecasts the ecosystem tightening or loosening. |
+| 164 | `identityContinuityPlanner` | Plans for the organism still being itself at the end of the horizon. |
+| 165 | `strategicSacrificeEngine` | Decides what to give up now to buy a better future. |
+| 166 | `horizonScanningEngine` | Scans the far horizon for the weak signals of a forming opportunity. |
+| 167 | `opportunityCostLedger` | Tracks the cost of the futures not walked toward. |
+| 168 | `compoundingAdvantageTracker` | Watches the edge that grows on itself. |
+| 169 | `strategicDebtMonitor` | Tracks the debt every present-optimized decision borrows from the future. |
+| 170 | `futureMemoryArchive` | Remembers past predictions to calibrate the organism's forecasting. |
+| 171 | `longHorizonRiskBalance` | Balances long-horizon risk against reward. |
+| 172 | `irreversibilityDetector` | Flags the decisions that cannot be undone. |
+| 173 | `strategicOptionalityEngine` | Keeps the organism's future options open. |
+| 174 | `generationalStrategyLayer` | Asks whether the strategy outlives the generation that made it. |
+| 175 | `futureIdentityProjection` | Projects who the organism becomes if it keeps deciding this way. |
+| 176 | `strategicConvictionEngine` | Decides when to hold conviction through noise and when to adapt. |
+| 177 | `temporalArbitrageDetector` | Detects time-asymmetric opportunities. |
+| 178 | `futureCoherenceValidator` | Catches a future plan that contradicts itself. |
+| 179 | `strategicFutureGovernor` | Governs the layer — compounding, drifting, or now-optimizing. |
+| 180 | `autonomousStrategicPlanningCore` | The persistent strategic state and closing synthesis — compounding a future, or optimizing for now? |
+
+Wave 11 meta-critic — the governing question: **"What future are we compounding toward?"** A run that optimizes for what works now — spending the future for a present gain — is refused at default brutality. The meta-critic refuses a negative second-order consequence, a moment that calls for strategic patience, dangerous strategic debt, an irreversible decision that abandons identity continuity, a fragile future, an incoherent future plan, and an identity that does not survive the horizon. A run that compounds toward a future grows the advantage; a run that optimizes for now accrues strategic debt; an exhausted run that ships nothing is strategic patience. Soft-floor threshold recalibrated for the 180-phase stack: **lenient=67 · default=59 · brutal=53**.
+
+Verified by `scripts/test-strategic-future.ts` — 22 checks across scenario simulation, timeline branching, narrative/cultural/reputation/trust futures, market timing and strategic patience, second-order cost, anti-fragility, black-swan exposure, competitor and ecosystem forecasting, identity continuity, strategic sacrifice and debt, compounding advantage, irreversibility, future identity projection, coherence validation, governance, persistence, and the closing synthesis. 22/22 pass.
+
 ## Wave 10 — Reality Coupling Architecture (Phases 131–150)
 
 Waves 1–9 built an organism that lives, governs itself, and shows itself — but it had been living almost entirely *inside itself*. Wave 10 is **reality coupling**: the organism stops being self-referential and begins **learning from the external world** — audience behaviour, trust formation, emotional fatigue, the narrative climate, attention economics, saturation, authenticity, reputation pressure, platform drift, and real-world contradiction. The coupling state — trust, authenticity, saturation — persists to `data/runtime/reality-coupling.json` and compounds across cycles.

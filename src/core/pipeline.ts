@@ -372,6 +372,41 @@ import {
   readExternalRealityModel,
   readCouplingHealth,
   readRealityCouplingCore,
+  // Wave 11 — strategic future intelligence (Phases 151–180)
+  createStrategicFutureStore,
+  evolveFutureFromCompounding,
+  evolveFutureFromNowOptimization,
+  evolveFutureFromPatience,
+  simulateFutureScenarios,
+  readStrategicTimelineBranching,
+  mapNarrativeFuture,
+  predictCulturalShift,
+  modelReputationFuture,
+  readTrustCompounding,
+  readMarketTiming,
+  readStrategicPatience,
+  readSecondOrderConsequence,
+  readAntiFragility,
+  mapBlackSwanSensitivity,
+  simulateCompetitorEvolution,
+  forecastEcosystemPressure,
+  planIdentityContinuity,
+  readStrategicSacrifice,
+  scanHorizon,
+  readOpportunityCost,
+  readCompoundingAdvantage,
+  readStrategicDebt,
+  readFutureMemoryArchive,
+  readLongHorizonRisk,
+  detectIrreversibility,
+  readStrategicOptionality,
+  readGenerationalStrategy,
+  projectFutureIdentity,
+  readStrategicConviction,
+  detectTemporalArbitrage,
+  validateFutureCoherence,
+  readStrategicFutureGovernor,
+  readAutonomousStrategicPlanningCore,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -690,6 +725,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: couplingState.couplingCycles === 0
       ? 'the organism is coupling to reality for the first time'
       : `reality coupling: ${couplingState.couplingCycles} cycles · trust ${couplingState.trustLevel}/10 · authenticity ${couplingState.authenticityReserve}/10 · ${couplingState.resonanceWins} resonance / ${couplingState.stimulusWins} stimulus`,
+  });
+
+  // ─── Wave 11 — load the organism's strategic-future state ─────
+  // The organism now reasons across long horizons: compounding
+  // advantage, strategic debt, and the future it is building toward
+  // persist across planning cycles.
+  const strategicFutureStore = createStrategicFutureStore();
+  const strategicFutureState = await strategicFutureStore.read();
+  emit({
+    stage: 'strategic-future',
+    message: strategicFutureState.planningCycles === 0
+      ? 'the organism is beginning to reason about the future for the first time'
+      : `strategic future: ${strategicFutureState.planningCycles} cycles · advantage ${strategicFutureState.compoundingAdvantage}/10 · debt ${strategicFutureState.strategicDebt}/10 · ${strategicFutureState.futureCompoundedCount} future / ${strategicFutureState.nowOptimizedCount} now`,
   });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
@@ -2571,6 +2619,166 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 11 — STRATEGIC FUTURE (Phases 151–180) ═══════════
+      // The organism stops asking "what works now?" and begins asking
+      // "what future are we compounding toward?" — simulating
+      // scenarios, branching timelines, weighing second-order cost,
+      // and protecting identity continuity across the long horizon.
+      const futIdentityStrength = civIdentityContinuity.identity_continuity;
+      const futPushedForReach =
+        antiOptimizationReading.optimization_corrupts_truth || cplResonance.is_stimulus_addiction;
+
+      const futScenarios = simulateFutureScenarios({
+        worldState: executiveWorldState,
+        trustCarried: couplingState.trustLevel,
+        organismVitality: orgCore.vitality,
+      });
+      const futCulturalShift = predictCulturalShift({ worldState: executiveWorldState });
+      const futMarketTiming = readMarketTiming({
+        worldState: executiveWorldState, culturalShift: futCulturalShift,
+      });
+      const futTimeline = readStrategicTimelineBranching({
+        scenarios: futScenarios, identityStrength: futIdentityStrength, pushedForReach: futPushedForReach,
+      });
+      const futNarrative = mapNarrativeFuture({
+        trustCarried: couplingState.trustLevel,
+        strategicDebt: strategicFutureState.strategicDebt,
+        identityHeld: civIdentityHeld,
+      });
+      const futReputation = modelReputationFuture({
+        reputationCredit: couplingState.reputationCredit,
+        trustForming: cplTrust.trust_trend === 'forming',
+        trustDecaying: cplTrust.trust_is_decaying,
+        strategicDebt: strategicFutureState.strategicDebt,
+      });
+      const futTrustCompounding = readTrustCompounding({
+        trustLevel: couplingState.trustLevel,
+        trustForming: cplTrust.trust_trend === 'forming',
+        trustDecaying: cplTrust.trust_is_decaying,
+        patienceHonored: strategicFutureState.patienceHonored,
+      });
+      const futPatience = readStrategicPatience({
+        timing: futMarketTiming, scenarios: futScenarios,
+        strategicDebt: strategicFutureState.strategicDebt,
+      });
+      const futSecondOrder = readSecondOrderConsequence({
+        optimizationCorrupts: antiOptimizationReading.optimization_corrupts_truth,
+        chasedStimulus: cplResonance.is_stimulus_addiction,
+        saturation: cplSaturation.saturation,
+      });
+      const futIdentityContinuity = planIdentityContinuity({
+        identityStrength: futIdentityStrength, scenarios: futScenarios,
+        strategicDebt: strategicFutureState.strategicDebt,
+        narrativeDrift: futNarrative.drift_from_origin,
+      });
+      const futAntifragility = readAntiFragility({
+        worstCaseDesirability: futScenarios.worst_case.desirability,
+        compoundingAdvantage: strategicFutureState.compoundingAdvantage,
+        strategicDebt: strategicFutureState.strategicDebt,
+        identitySurvives: futIdentityContinuity.identity_survives_horizon,
+      });
+      const futBlackSwan = mapBlackSwanSensitivity({
+        worldState: executiveWorldState, identityStrength: futIdentityStrength,
+        compoundingAdvantage: strategicFutureState.compoundingAdvantage,
+      });
+      const futCompetitor = simulateCompetitorEvolution({
+        worldState: executiveWorldState, platformDrift: cplPlatformDrift.platform_drift,
+      });
+      const futEcosystem = forecastEcosystemPressure({
+        worldState: executiveWorldState,
+        attentionEconomyPressure: cplAttentionEconomy.attention_economy_pressure,
+      });
+      const futSacrifice = readStrategicSacrifice({
+        compoundingAdvantage: strategicFutureState.compoundingAdvantage,
+        strategicDebt: strategicFutureState.strategicDebt, timing: futMarketTiming,
+      });
+      const futHorizonScan = scanHorizon({
+        worldState: executiveWorldState,
+        externalSignalVolume: cplIngestion.external_signal_volume,
+      });
+      const futOpportunityCost = readOpportunityCost({
+        scenarios: futScenarios,
+        patienceHonored: strategicFutureState.patienceHonored,
+        nowOptimizedCount: strategicFutureState.nowOptimizedCount,
+      });
+      const futCompounding = readCompoundingAdvantage({
+        priorAdvantage: strategicFutureState.compoundingAdvantage,
+        trustCompounding: futTrustCompounding.trust_compounding,
+        futureCompoundedCount: strategicFutureState.futureCompoundedCount,
+        nowOptimizedCount: strategicFutureState.nowOptimizedCount,
+      });
+      const futStrategicDebt = readStrategicDebt({
+        priorDebt: strategicFutureState.strategicDebt,
+        nowOptimizedCount: strategicFutureState.nowOptimizedCount,
+        optimizingForNow: antiOptimizationReading.optimization_corrupts_truth,
+      });
+      const futMemory = readFutureMemoryArchive({
+        predictionsLogged: strategicFutureState.predictionsLogged,
+        planningCycles: strategicFutureState.planningCycles,
+        futureCompoundedCount: strategicFutureState.futureCompoundedCount,
+        nowOptimizedCount: strategicFutureState.nowOptimizedCount,
+      });
+      const futLongHorizonRisk = readLongHorizonRisk({
+        scenarios: futScenarios, antifragility: futAntifragility.antifragility,
+        strategicDebt: strategicFutureState.strategicDebt,
+      });
+      const futIrreversibility = detectIrreversibility({
+        sacrificeInPlay: futSacrifice.sacrifice_is_worth_it,
+        continuityRisk: futIdentityContinuity.continuity_risk,
+        optimizationCorrupts: antiOptimizationReading.optimization_corrupts_truth,
+        narrativeDrift: futNarrative.drift_from_origin,
+      });
+      const futOptionality = readStrategicOptionality({
+        healthyBranchCount: futTimeline.branches.filter((b) => b.healthy).length,
+        irreversibility: futIrreversibility.irreversibility,
+        strategicDebt: strategicFutureState.strategicDebt,
+      });
+      const futGenerational = readGenerationalStrategy({
+        civilizationGeneration: civilization.generation,
+        compoundingAdvantage: strategicFutureState.compoundingAdvantage,
+        identitySurvivesHorizon: futIdentityContinuity.identity_survives_horizon,
+      });
+      const futIdentity = projectFutureIdentity({
+        identityStrength: futIdentityStrength,
+        narrativeDrift: futNarrative.drift_from_origin,
+        strategicDebt: strategicFutureState.strategicDebt,
+        optimizingForNow: antiOptimizationReading.optimization_corrupts_truth,
+      });
+      const futConviction = readStrategicConviction({
+        identityStrength: futIdentityStrength, scenarios: futScenarios, timing: futMarketTiming,
+      });
+      const futTemporalArbitrage = detectTemporalArbitrage({
+        timing: futMarketTiming, horizon: futHorizonScan,
+        competitivePressure: futCompetitor.competitive_pressure,
+      });
+      const futCoherence = validateFutureCoherence({
+        narrativeCoherent: futNarrative.narrative_is_coherent,
+        identitySurvivesHorizon: futIdentityContinuity.identity_survives_horizon,
+        onHealthyBranch: futTimeline.on_a_healthy_branch,
+        identityProjectionTrue: futIdentity.identity_projection_is_true,
+      });
+      const futGovernor = readStrategicFutureGovernor({
+        strategicDebtDangerous: futStrategicDebt.debt_is_dangerous,
+        advantageIsCompounding: futCompounding.advantage_is_compounding,
+        futureIsCoherent: futCoherence.future_is_coherent,
+        secondOrderNegative: futSecondOrder.second_order_is_negative,
+      });
+      const futCore = readAutonomousStrategicPlanningCore({
+        state: strategicFutureState, governor: futGovernor,
+        compounding: futCompounding, debt: futStrategicDebt, coherence: futCoherence,
+      });
+      emit({
+        stage: 'strategic-future',
+        message: `${futCore.planning_state} (future score ${futCore.strategic_future_score}/10) · ${futMarketTiming.timing} timing · ${futCulturalShift.predicted_shift} — ${futCore.planning_statement}`,
+      });
+      if (futCore.organism_optimizes_for_now) {
+        emit({ stage: 'strategic-future', message: 'META-CRITIC FLAG — the organism is optimizing for now, spending the future for a present gain' });
+      }
+      if (futPatience.recommend_patience) {
+        emit({ stage: 'strategic-future', message: `strategic patience: ${futPatience.patience_case}` });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -2808,6 +3016,37 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         cplExternalModel,
         cplHealth,
         cplCore,
+        // Wave 11 — strategic future intelligence
+        futScenarios,
+        futTimeline,
+        futNarrative,
+        futCulturalShift,
+        futReputation,
+        futTrustCompounding,
+        futMarketTiming,
+        futPatience,
+        futSecondOrder,
+        futAntifragility,
+        futBlackSwan,
+        futCompetitor,
+        futEcosystem,
+        futIdentityContinuity,
+        futSacrifice,
+        futHorizonScan,
+        futOpportunityCost,
+        futCompounding,
+        futStrategicDebt,
+        futMemory,
+        futLongHorizonRisk,
+        futIrreversibility,
+        futOptionality,
+        futGenerational,
+        futIdentity,
+        futConviction,
+        futTemporalArbitrage,
+        futCoherence,
+        futGovernor,
+        futCore,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -3290,6 +3529,38 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               health: cplHealth,
               core: cplCore,
             },
+            future: {
+              scenarios: futScenarios,
+              timeline: futTimeline,
+              narrativeFuture: futNarrative,
+              culturalShift: futCulturalShift,
+              reputationFuture: futReputation,
+              trustCompounding: futTrustCompounding,
+              marketTiming: futMarketTiming,
+              patience: futPatience,
+              secondOrder: futSecondOrder,
+              antifragility: futAntifragility,
+              blackSwan: futBlackSwan,
+              competitor: futCompetitor,
+              ecosystem: futEcosystem,
+              identityContinuity: futIdentityContinuity,
+              sacrifice: futSacrifice,
+              horizonScan: futHorizonScan,
+              opportunityCost: futOpportunityCost,
+              compoundingAdvantage: futCompounding,
+              strategicDebt: futStrategicDebt,
+              futureMemory: futMemory,
+              longHorizonRisk: futLongHorizonRisk,
+              irreversibility: futIrreversibility,
+              optionality: futOptionality,
+              generational: futGenerational,
+              futureIdentity: futIdentity,
+              conviction: futConviction,
+              temporalArbitrage: futTemporalArbitrage,
+              coherence: futCoherence,
+              governor: futGovernor,
+              core: futCore,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -3500,6 +3771,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             : `the run resonated — trust ${couplingState.trustLevel}/10 → ${evolvedCoupling.trustLevel}/10 across ${evolvedCoupling.couplingCycles} cycles`,
         });
 
+        // ─── Wave 11 — the planning cycle resolves: did the run
+        // compound toward a future, or spend the future for now?
+        const evolvedFuture = futCore.organism_optimizes_for_now
+          ? evolveFutureFromNowOptimization(strategicFutureState)
+          : evolveFutureFromCompounding(strategicFutureState);
+        await strategicFutureStore.save(evolvedFuture);
+        emit({
+          stage: 'strategic-future',
+          message: futCore.organism_optimizes_for_now
+            ? `the run optimized for now — strategic debt ${strategicFutureState.strategicDebt}/10 → ${evolvedFuture.strategicDebt}/10`
+            : `the run compounded toward "${evolvedFuture.futureBeingCompounded}" — advantage ${strategicFutureState.compoundingAdvantage}/10 → ${evolvedFuture.compoundingAdvantage}/10`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -3636,6 +3920,15 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   emit({
     stage: 'reality-coupling',
     message: `the organism added nothing to the feed — saturation ${couplingState.saturationMemory}/10 → ${restedCoupling.saturationMemory}/10, silence honored ${restedCoupling.silenceHonored}×`,
+  });
+
+  // ─── Wave 11 — the run shipped nothing: strategic patience. The
+  // future was protected rather than spent; strategic debt eases.
+  const patientFuture = evolveFutureFromPatience(strategicFutureState);
+  await strategicFutureStore.save(patientFuture);
+  emit({
+    stage: 'strategic-future',
+    message: `the organism held in strategic patience — debt ${strategicFutureState.strategicDebt}/10 → ${patientFuture.strategicDebt}/10, patience honored ${patientFuture.patienceHonored}×`,
   });
 
   throw new ExhaustedAttempts(

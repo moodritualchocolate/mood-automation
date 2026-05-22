@@ -252,6 +252,37 @@ import type { CouplingGovernorReading } from '@lib/realityCouplingGovernor';
 import type { ExternalRealityModelReading } from '@lib/externalRealityModel';
 import type { CouplingHealthReading } from '@lib/couplingHealthMonitor';
 import type { RealityCouplingReading } from '@lib/realityCouplingCore';
+// Wave 11 — strategic future intelligence (Phases 151–180)
+import type { FutureScenarioReading } from '@lib/futureScenarioSimulation';
+import type { TimelineBranchingReading } from '@lib/strategicTimelineBranching';
+import type { NarrativeFutureReading } from '@lib/narrativeFutureMapping';
+import type { CulturalShiftReading } from '@lib/culturalShiftPrediction';
+import type { ReputationFutureReading } from '@lib/reputationFutureModeling';
+import type { TrustCompoundingReading } from '@lib/trustCompoundingEngine';
+import type { MarketTimingReading } from '@lib/marketTimingIntelligence';
+import type { StrategicPatienceReading } from '@lib/strategicPatienceRuntime';
+import type { SecondOrderConsequenceReading } from '@lib/secondOrderConsequenceEngine';
+import type { AntiFragilityReading } from '@lib/antiFragilityFutureArchitecture';
+import type { BlackSwanReading } from '@lib/blackSwanSensitivityMapping';
+import type { CompetitorEvolutionReading } from '@lib/competitorEvolutionSimulation';
+import type { EcosystemPressureReading } from '@lib/ecosystemPressureForecasting';
+import type { IdentityContinuityPlanReading } from '@lib/identityContinuityPlanner';
+import type { StrategicSacrificeReading } from '@lib/strategicSacrificeEngine';
+import type { HorizonScanReading } from '@lib/horizonScanningEngine';
+import type { OpportunityCostReading } from '@lib/opportunityCostLedger';
+import type { CompoundingAdvantageReading } from '@lib/compoundingAdvantageTracker';
+import type { StrategicDebtReading } from '@lib/strategicDebtMonitor';
+import type { FutureMemoryReading } from '@lib/futureMemoryArchive';
+import type { LongHorizonRiskReading } from '@lib/longHorizonRiskBalance';
+import type { IrreversibilityReading } from '@lib/irreversibilityDetector';
+import type { StrategicOptionalityReading } from '@lib/strategicOptionalityEngine';
+import type { GenerationalStrategyReading } from '@lib/generationalStrategyLayer';
+import type { FutureIdentityReading } from '@lib/futureIdentityProjection';
+import type { StrategicConvictionReading } from '@lib/strategicConvictionEngine';
+import type { TemporalArbitrageReading } from '@lib/temporalArbitrageDetector';
+import type { FutureCoherenceReading } from '@lib/futureCoherenceValidator';
+import type { StrategicFutureGovernorReading } from '@lib/strategicFutureGovernor';
+import type { StrategicPlanningReading } from '@lib/autonomousStrategicPlanningCore';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -494,6 +525,37 @@ export interface MetaInput {
   cplExternalModel?: ExternalRealityModelReading;
   cplHealth?: CouplingHealthReading;
   cplCore?: RealityCouplingReading;
+  // Wave 11 — strategic future intelligence (Phases 151–180).
+  futScenarios?: FutureScenarioReading;
+  futTimeline?: TimelineBranchingReading;
+  futNarrative?: NarrativeFutureReading;
+  futCulturalShift?: CulturalShiftReading;
+  futReputation?: ReputationFutureReading;
+  futTrustCompounding?: TrustCompoundingReading;
+  futMarketTiming?: MarketTimingReading;
+  futPatience?: StrategicPatienceReading;
+  futSecondOrder?: SecondOrderConsequenceReading;
+  futAntifragility?: AntiFragilityReading;
+  futBlackSwan?: BlackSwanReading;
+  futCompetitor?: CompetitorEvolutionReading;
+  futEcosystem?: EcosystemPressureReading;
+  futIdentityContinuity?: IdentityContinuityPlanReading;
+  futSacrifice?: StrategicSacrificeReading;
+  futHorizonScan?: HorizonScanReading;
+  futOpportunityCost?: OpportunityCostReading;
+  futCompounding?: CompoundingAdvantageReading;
+  futStrategicDebt?: StrategicDebtReading;
+  futMemory?: FutureMemoryReading;
+  futLongHorizonRisk?: LongHorizonRiskReading;
+  futIrreversibility?: IrreversibilityReading;
+  futOptionality?: StrategicOptionalityReading;
+  futGenerational?: GenerationalStrategyReading;
+  futIdentity?: FutureIdentityReading;
+  futConviction?: StrategicConvictionReading;
+  futTemporalArbitrage?: TemporalArbitrageReading;
+  futCoherence?: FutureCoherenceReading;
+  futGovernor?: StrategicFutureGovernorReading;
+  futCore?: StrategicPlanningReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -558,7 +620,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           cplEngagementTruth, cplSaturation, cplTrust, cplClimate, cplAudience,
           cplPlatformDrift, cplAuthenticity, cplSilence, cplReputation, cplMeaning,
           cplSocialExhaustion, cplAttentionEconomy, cplContradiction, cplWorldFeedback,
-          cplResonance, cplGovernor, cplExternalModel, cplHealth, cplCore } = input;
+          cplResonance, cplGovernor, cplExternalModel, cplHealth, cplCore,
+          futNarrative, futReputation, futTrustCompounding, futMarketTiming, futPatience,
+          futSecondOrder, futAntifragility, futBlackSwan, futCompetitor, futEcosystem,
+          futIdentityContinuity, futOpportunityCost, futCompounding, futStrategicDebt,
+          futLongHorizonRisk, futIrreversibility, futOptionality, futGenerational,
+          futIdentity, futConviction, futCoherence, futGovernor, futCore } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1566,6 +1633,61 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 11 — STRATEGIC FUTURE: THE COMPOUNDING GATES ═══════
+  // THE GLOBAL WAVE 11 META-CRITIC QUESTION:
+  //   "What future are we compounding toward?" A run that optimizes
+  //   for what works now — spending the future for a present gain —
+  //   is refused at default brutality.
+  if (futCore && futCore.organism_optimizes_for_now && brutality >= 0.65) {
+    reasons.push(`strategic future: the organism is optimizing for now, not compounding a future — ${futCore.planning_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A negative second-order consequence — a present win that quietly
+  // creates a hidden future cost.
+  if (futSecondOrder && futSecondOrder.second_order_is_negative && brutality >= 0.7) {
+    reasons.push(`second-order consequence: ${futSecondOrder.hidden_cost ?? 'a present win conceals a negative second-order cost'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Strategic patience — when waiting compounds more than acting, the
+  // disciplined move is not to ship.
+  if (futPatience && futPatience.recommend_patience && brutality >= 0.7) {
+    reasons.push(`strategic patience: ${futPatience.patience_case}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Strategic debt has grown dangerous — the organism is living on
+  // its future.
+  if (futStrategicDebt && futStrategicDebt.debt_is_dangerous && brutality >= 0.7) {
+    reasons.push(`strategic debt: ${futStrategicDebt.debt_source}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // An irreversible decision that does not carry identity to the end
+  // of the horizon — refused at brutal.
+  if (futIrreversibility && futIrreversibility.decision_is_irreversible &&
+      futIdentityContinuity && !futIdentityContinuity.identity_survives_horizon && brutality >= 0.75) {
+    reasons.push(`irreversibility: this decision cannot be undone and the identity does not survive the horizon — ${futIrreversibility.reversibility_note}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A fragile future — robust until the first unmodelled shock.
+  if (futAntifragility && futAntifragility.is_fragile && brutality >= 0.75) {
+    reasons.push(`anti-fragility: the future is fragile — ${futAntifragility.fragility_source}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // The future plan contradicts itself.
+  if (futCoherence && !futCoherence.future_is_coherent && brutality >= 0.7) {
+    reasons.push(`future coherence: the future plan contradicts itself — ${futCoherence.incoherences[0] ?? 'internal incoherence'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The identity does not survive the long horizon.
+  if (futIdentityContinuity && !futIdentityContinuity.identity_survives_horizon && brutality >= 0.75) {
+    reasons.push(`identity continuity: the identity is not projected to survive the horizon — ${futIdentityContinuity.continuity_plan}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The future-intelligence layer reports the organism is now-optimizing.
+  if (futGovernor && futGovernor.governance === 'now-optimizing' && brutality >= 0.7) {
+    reasons.push(`strategic future governor: ${futGovernor.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -2193,6 +2315,50 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`reality coupling: the coupling is straining (${cplCore.coupling_score}/10)`);
   }
 
+  // Wave 11 soft floors — strategic future intelligence.
+  if (futReputation && futReputation.reputation_arc === 'eroding') {
+    softReasons.push(`reputation future: reputation is on an eroding arc → projected ${futReputation.projected_reputation}/10`);
+  }
+  if (futTrustCompounding && !futTrustCompounding.trust_compounding) {
+    softReasons.push('trust compounding: trust is not being left to compound — the long-term curve is flat');
+  }
+  if (futBlackSwan && futBlackSwan.exposure_is_dangerous) {
+    softReasons.push(`black swan sensitivity: dangerous exposure (${futBlackSwan.black_swan_exposure}/10) — vulnerable to ${futBlackSwan.vulnerable_to}`);
+  }
+  if (futCompetitor && futCompetitor.must_differentiate) {
+    softReasons.push(`competitor evolution: the field is racing toward noise — ${futCompetitor.competitor_trajectory}`);
+  }
+  if (futEcosystem && futEcosystem.ecosystem_tightening) {
+    softReasons.push(`ecosystem pressure: the ecosystem is tightening (${futEcosystem.forecast_pressure}/10) — dominant: ${futEcosystem.dominant_pressure}`);
+  }
+  if (futOpportunityCost && futOpportunityCost.cost_is_mounting) {
+    softReasons.push(`opportunity cost: the cost of paths not taken is mounting (${futOpportunityCost.opportunity_cost}/10)`);
+  }
+  if (futCompounding && !futCompounding.advantage_is_compounding) {
+    softReasons.push(`compounding advantage: ${futCompounding.advantage_source}`);
+  }
+  if (futOptionality && futOptionality.options_closing) {
+    softReasons.push('strategic optionality: the organism\'s future options are closing');
+  }
+  if (futMarketTiming && (futMarketTiming.timing === 'missed' || futMarketTiming.timing === 'too-early')) {
+    softReasons.push(`market timing: ${futMarketTiming.timing_note}`);
+  }
+  if (futIdentity && !futIdentity.identity_projection_is_true) {
+    softReasons.push(`future identity projection: if it keeps deciding this way it becomes "${futIdentity.projected_identity}"`);
+  }
+  if (futGenerational && !futGenerational.strategy_outlives_generation) {
+    softReasons.push(`generational strategy: ${futGenerational.generational_note}`);
+  }
+  if (futConviction && !futConviction.hold_conviction) {
+    softReasons.push(`strategic conviction: ${futConviction.conviction_note}`);
+  }
+  if (futLongHorizonRisk && !futLongHorizonRisk.long_horizon_worth_it) {
+    softReasons.push(`long-horizon risk: the long-horizon bet does not justify its risk (balance ${futLongHorizonRisk.risk_reward_balance})`);
+  }
+  if (futNarrative && !futNarrative.narrative_is_coherent) {
+    softReasons.push(`narrative future: the projected narrative has drifted from its origin (${futNarrative.drift_from_origin}/10)`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -2222,14 +2388,14 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 150 phases of judgement — the Wave 10
-  // reality-coupling layer on top of the operating system and the
-  // organism — every banner produces 44-70 soft signals routinely.
-  // Threshold band:
-  //   lenient (0.50)   → 59 soft reasons required to reject
-  //   default (0.65)   → 51 soft reasons required
-  //   brutal  (0.90)   → 45 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 45 : brutality >= 0.6 ? 51 : 59;
+  // the cognition stack. After 180 phases of judgement — the Wave 11
+  // strategic-future layer on top of reality coupling, the operating
+  // system, and the organism — every banner produces 50-80 soft
+  // signals routinely. Threshold band:
+  //   lenient (0.50)   → 67 soft reasons required to reject
+  //   default (0.65)   → 59 soft reasons required
+  //   brutal  (0.90)   → 53 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 53 : brutality >= 0.6 ? 59 : 67;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

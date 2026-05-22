@@ -705,6 +705,39 @@ export interface BannerTasteSystem {
     health: import('@lib/couplingHealthMonitor').CouplingHealthReading;
     core: import('@lib/realityCouplingCore').RealityCouplingReading;
   };
+  // Wave 11 — strategic future intelligence (Phases 151–180)
+  future: {
+    scenarios: import('@lib/futureScenarioSimulation').FutureScenarioReading;
+    timeline: import('@lib/strategicTimelineBranching').TimelineBranchingReading;
+    narrativeFuture: import('@lib/narrativeFutureMapping').NarrativeFutureReading;
+    culturalShift: import('@lib/culturalShiftPrediction').CulturalShiftReading;
+    reputationFuture: import('@lib/reputationFutureModeling').ReputationFutureReading;
+    trustCompounding: import('@lib/trustCompoundingEngine').TrustCompoundingReading;
+    marketTiming: import('@lib/marketTimingIntelligence').MarketTimingReading;
+    patience: import('@lib/strategicPatienceRuntime').StrategicPatienceReading;
+    secondOrder: import('@lib/secondOrderConsequenceEngine').SecondOrderConsequenceReading;
+    antifragility: import('@lib/antiFragilityFutureArchitecture').AntiFragilityReading;
+    blackSwan: import('@lib/blackSwanSensitivityMapping').BlackSwanReading;
+    competitor: import('@lib/competitorEvolutionSimulation').CompetitorEvolutionReading;
+    ecosystem: import('@lib/ecosystemPressureForecasting').EcosystemPressureReading;
+    identityContinuity: import('@lib/identityContinuityPlanner').IdentityContinuityPlanReading;
+    sacrifice: import('@lib/strategicSacrificeEngine').StrategicSacrificeReading;
+    horizonScan: import('@lib/horizonScanningEngine').HorizonScanReading;
+    opportunityCost: import('@lib/opportunityCostLedger').OpportunityCostReading;
+    compoundingAdvantage: import('@lib/compoundingAdvantageTracker').CompoundingAdvantageReading;
+    strategicDebt: import('@lib/strategicDebtMonitor').StrategicDebtReading;
+    futureMemory: import('@lib/futureMemoryArchive').FutureMemoryReading;
+    longHorizonRisk: import('@lib/longHorizonRiskBalance').LongHorizonRiskReading;
+    irreversibility: import('@lib/irreversibilityDetector').IrreversibilityReading;
+    optionality: import('@lib/strategicOptionalityEngine').StrategicOptionalityReading;
+    generational: import('@lib/generationalStrategyLayer').GenerationalStrategyReading;
+    futureIdentity: import('@lib/futureIdentityProjection').FutureIdentityReading;
+    conviction: import('@lib/strategicConvictionEngine').StrategicConvictionReading;
+    temporalArbitrage: import('@lib/temporalArbitrageDetector').TemporalArbitrageReading;
+    coherence: import('@lib/futureCoherenceValidator').FutureCoherenceReading;
+    governor: import('@lib/strategicFutureGovernor').StrategicFutureGovernorReading;
+    core: import('@lib/autonomousStrategicPlanningCore').StrategicPlanningReading;
+  };
 }
 
 export interface Banner {
