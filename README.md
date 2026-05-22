@@ -68,6 +68,35 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 9 — Manifestation Architecture (Phases 111–130)
+
+Waves 1–8 built a mind. Wave 9 gives it a **body**. The cognitive operating system becomes a **living, visible runtime** — a dashboard at `/runtime` that is not analytics software but a window into an organism thinking. The critical rule of the wave: the UI is *not* separate from cognition. Every visible surface is built from the persistent runtime state — `organism.json`, `os-runtime.json`, `civilization.json`, `world-psychology.json`, the runtime memory — by a manifestation module. No fabricated widgets, no disconnected analytics; `GET /api/runtime` assembles one snapshot and the page renders only what the modules derive from it.
+
+| Phase | Module | Role |
+|---|---|---|
+| 111 | `runtimeUIBrain` | The foundation — defines the runtime snapshot and decides the one thing a viewer feels first: alive, or dormant. |
+| 112 | `organismStateView` | The organism's vital signs — energy, stress, complexity, vitality — surfaced as gauges. |
+| 113 | `cognitivePulseView` | The runtime's heartbeat — a rate, an amplitude, a rhythm, a waveform the UI animates. |
+| 114 | `cognitionTimelineView` | Directives, civilization sessions, and verdicts ordered into one live history. |
+| 115 | `directiveStreamView` | The executive's voice — the current directive and the stream behind it. |
+| 116 | `memoryGraphView` | Beliefs, myths, scars, laws, and immune records drawn as a graph. |
+| 117 | `worldStateMonitorView` | The reality the organism lives inside, surfaced as pressure gauges. |
+| 118 | `attentionPressureMapView` | External, internal, and runtime pressure laid onto a heat field. |
+| 119 | `strategicSeasonMonitorView` | Which of the seven seasons the runtime is living in. |
+| 120 | `driftMonitorView` | Whether the runtime is holding its line or sliding, read from history. |
+| 121 | `executiveCouncilView` | The civilization's council — reputation standing and recent sessions. |
+| 122 | `internalConflictView` | The live tensions — optimization vs identity, unhealed scars, fragmentation. |
+| 123 | `identityStateView` | The governing question, made visible: is the organism still itself? |
+| 124 | `interruptSurfaceView` | How interrupted the organism's cognition has been across its life. |
+| 125 | `runtimeHealthView` | The operating system's own vital signs — coordination, fragmentation. |
+| 126 | `escalationSurfaceView` | The decision ledger — shipped, refused, or held in silence. |
+| 127 | `runtimeOrchestrationView` | The OS control surface — posture, season, directive, coordination. |
+| 128 | `livePresenceLayer` | The layer that makes the runtime feel present — breathing, slow, or dormant. |
+| 129 | `manifestationLayout` | The runtime composes how it should be seen — the foreground surface becomes hero. |
+| 130 | `manifestationCore` | The aggregator and closing synthesis — builds every surface, answers: is the runtime visible and true to cognition? |
+
+The wave's governing rule — **the UI must emerge directly from persistent runtime state** — is enforced by construction: `buildRuntimeManifestation` builds all eighteen surfaces from one snapshot, the `/api/runtime` route serves it, and the `/runtime` page renders the manifestation and nothing else. The dashboard polls on an interval so a viewer watches the organism think in real time. Verified by `scripts/test-manifestation.ts` — 16 checks: a dormant runtime manifests honestly, a booted runtime manifests as alive, vital signs / pulse / directives / timeline / season / world-state / pressure / memory / identity / decision-ledger / drift all surface from real state, the layout promotes the foreground surface to hero, every surface is true to cognition, and a distressed runtime manifests as critical. 16/16 pass.
+
 ## Wave 8 — Operating System Genesis (Phases 91–110)
 
 Wave 7 made the system a living organism. Wave 8 gives that organism an **operating system**. Up to this point the engine was a collection of cognitive capabilities; now it becomes **a persistent cognitive operating system that coordinates cognition continuously** — a kernel runs the loop, a scheduler allocates attention, interrupts pre-empt it, a directive engine governs every tick, and the runtime heals itself. Every run is one kernel tick; the OS's persistent runtime state — uptime, operational posture, strategic season, directive log — carries to `data/runtime/os-runtime.json`.
