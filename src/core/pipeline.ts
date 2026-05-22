@@ -223,9 +223,28 @@ import {
   evolveWorldStateFromSignals,
   describeWorldState,
   recordCausalChain,
+  // Phase 27 — persistent cognitive runtime (the living runtime layer)
+  createRuntimeMemoryStore,
+  loadRuntimeContext,
+  commitApprovedRun,
+  commitRejectedRun,
+  buildRejectionRecord,
+  assessAgainstRejectionMemory,
+  assessAgainstApprovalMemory,
+  scoreCognitiveContinuity,
+  detectRuntimeDrift,
+  assessRuntimeHealth,
+  buildRuntimeTrace,
+  generateNextRunDirective,
+  defendIdentity,
 } from '@lib/index';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
 import type { CausalChainLink } from '@lib/causalMemoryGraph';
+import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
+import type { ApprovalRecord } from '@lib/approvalMemory';
+import type { CognitiveFieldState } from '@lib/cognitiveField';
+import type { CognitiveContinuityReading } from '@lib/cognitiveContinuityScore';
+import type { WorldModelEvolution } from '@lib/selfEvolvingWorldModel';
 import { SEED_INGESTED_SIGNALS } from '@data/seed-ingested-signals';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { EmotionalCore } from '@lib/humanTruthEngine';
@@ -266,6 +285,26 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   const maxAttempts = Math.max(1, Math.min(request.maxAttempts ?? 3, 5));
   let attempt = 0;
   const rejectedAttempts: Banner['rejectedAttempts'] = [];
+
+  // Phase 27 — the last attempt's runtime snapshot, captured so an
+  // exhausted run can still commit a rejection to the living runtime.
+  let lastRejectionSnapshot: {
+    stateFamily: string;
+    dominantTruth: string;
+    verdict: string;
+    reasons: string[];
+    field: CognitiveFieldState;
+    continuity: CognitiveContinuityReading;
+    worldStateGen: number;
+  } | null = null;
+
+  // Phase 27 — a minimal world-model evolution for the rejected-run
+  // trace (a refused run does not run the self-evolving world model).
+  const emptyEvolution: WorldModelEvolution = {
+    strengthen_truths: [], weaken_truths: [], emerging_pressures: [],
+    retire_cliches: [], new_desire_forces: [], overfitting_detected: false,
+    evolution_pressure: 0, notes: [],
+  };
 
   let stateSeed = Date.now();
   let forceStateId: string | undefined = request.forceStateId;
@@ -421,6 +460,28 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   });
   // Reality signals also move the world-state weather.
   worldState = evolveWorldStateFromSignals(worldState, ingestedSignals.length);
+
+  // ─── Phase 27 — persistent cognitive runtime: load everything the
+  // prior runs of this campaign left behind, before deciding anything.
+  const campaignId = request.campaignId ?? request.formula.toLowerCase();
+  const runtimeStore = createRuntimeMemoryStore(campaignId);
+  const runtimeContext = await loadRuntimeContext(runtimeStore);
+  emit({
+    stage: 'runtime',
+    message: runtimeContext.generationIndex === 0
+      ? `campaign "${campaignId}" — first run, no prior runtime memory`
+      : `campaign "${campaignId}" — run ${runtimeContext.generationIndex + 1}; ` +
+        `${runtimeContext.approvedCount} approved / ${runtimeContext.rejectedCount} refused; ` +
+        `directive: ${runtimeContext.nextRunDirective.antiRepetitionWarning ? 'anti-repetition active' : 'hold course'}`,
+  });
+  // Runtime drift — the system watches its own mind across runs.
+  const runtimeDrift = detectRuntimeDrift({ history: runtimeContext.history });
+  if (runtimeDrift.drift_detected) {
+    emit({
+      stage: 'runtime-drift',
+      message: `the runtime is drifting: ${runtimeDrift.drift_signals.join(', ')} — next directive must correct it`,
+    });
+  }
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
   const truthPersistenceStore = createTruthPersistenceStore();
@@ -1494,6 +1555,50 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       });
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ PHASE 27 — PERSISTENT RUNTIME: CONTINUITY CHECK ═══════
+      // The run is measured against everything the prior runs left.
+      // The meta-critic's Phase 27 question: "did this generation
+      // respect what the system has already learned, or behave like a
+      // fresh prompt?"
+      const rejectionAssessment = assessAgainstRejectionMemory({
+        candidateConcept: `${emotionalCore?.id ?? ''} ${truth.truth}`,
+        candidateTerritory: state.family,
+        rejectionMemory: runtimeContext.rejectionMemory,
+      });
+      const approvalAssessment = assessAgainstApprovalMemory({
+        candidateConcept: `${emotionalCore?.id ?? ''} ${truth.truth}`,
+        candidateTerritory: state.family,
+        candidateObjectMotif: symbolicObjectsReading.objects_present[0]?.object ?? '',
+        candidateProductRole: direction.productRole,
+        approvalMemory: runtimeContext.approvalMemory,
+      });
+      const cognitiveContinuity = scoreCognitiveContinuity({
+        generationIndex: runtimeContext.generationIndex,
+        field: cognitiveField,
+        priorDirective: runtimeContext.nextRunDirective,
+        rejectionAssessment,
+        approvalAssessment,
+        priorState: runtimeContext.priorState,
+        worldStateGen: worldState.generationCount,
+        candidateTerritory: state.family,
+        truthPersistence: cognitiveField.truthPersistence,
+        unifiedGraphCoherence: unifiedGraphReading.human_coherence,
+      });
+      emit({
+        stage: 'cognitive-continuity',
+        message: cognitiveContinuity.is_first_run
+          ? 'first run — continuity baseline established'
+          : `continuity ${cognitiveContinuity.continuity_score}/10${cognitiveContinuity.behaved_like_fresh_prompt ? ' — BEHAVED LIKE A FRESH PROMPT' : ''}`,
+      });
+      // The runtime identity defends human truth over engagement pull.
+      const identityDefense = defendIdentity({
+        engagementTrendPull: reaction.engagementQuality,
+        humanTruthStrength: cognitiveField.emergence_score,
+        productVisibilityPush: direction.productRole === 'hidden' || direction.productRole === 'environmental' ? 2 : 7,
+        culturalHonesty: privateLanguageReading.private_language_score,
+      });
+      // ═══════════════════════════════════════════════════════════
+
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
       // computed pre-verdict so the meta-critic can gate on them. ──
       const tentativeAftertaste = predictAftertaste({
@@ -1673,6 +1778,10 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         emotionalPhysicsReading,
         tensionTopologyReading,
         contradictionResolution,
+        // Phase 27 — persistent cognitive runtime
+        cognitiveContinuity,
+        runtimeDrift,
+        priorNextRunDirective: runtimeContext.nextRunDirective,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -1750,6 +1859,100 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             message: `evolution pressure ${worldModelEvolution.evolution_pressure}/10 — ${worldModelEvolution.notes[0] ?? ''}`,
           });
         }
+
+        // ─── Phase 27 — the runtime learns from this approval ─────
+        const runtimeHealth = assessRuntimeHealth({
+          field: cognitiveField,
+          drift: runtimeDrift,
+          continuity: cognitiveContinuity,
+          approvedCount: runtimeContext.approvedCount,
+          rejectedCount: runtimeContext.rejectedCount,
+          contradictionCount: contradictionResolution.conflicts.length,
+          realitySync: collectiveRealityTrackingReading.reality_sync,
+          productRole: direction.productRole,
+        });
+        const nextRunDirective = generateNextRunDirective({
+          generationIndex: runtimeContext.generationIndex,
+          field: cognitiveField,
+          worldModelEvolution,
+          usedTerritory: state.family,
+          usedObjects: symbolicObjectsReading.objects_present.map((o) => o.object),
+          driftCorrections: runtimeDrift.correction_needed,
+          driftTooMuchSilence: runtimeDrift.too_much_silence,
+          driftTooMuchHeaviness: runtimeDrift.too_much_heaviness,
+        });
+        const runtimeTrace = buildRuntimeTrace({
+          generationIndex: runtimeContext.generationIndex,
+          priorState: runtimeContext.priorState,
+          field: cognitiveField,
+          worldModelEvolution,
+          drift: runtimeDrift,
+          continuity: cognitiveContinuity,
+          nextRunDirective,
+          verdict: 'approve',
+          worldStateDescription: describeWorldState(worldState),
+        });
+        const approvalRecord: ApprovalRecord = {
+          ts: shippedAt,
+          generationIndex: runtimeContext.generationIndex,
+          approvedConcept: `${emotionalCore?.id ?? state.id}: ${truth.truth.slice(0, 90)}`,
+          whyApproved: cognitionTrace.finalCreativeReason,
+          dominantHumanTruth: cognitiveField.dominantTruths[0] ?? state.id,
+          activePressure: cognitiveField.activePressures[0] ?? 'none',
+          behavioralLoop: cognitiveField.behavioralLoops[0] ?? 'none',
+          ritualSignal: cognitiveField.ritualAttachments[0] ?? 'none',
+          identityTension: cognitiveField.identityNarratives[0] ?? 'none',
+          culturalRecognitionScore: collectiveRecognition.recognition_score,
+          atmosphereSignature: cognitiveField.campaignAtmosphere,
+          objectMotif: symbolicObjectsReading.objects_present[0]?.object ?? '',
+          productRole: direction.productRole,
+          expectedAftertaste: tentativeAftertaste.residueStrength,
+          futureTrajectory: emotionalForecastReading.direction,
+        };
+        const runtimeHistoryEntry: RuntimeHistoryEntry = {
+          generationIndex: runtimeContext.generationIndex,
+          ts: shippedAt,
+          verdict: 'approve',
+          dominantTruth: cognitiveField.dominantTruths[0] ?? state.id,
+          emotionalTerritory: state.family,
+          symbolicObjects: symbolicObjectsReading.objects_present.map((o) => o.object),
+          worldStateGen: worldState.generationCount,
+          emergence: cognitiveField.emergence_score,
+          fieldCoherence: cognitiveField.field_coherence,
+          continuityScore: cognitiveContinuity.continuity_score,
+          silenceLevel: Math.round(direction.restraint * 10),
+        };
+        const nearMissRejection = rejectedAttempts.length > 0
+          ? buildRejectionRecord({
+              generationIndex: runtimeContext.generationIndex,
+              rejectedConcept: `${state.family}: ${rejectedAttempts[0].stage}`,
+              verdict: 'near-miss',
+              reasons: [rejectedAttempts[0].reason],
+            })
+          : null;
+        const persistentRuntimeState = await commitApprovedRun(runtimeStore, {
+          context: runtimeContext,
+          field: cognitiveField,
+          continuity: cognitiveContinuity,
+          health: runtimeHealth,
+          trace: runtimeTrace,
+          nextRunDirective,
+          approvalRecord,
+          historyEntry: runtimeHistoryEntry,
+          nearMissRejection,
+          worldStateDelta: describeWorldState(worldState),
+          humanGraphDelta: `coherence ${unifiedGraphReading.human_coherence.toFixed(1)}/10`,
+          symbolicObjectDelta: symbolicObjectsReading.objects_present.map((o) => o.object).join(', ') || 'none',
+          truthPersistenceDelta: `durability ${cognitiveField.truthPersistence}/10`,
+          decayDelta: cognitiveField.decaySignals.join(', ') || 'no decay',
+          trajectoryDelta: emotionalForecastReading.direction,
+          campaignIdentityDelta: `belongs ${unifiedGraphReading.candidate_belongs.toFixed(1)}/10`,
+          audienceSignalDelta: `${ingestedSignals.length} reality signals in scope`,
+        });
+        emit({
+          stage: 'runtime',
+          message: `${persistentRuntimeState.changed_the_mind ? 'the run CHANGED the mind of the system' : 'the run did not change the system — runtime not advancing'} · health ${runtimeHealth.overall_health}/10 · ${runtimeTrace.director_memo}`,
+        });
 
         const partial: Omit<Banner, 'memorySnapshot'> = {
           id: bannerId,
@@ -1936,6 +2139,15 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               trace: cognitionTrace,
               worldModelEvolution,
             },
+            runtime: {
+              persistentState: persistentRuntimeState,
+              continuity: cognitiveContinuity,
+              drift: runtimeDrift,
+              health: runtimeHealth,
+              trace: runtimeTrace,
+              nextRunDirective,
+              identityDefense,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -2063,11 +2275,67 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       // absorbs it and the next run inherits the slightly raised bar.
       worldState = evolveWorldStateFromRejection(worldState);
       await worldStateStore.saveWorldState(worldState);
+      // Phase 27 — capture the snapshot so an exhausted run still
+      // commits a rejection into the living runtime.
+      lastRejectionSnapshot = {
+        stateFamily: state.family,
+        dominantTruth: cognitiveField.dominantTruths[0] ?? state.id,
+        verdict: finalVerdict.verdict,
+        reasons: finalVerdict.reasons,
+        field: cognitiveField,
+        continuity: cognitiveContinuity,
+        worldStateGen: worldState.generationCount,
+      };
       stateSeed += 7919;
       forceStateId = undefined;
       memory = await memoryStore.read();
       break; // exit inner loop, next outer attempt
     }
+  }
+
+  // ─── Phase 27 — the run exhausted: commit a rejection so the
+  // runtime learns from the refusal and the next run inherits it.
+  if (lastRejectionSnapshot) {
+    const rejectionRecord = buildRejectionRecord({
+      generationIndex: runtimeContext.generationIndex,
+      rejectedConcept: `${lastRejectionSnapshot.stateFamily}: ${lastRejectionSnapshot.dominantTruth}`,
+      verdict: lastRejectionSnapshot.verdict,
+      reasons: lastRejectionSnapshot.reasons,
+    });
+    const rejectionHistoryEntry: RuntimeHistoryEntry = {
+      generationIndex: runtimeContext.generationIndex,
+      ts: Date.now(),
+      verdict: lastRejectionSnapshot.verdict,
+      dominantTruth: lastRejectionSnapshot.dominantTruth,
+      emotionalTerritory: lastRejectionSnapshot.stateFamily,
+      symbolicObjects: lastRejectionSnapshot.field.symbolicObjects,
+      worldStateGen: lastRejectionSnapshot.worldStateGen,
+      emergence: lastRejectionSnapshot.field.emergence_score,
+      fieldCoherence: lastRejectionSnapshot.field.field_coherence,
+      continuityScore: lastRejectionSnapshot.continuity.continuity_score,
+      silenceLevel: 5,
+    };
+    const rejectionTrace = buildRuntimeTrace({
+      generationIndex: runtimeContext.generationIndex,
+      priorState: runtimeContext.priorState,
+      field: lastRejectionSnapshot.field,
+      worldModelEvolution: emptyEvolution,
+      drift: runtimeDrift,
+      continuity: lastRejectionSnapshot.continuity,
+      nextRunDirective: runtimeContext.nextRunDirective,
+      verdict: lastRejectionSnapshot.verdict,
+      worldStateDescription: describeWorldState(worldState),
+    });
+    await commitRejectedRun(runtimeStore, {
+      context: runtimeContext,
+      rejectionRecord,
+      historyEntry: rejectionHistoryEntry,
+      trace: rejectionTrace,
+    });
+    emit({
+      stage: 'runtime',
+      message: `run exhausted — rejection committed to the runtime; the next run inherits this refusal (${rejectionRecord.rejectionCategory})`,
+    });
   }
 
   throw new ExhaustedAttempts(

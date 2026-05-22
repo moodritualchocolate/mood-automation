@@ -358,6 +358,9 @@ export interface GenerateRequest {
   forceStateId?: string;
   /** Max critic-driven regeneration attempts. */
   maxAttempts?: number;
+  /** Phase 27 — the persistent-runtime campaign this run belongs to.
+   *  When omitted the runtime uses the formula as the campaign id. */
+  campaignId?: string;
 }
 
 /**
@@ -568,6 +571,16 @@ export interface BannerTasteSystem {
     symbolicObjects: import('@lib/symbolicObjects').SymbolicObjectsReading;
     trace: import('@lib/cognitionTrace').CognitionTrace;
     worldModelEvolution: import('@lib/selfEvolvingWorldModel').WorldModelEvolution;
+  };
+  // Phase 27 — persistent cognitive runtime (the living runtime layer)
+  runtime: {
+    persistentState: import('@lib/persistentCognitiveRuntime').PersistentRuntimeState;
+    continuity: import('@lib/cognitiveContinuityScore').CognitiveContinuityReading;
+    drift: import('@lib/runtimeDriftDetector').RuntimeDriftReport;
+    health: import('@lib/runtimeHealthMonitor').RuntimeHealth;
+    trace: import('@lib/runtimeTrace').RuntimeTrace;
+    nextRunDirective: import('@lib/nextRunDirective').NextRunDirective;
+    identityDefense: import('@lib/runtimeIdentity').IdentityDefenseReading;
   };
 }
 

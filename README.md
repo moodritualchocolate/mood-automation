@@ -68,6 +68,29 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Phase 27 — Persistent Cognitive Runtime (the living runtime layer)
+
+Phase 26 made the system one mind. Phase 27 makes that mind **persist through time**. It adds no new creative module, no new psychological theory, no new output — it makes the existing intelligence *remember, breathe, and evolve across runs*. The system stops behaving as *"generate → judge → store"* and starts behaving as *"remember → interpret → decide → act → learn → become slightly different."*
+
+The master principle: *"Did this run change the mind of the system?"* If not, the runtime is not alive.
+
+| Module | Role |
+|---|---|
+| `lib/persistentCognitiveRuntime.ts` | The orchestration layer that wraps the Phase 26 pipeline. `loadRuntimeContext` loads everything prior runs left; `commitApprovedRun` / `commitRejectedRun` learn from the outcome and persist. Emits `PersistentRuntimeState` with all the deltas and `changed_the_mind`. |
+| `lib/runtimeMemoryStore.ts` | The single centralized long-term memory — `data/runtime/campaigns/{campaignId}/runtime.json` + `data/runtime/global-runtime.json`. Holds runtime history, the standing next-run directive, rejection + approval memory, and runtime traces. File-based, structured for a future DB migration. |
+| `lib/nextRunDirective.ts` | Every generation leaves *cognitive* instructions for the next: emotional territories to avoid, truths to strengthen/weaken, tensions to continue, objects to avoid/develop, desired silence level, pressures to increase/reduce, anti-repetition warning. The next run reads it before deciding anything. |
+| `lib/rejectionMemory.ts` | Rejections become intelligence. Each refusal is categorised by *what it violated* (truth / atmosphere / behavioral authenticity / cultural honesty / visual taste / product role / silence / system causality). A repeated rejected territory is pushed back to the bar. |
+| `lib/approvalMemory.ts` | Approvals become intelligence too. Distinguishes a healthy *continuation* of emotional territory from an unhealthy *duplication* of a creative pattern — approved ideas must evolve, never repeat. |
+| `lib/runtimeDriftDetector.ts` | The system watches its own mind across runs — overuse of the same truths / objects / territory, too much silence, too much heaviness, too much refusal, lost commercial grounding, excessive abstraction. When drift is detected, the next-run directive must correct it. |
+| `lib/runtimeIdentity.ts` | Maintains the identity of the engine itself — system identity, brand identity, creative + refusal philosophy, commercial boundaries, human-truth priorities, anti-patterns, tone boundaries, evolution rules. `defendIdentity` enforces: human truth and brand identity outrank shallow engagement, every time. |
+| `lib/cognitiveContinuityScore.ts` | Scores 10 continuity metrics (memory, campaign identity, emotional trajectory, symbolic object, refusal, truth persistence, human graph, world-state, anti-repetition, evolution-without-fragmentation) and flags `behaved_like_fresh_prompt`. |
+| `lib/runtimeHealthMonitor.ts` | Runtime self-diagnostic — cognition coherence, memory load, contradiction load, refusal/approval rate, drift / recursion / freshness / fragmentation / over-intelligence / under- and over-commercialization / reality-disconnection risk. |
+| `lib/runtimeTrace.ts` | Every run leaves a human-readable trace that reads like a creative director's private memory: *"Gen 4. I remembered gen 3… I held continuity at 6.7/10… Next run: do not re-open 'pressure'; continue 'energy without aim'."* |
+
+Phase 27 master meta-critic gate — **"Did this generation respect what the system has already learned, or did it behave like a fresh prompt?"** A run that behaved like a fresh prompt → reject-concept at default+. A run that re-opens a territory the standing directive said to avoid, or repeats a territory the runtime previously refused → reject-concept at brutal. No generation is allowed to be isolated — every output must be a continuation, a correction, or an evolution of the living memory. Soft-floor threshold for the 27-phase stack: **lenient=21 · default=18 · brutal=14**.
+
+Verified by `scripts/test-persistent-runtime.ts` — 5 consecutive zero-prompt generations (only `{ formula }` supplied): the runtime generation index increments, every run reads the prior one, only the first run is permitted to be "fresh", the runtime trace references the prior run, the next-run directive carries anti-repetition forward, approval + rejection memory accumulate, and `defendIdentity` protects human truth over a loud engagement trend. 11/11 checks pass — *"the system remembers what it believed yesterday."*
+
 ## Phase 26 — Unified Cognitive Field (the nervous system)
 
 Until Phase 25 the system had many powerful intelligence layers, but they risked behaving like separate modules reporting in a line. Phase 26 adds **no new creative feature, no new output type, no new generator** — it builds the *nervous system* that makes every existing organ behave like one mind. The system stops running modules in a line and starts maintaining **a persistent psychological world-state**.

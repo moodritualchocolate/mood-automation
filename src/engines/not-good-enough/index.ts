@@ -155,6 +155,10 @@ import type { CognitiveFieldState } from '@lib/cognitiveField';
 import type { EmotionalPhysicsReading } from '@lib/emotionalPhysics';
 import type { TensionTopologyReading } from '@lib/tensionTopology';
 import type { ContradictionResolverReading } from '@lib/cognitiveContradictionResolver';
+// Phase 27 — persistent cognitive runtime (the living runtime layer)
+import type { CognitiveContinuityReading } from '@lib/cognitiveContinuityScore';
+import type { RuntimeDriftReport } from '@lib/runtimeDriftDetector';
+import type { NextRunDirective } from '@lib/nextRunDirective';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -299,6 +303,10 @@ export interface MetaInput {
   emotionalPhysicsReading?: EmotionalPhysicsReading;
   tensionTopologyReading?: TensionTopologyReading;
   contradictionResolution?: ContradictionResolverReading;
+  // Phase 27 — persistent cognitive runtime (the living runtime layer).
+  cognitiveContinuity?: CognitiveContinuityReading;
+  runtimeDrift?: RuntimeDriftReport;
+  priorNextRunDirective?: NextRunDirective;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -339,7 +347,8 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           collectiveRealityTrackingReading, adaptiveEmotionalIntelligenceReading,
           unifiedGraphReading,
           cognitiveField, emotionalPhysicsReading, tensionTopologyReading,
-          contradictionResolution } = input;
+          contradictionResolution,
+          cognitiveContinuity, runtimeDrift, priorNextRunDirective } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1010,6 +1019,31 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-taste';
   }
 
+  // ═══ PHASE 27 — PERSISTENT RUNTIME: THE CONTINUITY GATE ═══════
+  // THE PHASE 27 MASTER META-CRITIC QUESTION:
+  //   "Did this generation RESPECT what the system has already
+  //    learned, or did it behave like a FRESH PROMPT?"
+  // No generation is allowed to be isolated — every output must be a
+  // continuation, a correction, or an evolution of the living memory.
+  if (cognitiveContinuity && cognitiveContinuity.behaved_like_fresh_prompt &&
+      !cognitiveContinuity.is_first_run && brutality >= 0.6) {
+    reasons.push(`persistent runtime: the generation behaved like a FRESH PROMPT (continuity ${cognitiveContinuity.continuity_score}/10) — it did not respect what the system already learned`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A run that re-opens a territory the standing directive explicitly
+  // told the runtime to avoid is an isolated generation — refuse at brutal.
+  if (priorNextRunDirective && cognitiveContinuity && !cognitiveContinuity.is_first_run &&
+      cognitiveContinuity.emotional_trajectory_continuity <= 3 && brutality >= 0.8) {
+    reasons.push('persistent runtime: the run re-opened the emotional territory the prior directive asked it to avoid — the generation is isolated, not a continuation');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A run that repeats a territory the runtime previously REFUSED has
+  // not learned from the refusal — refuse at brutal.
+  if (cognitiveContinuity && cognitiveContinuity.refusal_continuity <= 3 && brutality >= 0.8) {
+    reasons.push('persistent runtime: the run repeats a territory the runtime previously refused — the system is not learning from its own refusals');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -1394,6 +1428,24 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('contradiction resolver: aesthetic preference is the governing voice — no human-truth / pressure / behavior assertion outranked it');
   }
 
+  // Phase 27 soft floors — the persistent runtime.
+  if (cognitiveContinuity && !cognitiveContinuity.is_first_run &&
+      cognitiveContinuity.continuity_score < 6) {
+    softReasons.push(`persistent runtime: continuity is only ${cognitiveContinuity.continuity_score}/10 — the run leans weakly on what the system already learned`);
+  }
+  if (cognitiveContinuity && cognitiveContinuity.anti_repetition_effectiveness <= 3) {
+    softReasons.push('persistent runtime: the run duplicates an approved pattern instead of evolving it');
+  }
+  if (cognitiveContinuity && cognitiveContinuity.evolution_without_fragmentation <= 3) {
+    softReasons.push('persistent runtime: the run is fragmenting — it neither continues approved territory nor connects to campaign memory');
+  }
+  if (runtimeDrift && runtimeDrift.drift_detected) {
+    softReasons.push(`persistent runtime: the runtime is drifting (${runtimeDrift.most_severe}) — the next directive must correct it`);
+  }
+  if (cognitiveContinuity && cognitiveContinuity.symbolic_object_continuity <= 3) {
+    softReasons.push('persistent runtime: the run uses an object the prior directive marked to avoid');
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -1423,12 +1475,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 26 phases of judgement every banner
-  // produces 14-22 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 19 soft reasons required to reject
-  //   default (0.65)   → 16 soft reasons required
-  //   brutal  (0.90)   → 13 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 13 : brutality >= 0.6 ? 16 : 19;
+  // the cognition stack. After 27 phases of judgement every banner
+  // produces 15-24 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 21 soft reasons required to reject
+  //   default (0.65)   → 18 soft reasons required
+  //   brutal  (0.90)   → 14 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 14 : brutality >= 0.6 ? 18 : 21;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

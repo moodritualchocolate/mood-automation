@@ -89,9 +89,9 @@ async function main() {
     ],
     [
       'tension topology located a campaign opportunity',
-      cog.tensionTopology.deepest_opportunity !== null,
-      cog.tensionTopology.deepest_opportunity
-        ? `"${cog.tensionTopology.deepest_opportunity.the_tension}"`
+      richBanner.tasteSystem.cognition.tensionTopology.deepest_opportunity !== null,
+      richBanner.tasteSystem.cognition.tensionTopology.deepest_opportunity
+        ? `"${richBanner.tasteSystem.cognition.tensionTopology.deepest_opportunity.the_tension}"`
         : 'no tension located',
     ],
     [

@@ -179,3 +179,14 @@ export * from './cognitiveContradictionResolver';
 export * from './cognitionTrace';
 export * from './selfEvolvingWorldModel';
 export * from './worldStatePersistence';
+// Phase 27 — persistent cognitive runtime (the living runtime layer)
+export * from './runtimeIdentity';
+export * from './nextRunDirective';
+export * from './rejectionMemory';
+export * from './approvalMemory';
+export * from './runtimeMemoryStore';
+export * from './runtimeDriftDetector';
+export * from './cognitiveContinuityScore';
+export * from './runtimeHealthMonitor';
+export * from './runtimeTrace';
+export * from './persistentCognitiveRuntime';
