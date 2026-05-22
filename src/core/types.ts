@@ -659,6 +659,29 @@ export interface BannerTasteSystem {
     existentialRisk: import('@lib/existentialRiskLayer').ExistentialRiskReading;
     core: import('@lib/persistentOrganismCore').OrganismCoreReading;
   };
+  // Wave 8 — operating system genesis (Phases 91–110)
+  os: {
+    kernel: import('@lib/cognitiveKernel').KernelReading;
+    scheduler: import('@lib/processScheduler').ProcessScheduleReading;
+    interrupts: import('@lib/interruptArchitecture').InterruptReading;
+    taskQueue: import('@lib/strategicTaskQueue').TaskQueueReading;
+    resources: import('@lib/runtimeResourceAllocation').ResourceAllocationReading;
+    cognitionGraph: import('@lib/activeCognitionGraph').CognitionGraphReading;
+    directive: import('@lib/directiveEngine').DirectiveReading;
+    loops: import('@lib/autonomousRuntimeLoops').RuntimeLoopsReading;
+    pause: import('@lib/strategicPauseInfrastructure').StrategicPauseReading;
+    health: import('@lib/kernelHealthMonitor').KernelHealthReading;
+    memoryPressure: import('@lib/memoryPressureManagement').MemoryPressureReading;
+    multiHorizon: import('@lib/multiHorizonPlanning').MultiHorizonReading;
+    reflection: import('@lib/recursiveReflectionEngine').RecursiveReflectionReading;
+    arbitration: import('@lib/executiveArbitrationCourt').ArbitrationReading;
+    identityEnforcement: import('@lib/runtimeIdentityEnforcement').IdentityEnforcementReading;
+    season: import('@lib/dynamicStrategicSeasons').StrategicSeasonReading;
+    dependencies: import('@lib/cognitiveDependencyMapping').DependencyMapReading;
+    stabilization: import('@lib/autonomousRuntimeStabilization').StabilizationReading;
+    executiveState: import('@lib/persistentExecutiveState').ExecutiveStateReading;
+    core: import('@lib/operatingSystemCore').OperatingSystemReading;
+  };
 }
 
 export interface Banner {

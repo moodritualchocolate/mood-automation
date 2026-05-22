@@ -324,6 +324,29 @@ import {
   readAutonomousStabilityPreservation,
   readExistentialRisk,
   readPersistentOrganismCore,
+  // Wave 8 — operating system genesis (Phases 91–110)
+  createOSRuntimeStore,
+  evolveOSFromTick,
+  readCognitiveKernel,
+  readProcessScheduler,
+  readInterruptArchitecture,
+  readStrategicTaskQueue,
+  readRuntimeResourceAllocation,
+  readActiveCognitionGraph,
+  readDirectiveEngine,
+  readAutonomousRuntimeLoops,
+  readStrategicPauseInfrastructure,
+  readKernelHealthMonitor,
+  readMemoryPressureManagement,
+  readMultiHorizonPlanning,
+  readRecursiveReflectionEngine,
+  readExecutiveArbitrationCourt,
+  readRuntimeIdentityEnforcement,
+  readDynamicStrategicSeasons,
+  readCognitiveDependencyMapping,
+  readAutonomousRuntimeStabilization,
+  readPersistentExecutiveState,
+  readOperatingSystemCore,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -332,6 +355,7 @@ import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
 import type { ApprovalRecord } from '@lib/approvalMemory';
 import type { CognitiveFieldState } from '@lib/cognitiveField';
 import type { CognitiveContinuityReading } from '@lib/cognitiveContinuityScore';
+import type { OperationalPosture, StrategicSeasonName } from '@lib/operatingSystemCore';
 import type { WorldModelEvolution } from '@lib/selfEvolvingWorldModel';
 import { SEED_INGESTED_SIGNALS } from '@data/seed-ingested-signals';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
@@ -384,6 +408,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     field: CognitiveFieldState;
     continuity: CognitiveContinuityReading;
     worldStateGen: number;
+    os: {
+      coordination: number;
+      directive: string;
+      posture: OperationalPosture;
+      season: StrategicSeasonName;
+      interrupts: number;
+      fragmented: boolean;
+    };
   } | null = null;
 
   // Phase 27 — a minimal world-model evolution for the rejected-run
@@ -609,6 +641,18 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: organism.age === 0
       ? 'the reality organism is drawing its first breath — age 0'
       : `the reality organism is ${organism.age} runs old · energy ${organism.energyReserves}/10 · stress ${organism.stressAccumulation}/10 · ${organism.consecutiveActions} runs since its last rest`,
+  });
+
+  // ─── Wave 8 — load the operating system's persistent runtime ──
+  // The organism now runs on an OS: a kernel, a scheduler, interrupts,
+  // resource allocation. Every run is one kernel tick.
+  const osStore = createOSRuntimeStore();
+  const osState = await osStore.read();
+  emit({
+    stage: 'operating-system',
+    message: osState.uptime === 0
+      ? 'the cognitive operating system is booting — uptime 0 ticks'
+      : `the cognitive operating system has ${osState.uptime} ticks of uptime · posture "${osState.operationalPosture}" · season "${osState.currentSeason}"`,
   });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
@@ -2242,6 +2286,133 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 8 — OPERATING SYSTEM (Phases 91–110) ═════════════
+      // Wave 7 made the system a living organism. Wave 8 gives that
+      // organism an operating system: a kernel runs the loop, a
+      // scheduler allocates cognition, interrupts pre-empt it, a
+      // directive engine governs the tick. Every run is one kernel tick.
+      const osKernel = readCognitiveKernel({
+        organism: orgCore, existentialRisk: orgExistentialRisk,
+        complexity: orgComplexity, uptime: osState.uptime,
+      });
+      const osScheduler = readProcessScheduler({
+        kernel: osKernel,
+        energyReserves: organism.energyReserves,
+        fatigueNeedsRecovery: orgFatigue.needs_recovery,
+        existentialRisk: orgExistentialRisk.existential_risk,
+      });
+      const osInterrupts = readInterruptArchitecture({
+        worldShiftRate: orgAdaptiveWorldModel.world_shift_rate,
+        modelLagging: orgAdaptiveWorldModel.model_lagging,
+        fatigueNeedsRecovery: orgFatigue.needs_recovery,
+        identityFailing: !orgIdentityStress.identity_holds,
+        ideologicalMutation: civIdeologicalMutation.mutation_detected,
+        environmentHostile: orgEnvironmental.environment_is_hostile,
+        organismAtRisk: orgExistentialRisk.organism_at_risk,
+        contradictionCount: contradictionResolution.conflicts.length,
+        memeticInfection: orgMemetic.memetic_infection_risk,
+      });
+      const osTaskQueue = readStrategicTaskQueue({
+        scheduler: osScheduler, interrupts: osInterrupts,
+        energyReserves: organism.energyReserves,
+      });
+      const osResources = readRuntimeResourceAllocation({
+        kernel: osKernel,
+        energyReserves: organism.energyReserves,
+        complexityLoad: orgComplexity.complexity_load,
+        deferredAndStarved: osScheduler.deferred_count + osScheduler.starved_count,
+      });
+      const osCognitionGraph = readActiveCognitionGraph({
+        interrupts: osInterrupts, scheduler: osScheduler,
+        contradictionCount: contradictionResolution.conflicts.length,
+        identityTension: !orgIdentityStress.identity_holds,
+      });
+      const osDirective = readDirectiveEngine({
+        kernel: osKernel, interrupts: osInterrupts,
+        organism: orgCore, existentialRisk: orgExistentialRisk,
+        silenceChosen: orgSilence.choose_silence,
+      });
+      const osLoops = readAutonomousRuntimeLoops({
+        kernel: osKernel, complexity: orgComplexity, uptime: osState.uptime,
+      });
+      const osPause = readStrategicPauseInfrastructure({
+        directive: osDirective,
+        fatigueNeedsRecovery: orgFatigue.needs_recovery,
+        shouldRest: orgCore.should_rest,
+        organismAtRisk: orgExistentialRisk.organism_at_risk,
+      });
+      const osHealth = readKernelHealthMonitor({
+        complexity: orgComplexity, organism: orgCore, fatigue: orgFatigue,
+        identityStress: orgIdentityStress, civilizationDecaying: civStability.is_decaying,
+      });
+      const osMemoryPressure = readMemoryPressureManagement({
+        memoryFootprint: runtimeContext.history.length,
+        complexityLoad: orgComplexity.complexity_load,
+        organismAge: organism.age,
+        relevanceSpike: false,
+      });
+      const osMultiHorizon = readMultiHorizonPlanning({
+        longHorizon: orgLongHorizon, existentialRisk: orgExistentialRisk,
+        directive: osDirective,
+      });
+      const osReflection = readRecursiveReflectionEngine({ kernel: osKernel, health: osHealth });
+      const osArbitration = readExecutiveArbitrationCourt({
+        wantsGrowth: orgExpansion.posture === 'expand' || orgExpansion.posture === 'balanced-growth',
+        optimizationCorrupts: antiOptimizationReading.optimization_corrupts_truth,
+        existentialRisk: orgExistentialRisk.existential_risk,
+        identityFailing: !orgIdentityStress.identity_holds,
+        silenceChosen: orgSilence.choose_silence,
+        engagementPull: antiOptimizationReading.engagementCorruption,
+      });
+      const osIdentityEnforcement = readRuntimeIdentityEnforcement({
+        ideologicalMutation: civIdeologicalMutation.mutation_detected,
+        identityFailing: !orgIdentityStress.identity_holds,
+        governanceBlocks: identityGovernanceReading.governance_blocks,
+        arbitratedWinner: osArbitration.arbitrated_winner,
+      });
+      const osSeason = readDynamicStrategicSeasons({
+        currentSeason: osState.currentSeason, seasonAge: osState.seasonAge,
+        longHorizon: orgLongHorizon, health: osHealth, directive: osDirective,
+        organismAtRisk: orgExistentialRisk.organism_at_risk,
+        canExpand: orgExpansion.posture === 'expand',
+      });
+      const osDependencies = readCognitiveDependencyMapping({
+        cognitionGraph: osCognitionGraph, health: osHealth,
+        civilizationDecaying: civStability.is_decaying,
+      });
+      const osStabilization = readAutonomousRuntimeStabilization({
+        health: osHealth, kernel: osKernel,
+        fragmentationStreak: osState.fragmentationStreak,
+        runtimeDrift: runtimeDrift.drift_detected,
+        graphTangled: osCognitionGraph.graph_is_tangled,
+      });
+      const osExecutiveState = readPersistentExecutiveState({
+        priorPosture: osState.operationalPosture, directiveLog: osState.directiveLog,
+        kernel: osKernel, directive: osDirective, health: osHealth,
+      });
+      // THE GLOBAL WAVE 8 QUESTION — coordinated cognition, or isolated
+      // process stimulation? Addiction or a starved, uncoordinated
+      // scheduler means isolated processes are driving the runtime.
+      const osIsolatedProcessStimulation =
+        orgCore.organism_is_addicted ||
+        (osKernel.coordination_score < 4 && osScheduler.starved_count >= 3);
+      const osCore = readOperatingSystemCore({
+        state: osState, kernel: osKernel, health: osHealth,
+        directive: osDirective, stabilization: osStabilization,
+        isolatedProcessStimulation: osIsolatedProcessStimulation,
+      });
+      emit({
+        stage: 'operating-system',
+        message: `${osCore.os_state} · kernel ${osKernel.kernel_state} · directive "${osDirective.directive}" · season "${osSeason.season}" — ${osCore.os_statement}`,
+      });
+      if (osCore.runtime_is_fragmenting) {
+        emit({ stage: 'operating-system', message: 'META-CRITIC FLAG — the runtime is fragmenting: isolated processes over coordinated cognition' });
+      }
+      if (osInterrupts.highest) {
+        emit({ stage: 'operating-system', message: `interrupt: ${osInterrupts.highest.kind} (severity ${osInterrupts.highest.severity}/10) — ${osInterrupts.highest.demand}` });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -2437,6 +2608,27 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         orgStabilityPreservation,
         orgExistentialRisk,
         orgCore,
+        // Wave 8 — operating system genesis
+        osKernel,
+        osScheduler,
+        osInterrupts,
+        osTaskQueue,
+        osResources,
+        osCognitionGraph,
+        osDirective,
+        osLoops,
+        osPause,
+        osHealth,
+        osMemoryPressure,
+        osMultiHorizon,
+        osReflection,
+        osArbitration,
+        osIdentityEnforcement,
+        osSeason,
+        osDependencies,
+        osStabilization,
+        osExecutiveState,
+        osCore,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -2875,6 +3067,28 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               existentialRisk: orgExistentialRisk,
               core: orgCore,
             },
+            os: {
+              kernel: osKernel,
+              scheduler: osScheduler,
+              interrupts: osInterrupts,
+              taskQueue: osTaskQueue,
+              resources: osResources,
+              cognitionGraph: osCognitionGraph,
+              directive: osDirective,
+              loops: osLoops,
+              pause: osPause,
+              health: osHealth,
+              memoryPressure: osMemoryPressure,
+              multiHorizon: osMultiHorizon,
+              reflection: osReflection,
+              arbitration: osArbitration,
+              identityEnforcement: osIdentityEnforcement,
+              season: osSeason,
+              dependencies: osDependencies,
+              stabilization: osStabilization,
+              executiveState: osExecutiveState,
+              core: osCore,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -3054,6 +3268,23 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           message: `the organism acted and lived — age ${evolvedOrganism.age} · energy ${evolvedOrganism.energyReserves}/10 · stress ${evolvedOrganism.stressAccumulation}/10 · ${evolvedOrganism.adaptationCount} adaptations across its life`,
         });
 
+        // ─── Wave 8 — the kernel ran one coordinated tick: the OS
+        // advances its persistent runtime state so the next run boots
+        // from the posture, season, and directive log this tick left.
+        const evolvedOS = evolveOSFromTick(osState, {
+          coordination: osCore.coordination_score,
+          directive: osDirective.directive,
+          posture: osCore.os_state,
+          season: osSeason.season,
+          interrupts: osInterrupts.interrupts.length,
+          fragmented: osCore.runtime_is_fragmenting,
+        });
+        await osStore.save(evolvedOS);
+        emit({
+          stage: 'operating-system',
+          message: `kernel tick ${evolvedOS.uptime} committed — posture "${evolvedOS.operationalPosture}", season "${evolvedOS.currentSeason}" (age ${evolvedOS.seasonAge}), coordination EMA ${evolvedOS.coordinationEMA}/10`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -3084,6 +3315,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         field: cognitiveField,
         continuity: cognitiveContinuity,
         worldStateGen: worldState.generationCount,
+        os: {
+          coordination: osCore.coordination_score,
+          directive: osDirective.directive,
+          posture: osCore.os_state,
+          season: osSeason.season,
+          interrupts: osInterrupts.interrupts.length,
+          fragmented: osCore.runtime_is_fragmenting,
+        },
       };
       stateSeed += 7919;
       forceStateId = undefined;
@@ -3145,6 +3384,33 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   emit({
     stage: 'organism',
     message: `the run shipped nothing — the organism rested · energy ${organism.energyReserves}/10 → ${restedOrganism.energyReserves}/10 · stress ${organism.stressAccumulation}/10 → ${restedOrganism.stressAccumulation}/10`,
+  });
+
+  // ─── Wave 8 — the kernel still ticked, in a withholding posture.
+  // The OS commits the tick so uptime, season, and the directive log
+  // stay continuous even when the run produced no banner.
+  const osRestTick = lastRejectionSnapshot
+    ? lastRejectionSnapshot.os
+    : {
+        coordination: osState.coordinationEMA,
+        directive: 'pause',
+        posture: osState.operationalPosture,
+        season: osState.currentSeason,
+        interrupts: 0,
+        fragmented: false,
+      };
+  const evolvedOSRest = evolveOSFromTick(osState, {
+    coordination: osRestTick.coordination,
+    directive: osRestTick.directive,
+    posture: osRestTick.posture,
+    season: osRestTick.season,
+    interrupts: osRestTick.interrupts,
+    fragmented: osRestTick.fragmented,
+  });
+  await osStore.save(evolvedOSRest);
+  emit({
+    stage: 'operating-system',
+    message: `kernel tick ${evolvedOSRest.uptime} committed (no output) — posture "${evolvedOSRest.operationalPosture}", season "${evolvedOSRest.currentSeason}"`,
   });
 
   throw new ExhaustedAttempts(

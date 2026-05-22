@@ -210,6 +210,27 @@ import type { RealityAdaptiveRuntimeReading } from '@lib/realityAdaptiveRuntime'
 import type { StabilityPreservationReading } from '@lib/autonomousStabilityPreservation';
 import type { ExistentialRiskReading } from '@lib/existentialRiskLayer';
 import type { OrganismCoreReading } from '@lib/persistentOrganismCore';
+// Wave 8 — operating system genesis (Phases 91–110)
+import type { KernelReading } from '@lib/cognitiveKernel';
+import type { ProcessScheduleReading } from '@lib/processScheduler';
+import type { InterruptReading } from '@lib/interruptArchitecture';
+import type { TaskQueueReading } from '@lib/strategicTaskQueue';
+import type { ResourceAllocationReading } from '@lib/runtimeResourceAllocation';
+import type { CognitionGraphReading } from '@lib/activeCognitionGraph';
+import type { DirectiveReading } from '@lib/directiveEngine';
+import type { RuntimeLoopsReading } from '@lib/autonomousRuntimeLoops';
+import type { StrategicPauseReading } from '@lib/strategicPauseInfrastructure';
+import type { KernelHealthReading } from '@lib/kernelHealthMonitor';
+import type { MemoryPressureReading } from '@lib/memoryPressureManagement';
+import type { MultiHorizonReading } from '@lib/multiHorizonPlanning';
+import type { RecursiveReflectionReading } from '@lib/recursiveReflectionEngine';
+import type { ArbitrationReading } from '@lib/executiveArbitrationCourt';
+import type { IdentityEnforcementReading } from '@lib/runtimeIdentityEnforcement';
+import type { StrategicSeasonReading } from '@lib/dynamicStrategicSeasons';
+import type { DependencyMapReading } from '@lib/cognitiveDependencyMapping';
+import type { StabilizationReading } from '@lib/autonomousRuntimeStabilization';
+import type { ExecutiveStateReading } from '@lib/persistentExecutiveState';
+import type { OperatingSystemReading } from '@lib/operatingSystemCore';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -410,6 +431,27 @@ export interface MetaInput {
   orgStabilityPreservation?: StabilityPreservationReading;
   orgExistentialRisk?: ExistentialRiskReading;
   orgCore?: OrganismCoreReading;
+  // Wave 8 — operating system genesis (Phases 91–110).
+  osKernel?: KernelReading;
+  osScheduler?: ProcessScheduleReading;
+  osInterrupts?: InterruptReading;
+  osTaskQueue?: TaskQueueReading;
+  osResources?: ResourceAllocationReading;
+  osCognitionGraph?: CognitionGraphReading;
+  osDirective?: DirectiveReading;
+  osLoops?: RuntimeLoopsReading;
+  osPause?: StrategicPauseReading;
+  osHealth?: KernelHealthReading;
+  osMemoryPressure?: MemoryPressureReading;
+  osMultiHorizon?: MultiHorizonReading;
+  osReflection?: RecursiveReflectionReading;
+  osArbitration?: ArbitrationReading;
+  osIdentityEnforcement?: IdentityEnforcementReading;
+  osSeason?: StrategicSeasonReading;
+  osDependencies?: DependencyMapReading;
+  osStabilization?: StabilizationReading;
+  osExecutiveState?: ExecutiveStateReading;
+  osCore?: OperatingSystemReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -466,7 +508,11 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           orgExpansion, orgRhythm, orgAttentionForecast, orgMemetic, orgFatigue,
           orgSilence, orgEmotionalResource, orgAdaptiveWorldModel, orgComplexity,
           orgEvolutionGovernance, orgAdaptiveRuntime, orgStabilityPreservation,
-          orgExistentialRisk, orgCore } = input;
+          orgExistentialRisk, orgCore,
+          osKernel, osInterrupts, osResources, osCognitionGraph, osDirective,
+          osLoops, osPause, osHealth, osMemoryPressure, osMultiHorizon,
+          osReflection, osIdentityEnforcement, osSeason, osDependencies,
+          osStabilization, osExecutiveState, osScheduler, osTaskQueue, osCore } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1388,6 +1434,46 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 8 — OPERATING SYSTEM: THE COORDINATION GATES ═══════
+  // THE GLOBAL WAVE 8 META-CRITIC QUESTION:
+  //   "Did this action emerge from coordinated organism cognition, or
+  //    from isolated process stimulation?" When isolated processes
+  //    dominate the runtime is fragmenting — refused at default.
+  if (osCore && osCore.runtime_is_fragmenting && brutality >= 0.65) {
+    reasons.push(`operating system core: the runtime is fragmenting — ${osCore.os_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The directive engine is the OS's executive — when it commands a
+  // posture that withholds output, the runtime does not ship.
+  if (osDirective && osDirective.directive_withholds_output && brutality >= 0.7) {
+    reasons.push(`directive engine: the operating system's directive this tick is "${osDirective.directive}" — ${osDirective.directive_reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Runtime identity enforcement — an identity breach anywhere in the
+  // runtime is refused; the organism does not ship as something else.
+  if (osIdentityEnforcement && !osIdentityEnforcement.identity_enforced && brutality >= 0.7) {
+    reasons.push(`runtime identity enforcement: identity could not be enforced across the runtime — ${osIdentityEnforcement.violations_blocked[0] ?? 'identity breach'}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Emergency stabilisation — the runtime is genuinely unstable; it
+  // must heal itself before it produces.
+  if (osStabilization && osStabilization.stabilization_action === 'emergency-stabilize' && brutality >= 0.65) {
+    reasons.push(`autonomous runtime stabilization: ${osStabilization.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A multi-horizon conflict — a short-term move that contradicts a
+  // long-horizon need is refused at brutal.
+  if (osMultiHorizon && osMultiHorizon.horizon_conflict && brutality >= 0.75) {
+    reasons.push('multi-horizon planning: this run\'s short-horizon move contradicts a long-horizon need');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A dependency cascade — when a fragile dependency would cascade
+  // across the runtime, the run is refused at brutal.
+  if (osDependencies && osDependencies.cascade_risk >= 8 && brutality >= 0.8) {
+    reasons.push(`cognitive dependency mapping: a failure would cascade across the runtime (risk ${osDependencies.cascade_risk}/10) — fragile: ${osDependencies.fragile_dependency ?? 'multiple dependencies'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -1930,6 +2016,50 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('persistent organism core: the organism should rest before it acts again');
   }
 
+  // Wave 8 soft floors — the cognitive operating system.
+  if (osKernel && (osKernel.kernel_state === 'throttled' || osKernel.kernel_state === 'protected-mode')) {
+    softReasons.push(`cognitive kernel: the kernel is in "${osKernel.kernel_state}" — cognition is running at reduced capacity`);
+  }
+  if (osResources && osResources.over_subscribed) {
+    softReasons.push(`runtime resources: the runtime is over-subscribed — scarcest resource "${osResources.scarcest_resource}"`);
+  }
+  if (osCognitionGraph && osCognitionGraph.graph_is_tangled) {
+    softReasons.push(`active cognition graph: the working graph is tangled (load ${osCognitionGraph.graph_load}/10)`);
+  }
+  if (osLoops && osLoops.a_loop_is_runaway) {
+    softReasons.push('autonomous runtime loops: a background loop has gone runaway');
+  }
+  if (osPause && osPause.pause_mode !== 'none') {
+    softReasons.push(`strategic pause: the runtime is in "${osPause.pause_mode}" (depth ${osPause.pause_depth}/10)`);
+  }
+  if (osHealth && osHealth.failure_modes.length > 0) {
+    softReasons.push(`kernel health: ${osHealth.failure_modes.length} runtime failure mode(s) active — ${osHealth.failure_modes.join(', ')}`);
+  }
+  if (osMemoryPressure && (osMemoryPressure.action === 'archive' || osMemoryPressure.action === 'strategic-forget')) {
+    softReasons.push(`memory pressure: ${osMemoryPressure.reason}`);
+  }
+  if (osReflection && !osReflection.operating_well) {
+    softReasons.push(`recursive reflection: the runtime is not operating well as a structure — ${osReflection.structural_insight}`);
+  }
+  if (osScheduler && osScheduler.starved_count >= 2) {
+    softReasons.push(`process scheduler: ${osScheduler.starved_count} cognitive processes are starved this tick`);
+  }
+  if (osTaskQueue && osTaskQueue.reprioritized) {
+    softReasons.push('strategic task queue: an interrupt forced the runtime to reprioritise mid-tick');
+  }
+  if (osExecutiveState && osExecutiveState.posture_drifted) {
+    softReasons.push(`persistent executive state: the operational posture is drifting tick to tick (continuity ${osExecutiveState.posture_continuity}/10)`);
+  }
+  if (osStabilization && osStabilization.stabilization_action !== 'none' && osStabilization.stabilization_action !== 'emergency-stabilize') {
+    softReasons.push(`runtime stabilization: the runtime needs "${osStabilization.stabilization_action}" — ${osStabilization.reason}`);
+  }
+  if (osDependencies && osDependencies.fragile_dependency) {
+    softReasons.push(`cognitive dependency mapping: a dependency has become fragile — "${osDependencies.fragile_dependency}"`);
+  }
+  if (osSeason && (osSeason.season === 'recovery' || osSeason.season === 'hibernation' || osSeason.season === 'defense')) {
+    softReasons.push(`dynamic strategic seasons: the runtime is in a "${osSeason.season}" season — ${osSeason.season_directive}`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -1959,13 +2089,13 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 90 phases of judgement — the Wave 7
-  // reality organism layered on top — every banner produces 32-54
-  // soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 45 soft reasons required to reject
-  //   default (0.65)   → 37 soft reasons required
-  //   brutal  (0.90)   → 31 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 31 : brutality >= 0.6 ? 37 : 45;
+  // the cognition stack. After 110 phases of judgement — the Wave 8
+  // operating system layered on top of the Wave 7 organism — every
+  // banner produces 38-62 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 52 soft reasons required to reject
+  //   default (0.65)   → 44 soft reasons required
+  //   brutal  (0.90)   → 38 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 38 : brutality >= 0.6 ? 44 : 52;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

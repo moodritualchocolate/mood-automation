@@ -68,6 +68,37 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 8 — Operating System Genesis (Phases 91–110)
+
+Wave 7 made the system a living organism. Wave 8 gives that organism an **operating system**. Up to this point the engine was a collection of cognitive capabilities; now it becomes **a persistent cognitive operating system that coordinates cognition continuously** — a kernel runs the loop, a scheduler allocates attention, interrupts pre-empt it, a directive engine governs every tick, and the runtime heals itself. Every run is one kernel tick; the OS's persistent runtime state — uptime, operational posture, strategic season, directive log — carries to `data/runtime/os-runtime.json`.
+
+| Phase | Module | Role |
+|---|---|---|
+| 91 | `cognitiveKernel` | The central persistent runtime loop — the organism's heartbeat; nothing runs outside it. |
+| 92 | `processScheduler` | Decides which cognitive processes get attention, priority, and an execution window. |
+| 93 | `interruptArchitecture` | The global interruption system — world shifts, fatigue, identity risk, emergencies pre-empt cognition. |
+| 94 | `strategicTaskQueue` | The long-lived priority queue — deferred thinking, carried across ticks, adaptively reprioritised. |
+| 95 | `runtimeResourceAllocation` | Allocates attention, memory, energy, reasoning depth, and bandwidth. |
+| 96 | `activeCognitionGraph` | The live working set — active thoughts, conflicts, tensions, and their dependencies. |
+| 97 | `directiveEngine` | The top-level executive — issues one governing directive per tick (pause / publish / hibernate / …). |
+| 98 | `autonomousRuntimeLoops` | Background loops that keep evolving cognition between banners. |
+| 99 | `strategicPauseInfrastructure` | The system-wide pause — light observation, deep pause, full recovery. |
+| 100 | `kernelHealthMonitor` | Tracks the five ways a runtime fails — overload, fragmentation, addiction, exhaustion, decay. |
+| 101 | `memoryPressureManagement` | Manages memory like RAM — compress, archive, resurface, strategically forget. |
+| 102 | `multiHorizonPlanning` | Plans the next banner, the season, the civilization, and survival at once. |
+| 103 | `recursiveReflectionEngine` | The runtime reflects on its own operational structure each tick. |
+| 104 | `executiveArbitrationCourt` | Resolves conflicts between growth, truth, identity, survival, engagement, restraint. |
+| 105 | `runtimeIdentityEnforcement` | Protects core identity across *every* process, not just the foreground one. |
+| 106 | `dynamicStrategicSeasons` | The runtime moves through growth / silence / observation / recovery / expansion / defense / hibernation. |
+| 107 | `cognitiveDependencyMapping` | Maps the hidden dependencies so the OS sees which change would cascade. |
+| 108 | `autonomousRuntimeStabilization` | Self-healing — corrects drift, sheds load, defragments, emergency-stabilises. |
+| 109 | `persistentExecutiveState` | The runtime remembers its operational posture over time, not just its memories. |
+| 110 | `operatingSystemCore` | The persistent OS runtime state and the closing synthesis — coordinated, or fragmenting? |
+
+Wave 8 meta-critic — the governing question: **"Did this action emerge from coordinated organism cognition, or from isolated process stimulation?"** When isolated processes dominate, the runtime is fragmenting and the banner is refused at default brutality. The directive engine's executive command is enforced — when the OS itself commands a withholding posture, the runtime does not ship; an identity breach anywhere in the runtime is refused; an unstable runtime must emergency-stabilise before it produces; a short-horizon move that contradicts a long-horizon need is refused. Soft-floor threshold recalibrated for the 110-phase stack: **lenient=52 · default=44 · brutal=38**.
+
+Verified by `scripts/test-os-genesis.ts` — 19 checks: the kernel boots / runs / enters protected mode, the OS state persists across a restart, the scheduler never starves identity-defense, interrupts pre-empt cognition, the task queue reprioritises on a severe interrupt, resource allocation detects over-subscription, the directive engine governs the tick, the health monitor names every failure mode, memory pressure acts under load, the arbitration court refuses engagement-alone, identity enforcement blocks violations, seasons change when reality calls, the pause infrastructure enters a system-wide pause, stabilization emergency-heals an unstable runtime, recursive reflection knows when its structure is failing, multi-horizon planning flags a horizon conflict, dependency mapping flags a fragile cascade, executive state detects posture drift, and the closing synthesis distinguishes a coordinated runtime from a fragmenting one. 19/19 pass.
+
 ## Wave 7 — Reality Organism Architecture (Phases 71–90)
 
 Wave 6 gave the civilization **history**. Wave 7 makes it a **living organism interacting continuously with a changing reality**. It is no longer a system that thinks about the past — it is a body that must survive the present: it has finite energy that depletes with action and restores with rest, it runs an immune system with memory, it reads the environment it lives inside, it predicts strategic seasons, it protects itself from existential risk — and, above all, it **learns when *not* to act**. The organism's vital state persists to `data/runtime/organism.json`; every run either spends the body (a banner ships) or rests it (the run produces nothing).
