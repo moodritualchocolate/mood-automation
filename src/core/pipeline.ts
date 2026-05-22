@@ -347,6 +347,31 @@ import {
   readAutonomousRuntimeStabilization,
   readPersistentExecutiveState,
   readOperatingSystemCore,
+  // Wave 10 — reality coupling architecture (Phases 131–150)
+  createRealityCouplingStore,
+  evolveCouplingFromResonance,
+  evolveCouplingFromStimulus,
+  evolveCouplingFromSilence,
+  readRealityIngestionEngine,
+  scoreEngagementTruth,
+  mapEmotionalSaturation,
+  readTrustDecay,
+  monitorNarrativeClimate,
+  readAudienceNervousSystem,
+  readPlatformDrift,
+  trackAuthenticityErosion,
+  recommendSilence,
+  readReputationPressure,
+  readMeaningCompression,
+  detectSocialExhaustion,
+  readAttentionEconomyPressure,
+  detectRealityContradiction,
+  fuseWorldFeedback,
+  detectTrueResonance,
+  governRealityCoupling,
+  readExternalRealityModel,
+  readCouplingHealth,
+  readRealityCouplingCore,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -653,6 +678,18 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: osState.uptime === 0
       ? 'the cognitive operating system is booting — uptime 0 ticks'
       : `the cognitive operating system has ${osState.uptime} ticks of uptime · posture "${osState.operationalPosture}" · season "${osState.currentSeason}"`,
+  });
+
+  // ─── Wave 10 — load the organism's reality-coupling state ─────
+  // The organism now learns from the external world: trust,
+  // authenticity, and saturation persist across coupling cycles.
+  const couplingStore = createRealityCouplingStore();
+  const couplingState = await couplingStore.read();
+  emit({
+    stage: 'reality-coupling',
+    message: couplingState.couplingCycles === 0
+      ? 'the organism is coupling to reality for the first time'
+      : `reality coupling: ${couplingState.couplingCycles} cycles · trust ${couplingState.trustLevel}/10 · authenticity ${couplingState.authenticityReserve}/10 · ${couplingState.resonanceWins} resonance / ${couplingState.stimulusWins} stimulus`,
   });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
@@ -2413,6 +2450,127 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 10 — REALITY COUPLING (Phases 131–150) ═══════════
+      // The organism stops living only inside itself. It reads the
+      // external world — audience, trust, saturation, the narrative
+      // climate — and learns the distinction the wave exists for:
+      // TRUE RESONANCE versus STIMULUS ADDICTION.
+      const cplRecentShipCount = runtimeContext.history
+        .slice(-6).filter((h) => h.verdict === 'approve').length;
+
+      const cplIngestion = readRealityIngestionEngine({
+        worldState: executiveWorldState, externalSignalCount: ingestedSignals.length,
+      });
+      const cplSocialExhaustion = detectSocialExhaustion({ worldState: executiveWorldState });
+      const cplSaturation = mapEmotionalSaturation({
+        worldState: executiveWorldState,
+        priorSaturation: couplingState.saturationMemory,
+        recentShipCount: cplRecentShipCount,
+      });
+      const cplClimate = monitorNarrativeClimate({
+        worldState: executiveWorldState,
+        externalSignalVolume: cplIngestion.external_signal_volume,
+      });
+      const cplAudience = readAudienceNervousSystem({
+        worldState: executiveWorldState, saturation: cplSaturation.saturation,
+      });
+      const cplPlatformDrift = readPlatformDrift({
+        worldState: executiveWorldState, viralityRisk: antiOptimizationReading.viralityRisk,
+      });
+      const cplAttentionEconomy = readAttentionEconomyPressure({
+        worldState: executiveWorldState, platformDrift: cplPlatformDrift.platform_drift,
+      });
+      const cplMeaning = readMeaningCompression({
+        worldState: executiveWorldState, saturation: cplSaturation.saturation,
+        truthValue: strategicPriorityReading.truth_value,
+      });
+      const cplEngagementTruth = scoreEngagementTruth({
+        engagementCorruption: antiOptimizationReading.engagementCorruption,
+        viralityRisk: antiOptimizationReading.viralityRisk,
+        truthValue: strategicPriorityReading.truth_value,
+        optimizationCorrupts: antiOptimizationReading.optimization_corrupts_truth,
+      });
+      const cplAuthenticity = trackAuthenticityErosion({
+        priorAuthenticity: couplingState.authenticityReserve,
+        optimizationCorrupts: antiOptimizationReading.optimization_corrupts_truth,
+        readsAsStimulus: cplEngagementTruth.reads_as_stimulus,
+        platformRewardsNoise: cplPlatformDrift.platform_rewards_noise,
+      });
+      const cplTrust = readTrustDecay({
+        priorTrust: couplingState.trustLevel,
+        identityHeld: civIdentityHeld,
+        optimizationCorrupts: antiOptimizationReading.optimization_corrupts_truth,
+        authenticityEroding: cplAuthenticity.authenticity_eroding,
+      });
+      const cplReputation = readReputationPressure({
+        reputationCredit: couplingState.reputationCredit,
+        trustLevel: cplTrust.trust_level,
+        optimizationCorrupts: antiOptimizationReading.optimization_corrupts_truth,
+      });
+      const cplSilence = recommendSilence({
+        audienceSaturated: cplSaturation.audience_is_saturated,
+        audiencePastThreshold: cplAudience.past_threshold,
+        climateRejectsAddition: cplClimate.climate_rejects_addition,
+        socialExhaustion: cplSocialExhaustion.social_exhaustion,
+      });
+      const cplContradiction = detectRealityContradiction({
+        organismBelievesItIsAdapting: orgCore.organism_is_adapting,
+        runtimeBelievesItIsCoordinated: osCore.runtime_is_coordinated,
+        trustIsDecaying: cplTrust.trust_is_decaying,
+        audienceExhausted: cplAudience.past_threshold,
+        readsAsStimulus: cplEngagementTruth.reads_as_stimulus,
+        authenticityEroding: cplAuthenticity.authenticity_eroding,
+      });
+      const cplWorldFeedback = fuseWorldFeedback({
+        externalSignalVolume: cplIngestion.external_signal_volume,
+        saturation: cplSaturation.saturation,
+        trustTrend: cplTrust.trust_trend,
+        audienceState: cplAudience.audience_state,
+        platformRewardsNoise: cplPlatformDrift.platform_rewards_noise,
+        worldIsExhausted: cplSocialExhaustion.world_is_exhausted,
+      });
+      const cplResonance = detectTrueResonance({
+        engagementTruthScore: cplEngagementTruth.engagement_truth_score,
+        readsAsStimulus: cplEngagementTruth.reads_as_stimulus,
+        trustTrend: cplTrust.trust_trend,
+        audiencePastThreshold: cplAudience.past_threshold,
+        feedbackIsNegative: cplWorldFeedback.feedback_is_negative,
+      });
+      const cplGovernor = governRealityCoupling({
+        worldIsSpeaking: cplIngestion.world_is_speaking,
+        externalSignalVolume: cplIngestion.external_signal_volume,
+        isStimulusAddiction: cplResonance.is_stimulus_addiction,
+        feedbackIsNegative: cplWorldFeedback.feedback_is_negative,
+      });
+      const cplExternalModel = readExternalRealityModel({
+        worldIsSpeaking: cplIngestion.world_is_speaking,
+        externalSignalVolume: cplIngestion.external_signal_volume,
+        contradictionDetected: cplContradiction.contradiction_detected,
+        worldFeedbackSignal: cplWorldFeedback.world_feedback_signal,
+      });
+      const cplHealth = readCouplingHealth({
+        couplingMode: cplGovernor.coupling_mode,
+        trustIsDecaying: cplTrust.trust_is_decaying,
+        authenticityEroding: cplAuthenticity.authenticity_eroding,
+        isStimulusAddiction: cplResonance.is_stimulus_addiction,
+        modelDiverges: cplExternalModel.model_diverges_from_reality,
+      });
+      const cplCore = readRealityCouplingCore({
+        state: couplingState, worldFeedback: cplWorldFeedback,
+        resonance: cplResonance, governor: cplGovernor, health: cplHealth,
+      });
+      emit({
+        stage: 'reality-coupling',
+        message: `${cplCore.coupling_state} (coupling ${cplCore.coupling_score}/10) · ${cplResonance.resonance_kind} · ${cplWorldFeedback.world_says}`,
+      });
+      if (cplCore.organism_is_addicted_to_stimulus) {
+        emit({ stage: 'reality-coupling', message: 'META-CRITIC FLAG — the organism is chasing stimulus, not resonating with reality' });
+      }
+      if (cplSilence.recommend_silence) {
+        emit({ stage: 'reality-coupling', message: `the world recommends silence — ${cplSilence.silence_reason}` });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -2629,6 +2787,27 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         osStabilization,
         osExecutiveState,
         osCore,
+        // Wave 10 — reality coupling architecture
+        cplIngestion,
+        cplEngagementTruth,
+        cplSaturation,
+        cplTrust,
+        cplClimate,
+        cplAudience,
+        cplPlatformDrift,
+        cplAuthenticity,
+        cplSilence,
+        cplReputation,
+        cplMeaning,
+        cplSocialExhaustion,
+        cplAttentionEconomy,
+        cplContradiction,
+        cplWorldFeedback,
+        cplResonance,
+        cplGovernor,
+        cplExternalModel,
+        cplHealth,
+        cplCore,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -3089,6 +3268,28 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               executiveState: osExecutiveState,
               core: osCore,
             },
+            coupling: {
+              ingestion: cplIngestion,
+              engagementTruth: cplEngagementTruth,
+              saturation: cplSaturation,
+              trust: cplTrust,
+              climate: cplClimate,
+              audience: cplAudience,
+              platformDrift: cplPlatformDrift,
+              authenticity: cplAuthenticity,
+              silence: cplSilence,
+              reputation: cplReputation,
+              meaningCompression: cplMeaning,
+              socialExhaustion: cplSocialExhaustion,
+              attentionEconomy: cplAttentionEconomy,
+              contradiction: cplContradiction,
+              worldFeedback: cplWorldFeedback,
+              resonance: cplResonance,
+              governor: cplGovernor,
+              externalModel: cplExternalModel,
+              health: cplHealth,
+              core: cplCore,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -3285,6 +3486,20 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           message: `kernel tick ${evolvedOS.uptime} committed — posture "${evolvedOS.operationalPosture}", season "${evolvedOS.currentSeason}" (age ${evolvedOS.seasonAge}), coordination EMA ${evolvedOS.coordinationEMA}/10`,
         });
 
+        // ─── Wave 10 — the coupling cycle resolves: the organism
+        // shipped. A run that chased stimulus pays for it in
+        // authenticity; a run that resonated compounds trust.
+        const evolvedCoupling = cplResonance.is_stimulus_addiction
+          ? evolveCouplingFromStimulus(couplingState)
+          : evolveCouplingFromResonance(couplingState);
+        await couplingStore.save(evolvedCoupling);
+        emit({
+          stage: 'reality-coupling',
+          message: cplResonance.is_stimulus_addiction
+            ? `the run chased stimulus — authenticity ${couplingState.authenticityReserve}/10 → ${evolvedCoupling.authenticityReserve}/10, trust ${couplingState.trustLevel} → ${evolvedCoupling.trustLevel}`
+            : `the run resonated — trust ${couplingState.trustLevel}/10 → ${evolvedCoupling.trustLevel}/10 across ${evolvedCoupling.couplingCycles} cycles`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -3411,6 +3626,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   emit({
     stage: 'operating-system',
     message: `kernel tick ${evolvedOSRest.uptime} committed (no output) — posture "${evolvedOSRest.operationalPosture}", season "${evolvedOSRest.currentSeason}"`,
+  });
+
+  // ─── Wave 10 — the run shipped nothing: the organism honored
+  // silence. It added nothing to the feed — the audience recovers
+  // and quiet trust holds.
+  const restedCoupling = evolveCouplingFromSilence(couplingState);
+  await couplingStore.save(restedCoupling);
+  emit({
+    stage: 'reality-coupling',
+    message: `the organism added nothing to the feed — saturation ${couplingState.saturationMemory}/10 → ${restedCoupling.saturationMemory}/10, silence honored ${restedCoupling.silenceHonored}×`,
   });
 
   throw new ExhaustedAttempts(

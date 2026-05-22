@@ -231,6 +231,27 @@ import type { DependencyMapReading } from '@lib/cognitiveDependencyMapping';
 import type { StabilizationReading } from '@lib/autonomousRuntimeStabilization';
 import type { ExecutiveStateReading } from '@lib/persistentExecutiveState';
 import type { OperatingSystemReading } from '@lib/operatingSystemCore';
+// Wave 10 — reality coupling architecture (Phases 131–150)
+import type { RealityIngestionReading } from '@lib/realityIngestionEngine';
+import type { EngagementTruthReading } from '@lib/engagementTruthScoring';
+import type { EmotionalSaturationReading } from '@lib/emotionalSaturationMap';
+import type { TrustDecayReading } from '@lib/trustDecayEngine';
+import type { NarrativeClimateMonitorReading } from '@lib/narrativeClimateMonitor';
+import type { AudienceNervousSystemReading } from '@lib/audienceNervousSystemModel';
+import type { PlatformDriftReading } from '@lib/platformDriftRuntime';
+import type { AuthenticityErosionReading } from '@lib/authenticityErosionTracker';
+import type { SilenceRecommendationReading } from '@lib/silenceRecommendationRuntime';
+import type { ReputationPressureReading } from '@lib/reputationPressureEngine';
+import type { MeaningCompressionReading } from '@lib/meaningCompressionEngine';
+import type { SocialExhaustionReading } from '@lib/socialExhaustionDetector';
+import type { AttentionEconomyReading } from '@lib/attentionEconomyPressure';
+import type { ContradictionDetectionReading } from '@lib/contradictionDetectionLayer';
+import type { WorldFeedbackFusionReading } from '@lib/worldFeedbackFusion';
+import type { TrueResonanceReading } from '@lib/trueResonanceDetector';
+import type { CouplingGovernorReading } from '@lib/realityCouplingGovernor';
+import type { ExternalRealityModelReading } from '@lib/externalRealityModel';
+import type { CouplingHealthReading } from '@lib/couplingHealthMonitor';
+import type { RealityCouplingReading } from '@lib/realityCouplingCore';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -452,6 +473,27 @@ export interface MetaInput {
   osStabilization?: StabilizationReading;
   osExecutiveState?: ExecutiveStateReading;
   osCore?: OperatingSystemReading;
+  // Wave 10 — reality coupling architecture (Phases 131–150).
+  cplIngestion?: RealityIngestionReading;
+  cplEngagementTruth?: EngagementTruthReading;
+  cplSaturation?: EmotionalSaturationReading;
+  cplTrust?: TrustDecayReading;
+  cplClimate?: NarrativeClimateMonitorReading;
+  cplAudience?: AudienceNervousSystemReading;
+  cplPlatformDrift?: PlatformDriftReading;
+  cplAuthenticity?: AuthenticityErosionReading;
+  cplSilence?: SilenceRecommendationReading;
+  cplReputation?: ReputationPressureReading;
+  cplMeaning?: MeaningCompressionReading;
+  cplSocialExhaustion?: SocialExhaustionReading;
+  cplAttentionEconomy?: AttentionEconomyReading;
+  cplContradiction?: ContradictionDetectionReading;
+  cplWorldFeedback?: WorldFeedbackFusionReading;
+  cplResonance?: TrueResonanceReading;
+  cplGovernor?: CouplingGovernorReading;
+  cplExternalModel?: ExternalRealityModelReading;
+  cplHealth?: CouplingHealthReading;
+  cplCore?: RealityCouplingReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -512,7 +554,11 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           osKernel, osInterrupts, osResources, osCognitionGraph, osDirective,
           osLoops, osPause, osHealth, osMemoryPressure, osMultiHorizon,
           osReflection, osIdentityEnforcement, osSeason, osDependencies,
-          osStabilization, osExecutiveState, osScheduler, osTaskQueue, osCore } = input;
+          osStabilization, osExecutiveState, osScheduler, osTaskQueue, osCore,
+          cplEngagementTruth, cplSaturation, cplTrust, cplClimate, cplAudience,
+          cplPlatformDrift, cplAuthenticity, cplSilence, cplReputation, cplMeaning,
+          cplSocialExhaustion, cplAttentionEconomy, cplContradiction, cplWorldFeedback,
+          cplResonance, cplGovernor, cplExternalModel, cplHealth, cplCore } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1474,6 +1520,52 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 10 — REALITY COUPLING: THE RESONANCE GATES ═════════
+  // THE GLOBAL WAVE 10 META-CRITIC QUESTION:
+  //   "Is this true resonance with reality, or stimulus addiction?"
+  //   An organism chasing stimulus is spending authenticity for reach
+  //   — refused at default brutality.
+  if (cplCore && cplCore.organism_is_addicted_to_stimulus && brutality >= 0.65) {
+    reasons.push(`reality coupling: the organism is chasing stimulus, not resonating with reality — ${cplCore.coupling_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The engagement this run would earn reads as stimulus, not a real
+  // response to a human truth.
+  if (cplEngagementTruth && cplEngagementTruth.reads_as_stimulus && brutality >= 0.7) {
+    reasons.push(`engagement truth: ${cplEngagementTruth.scoring_note}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // The world recommends silence — the audience is saturated, the
+  // climate closed. The strongest coupling is to add nothing.
+  if (cplSilence && cplSilence.recommend_silence && brutality >= 0.7) {
+    reasons.push(`silence recommendation: ${cplSilence.silence_reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The whole collective is exhausted — the right move is not a better
+  // banner but no banner.
+  if (cplSocialExhaustion && cplSocialExhaustion.world_is_exhausted && brutality >= 0.75) {
+    reasons.push(`social exhaustion: the world is exhausted (${cplSocialExhaustion.social_exhaustion}/10) — dominant source: ${cplSocialExhaustion.exhaustion_source}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The organism is over-coupled — addicted to feedback, reacting to
+  // every external signal rather than learning from it.
+  if (cplGovernor && cplGovernor.coupling_mode === 'over-coupled' && brutality >= 0.7) {
+    reasons.push(`reality coupling governor: ${cplGovernor.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The organism's self-model has diverged from reality — it believes
+  // one thing about itself while the world says another.
+  if (cplContradiction && cplContradiction.contradiction_detected && cplContradiction.the_contradiction && brutality >= 0.75) {
+    reasons.push(`contradiction detection: ${cplContradiction.the_contradiction.self_belief}, but ${cplContradiction.the_contradiction.reality_says}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The coupling to reality is itself failing — the organism is not
+  // learning cleanly from the world.
+  if (cplHealth && cplHealth.coupling_is_failing && brutality >= 0.7) {
+    reasons.push(`coupling health: the coupling to reality is failing — ${cplHealth.coupling_failure_modes.join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -2060,6 +2152,47 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`dynamic strategic seasons: the runtime is in a "${osSeason.season}" season — ${osSeason.season_directive}`);
   }
 
+  // Wave 10 soft floors — reality coupling.
+  if (cplSaturation && cplSaturation.audience_is_saturated) {
+    softReasons.push(`emotional saturation: the audience is saturated (${cplSaturation.saturation}/10) — ${cplSaturation.saturated_register}`);
+  }
+  if (cplAudience && cplAudience.past_threshold) {
+    softReasons.push(`audience nervous system: the audience is ${cplAudience.audience_state} — more signal will not register`);
+  }
+  if (cplTrust && cplTrust.trust_is_decaying) {
+    softReasons.push(`trust decay: audience trust is decaying (${cplTrust.trust_level}/10) — spent faster than earned`);
+  }
+  if (cplAuthenticity && cplAuthenticity.authenticity_eroding) {
+    softReasons.push(`authenticity erosion: the authenticity reserve is eroding (${cplAuthenticity.authenticity_reserve}/10 remaining)`);
+  }
+  if (cplPlatformDrift && cplPlatformDrift.platform_rewards_noise) {
+    softReasons.push(`platform drift: ${cplPlatformDrift.drift_direction}`);
+  }
+  if (cplMeaning && cplMeaning.meaning_is_hollowing) {
+    softReasons.push('meaning compression: the environment is hollowing meaning faster than this run can make it');
+  }
+  if (cplAttentionEconomy && cplAttentionEconomy.economy_demands_volume) {
+    softReasons.push(`attention economy: ${cplAttentionEconomy.pressure_note}`);
+  }
+  if (cplReputation && cplReputation.reputation_at_risk) {
+    softReasons.push('reputation pressure: reputation is being spent for reach rather than protected');
+  }
+  if (cplClimate && cplClimate.climate_rejects_addition) {
+    softReasons.push(`narrative climate: the climate is ${cplClimate.climate} — it would reject anything more added to it`);
+  }
+  if (cplWorldFeedback && cplWorldFeedback.feedback_is_negative) {
+    softReasons.push(`world feedback: ${cplWorldFeedback.world_says}`);
+  }
+  if (cplExternalModel && cplExternalModel.model_diverges_from_reality) {
+    softReasons.push(`external reality model: ${cplExternalModel.world_model_summary}`);
+  }
+  if (cplGovernor && cplGovernor.coupling_mode === 'decoupled') {
+    softReasons.push('reality coupling governor: the organism has decoupled from reality — acting from inside itself');
+  }
+  if (cplCore && cplCore.coupling_state === 'straining') {
+    softReasons.push(`reality coupling: the coupling is straining (${cplCore.coupling_score}/10)`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -2089,13 +2222,14 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 110 phases of judgement — the Wave 8
-  // operating system layered on top of the Wave 7 organism — every
-  // banner produces 38-62 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 52 soft reasons required to reject
-  //   default (0.65)   → 44 soft reasons required
-  //   brutal  (0.90)   → 38 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 38 : brutality >= 0.6 ? 44 : 52;
+  // the cognition stack. After 150 phases of judgement — the Wave 10
+  // reality-coupling layer on top of the operating system and the
+  // organism — every banner produces 44-70 soft signals routinely.
+  // Threshold band:
+  //   lenient (0.50)   → 59 soft reasons required to reject
+  //   default (0.65)   → 51 soft reasons required
+  //   brutal  (0.90)   → 45 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 45 : brutality >= 0.6 ? 51 : 59;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

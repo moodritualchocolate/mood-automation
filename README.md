@@ -68,6 +68,37 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 10 — Reality Coupling Architecture (Phases 131–150)
+
+Waves 1–9 built an organism that lives, governs itself, and shows itself — but it had been living almost entirely *inside itself*. Wave 10 is **reality coupling**: the organism stops being self-referential and begins **learning from the external world** — audience behaviour, trust formation, emotional fatigue, the narrative climate, attention economics, saturation, authenticity, reputation pressure, platform drift, and real-world contradiction. The coupling state — trust, authenticity, saturation — persists to `data/runtime/reality-coupling.json` and compounds across cycles.
+
+| Phase | Module | Role |
+|---|---|---|
+| 131 | `realityIngestionEngine` | The intake — how much real external signal is reaching the runtime. |
+| 132 | `engagementTruthScoring` | Scores whether engagement would reflect a real truth, or only stimulus. |
+| 133 | `emotionalSaturationMap` | Maps where the audience's emotional bandwidth is already spent. |
+| 134 | `trustDecayEngine` | Models how trust forms slowly and decays fast. |
+| 135 | `narrativeClimateMonitor` | Watches the external storytelling weather continuously. |
+| 136 | `audienceNervousSystemModel` | Models the audience as a nervous system with its own fatigue and threshold. |
+| 137 | `platformDriftRuntime` | Detects the distribution environment drifting toward noise. |
+| 138 | `authenticityErosionTracker` | Tracks the authenticity reserve eroding when stimulus is chased. |
+| 139 | `silenceRecommendationRuntime` | Says *not now* — when adding nothing is the strongest coupling. |
+| 140 | `reputationPressureEngine` | Reads whether reputation is being protected or extracted. |
+| 141 | `meaningCompressionEngine` | Detects meaning being hollowed faster than it can be made. |
+| 142 | `socialExhaustionDetector` | Reads when the whole collective is simply tired. |
+| 143 | `attentionEconomyPressure` | Names the pull to post more and louder — as pressure, not instruction. |
+| 144 | `contradictionDetectionLayer` | Catches the organism's self-model diverging from reality. |
+| 145 | `worldFeedbackFusion` | Fuses the scattered external signals into one coherent reading. |
+| 146 | `trueResonanceDetector` | The core distinction — true resonance versus stimulus addiction. |
+| 147 | `realityCouplingGovernor` | Holds the band between over-coupled (addicted) and decoupled (solipsist). |
+| 148 | `externalRealityModel` | Reports how faithfully the organism's model tracks the real world. |
+| 149 | `couplingHealthMonitor` | Watches the coupling itself for failure. |
+| 150 | `realityCouplingCore` | The persistent coupling state and closing synthesis — coupled, or addicted? |
+
+Wave 10 meta-critic — the governing question: **"Is this true resonance with reality, or stimulus addiction?"** An organism chasing stimulus spends authenticity for reach and is refused at default brutality. The organism does *not* optimize for engagement alone: when the world recommends silence, when the collective is exhausted, when the engagement would read as stimulus, when the organism is over-coupled to feedback, when its self-model contradicts reality, or when the coupling is failing — the run is refused. Resonance compounds trust; stimulus erodes authenticity; honored silence lets the audience recover. Soft-floor threshold recalibrated for the 150-phase stack: **lenient=59 · default=51 · brutal=45**.
+
+Verified by `scripts/test-reality-coupling.ts` — 20 checks: ingestion reads whether the world is speaking, engagement-truth separates stimulus from resonance, saturation / trust decay / narrative climate / audience nervous system / platform drift / authenticity erosion / social exhaustion / silence recommendation / meaning compression / attention economy / reputation pressure / contradiction detection all read real external state, the true resonance detector tells resonance from stimulus addiction, the governor holds the healthy band, the coupling state persists, and the closing synthesis distinguishes a coupled organism from an addicted one. 20/20 pass.
+
 ## Wave 9 — Manifestation Architecture (Phases 111–130)
 
 Waves 1–8 built a mind. Wave 9 gives it a **body**. The cognitive operating system becomes a **living, visible runtime** — a dashboard at `/runtime` that is not analytics software but a window into an organism thinking. The critical rule of the wave: the UI is *not* separate from cognition. Every visible surface is built from the persistent runtime state — `organism.json`, `os-runtime.json`, `civilization.json`, `world-psychology.json`, the runtime memory — by a manifestation module. No fabricated widgets, no disconnected analytics; `GET /api/runtime` assembles one snapshot and the page renders only what the modules derive from it.

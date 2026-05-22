@@ -682,6 +682,29 @@ export interface BannerTasteSystem {
     executiveState: import('@lib/persistentExecutiveState').ExecutiveStateReading;
     core: import('@lib/operatingSystemCore').OperatingSystemReading;
   };
+  // Wave 10 — reality coupling architecture (Phases 131–150)
+  coupling: {
+    ingestion: import('@lib/realityIngestionEngine').RealityIngestionReading;
+    engagementTruth: import('@lib/engagementTruthScoring').EngagementTruthReading;
+    saturation: import('@lib/emotionalSaturationMap').EmotionalSaturationReading;
+    trust: import('@lib/trustDecayEngine').TrustDecayReading;
+    climate: import('@lib/narrativeClimateMonitor').NarrativeClimateMonitorReading;
+    audience: import('@lib/audienceNervousSystemModel').AudienceNervousSystemReading;
+    platformDrift: import('@lib/platformDriftRuntime').PlatformDriftReading;
+    authenticity: import('@lib/authenticityErosionTracker').AuthenticityErosionReading;
+    silence: import('@lib/silenceRecommendationRuntime').SilenceRecommendationReading;
+    reputation: import('@lib/reputationPressureEngine').ReputationPressureReading;
+    meaningCompression: import('@lib/meaningCompressionEngine').MeaningCompressionReading;
+    socialExhaustion: import('@lib/socialExhaustionDetector').SocialExhaustionReading;
+    attentionEconomy: import('@lib/attentionEconomyPressure').AttentionEconomyReading;
+    contradiction: import('@lib/contradictionDetectionLayer').ContradictionDetectionReading;
+    worldFeedback: import('@lib/worldFeedbackFusion').WorldFeedbackFusionReading;
+    resonance: import('@lib/trueResonanceDetector').TrueResonanceReading;
+    governor: import('@lib/realityCouplingGovernor').CouplingGovernorReading;
+    externalModel: import('@lib/externalRealityModel').ExternalRealityModelReading;
+    health: import('@lib/couplingHealthMonitor').CouplingHealthReading;
+    core: import('@lib/realityCouplingCore').RealityCouplingReading;
+  };
 }
 
 export interface Banner {
