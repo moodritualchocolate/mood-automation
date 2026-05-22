@@ -582,6 +582,18 @@ export interface BannerTasteSystem {
     nextRunDirective: import('@lib/nextRunDirective').NextRunDirective;
     identityDefense: import('@lib/runtimeIdentity').IdentityDefenseReading;
   };
+  // Wave 2 — reality execution architecture (Phases 28–35)
+  execution: {
+    nervousSystem: import('@lib/campaignNervousSystem').CampaignNervousSystemReading;
+    attentionPhysics: import('@lib/attentionPhysics').AttentionPhysicsReading;
+    visualCognition: import('@lib/visualCognition').VisualCognitionReading;
+    emotionalContinuity: import('@lib/emotionalContinuityRuntime').EmotionalContinuityRuntimeReading;
+    audienceFeedback: import('@lib/audienceRealityFeedback').AudienceRealityFeedbackReading;
+    antiOptimization: import('@lib/antiOptimization').AntiOptimizationReading;
+    identityPersistence: import('@lib/identityPersistence').IdentityPersistenceReading;
+    autonomousDirection: import('@lib/autonomousCreativeDirection').AutonomousCreativeDirectionReading;
+    orchestration: import('@lib/realityExecutionOrchestrator').RealityExecutionState;
+  };
 }
 
 export interface Banner {

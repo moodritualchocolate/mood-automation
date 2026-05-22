@@ -237,6 +237,16 @@ import {
   buildRuntimeTrace,
   generateNextRunDirective,
   defendIdentity,
+  // Wave 2 — reality execution architecture (Phases 28–35)
+  readCampaignNervousSystem,
+  readAttentionPhysics,
+  readVisualCognition,
+  readEmotionalContinuityRuntime,
+  readAudienceRealityFeedback,
+  readAntiOptimization,
+  readIdentityPersistence,
+  directAutonomousCreative,
+  orchestrateRealityExecution,
 } from '@lib/index';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
 import type { CausalChainLink } from '@lib/causalMemoryGraph';
@@ -1639,6 +1649,111 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       });
       // ───────────────────────────────────────────────────────────
 
+      // ═══ WAVE 2 — REALITY EXECUTION ARCHITECTURE (Phases 28–35) ═
+      // The system stops being only a living mind and becomes a
+      // living creative organism acting in reality: it senses the
+      // campaign, reads attention, sees the frame, tracks emotional
+      // continuity, interprets audience feedback, resists optimisation
+      // corruption, protects identity, and makes a real creative
+      // decision.
+      const nervousSystemReading = readCampaignNervousSystem({
+        engagements: allEngagements, trail: emotionalTrail,
+      });
+      emit({
+        stage: 'campaign-nervous-system',
+        message: `pulse ${nervousSystemReading.campaignPulse} · ${nervousSystemReading.emotionally_alive ? 'EMOTIONALLY ALIVE' : 'REPEATING ITSELF'} — ${nervousSystemReading.recommendedResponse}`,
+      });
+      const attentionPhysicsReading = readAttentionPhysics({
+        truth, direction, composition, psychology, gravity,
+        at_0_3s: reaction.at_0_3s, at_1s: reaction.at_1s, at_3s: reaction.at_3s,
+      });
+      emit({
+        stage: 'attention-physics',
+        message: `${attentionPhysicsReading.attention_is_true ? 'TRUE attention' : attentionPhysicsReading.attention_is_loud ? 'LOUD attention' : 'weak attention'} · scroll-stop ${attentionPhysicsReading.scrollStopProbability}/10 · risk ${attentionPhysicsReading.attentionRisk}/10`,
+      });
+      const visualCognitionReading = readVisualCognition({ composition, direction, brief });
+      emit({
+        stage: 'visual-cognition',
+        message: `${visualCognitionReading.frame_is_seen ? 'frame SEEN (observed)' : 'frame ASSEMBLED'} · realism ${visualCognitionReading.realismScore}/10${visualCognitionReading.recommendedFrameAdjustment ? ' — ' + visualCognitionReading.recommendedFrameAdjustment : ''}`,
+      });
+      const emotionalContinuityReading = readEmotionalContinuityRuntime({
+        trail: emotionalTrail,
+        candidateTruth: truth,
+        candidateFamily: state.family,
+        candidateMotifs: symbolicObjectsReading.objects_present.map((o) => o.object),
+      });
+      emit({
+        stage: 'emotional-continuity-runtime',
+        message: `arc ${emotionalContinuityReading.activeEmotionalArc} · next move "${emotionalContinuityReading.nextEmotionalMove}" · repetition risk ${emotionalContinuityReading.emotionalRepetitionRisk}/10`,
+      });
+      const audienceFeedbackReading = readAudienceRealityFeedback({ engagements: allEngagements });
+      if (audienceFeedbackReading.has_feedback) {
+        emit({
+          stage: 'audience-reality-feedback',
+          message: `${audienceFeedbackReading.audience_recognised_itself ? 'audience RECOGNISED ITSELF' : 'audience reacted to STIMULATION'} · deep ${audienceFeedbackReading.deepEngagement}/10 vs shallow ${audienceFeedbackReading.shallowEngagement}/10`,
+        });
+      }
+      const nonPerformativeScore = nonPerformative
+        ? Math.max(0, Math.min(10, 10 - nonPerformative.performativeness_score))
+        : 6;
+      const recognitionScore = collectiveRecognition?.recognition_score ?? 5;
+      const antiOptimizationReading = readAntiOptimization({
+        direction,
+        hookStrength: attentionPhysicsReading.scrollStopProbability,
+        aftertaste: tentativeAftertaste.residueStrength,
+        truthStrength: cognitiveField.emergence_score,
+        attentionIsLoud: attentionPhysicsReading.attention_is_loud,
+        recognition: recognitionScore,
+        engagementStrength: reaction.engagementQuality,
+        engagementDepth: audienceFeedbackReading.has_feedback ? audienceFeedbackReading.deepEngagement : reaction.engagementQuality * 0.7,
+        viralContamination: viralPatternsReading.contamination_score,
+        usesOverCirculatedVocab: viralPatternsReading.uses_over_circulated,
+        commentPerformativeness: audienceFeedbackReading.shallowEngagement,
+        trendContaminationFlagged: !!culturalDriftReading?.feels_culturally_consumed,
+      });
+      if (antiOptimizationReading.optimization_corrupts_truth) {
+        emit({
+          stage: 'anti-optimization',
+          message: `RESIST — ${antiOptimizationReading.recommendedResistance}`,
+        });
+      }
+      const identityPersistenceReading = readIdentityPersistence({
+        truth, direction, emotionalCore,
+        trail: emotionalTrail,
+        recognition: recognitionScore,
+        nonPerformative: nonPerformativeScore,
+        emergence: cognitiveField.emergence_score,
+        copyText: typography.primary.text,
+      });
+      emit({
+        stage: 'identity-persistence',
+        message: `${identityPersistenceReading.still_unmistakably_mood ? 'still unmistakably MOOD' : 'IDENTITY AT RISK'} · risk ${identityPersistenceReading.identityRisk}/10${identityPersistenceReading.identityCorrection ? ' — ' + identityPersistenceReading.identityCorrection : ''}`,
+      });
+      const autonomousDirectionReading = directAutonomousCreative({
+        state,
+        trail: emotionalTrail,
+        nervousSystem: nervousSystemReading,
+        continuity: emotionalContinuityReading,
+        feedback: audienceFeedbackReading,
+        antiOptimization: antiOptimizationReading,
+        identity: identityPersistenceReading,
+      });
+      const realityExecution = orchestrateRealityExecution({
+        nervousSystem: nervousSystemReading,
+        attention: attentionPhysicsReading,
+        visualCognition: visualCognitionReading,
+        continuity: emotionalContinuityReading,
+        feedback: audienceFeedbackReading,
+        antiOptimization: antiOptimizationReading,
+        identity: identityPersistenceReading,
+        direction: autonomousDirectionReading,
+      });
+      emit({
+        stage: 'reality-execution',
+        message: `${realityExecution.executionVerdict} — ${realityExecution.creativeDirectorMemo}`,
+      });
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -1782,6 +1897,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         cognitiveContinuity,
         runtimeDrift,
         priorNextRunDirective: runtimeContext.nextRunDirective,
+        // Wave 2 — reality execution architecture
+        nervousSystemReading,
+        attentionPhysicsReading,
+        visualCognitionReading,
+        emotionalContinuityReading,
+        audienceFeedbackReading,
+        antiOptimizationReading,
+        identityPersistenceReading,
+        autonomousDirectionReading,
+        realityExecution,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -2147,6 +2272,17 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               trace: runtimeTrace,
               nextRunDirective,
               identityDefense,
+            },
+            execution: {
+              nervousSystem: nervousSystemReading,
+              attentionPhysics: attentionPhysicsReading,
+              visualCognition: visualCognitionReading,
+              emotionalContinuity: emotionalContinuityReading,
+              audienceFeedback: audienceFeedbackReading,
+              antiOptimization: antiOptimizationReading,
+              identityPersistence: identityPersistenceReading,
+              autonomousDirection: autonomousDirectionReading,
+              orchestration: realityExecution,
             },
           },
           attempts: attempt,

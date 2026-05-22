@@ -159,6 +159,16 @@ import type { ContradictionResolverReading } from '@lib/cognitiveContradictionRe
 import type { CognitiveContinuityReading } from '@lib/cognitiveContinuityScore';
 import type { RuntimeDriftReport } from '@lib/runtimeDriftDetector';
 import type { NextRunDirective } from '@lib/nextRunDirective';
+// Wave 2 — reality execution architecture (Phases 28–35)
+import type { CampaignNervousSystemReading } from '@lib/campaignNervousSystem';
+import type { AttentionPhysicsReading } from '@lib/attentionPhysics';
+import type { VisualCognitionReading } from '@lib/visualCognition';
+import type { EmotionalContinuityRuntimeReading } from '@lib/emotionalContinuityRuntime';
+import type { AudienceRealityFeedbackReading } from '@lib/audienceRealityFeedback';
+import type { AntiOptimizationReading } from '@lib/antiOptimization';
+import type { IdentityPersistenceReading } from '@lib/identityPersistence';
+import type { AutonomousCreativeDirectionReading } from '@lib/autonomousCreativeDirection';
+import type { RealityExecutionState } from '@lib/realityExecutionOrchestrator';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -307,6 +317,16 @@ export interface MetaInput {
   cognitiveContinuity?: CognitiveContinuityReading;
   runtimeDrift?: RuntimeDriftReport;
   priorNextRunDirective?: NextRunDirective;
+  // Wave 2 — reality execution architecture (Phases 28–35).
+  nervousSystemReading?: CampaignNervousSystemReading;
+  attentionPhysicsReading?: AttentionPhysicsReading;
+  visualCognitionReading?: VisualCognitionReading;
+  emotionalContinuityReading?: EmotionalContinuityRuntimeReading;
+  audienceFeedbackReading?: AudienceRealityFeedbackReading;
+  antiOptimizationReading?: AntiOptimizationReading;
+  identityPersistenceReading?: IdentityPersistenceReading;
+  autonomousDirectionReading?: AutonomousCreativeDirectionReading;
+  realityExecution?: RealityExecutionState;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -348,7 +368,10 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           unifiedGraphReading,
           cognitiveField, emotionalPhysicsReading, tensionTopologyReading,
           contradictionResolution,
-          cognitiveContinuity, runtimeDrift, priorNextRunDirective } = input;
+          cognitiveContinuity, runtimeDrift, priorNextRunDirective,
+          nervousSystemReading, attentionPhysicsReading, visualCognitionReading,
+          emotionalContinuityReading, audienceFeedbackReading, antiOptimizationReading,
+          identityPersistenceReading, autonomousDirectionReading, realityExecution } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1044,6 +1067,63 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 2 — REALITY EXECUTION: THE EXECUTION GATES ══════════
+  // THE GLOBAL WAVE 2 META-CRITIC QUESTION:
+  //   "Did this creative move emerge from reality, memory, identity,
+  //    and strategy — or did it merely produce content?"
+  if (realityExecution && realityExecution.merely_produced_content && brutality >= 0.6) {
+    reasons.push(`reality execution: the run MERELY PRODUCED CONTENT — it did not emerge from reality, memory, identity, and strategy (emergence ${realityExecution.emergence_from_reality}/10)`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Phase 28 — "is this campaign still emotionally alive, or is it
+  // only repeating itself?"
+  if (nervousSystemReading && !nervousSystemReading.emotionally_alive &&
+      (nervousSystemReading.truthWeakening || nervousSystemReading.saturationRisk >= 7) && brutality >= 0.7) {
+    reasons.push(`campaign nervous system: the campaign is repeating itself, not emotionally alive — ${nervousSystemReading.recommendedResponse}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Phase 29 — "does this stop attention because it is true, or
+  // because it is loud?"
+  if (attentionPhysicsReading && attentionPhysicsReading.attention_is_loud && brutality >= 0.7) {
+    reasons.push('attention physics: attention relies on loudness / size / product, not on human recognition — loud is not attention');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Phase 30 — "could this frame exist before the advertisement?"
+  if (visualCognitionReading && !visualCognitionReading.frame_is_seen && brutality >= 0.75) {
+    reasons.push(`visual cognition: the frame is assembled, not seen — ${visualCognitionReading.recommendedFrameAdjustment ?? 'it could not exist before the advertisement'}`);
+    if (verdict === 'approve') verdict = 'reject-image';
+  }
+  // Phase 31 — "is this the next emotional move, or just another
+  // expression of the same feeling?"
+  if (emotionalContinuityReading && !emotionalContinuityReading.is_the_next_move &&
+      emotionalContinuityReading.emotionalRepetitionRisk >= 6 && brutality >= 0.7) {
+    reasons.push(`emotional continuity: this is emotional repetition without evolution — not the next move (repetition risk ${emotionalContinuityReading.emotionalRepetitionRisk}/10)`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Phase 33 — "are we improving the campaign, or training it to
+  // become less truthful?"
+  if (antiOptimizationReading && antiOptimizationReading.optimization_corrupts_truth && brutality >= 0.7) {
+    reasons.push(`anti-optimization: ${antiOptimizationReading.recommendedResistance}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Phase 34 — "is this still unmistakably MOOD, even without the
+  // logo?" — a brand-truth violation is an automatic refusal.
+  if (identityPersistenceReading && identityPersistenceReading.violatedRefusals.length > 0 && brutality >= 0.65) {
+    reasons.push(`identity persistence: the banner drifts toward what MOOD refuses to become — ${identityPersistenceReading.violatedRefusals.join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  if (identityPersistenceReading && !identityPersistenceReading.still_unmistakably_mood &&
+      identityPersistenceReading.identityRisk >= 6 && brutality >= 0.75) {
+    reasons.push(`identity persistence: the banner is no longer unmistakably MOOD — ${identityPersistenceReading.identityCorrection ?? 'identity has drifted'}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Phase 35 — "did the system make a real creative decision, or did
+  // it simply generate another asset?"
+  if (autonomousDirectionReading && !autonomousDirectionReading.is_a_real_decision && brutality >= 0.7) {
+    reasons.push('autonomous creative direction: no real creative decision — no hypothesis, no rejected alternatives, no do-not-do list, or a flat repeat');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -1446,6 +1526,35 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('persistent runtime: the run uses an object the prior directive marked to avoid');
   }
 
+  // Wave 2 soft floors — reality execution architecture.
+  if (nervousSystemReading && nervousSystemReading.saturationRisk >= 5 && nervousSystemReading.emotionally_alive) {
+    softReasons.push(`campaign nervous system: saturation rising (${nervousSystemReading.saturationRisk}/10) — ${nervousSystemReading.recommendedResponse}`);
+  }
+  if (attentionPhysicsReading && !attentionPhysicsReading.attention_is_true && !attentionPhysicsReading.attention_is_loud) {
+    softReasons.push('attention physics: attention is weak — no first-second hook, no true interruption');
+  }
+  if (visualCognitionReading && visualCognitionReading.frame_is_seen && visualCognitionReading.overDesignRisk >= 6) {
+    softReasons.push(`visual cognition: over-design risk ${visualCognitionReading.overDesignRisk}/10 — the frame leans designed`);
+  }
+  if (emotionalContinuityReading && emotionalContinuityReading.decayWarnings.length > 0) {
+    softReasons.push(`emotional continuity: decay warnings — ${emotionalContinuityReading.decayWarnings.join('; ')}`);
+  }
+  if (audienceFeedbackReading && audienceFeedbackReading.has_feedback && audienceFeedbackReading.emotionalMisread) {
+    softReasons.push('audience reality feedback: the prior banner was emotionally misread — strong shallow reaction, no recognition');
+  }
+  if (antiOptimizationReading && !antiOptimizationReading.optimization_corrupts_truth &&
+      antiOptimizationReading.optimizationRisk >= 5) {
+    softReasons.push(`anti-optimization: optimisation pressure rising (${antiOptimizationReading.optimizationRisk}/10) — performance is a signal, not a master`);
+  }
+  if (identityPersistenceReading && identityPersistenceReading.violatedRefusals.length === 0 &&
+      identityPersistenceReading.identityRisk >= 4) {
+    softReasons.push(`identity persistence: identity risk ${identityPersistenceReading.identityRisk}/10 — watch the MOOD voice`);
+  }
+  if (realityExecution && !realityExecution.merely_produced_content &&
+      realityExecution.emergence_from_reality < 7) {
+    softReasons.push(`reality execution: emergence ${realityExecution.emergence_from_reality}/10 — the move only partly emerged from reality + memory + identity + strategy`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -1475,12 +1584,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 27 phases of judgement every banner
-  // produces 15-24 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 21 soft reasons required to reject
-  //   default (0.65)   → 18 soft reasons required
-  //   brutal  (0.90)   → 14 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 14 : brutality >= 0.6 ? 18 : 21;
+  // the cognition stack. After 35 phases of judgement every banner
+  // produces 18-30 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 25 soft reasons required to reject
+  //   default (0.65)   → 21 soft reasons required
+  //   brutal  (0.90)   → 17 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 17 : brutality >= 0.6 ? 21 : 25;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

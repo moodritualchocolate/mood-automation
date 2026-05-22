@@ -190,3 +190,55 @@ export * from './cognitiveContinuityScore';
 export * from './runtimeHealthMonitor';
 export * from './runtimeTrace';
 export * from './persistentCognitiveRuntime';
+// ─── WAVE 2 — Reality Execution Architecture (Phases 28–35) ───
+// Phase 28 — campaign nervous system
+export * from './performancePulse';
+export * from './audienceSignalState';
+export * from './campaignSaturation';
+export * from './emotionalFatigueMonitor';
+export * from './campaignNervousSystem';
+// Phase 29 — attention physics engine
+export * from './scrollStopMechanics';
+export * from './firstSecondRecognition';
+export * from './visualInterruptionMap';
+export * from './cognitiveEntryPoint';
+export * from './attentionPhysics';
+// Phase 30 — visual cognition layer
+export * from './frameIntelligence';
+export * from './emotionalGeometry';
+export * from './productGravity';
+export * from './visualSilence';
+export * from './humanEyeFlow';
+export * from './visualCognition';
+// Phase 31 — emotional continuity runtime
+export * from './truthFatigue';
+export * from './motifDecay';
+export * from './atmosphereContinuity';
+export * from './emotionalArcMemory';
+export * from './emotionalContinuityRuntime';
+// Phase 32 — audience reality feedback loop
+export * from './silentEngagementSignals';
+export * from './commentRecognitionParser';
+export * from './saveShareMeaning';
+export * from './realityFeedbackWeighting';
+export * from './audienceRealityFeedback';
+// Phase 33 — anti-optimization layer
+export * from './performanceCorruptionDetector';
+export * from './truthVsEngagement';
+export * from './algorithmicPressureShield';
+export * from './viralityImmuneSystem';
+export * from './antiOptimization';
+// Phase 34 — identity persistence engine
+export * from './brandTruthCore';
+export * from './toneIntegrity';
+export * from './visualIdentityMemory';
+export * from './emotionalSignature';
+export * from './identityPersistence';
+// Phase 35 — autonomous creative direction
+export * from './campaignHypothesisEngine';
+export * from './emotionalStrategyPlanner';
+export * from './creativeDecisionMemory';
+export * from './doNotDoMemory';
+export * from './autonomousCreativeDirection';
+// Wave 2 — unified orchestration
+export * from './realityExecutionOrchestrator';

@@ -68,6 +68,30 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 2 — Reality Execution Architecture (Phases 28–35)
+
+Phases 1–27 made the system think, remember, and persist. Wave 2 makes the mind **act in reality** — observe what it releases, protect its identity, learn from response, and evolve without becoming an engagement machine. The architectural shift: `memory → cognition → continuity → identity → evolution` now gains `execution → attention → feedback → anti-optimization → autonomous direction`. The system stops being only a living mind and becomes **a living creative organism operating in reality**. 42 modules across 8 phases, one connected execution layer.
+
+**Phase 28 — Campaign Nervous System** (`campaignNervousSystem` · `performancePulse` · `audienceSignalState` · `campaignSaturation` · `emotionalFatigueMonitor`) — the campaign now feels *live*: it senses performance pulse, audience signal strength + drift, saturation, motif overuse, emotional fatigue, weakening truths. Gate: *"is this campaign still emotionally alive, or only repeating itself?"*
+
+**Phase 29 — Attention Physics Engine** (`attentionPhysics` · `scrollStopMechanics` · `firstSecondRecognition` · `visualInterruptionMap` · `cognitiveEntryPoint`) — models why humans stop: not because something is loud, because something interrupts an internal pattern. True attention = internal recognition + visual interruption + unresolved tension. Gate: *"does this stop attention because it is true, or because it is loud?"* — loud / contrast / size are NOT attention.
+
+**Phase 30 — Visual Cognition Layer** (`visualCognition` · `frameIntelligence` · `emotionalGeometry` · `productGravity` · `visualSilence` · `humanEyeFlow`) — the system begins to *see* frames, not generate them: frame diagnosis, emotional geometry, product gravity, silence with emotional function, human eye flow. Gate: *"could this frame exist before the advertisement?"*
+
+**Phase 31 — Emotional Continuity Runtime** (`emotionalContinuityRuntime` · `truthFatigue` · `motifDecay` · `atmosphereContinuity` · `emotionalArcMemory`) — campaigns must not emotionally reset: tracks emotional arcs, truth fatigue, motif decay, atmosphere continuity, and decides the next move — continue / deepen / reverse / interrupt / retire. Gate: *"is this the next emotional move, or just another expression of the same feeling?"*
+
+**Phase 32 — Audience Reality Feedback Loop** (`audienceRealityFeedback` · `silentEngagementSignals` · `commentRecognitionParser` · `saveShareMeaning` · `realityFeedbackWeighting`) — interprets real-world feedback correctly: saves, rewatches, recognition comments, silent engagement weighted far above shallow likes. High engagement does not mean good. Gate: *"did the audience recognise itself, or merely react to stimulation?"*
+
+**Phase 33 — Anti-Optimization Layer** (`antiOptimization` · `performanceCorruptionDetector` · `truthVsEngagement` · `algorithmicPressureShield` · `viralityImmuneSystem`) — protects the system from becoming a performance machine: detects when real data corrupts human truth, hook addiction, algorithmic drift, shallow virality. Hard rule: **performance is a signal, not a master.** Gate: *"are we improving the campaign, or training it to become less truthful?"*
+
+**Phase 34 — Identity Persistence Engine** (`identityPersistence` · `brandTruthCore` · `toneIntegrity` · `visualIdentityMemory` · `emotionalSignature`) — protects the brand's soul across execution. The brand truth core knows what MOOD *refuses to become* (supplement hype, TikTok wellness, fake mental-health content, luxury performance aesthetic, influencer wellness, generic chocolate, productivity-drug narrative). Gate: *"is this still unmistakably MOOD, even without the logo?"*
+
+**Phase 35 — Autonomous Creative Direction** (`autonomousCreativeDirection` · `campaignHypothesisEngine` · `emotionalStrategyPlanner` · `creativeDecisionMemory` · `doNotDoMemory`) — the system makes real creative *decisions*, not outputs: a campaign hypothesis, a chosen territory, rejected alternatives, an emotional strategy, a do-not-do list, and a **Creative Director Memo** explaining the next move.
+
+**`realityExecutionOrchestrator`** wraps all eight phases. The global Wave 2 meta-critic gate — **"did this creative move emerge from reality, memory, identity, and strategy, or did it merely produce content?"** A run that merely produced content is rejected at default+. Each phase contributes its own hard gate (reject) and soft floor. Soft-floor threshold recalibrated for the 35-phase stack: **lenient=25 · default=21 · brutal=17**.
+
+Verified by `scripts/test-reality-execution-wave.ts` — 8 tests: feedback influences next decisions · anti-optimization blocks shallow high-engagement corruption · deep low-volume recognition is weighted highly · a repeated motif activates emotional fatigue + motif decay · product gravity flags a pasted product-heavy frame · attention physics rejects loud-but-empty interruption · brand truth core rejects generic wellness tone · autonomous creative direction produces a real decision. 8/8 pass.
+
 ## Phase 27 — Persistent Cognitive Runtime (the living runtime layer)
 
 Phase 26 made the system one mind. Phase 27 makes that mind **persist through time**. It adds no new creative module, no new psychological theory, no new output — it makes the existing intelligence *remember, breathe, and evolve across runs*. The system stops behaving as *"generate → judge → store"* and starts behaving as *"remember → interpret → decide → act → learn → become slightly different."*
