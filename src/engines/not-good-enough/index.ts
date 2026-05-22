@@ -106,6 +106,50 @@ import type { IdentityMaintenanceReading } from '@lib/identityMaintenance';
 import type { EmotionalCamouflageReading } from '@lib/emotionalCamouflage';
 import type { PublicPrivateSplitReading } from '@lib/publicPrivateSplit';
 import type { MaskFatigueReading } from '@lib/maskFatigue';
+// Phase 20 — desire systems
+import type { DesireArchitectureReading } from '@lib/desireArchitecture';
+import type { QuietStatusReading } from '@lib/statusWithoutStatus';
+import type { EmotionalHungerReading } from '@lib/emotionalHunger';
+import type { ValidationSystemsReading } from '@lib/validationSystems';
+import type { InvisibleEnvyReading } from '@lib/invisibleEnvy';
+import type { AspirationalIdentityGapReading } from '@lib/aspirationalIdentityGap';
+// Phase 21 — social gravity
+import type { SocialGravityReading } from '@lib/socialGravity';
+import type { CollectiveEmotionalMovementReading } from '@lib/collectiveEmotionalMovement';
+import type { CulturalAccelerationReading } from '@lib/culturalAcceleration';
+import type { GroupAnxietyReading } from '@lib/groupAnxiety';
+import type { ViralEmotionPatternsReading } from '@lib/viralEmotionPatterns';
+import type { SocialPermissionReading } from '@lib/socialPermissionStructures';
+// Phase 22 — ritual attachment
+import type { RitualFormationReading } from '@lib/ritualFormation';
+import type { AttachmentLoopsReading } from '@lib/attachmentLoops';
+import type { SymbolicSafetyReading } from '@lib/symbolicSafety';
+import type { EmotionalReturnReading } from '@lib/emotionalReturnMechanics';
+import type { PrivateRitualMemoryReading } from '@lib/privateRitualMemory';
+import type { RepeatedComfortSystemsReading } from '@lib/repeatedComfortSystems';
+// Phase 23 — narrative self
+import type { InternalNarrativeReading } from '@lib/internalNarrative';
+import type { SelfStoryArchitectureReading } from '@lib/selfStoryArchitecture';
+import type { IdentityContinuityReading } from '@lib/identityContinuity';
+import type { PrivateMeaningSystemsReading } from '@lib/privateMeaningSystems';
+import type { EmotionalSelfTranslationReading } from '@lib/emotionalSelfTranslation';
+import type { PersonalMythologyReading } from '@lib/personalMythology';
+// Phase 24 — predictive human states
+import type { EmotionalForecastReading } from '@lib/emotionalForecasting';
+import type { BehaviorPredictionReading } from '@lib/behaviorPrediction';
+import type { CollapseProbabilityReading } from '@lib/collapseProbability';
+import type { RecoveryAttemptReading } from '@lib/recoveryAttemptModel';
+import type { FuturePressureTrajectoryReading } from '@lib/futurePressureTrajectory';
+import type { EmotionalDriftPredictionReading } from '@lib/emotionalDriftPrediction';
+// Phase 25 — autonomous campaign intelligence
+import type { AutonomousNarrativeReading } from '@lib/autonomousNarrativeEngine';
+import type { CulturalSignalEvolutionReading } from '@lib/culturalSignalEvolution';
+import type { SelfUpdatingPsychologyReading } from '@lib/selfUpdatingPsychology';
+import type { EmergentCampaignMemoryReading } from '@lib/emergentCampaignMemory';
+import type { CollectiveRealityTrackingReading } from '@lib/collectiveRealityTracking';
+import type { AdaptiveEmotionalIntelligenceReading } from '@lib/adaptiveEmotionalIntelligence';
+// Phases 20–25 — unified human cognition graph
+import type { UnifiedHumanGraphReading } from '@lib/unifiedHumanGraph';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -201,6 +245,50 @@ export interface MetaInput {
   emotionalCamouflageReading?: EmotionalCamouflageReading;
   publicPrivateSplitReading?: PublicPrivateSplitReading;
   maskFatigueReading?: MaskFatigueReading;
+  // Phase 20 — desire systems.
+  desireArchitectureReading?: DesireArchitectureReading;
+  quietStatusReading?: QuietStatusReading;
+  emotionalHungerReading?: EmotionalHungerReading;
+  validationSystemsReading?: ValidationSystemsReading;
+  invisibleEnvyReading?: InvisibleEnvyReading;
+  aspirationalGapReading?: AspirationalIdentityGapReading;
+  // Phase 21 — social gravity.
+  socialGravityReading?: SocialGravityReading;
+  collectiveMovementReading?: CollectiveEmotionalMovementReading;
+  culturalAccelerationReading?: CulturalAccelerationReading;
+  groupAnxietyReading?: GroupAnxietyReading;
+  viralPatternsReading?: ViralEmotionPatternsReading;
+  socialPermissionReading?: SocialPermissionReading;
+  // Phase 22 — ritual attachment.
+  ritualFormationReading?: RitualFormationReading;
+  attachmentLoopsReading?: AttachmentLoopsReading;
+  symbolicSafetyReading?: SymbolicSafetyReading;
+  emotionalReturnReading?: EmotionalReturnReading;
+  privateRitualMemoryReading?: PrivateRitualMemoryReading;
+  repeatedComfortReading?: RepeatedComfortSystemsReading;
+  // Phase 23 — narrative self.
+  internalNarrativeReading?: InternalNarrativeReading;
+  selfStoryReading?: SelfStoryArchitectureReading;
+  identityContinuityReading?: IdentityContinuityReading;
+  meaningSystemsReading?: PrivateMeaningSystemsReading;
+  selfTranslationReading?: EmotionalSelfTranslationReading;
+  personalMythologyReading?: PersonalMythologyReading;
+  // Phase 24 — predictive human states.
+  emotionalForecastReading?: EmotionalForecastReading;
+  behaviorPredictionReading?: BehaviorPredictionReading;
+  collapseProbabilityReading?: CollapseProbabilityReading;
+  recoveryAttemptReading?: RecoveryAttemptReading;
+  pressureTrajectoryReading?: FuturePressureTrajectoryReading;
+  emotionalDriftReading?: EmotionalDriftPredictionReading;
+  // Phase 25 — autonomous campaign intelligence.
+  autonomousNarrativeReading?: AutonomousNarrativeReading;
+  culturalSignalEvolutionReading?: CulturalSignalEvolutionReading;
+  selfUpdatingPsychologyReading?: SelfUpdatingPsychologyReading;
+  emergentCampaignMemoryReading?: EmergentCampaignMemoryReading;
+  collectiveRealityTrackingReading?: CollectiveRealityTrackingReading;
+  adaptiveEmotionalIntelligenceReading?: AdaptiveEmotionalIntelligenceReading;
+  // Phases 20–25 — unified human cognition graph.
+  unifiedGraphReading?: UnifiedHumanGraphReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -225,7 +313,21 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           fakeRecoveryReading, silentCopingReading, behavioralResidueReading,
           socialMaskingEngineReading, highFunctioningBurnoutReading,
           identityMaintenanceReading, emotionalCamouflageReading,
-          publicPrivateSplitReading, maskFatigueReading } = input;
+          publicPrivateSplitReading, maskFatigueReading,
+          desireArchitectureReading, quietStatusReading, emotionalHungerReading,
+          validationSystemsReading, invisibleEnvyReading, aspirationalGapReading,
+          socialGravityReading, collectiveMovementReading, culturalAccelerationReading,
+          groupAnxietyReading, viralPatternsReading, socialPermissionReading,
+          ritualFormationReading, attachmentLoopsReading, symbolicSafetyReading,
+          emotionalReturnReading, privateRitualMemoryReading, repeatedComfortReading,
+          internalNarrativeReading, selfStoryReading, identityContinuityReading,
+          meaningSystemsReading, selfTranslationReading, personalMythologyReading,
+          emotionalForecastReading, behaviorPredictionReading, collapseProbabilityReading,
+          recoveryAttemptReading, pressureTrajectoryReading, emotionalDriftReading,
+          autonomousNarrativeReading, culturalSignalEvolutionReading,
+          selfUpdatingPsychologyReading, emergentCampaignMemoryReading,
+          collectiveRealityTrackingReading, adaptiveEmotionalIntelligenceReading,
+          unifiedGraphReading } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -776,6 +878,98 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-taste';
   }
 
+  // ─── Phase 20 hard gates ──────────────────────────────────────
+  // THE HEADLINE QUESTION:
+  //   "Does this desire feel emotionally inevitable, or creatively
+  //    manufactured?"
+  if (desireArchitectureReading && desireArchitectureReading.uses_forbidden_framing && brutality >= 0.7) {
+    reasons.push('desire architecture: truth uses influencer / wellness / luxury framing — desire is manufactured, not inevitable');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  if (quietStatusReading && brutality >= 0.75 &&
+      (quietStatusReading.luxury_contamination >= 5 || quietStatusReading.productivity_porn_risk >= 5)) {
+    reasons.push('status without status: signal contaminated by luxury / productivity-porn vocabulary');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  if (invisibleEnvyReading && brutality >= 0.75 &&
+      (invisibleEnvyReading.social_media_contamination >= 5 || invisibleEnvyReading.luxury_envy_contamination >= 5)) {
+    reasons.push('invisible envy: envy framed as social-media comparison or luxury — Phase 20 forbids performative envy');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  if (aspirationalGapReading && aspirationalGapReading.uses_marketing_vocab && brutality >= 0.75) {
+    reasons.push('aspirational identity gap: aspirational-marketing vocabulary present — longing reads as motivational, not lived');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
+  // ─── Phase 21 hard gates ──────────────────────────────────────
+  // THE HEADLINE QUESTION:
+  //   "Does this feel socially lived, or individually dramatized?"
+  if (viralPatternsReading && viralPatternsReading.uses_over_circulated && brutality >= 0.7) {
+    reasons.push(`viral emotion patterns: truth uses over-circulated viral vocabulary — ${viralPatternsReading.hits.map((h) => h.id).join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  if (socialGravityReading && socialGravityReading.individually_dramatized &&
+      socialGravityReading.primary && brutality >= 0.8) {
+    reasons.push('social gravity: a collective field is present but the truth is dramatized at the individual level — emotion isolated from culture');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
+  // ─── Phase 22 hard gates ──────────────────────────────────────
+  // THE HEADLINE QUESTION:
+  //   "Would this ritual still exist if nobody ever saw it?"
+  if (repeatedComfortReading && repeatedComfortReading.comfort_is_designed && brutality >= 0.7) {
+    reasons.push('repeated comfort systems: comfort is framed as branded / optimised — Phase 22 forbids designed comfort');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  if (symbolicSafetyReading && symbolicSafetyReading.object_named_too_directly && brutality >= 0.8) {
+    reasons.push('symbolic safety: the object is described as a symbol — Phase 22 wants the object to stay an object');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
+  // ─── Phase 23 hard gates ──────────────────────────────────────
+  // THE HEADLINE QUESTION:
+  //   "Does this feel like an actual internal human narrative, or
+  //    written character psychology?"
+  if (internalNarrativeReading && internalNarrativeReading.too_articulate && brutality >= 0.75) {
+    reasons.push('internal narrative: self-awareness is too articulate — real internal narration does not resolve into insight');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  if (internalNarrativeReading && internalNarrativeReading.too_literary && brutality >= 0.75) {
+    reasons.push('internal narrative: emotional language is literary — real internal narration is clumsy, not written');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  if (personalMythologyReading && personalMythologyReading.framed_as_aphorism && brutality >= 0.8) {
+    reasons.push('personal mythology: the myth is framed as a literary aphorism — suffering becoming philosophy');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
+  // ─── Phase 24 hard gates ──────────────────────────────────────
+  // THE HEADLINE QUESTION:
+  //   "Does this future state feel psychologically inevitable?"
+  if (emotionalForecastReading && emotionalForecastReading.forecast_too_clean && brutality >= 0.75) {
+    reasons.push('emotional forecasting: the forecast resolves too cleanly — modern emotional movement is rarely linear');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  if (recoveryAttemptReading && recoveryAttemptReading.recovery_too_inspirational && brutality >= 0.75) {
+    reasons.push('recovery attempt model: recovery framed as inspirational — Phase 24 forbids clean recovery');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  if (collapseProbabilityReading && collapseProbabilityReading.depicts_collapse_directly && brutality >= 0.8) {
+    reasons.push('collapse probability: banner depicts collapse directly — Phase 24 wants the last stable moment before it, not the collapse');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
+  // ─── Phase 25 hard gate ───────────────────────────────────────
+  // When the autonomous intelligence has flagged that the campaign
+  // has drifted from reality, refuse banners at brutal until resync.
+  if (adaptiveEmotionalIntelligenceReading &&
+      adaptiveEmotionalIntelligenceReading.directive === 'resync-with-reality' &&
+      collectiveRealityTrackingReading && collectiveRealityTrackingReading.campaign_self_referential &&
+      brutality >= 0.85) {
+    reasons.push('autonomous intelligence: campaign has drifted into self-reference — banner refused until the campaign resyncs with reality');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -1047,6 +1241,98 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push('mask fatigue: signature matched but truth attributes the fatigue to work instead of to the performance');
   }
 
+  // Phase 20 soft floors — desire systems.
+  if (desireArchitectureReading && desireArchitectureReading.primary &&
+      desireArchitectureReading.emotional_inevitability < 5) {
+    softReasons.push('desire architecture: desire matched but reads more manufactured than inevitable');
+  }
+  if (emotionalHungerReading && emotionalHungerReading.primary &&
+      !emotionalHungerReading.symptom_visible) {
+    softReasons.push('emotional hunger: deficit matched but truth states the hunger instead of observing its symptom');
+  }
+  if (aspirationalGapReading && aspirationalGapReading.attempts_resolution) {
+    softReasons.push('aspirational identity gap: truth attempts to resolve the gap — Phase 20 prefers observation over resolution');
+  }
+  if (validationSystemsReading && validationSystemsReading.uses_performative_vocabulary) {
+    softReasons.push('validation systems: truth uses platform-engagement vocabulary (likes / followers)');
+  }
+
+  // Phase 21 soft floors — social gravity.
+  if (socialGravityReading && socialGravityReading.primary &&
+      socialGravityReading.collective_grounding < 4) {
+    softReasons.push('social gravity: a collective field is present but the truth does not place the human inside it');
+  }
+  if (viralPatternsReading && viralPatternsReading.contamination_score >= 4 &&
+      !viralPatternsReading.uses_over_circulated) {
+    softReasons.push(`viral emotion patterns: circulated viral vocabulary present — ${viralPatternsReading.hits.map((h) => h.id).join(', ')}`);
+  }
+  if (collectiveMovementReading && collectiveMovementReading.candidate_role === 'contradicts' &&
+      collectiveMovementReading.movement_confidence >= 6) {
+    softReasons.push(`collective emotional movement: banner contradicts the collective direction (${collectiveMovementReading.current_direction})`);
+  }
+
+  // Phase 22 soft floors — ritual attachment.
+  if (attachmentLoopsReading && attachmentLoopsReading.primary &&
+      repeatedComfortReading && repeatedComfortReading.primary &&
+      repeatedComfortReading.emotional_necessity < 5) {
+    softReasons.push('ritual attachment: ritual present but with low emotional necessity — comfort reads optional, not load-bearing');
+  }
+  if (ritualFormationReading && ritualFormationReading.detected_stage === 'identity') {
+    softReasons.push('ritual formation: ritual is already at the "identity" stage — comfortable but not cinematically alive');
+  }
+  if (privateRitualMemoryReading && privateRitualMemoryReading.ritual_over_represented) {
+    softReasons.push('private ritual memory: one ritual is dominating campaign memory');
+  }
+
+  // Phase 23 soft floors — narrative self.
+  if (internalNarrativeReading && internalNarrativeReading.primary &&
+      internalNarrativeReading.narrative_authenticity < 5) {
+    softReasons.push('internal narrative: narration matched but reads too clean — real internal narration loops and stays unfinished');
+  }
+  if (meaningSystemsReading && meaningSystemsReading.primary &&
+      !meaningSystemsReading.system_under_question) {
+    softReasons.push('private meaning systems: a meaning-system is present but the moment does not quietly question it');
+  }
+  if (selfTranslationReading && selfTranslationReading.primary &&
+      selfTranslationReading.gap_visible < 5) {
+    softReasons.push('emotional self-translation: a mistranslation is present but the banner does not catch the gap between the feeling and its name');
+  }
+
+  // Phase 24 soft floors — predictive human states.
+  if (emotionalForecastReading && emotionalForecastReading.inevitability < 5) {
+    softReasons.push('emotional forecasting: the forecast does not read as psychologically inevitable');
+  }
+  if (recoveryAttemptReading && recoveryAttemptReading.primary &&
+      recoveryAttemptReading.recovery_realism < 5) {
+    softReasons.push('recovery attempt model: the predicted recovery reads optimistic, not realistic');
+  }
+  if (collapseProbabilityReading && collapseProbabilityReading.horizon === 'imminent' &&
+      !collapseProbabilityReading.depicts_collapse_directly) {
+    // POSITIVE — the banner is correctly photographing the last stable
+    // moment before an imminent collapse. No soft reason added.
+  }
+
+  // Phase 25 soft floors — autonomous campaign intelligence.
+  if (emergentCampaignMemoryReading && emergentCampaignMemoryReading.has_emergent_rut) {
+    softReasons.push('emergent campaign memory: an emergent signature has become a rut — campaign is repeating itself');
+  }
+  if (collectiveRealityTrackingReading && collectiveRealityTrackingReading.reality_sync < 4 &&
+      !collectiveRealityTrackingReading.campaign_self_referential) {
+    softReasons.push(`collective reality tracking: campaign-reality sync is low (${collectiveRealityTrackingReading.reality_sync}/10)`);
+  }
+  if (adaptiveEmotionalIntelligenceReading && adaptiveEmotionalIntelligenceReading.adaptation_urgency >= 7 &&
+      adaptiveEmotionalIntelligenceReading.directive !== 'resync-with-reality') {
+    softReasons.push(`autonomous intelligence: high adaptation urgency — directive "${adaptiveEmotionalIntelligenceReading.directive}"`);
+  }
+
+  // Unified human graph — the closing soft floor. When the candidate
+  // does not belong to the continuous human the graph has been
+  // modelling, the banner is a stranger to its own campaign.
+  if (unifiedGraphReading && unifiedGraphReading.human_coherence >= 6 &&
+      unifiedGraphReading.candidate_belongs < 5) {
+    softReasons.push('unified human graph: the banner does not belong to the continuous human the campaign has been modelling');
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -1076,12 +1362,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 19 phases of judgement every banner
-  // produces 9-14 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 13 soft reasons required to reject
-  //   default (0.65)   → 11 soft reasons required
-  //   brutal  (0.90)   → 9 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 9 : brutality >= 0.6 ? 11 : 13;
+  // the cognition stack. After 25 phases of judgement every banner
+  // produces 13-20 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 18 soft reasons required to reject
+  //   default (0.65)   → 15 soft reasons required
+  //   brutal  (0.90)   → 12 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 12 : brutality >= 0.6 ? 15 : 18;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

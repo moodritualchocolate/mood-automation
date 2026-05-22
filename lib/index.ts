@@ -122,3 +122,48 @@ export * from './identityMaintenance';
 export * from './emotionalCamouflage';
 export * from './publicPrivateSplit';
 export * from './maskFatigue';
+// Phases 20–25 — unified human desire + ritual intelligence architecture
+export * from './humanDesireMemory';
+export * from './unifiedHumanGraph';
+// Phase 20 — desire systems
+export * from './desireArchitecture';
+export * from './statusWithoutStatus';
+export * from './emotionalHunger';
+export * from './validationSystems';
+export * from './invisibleEnvy';
+export * from './aspirationalIdentityGap';
+// Phase 21 — social gravity
+export * from './socialGravity';
+export * from './collectiveEmotionalMovement';
+export * from './culturalAcceleration';
+export * from './groupAnxiety';
+export * from './viralEmotionPatterns';
+export * from './socialPermissionStructures';
+// Phase 22 — ritual attachment
+export * from './ritualFormation';
+export * from './attachmentLoops';
+export * from './symbolicSafety';
+export * from './emotionalReturnMechanics';
+export * from './privateRitualMemory';
+export * from './repeatedComfortSystems';
+// Phase 23 — narrative self
+export * from './internalNarrative';
+export * from './selfStoryArchitecture';
+export * from './identityContinuity';
+export * from './privateMeaningSystems';
+export * from './emotionalSelfTranslation';
+export * from './personalMythology';
+// Phase 24 — predictive human states
+export * from './emotionalForecasting';
+export * from './behaviorPrediction';
+export * from './collapseProbability';
+export * from './recoveryAttemptModel';
+export * from './futurePressureTrajectory';
+export * from './emotionalDriftPrediction';
+// Phase 25 — autonomous campaign intelligence
+export * from './autonomousNarrativeEngine';
+export * from './culturalSignalEvolution';
+export * from './selfUpdatingPsychology';
+export * from './emergentCampaignMemory';
+export * from './collectiveRealityTracking';
+export * from './adaptiveEmotionalIntelligence';

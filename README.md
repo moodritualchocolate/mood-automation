@@ -68,6 +68,33 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Unified human desire + ritual intelligence architecture (Phases 20–25)
+
+The system stops being an ad engine, a banner generator, or a campaign optimizer and becomes **a living cognitive model of modern human behaviour, desire, pressure, identity, ritual, and emotional adaptation**. The campaign is no longer invented — it is *discovered*. Phases 20–25 are not isolated; they are one shared cognitive super-system bound by a single persistent longing graph.
+
+The architectural shift: the engine stops asking *"what campaign should we create?"* and begins asking *"what invisible human longing, pressure, compensation, ritual, identity need, and future emotional trajectory already exists beneath modern life?"*
+
+**Shared cognition layer:**
+
+| Module | Role |
+|---|---|
+| `lib/humanDesireMemory.ts` | The permanent human-longing memory graph. Persisted to `data/memory/human-desire.json`. Accumulates 12 categories across the campaign lifetime: aspiration, emotional-hunger, identity-desire, validation-pattern, compensation-loop, attachment-behavior, symbolic-safety-object, status-longing, invisible-envy, loneliness-structure, ritual-dependency, emotional-drift. Each entry tracks count, time bounds, average intensity, sample truths. |
+| `lib/unifiedHumanGraph.ts` | The central cognition architecture. Binds emotional / desire / ritual / behavioral / identity / cultural / systemic / future-trajectory memory into one synthesis. Produces `human_coherence` (is the campaign modelling one continuous person?) and `candidate_belongs` (does this banner belong to that human?), plus a one-sentence portrait of the modern human the campaign models. |
+
+**Phase 20 — Desire Systems** (`desireArchitecture` · `statusWithoutStatus` · `emotionalHunger` · `validationSystems` · `invisibleEnvy` · `aspirationalIdentityGap`) — models desire as psychological gravity, not marketing. 10 structural desires (permission-to-stop, unobserved-existence, a-self-that-is-not-needed…), quiet-status markers, emotional deficits, validation dependency loops, unspoken envy, and the shadow-identity gap. Headline gate: *"does this desire feel emotionally inevitable, or creatively manufactured?"* — rejects influencer/luxury/wellness framing, performative envy, aspirational-marketing vocabulary.
+
+**Phase 21 — Social Gravity** (`socialGravity` · `collectiveEmotionalMovement` · `culturalAcceleration` · `groupAnxiety` · `viralEmotionPatterns` · `socialPermissionStructures`) — models how emotions spread across society invisibly: standing social fields, the direction the collective is moving, cultural cycle speed, group ambient anxiety, over-circulated viral patterns, and informal permission economies. Headline gate: *"does this feel socially lived, or individually dramatized?"* — rejects over-circulated viral vocabulary and collective fields dramatized at the individual level.
+
+**Phase 22 — Ritual Attachment** (`ritualFormation` · `attachmentLoops` · `symbolicSafety` · `emotionalReturnMechanics` · `privateRitualMemory` · `repeatedComfortSystems`) — models why humans emotionally return: ritual formation stages (accident → association → stabilisation → identity), object/window attachments, symbolic-safety objects, return-gravity drivers, persistent ritual memory, comfort-system breadth. Headline gate: *"would this ritual still exist if nobody ever saw it?"* — rejects branded / optimised comfort and objects described as symbols.
+
+**Phase 23 — Narrative Self** (`internalNarrative` · `selfStoryArchitecture` · `identityContinuity` · `privateMeaningSystems` · `emotionalSelfTranslation` · `personalMythology`) — models how humans narrate themselves internally: the clumsy running commentary, the load-bearing self-story beams, identity-continuity fractures across environments, private meaning-systems, emotional mistranslation (exhaustion called laziness), and personal myths. Headline gate: *"does this feel like an actual internal human narrative, or written character psychology?"* — rejects narration that is too articulate or too literary, and myths framed as aphorisms.
+
+**Phase 24 — Predictive Human States** (`emotionalForecasting` · `behaviorPrediction` · `collapseProbability` · `recoveryAttemptModel` · `futurePressureTrajectory` · `emotionalDriftPrediction`) — the system's first genuinely predictive layer: forecasts the next emotional state, the next concrete behaviour, the functional-collapse horizon, the next recovery attempt and its likely (usually partial) outcome, the future pressure trajectory, and the slow drift of the emotional baseline. Headline gate: *"does this future state feel psychologically inevitable?"* — rejects clean forecasts, inspirational recovery, and banners depicting collapse directly instead of the last stable moment before it.
+
+**Phase 25 — Autonomous Campaign Intelligence** (`autonomousNarrativeEngine` · `culturalSignalEvolution` · `selfUpdatingPsychology` · `emergentCampaignMemory` · `collectiveRealityTracking` · `adaptiveEmotionalIntelligence`) — the campaign becomes a continuously learning psychological organism: it evolves its own narrative, tracks rising/fading cultural vocabulary, retires dead emotional patterns and promotes emerging ones, detects emergent campaign signatures (identity vs rut), checks whether the campaign is still synchronised with reality, and emits one adaptation directive. When the organism detects self-reference, banners are refused at brutal until the campaign resyncs with reality.
+
+Phase 20–25 meta-critic: each phase contributes hard gates (at default/brutal) and conditioned soft floors. The unified human graph adds a closing soft floor — when a banner does not belong to the continuous human the campaign has been modelling, it is *a stranger to its own campaign*. Soft-floor threshold recalibrated for the 25-phase stack: **lenient=18 · default=15 · brutal=12**. The longing graph compounds on every approved banner.
+
 **Social masking + identity performance engine** (`lib/*` Phase 19 modules) — the system stops modelling only internal survival and starts modelling the SOCIAL IDENTITIES humans perform while surviving. Phase 19 is about *functioning while collapsing* — not visible suffering, not emotional expression, but the **maintenance of identity under pressure**.
 
 The new core question: *"What version of themselves must this human continuously perform in order to remain socially acceptable?"*

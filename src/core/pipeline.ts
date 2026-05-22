@@ -163,6 +163,51 @@ import {
   readEmotionalCamouflage,
   readPublicPrivateSplit,
   readMaskFatigue,
+  // Phases 20–25 — unified human desire + ritual intelligence
+  createHumanDesireMemoryStore,
+  readUnifiedHumanGraph,
+  // Phase 20 — desire systems
+  readDesireArchitecture,
+  readQuietStatus,
+  readEmotionalHunger,
+  readValidationSystems,
+  readInvisibleEnvy,
+  readAspirationalIdentityGap,
+  // Phase 21 — social gravity
+  readSocialGravity,
+  readCollectiveEmotionalMovement,
+  readCulturalAcceleration,
+  readGroupAnxiety,
+  readViralEmotionPatterns,
+  readSocialPermissionStructures,
+  // Phase 22 — ritual attachment
+  readRitualFormation,
+  readAttachmentLoops,
+  readSymbolicSafety,
+  readEmotionalReturnMechanics,
+  readPrivateRitualMemory,
+  readRepeatedComfortSystems,
+  // Phase 23 — narrative self
+  readInternalNarrative,
+  readSelfStoryArchitecture,
+  readIdentityContinuity,
+  readPrivateMeaningSystems,
+  readEmotionalSelfTranslation,
+  readPersonalMythology,
+  // Phase 24 — predictive human states
+  readEmotionalForecasting,
+  readBehaviorPrediction,
+  readCollapseProbability,
+  readRecoveryAttemptModel,
+  readFuturePressureTrajectory,
+  readEmotionalDriftPrediction,
+  // Phase 25 — autonomous campaign intelligence
+  readAutonomousNarrativeEngine,
+  readCulturalSignalEvolution,
+  readSelfUpdatingPsychology,
+  readEmergentCampaignMemory,
+  readCollectiveRealityTracking,
+  readAdaptiveEmotionalIntelligence,
 } from '@lib/index';
 import { SEED_INGESTED_SIGNALS } from '@data/seed-ingested-signals';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
@@ -342,6 +387,10 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       data: { drift: collectiveDriftReport.director_read },
     });
   }
+
+  // ─── Phases 20–25 — unified human desire memory (campaign-level) ─
+  const humanDesireStore = createHumanDesireMemoryStore();
+  const desireEntriesAtRunStart = await humanDesireStore.list();
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
   const truthPersistenceStore = createTruthPersistenceStore();
@@ -1189,6 +1238,128 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ───────────────────────────────────────────────────────────
 
+      // ─── Phase 20 — desire systems ────────────────────────────
+      const desireArchitectureReading = readDesireArchitecture({ state, truth, emotionalCore });
+      if (desireArchitectureReading.primary) {
+        emit({
+          stage: 'desire-architecture',
+          message: `${desireArchitectureReading.primary.id} — gravity ${desireArchitectureReading.desire_gravity.toFixed(1)}/10, inevitability ${desireArchitectureReading.emotional_inevitability.toFixed(1)}/10${desireArchitectureReading.uses_forbidden_framing ? ' — FORBIDDEN FRAMING' : ''}`,
+        });
+      }
+      const quietStatusReading = readQuietStatus({ state, truth, emotionalCore });
+      const emotionalHungerReading = readEmotionalHunger({ state, truth, emotionalCore });
+      if (emotionalHungerReading.primary) {
+        emit({ stage: 'emotional-hunger', message: `${emotionalHungerReading.primary.id} — intensity ${emotionalHungerReading.hunger_intensity.toFixed(1)}/10` });
+      }
+      const validationSystemsReading = readValidationSystems({ state, truth, emotionalCore });
+      const invisibleEnvyReading = readInvisibleEnvy({ state, truth, emotionalCore });
+      const aspirationalGapReading = readAspirationalIdentityGap({ state, truth, emotionalCore });
+
+      // ─── Phase 21 — social gravity ────────────────────────────
+      const socialGravityReading = readSocialGravity({ state, truth, emotionalCore });
+      if (socialGravityReading.primary) {
+        emit({
+          stage: 'social-gravity',
+          message: `${socialGravityReading.primary.id} — gravity ${socialGravityReading.gravity_strength.toFixed(1)}/10, collective grounding ${socialGravityReading.collective_grounding.toFixed(1)}/10${socialGravityReading.individually_dramatized ? ' — INDIVIDUALLY DRAMATIZED' : ''}`,
+        });
+      }
+      const collectiveMovementReading = readCollectiveEmotionalMovement({
+        state, truth, recentTrail: emotionalTrail, ingestedSignals,
+      });
+      const culturalAccelerationReading = readCulturalAcceleration({ ingestedSignals });
+      const groupAnxietyReading = readGroupAnxiety({ state, truth, emotionalCore });
+      const viralPatternsReading = readViralEmotionPatterns({ truth });
+      if (viralPatternsReading.hits.length > 0) {
+        emit({ stage: 'viral-emotion-patterns', message: `contamination ${viralPatternsReading.contamination_score.toFixed(1)}/10 · ${viralPatternsReading.hits.map((h) => h.id).join(', ')}` });
+      }
+      const socialPermissionReading = readSocialPermissionStructures({ state, truth, emotionalCore });
+
+      // ─── Phase 22 — ritual attachment ─────────────────────────
+      const ritualFormationReading = readRitualFormation({ truth });
+      const attachmentLoopsReading = readAttachmentLoops({ state, truth, emotionalCore });
+      const symbolicSafetyReading = readSymbolicSafety({ state, truth, emotionalCore });
+      const emotionalReturnReading = readEmotionalReturnMechanics({ state, truth, emotionalCore });
+      const privateRitualMemoryReading = await readPrivateRitualMemory({ store: humanDesireStore });
+      const repeatedComfortReading = readRepeatedComfortSystems({ state, truth, emotionalCore });
+      if (attachmentLoopsReading.primary || ritualFormationReading.detected_stage) {
+        emit({
+          stage: 'ritual-attachment',
+          message: `${attachmentLoopsReading.primary?.id ?? 'no-anchor'} · formation ${ritualFormationReading.detected_stage ?? 'none'}${repeatedComfortReading.comfort_is_designed ? ' — DESIGNED COMFORT' : ''}`,
+        });
+      }
+
+      // ─── Phase 23 — narrative self ────────────────────────────
+      const internalNarrativeReading = readInternalNarrative({ state, truth, emotionalCore });
+      if (internalNarrativeReading.primary) {
+        emit({
+          stage: 'internal-narrative',
+          message: `${internalNarrativeReading.primary.id} — authenticity ${internalNarrativeReading.narrative_authenticity.toFixed(1)}/10${internalNarrativeReading.too_articulate ? ' — TOO ARTICULATE' : ''}${internalNarrativeReading.too_literary ? ' — TOO LITERARY' : ''}`,
+        });
+      }
+      const selfStoryReading = readSelfStoryArchitecture({ state, truth, emotionalCore });
+      const identityContinuityReading = readIdentityContinuity({ state, truth, emotionalCore });
+      const meaningSystemsReading = readPrivateMeaningSystems({ state, truth, emotionalCore });
+      const selfTranslationReading = readEmotionalSelfTranslation({ state, truth, emotionalCore });
+      if (selfTranslationReading.primary) {
+        emit({ stage: 'emotional-self-translation', message: `${selfTranslationReading.primary.id} — gap visible ${selfTranslationReading.gap_visible.toFixed(1)}/10` });
+      }
+      const personalMythologyReading = readPersonalMythology({ state, truth, emotionalCore });
+
+      // ─── Phase 24 — predictive human states ───────────────────
+      const emotionalForecastReading = readEmotionalForecasting({
+        state, truth, emotionalCore, recentTrail: emotionalTrail,
+      });
+      emit({
+        stage: 'emotional-forecasting',
+        message: `${emotionalForecastReading.direction} — confidence ${emotionalForecastReading.forecast_confidence.toFixed(1)}/10, inevitability ${emotionalForecastReading.inevitability.toFixed(1)}/10${emotionalForecastReading.forecast_too_clean ? ' — TOO CLEAN' : ''}`,
+      });
+      const behaviorPredictionReading = readBehaviorPrediction({ state, truth, emotionalCore });
+      const collapseProbabilityReading = readCollapseProbability({ state, truth, recentTrail: emotionalTrail });
+      if (collapseProbabilityReading.probability >= 5) {
+        emit({
+          stage: 'collapse-probability',
+          message: `${collapseProbabilityReading.probability.toFixed(1)}/10 (${collapseProbabilityReading.horizon})${collapseProbabilityReading.depicts_collapse_directly ? ' — DEPICTS COLLAPSE DIRECTLY' : ''}`,
+        });
+      }
+      const recoveryAttemptReading = readRecoveryAttemptModel({ state, truth, emotionalCore });
+      const pressureTrajectoryReading = readFuturePressureTrajectory({ state, truth, recentTrail: emotionalTrail });
+      const emotionalDriftReading = readEmotionalDriftPrediction({ state, recentTrail: emotionalTrail });
+
+      // ─── Phase 25 — autonomous campaign intelligence ──────────
+      const autonomousNarrativeReading = readAutonomousNarrativeEngine({ recentTrail: emotionalTrail });
+      const culturalSignalEvolutionReading = readCulturalSignalEvolution({ ingestedSignals });
+      const selfUpdatingPsychologyReading = await readSelfUpdatingPsychology({ store: humanDesireStore });
+      const emergentCampaignMemoryReading = readEmergentCampaignMemory({ recentTrail: emotionalTrail });
+      const collectiveRealityTrackingReading = readCollectiveRealityTracking({
+        recentTrail: emotionalTrail, ingestedSignals,
+      });
+      const adaptiveEmotionalIntelligenceReading = readAdaptiveEmotionalIntelligence({
+        autonomousNarrative: autonomousNarrativeReading,
+        culturalSignalEvolution: culturalSignalEvolutionReading,
+        selfUpdatingPsychology: selfUpdatingPsychologyReading,
+        emergentCampaignMemory: emergentCampaignMemoryReading,
+        collectiveRealityTracking: collectiveRealityTrackingReading,
+      });
+      emit({
+        stage: 'autonomous-intelligence',
+        message: `directive: ${adaptiveEmotionalIntelligenceReading.directive} (urgency ${adaptiveEmotionalIntelligenceReading.adaptation_urgency.toFixed(1)}/10) — ${adaptiveEmotionalIntelligenceReading.organism_state}`,
+      });
+
+      // ─── Phases 20–25 — unified human cognition graph ─────────
+      const unifiedGraphReading = readUnifiedHumanGraph({
+        state,
+        recentTrail: emotionalTrail,
+        desireEntries: desireEntriesAtRunStart,
+        forecast: emotionalForecastReading,
+        drift: emotionalDriftReading,
+        adaptive: adaptiveEmotionalIntelligenceReading,
+      });
+      emit({
+        stage: 'unified-human-graph',
+        message: `coherence ${unifiedGraphReading.human_coherence.toFixed(1)}/10 · candidate-belongs ${unifiedGraphReading.candidate_belongs.toFixed(1)}/10 — ${unifiedGraphReading.portrait}`,
+      });
+      // ───────────────────────────────────────────────────────────
+
       // ─── Phase 4 — aftertaste prediction + atmosphere snapshot
       // computed pre-verdict so the meta-critic can gate on them. ──
       const tentativeAftertaste = predictAftertaste({
@@ -1319,6 +1490,50 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         emotionalCamouflageReading,
         publicPrivateSplitReading,
         maskFatigueReading,
+        // Phase 20
+        desireArchitectureReading,
+        quietStatusReading,
+        emotionalHungerReading,
+        validationSystemsReading,
+        invisibleEnvyReading,
+        aspirationalGapReading,
+        // Phase 21
+        socialGravityReading,
+        collectiveMovementReading,
+        culturalAccelerationReading,
+        groupAnxietyReading,
+        viralPatternsReading,
+        socialPermissionReading,
+        // Phase 22
+        ritualFormationReading,
+        attachmentLoopsReading,
+        symbolicSafetyReading,
+        emotionalReturnReading,
+        privateRitualMemoryReading,
+        repeatedComfortReading,
+        // Phase 23
+        internalNarrativeReading,
+        selfStoryReading,
+        identityContinuityReading,
+        meaningSystemsReading,
+        selfTranslationReading,
+        personalMythologyReading,
+        // Phase 24
+        emotionalForecastReading,
+        behaviorPredictionReading,
+        collapseProbabilityReading,
+        recoveryAttemptReading,
+        pressureTrajectoryReading,
+        emotionalDriftReading,
+        // Phase 25
+        autonomousNarrativeReading,
+        culturalSignalEvolutionReading,
+        selfUpdatingPsychologyReading,
+        emergentCampaignMemoryReading,
+        collectiveRealityTrackingReading,
+        adaptiveEmotionalIntelligenceReading,
+        // Unified graph
+        unifiedGraphReading,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -1456,6 +1671,55 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               publicPrivateSplit: publicPrivateSplitReading,
               maskFatigue: maskFatigueReading,
             },
+            desire: {
+              architecture: desireArchitectureReading,
+              quietStatus: quietStatusReading,
+              emotionalHunger: emotionalHungerReading,
+              validation: validationSystemsReading,
+              invisibleEnvy: invisibleEnvyReading,
+              aspirationalGap: aspirationalGapReading,
+            },
+            socialGravity: {
+              gravity: socialGravityReading,
+              collectiveMovement: collectiveMovementReading,
+              culturalAcceleration: culturalAccelerationReading,
+              groupAnxiety: groupAnxietyReading,
+              viralPatterns: viralPatternsReading,
+              permissionStructures: socialPermissionReading,
+            },
+            ritual: {
+              formation: ritualFormationReading,
+              attachmentLoops: attachmentLoopsReading,
+              symbolicSafety: symbolicSafetyReading,
+              returnMechanics: emotionalReturnReading,
+              privateRitualMemory: privateRitualMemoryReading,
+              comfortSystems: repeatedComfortReading,
+            },
+            narrative: {
+              internalNarrative: internalNarrativeReading,
+              selfStory: selfStoryReading,
+              identityContinuity: identityContinuityReading,
+              meaningSystems: meaningSystemsReading,
+              selfTranslation: selfTranslationReading,
+              personalMythology: personalMythologyReading,
+            },
+            predictive: {
+              forecast: emotionalForecastReading,
+              behaviorPrediction: behaviorPredictionReading,
+              collapseProbability: collapseProbabilityReading,
+              recoveryAttempt: recoveryAttemptReading,
+              pressureTrajectory: pressureTrajectoryReading,
+              drift: emotionalDriftReading,
+            },
+            autonomous: {
+              narrativeEngine: autonomousNarrativeReading,
+              culturalSignalEvolution: culturalSignalEvolutionReading,
+              selfUpdatingPsychology: selfUpdatingPsychologyReading,
+              emergentMemory: emergentCampaignMemoryReading,
+              realityTracking: collectiveRealityTrackingReading,
+              adaptiveIntelligence: adaptiveEmotionalIntelligenceReading,
+            },
+            unifiedGraph: unifiedGraphReading,
           },
           attempts: attempt,
           rejectedAttempts,
@@ -1496,6 +1760,49 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             message: `recorded — truth "${persistenceUpdated.display}" now at ×${persistenceUpdated.count}`,
           });
         }
+
+        // ─── Phases 20–25 — record into the human desire memory ───
+        // graph so the longing graph compounds across the campaign.
+        if (desireArchitectureReading.primary) {
+          await humanDesireStore.record({
+            category: 'aspiration',
+            key: desireArchitectureReading.primary.id,
+            display: desireArchitectureReading.primary.the_reach,
+            intensity: desireArchitectureReading.desire_gravity,
+            sampleTruth: truth.truth,
+          });
+        }
+        if (emotionalHungerReading.primary) {
+          await humanDesireStore.record({
+            category: 'emotional-hunger',
+            key: emotionalHungerReading.primary.id,
+            display: emotionalHungerReading.primary.the_deficit,
+            intensity: emotionalHungerReading.hunger_intensity,
+            sampleTruth: truth.truth,
+          });
+        }
+        if (attachmentLoopsReading.primary) {
+          await humanDesireStore.record({
+            category: 'ritual-dependency',
+            key: attachmentLoopsReading.primary.id,
+            display: attachmentLoopsReading.primary.the_object_or_window,
+            intensity: attachmentLoopsReading.attachment_strength,
+            sampleTruth: truth.truth,
+          });
+        }
+        if (invisibleEnvyReading.primary) {
+          await humanDesireStore.record({
+            category: 'invisible-envy',
+            key: invisibleEnvyReading.primary.id,
+            display: invisibleEnvyReading.primary.the_thing,
+            intensity: invisibleEnvyReading.envy_specificity,
+            sampleTruth: truth.truth,
+          });
+        }
+        emit({
+          stage: 'human-desire-memory',
+          message: `longing graph updated — ${desireEntriesAtRunStart.length} prior entries · organism: ${adaptiveEmotionalIntelligenceReading.directive}`,
+        });
 
         emit({
           stage: 'human-memory',

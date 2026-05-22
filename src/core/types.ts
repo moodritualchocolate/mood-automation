@@ -502,6 +502,62 @@ export interface BannerTasteSystem {
     publicPrivateSplit: import('@lib/publicPrivateSplit').PublicPrivateSplitReading;
     maskFatigue: import('@lib/maskFatigue').MaskFatigueReading;
   };
+  // Phase 20 — desire systems
+  desire: {
+    architecture: import('@lib/desireArchitecture').DesireArchitectureReading;
+    quietStatus: import('@lib/statusWithoutStatus').QuietStatusReading;
+    emotionalHunger: import('@lib/emotionalHunger').EmotionalHungerReading;
+    validation: import('@lib/validationSystems').ValidationSystemsReading;
+    invisibleEnvy: import('@lib/invisibleEnvy').InvisibleEnvyReading;
+    aspirationalGap: import('@lib/aspirationalIdentityGap').AspirationalIdentityGapReading;
+  };
+  // Phase 21 — social gravity
+  socialGravity: {
+    gravity: import('@lib/socialGravity').SocialGravityReading;
+    collectiveMovement: import('@lib/collectiveEmotionalMovement').CollectiveEmotionalMovementReading;
+    culturalAcceleration: import('@lib/culturalAcceleration').CulturalAccelerationReading;
+    groupAnxiety: import('@lib/groupAnxiety').GroupAnxietyReading;
+    viralPatterns: import('@lib/viralEmotionPatterns').ViralEmotionPatternsReading;
+    permissionStructures: import('@lib/socialPermissionStructures').SocialPermissionReading;
+  };
+  // Phase 22 — ritual attachment
+  ritual: {
+    formation: import('@lib/ritualFormation').RitualFormationReading;
+    attachmentLoops: import('@lib/attachmentLoops').AttachmentLoopsReading;
+    symbolicSafety: import('@lib/symbolicSafety').SymbolicSafetyReading;
+    returnMechanics: import('@lib/emotionalReturnMechanics').EmotionalReturnReading;
+    privateRitualMemory: import('@lib/privateRitualMemory').PrivateRitualMemoryReading;
+    comfortSystems: import('@lib/repeatedComfortSystems').RepeatedComfortSystemsReading;
+  };
+  // Phase 23 — narrative self
+  narrative: {
+    internalNarrative: import('@lib/internalNarrative').InternalNarrativeReading;
+    selfStory: import('@lib/selfStoryArchitecture').SelfStoryArchitectureReading;
+    identityContinuity: import('@lib/identityContinuity').IdentityContinuityReading;
+    meaningSystems: import('@lib/privateMeaningSystems').PrivateMeaningSystemsReading;
+    selfTranslation: import('@lib/emotionalSelfTranslation').EmotionalSelfTranslationReading;
+    personalMythology: import('@lib/personalMythology').PersonalMythologyReading;
+  };
+  // Phase 24 — predictive human states
+  predictive: {
+    forecast: import('@lib/emotionalForecasting').EmotionalForecastReading;
+    behaviorPrediction: import('@lib/behaviorPrediction').BehaviorPredictionReading;
+    collapseProbability: import('@lib/collapseProbability').CollapseProbabilityReading;
+    recoveryAttempt: import('@lib/recoveryAttemptModel').RecoveryAttemptReading;
+    pressureTrajectory: import('@lib/futurePressureTrajectory').FuturePressureTrajectoryReading;
+    drift: import('@lib/emotionalDriftPrediction').EmotionalDriftPredictionReading;
+  };
+  // Phase 25 — autonomous campaign intelligence
+  autonomous: {
+    narrativeEngine: import('@lib/autonomousNarrativeEngine').AutonomousNarrativeReading;
+    culturalSignalEvolution: import('@lib/culturalSignalEvolution').CulturalSignalEvolutionReading;
+    selfUpdatingPsychology: import('@lib/selfUpdatingPsychology').SelfUpdatingPsychologyReading;
+    emergentMemory: import('@lib/emergentCampaignMemory').EmergentCampaignMemoryReading;
+    realityTracking: import('@lib/collectiveRealityTracking').CollectiveRealityTrackingReading;
+    adaptiveIntelligence: import('@lib/adaptiveEmotionalIntelligence').AdaptiveEmotionalIntelligenceReading;
+  };
+  // Phases 20–25 — unified human cognition graph
+  unifiedGraph: import('@lib/unifiedHumanGraph').UnifiedHumanGraphReading;
 }
 
 export interface Banner {
