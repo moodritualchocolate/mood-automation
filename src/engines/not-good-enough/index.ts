@@ -190,6 +190,26 @@ import type { ExecutiveEthicsReading } from '@lib/executiveEthicsRuntime';
 import type { CivilizationStabilityReading } from '@lib/civilizationStabilityLayer';
 import type { IdeologicalMutationReading } from '@lib/ideologicalMutationDetection';
 import type { EmergentIdentityContinuityReading } from '@lib/emergentIdentityContinuity';
+// Wave 7 — reality organism architecture (Phases 71–90)
+import type { EnvironmentalPressureReading } from '@lib/environmentalPressureMapping';
+import type { ImmuneResponseReading } from '@lib/cognitiveImmuneSystem';
+import type { StrategicEnergyReading } from '@lib/strategicEnergyAllocation';
+import type { NarrativeClimateReading } from '@lib/narrativeClimateDetection';
+import type { IdentityStressReading } from '@lib/identityStressTesting';
+import type { ExpansionPreservationReading } from '@lib/expansionVsPreservation';
+import type { RealityRhythmReading } from '@lib/realityRhythmSynchronization';
+import type { CollectiveAttentionForecastReading } from '@lib/collectiveAttentionForecasting';
+import type { MemeticThreatReading } from '@lib/memeticThreatDetection';
+import type { CivilizationFatigueReading } from '@lib/civilizationFatigueMonitoring';
+import type { StrategicSilenceReading } from '@lib/strategicSilenceIntelligence';
+import type { EmotionalResourceReading } from '@lib/emotionalResourceManagement';
+import type { AdaptiveWorldStateReading } from '@lib/adaptiveWorldStateModeling';
+import type { ComplexityRegulationReading } from '@lib/internalComplexityRegulation';
+import type { StrategicEvolutionReading } from '@lib/strategicEvolutionGovernance';
+import type { RealityAdaptiveRuntimeReading } from '@lib/realityAdaptiveRuntime';
+import type { StabilityPreservationReading } from '@lib/autonomousStabilityPreservation';
+import type { ExistentialRiskReading } from '@lib/existentialRiskLayer';
+import type { OrganismCoreReading } from '@lib/persistentOrganismCore';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -370,6 +390,26 @@ export interface MetaInput {
   civStability?: CivilizationStabilityReading;
   civIdeologicalMutation?: IdeologicalMutationReading;
   civIdentityContinuity?: EmergentIdentityContinuityReading;
+  // Wave 7 — reality organism architecture (Phases 71–90).
+  orgEnvironmental?: EnvironmentalPressureReading;
+  orgImmune?: ImmuneResponseReading;
+  orgEnergy?: StrategicEnergyReading;
+  orgClimate?: NarrativeClimateReading;
+  orgIdentityStress?: IdentityStressReading;
+  orgExpansion?: ExpansionPreservationReading;
+  orgRhythm?: RealityRhythmReading;
+  orgAttentionForecast?: CollectiveAttentionForecastReading;
+  orgMemetic?: MemeticThreatReading;
+  orgFatigue?: CivilizationFatigueReading;
+  orgSilence?: StrategicSilenceReading;
+  orgEmotionalResource?: EmotionalResourceReading;
+  orgAdaptiveWorldModel?: AdaptiveWorldStateReading;
+  orgComplexity?: ComplexityRegulationReading;
+  orgEvolutionGovernance?: StrategicEvolutionReading;
+  orgAdaptiveRuntime?: RealityAdaptiveRuntimeReading;
+  orgStabilityPreservation?: StabilityPreservationReading;
+  orgExistentialRisk?: ExistentialRiskReading;
+  orgCore?: OrganismCoreReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -421,7 +461,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           councilSession, internalDebate, councilConflict, executiveConsensus,
           strategicConsciousness,
           civLaws, civScars, civEthics, civStability, civIdeologicalMutation,
-          civIdentityContinuity } = input;
+          civIdentityContinuity,
+          orgEnvironmental, orgImmune, orgEnergy, orgClimate, orgIdentityStress,
+          orgExpansion, orgRhythm, orgAttentionForecast, orgMemetic, orgFatigue,
+          orgSilence, orgEmotionalResource, orgAdaptiveWorldModel, orgComplexity,
+          orgEvolutionGovernance, orgAdaptiveRuntime, orgStabilityPreservation,
+          orgExistentialRisk, orgCore } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1290,6 +1335,59 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 7 — REALITY ORGANISM: THE SURVIVAL GATES ═══════════
+  // THE GLOBAL WAVE 7 META-CRITIC QUESTION:
+  //   "Is the organism adapting to reality, or compulsively reacting
+  //    to stimulation?" An organism governed by stimulation is
+  //    addicted; one governed by identity survives. Addiction is the
+  //    single most dangerous state — refused at default brutality.
+  if (orgCore && orgCore.organism_is_addicted && brutality >= 0.65) {
+    reasons.push(`reality organism: the organism is compulsively reacting to stimulation, not adapting to reality — ${orgCore.organism_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Existential risk — when the organism itself is threatened it must
+  // stop and protect its core. Survival outranks any single banner.
+  if (orgExistentialRisk && orgExistentialRisk.organism_at_risk && brutality >= 0.6) {
+    reasons.push(`existential risk: the organism is at existential risk (${orgExistentialRisk.existential_risk}/10) — ${orgExistentialRisk.survival_imperative}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // THE WAVE 7 LESSON — learning when NOT to act. When the organism's
+  // own silence intelligence judges silence the stronger move, the
+  // banner is refused: not acting IS the strategic decision.
+  if (orgSilence && orgSilence.choose_silence && brutality >= 0.7) {
+    reasons.push(`strategic silence: the organism judges silence the stronger move — ${orgSilence.silence_case}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Autonomic self-preservation — when stability preservation calls
+  // for rest, the organism rests rather than acts.
+  if (orgStabilityPreservation && orgStabilityPreservation.preservation_calls_for_rest && brutality >= 0.75) {
+    reasons.push(`autonomous stability preservation: ${orgStabilityPreservation.protective_action}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A memetic pathogen would rewrite the organism's voice — refused.
+  if (orgMemetic && orgMemetic.memetic_infection_risk && brutality >= 0.7) {
+    reasons.push(`memetic threat: a memetic pathogen would infect the organism's voice — ${orgMemetic.threats.map((t) => t.infection)[0] ?? 'borrowed cultural grammar'}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // The identity stress test — when the identity would not hold under
+  // this run's pressures, the organism does not act as something else.
+  if (orgIdentityStress && !orgIdentityStress.identity_holds && brutality >= 0.75) {
+    reasons.push(`identity stress test: the identity would not hold under this run's pressure — ${orgIdentityStress.failure_mode ?? 'identity deformation'}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // Strategic evolution governance — a sudden mutation is refused
+  // however tempting the short-term gain.
+  if (orgEvolutionGovernance && orgEvolutionGovernance.mutation_refused && brutality >= 0.7) {
+    reasons.push(`strategic evolution governance: this is a sudden mutation, not an evolution — ${orgEvolutionGovernance.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The reality-adaptive runtime — when the organism is reacting
+  // compulsively rather than adapting, the run is refused.
+  if (orgAdaptiveRuntime && orgAdaptiveRuntime.reacting_not_adapting && brutality >= 0.7) {
+    reasons.push(`reality-adaptive runtime: the organism is reacting compulsively, not adapting — ${orgAdaptiveRuntime.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -1791,6 +1889,47 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`emergent identity continuity: identity continuity is only ${civIdentityContinuity.identity_continuity}/10 across the civilization's life`);
   }
 
+  // Wave 7 soft floors — the reality organism.
+  if (orgEnvironmental && orgEnvironmental.environment_is_hostile) {
+    softReasons.push(`environmental pressure: the environment is hostile (load ${orgEnvironmental.environmental_load}/10) — most acute: ${orgEnvironmental.acute_pressure}`);
+  }
+  if (orgImmune && orgImmune.infection_risk) {
+    softReasons.push(`cognitive immune system: a threat got past the organism's defences — ${orgImmune.threats_detected.join(', ')}`);
+  }
+  if (orgEnergy && orgEnergy.must_conserve) {
+    softReasons.push(`strategic energy: the organism must conserve, not spend — ${orgEnergy.reason}`);
+  }
+  if (orgClimate && orgClimate.climate_would_swallow_it) {
+    softReasons.push(`narrative climate: the climate is ${orgClimate.climate} — it would swallow this banner whole`);
+  }
+  if (orgExpansion && orgExpansion.posture === 'retrench') {
+    softReasons.push(`expansion vs preservation: the organism should retrench, not reach — ${orgExpansion.reason}`);
+  }
+  if (orgRhythm && orgRhythm.phase === 'out-of-phase') {
+    softReasons.push(`reality rhythm: the organism is out of phase with reality — it would speak into noise`);
+  }
+  if (orgAttentionForecast && orgAttentionForecast.forecast === 'withdrawing-into-fatigue') {
+    softReasons.push(`collective attention forecast: attention is withdrawing into fatigue — ${orgAttentionForecast.positioning}`);
+  }
+  if (orgFatigue && orgFatigue.needs_recovery) {
+    softReasons.push(`civilization fatigue: the whole organism is fatigued (${orgFatigue.civilization_fatigue}/10) — dominant source: ${orgFatigue.fatigue_source}`);
+  }
+  if (orgComplexity && orgComplexity.over_thinking) {
+    softReasons.push(`internal complexity: ${orgComplexity.regulation}`);
+  }
+  if (orgEmotionalResource && orgEmotionalResource.overspending) {
+    softReasons.push(`emotional resource: the organism is overspending its emotional intensity — nothing is left for the moment that matters`);
+  }
+  if (orgAdaptiveWorldModel && orgAdaptiveWorldModel.model_lagging) {
+    softReasons.push(`adaptive world-state: the organism's model has fallen behind a fast-shifting reality (shift ${orgAdaptiveWorldModel.world_shift_rate}/10)`);
+  }
+  if (orgCore && (orgCore.condition === 'strained' || orgCore.condition === 'at-risk')) {
+    softReasons.push(`persistent organism core: the organism is ${orgCore.condition} (vitality ${orgCore.vitality}/10)`);
+  }
+  if (orgCore && orgCore.should_rest && !(orgStabilityPreservation && orgStabilityPreservation.preservation_calls_for_rest)) {
+    softReasons.push('persistent organism core: the organism should rest before it acts again');
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -1820,12 +1959,13 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 70 phases of judgement every banner
-  // produces 28-46 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 38 soft reasons required to reject
-  //   default (0.65)   → 31 soft reasons required
-  //   brutal  (0.90)   → 26 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 26 : brutality >= 0.6 ? 31 : 38;
+  // the cognition stack. After 90 phases of judgement — the Wave 7
+  // reality organism layered on top — every banner produces 32-54
+  // soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 45 soft reasons required to reject
+  //   default (0.65)   → 37 soft reasons required
+  //   brutal  (0.90)   → 31 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 31 : brutality >= 0.6 ? 37 : 45;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

@@ -299,6 +299,31 @@ import {
   planAutonomousLongTerm,
   readCivilizationStability,
   readEmergentIdentityContinuity,
+  // Wave 7 — reality organism architecture (Phases 71–90)
+  createOrganismCoreStore,
+  evolveOrganismFromAction,
+  evolveOrganismFromRest,
+  recordImmuneEncounter,
+  mapEnvironmentalPressure,
+  readCognitiveImmuneSystem,
+  allocateStrategicEnergy,
+  detectNarrativeClimate,
+  readIdentityStressTest,
+  readExpansionVsPreservation,
+  readRealityRhythmSync,
+  forecastCollectiveAttention,
+  detectMemeticThreats,
+  readCivilizationFatigue,
+  readStrategicSilence,
+  readEmotionalResourceManagement,
+  readAdaptiveWorldStateModeling,
+  predictLongHorizon,
+  readInternalComplexityRegulation,
+  readStrategicEvolutionGovernance,
+  readRealityAdaptiveRuntime,
+  readAutonomousStabilityPreservation,
+  readExistentialRisk,
+  readPersistentOrganismCore,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -572,6 +597,18 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: civilization.generation === 0
       ? 'the cognitive civilization is being founded — generation 0'
       : `the cognitive civilization is ${civilization.generation} generations old · ${civilization.beliefs.length} belief(s) · ${civilization.laws.length} law(s) · ${civilization.scars.filter((s) => !s.healed).length} active scar(s)`,
+  });
+
+  // ─── Wave 7 — load the organism's persistent vital state ──────
+  // The civilization is now a LIVING ORGANISM — it has finite energy,
+  // accumulates stress, runs an immune system, and knows when to rest.
+  const organismStore = createOrganismCoreStore();
+  const organism = await organismStore.read();
+  emit({
+    stage: 'organism',
+    message: organism.age === 0
+      ? 'the reality organism is drawing its first breath — age 0'
+      : `the reality organism is ${organism.age} runs old · energy ${organism.energyReserves}/10 · stress ${organism.stressAccumulation}/10 · ${organism.consecutiveActions} runs since its last rest`,
   });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
@@ -2076,6 +2113,135 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 7 — REALITY ORGANISM (Phases 71–90) ══════════════
+      // Wave 6 built a civilization with history. Wave 7 makes it a
+      // LIVING ORGANISM interacting continuously with a changing
+      // reality: it reads the environment it lives inside, defends
+      // itself, spends finite energy — and learns when NOT to act.
+      const w7ViralContamination = antiOptimizationReading.viralityRisk;
+      const w7StrategicWeight = strategicPriorityReading.strategic_weight;
+      // The organism is "stimulation-driven" when optimization pressure
+      // or false urgency — not identity — is pushing the run. This is
+      // the line between adapting (survives) and reacting (addicted).
+      const w7StimulationDriven =
+        antiOptimizationReading.optimization_corrupts_truth ||
+        strategicPriorityReading.urgency_kind === 'false-urgency';
+      const w7IdentityGoverns = civIdentityHeld && !w7StimulationDriven;
+
+      const orgEnvironmental = mapEnvironmentalPressure({ worldState: executiveWorldState });
+      const orgImmune = readCognitiveImmuneSystem({
+        organism,
+        trendContaminated: antiOptimizationReading.trendContamination || culturalDriftReading.feels_culturally_consumed,
+        optimizationCorrupts: antiOptimizationReading.optimization_corrupts_truth,
+        identityDrifting: civIdeologicalMutation.mutation_detected || identityGovernanceReading.governance_blocks,
+        viralContamination: w7ViralContamination,
+        consecutiveActions: organism.consecutiveActions,
+      });
+      const orgEnergy = allocateStrategicEnergy({
+        organism,
+        strategicWeight: w7StrategicWeight,
+        environmentalLoad: orgEnvironmental.environmental_load,
+      });
+      const orgClimate = detectNarrativeClimate({
+        worldState: executiveWorldState,
+        viralContamination: w7ViralContamination,
+      });
+      const orgIdentityStress = readIdentityStressTest({
+        engagementPull: antiOptimizationReading.engagementCorruption,
+        environmentalLoad: orgEnvironmental.environmental_load,
+        identityStrength: civIdentityContinuity.identity_continuity,
+        timingWrong: temporalPsychologyReading.timing_is_wrong,
+        optimizationCorrupts: antiOptimizationReading.optimization_corrupts_truth,
+      });
+      const orgExpansion = readExpansionVsPreservation({
+        organism,
+        environmentalLoad: orgEnvironmental.environmental_load,
+        civilizationStability: civStability.stability,
+      });
+      const orgRhythm = readRealityRhythmSync({
+        worldState: executiveWorldState,
+        temporal: temporalPsychologyReading,
+      });
+      const orgAttentionForecast = forecastCollectiveAttention({
+        worldState: executiveWorldState,
+        trail: emotionalTrail,
+      });
+      const orgMemetic = detectMemeticThreats({ truth, copyText: direction.hook });
+      const orgFatigue = readCivilizationFatigue({
+        organism,
+        environmentalLoad: orgEnvironmental.environmental_load,
+      });
+      const orgComplexity = readInternalComplexityRegulation({
+        organism,
+        contradictionCount: contradictionResolution.conflicts.length,
+        softSignalCount:
+          contradictionResolution.conflicts.length +
+          civStability.decay_signals.length +
+          orgImmune.threats_detected.length +
+          rejectedAttempts.length,
+      });
+      const orgStabilityPreservation = readAutonomousStabilityPreservation({
+        organism, fatigue: orgFatigue, complexity: orgComplexity,
+      });
+      const orgExistentialRisk = readExistentialRisk({
+        organism,
+        civilization: civStability,
+        mutation: civIdeologicalMutation,
+        preservation: orgStabilityPreservation,
+      });
+      const orgSilence = readStrategicSilence({
+        needsRecovery: orgFatigue.needs_recovery,
+        climateWouldSwallow: orgClimate.climate_would_swallow_it,
+        outOfPhase: orgRhythm.phase === 'out-of-phase',
+        mustConserve: orgEnergy.must_conserve,
+        strategicWeight: w7StrategicWeight,
+      });
+      const orgEmotionalResource = readEmotionalResourceManagement({
+        stress: organism.stressAccumulation,
+        strategicWeight: w7StrategicWeight,
+        recentIntensity: campaignMemoryV2.saturationScore,
+      });
+      const orgAdaptiveWorldModel = readAdaptiveWorldStateModeling({
+        worldState: executiveWorldState,
+        priorWorldState,
+      });
+      const orgLongHorizon = predictLongHorizon({
+        worldState: executiveWorldState, organism,
+      });
+      const orgEvolutionGovernance = readStrategicEvolutionGovernance({
+        departureMagnitude: courage.level === 'radical' ? 7 : courage.level === 'restrained' ? 4 : 1,
+        identityStrength: civIdentityContinuity.identity_continuity,
+        drivenByShortTermGain: antiOptimizationReading.optimization_corrupts_truth,
+      });
+      const orgAdaptiveRuntime = readRealityAdaptiveRuntime({
+        environmental: orgEnvironmental,
+        rhythm: orgRhythm,
+        worldModel: orgAdaptiveWorldModel,
+        climate: orgClimate,
+        stimulationDriven: w7StimulationDriven,
+      });
+      const orgCore = readPersistentOrganismCore({
+        state: organism,
+        identityGoverns: w7IdentityGoverns,
+        stimulationDriven: w7StimulationDriven,
+        existentialRisk: orgExistentialRisk.existential_risk,
+        preservationCallsForRest: orgStabilityPreservation.preservation_calls_for_rest,
+      });
+      emit({
+        stage: 'organism',
+        message: `${orgCore.condition} (vitality ${orgCore.vitality}/10) · ${orgAdaptiveRuntime.posture} · ${orgLongHorizon.predicted_season} — ${orgCore.organism_statement}`,
+      });
+      if (orgCore.organism_is_addicted) {
+        emit({ stage: 'organism', message: 'META-CRITIC FLAG — the organism is reacting to stimulation, not adapting to reality' });
+      }
+      if (orgSilence.choose_silence) {
+        emit({ stage: 'organism', message: `the organism judges silence the stronger move — ${orgSilence.silence_case}` });
+      }
+      if (orgExistentialRisk.organism_at_risk) {
+        emit({ stage: 'organism', message: `EXISTENTIAL RISK ${orgExistentialRisk.existential_risk}/10 — ${orgExistentialRisk.survival_imperative}` });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -2251,6 +2417,26 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         civStability,
         civIdeologicalMutation,
         civIdentityContinuity,
+        // Wave 7 — reality organism architecture
+        orgEnvironmental,
+        orgImmune,
+        orgEnergy,
+        orgClimate,
+        orgIdentityStress,
+        orgExpansion,
+        orgRhythm,
+        orgAttentionForecast,
+        orgMemetic,
+        orgFatigue,
+        orgSilence,
+        orgEmotionalResource,
+        orgAdaptiveWorldModel,
+        orgComplexity,
+        orgEvolutionGovernance,
+        orgAdaptiveRuntime,
+        orgStabilityPreservation,
+        orgExistentialRisk,
+        orgCore,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -2667,6 +2853,28 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               stability: civStability,
               identityContinuity: civIdentityContinuity,
             },
+            organism: {
+              environmental: orgEnvironmental,
+              immune: orgImmune,
+              energy: orgEnergy,
+              climate: orgClimate,
+              identityStress: orgIdentityStress,
+              expansion: orgExpansion,
+              rhythm: orgRhythm,
+              attentionForecast: orgAttentionForecast,
+              memetic: orgMemetic,
+              fatigue: orgFatigue,
+              silence: orgSilence,
+              emotionalResource: orgEmotionalResource,
+              adaptiveWorldModel: orgAdaptiveWorldModel,
+              longHorizon: orgLongHorizon,
+              complexity: orgComplexity,
+              evolutionGovernance: orgEvolutionGovernance,
+              adaptiveRuntime: orgAdaptiveRuntime,
+              stabilityPreservation: orgStabilityPreservation,
+              existentialRisk: orgExistentialRisk,
+              core: orgCore,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -2827,6 +3035,25 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           message: `the civilization lived generation ${civilization.generation} — ${civilization.beliefs.length} belief(s), ${civilization.laws.length} law(s), ${civilization.myths.length} myth(s)`,
         });
 
+        // ─── Wave 7 — the organism ACTED: a banner shipped. Action
+        // depletes energy and accumulates stress; the immune system
+        // records the threats it met. Then the organism persists so
+        // the next run inherits a slightly more depleted body.
+        if (orgImmune.threats_detected.length > 0) {
+          recordImmuneEncounter(organism, orgImmune.threats_detected[0], !orgImmune.infection_risk);
+        }
+        const evolvedOrganism = evolveOrganismFromAction(organism, {
+          energyCost: orgEnergy.energy_budget * 0.3,
+          stressAdded: orgEnvironmental.environmental_load * 0.15 + (orgImmune.infection_risk ? 1 : 0),
+          complexityAdded: orgComplexity.complexity_load * 0.2,
+          adapted: orgAdaptiveRuntime.adaptation_quality >= 6 && !orgAdaptiveRuntime.reacting_not_adapting,
+        });
+        await organismStore.save(evolvedOrganism);
+        emit({
+          stage: 'organism',
+          message: `the organism acted and lived — age ${evolvedOrganism.age} · energy ${evolvedOrganism.energyReserves}/10 · stress ${evolvedOrganism.stressAccumulation}/10 · ${evolvedOrganism.adaptationCount} adaptations across its life`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -2909,6 +3136,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       message: `run exhausted — rejection committed to the runtime; the next run inherits this refusal (${rejectionRecord.rejectionCategory})`,
     });
   }
+
+  // ─── Wave 7 — the run produced no banner: the organism RESTED.
+  // It chose not to act. Rest restores energy and sheds stress — a
+  // healthy organism rests, and the next run inherits the recovery.
+  const restedOrganism = evolveOrganismFromRest(organism);
+  await organismStore.save(restedOrganism);
+  emit({
+    stage: 'organism',
+    message: `the run shipped nothing — the organism rested · energy ${organism.energyReserves}/10 → ${restedOrganism.energyReserves}/10 · stress ${organism.stressAccumulation}/10 → ${restedOrganism.stressAccumulation}/10`,
+  });
 
   throw new ExhaustedAttempts(
     maxAttempts,

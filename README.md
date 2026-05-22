@@ -68,6 +68,37 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 7 — Reality Organism Architecture (Phases 71–90)
+
+Wave 6 gave the civilization **history**. Wave 7 makes it a **living organism interacting continuously with a changing reality**. It is no longer a system that thinks about the past — it is a body that must survive the present: it has finite energy that depletes with action and restores with rest, it runs an immune system with memory, it reads the environment it lives inside, it predicts strategic seasons, it protects itself from existential risk — and, above all, it **learns when *not* to act**. The organism's vital state persists to `data/runtime/organism.json`; every run either spends the body (a banner ships) or rests it (the run produces nothing).
+
+| Phase | Module | Role |
+|---|---|---|
+| 71 | `environmentalPressureMapping` | Maps the external pressure the organism is living inside into one environmental load. |
+| 72 | `cognitiveImmuneSystem` | Defends against cognitive infection; recognises a pathogen it has survived before. |
+| 73 | `strategicEnergyAllocation` | Decides how much of the organism's finite energy this run deserves — or none at all. |
+| 74 | `narrativeClimateDetection` | Reads the storytelling weather — whether the climate would swallow a quiet true banner. |
+| 75 | `identityStressTesting` | Stress-tests the identity before acting: under this run's pressures, would it hold? |
+| 76 | `expansionVsPreservation` | Balances growth against survival — expand, hold, or retrench. |
+| 77 | `realityRhythmSynchronization` | Synchronises to reality's rhythm — speak on the culture's exhale, rest on its inhale. |
+| 78 | `collectiveAttentionForecasting` | Forecasts where collective attention is heading and positions for it. |
+| 79 | `memeticThreatDetection` | Detects memetic pathogens that would rewrite the organism's voice. |
+| 80 | `civilizationFatigueMonitoring` | Monitors the accumulated fatigue of the whole organism across its life. |
+| 81 | `strategicSilenceIntelligence` | The intelligence of silence — when not acting is the stronger move. |
+| 82 | `emotionalResourceManagement` | Manages the finite emotional-intensity budget so something is left for the moment that matters. |
+| 83 | `adaptiveWorldStateModeling` | Measures how fast reality is shifting and whether the organism's model keeps up. |
+| 84 | `longHorizonPrediction` | Predicts the coming strategic season and what the organism must become to remain itself. |
+| 85 | `internalComplexityRegulation` | Regulates a 90-phase cognition stack against collapse under its own complexity. |
+| 86 | `strategicEvolutionGovernance` | Governs the pace of evolution — permits gradual change, refuses sudden mutation. |
+| 87 | `realityAdaptiveRuntime` | Synthesises the environmental readings into one adaptive posture. |
+| 88 | `autonomousStabilityPreservation` | Autonomic self-preservation — calls for rest before continued action threatens stability. |
+| 89 | `existentialRiskLayer` | Detects the convergence of conditions that threaten the organism itself. |
+| 90 | `persistentOrganismCore` | The organism's persistent vital state and the closing synthesis: adapting, or addicted? |
+
+Wave 7 meta-critic — the governing question: **"Is the organism adapting to reality, or compulsively reacting to stimulation?"** An organism governed by stimulation is addicted; one governed by identity survives. Addiction is a refusal at default brutality; an organism at existential risk must stop and protect its core; a memetic pathogen and a failed identity stress test are refused; a sudden mutation is refused. And — the Wave 7 lesson — when the organism's own silence intelligence judges silence the stronger move, the banner is refused: **not acting is itself the strategic decision.** Soft-floor threshold recalibrated for the 90-phase stack: **lenient=45 · default=37 · brutal=31**.
+
+Verified by `scripts/test-reality-organism.ts` — 19 checks: action depletes energy and rest restores it, the vital state survives a restart, environmental pressure detects a hostile world, the immune system recognises a known pathogen, energy allocation forces conservation when reserves are low, strategic silence learns when not to act, existential risk converges danger from multiple signals, memetic detection catches a cultural pathogen, identity stress testing fails a weak identity under load, long-horizon prediction names the coming season, evolution governance refuses a sudden mutation, the closing synthesis distinguishes adapting from addicted, and more. 19/19 pass.
+
 ## Wave 6 — Cognitive Civilization Infrastructure (Phases 56–70)
 
 Wave 5 created disagreement. Wave 6 creates **history**. The system stops behaving like a council of agents and becomes **a living civilization of minds — with memory, hierarchy, law, culture, and evolution**. No internal behaviour is agent theatre: every belief, scar, myth, and law emerges from accumulated decisions, persisted across generations to `data/runtime/civilization.json`. Each run is one more year in the civilization's life.

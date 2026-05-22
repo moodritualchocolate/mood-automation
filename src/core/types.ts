@@ -636,6 +636,29 @@ export interface BannerTasteSystem {
     stability: import('@lib/civilizationStabilityLayer').CivilizationStabilityReading;
     identityContinuity: import('@lib/emergentIdentityContinuity').EmergentIdentityContinuityReading;
   };
+  // Wave 7 — reality organism architecture (Phases 71–90)
+  organism: {
+    environmental: import('@lib/environmentalPressureMapping').EnvironmentalPressureReading;
+    immune: import('@lib/cognitiveImmuneSystem').ImmuneResponseReading;
+    energy: import('@lib/strategicEnergyAllocation').StrategicEnergyReading;
+    climate: import('@lib/narrativeClimateDetection').NarrativeClimateReading;
+    identityStress: import('@lib/identityStressTesting').IdentityStressReading;
+    expansion: import('@lib/expansionVsPreservation').ExpansionPreservationReading;
+    rhythm: import('@lib/realityRhythmSynchronization').RealityRhythmReading;
+    attentionForecast: import('@lib/collectiveAttentionForecasting').CollectiveAttentionForecastReading;
+    memetic: import('@lib/memeticThreatDetection').MemeticThreatReading;
+    fatigue: import('@lib/civilizationFatigueMonitoring').CivilizationFatigueReading;
+    silence: import('@lib/strategicSilenceIntelligence').StrategicSilenceReading;
+    emotionalResource: import('@lib/emotionalResourceManagement').EmotionalResourceReading;
+    adaptiveWorldModel: import('@lib/adaptiveWorldStateModeling').AdaptiveWorldStateReading;
+    longHorizon: import('@lib/longHorizonPrediction').LongHorizonPredictionReading;
+    complexity: import('@lib/internalComplexityRegulation').ComplexityRegulationReading;
+    evolutionGovernance: import('@lib/strategicEvolutionGovernance').StrategicEvolutionReading;
+    adaptiveRuntime: import('@lib/realityAdaptiveRuntime').RealityAdaptiveRuntimeReading;
+    stabilityPreservation: import('@lib/autonomousStabilityPreservation').StabilityPreservationReading;
+    existentialRisk: import('@lib/existentialRiskLayer').ExistentialRiskReading;
+    core: import('@lib/persistentOrganismCore').OrganismCoreReading;
+  };
 }
 
 export interface Banner {
