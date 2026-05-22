@@ -604,6 +604,20 @@ export interface BannerTasteSystem {
     worldState: import('@lib/worldStateEngine').ExecutiveWorldState;
     decision: import('@lib/executiveRuntime').ExecutiveDecision;
   };
+  // Wave 5 — autonomous strategic society (Phases 43–55)
+  society: {
+    session: import('@lib/cognitiveCouncil').CouncilSession;
+    debate: import('@lib/internalDebateEngine').InternalDebateReading;
+    conflict: import('@lib/councilConflictResolution').CouncilConflictReading;
+    plan: import('@lib/autonomousCampaignPlanning').AutonomousCampaignPlanReading;
+    arc: import('@lib/narrativeArcIntelligence').NarrativeArcIntelligenceReading;
+    silenceGovernance: import('@lib/silenceRestraintGovernance').SilenceRestraintReading;
+    audienceSociety: import('@lib/audienceInterpretationSociety').AudienceInterpretationReading;
+    identityCourt: import('@lib/identityDefenseCourt').IdentityDefenseCourtReading;
+    selfReflection: import('@lib/selfReflectionHypocrisy').SelfReflectionReading;
+    consensus: import('@lib/executiveConsensusRuntime').ExecutiveConsensusReading;
+    consciousness: import('@lib/autonomousStrategicConsciousness').StrategicConsciousnessReading;
+  };
 }
 
 export interface Banner {

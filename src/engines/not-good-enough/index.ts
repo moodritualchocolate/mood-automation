@@ -177,6 +177,12 @@ import type { IdentityGovernanceReading } from '@lib/identityGovernance';
 import type { CampaignLifecycleReading } from '@lib/campaignLifecycle';
 import type { ExecutiveWorldState, WorldUnderstandingReading } from '@lib/worldStateEngine';
 import type { ExecutiveDecision } from '@lib/executiveRuntime';
+// Wave 5 — autonomous strategic society (Phases 43–55)
+import type { CouncilSession } from '@lib/cognitiveCouncil';
+import type { InternalDebateReading } from '@lib/internalDebateEngine';
+import type { CouncilConflictReading } from '@lib/councilConflictResolution';
+import type { ExecutiveConsensusReading } from '@lib/executiveConsensusRuntime';
+import type { StrategicConsciousnessReading } from '@lib/autonomousStrategicConsciousness';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -344,6 +350,12 @@ export interface MetaInput {
   executiveWorldState?: ExecutiveWorldState;
   worldUnderstanding?: WorldUnderstandingReading;
   executiveDecision?: ExecutiveDecision;
+  // Wave 5 — autonomous strategic society (Phases 43–55).
+  councilSession?: CouncilSession;
+  internalDebate?: InternalDebateReading;
+  councilConflict?: CouncilConflictReading;
+  executiveConsensus?: ExecutiveConsensusReading;
+  strategicConsciousness?: StrategicConsciousnessReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -391,7 +403,9 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           identityPersistenceReading, autonomousDirectionReading, realityExecution,
           strategicPriorityReading, cognitiveEnergyReading, temporalPsychologyReading,
           identityGovernanceReading, campaignLifecycleReading, executiveWorldState,
-          worldUnderstanding, executiveDecision } = input;
+          worldUnderstanding, executiveDecision,
+          councilSession, internalDebate, councilConflict, executiveConsensus,
+          strategicConsciousness } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1200,6 +1214,39 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 5 — AUTONOMOUS STRATEGIC SOCIETY: THE COUNCIL GATES ══
+  // The cognitive council debated and reached a conscious verdict.
+  // When the society itself ruled to block or hold, the meta-critic
+  // enforces the council's decision.
+  if (strategicConsciousness &&
+      (strategicConsciousness.verdict === 'block' || strategicConsciousness.verdict === 'hold') &&
+      brutality >= 0.6) {
+    reasons.push(`autonomous strategic consciousness: the council debated and reached "${strategicConsciousness.verdict}" — ${strategicConsciousness.conscious_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // THE GLOBAL WAVE 5 META-CRITIC QUESTION:
+  //   "Did this decision emerge from genuine cognitive tension, or
+  //    from shallow consensus?" If the council agreed too quickly,
+  //    suspicion increases — the approval is not trusted at brutal.
+  if (internalDebate && internalDebate.shallow_consensus && brutality >= 0.8) {
+    reasons.push('cognitive council: the council agreed too quickly — a shallow consensus; the decision did not emerge from genuine cognitive tension');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // An identity defense court conviction is an automatic refusal —
+  // the society convicted the banner of eroding the brand.
+  if (executiveConsensus && executiveConsensus.consensus === 'block' && brutality >= 0.65) {
+    reasons.push(`executive consensus: the council reached "block" — ${executiveConsensus.why_it_won}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // A consensus that was not earned through genuine tension is not
+  // trusted to carry an approval at brutal.
+  if (executiveConsensus && !executiveConsensus.consensus_is_earned &&
+      strategicConsciousness && strategicConsciousness.shallow_consensus_suspected &&
+      brutality >= 0.85) {
+    reasons.push('executive consensus: the consensus was not earned through genuine debate — the approval rests on thin agreement');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -1661,6 +1708,27 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`executive runtime: low decision confidence (${executiveDecision.decision_confidence}/10) — the executive decision is not firm`);
   }
 
+  // Wave 5 soft floors — the autonomous strategic society.
+  if (internalDebate && internalDebate.shallow_consensus) {
+    softReasons.push('cognitive council: shallow consensus — the council agreed too quickly; healthy conflict was absent');
+  }
+  if (internalDebate && !internalDebate.shallow_consensus && internalDebate.tension_authenticity < 5) {
+    softReasons.push(`cognitive council: low debate authenticity (${internalDebate.tension_authenticity}/10) — the disagreement was thin`);
+  }
+  if (councilConflict && councilConflict.standing === 'contested') {
+    softReasons.push(`cognitive council: the council is contested (advocacy ${councilConflict.advocacy_force} vs objection ${councilConflict.objection_force}) — the decision is not settled`);
+  }
+  if (executiveConsensus && !executiveConsensus.consensus_is_earned) {
+    softReasons.push(`executive consensus: consensus quality only ${executiveConsensus.consensus_quality}/10 — it was not fully earned through debate`);
+  }
+  if (strategicConsciousness && !strategicConsciousness.emerged_from_genuine_tension &&
+      strategicConsciousness.verdict === 'proceed') {
+    softReasons.push('strategic consciousness: the decision to proceed did not emerge from genuine cognitive tension');
+  }
+  if (councilSession && councilSession.objectors.length >= 4) {
+    softReasons.push(`cognitive council: ${councilSession.objectors.length} entities object — the society is substantially against this`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -1690,12 +1758,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 42 phases of judgement every banner
-  // produces 22-36 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 30 soft reasons required to reject
-  //   default (0.65)   → 25 soft reasons required
-  //   brutal  (0.90)   → 20 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 20 : brutality >= 0.6 ? 25 : 30;
+  // the cognition stack. After 55 phases of judgement every banner
+  // produces 26-42 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 34 soft reasons required to reject
+  //   default (0.65)   → 28 soft reasons required
+  //   brutal  (0.90)   → 23 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 23 : brutality >= 0.6 ? 28 : 34;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

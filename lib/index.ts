@@ -292,3 +292,31 @@ export * from './socialPressureSystems';
 export * from './culturalClimateModel';
 export * from './worldTensionIndex';
 export * from './worldStateEngine';
+// ─── WAVE 5 — Autonomous Strategic Society (Phases 43–55) ─────
+export * from './councilTypes';
+// the eleven cognitive entities
+export * from './councilStrategist';
+export * from './councilIdentityGuardian';
+export * from './councilCulturalAnalyst';
+export * from './councilAudienceInterpreter';
+export * from './councilEmotionalHistorian';
+export * from './councilAttentionPhysicist';
+export * from './councilRecoveryDirector';
+export * from './councilAntiHypeDefender';
+export * from './councilWorldStateObserver';
+export * from './councilNarrativeArchitect';
+export * from './councilExecutiveSynthesizer';
+// Phase 43–55 — the council process
+export * from './cognitiveCouncil';
+export * from './internalDebateEngine';
+export * from './multiAgentMemoryBias';
+export * from './councilConflictResolution';
+export * from './autonomousCampaignPlanning';
+export * from './narrativeArcIntelligence';
+export * from './silenceRestraintGovernance';
+export * from './audienceInterpretationSociety';
+export * from './identityDefenseCourt';
+export * from './selfReflectionHypocrisy';
+export * from './internalReputationSystem';
+export * from './executiveConsensusRuntime';
+export * from './autonomousStrategicConsciousness';

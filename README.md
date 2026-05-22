@@ -68,6 +68,32 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 5 — Autonomous Strategic Society (Phases 43–55)
+
+The deepest architectural transition so far: the engine stops being *one executive intelligence* and becomes **a society of cognitive entities with competing interpretations of reality**. Before Wave 5 the system thinks; after Wave 5 it **argues with itself before acting**. No single module controls reality alone — every campaign decision emerges from internal debate, conflicting priorities, identity defense, and recorded dissent.
+
+**The cognitive council — eleven autonomous entities**, each with an independent reasoning bias, a memory bias, and a priority it exists to defend: the **Strategist** (long-term equity), the **Identity Guardian** (the brand's soul), the **Cultural Analyst** (cultural honesty), the **Audience Interpreter** (genuine recognition), the **Emotional Historian** (continuity), the **Attention Physicist** (true attention), the **Recovery Director** (the right to not speak), the **Anti-Hype Defender** (truth over performance), the **World-State Observer** (world-awareness), the **Narrative Architect** (the campaign arc), and the **Executive Synthesizer** (coherence with the Wave 4 decision). Each reads the same `CouncilBriefing` through its own lens and returns an `EntityOpinion` — they disagree naturally.
+
+| Phase | Role |
+|---|---|
+| 43 — Cognitive Council Runtime (`cognitiveCouncil`) | Convenes all eleven entities; gathers the society's competing interpretations. |
+| 44 — Internal Debate Engine (`internalDebateEngine`) | Pairs advocates against objectors into real exchanges; scores debate tension and flags shallow consensus. |
+| 45 — Multi-Agent Memory Bias (`multiAgentMemoryBias`) | Each entity argues with the authority its track record has earned; persists the council reputation book. |
+| 46 — Strategic Conflict Resolution (`councilConflictResolution`) | Resolves the debate by conviction-weighted force — a convinced minority can outweigh a lukewarm majority. |
+| 47 — Autonomous Campaign Planning (`autonomousCampaignPlanning`) | From the debate, the society plans the next move: ship · soften · rework · change territory · rest. |
+| 48 — Narrative Arc Intelligence (`narrativeArcIntelligence`) | Reads the campaign as a story across time — rising, holding, turning, breaking. |
+| 49 — Silence & Restraint Governance (`silenceRestraintGovernance`) | The council's standing authority on *not speaking*. |
+| 50 — Audience Interpretation Society (`audienceInterpretationSociety`) | The audience is read through competing lenses; their disagreement is itself information. |
+| 51 — Identity Defense Court (`identityDefenseCourt`) | When a banner is accused of eroding the brand, the council holds a court — the Guardian prosecutes, mitigation is argued, the court rules. |
+| 52 — Self-Reflection & Hypocrisy Detection (`selfReflectionHypocrisy`) | The council turns its scrutiny on itself — catching the system advocating what it claims to refuse. |
+| 53 — Internal Reputation System (`internalReputationSystem`) | Entities are held accountable; those aligned with the outcome gain standing; personalities evolve across sessions. |
+| 54 — Executive Consensus Runtime (`executiveConsensusRuntime`) | Brings the society to a consensus and judges its *quality* — earned through tension, or reached too easily. |
+| 55 — Autonomous Strategic Consciousness (`autonomousStrategicConsciousness`) | The closing synthesis — one conscious verdict, with overruled dissent kept on the record. |
+
+Wave 5 meta-critic — the global question: **"Did this decision emerge from genuine cognitive tension, or from shallow consensus?"** When the council debates and reaches `block` or `hold`, the meta-critic enforces it; when the council agrees too quickly, suspicion increases and the approval is not trusted at brutal; an identity-defense-court conviction is an automatic refusal. Soft-floor threshold recalibrated for the 55-phase stack: **lenient=34 · default=28 · brutal=23**.
+
+Verified by `scripts/test-cognitive-society.ts` — 9 checks: the council convenes eleven entities, entities disagree naturally, the internal debate produces real exchanges, the identity court convicts a brand-eroding candidate, self-reflection catches the council in hypocrisy, shallow consensus is detected, a debated decision emerges from genuine tension, overruled dissent is recorded, and the agents' reputations evolve across sessions. 9/9 pass.
+
 ## Wave 4 — Executive Cognition Layer (Phases 36–42)
 
 The system stops behaving like a reactive intelligence and begins behaving like an **executive organism** — capable of strategic judgment, prioritization, restraint, long-term adaptation, and business-aware cognition. Before Phase 36 the system reacts to signals; after Phase 42 it **governs itself**. The engine now optimizes for psychological truth, strategic continuity, identity integrity, emotional trust, cultural timing, and long-term resonance — *not* clicks. 42 modules across 7 phases.

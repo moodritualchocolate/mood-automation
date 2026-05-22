@@ -257,7 +257,23 @@ import {
   readWorldState,
   campaignUnderstandsWorld,
   runExecutiveRuntime,
+  // Wave 5 — autonomous strategic society (Phases 43–55)
+  conveneCognitiveCouncil,
+  runInternalDebate,
+  createCouncilReputationStore,
+  applyMemoryBias,
+  resolveCouncilConflict,
+  planAutonomousCampaign,
+  readNarrativeArcIntelligence,
+  readSilenceRestraintGovernance,
+  readAudienceInterpretationSociety,
+  holdIdentityDefenseCourt,
+  reflectOnHypocrisy,
+  updateInternalReputation,
+  runExecutiveConsensus,
+  readAutonomousStrategicConsciousness,
 } from '@lib/index';
+import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
 import type { CausalChainLink } from '@lib/causalMemoryGraph';
 import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
@@ -516,6 +532,10 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     stage: 'world-state-engine',
     message: `${executiveWorldState.climate_description} · world tension ${executiveWorldState.world_tension}/10 · most acute: ${executiveWorldState.most_acute_pressure}`,
   });
+
+  // ─── Wave 5 — load the council's persistent reputation book ───
+  const councilReputationStore = createCouncilReputationStore();
+  const councilReputationBook = await councilReputationStore.read();
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
   const truthPersistenceStore = createTruthPersistenceStore();
@@ -1884,6 +1904,82 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       });
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 5 — AUTONOMOUS STRATEGIC SOCIETY (Phases 43–55) ══
+      // The system stops being one executive intelligence and becomes
+      // a SOCIETY of cognitive entities. It argues with itself before
+      // acting — eleven entities convene, debate, and reach a
+      // consensus the campaign acts on.
+      const councilBriefing: CouncilBriefing = {
+        strategicWeight: strategicPriorityReading.strategic_weight,
+        priorityBand: strategicPriorityReading.priority_band,
+        strategicallyUnwise: strategicPriorityReading.strategically_unwise,
+        merelyEmotionallyEffective: strategicPriorityReading.merely_emotionally_effective,
+        longTermEquity: strategicPriorityReading.long_term_equity,
+        identityGovernanceBlocks: identityGovernanceReading.governance_blocks,
+        exhaustedHumanTrust: identityGovernanceReading.exhausted_human_would_trust,
+        identityRisk: identityGovernanceReading.violationSeverity,
+        collectiveRecognition: recognitionScore,
+        worldTension: executiveWorldState.world_tension,
+        culturalClimate: executiveWorldState.climate,
+        viralContamination: viralPatternsReading.contamination_score,
+        audienceHasFeedback: audienceFeedbackReading.has_feedback,
+        audienceRecognisedItself: audienceFeedbackReading.audience_recognised_itself,
+        deepEngagement: audienceFeedbackReading.deepEngagement,
+        shallowEngagement: audienceFeedbackReading.shallowEngagement,
+        responseCorruptsTruth: audienceFeedbackReading.response_corrupts_truth,
+        emotionalRepetitionRisk: emotionalContinuityReading.emotionalRepetitionRisk,
+        truthPersistence: cognitiveField.truthPersistence,
+        continuityScore: cognitiveContinuity.continuity_score,
+        attentionIsTrue: attentionPhysicsReading.attention_is_true,
+        attentionIsLoud: attentionPhysicsReading.attention_is_loud,
+        attentionRisk: attentionPhysicsReading.attentionRisk,
+        cognitiveEnergy: cognitiveEnergyReading.cognitive_energy,
+        shouldSpeak: cognitiveEnergyReading.should_speak,
+        recommendSilence: cognitiveEnergyReading.recommend_silence,
+        optimizationCorruptsTruth: antiOptimizationReading.optimization_corrupts_truth,
+        optimizationRisk: antiOptimizationReading.optimizationRisk,
+        campaignUnderstandsWorld: worldUnderstanding.campaign_understands_world,
+        worldStrained: executiveWorldState.world_tension >= 6,
+        lifecycleState: campaignLifecycleReading.lifecycle_state,
+        campaignHealth: campaignLifecycleReading.campaign_health,
+        isRealDecision: autonomousDirectionReading.is_a_real_decision,
+        executiveAction: executiveDecision.action,
+        executiveIsOutput: executiveDecision.is_an_output,
+        executiveConfidence: executiveDecision.decision_confidence,
+        emergence: cognitiveField.emergence_score,
+        truthValue: strategicPriorityReading.truth_value,
+      };
+      const councilSession = conveneCognitiveCouncil({ briefing: councilBriefing });
+      // Multi-agent memory bias — each entity argues with the
+      // authority its track record has earned.
+      const memoryBias = applyMemoryBias(councilSession.opinions, councilReputationBook);
+      councilSession.opinions = memoryBias.biased_opinions;
+      const internalDebate = runInternalDebate({ session: councilSession });
+      const councilConflict = resolveCouncilConflict({ opinions: councilSession.opinions, debate: internalDebate });
+      const narrativeArc = readNarrativeArcIntelligence({ briefing: councilBriefing });
+      const silenceGovernance = readSilenceRestraintGovernance({ briefing: councilBriefing, opinions: councilSession.opinions });
+      const audienceSociety = readAudienceInterpretationSociety({ briefing: councilBriefing, opinions: councilSession.opinions });
+      const identityCourt = holdIdentityDefenseCourt({ briefing: councilBriefing, opinions: councilSession.opinions });
+      const selfReflection = reflectOnHypocrisy({ briefing: councilBriefing, opinions: councilSession.opinions });
+      const campaignPlan = planAutonomousCampaign({ briefing: councilBriefing, conflict: councilConflict, debate: internalDebate });
+      const executiveConsensus = runExecutiveConsensus({
+        conflict: councilConflict, debate: internalDebate, silence: silenceGovernance,
+        identityCourt, selfReflection,
+      });
+      const strategicConsciousness = readAutonomousStrategicConsciousness({
+        session: councilSession, debate: internalDebate, consensus: executiveConsensus,
+        selfReflection, plan: campaignPlan, arc: narrativeArc,
+      });
+      emit({
+        stage: 'cognitive-council',
+        message: `${councilSession.tally.advocate} advocate / ${councilSession.tally.object} object / ${councilSession.tally.caution} caution — debate tension ${internalDebate.debate_tension}/10${internalDebate.shallow_consensus ? ' — SHALLOW CONSENSUS' : ''}`,
+      });
+      emit({
+        stage: 'strategic-consciousness',
+        message: `VERDICT: ${strategicConsciousness.verdict} (consciousness ${strategicConsciousness.consciousness_score}/10) — ${strategicConsciousness.conscious_statement}`,
+      });
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -2046,6 +2142,12 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         executiveWorldState,
         worldUnderstanding,
         executiveDecision,
+        // Wave 5 — autonomous strategic society
+        councilSession,
+        internalDebate,
+        councilConflict,
+        executiveConsensus,
+        strategicConsciousness,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -2432,6 +2534,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               worldState: executiveWorldState,
               decision: executiveDecision,
             },
+            society: {
+              session: councilSession,
+              debate: internalDebate,
+              conflict: councilConflict,
+              plan: campaignPlan,
+              arc: narrativeArc,
+              silenceGovernance,
+              audienceSociety,
+              identityCourt,
+              selfReflection,
+              consensus: executiveConsensus,
+              consciousness: strategicConsciousness,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -2539,6 +2654,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           message: `residue: ${traceEntry.residue}`,
           data: { traceEntry },
         });
+        // ─── Wave 5 — the council is held accountable: entities
+        // whose stance aligned with the approval gain standing.
+        const reputationUpdate = updateInternalReputation({
+          book: councilReputationBook,
+          opinions: councilSession.opinions,
+          finalOutcomeWasProceed: true,
+        });
+        await councilReputationStore.save(reputationUpdate.book);
+        emit({
+          stage: 'cognitive-council',
+          message: `internal reputation updated — ${reputationUpdate.rose.length} entities rose, ${reputationUpdate.fell.length} fell`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
