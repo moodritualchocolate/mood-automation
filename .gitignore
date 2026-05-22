@@ -7,6 +7,7 @@ node_modules/
 dist/
 data/memory/
 !data/memory/.gitkeep
+data/runtime/
 tsconfig.tsbuildinfo
 out-banner.*
 
