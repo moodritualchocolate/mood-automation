@@ -15,6 +15,7 @@
 import type { RuntimeSnapshot, Tone, Gauge } from './runtimeUIBrain';
 import { readSilenceEngine, type SilenceEngineReading, type SilenceDirective, type SilenceReason } from './silenceEngine';
 import type { ContradictionKind } from './contradictionScarsArchive';
+import type { WeatherSampleKind } from './weatherLogArchive';
 
 export interface DeepCognitionLayer {
   /** Display name of the layer (e.g. "reality coupling"). */
@@ -68,6 +69,39 @@ export interface CognitiveWeatherReading {
   breath: 'breathe-hold' | 'breathe-silent' | 'breathe-go-quiet' | null;
 }
 
+/** A render-ready snapshot of the recent weather history. The page
+ *  uses this to show where the organism came from, not just where
+ *  it is. */
+export interface WeatherTrailDot {
+  /** Index in the trail; 0 = oldest visible. */
+  i: number;
+  weather: WeatherSampleKind;
+  /** Tone for colouring the dot. */
+  tone: Tone;
+  /** True when this sample coincided with a protection or a scar —
+   *  used by the UI to make a sample feel weightier. */
+  marked: boolean;
+}
+
+export interface WeatherTrail {
+  /** The trail itself, oldest → newest, up to ~24 dots. */
+  dots: WeatherTrailDot[];
+  /** True when there is enough history to read a transition front. */
+  has_history: boolean;
+  /** A transition front, if a state change is recently in progress. */
+  transition?: {
+    from: WeatherSampleKind;
+    to: WeatherSampleKind;
+    /** A one-line description for the UI. */
+    statement: string;
+  };
+  /** 0..1 — how heavy the memory of past restraint/scars sits on
+   *  the current atmosphere. The vignette baseline is biased by this. */
+  memory_pressure: number;
+  /** A short summary line about temporal continuity. */
+  summary: string;
+}
+
 /** A historical contradiction — a moment the organism shipped despite
  *  itself. Scars create wisdom. */
 export interface ScarTrailEntry {
@@ -104,6 +138,9 @@ export interface DeepCognitionViewModel {
   scarTrail: ScarTrail;
   /** The single-word felt weather of the organism right now. */
   weather: CognitiveWeatherReading;
+  /** Temporal continuity for the atmosphere — where the organism
+   *  came from, not just where it is. */
+  weatherTrail: WeatherTrail;
   /** A one-line statement summarising the deep cognition state. */
   statement: string;
 }
@@ -217,6 +254,76 @@ function buildCognitiveWeather(
     tone: 'good',
     breath: null,
   };
+}
+
+const WEATHER_TONE: Record<WeatherSampleKind, Tone> = {
+  awake:       'good',
+  flourishing: 'good',
+  breathing:   'neutral',
+  restrained:  'cool',
+  hushed:      'cool',
+  strained:    'warn',
+  dormant:     'cool',
+};
+
+/**
+ * Build the weather trail. The dots are the last N weather samples;
+ * the transition front fires when the last two distinct samples
+ * differ; the memory pressure rises with recent scars and protections,
+ * shaping how heavy the page atmosphere should feel.
+ *
+ * Like everything else here, this reads from persisted state only.
+ * Time itself is the only thing being derived.
+ */
+function buildWeatherTrail(snap: RuntimeSnapshot): WeatherTrail {
+  const log = snap.weatherLog ?? null;
+  const samples = log?.samples ?? [];
+
+  // Take the most recent 24 samples for the dot strip.
+  const visible = samples.slice(-24);
+  const dots: WeatherTrailDot[] = visible.map((s, i) => ({
+    i,
+    weather: s.weather,
+    tone: WEATHER_TONE[s.weather] ?? 'neutral',
+    marked: s.protection_recorded || s.scar_recorded,
+  }));
+
+  // Find the most recent distinct prior sample for the front.
+  let transition: WeatherTrail['transition'] | undefined;
+  if (samples.length >= 2) {
+    const latest = samples[samples.length - 1];
+    let prior: typeof latest | undefined;
+    for (let i = samples.length - 2; i >= Math.max(0, samples.length - 8); i--) {
+      if (samples[i].weather !== latest.weather) { prior = samples[i]; break; }
+    }
+    if (prior) {
+      transition = {
+        from: prior.weather,
+        to: latest.weather,
+        statement: `weather moved from ${prior.weather} to ${latest.weather}`,
+      };
+    }
+  }
+
+  // Memory pressure — how much the recent past presses on the
+  // current atmosphere. Each scar weighs more than each protection;
+  // a freshly clean window weighs nothing. Bounded at 1.0.
+  const recent = samples.slice(-8);
+  const scarsRecent = recent.filter((s) => s.scar_recorded).length;
+  const protRecent = recent.filter((s) => s.protection_recorded).length;
+  const memory_pressure = Math.min(1, scarsRecent * 0.18 + protRecent * 0.06);
+
+  const has_history = samples.length >= 2;
+
+  const summary = samples.length === 0
+    ? 'no weather history yet — the organism is taking its first breath'
+    : transition
+      ? `${transition.statement} — the front is recent`
+      : samples.length === 1
+        ? 'one weather sample on record — continuity is just beginning'
+        : `${samples.length} samples on record — the atmosphere has held`;
+
+  return { dots, has_history, transition, memory_pressure, summary };
 }
 
 function buildScarTrail(snap: RuntimeSnapshot): ScarTrail {
@@ -445,11 +552,12 @@ export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionView
   const protectionTrail = buildProtectionTrail(snap, silence);
   const scarTrail = buildScarTrail(snap);
   const weather = buildCognitiveWeather(snap, silence, layers);
+  const weatherTrail = buildWeatherTrail(snap);
 
   const any_layer_present = layers.length > 0;
   const statement = !any_layer_present
     ? 'the deepest layers have not yet drawn breath'
     : `${layers.length} deep cognition layer(s) visible · ${silence.directive} · ${protectionTrail.total_protections} protection(s) · ${scarTrail.total_scars} scar(s)`;
 
-  return { any_layer_present, layers, silence, protectionTrail, scarTrail, weather, statement };
+  return { any_layer_present, layers, silence, protectionTrail, scarTrail, weather, weatherTrail, statement };
 }

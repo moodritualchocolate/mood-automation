@@ -60,11 +60,27 @@ export default function RuntimePage() {
   const b = m.brain;
   const dot = LIVENESS_COLOR[b.liveness];
 
+  // Wave 17.6 — memory pressure subtly biases the vignette deeper
+  // when the organism's recent history has been heavy (scars and
+  // protections close together). The page literally feels shaped by
+  // memory. The transition variable inherits from data-weather and
+  // is overridden here only when memory adds weight.
+  const memoryPressure = m.deepCognition.weatherTrail.memory_pressure;
+  const atmosStyle: React.CSSProperties = {
+    gap: 'var(--atmos-gap)',
+    transition: 'gap var(--atmos-transition) ease-in-out',
+  };
+  if (memoryPressure > 0) {
+    // Add up to +0.08 to the vignette. Subtle. The baseline still
+    // comes from --atmos-vignette in the stylesheet.
+    (atmosStyle as Record<string, string>)['--atmos-vignette-bias'] = `${memoryPressure * 0.08}`;
+  }
+
   return (
     <main
       className="min-h-screen px-6 md:px-10 py-8 flex flex-col relative"
       data-weather={m.deepCognition.weather.weather}
-      style={{ gap: 'var(--atmos-gap)' }}
+      style={atmosStyle}
     >
       {/* Wave 17.5 — atmospheric coherence. A subtle vignette that
           deepens when the organism's attention turns inward. Never

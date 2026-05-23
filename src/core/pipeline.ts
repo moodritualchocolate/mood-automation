@@ -759,6 +759,10 @@ import {
   // ─── Wave 17.4 — contradiction scars: wisdom from breaches.
   createContradictionScarsStore,
   detectAndRecordScars,
+  // ─── Wave 17.6 — weather log: temporal atmospheric continuity.
+  createWeatherLogStore,
+  appendWeatherSample,
+  buildDeepCognitionView,
 } from '@lib/index';
 import type { SilenceEngineReading } from '@lib/silenceEngine';
 import type { CouncilBriefing } from '@lib/councilTypes';
@@ -5774,6 +5778,32 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           });
         }
 
+        // ─── Wave 17.6 — sample the weather. The approve path is a
+        // moment of atmospheric truth: a banner shipped, scars may
+        // have been logged, weather may have shifted. Read the
+        // canonical weather against the post-evolution state and
+        // append to the log.
+        {
+          const dcSnap = {
+            organism: null, os: null, civilization: null, worldState: executiveWorldState, runtime: null,
+            coupling: evolvedCoupling, strategicFuture: evolvedFuture,
+            execution: evolvedExecution, feedback: evolvedFeedback,
+            liveCoupling: evolvedLiveCoupling, sovereignIdentity: evolvedIdentity,
+            generativePresence: evolvedGenerative,
+            capturedAt: Date.now(),
+          };
+          const dc = buildDeepCognitionView(dcSnap);
+          const weatherStore = createWeatherLogStore();
+          const priorLog = await weatherStore.read();
+          await weatherStore.save(appendWeatherSample(priorLog, {
+            at: Date.now(),
+            weather: dc.weather.weather,
+            silence_strength: dc.silence.silence_strength,
+            protection_recorded: false,
+            scar_recorded: newScars.length > 0,
+          }));
+        }
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -6001,6 +6031,30 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     stage: 'protection-memory',
     message: `restraint recorded — ${evolvedProtectionMemory.totalEvents} protection(s) on the organism's record · ${guaranteed.directive}`,
   });
+
+  // ─── Wave 17.6 — sample the weather. An exhausted run is itself
+  // an atmospheric event: silence was held. Append to the log so the
+  // dashboard's temporal continuity reads it as a moment of restraint.
+  {
+    const dcSnap = {
+      organism: null, os: null, civilization: null, worldState: executiveWorldState, runtime: null,
+      coupling: restedCoupling, strategicFuture: patientFuture,
+      execution: withheldExecution, feedback: silentFeedback,
+      liveCoupling: silentLiveCoupling, sovereignIdentity: restedIdentity,
+      generativePresence: quietGenerative,
+      capturedAt: Date.now(),
+    };
+    const dc = buildDeepCognitionView(dcSnap);
+    const weatherStore = createWeatherLogStore();
+    const priorLog = await weatherStore.read();
+    await weatherStore.save(appendWeatherSample(priorLog, {
+      at: Date.now(),
+      weather: dc.weather.weather,
+      silence_strength: dc.silence.silence_strength,
+      protection_recorded: true,
+      scar_recorded: false,
+    }));
+  }
 
   throw new ExhaustedAttempts(
     maxAttempts,

@@ -112,10 +112,13 @@ main[data-weather="hushed"]       { --atmos-rate: 11s; --atmos-gap: 2.25rem; --a
   inset: 0;
   pointer-events: none;
   z-index: 1;
+  /* Wave 17.6 — the vignette baseline + memory pressure bias.
+     The base comes from data-weather; the bias comes from recent
+     scars and protections via --atmos-vignette-bias. The two add. */
   background: radial-gradient(
     ellipse at center,
     transparent 50%,
-    rgba(5,5,5,calc(var(--atmos-vignette) * 1)) 100%
+    rgba(5,5,5,calc((var(--atmos-vignette) + var(--atmos-vignette-bias, 0)) * 1)) 100%
   );
   transition: background var(--atmos-transition) ease-in-out;
 }

@@ -25,6 +25,7 @@ import type { SovereignIdentityState } from './existentialIntegrityEngine';
 import type { GenerativePresenceState } from './civilizationCoherenceRuntime';
 import type { ProtectionMemoryState } from './protectionMemoryArchive';
 import type { ContradictionScarsState } from './contradictionScarsArchive';
+import type { WeatherLogState } from './weatherLogArchive';
 
 /** The complete persistent runtime state every manifestation surface
  *  reads from. Nothing in Wave 9 renders anything not derived here.
@@ -48,6 +49,8 @@ export interface RuntimeSnapshot {
   protectionMemory?: ProtectionMemoryState | null;
   /** Wave 17.4 — the dark counterpart: scars from breaches that shipped. */
   contradictionScars?: ContradictionScarsState | null;
+  /** Wave 17.6 — weather log: temporal continuity for the atmosphere. */
+  weatherLog?: WeatherLogState | null;
   capturedAt: number;
 }
 

@@ -542,23 +542,58 @@ export function SilenceBanner({ m }: { m: RuntimeManifestation }) {
  */
 export function CognitiveWeather({ m }: { m: RuntimeManifestation }) {
   const w = m.deepCognition.weather;
+  const trail = m.deepCognition.weatherTrail;
   const color = toneOf(w.tone);
   const breathClass = w.breath ?? '';
 
   return (
-    <div className="flex items-center gap-3 flex-wrap">
-      <span className="text-[10px] tracking-[0.28em] uppercase text-bone-200/35">
-        weather
-      </span>
-      <span
-        className={`text-[11px] tracking-[0.32em] font-medium uppercase ${breathClass}`}
-        style={{ color }}
-      >
-        {w.weather}
-      </span>
-      <span className="text-[11px] text-bone-200/55 italic">
-        {w.felt_as}
-      </span>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-3 flex-wrap">
+        <span className="text-[10px] tracking-[0.28em] uppercase text-bone-200/35">
+          weather
+        </span>
+        <span
+          className={`text-[11px] tracking-[0.32em] font-medium uppercase ${breathClass}`}
+          style={{ color }}
+        >
+          {w.weather}
+        </span>
+        <span className="text-[11px] text-bone-200/55 italic">
+          {w.felt_as}
+        </span>
+      </div>
+      {/* Wave 17.6 — the weather trail. A horizontal strip of the
+          last N samples; the eye reads where the organism came from
+          in the same glance as where it is now. Marked dots indicate
+          samples that coincided with a protection or a scar. */}
+      {trail.dots.length > 0 && (
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] tracking-[0.18em] uppercase text-bone-200/25">
+            history
+          </span>
+          <div className="flex items-center gap-[3px]" aria-label="recent weather history">
+            {trail.dots.map((d) => (
+              <span
+                key={d.i}
+                className="block"
+                title={d.weather}
+                style={{
+                  width: d.marked ? 5 : 4,
+                  height: d.marked ? 5 : 4,
+                  borderRadius: 9999,
+                  background: toneOf(d.tone),
+                  opacity: 0.35 + (d.i / Math.max(1, trail.dots.length - 1)) * 0.5,
+                }}
+              />
+            ))}
+          </div>
+          {trail.transition && (
+            <span className="text-[10px] tracking-[0.18em] uppercase text-bone-200/40 ml-1">
+              {trail.transition.from} → {trail.transition.to}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -122,6 +122,22 @@ Section gaps subscribe via `style={{ gap: 'var(--atmos-gap)' }}` — so the page
 
 Verified across four weather conditions: fresh state → `awake` (no breath, brisk transitions, no vignette); hostile state (saturation + restraint depletion + storm) → `hushed` with `breathe-go-quiet` (11s breath, 2.25rem gaps, 1.2s transitions, deeper vignette); silence accumulated → `restrained`; full coherence → `flourishing`. Each weather has a distinct felt signature derived purely from persistent state. Full Wave 6–16 regression remains green.
 
+### Wave 17.6 — Temporal continuity: weather has history, memory has weight
+
+The atmosphere knows where it is. It didn't yet know where it came from. This pass gives the dashboard a past.
+
+**`lib/weatherLogArchive.ts`** — a small persistent log of weather samples (capped at 64). At the end of every pipeline run, the canonical `buildDeepCognitionView` is read against the just-evolved state and one sample is appended: `{ at, weather, silence_strength, protection_recorded, scar_recorded }`. The approve and exhausted paths both sample, so every cycle leaves a trace.
+
+**Weather trail view derivation** — `deepCognitionView.ts` now produces a `WeatherTrail` alongside the current weather: up to 24 ordered dots (oldest → newest), each carrying a tone and a `marked` flag (`true` when the sample coincided with a protection or scar); a transition front built from the last two *distinct* samples (`from`, `to`, statement); and a `memory_pressure` value computed from recent marked samples (each scar 0.18, each protection 0.06, capped at 1.0).
+
+**Dashboard cognitive-weather strip** — the existing `CognitiveWeather` component now renders a thin row of fading dots beneath the weather word: 4–5px circles, opacity ramping from 0.35 (oldest) to 0.85 (newest), with marked samples slightly larger. When a transition is in progress, a single small label appears: `strained → restrained`. The eye reads where the organism came from in the same glance as where it is now.
+
+**Memory-pressure vignette bias** — the page-level vignette now reads two CSS custom properties added together: the data-weather baseline + an inline `--atmos-vignette-bias` set from the trail's memory pressure. A brand carrying recent scars feels slightly more inward-looking than the same brand without them, even at identical present weather. The page is shaped by history.
+
+**Front transitions** — the `<main>` element's gap now transitions via `var(--atmos-transition)`, so when the weather shifts the page widens or tightens smoothly. State changes feel like weather fronts, not snaps.
+
+Verified: a synthetic 5-sample log (`awake → restrained → restrained → strained → restrained`) produces the correct trail order, correctly identifies the `strained → restrained` transition front, computes memory pressure of 0.36, and yields a vignette bias of ~0.029. Full Wave 6–16 regression remains green.
+
 ## Wave 16 — Generative Civilization Presence (Phases 401–500)
 
 Wave 15 made the organism unbreakable; Wave 16 asks what it gives back. The governing shift: the organism stops asking *"how do we survive reality?"* and begins asking **"how does reality become different because we existed beautifully inside it?"** State persists to `data/runtime/generative-presence.json` — civilization coherence, generative impact, beauty moments created, hope seeds planted, cynicism repelled, collective healing dispatched.
