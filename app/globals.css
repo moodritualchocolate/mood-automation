@@ -48,3 +48,42 @@ html, body {
   50% { opacity: 1; }
 }
 .pulse { animation: pulseSoft 1.6s ease-in-out infinite; }
+
+/* ── Wave 17 — silence is not absence ────────────────────────────
+   Three breathing animations. Each is what a different intensity
+   of restraint feels like.
+     .breathe-hold      — quiet attention, easy to hold (4s)
+     .breathe-silent    — conscious restraint, slower (7s)
+     .breathe-go-quiet  — deep, deliberate withholding (11s)
+   The animation is opacity-only — the values themselves never
+   move, only the rendering breathes around the truth. */
+@keyframes breatheSoft {
+  0%, 100% { opacity: 0.75; }
+  50%      { opacity: 1.00; }
+}
+@keyframes breatheSlow {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 0.95; }
+}
+@keyframes breatheDeep {
+  0%, 100% { opacity: 0.40; }
+  50%      { opacity: 0.90; }
+}
+.breathe-hold       { animation: breatheSoft 4s  ease-in-out infinite; }
+.breathe-silent     { animation: breatheSlow 7s  ease-in-out infinite; }
+.breathe-go-quiet   { animation: breatheDeep 11s ease-in-out infinite; }
+
+/* ── The protection trail rail ──────────────────────────────────
+   A single hairline that runs down the inside of the trail,
+   threading the entries together so silence reads as a continuous
+   record rather than scattered events. */
+.trail-rail {
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(247,245,242,0.10) 8%,
+    rgba(247,245,242,0.10) 92%,
+    transparent 100%
+  );
+  width: 1px;
+}

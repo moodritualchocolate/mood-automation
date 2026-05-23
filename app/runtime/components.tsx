@@ -458,6 +458,10 @@ const SILENCE_LABEL: Record<string, string> = {
  * The canonical Silence Engine banner. The single most important
  * runtime surface in Wave 17: should the brand be silent right now,
  * and why? Aggregated from every layer that has a notion of silence.
+ *
+ * When silence is the move, the banner BREATHES — the rendering
+ * itself enacts the restraint. The values never move; only the
+ * opacity does. Silence is shown as active protection, not absence.
  */
 export function SilenceBanner({ m }: { m: RuntimeManifestation }) {
   const s = m.deepCognition.silence;
@@ -466,8 +470,25 @@ export function SilenceBanner({ m }: { m: RuntimeManifestation }) {
   const label = SILENCE_LABEL[s.directive] ?? s.directive.toUpperCase();
   const strengthPct = Math.max(4, Math.min(100, (s.silence_strength / 10) * 100));
 
+  // The breath the banner wears. Derived from the directive — speak
+  // gets no breath because nothing is being held.
+  const breathClass =
+    s.directive === 'go-quiet-now' ? 'breathe-go-quiet'
+    : s.directive === 'be-silent'   ? 'breathe-silent'
+    : s.directive === 'hold'        ? 'breathe-hold'
+    : '';
+
+  // A subtle inner glow that intensifies with silence strength. When
+  // the directive is speak, the glow evaporates.
+  const innerGlow = s.silence_is_the_move
+    ? `inset 0 0 ${24 + s.silence_strength * 4}px -8px ${color}26`
+    : 'none';
+
   return (
-    <div className="border hairline bg-ink-900/50 px-5 py-4 flex flex-col gap-3">
+    <div
+      className="border hairline bg-ink-900/50 px-5 py-4 flex flex-col gap-3 transition-all duration-1000"
+      style={{ boxShadow: innerGlow }}
+    >
       <div className="flex items-baseline justify-between gap-3">
         <div className="flex items-baseline gap-3">
           <span className="eyebrow">silence engine</span>
@@ -476,13 +497,13 @@ export function SilenceBanner({ m }: { m: RuntimeManifestation }) {
           </span>
         </div>
         <span
-          className="text-[11px] tracking-[0.3em] font-medium"
+          className={`text-[11px] tracking-[0.3em] font-medium ${breathClass}`}
           style={{ color }}
         >
           {label} · {s.silence_strength}/10
         </span>
       </div>
-      <p className="text-[13px] leading-relaxed text-bone-50/85">
+      <p className={`text-[13px] leading-relaxed text-bone-50/85 ${breathClass}`}>
         {s.statement}
       </p>
       {s.contributing_reasons.length > 0 && s.contributing_reasons[0] !== 'none' && (
@@ -495,8 +516,40 @@ export function SilenceBanner({ m }: { m: RuntimeManifestation }) {
         </div>
       )}
       <div className="h-[2px] bg-white/[0.06] mt-1">
-        <div className="h-full transition-all duration-700" style={{ width: `${strengthPct}%`, background: color }} />
+        <div
+          className={`h-full transition-all duration-700 ${breathClass}`}
+          style={{ width: `${strengthPct}%`, background: color }}
+        />
       </div>
+    </div>
+  );
+}
+
+/**
+ * The cognitive weather header — a single word that says what the
+ * organism is feeling right now. The first impression on page load.
+ * Aesthetic but never invented; derived from the same persistent
+ * state every other surface reads from.
+ */
+export function CognitiveWeather({ m }: { m: RuntimeManifestation }) {
+  const w = m.deepCognition.weather;
+  const color = toneOf(w.tone);
+  const breathClass = w.breath ?? '';
+
+  return (
+    <div className="flex items-center gap-3 flex-wrap">
+      <span className="text-[10px] tracking-[0.28em] uppercase text-bone-200/35">
+        weather
+      </span>
+      <span
+        className={`text-[11px] tracking-[0.32em] font-medium uppercase ${breathClass}`}
+        style={{ color }}
+      >
+        {w.weather}
+      </span>
+      <span className="text-[11px] text-bone-200/55 italic">
+        {w.felt_as}
+      </span>
     </div>
   );
 }
@@ -590,17 +643,25 @@ export function ProtectionTrail({ m }: { m: RuntimeManifestation }) {
       <p className="text-[12px] text-bone-200/55 leading-relaxed italic">
         {trail.summary}
       </p>
-      <ol className="flex flex-col gap-2 pt-1">
-        {[...trail.trail].reverse().map((entry, idx) => {
-          const tone: Tone = SILENCE_TONE[entry.directive] ?? 'cool';
-          const color = toneOf(tone);
-          return (
-            <li key={`${entry.at}-${idx}`} className="flex gap-3 items-start">
-              <span
-                className="w-1.5 h-1.5 rounded-full mt-[7px] shrink-0"
-                style={{ background: color, opacity: 0.8 }}
-              />
-              <div className="flex-1 min-w-0">
+      {/* Vertical rail threading the entries together. Silence reads
+          as one continuous record instead of scattered events. */}
+      <div className="relative pl-4 pt-1">
+        <div className="absolute left-[3px] top-1 bottom-1 trail-rail" aria-hidden />
+        <ol className="flex flex-col gap-3">
+          {[...trail.trail].reverse().map((entry, idx) => {
+            const tone: Tone = SILENCE_TONE[entry.directive] ?? 'cool';
+            const color = toneOf(tone);
+            return (
+              <li key={`${entry.at}-${idx}`} className="relative">
+                <span
+                  className="absolute -left-4 top-[7px] w-[7px] h-[7px] rounded-full border"
+                  style={{
+                    background: '#050505',
+                    borderColor: color,
+                    boxShadow: `0 0 0 2px rgba(5,5,5,1)`,
+                  }}
+                  aria-hidden
+                />
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="text-[11px] tracking-[0.2em] uppercase" style={{ color }}>
                     {SILENCE_LABEL[entry.directive] ?? entry.directive.toUpperCase()}
@@ -620,11 +681,11 @@ export function ProtectionTrail({ m }: { m: RuntimeManifestation }) {
                     ))}
                   </div>
                 )}
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </section>
   );
 }

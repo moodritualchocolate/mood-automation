@@ -51,6 +51,22 @@ export interface ProtectionTrail {
   summary: string;
 }
 
+/** One-word cognitive weather. The first impression of what the
+ *  organism is feeling, derived from the deepest layers. Aesthetic,
+ *  not analytical — but built from real state, not invented. */
+export type CognitiveWeather =
+  | 'awake' | 'breathing' | 'hushed' | 'restrained' | 'strained' | 'flourishing' | 'dormant';
+
+export interface CognitiveWeatherReading {
+  weather: CognitiveWeather;
+  /** A one-line first impression for the page header. */
+  felt_as: string;
+  /** Tone the dashboard should colour the weather word in. */
+  tone: Tone;
+  /** Which breathing class the page should wear right now — or null. */
+  breath: 'breathe-hold' | 'breathe-silent' | 'breathe-go-quiet' | null;
+}
+
 export interface DeepCognitionViewModel {
   /** True when at least one Wave 10–16 layer has persistent state. */
   any_layer_present: boolean;
@@ -61,6 +77,8 @@ export interface DeepCognitionViewModel {
   silence: SilenceEngineReading;
   /** The historical record of what restraint protected — runtime continuity. */
   protectionTrail: ProtectionTrail;
+  /** The single-word felt weather of the organism right now. */
+  weather: CognitiveWeatherReading;
   /** A one-line statement summarising the deep cognition state. */
   statement: string;
 }
@@ -85,6 +103,95 @@ function humanizeAgo(when: number, now: number): string {
   if (h < 24) return `${h}h ago`;
   const d = Math.floor(h / 24);
   return `${d}d ago`;
+}
+
+/**
+ * Build the cognitive weather. The single-word felt mood the
+ * organism is in right now — read from the same persistent state
+ * everything else reads from, never invented.
+ *
+ * The ladder, in priority order:
+ *   dormant      — no layers have drawn breath yet
+ *   go-quiet     — silence is deep and conscious
+ *   hushed       — silence is being held
+ *   restrained   — patience is on, no need to act
+ *   strained     — pressure is high, restraint is tight
+ *   flourishing  — the organism is shaping reality beautifully
+ *   breathing    — present and quiet
+ *   awake        — the default, alert and open
+ */
+function buildCognitiveWeather(
+  snap: RuntimeSnapshot,
+  silence: SilenceEngineReading,
+  layers: DeepCognitionLayer[],
+): CognitiveWeatherReading {
+  if (layers.length === 0) {
+    return {
+      weather: 'dormant',
+      felt_as: 'the deepest layers have not yet drawn breath',
+      tone: 'cool',
+      breath: null,
+    };
+  }
+
+  // Silence wins first, because silence is the central distinction.
+  if (silence.directive === 'go-quiet-now') {
+    return {
+      weather: 'hushed',
+      felt_as: 'a held breath — the organism is consciously withholding',
+      tone: 'cool',
+      breath: 'breathe-go-quiet',
+    };
+  }
+  if (silence.directive === 'be-silent') {
+    return {
+      weather: 'restrained',
+      felt_as: 'quiet restraint — the organism is choosing not to speak',
+      tone: 'cool',
+      breath: 'breathe-silent',
+    };
+  }
+  if (silence.directive === 'hold') {
+    return {
+      weather: 'breathing',
+      felt_as: 'breathing — present, attentive, not yet ready to speak',
+      tone: 'neutral',
+      breath: 'breathe-hold',
+    };
+  }
+
+  // Strain — if any of the load-bearing layers reports a bad tone,
+  // the organism is straining.
+  const anyBad = layers.some((l) => l.tone === 'bad');
+  if (anyBad) {
+    return {
+      weather: 'strained',
+      felt_as: 'strain — some layer is under pressure it cannot yet absorb',
+      tone: 'warn',
+      breath: null,
+    };
+  }
+
+  // Flourishing — Wave 16 reports flourishing.
+  const gp = snap.generativePresence;
+  const flourishing = gp && gp.presenceCycles >= 2 &&
+    gp.beautyMomentsCreated > gp.forcedInfluenceAttempts &&
+    gp.civilizationCoherenceScore >= 7;
+  if (flourishing) {
+    return {
+      weather: 'flourishing',
+      felt_as: 'flourishing — the organism is shaping reality beautifully',
+      tone: 'good',
+      breath: null,
+    };
+  }
+
+  return {
+    weather: 'awake',
+    felt_as: 'awake — open, listening, ready to act when action is right',
+    tone: 'good',
+    breath: null,
+  };
 }
 
 function buildProtectionTrail(snap: RuntimeSnapshot, currentSilence: SilenceEngineReading): ProtectionTrail {
@@ -283,11 +390,12 @@ export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionView
   });
 
   const protectionTrail = buildProtectionTrail(snap, silence);
+  const weather = buildCognitiveWeather(snap, silence, layers);
 
   const any_layer_present = layers.length > 0;
   const statement = !any_layer_present
     ? 'the deepest layers have not yet drawn breath'
     : `${layers.length} deep cognition layer(s) visible · ${silence.directive} · ${protectionTrail.total_protections} protection(s) on record`;
 
-  return { any_layer_present, layers, silence, protectionTrail, statement };
+  return { any_layer_present, layers, silence, protectionTrail, weather, statement };
 }

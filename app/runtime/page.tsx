@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -71,6 +71,10 @@ export default function RuntimePage() {
         <h1 className="text-2xl md:text-[2rem] tracking-tight text-bone-50 leading-snug max-w-3xl">
           {b.headline}
         </h1>
+        {/* Wave 17 — the cognitive weather. The first impression on
+            page load: one word for what the organism is feeling, one
+            sentence for how it feels. */}
+        <CognitiveWeather m={m} />
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-[11px] text-bone-200/50">
           <span>uptime {b.uptime_ticks} ticks</span>
           <span>organism age {b.organism_age}</span>
