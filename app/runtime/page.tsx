@@ -40,11 +40,36 @@ export default function RuntimePage() {
 
   useEffect(() => {
     void load();
-    const id = setInterval(() => {
+    let id: ReturnType<typeof setInterval> | null = setInterval(() => {
       void load();
       setRefreshes((r) => r + 1);
     }, 4000);
-    return () => clearInterval(id);
+
+    // Mobile coherence: when the tab backgrounds (iOS Safari throttles
+    // setInterval aggressively when the screen sleeps), pause polling.
+    // When it foregrounds again, refresh immediately so the viewer sees
+    // current atmosphere the moment they look, not stale state.
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        void load();
+        setRefreshes((r) => r + 1);
+        if (id === null) {
+          id = setInterval(() => {
+            void load();
+            setRefreshes((r) => r + 1);
+          }, 4000);
+        }
+      } else if (id !== null) {
+        clearInterval(id);
+        id = null;
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      if (id !== null) clearInterval(id);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, [load]);
 
   if (!m) {

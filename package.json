@@ -5,6 +5,7 @@
   "description": "MOOD CREATIVE OS — autonomous creative operating system. V1: ENERGY static banner engine.",
   "scripts": {
     "dev": "next dev -p 3000",
+    "dev:lan": "node scripts/print-lan-url.mjs && next dev -H 0.0.0.0 -p 3000",
     "build": "next build",
     "start": "next start -p 3000",
     "lint": "next lint",

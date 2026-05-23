@@ -15,6 +15,28 @@ html, body {
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* iOS Safari URL bar appears/disappears, making 100vh unreliable.
+     dvh follows the real visible viewport — atmosphere fills the
+     screen consistently whether the bar is showing or not. */
+  min-height: 100dvh;
+}
+
+/* Atmospheric breathing is meaning, not decoration — but a viewer who
+   has reduced-motion turned on has made a clear request. Honour it:
+   the breathing pauses; the values themselves never depended on the
+   animation anyway. */
+@media (prefers-reduced-motion: reduce) {
+  .pulse,
+  .breathe-hold,
+  .breathe-silent,
+  .breathe-go-quiet,
+  .atmos-breathe,
+  .atmos-breathe-faint {
+    animation: none;
+  }
+  .atmos-vignette {
+    transition: none;
+  }
 }
 
 [dir="rtl"], .he {
