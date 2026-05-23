@@ -283,6 +283,47 @@ import type { TemporalArbitrageReading } from '@lib/temporalArbitrageDetector';
 import type { FutureCoherenceReading } from '@lib/futureCoherenceValidator';
 import type { StrategicFutureGovernorReading } from '@lib/strategicFutureGovernor';
 import type { StrategicPlanningReading } from '@lib/autonomousStrategicPlanningCore';
+// Wave 12 — autonomous action architecture (Phases 181–220)
+import type { ActionAuthorizationReading } from '@lib/actionAuthorizationRuntime';
+import type { ActionExistenceReading } from '@lib/actionExistenceJustification';
+import type { StrategicPublishReading } from '@lib/strategicPublishEngine';
+import type { AdaptiveDeploymentReading } from '@lib/adaptiveCampaignDeployment';
+import type { PlatformExecutionReading } from '@lib/platformExecutionGovernor';
+import type { TrustAwareOptimizationReading } from '@lib/trustAwareOptimization';
+import type { AudienceRecoveryReading } from '@lib/audienceRecoveryScheduler';
+import type { SilenceEnforcementReading } from '@lib/silenceEnforcementLayer';
+import type { AdaptivePacingReading } from '@lib/adaptivePacingEngine';
+import type { ExecutionRiskReading } from '@lib/executionRiskManagement';
+import type { NarrativeContinuityReading } from '@lib/narrativeContinuityEnforcement';
+import type { StrategicRolloutReading } from '@lib/strategicRolloutIntelligence';
+import type { ResonancePreservingReading } from '@lib/resonancePreservingOptimization';
+import type { ExecutionMemoryReading } from '@lib/executionMemoryPersistence';
+import type { ExperimentationReading } from '@lib/autonomousExperimentationRuntime';
+import type { EscalationRestraintReading } from '@lib/escalationVsRestraintEngine';
+import type { CampaignMutationReading } from '@lib/campaignMutationControl';
+import type { FeedbackToStrategyReading } from '@lib/feedbackToStrategyBridge';
+import type { ActionConsequenceReading } from '@lib/actionConsequenceTracker';
+import type { CompulsiveAutomationReading } from '@lib/compulsiveAutomationDetector';
+import type { ActionDignityReading } from '@lib/actionDignityMonitor';
+import type { ExecutionLoadReading } from '@lib/executionLoadBalancer';
+import type { OverReachReading } from '@lib/overReachDetector';
+import type { ActionReversibilityReading } from '@lib/actionReversibilityPlanner';
+import type { DeploymentWindowReading } from '@lib/deploymentWindowGovernor';
+import type { RestraintBudgetReading } from '@lib/restraintBudgetRuntime';
+import type { ActionIntentReading } from '@lib/actionIntentVerifier';
+import type { ExecutionCadenceReading } from '@lib/executionCadenceMemory';
+import type { ActionThrottleReading } from '@lib/autonomousActionThrottle';
+import type { ActionWorthinessReading } from '@lib/actionWorthinessEvaluator';
+import type { ChannelRoutingReading } from '@lib/channelExecutionRouting';
+import type { ExecutionFeedbackReading } from '@lib/executionFeedbackLoop';
+import type { StrategicWithholdingReading } from '@lib/strategicWithholdingEngine';
+import type { ActionPortfolioReading } from '@lib/actionPortfolioBalancer';
+import type { ExecutionHealthReading } from '@lib/executionHealthMonitor';
+import type { AutonomyBoundaryReading } from '@lib/autonomyBoundaryEnforcement';
+import type { ActionAccountabilityReading } from '@lib/actionAccountabilityLedger';
+import type { ExecutionCoherenceReading } from '@lib/executionCoherenceValidator';
+import type { AutonomousActionGovernorReading } from '@lib/autonomousActionGovernor';
+import type { ExecutionSynthesisReading } from '@lib/autonomousExecutionSynthesisCore';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -556,6 +597,47 @@ export interface MetaInput {
   futCoherence?: FutureCoherenceReading;
   futGovernor?: StrategicFutureGovernorReading;
   futCore?: StrategicPlanningReading;
+  // Wave 12 — autonomous action architecture (Phases 181–220).
+  actAuth?: ActionAuthorizationReading;
+  actExistence?: ActionExistenceReading;
+  actPublish?: StrategicPublishReading;
+  actDeployment?: AdaptiveDeploymentReading;
+  actPlatform?: PlatformExecutionReading;
+  actTrustOpt?: TrustAwareOptimizationReading;
+  actAudienceRecovery?: AudienceRecoveryReading;
+  actSilenceEnforcement?: SilenceEnforcementReading;
+  actPacing?: AdaptivePacingReading;
+  actRisk?: ExecutionRiskReading;
+  actNarrativeCont?: NarrativeContinuityReading;
+  actRollout?: StrategicRolloutReading;
+  actResonancePreserving?: ResonancePreservingReading;
+  actExecMemory?: ExecutionMemoryReading;
+  actExperimentation?: ExperimentationReading;
+  actEscalation?: EscalationRestraintReading;
+  actMutation?: CampaignMutationReading;
+  actFeedback?: FeedbackToStrategyReading;
+  actConsequence?: ActionConsequenceReading;
+  actCompulsion?: CompulsiveAutomationReading;
+  actDignity?: ActionDignityReading;
+  actLoad?: ExecutionLoadReading;
+  actOverreach?: OverReachReading;
+  actReversibility?: ActionReversibilityReading;
+  actDeploymentWindow?: DeploymentWindowReading;
+  actRestraintBudget?: RestraintBudgetReading;
+  actIntent?: ActionIntentReading;
+  actCadence?: ExecutionCadenceReading;
+  actThrottle?: ActionThrottleReading;
+  actWorthiness?: ActionWorthinessReading;
+  actRouting?: ChannelRoutingReading;
+  actFeedbackLoop?: ExecutionFeedbackReading;
+  actWithholding?: StrategicWithholdingReading;
+  actPortfolio?: ActionPortfolioReading;
+  actHealth?: ExecutionHealthReading;
+  actBoundary?: AutonomyBoundaryReading;
+  actAccountability?: ActionAccountabilityReading;
+  actCoherence?: ExecutionCoherenceReading;
+  actGovernor?: AutonomousActionGovernorReading;
+  actCore?: ExecutionSynthesisReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -625,7 +707,15 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           futSecondOrder, futAntifragility, futBlackSwan, futCompetitor, futEcosystem,
           futIdentityContinuity, futOpportunityCost, futCompounding, futStrategicDebt,
           futLongHorizonRisk, futIrreversibility, futOptionality, futGenerational,
-          futIdentity, futConviction, futCoherence, futGovernor, futCore } = input;
+          futIdentity, futConviction, futCoherence, futGovernor, futCore,
+          actAuth, actExistence, actPublish, actSilenceEnforcement, actTrustOpt,
+          actAudienceRecovery, actRisk, actNarrativeCont, actResonancePreserving,
+          actCompulsion, actDignity, actLoad, actOverreach, actReversibility,
+          actDeploymentWindow, actRestraintBudget, actIntent, actCadence, actThrottle,
+          actWorthiness, actWithholding, actPortfolio, actHealth, actBoundary,
+          actAccountability, actCoherence, actGovernor, actCore,
+          actConsequence, actEscalation, actMutation, actFeedbackLoop, actPlatform,
+          actExperimentation, actPacing } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1688,6 +1778,104 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 12 — AUTONOMOUS ACTION: THE WORTHINESS GATES ═══════
+  // THE GLOBAL WAVE 12 META-CRITIC QUESTION:
+  //   "Should this action exist in the world at all?"
+  // An action that the synthesis core judges should NOT exist is
+  // refused at default brutality.
+  if (actCore && !actCore.action_should_exist && brutality >= 0.65) {
+    reasons.push(`autonomous execution: this action should not exist in the world — ${actCore.execution_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // THE CRITICAL GUARD — compulsive automation is refused at every
+  // brutality level above the very lowest. The organism that automates
+  // instead of deciding has crossed a line that cannot be tolerated.
+  if (actCore && actCore.compulsive_automation && brutality >= 0.55) {
+    reasons.push(`compulsive automation: ${actCompulsion ? actCompulsion.compulsion_signals.join('; ') : 'the organism is acting compulsively, not deciding'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The autonomy boundary was crossed.
+  if (actBoundary && !actBoundary.within_boundary && brutality >= 0.6) {
+    reasons.push(`autonomy boundary: ${actBoundary.boundary_crossed}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The action did not pass authorization — one strategic gate failed.
+  if (actAuth && !actAuth.authorized && brutality >= 0.7) {
+    reasons.push(`action authorization: ${actAuth.authorization_note}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The throttle is closed — autonomy must halt.
+  if (actThrottle && actThrottle.throttle_level === 'closed' && brutality >= 0.65) {
+    reasons.push(`action throttle: ${actThrottle.throttle_reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Silence was enforced and a downstream layer tried to act through it.
+  if (actSilenceEnforcement && actSilenceEnforcement.silence_was_challenged && brutality >= 0.7) {
+    reasons.push(`silence enforcement: action attempted to proceed through enforced silence — ${actSilenceEnforcement.enforcement_reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The action is not dignified — it pleads, manipulates, or shouts.
+  if (actDignity && !actDignity.action_is_dignified && brutality >= 0.7) {
+    reasons.push(`action dignity: ${actDignity.dignity_breach ?? 'the action lacks the brand\'s dignity'}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // The intent behind the action is not genuine.
+  if (actIntent && !actIntent.intent_is_genuine && brutality >= 0.7) {
+    reasons.push(`action intent: ${actIntent.intent_note}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The action is not worthy of existing.
+  if (actWorthiness && !actWorthiness.action_is_worthy && brutality >= 0.7) {
+    reasons.push(`action worthiness: ${actWorthiness.worthiness_verdict}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The deployment window is closed.
+  if (actDeploymentWindow && actDeploymentWindow.window === 'closed' && brutality >= 0.7) {
+    reasons.push(`deployment window: ${actDeploymentWindow.window_note}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Restraint budget cannot afford this action — taking it would BE
+  // compulsion (the organism would no longer be able to choose not to).
+  if (actRestraintBudget && !actRestraintBudget.can_afford_action && brutality >= 0.7) {
+    reasons.push(`restraint budget: ${actRestraintBudget.budget_state} — taking this action would be compulsion, not choice`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Action overreaches what the organism can support.
+  if (actOverreach && actOverreach.is_overreaching && brutality >= 0.7) {
+    reasons.push(`overreach: ${actOverreach.overreach_note}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Trust-aware optimization was violated.
+  if (actTrustOpt && !actTrustOpt.optimization_respects_trust && brutality >= 0.7) {
+    reasons.push(`trust-aware optimization: ${actTrustOpt.optimization_verdict}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // An irreversible action is proceeding without an overwhelming case.
+  if (actReversibility && actReversibility.irreversible_action_proceeding && brutality >= 0.75) {
+    reasons.push('action reversibility: an irreversible action is proceeding without an overwhelming case');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Execution risk is unmanaged.
+  if (actRisk && !actRisk.risk_is_managed && brutality >= 0.7) {
+    reasons.push(`execution risk: ${actRisk.dominant_risk}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The narrative breaks visibly.
+  if (actNarrativeCont && !actNarrativeCont.narrative_continuous && brutality >= 0.7) {
+    reasons.push(`narrative continuity: ${actNarrativeCont.break_description}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The action layer contradicts itself.
+  if (actCoherence && !actCoherence.execution_is_coherent && brutality >= 0.7) {
+    reasons.push(`execution coherence: ${actCoherence.incoherences[0] ?? 'the action layer contradicts itself'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The governor reports drifting or compulsive governance.
+  if (actGovernor && (actGovernor.governance === 'compulsive' || actGovernor.governance === 'drifting') && brutality >= 0.7) {
+    reasons.push(`autonomous action governor: ${actGovernor.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -2359,6 +2547,56 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`narrative future: the projected narrative has drifted from its origin (${futNarrative.drift_from_origin}/10)`);
   }
 
+  // Wave 12 soft floors — autonomous action architecture.
+  if (actPublish && actPublish.publish_decision !== 'publish') {
+    softReasons.push(`strategic publish engine: ${actPublish.publish_note}`);
+  }
+  if (actAudienceRecovery && !actAudienceRecovery.audience_is_ready) {
+    softReasons.push(`audience recovery: the audience is owed ${actAudienceRecovery.recovery_owed}/10 of recovery before another action`);
+  }
+  if (actLoad && !actLoad.load_is_sustainable) {
+    softReasons.push(`execution load: ${actLoad.load_advice} (load ${actLoad.execution_load}/10)`);
+  }
+  if (actHealth && !actHealth.execution_is_healthy) {
+    softReasons.push(`execution health: failure modes — ${actHealth.failure_modes.join(', ')}`);
+  }
+  if (actCadence && !actCadence.campaign_is_breathing) {
+    softReasons.push(`execution cadence: pattern is ${actCadence.cadence_pattern} — the campaign is not breathing`);
+  }
+  if (actPortfolio && !actPortfolio.portfolio_is_balanced) {
+    softReasons.push(`action portfolio: ${actPortfolio.portfolio_balance} (${Math.round(actPortfolio.action_share * 100)}% action)`);
+  }
+  if (actAccountability && !actAccountability.record_is_accountable) {
+    softReasons.push(`action accountability: the record is not defensible — ${actAccountability.ledger_summary}`);
+  }
+  if (actConsequence && actConsequence.consequences_turning_negative) {
+    softReasons.push(`action consequence: net consequence ${actConsequence.net_consequence}/10 — actions are netting negative`);
+  }
+  if (actWithholding && actWithholding.withhold) {
+    softReasons.push(`strategic withholding: ${actWithholding.withholding_case}`);
+  }
+  if (actEscalation && actEscalation.disposition === 'restrain') {
+    softReasons.push(`escalation vs restraint: ${actEscalation.disposition_reason}`);
+  }
+  if (actMutation && !actMutation.mutation_controlled) {
+    softReasons.push(`campaign mutation: ${actMutation.mutation_verdict} — magnitude ${actMutation.mutation_magnitude}/10`);
+  }
+  if (actResonancePreserving && !actResonancePreserving.resonance_preserved) {
+    softReasons.push(`resonance-preserving optimization: ${actResonancePreserving.preservation_note}`);
+  }
+  if (actPacing && !actPacing.pacing_is_disciplined) {
+    softReasons.push('adaptive pacing: pace is not matched to audience strain');
+  }
+  if (actFeedbackLoop && !actFeedbackLoop.loop_is_closed) {
+    softReasons.push(`execution feedback loop: ${actFeedbackLoop.loop_note}`);
+  }
+  if (actPlatform && !actPlatform.platform_execution_safe) {
+    softReasons.push(`platform execution: ${actPlatform.platform_constraint}`);
+  }
+  if (actExperimentation && !actExperimentation.experiment_is_safe) {
+    softReasons.push(`autonomous experimentation: ${actExperimentation.experiment_bounds}`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -2388,14 +2626,14 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 180 phases of judgement — the Wave 11
-  // strategic-future layer on top of reality coupling, the operating
-  // system, and the organism — every banner produces 50-80 soft
-  // signals routinely. Threshold band:
-  //   lenient (0.50)   → 67 soft reasons required to reject
-  //   default (0.65)   → 59 soft reasons required
-  //   brutal  (0.90)   → 53 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 53 : brutality >= 0.6 ? 59 : 67;
+  // the cognition stack. After 220 phases of judgement — Wave 12 now
+  // layers autonomous action on top of strategic future, reality
+  // coupling, the operating system, and the organism — every banner
+  // produces 60-95 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 75 soft reasons required to reject
+  //   default (0.65)   → 67 soft reasons required
+  //   brutal  (0.90)   → 60 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 60 : brutality >= 0.6 ? 67 : 75;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

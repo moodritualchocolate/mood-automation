@@ -68,6 +68,57 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 12 — Autonomous Action Architecture (Phases 181–220)
+
+Wave 11 reasoned about futures; Wave 12 lets the organism **act** — but never compulsively. Every action must pass through eight strategic gates (identity, resonance, trust, timing, strategic debt, audience capacity, reality coupling, future preservation) and then through worthiness, dignity, intent, and boundary checks. The governing shift: the organism stops asking *"can we act?"* and starts asking **"should this action exist in the world at all?"** State persists to `data/runtime/execution.json` — restraint budget, audience recovery debt, cadence health, and a ledger of every action taken or withheld.
+
+| Phase | Module | Role |
+|---|---|---|
+| 181 | `actionAuthorizationRuntime` | The eight-gate gate every action passes through. |
+| 182 | `actionExistenceJustification` | Answers "should this action exist at all?" |
+| 183 | `strategicPublishEngine` | Publish, hold, or withhold. |
+| 184 | `adaptiveCampaignDeployment` | Sets deployment intensity to conditions. |
+| 185 | `platformExecutionGovernor` | Reads when the platform itself would corrupt execution. |
+| 186 | `trustAwareOptimization` | Optimization that respects the trust account. |
+| 187 | `audienceRecoveryScheduler` | Treats audience attention as finite and replenishable. |
+| 188 | `silenceEnforcementLayer` | Hard-stops execution when silence is called. |
+| 189 | `adaptivePacingEngine` | The rhythm of action — sparse under strain, steady when healthy. |
+| 190 | `executionRiskManagement` | Sizes execution risk before it reaches the audience. |
+| 191 | `narrativeContinuityEnforcement` | Catches tonal breaks and contradictions in execution. |
+| 192 | `strategicRolloutIntelligence` | Lead, build, sustain, or pause the rollout. |
+| 193 | `resonancePreservingOptimization` | Checks optimization did not sand the soul off the action. |
+| 194 | `executionMemoryPersistence` | The organism's honest record of action. |
+| 195 | `autonomousExperimentationRuntime` | Bounded, reversible experimentation only. |
+| 196 | `escalationVsRestraintEngine` | When in doubt, restrain. |
+| 197 | `campaignMutationControl` | Bounds how far a single action may mutate the whole. |
+| 198 | `feedbackToStrategyBridge` | Routes execution learning back up to strategy. |
+| 199 | `actionConsequenceTracker` | Holds the organism accountable to consequences. |
+| 200 | `compulsiveAutomationDetector` | **THE CRITICAL GUARD** — catches automation masquerading as action. |
+| 201 | `actionDignityMonitor` | No pleading, manipulating, or shouting. |
+| 202 | `executionLoadBalancer` | Sheds load before taking on another action. |
+| 203 | `overReachDetector` | Flags action that reaches past what standing can hold. |
+| 204 | `actionReversibilityPlanner` | Plans the path back, or insists on a higher bar. |
+| 205 | `deploymentWindowGovernor` | Refuses to force action through a closed window. |
+| 206 | `restraintBudgetRuntime` | Restraint as finite, replenishable resource. |
+| 207 | `actionIntentVerifier` | Genuine purpose vs habit, performance pressure, or fear of silence. |
+| 208 | `executionCadenceMemory` | Is the campaign breathing, or flooding? |
+| 209 | `autonomousActionThrottle` | Final rate limiter on autonomy. |
+| 210 | `actionWorthinessEvaluator` | Merges every action signal into one verdict — worthy or not. |
+| 211 | `channelExecutionRouting` | Routes the action to the channel where it can land. |
+| 212 | `executionFeedbackLoop` | Closes the observe-report-adjust loop. |
+| 213 | `strategicWithholdingEngine` | Withholding as a positive strategic move. |
+| 214 | `actionPortfolioBalancer` | Catches the campaign tilting entirely into doing. |
+| 215 | `executionHealthMonitor` | Continuous health of the action layer. |
+| 216 | `autonomyBoundaryEnforcement` | What the organism will never do autonomously. |
+| 217 | `actionAccountabilityLedger` | The defensible record of action and restraint. |
+| 218 | `executionCoherenceValidator` | Catches the action layer contradicting itself. |
+| 219 | `autonomousActionGovernor` | Governed-action, restraint, drifting, or compulsive. |
+| 220 | `autonomousExecutionSynthesisCore` | Persistent execution state + closing synthesis. |
+
+Wave 12 meta-critic — the governing question: **"Should this action exist in the world at all?"** The hard gates refuse a compulsive run at brutality ≥ 0.55 (the lowest threshold in the entire stack — compulsion is the line that cannot be crossed); the autonomy boundary being crossed, authorization denied, the throttle closed, silence challenged, the action undignified or driven by non-genuine intent, the action unworthy, the deployment window closed, restraint cannot be afforded, overreach, trust-aware optimization violated, irreversible action without overwhelming case, unmanaged risk, narrative break, execution incoherence, or compulsive/drifting governance. An approved run that was governed evolves the action layer; a compulsive run that slips a low brutality gate logs the compulsion and collapses restraint; an exhausted run is withholding — replenishing restraint and paying down audience recovery debt. Soft-floor threshold recalibrated for the 220-phase stack: **lenient=75 · default=67 · brutal=60**.
+
+Verified by `scripts/test-autonomous-action.ts` — 27 checks across authorization, existence justification, publish/deployment/platform, trust-aware optimization, audience recovery + silence enforcement, pacing/risk/narrative continuity, the compulsion detector, dignity + intent, restraint budget + throttle + overreach, autonomy boundary, worthiness + governance, coherence + withholding + portfolio + memory, persistence, and the closing synthesis. 27/27 pass.
+
 ## Wave 11 — Strategic Future Intelligence (Phases 151–180)
 
 Wave 10 coupled the organism to *present* reality. Wave 11 lets it reason across **futures** — months, quarters, reputation arcs, cultural shifts, second-order consequences, identity continuity across the long horizon. The governing shift: the organism stops asking *"what works now?"* and starts asking **"what future are we compounding toward?"** The strategic state — compounding advantage, strategic debt, the future being built toward — persists to `data/runtime/strategic-future.json`.

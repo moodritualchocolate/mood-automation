@@ -407,6 +407,51 @@ import {
   validateFutureCoherence,
   readStrategicFutureGovernor,
   readAutonomousStrategicPlanningCore,
+  // Wave 12 — autonomous action architecture (Phases 181–220)
+  createExecutionStore,
+  evolveExecutionFromAuthorizedAction,
+  evolveExecutionFromWithholding,
+  evolveExecutionFromCompulsion,
+  readActionAuthorizationRuntime,
+  readActionExistenceJustification,
+  readStrategicPublishEngine,
+  readAdaptiveCampaignDeployment,
+  readPlatformExecutionGovernor,
+  readTrustAwareOptimization,
+  readAudienceRecoveryScheduler,
+  readSilenceEnforcementLayer,
+  readAdaptivePacingEngine,
+  readExecutionRiskManagement,
+  readNarrativeContinuityEnforcement,
+  readStrategicRolloutIntelligence,
+  readResonancePreservingOptimization,
+  readExecutionMemoryPersistence,
+  readAutonomousExperimentationRuntime,
+  readEscalationVsRestraintEngine,
+  readCampaignMutationControl,
+  readFeedbackToStrategyBridge,
+  readActionConsequenceTracker,
+  readCompulsiveAutomationDetector,
+  readActionDignityMonitor,
+  readExecutionLoadBalancer,
+  readOverReachDetector,
+  readActionReversibilityPlanner,
+  readDeploymentWindowGovernor,
+  readRestraintBudgetRuntime,
+  readActionIntentVerifier,
+  readExecutionCadenceMemory,
+  readAutonomousActionThrottle,
+  readActionWorthinessEvaluator,
+  readChannelExecutionRouting,
+  readExecutionFeedbackLoop,
+  readStrategicWithholdingEngine,
+  readActionPortfolioBalancer,
+  readExecutionHealthMonitor,
+  readAutonomyBoundaryEnforcement,
+  readActionAccountabilityLedger,
+  readExecutionCoherenceValidator,
+  readAutonomousActionGovernor,
+  readAutonomousExecutionSynthesisCore,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -738,6 +783,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: strategicFutureState.planningCycles === 0
       ? 'the organism is beginning to reason about the future for the first time'
       : `strategic future: ${strategicFutureState.planningCycles} cycles · advantage ${strategicFutureState.compoundingAdvantage}/10 · debt ${strategicFutureState.strategicDebt}/10 · ${strategicFutureState.futureCompoundedCount} future / ${strategicFutureState.nowOptimizedCount} now`,
+  });
+
+  // ─── Wave 12 — load the organism's execution state ────────────
+  // The organism can now ACT — but never compulsively. Restraint
+  // budget, audience recovery debt, and cadence health persist across
+  // execution cycles so that autonomy is always accountable.
+  const executionStore = createExecutionStore();
+  const executionState = await executionStore.read();
+  emit({
+    stage: 'autonomous-action',
+    message: executionState.executionCycles === 0
+      ? 'the organism is preparing to act in the world for the first time'
+      : `autonomous action: ${executionState.executionCycles} cycles · restraint ${executionState.restraintBudget}/10 · cadence ${executionState.cadenceHealth}/10 · ${executionState.actionsAuthorized} acted / ${executionState.actionsWithheld} withheld`,
   });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
@@ -2779,6 +2837,257 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 12 — AUTONOMOUS ACTION (Phases 181–220) ══════════
+      // The organism stops asking "can we act?" and starts asking
+      // "should this action exist in the world at all?" — with
+      // explicit guards against compulsive automation.
+      const actAuth = readActionAuthorizationRuntime({
+        identityIntact: civIdentityHeld,
+        resonancePresent: !cplResonance.is_stimulus_addiction,
+        trustAvailable: couplingState.trustLevel >= 4,
+        timingRight: futMarketTiming.timing === 'ripe' || futMarketTiming.timing === 'closing',
+        strategicDebtContained: !futStrategicDebt.debt_is_dangerous,
+        audienceHasCapacity: !cplSilence.recommend_silence && cplSocialExhaustion.social_exhaustion < 7,
+        realityCouplingHealthy: !cplHealth.coupling_is_failing,
+        futurePreserved: !futCore.organism_optimizes_for_now,
+      });
+      const actExistence = readActionExistenceJustification({
+        resonancePresent: !cplResonance.is_stimulus_addiction,
+        addsMeaning: !antiOptimizationReading.optimization_corrupts_truth && !cplResonance.is_stimulus_addiction,
+        worldHasRoom: !cplSilence.recommend_silence,
+        saturation: cplSaturation.saturation,
+      });
+      const actPublish = readStrategicPublishEngine({
+        authorized: actAuth.authorized,
+        actionShouldExist: actExistence.action_should_exist,
+        timing: futMarketTiming.timing,
+        recommendSilence: cplSilence.recommend_silence,
+      });
+      const actDeployment = readAdaptiveCampaignDeployment({
+        worldState: executiveWorldState,
+        audienceRecoveryDebt: executionState.audienceRecoveryDebt,
+        restraintBudget: executionState.restraintBudget,
+      });
+      const actPlatform = readPlatformExecutionGovernor({
+        platformDrift: cplPlatformDrift.platform_drift,
+        attentionChaos: executiveWorldState.attention_chaos,
+        saturation: cplSaturation.saturation,
+      });
+      const actTrustOpt = readTrustAwareOptimization({
+        optimizationApplied: antiOptimizationReading.optimization_corrupts_truth || cplResonance.is_stimulus_addiction,
+        optimizationCorruptsTruth: antiOptimizationReading.optimization_corrupts_truth,
+        chasingStimulus: cplResonance.is_stimulus_addiction,
+        trustLevel: couplingState.trustLevel,
+      });
+      const actAudienceRecovery = readAudienceRecoveryScheduler({
+        recoveryDebt: executionState.audienceRecoveryDebt,
+        audienceFatigue: cplSocialExhaustion.social_exhaustion,
+        recommendSilence: cplSilence.recommend_silence,
+      });
+      const actSilenceEnforcement = readSilenceEnforcementLayer({
+        recommendSilence: cplSilence.recommend_silence,
+        audienceNeedsRecovery: !actAudienceRecovery.audience_is_ready,
+        saturation: cplSaturation.saturation,
+        actionWantsToProceed: true,
+      });
+      const actPacing = readAdaptivePacingEngine({
+        cadenceHealth: executionState.cadenceHealth,
+        recoveryDebt: executionState.audienceRecoveryDebt,
+        restraintBudget: executionState.restraintBudget,
+      });
+      const actRisk = readExecutionRiskManagement({
+        irreversible: futIrreversibility.decision_is_irreversible,
+        blackSwanExposure: futBlackSwan.black_swan_exposure,
+        couplingFailing: cplHealth.coupling_is_failing,
+        strategicDebt: strategicFutureState.strategicDebt,
+      });
+      const actNarrativeCont = readNarrativeContinuityEnforcement({
+        narrativeDrift: futNarrative.drift_from_origin,
+        voiceConsistent: civIdentityHeld,
+        contradictsPriorClaim: false,
+      });
+      const actRollout = readStrategicRolloutIntelligence({
+        actionsAuthorized: executionState.actionsAuthorized,
+        timingRipe: futMarketTiming.timing === 'ripe',
+        recoveryDebt: executionState.audienceRecoveryDebt,
+      });
+      const actResonancePreserving = readResonancePreservingOptimization({
+        resonanceBefore: couplingState.trustLevel,
+        optimizationApplied: antiOptimizationReading.optimization_corrupts_truth || cplResonance.is_stimulus_addiction,
+        chasedMetric: cplResonance.is_stimulus_addiction,
+        stillTruthful: !antiOptimizationReading.optimization_corrupts_truth,
+      });
+      const actExecMemory = readExecutionMemoryPersistence({
+        executionCycles: executionState.executionCycles,
+        actionsAuthorized: executionState.actionsAuthorized,
+        actionsWithheld: executionState.actionsWithheld,
+      });
+      const actRisk_val = actRisk.execution_risk;
+      const actExperimentation = readAutonomousExperimentationRuntime({
+        restraintBudget: executionState.restraintBudget,
+        reversible: !futIrreversibility.decision_is_irreversible,
+        executionRisk: actRisk_val,
+        trustHealthy: couplingState.trustLevel >= 5,
+      });
+      const actEscalation = readEscalationVsRestraintEngine({
+        momentRewardsAction: futMarketTiming.timing === 'ripe',
+        restraintBudget: executionState.restraintBudget,
+        recoveryDebt: executionState.audienceRecoveryDebt,
+        strategicDebt: strategicFutureState.strategicDebt,
+      });
+      const actMutation = readCampaignMutationControl({
+        departureFromEstablished: futNarrative.drift_from_origin,
+        identityKept: civIdentityHeld,
+        mutationIsDeliberate: false,
+      });
+      const actFeedback = readFeedbackToStrategyBridge({
+        lastActionResonated: executionState.cadenceHealth >= 6,
+        audienceShowedFatigue: cplSocialExhaustion.social_exhaustion >= 6,
+        timingWasAccurate: true,
+      });
+      const actConsequence = readActionConsequenceTracker({
+        actionsAuthorized: executionState.actionsAuthorized,
+        recoveryDebt: executionState.audienceRecoveryDebt,
+        trustSpentOnAction: executionState.trustSpentOnAction,
+        cadenceHealth: executionState.cadenceHealth,
+      });
+      const actAudienceReady = actAudienceRecovery.audience_is_ready;
+      const actCompulsion = readCompulsiveAutomationDetector({
+        restraintBudget: executionState.restraintBudget,
+        recoveryDebt: executionState.audienceRecoveryDebt,
+        audienceReady: actAudienceReady,
+        momentRewardsAction: futMarketTiming.timing === 'ripe',
+        actionsWithheld: executionState.actionsWithheld,
+        executionCycles: executionState.executionCycles,
+      });
+      const actDignity = readActionDignityMonitor({
+        pleadsForAttention: cplResonance.is_stimulus_addiction,
+        manipulates: antiOptimizationReading.optimization_corrupts_truth,
+        raisesVoice: cplResonance.is_stimulus_addiction,
+        selfPossessed: !cplResonance.is_stimulus_addiction && civIdentityHeld,
+      });
+      const actLoad = readExecutionLoadBalancer({
+        recoveryDebt: executionState.audienceRecoveryDebt,
+        restraintBudget: executionState.restraintBudget,
+        cadenceHealth: executionState.cadenceHealth,
+      });
+      const actOverreach = readOverReachDetector({
+        ambitionLevel: futScenarios.best_case.desirability,
+        trustLevel: couplingState.trustLevel,
+        capacity: 10 - executionState.audienceRecoveryDebt,
+        reputationCredit: couplingState.reputationCredit,
+      });
+      const actReversibility = readActionReversibilityPlanner({
+        irreversible: futIrreversibility.decision_is_irreversible,
+        actionProceeding: true,
+        justificationStrength: futCore.strategic_future_score,
+      });
+      const actDeploymentWindow = readDeploymentWindowGovernor({
+        timingRipe: futMarketTiming.timing === 'ripe',
+        timingMissed: futMarketTiming.timing === 'missed',
+        silenceEnforced: actSilenceEnforcement.silence_enforced,
+        audienceReady: actAudienceReady,
+      });
+      const actRestraintBudget = readRestraintBudgetRuntime({
+        restraintBudget: executionState.restraintBudget,
+        actionWouldSpend: true,
+      });
+      const actIntent = readActionIntentVerifier({
+        answersRealNeed: !cplResonance.is_stimulus_addiction,
+        drivenByCadence: false,
+        drivenByMetric: cplResonance.is_stimulus_addiction,
+        drivenByDiscomfortWithSilence: false,
+      });
+      const actCadence = readExecutionCadenceMemory({
+        actionsAuthorized: executionState.actionsAuthorized,
+        actionsWithheld: executionState.actionsWithheld,
+        cadenceHealth: executionState.cadenceHealth,
+      });
+      const actThrottle = readAutonomousActionThrottle({
+        executionLoad: actLoad.execution_load,
+        isCompulsive: actCompulsion.is_compulsive,
+        restraintBudget: executionState.restraintBudget,
+      });
+      const actWorthiness = readActionWorthinessEvaluator({
+        authorized: actAuth.authorized,
+        actionShouldExist: actExistence.action_should_exist,
+        intentGenuine: actIntent.intent_is_genuine,
+        dignified: actDignity.action_is_dignified,
+        executionRisk: actRisk.execution_risk,
+        notOverreaching: !actOverreach.is_overreaching,
+      });
+      const actRouting = readChannelExecutionRouting({
+        saturation: cplSaturation.saturation,
+        attentionChaos: executiveWorldState.attention_chaos,
+        actionIsQuiet: true,
+      });
+      const actFeedbackLoop = readExecutionFeedbackLoop({
+        lastResultObserved: executionState.executionCycles > 0,
+        feedbackRouted: actFeedback.feedback_routed,
+        nextActionAdjusted: executionState.executionCycles > 0,
+      });
+      const actWithholding = readStrategicWithholdingEngine({
+        actionIsWorthy: actWorthiness.action_is_worthy,
+        silenceEnforced: actSilenceEnforcement.silence_enforced,
+        audienceNeedsRecovery: !actAudienceReady,
+        restraintBudget: executionState.restraintBudget,
+      });
+      const actPortfolio = readActionPortfolioBalancer({
+        actionsAuthorized: executionState.actionsAuthorized,
+        actionsWithheld: executionState.actionsWithheld,
+      });
+      const actHealth = readExecutionHealthMonitor({
+        restraintBudget: executionState.restraintBudget,
+        cadenceHealth: executionState.cadenceHealth,
+        recoveryDebt: executionState.audienceRecoveryDebt,
+        executionLoad: actLoad.execution_load,
+      });
+      const actBoundary = readAutonomyBoundaryEnforcement({
+        irreversibleAndIdentityThreatening:
+          futIrreversibility.decision_is_irreversible && !futIdentityContinuity.identity_survives_horizon,
+        wouldCorruptTruth: antiOptimizationReading.optimization_corrupts_truth,
+        actsThroughEnforcedSilence: actSilenceEnforcement.silence_was_challenged,
+        isCompulsive: actCompulsion.is_compulsive,
+      });
+      const actAccountability = readActionAccountabilityLedger({
+        actionsAuthorized: executionState.actionsAuthorized,
+        actionsWithheld: executionState.actionsWithheld,
+        compulsiveSignals: executionState.compulsiveSignals,
+        overreachCount: executionState.overreachCount,
+      });
+      const actCoherence = readExecutionCoherenceValidator({
+        publishing: actPublish.publish_decision === 'publish',
+        silenceEnforced: actSilenceEnforcement.silence_enforced,
+        throttlePermitsAction: actThrottle.throttle_permits_action,
+        authorized: actAuth.authorized,
+        actionIsWorthy: actWorthiness.action_is_worthy,
+      });
+      const actGovernor = readAutonomousActionGovernor({
+        authorized: actAuth.authorized,
+        isCompulsive: actCompulsion.is_compulsive,
+        withinBoundary: actBoundary.within_boundary,
+        executionCoherent: actCoherence.execution_is_coherent,
+        withholding: actWithholding.withhold,
+      });
+      const actCore = readAutonomousExecutionSynthesisCore({
+        state: executionState,
+        governor: actGovernor,
+        authorization: actAuth,
+        compulsion: actCompulsion,
+        worthiness: actWorthiness,
+      });
+      emit({
+        stage: 'autonomous-action',
+        message: `${actCore.execution_state} (integrity ${actCore.execution_integrity_score}/10) · ${actPublish.publish_decision} · ${actGovernor.governance} — ${actCore.execution_statement}`,
+      });
+      if (actCore.compulsive_automation) {
+        emit({ stage: 'autonomous-action', message: 'META-CRITIC FLAG — the organism is acting compulsively, not deciding' });
+      }
+      if (actBoundary.boundary_crossed) {
+        emit({ stage: 'autonomous-action', message: `META-CRITIC FLAG — autonomy boundary crossed: ${actBoundary.boundary_crossed}` });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -3047,6 +3356,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         futCoherence,
         futGovernor,
         futCore,
+        // Wave 12 — autonomous action architecture
+        actAuth, actExistence, actPublish, actDeployment, actPlatform, actTrustOpt,
+        actAudienceRecovery, actSilenceEnforcement, actPacing, actRisk, actNarrativeCont,
+        actRollout, actResonancePreserving, actExecMemory, actExperimentation, actEscalation,
+        actMutation, actFeedback, actConsequence, actCompulsion, actDignity, actLoad,
+        actOverreach, actReversibility, actDeploymentWindow, actRestraintBudget, actIntent,
+        actCadence, actThrottle, actWorthiness, actRouting, actFeedbackLoop, actWithholding,
+        actPortfolio, actHealth, actBoundary, actAccountability, actCoherence, actGovernor, actCore,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -3561,6 +3878,23 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               governor: futGovernor,
               core: futCore,
             },
+            action: {
+              authorization: actAuth, existence: actExistence, publish: actPublish,
+              deployment: actDeployment, platform: actPlatform, trustAwareOpt: actTrustOpt,
+              audienceRecovery: actAudienceRecovery, silenceEnforcement: actSilenceEnforcement,
+              pacing: actPacing, risk: actRisk, narrativeContinuity: actNarrativeCont,
+              rollout: actRollout, resonancePreserving: actResonancePreserving,
+              memory: actExecMemory, experimentation: actExperimentation,
+              escalation: actEscalation, mutation: actMutation, feedbackBridge: actFeedback,
+              consequence: actConsequence, compulsion: actCompulsion, dignity: actDignity,
+              load: actLoad, overreach: actOverreach, reversibility: actReversibility,
+              deploymentWindow: actDeploymentWindow, restraintBudget: actRestraintBudget,
+              intent: actIntent, cadence: actCadence, throttle: actThrottle,
+              worthiness: actWorthiness, routing: actRouting, feedbackLoop: actFeedbackLoop,
+              withholding: actWithholding, portfolio: actPortfolio, health: actHealth,
+              boundary: actBoundary, accountability: actAccountability,
+              coherence: actCoherence, governor: actGovernor, core: actCore,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -3784,6 +4118,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             : `the run compounded toward "${evolvedFuture.futureBeingCompounded}" — advantage ${strategicFutureState.compoundingAdvantage}/10 → ${evolvedFuture.compoundingAdvantage}/10`,
         });
 
+        // ─── Wave 12 — the action layer resolves: was this a
+        // governed action, or did compulsion slip through the gates?
+        const evolvedExecution = actCore.compulsive_automation
+          ? evolveExecutionFromCompulsion(executionState)
+          : evolveExecutionFromAuthorizedAction(executionState);
+        await executionStore.save(evolvedExecution);
+        emit({
+          stage: 'autonomous-action',
+          message: actCore.compulsive_automation
+            ? `the run was COMPULSIVE — restraint ${executionState.restraintBudget}/10 → ${evolvedExecution.restraintBudget}/10, compulsion logged`
+            : `the action was governed — restraint ${executionState.restraintBudget}/10 → ${evolvedExecution.restraintBudget}/10, ${evolvedExecution.actionsAuthorized} actions on record`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -3929,6 +4276,15 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   emit({
     stage: 'strategic-future',
     message: `the organism held in strategic patience — debt ${strategicFutureState.strategicDebt}/10 → ${patientFuture.strategicDebt}/10, patience honored ${patientFuture.patienceHonored}×`,
+  });
+
+  // ─── Wave 12 — the run withheld action: a deliberate restraint
+  // that replenishes the restraint budget and pays down recovery debt.
+  const withheldExecution = evolveExecutionFromWithholding(executionState);
+  await executionStore.save(withheldExecution);
+  emit({
+    stage: 'autonomous-action',
+    message: `the organism withheld action — restraint ${executionState.restraintBudget}/10 → ${withheldExecution.restraintBudget}/10, ${withheldExecution.actionsWithheld} withholdings on record`,
   });
 
   throw new ExhaustedAttempts(

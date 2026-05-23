@@ -738,6 +738,49 @@ export interface BannerTasteSystem {
     governor: import('@lib/strategicFutureGovernor').StrategicFutureGovernorReading;
     core: import('@lib/autonomousStrategicPlanningCore').StrategicPlanningReading;
   };
+  // Wave 12 — autonomous action architecture (Phases 181–220)
+  action: {
+    authorization: import('@lib/actionAuthorizationRuntime').ActionAuthorizationReading;
+    existence: import('@lib/actionExistenceJustification').ActionExistenceReading;
+    publish: import('@lib/strategicPublishEngine').StrategicPublishReading;
+    deployment: import('@lib/adaptiveCampaignDeployment').AdaptiveDeploymentReading;
+    platform: import('@lib/platformExecutionGovernor').PlatformExecutionReading;
+    trustAwareOpt: import('@lib/trustAwareOptimization').TrustAwareOptimizationReading;
+    audienceRecovery: import('@lib/audienceRecoveryScheduler').AudienceRecoveryReading;
+    silenceEnforcement: import('@lib/silenceEnforcementLayer').SilenceEnforcementReading;
+    pacing: import('@lib/adaptivePacingEngine').AdaptivePacingReading;
+    risk: import('@lib/executionRiskManagement').ExecutionRiskReading;
+    narrativeContinuity: import('@lib/narrativeContinuityEnforcement').NarrativeContinuityReading;
+    rollout: import('@lib/strategicRolloutIntelligence').StrategicRolloutReading;
+    resonancePreserving: import('@lib/resonancePreservingOptimization').ResonancePreservingReading;
+    memory: import('@lib/executionMemoryPersistence').ExecutionMemoryReading;
+    experimentation: import('@lib/autonomousExperimentationRuntime').ExperimentationReading;
+    escalation: import('@lib/escalationVsRestraintEngine').EscalationRestraintReading;
+    mutation: import('@lib/campaignMutationControl').CampaignMutationReading;
+    feedbackBridge: import('@lib/feedbackToStrategyBridge').FeedbackToStrategyReading;
+    consequence: import('@lib/actionConsequenceTracker').ActionConsequenceReading;
+    compulsion: import('@lib/compulsiveAutomationDetector').CompulsiveAutomationReading;
+    dignity: import('@lib/actionDignityMonitor').ActionDignityReading;
+    load: import('@lib/executionLoadBalancer').ExecutionLoadReading;
+    overreach: import('@lib/overReachDetector').OverReachReading;
+    reversibility: import('@lib/actionReversibilityPlanner').ActionReversibilityReading;
+    deploymentWindow: import('@lib/deploymentWindowGovernor').DeploymentWindowReading;
+    restraintBudget: import('@lib/restraintBudgetRuntime').RestraintBudgetReading;
+    intent: import('@lib/actionIntentVerifier').ActionIntentReading;
+    cadence: import('@lib/executionCadenceMemory').ExecutionCadenceReading;
+    throttle: import('@lib/autonomousActionThrottle').ActionThrottleReading;
+    worthiness: import('@lib/actionWorthinessEvaluator').ActionWorthinessReading;
+    routing: import('@lib/channelExecutionRouting').ChannelRoutingReading;
+    feedbackLoop: import('@lib/executionFeedbackLoop').ExecutionFeedbackReading;
+    withholding: import('@lib/strategicWithholdingEngine').StrategicWithholdingReading;
+    portfolio: import('@lib/actionPortfolioBalancer').ActionPortfolioReading;
+    health: import('@lib/executionHealthMonitor').ExecutionHealthReading;
+    boundary: import('@lib/autonomyBoundaryEnforcement').AutonomyBoundaryReading;
+    accountability: import('@lib/actionAccountabilityLedger').ActionAccountabilityReading;
+    coherence: import('@lib/executionCoherenceValidator').ExecutionCoherenceReading;
+    governor: import('@lib/autonomousActionGovernor').AutonomousActionGovernorReading;
+    core: import('@lib/autonomousExecutionSynthesisCore').ExecutionSynthesisReading;
+  };
 }
 
 export interface Banner {
