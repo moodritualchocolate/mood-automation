@@ -102,6 +102,26 @@ Verified end-to-end: in a sample of 10 runs, the 5 that exhausted produced 5 pro
 
 Verified end-to-end: direct unit smoke test shows clean run → 0 scars; capture run → `identity-drift` + `applause-chasing`; overreach run → 1 scar with `gap 6/10`; full collapse → 7 scars; archive round-trips through disk. Two-event seed test shows the trail surfacing through the API with real timestamps, descriptions, and wisdom. Full Wave 6–16 regression remains green.
 
+### Wave 17.5 — Atmospheric coherence: one nervous system
+
+No isolated widgets. The dashboard now distributes its breath through a single source: a `data-weather` attribute on `<main>` (set from the cognitive weather) drives four CSS custom properties — `--atmos-rate`, `--atmos-gap`, `--atmos-transition`, `--atmos-vignette` — that every element subscribes to. Change the weather, and the entire page reorganises around it.
+
+| weather | rate | gap | transition | vignette |
+|---|---|---|---|---|
+| awake | 0s (none) | 1.5rem | 500ms | 0 |
+| flourishing | 5s | 1.5rem | 500ms | 0 |
+| breathing | 4s | 1.75rem | 700ms | 0.04 |
+| restrained | 7s | 2.0rem | 900ms | 0.10 |
+| hushed | 11s | 2.25rem | 1200ms | 0.18 |
+| strained | 2.4s | 1.25rem | 400ms | 0.06 |
+| dormant | 8s | 1.5rem | 800ms | 0.18 |
+
+Two opt-in classes — `.atmos-breathe` and `.atmos-breathe-faint` — use `animation-duration: var(--atmos-rate)`, so the cognitive pulse line, the deep-cognition tone dots, and the silence banner's transitions all breathe at the same cadence as the weather. The `.atmos-vignette` overlay deepens during inward states and dissolves during awake/flourishing — never decorative, only felt presence.
+
+Section gaps subscribe via `style={{ gap: 'var(--atmos-gap)' }}` — so the page literally widens when the organism turns inward and tightens when it strains. The silence banner's box-shadow transitions use `var(--atmos-transition)`, so even state changes adopt the cadence the organism is in.
+
+Verified across four weather conditions: fresh state → `awake` (no breath, brisk transitions, no vignette); hostile state (saturation + restraint depletion + storm) → `hushed` with `breathe-go-quiet` (11s breath, 2.25rem gaps, 1.2s transitions, deeper vignette); silence accumulated → `restrained`; full coherence → `flourishing`. Each weather has a distinct felt signature derived purely from persistent state. Full Wave 6–16 regression remains green.
+
 ## Wave 16 — Generative Civilization Presence (Phases 401–500)
 
 Wave 15 made the organism unbreakable; Wave 16 asks what it gives back. The governing shift: the organism stops asking *"how do we survive reality?"* and begins asking **"how does reality become different because we existed beautifully inside it?"** State persists to `data/runtime/generative-presence.json` — civilization coherence, generative impact, beauty moments created, hope seeds planted, cynicism repelled, collective healing dispatched.

@@ -104,7 +104,11 @@ export function PulseBanner({ m }: { m: RuntimeManifestation }) {
         </span>
       </div>
       <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="w-full h-[70px]">
+        {/* The pulse line itself subscribes to atmospheric breath.
+            When silence deepens, the heartbeat trace softens with
+            the same cadence as everything else on the page. */}
         <polyline
+          className="atmos-breathe"
           points={pts}
           fill="none"
           stroke={tone}
@@ -486,8 +490,13 @@ export function SilenceBanner({ m }: { m: RuntimeManifestation }) {
 
   return (
     <div
-      className="border hairline bg-ink-900/50 px-5 py-4 flex flex-col gap-3 transition-all duration-1000"
-      style={{ boxShadow: innerGlow }}
+      className="border hairline bg-ink-900/50 px-5 py-4 flex flex-col gap-3"
+      style={{
+        boxShadow: innerGlow,
+        // Transition timing inherits the atmospheric cadence — state
+        // changes themselves slow with the organism's attention.
+        transition: 'box-shadow var(--atmos-transition) ease-in-out',
+      }}
     >
       <div className="flex items-baseline justify-between gap-3">
         <div className="flex items-baseline gap-3">
@@ -585,7 +594,7 @@ export function DeepCognitionGrid({ m }: { m: RuntimeManifestation }) {
             <div className="flex items-baseline justify-between gap-2">
               <div className="flex items-baseline gap-2">
                 <span
-                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                  className="w-1.5 h-1.5 rounded-full shrink-0 atmos-breathe-faint"
                   style={{ background: toneOf(layer.tone), opacity: 0.85 }}
                 />
                 <h3 className="text-[12px] tracking-[0.2em] uppercase text-bone-100/85">

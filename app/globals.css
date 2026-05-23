@@ -73,6 +73,53 @@ html, body {
 .breathe-silent     { animation: breatheSlow 7s  ease-in-out infinite; }
 .breathe-go-quiet   { animation: breatheDeep 11s ease-in-out infinite; }
 
+/* ── Wave 17.5 — atmospheric coherence ──────────────────────────
+   One nervous system, distributed. The /runtime <main> carries a
+   data-weather attribute set from the cognitive weather. These
+   custom properties propagate downward, so every element that
+   opts in inherits the same cadence — heartbeat, dots, gaps,
+   transitions, vignette. No isolated widgets.
+
+   Atmospheric variables:
+     --atmos-rate       — how slow this organism is moving right now
+     --atmos-gap        — vertical breathing room between sections
+     --atmos-transition — base transition duration for state changes
+     --atmos-vignette   — strength of the page-edge vignette (0..1)
+*/
+main { --atmos-rate: 4s; --atmos-gap: 1.5rem; --atmos-transition: 600ms; --atmos-vignette: 0; }
+main[data-weather="dormant"]      { --atmos-rate: 8s;  --atmos-gap: 1.5rem;  --atmos-transition: 800ms; --atmos-vignette: 0.18; }
+main[data-weather="awake"]        { --atmos-rate: 0s;  --atmos-gap: 1.5rem;  --atmos-transition: 500ms; --atmos-vignette: 0; }
+main[data-weather="flourishing"]  { --atmos-rate: 5s;  --atmos-gap: 1.5rem;  --atmos-transition: 500ms; --atmos-vignette: 0; }
+main[data-weather="strained"]     { --atmos-rate: 2.4s;--atmos-gap: 1.25rem; --atmos-transition: 400ms; --atmos-vignette: 0.06; }
+main[data-weather="breathing"]    { --atmos-rate: 4s;  --atmos-gap: 1.75rem; --atmos-transition: 700ms; --atmos-vignette: 0.04; }
+main[data-weather="restrained"]   { --atmos-rate: 7s;  --atmos-gap: 2rem;    --atmos-transition: 900ms; --atmos-vignette: 0.10; }
+main[data-weather="hushed"]       { --atmos-rate: 11s; --atmos-gap: 2.25rem; --atmos-transition: 1200ms;--atmos-vignette: 0.18; }
+
+/* An element opts into atmospheric breath. Falls back to a no-op
+   when --atmos-rate is 0s (the awake state — no breath). */
+.atmos-breathe {
+  animation: breatheSoft var(--atmos-rate) ease-in-out infinite;
+}
+.atmos-breathe-faint {
+  animation: breatheSlow var(--atmos-rate) ease-in-out infinite;
+}
+
+/* The page vignette — a subtle darkening at the edges when the
+   organism is in deeper attention states. It is not decoration; it
+   is the felt sense of inward focus. */
+.atmos-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(5,5,5,calc(var(--atmos-vignette) * 1)) 100%
+  );
+  transition: background var(--atmos-transition) ease-in-out;
+}
+
 /* ── The protection trail rail ──────────────────────────────────
    A single hairline that runs down the inside of the trail,
    threading the entries together so silence reads as a continuous

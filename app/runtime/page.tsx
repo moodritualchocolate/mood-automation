@@ -61,8 +61,18 @@ export default function RuntimePage() {
   const dot = LIVENESS_COLOR[b.liveness];
 
   return (
-    <main className="min-h-screen px-6 md:px-10 py-8 flex flex-col gap-6">
-      <header className="flex flex-col gap-3">
+    <main
+      className="min-h-screen px-6 md:px-10 py-8 flex flex-col relative"
+      data-weather={m.deepCognition.weather.weather}
+      style={{ gap: 'var(--atmos-gap)' }}
+    >
+      {/* Wave 17.5 — atmospheric coherence. A subtle vignette that
+          deepens when the organism's attention turns inward. Never
+          decorative; the strength comes from --atmos-vignette which
+          is driven by the cognitive weather of the moment. */}
+      <div className="atmos-vignette" aria-hidden />
+
+      <header className="flex flex-col gap-3 relative z-10">
         <div className="flex items-center gap-3">
           {/* The status dot inherits the cognitive weather breath
               when silence is the move — so the very heartbeat at the
