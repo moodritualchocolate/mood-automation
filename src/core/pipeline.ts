@@ -647,6 +647,111 @@ import {
   readSovereignPresenceCheck,
   readExistentialResilienceMonitor,
   readExistentialIntegrityEngine,
+  // Wave 16 — generative civilization presence (Phases 401–500)
+  createGenerativePresenceStore,
+  evolveGenerativeFromBeauty,
+  evolveGenerativeFromForce,
+  evolveGenerativeFromQuiet,
+  readCivilizationPresenceField,
+  readMeaningPropagationEngine,
+  readTrustGravityWell,
+  readSymbolicWorldbuildingRuntime,
+  readMythogenesisLayer,
+  readCollectiveHealingPatterns,
+  readResonanceFieldExpansion,
+  readNonManipulativeInfluenceSystem,
+  readBeautyPersistenceRuntime,
+  readAntiCynicismField,
+  readCoherentHopeArchitecture,
+  readCollectiveNervousSystemRepair,
+  readSymbolGenerationKernel,
+  readMythDensityTracker,
+  readBeautyResonanceMonitor,
+  readCollectiveWoundReader,
+  readHopeSeedDetector,
+  readCynicismVectorScanner,
+  readGenerativePresenceMeter,
+  readPresenceFieldRadius,
+  readMeaningDensityField,
+  readMeaningHalfLifeTracker,
+  readTrustGravityStrength,
+  readTrustGravityRadius,
+  readSymbolicLanguageGenerator,
+  readSymbolicCoherenceValidator,
+  readMythArchetypeMatcher,
+  readMythTimelinessGauge,
+  readCollectiveHealingDispatch,
+  readCollectiveHealingMonitor,
+  readResonanceWaveformAnalyzer,
+  readResonanceFieldCoherence,
+  readInfluenceWithoutPersuasion,
+  readInvitationOverPersuasionGovernor,
+  readBeautyDurabilityScanner,
+  readBeautyResonanceWithSilence,
+  readCynicismImmunityLayer,
+  readAntiNihilismRuntime,
+  readHopeCoherenceValidator,
+  readHopeWithoutDelusion,
+  readCollectiveBreathRestoration,
+  readNervousSystemRegulationFlow,
+  readPresenceWithoutPerformance,
+  readGenerativeContagionMap,
+  readGenerativeImpactAttribution,
+  readBeautyContagionTracker,
+  readGentleStrengthIndex,
+  readQuietAuthorityField,
+  readCoherentMeaningBroadcast,
+  readSymbolicArtifactPersistence,
+  readMeaningSpreadVelocity,
+  readMeaningSpreadFidelity,
+  readSymbolicWorldExpansionMap,
+  readMythNarrativeAlignmentScanner,
+  readHealingRippleTracker,
+  readWoundRecognitionEngine,
+  readGentleTruthDelivery,
+  readAntiPressurePresence,
+  readPresenceAsServiceMonitor,
+  readSymbolicGiftEngine,
+  readMeaningGiftLedger,
+  readGenerativeAccountabilityArchive,
+  readPresenceWithoutPredation,
+  readAntiEngagementOptimization,
+  readBeautyOverSpectacleGovernor,
+  readSubstantiveDepthScanner,
+  readCoherentJoyArchitecture,
+  readCollectiveResonanceHarvester,
+  readCivicTrustBuilder,
+  readSymbolicSovereigntyRespect,
+  readPluralisticPresenceLayer,
+  readGentlePresenceCadence,
+  readAntiColonizationLayer,
+  readPresenceOfferingFormatEngine,
+  readQuietPresenceMagnetism,
+  readPresenceWithoutOwnership,
+  readGentleReclamationLayer,
+  readAntiOtheringEngine,
+  readSymbolicRefugeProvider,
+  readMeaningAnchoringRuntime,
+  readGenerativePresenceWatchdog,
+  readCivilizationFlourishingAccelerator,
+  readBeautyAsTruthValidator,
+  readRestingPresenceMonitor,
+  readSilenceAsGiftDetector,
+  readGenerativeImpactAuditor,
+  readGenerativePresenceHealthCheck,
+  readCivilizationCoherenceMonitor,
+  readCoherentHopeIntegrityValidator,
+  readGenerativePresenceDignityCheck,
+  readMeaningPropagationCoherence,
+  readGenerativePresenceCoherence,
+  readGenerativePresenceGovernor,
+  readGenerativePresenceBoundary,
+  readGenerativePresencePresenceCheck,
+  readCivilizationFlourishingScore,
+  readGenerativeIntegrityCoherence,
+  readGenerativePresenceMemoryArchive,
+  readExistentialPresenceResilienceMonitor,
+  readCivilizationCoherenceRuntime,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -1029,6 +1134,18 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: sovereignIdentityState.preservationCycles === 0
       ? 'the organism is beginning to defend its identity against live reality for the first time'
       : `sovereign identity: ${sovereignIdentityState.preservationCycles} cycles · sovereignty ${sovereignIdentityState.sovereigntyScore}/10 · integrity ${sovereignIdentityState.coreIntegrityScore}/10 · ${sovereignIdentityState.truthChosenOverPopularity} truth / ${sovereignIdentityState.popularityChosenOverTruth} popularity`,
+  });
+
+  // ─── Wave 16 — load the organism's generative-presence state ──
+  // The deepest question now: does reality become different because
+  // the brand existed beautifully inside it?
+  const generativePresenceStore = createGenerativePresenceStore();
+  const generativePresenceState = await generativePresenceStore.read();
+  emit({
+    stage: 'generative-presence',
+    message: generativePresenceState.presenceCycles === 0
+      ? 'the organism is preparing to change reality by existing beautifully inside it for the first time'
+      : `generative presence: ${generativePresenceState.presenceCycles} cycles · coherence ${generativePresenceState.civilizationCoherenceScore}/10 · impact ${generativePresenceState.generativeImpactScore}/10 · ${generativePresenceState.beautyMomentsCreated} beauty / ${generativePresenceState.forcedInfluenceAttempts} forced`,
   });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
@@ -4186,6 +4303,168 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 16 — GENERATIVE CIVILIZATION PRESENCE (401-500) ══
+      // The deepest question yet: "How does reality become different
+      // because we existed beautifully inside it?"
+      const gpForcing = antiOptimizationReading.optimization_corrupts_truth || cplResonance.is_stimulus_addiction;
+      const gpField = readCivilizationPresenceField({
+        sovereignty: sovereignIdentityState.sovereigntyScore,
+        livingReputation: lcLivingRep.living_reputation,
+        forcedInfluence: gpForcing,
+      });
+      const gpMeaningProp = readMeaningPropagationEngine({
+        meaningDensity: feedbackState.meaningPersistenceScore,
+        trustGravity: generativePresenceState.trustGravityAccumulated,
+      });
+      const gpTrustWell = readTrustGravityWell({
+        livingReputation: lcLivingRep.living_reputation, trustNetGain: feedbackState.trustNetGain,
+      });
+      const gpWorldBuild = readSymbolicWorldbuildingRuntime({
+        symbolDensity: feedbackState.meaningPersistenceScore, symbolCoherence: civIdentityHeld ? 8 : 4,
+      });
+      const gpMythogen = readMythogenesisLayer({
+        archetypePresent: civIdentityHeld, symbolPersistence: feedbackState.meaningPersistenceScore,
+        timelinessRight: lcWeather.weather === 'calm' || lcWeather.weather === 'aftermath',
+      });
+      const gpHealingPatterns = readCollectiveHealingPatterns({
+        audienceWoundedByExhaustion: executiveWorldState.collective_exhaustion >= 7,
+        audienceWoundedByCynicism: executiveWorldState.trust_erosion >= 7,
+        brandAbleToOfferQuiet: civIdentityHeld && !gpForcing,
+      });
+      const gpResExp = readResonanceFieldExpansion({
+        meaningPropagated: generativePresenceState.meaningPropagated,
+        trustGravity: generativePresenceState.trustGravityAccumulated,
+      });
+      const gpNonManip = readNonManipulativeInfluenceSystem({
+        invitesNotPushes: !gpForcing, manipulating: antiOptimizationReading.optimization_corrupts_truth,
+      });
+      const gpBeautyPersist = readBeautyPersistenceRuntime({
+        beautyPresent: civIdentityHeld && !gpForcing,
+        truthful: !antiOptimizationReading.optimization_corrupts_truth,
+        carriedSecondHand: fbSecondHand.action_is_being_carried,
+      });
+      const gpAntiCyn = readAntiCynicismField({
+        sincerityPresent: civIdentityHeld, sustainedOverTime: sovereignIdentityState.preservationCycles >= 2,
+        cynicismPressure: executiveWorldState.trust_erosion,
+      });
+      const gpHope = readCoherentHopeArchitecture({
+        hopeOffered: civIdentityHeld && !gpForcing,
+        withoutDelusion: !antiOptimizationReading.optimization_corrupts_truth,
+        withoutDespair: executiveWorldState.collective_exhaustion < 8,
+      });
+      const gpNsRepair = readCollectiveNervousSystemRepair({
+        audienceOverloaded: executiveWorldState.digital_overload >= 7,
+        brandOfferingSlowness: !gpForcing, brandOfferingPermission: civIdentityHeld,
+      });
+      const gpSymGen = readSymbolGenerationKernel({
+        meaningDensity: feedbackState.meaningPersistenceScore, symbolicCoherence: civIdentityHeld ? 8 : 4,
+      });
+      const gpMythDens = readMythDensityTracker({ archetypeCount: 1, symbolReuse: 3 });
+      const gpBeautyRes = readBeautyResonanceMonitor({ beautyPresent: !gpForcing, audienceReceptive: !lcStress.too_stressed_to_act_on });
+      const gpWound = readCollectiveWoundReader({
+        exhaustionHigh: executiveWorldState.collective_exhaustion >= 7,
+        trustEroded: executiveWorldState.trust_erosion >= 7,
+        isolationHigh: executiveWorldState.loneliness_index >= 7,
+      });
+      const gpHopeSeed = readHopeSeedDetector({
+        truthfulOptimism: civIdentityHeld && !antiOptimizationReading.optimization_corrupts_truth,
+        groundedInReality: lcPresenceVer.is_present,
+      });
+      const gpCynVec = readCynicismVectorScanner({ cynicismLevel: executiveWorldState.trust_erosion, ironicTone: false });
+      const gpPresMeter = readGenerativePresenceMeter({ fieldStrength: gpField.field_strength, meaningPropagating: gpMeaningProp.propagating });
+      const gpRadius = readPresenceFieldRadius({ fieldStrength: gpField.field_strength, secondHandSpread: fbSecondHand.second_hand_resonance });
+      const gpDensField = readMeaningDensityField({ meaningPropagated: generativePresenceState.meaningPropagated, presenceCycles: Math.max(1, generativePresenceState.presenceCycles) });
+      const gpHalfLife = readMeaningHalfLifeTracker({ persistenceScore: feedbackState.meaningPersistenceScore });
+      const gpTGStr = readTrustGravityStrength({ gravityWellStrength: gpTrustWell.gravity_strength });
+      const gpTGRad = readTrustGravityRadius({ gravityStrength: gpTrustWell.gravity_strength, secondHandSpread: fbSecondHand.second_hand_resonance });
+      const gpSymLang = readSymbolicLanguageGenerator({ uniquePhrasesUsed: 3, consistentVoice: civIdentityHeld });
+      const gpSymCoh = readSymbolicCoherenceValidator({ symbolsAligned: civIdentityHeld, voiceUnified: civIdentityHeld });
+      const gpMythArch = readMythArchetypeMatcher({ storyShape: civIdentityHeld ? 'quiet-witness' : 'none' });
+      const gpMythTime = readMythTimelinessGauge({ culturalNeedForMyth: executiveWorldState.trust_erosion });
+      const gpHealDispatch = readCollectiveHealingDispatch({ woundDetected: gpWound.wound_detected, patternAvailable: gpHealingPatterns.pattern_kind });
+      const gpHealMon = readCollectiveHealingMonitor({ dispatched: gpHealDispatch.dispatched, received: !lcStress.too_stressed_to_act_on });
+      const gpResWave = readResonanceWaveformAnalyzer({ intensity: couplingState.trustLevel, persistence: feedbackState.meaningPersistenceScore });
+      const gpResFCoh = readResonanceFieldCoherence({ fieldVariance: lcSentimentField.field_variance, fieldMean: lcSentimentField.field_mean });
+      const gpInfNoP = readInfluenceWithoutPersuasion({ presenceField: gpField.field_strength, pushing: gpForcing });
+      const gpInvGov = readInvitationOverPersuasionGovernor({ inviting: !gpForcing, persuading: gpForcing });
+      const gpBeautyDur = readBeautyDurabilityScanner({ beautyAge: 2, stillResonating: feedbackState.meaningPersistenceScore >= 5 });
+      const gpBeautySil = readBeautyResonanceWithSilence({ beautyDepth: civIdentityHeld ? 7 : 3, silencePresent: cplSilence.recommend_silence });
+      const gpCynImm = readCynicismImmunityLayer({ sincerityHeld: civIdentityHeld, cynicismPressure: executiveWorldState.trust_erosion });
+      const gpAntiNih = readAntiNihilismRuntime({ meaningOffered: !gpForcing, despairResisted: executiveWorldState.collective_exhaustion < 8 });
+      const gpHopeCoh = readHopeCoherenceValidator({ hopeOffered: gpHope.hope_is_coherent, groundedInReality: lcPresenceVer.is_present });
+      const gpHopeNoDel = readHopeWithoutDelusion({ hope: gpHope.hope_is_coherent, acknowledgesDifficulty: true });
+      const gpBreath = readCollectiveBreathRestoration({ offeredPause: cplSilence.recommend_silence, audienceFatigued: cplSocialExhaustion.social_exhaustion >= 6 });
+      const gpNsFlow = readNervousSystemRegulationFlow({ calmingPresence: civIdentityHeld && !gpForcing, audiencePulse: 7 });
+      const gpNotPerf = readPresenceWithoutPerformance({ present: lcPresenceVer.is_present, performing: cplResonance.is_stimulus_addiction });
+      const gpGenCont = readGenerativeContagionMap({ beautyPresent: !gpForcing, secondHandSpread: fbSecondHand.second_hand_resonance });
+      const gpGenIA = readGenerativeImpactAttribution({ beautyMadeIt: !gpForcing, clarity: lcSignalAgg.live_signal_strength });
+      const gpBContag = readBeautyContagionTracker({ momentsCarried: generativePresenceState.beautyMomentsCreated });
+      const gpGentleStr = readGentleStrengthIndex({ sovereignty: sovereignIdentityState.sovereigntyScore, softness: 7 });
+      const gpQuietAuth = readQuietAuthorityField({ authorityEarned: civIdentityHeld, demanding: gpForcing });
+      const gpCohBcast = readCoherentMeaningBroadcast({ messagesAligned: civIdentityHeld });
+      const gpSymArt = readSymbolicArtifactPersistence({ artifactDepth: feedbackState.meaningPersistenceScore });
+      const gpSpreadVel = readMeaningSpreadVelocity({ meaningsCarried: generativePresenceState.meaningPropagated });
+      const gpSpreadFid = readMeaningSpreadFidelity({ memeticIntegrity: fbMemetic.integrity_score });
+      const gpWorldExp = readSymbolicWorldExpansionMap({ worldGrowthSignals: gpField.field_strength });
+      const gpMythAlign = readMythNarrativeAlignmentScanner({ mythActive: gpMythogen.myth_taking_root, narrativeMatchesMyth: civIdentityHeld });
+      const gpHealRipple = readHealingRippleTracker({ secondHandHealings: gpHealMon.healing_landing ? 1 : 0 });
+      const gpWoundRec = readWoundRecognitionEngine({ detected: gpWound.wound_detected, kind: gpWound.wound_kind });
+      const gpGentleTruth = readGentleTruthDelivery({ truthOffered: !antiOptimizationReading.optimization_corrupts_truth, deliveredHarshly: gpForcing });
+      const gpAntiPress = readAntiPressurePresence({ applyingPressure: gpForcing });
+      const gpService = readPresenceAsServiceMonitor({ presenceServesAudience: !gpForcing });
+      const gpGift = readSymbolicGiftEngine({ offeringMeaningWithoutAsk: !gpForcing });
+      const gpGiftLed = readMeaningGiftLedger({ priorGifts: generativePresenceState.beautyMomentsCreated, thisCycleGift: gpGift.gift_offered });
+      const gpAcct = readGenerativeAccountabilityArchive({ forcedAttempts: generativePresenceState.forcedInfluenceAttempts, beautyCount: generativePresenceState.beautyMomentsCreated });
+      const gpNoPredate = readPresenceWithoutPredation({ extractingAttention: gpForcing });
+      const gpNoOptEng = readAntiEngagementOptimization({ optimizingForEngagement: cplResonance.is_stimulus_addiction });
+      const gpBeautyOverSpec = readBeautyOverSpectacleGovernor({ beautifulOptionPicked: !gpForcing, spectacleOptionPicked: gpForcing });
+      const gpDepth = readSubstantiveDepthScanner({ meaningWeight: feedbackState.meaningPersistenceScore });
+      const gpJoy = readCoherentJoyArchitecture({ joyOffered: !gpForcing, sincere: civIdentityHeld });
+      const gpResHarv = readCollectiveResonanceHarvester({ resonanceAccrued: feedbackState.resonanceCurveAUC });
+      const gpCivicTrust = readCivicTrustBuilder({ contributingToCollective: !gpForcing });
+      const gpSymSov = readSymbolicSovereigntyRespect({ takesFromOthers: false });
+      const gpPlural = readPluralisticPresenceLayer({ addressesMultipleAudiences: true });
+      const gpCadence = readGentlePresenceCadence({ spaceBetween: cplSilence.recommend_silence ? 5 : 2 });
+      const gpAntiCol = readAntiColonizationLayer({ takingOverSpace: gpForcing });
+      const gpFormat = readPresenceOfferingFormatEngine({ formatMatchesContent: true });
+      const gpQuietMag = readQuietPresenceMagnetism({ quiet: !gpForcing, drawingAttentionAnyway: gpTrustWell.pulling_without_effort });
+      const gpNotOwn = readPresenceWithoutOwnership({ clingingToControl: gpForcing });
+      const gpGentleRec = readGentleReclamationLayer({ reclaimingSpaceForcefully: gpForcing });
+      const gpAntiOther = readAntiOtheringEngine({ castingAnEnemy: false });
+      const gpRefuge = readSymbolicRefugeProvider({ audienceNeedsRefuge: lcStress.too_stressed_to_act_on, brandOfferingShelter: civIdentityHeld });
+      const gpAnchor = readMeaningAnchoringRuntime({ foundingMeaningPresent: civIdentityHeld });
+      const gpWatchdog = readGenerativePresenceWatchdog({ fieldStrength: gpField.field_strength, forcing: gpForcing });
+      const gpFlourAcc = readCivilizationFlourishingAccelerator({ coherenceScore: generativePresenceState.civilizationCoherenceScore });
+      const gpBeautyAsTruth = readBeautyAsTruthValidator({ beautiful: !gpForcing, truthful: !antiOptimizationReading.optimization_corrupts_truth });
+      const gpResting = readRestingPresenceMonitor({ silentThisCycle: !actPublish.publish_decision || actPublish.publish_decision !== 'publish', presenceStillHeld: lcPresenceVer.is_present });
+      const gpSilGift = readSilenceAsGiftDetector({ silenceCame: cplSilence.recommend_silence, audienceWanted: lcStress.too_stressed_to_act_on });
+      const gpImpactAud = readGenerativeImpactAuditor({ claimedImpact: lcImpact.impact_strength, verifiedImpact: lcAttribution.attribution_share });
+      const gpHealth = readGenerativePresenceHealthCheck({ fieldStrength: gpField.field_strength, coherence: generativePresenceState.civilizationCoherenceScore });
+      const gpCohMon = readCivilizationCoherenceMonitor({ coherenceScore: generativePresenceState.civilizationCoherenceScore });
+      const gpHopeInt = readCoherentHopeIntegrityValidator({ hopeCoherent: gpHope.hope_is_coherent, notDeluded: gpHopeNoDel.honest_hope });
+      const gpDignity = readGenerativePresenceDignityCheck({ presenceDignified: !cplResonance.is_stimulus_addiction });
+      const gpPropCoh = readMeaningPropagationCoherence({ velocity: gpSpreadVel.velocity, fidelity: gpSpreadFid.fidelity });
+      const gpPresCoh = readGenerativePresenceCoherence({ fieldStrong: gpField.field_strength >= 6, forcing: gpForcing, offeringGifts: gpGift.gift_offered });
+      const gpPresGov = readGenerativePresenceGovernor({ fieldGenerative: gpField.field_is_generative, forcing: gpForcing, coherent: gpPresCoh.coherent });
+      const gpBoundary = readGenerativePresenceBoundary({ forcingInfluence: gpForcing, manipulating: antiOptimizationReading.optimization_corrupts_truth, predating: cplResonance.is_stimulus_addiction });
+      const gpPresCheck = readGenerativePresencePresenceCheck({ fieldGenerative: gpField.field_is_generative, withinBoundary: gpBoundary.within });
+      const gpFlourScore = readCivilizationFlourishingScore({ coherence: generativePresenceState.civilizationCoherenceScore, beauty: gpBeautyPersist.persistence_score, hope: gpHopeSeed.seed_quality });
+      const gpIntCoh = readGenerativeIntegrityCoherence({ presenceCoherent: gpPresCoh.coherent, meaningCoherent: gpPropCoh.coherent, hopeCoherent: gpHopeCoh.coherent });
+      const gpMemory = readGenerativePresenceMemoryArchive({ cycles: generativePresenceState.presenceCycles, beautyMoments: generativePresenceState.beautyMomentsCreated });
+      const gpResilience = readExistentialPresenceResilienceMonitor({ presenceCycles: generativePresenceState.presenceCycles, flourishingShare: 0.5 });
+      const gpKernel = readCivilizationCoherenceRuntime({
+        state: generativePresenceState, governor: gpPresGov,
+        presenceField: gpField, hope: gpHope, coherence: gpIntCoh,
+      });
+      emit({
+        stage: 'generative-presence',
+        message: `${gpKernel.generative_state} (${gpKernel.civilization_coherence_score}/10) · ${gpPresGov.governance} · "${gpKernel.what_the_world_received}"`,
+      });
+      if (gpKernel.damaged_reality_by_forcing) {
+        emit({ stage: 'generative-presence', message: 'META-CRITIC FLAG — the brand damaged reality by forcing it' });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -4498,6 +4777,12 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         idBleed, idVoiceAmp, idWatchdog, idDoubt, idCohesion, idForce, idMaint, idFid,
         idPressBuf, idActFilter, idCoherUnder, idPopAttr, idCoherValid, idGovernor,
         idPresenceCheck, idExistRes, idKernel,
+        // Wave 16 — generative civilization presence
+        gpKernel, gpPresGov, gpBoundary, gpPresCheck, gpField,
+        gpHope, gpBeautyAsTruth, gpWatchdog, gpAcct, gpHealth, gpFlourScore,
+        gpIntCoh, gpDignity, gpPresCoh, gpNonManip, gpInvGov, gpAntiPress,
+        gpService, gpNoPredate, gpNoOptEng, gpBeautyOverSpec, gpQuietAuth,
+        gpGift, gpAntiCol, gpNotOwn, gpAntiOther, gpAntiCyn, gpAntiNih,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -5123,6 +5408,49 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               presenceCheck: idPresenceCheck, existentialResilience: idExistRes,
               kernel: idKernel,
             },
+            presence: {
+              field: gpField, meaningProp: gpMeaningProp, trustWell: gpTrustWell,
+              worldBuild: gpWorldBuild, mythogen: gpMythogen,
+              healingPatterns: gpHealingPatterns, resonanceExpansion: gpResExp,
+              nonManipInfluence: gpNonManip, beautyPersist: gpBeautyPersist,
+              antiCynicism: gpAntiCyn, hope: gpHope, nsRepair: gpNsRepair,
+              symbolGen: gpSymGen, mythDensity: gpMythDens, beautyRes: gpBeautyRes,
+              woundReader: gpWound, hopeSeed: gpHopeSeed, cynicismVec: gpCynVec,
+              presenceMeter: gpPresMeter, fieldRadius: gpRadius,
+              meaningDensField: gpDensField, meaningHalfLife: gpHalfLife,
+              trustGravStr: gpTGStr, trustGravRad: gpTGRad,
+              symLang: gpSymLang, symCoh: gpSymCoh,
+              mythArch: gpMythArch, mythTime: gpMythTime,
+              healDispatch: gpHealDispatch, healMonitor: gpHealMon,
+              resWave: gpResWave, resFieldCoh: gpResFCoh,
+              infNoPersuade: gpInfNoP, invitationGov: gpInvGov,
+              beautyDur: gpBeautyDur, beautySilence: gpBeautySil,
+              cynicismImm: gpCynImm, antiNihilism: gpAntiNih,
+              hopeCoh: gpHopeCoh, hopeNotDelusion: gpHopeNoDel,
+              breath: gpBreath, nsFlow: gpNsFlow, notPerforming: gpNotPerf,
+              genContagion: gpGenCont, genImpactAttr: gpGenIA,
+              beautyContagion: gpBContag, gentleStrength: gpGentleStr,
+              quietAuth: gpQuietAuth, coherentBroadcast: gpCohBcast,
+              symArtifact: gpSymArt, spreadVel: gpSpreadVel, spreadFid: gpSpreadFid,
+              worldExp: gpWorldExp, mythAlign: gpMythAlign,
+              healRipple: gpHealRipple, woundRec: gpWoundRec,
+              gentleTruth: gpGentleTruth, antiPressure: gpAntiPress,
+              serviceMonitor: gpService, giftEngine: gpGift, giftLedger: gpGiftLed,
+              genAcct: gpAcct, notPredating: gpNoPredate, notOptEng: gpNoOptEng,
+              beautyOverSpec: gpBeautyOverSpec, depth: gpDepth, joy: gpJoy,
+              resHarvest: gpResHarv, civicTrust: gpCivicTrust, symSov: gpSymSov,
+              plural: gpPlural, cadence: gpCadence, antiColon: gpAntiCol,
+              formatEng: gpFormat, quietMag: gpQuietMag, notOwning: gpNotOwn,
+              gentleRec: gpGentleRec, antiOther: gpAntiOther, refuge: gpRefuge,
+              anchor: gpAnchor, watchdog: gpWatchdog,
+              flourishAcc: gpFlourAcc, beautyAsTruth: gpBeautyAsTruth,
+              resting: gpResting, silenceGift: gpSilGift, impactAudit: gpImpactAud,
+              health: gpHealth, cohMonitor: gpCohMon, hopeIntegrity: gpHopeInt,
+              dignity: gpDignity, propCoh: gpPropCoh, coherence: gpPresCoh,
+              governor: gpPresGov, boundary: gpBoundary, presenceCheck: gpPresCheck,
+              flourishScore: gpFlourScore, integrityCoh: gpIntCoh,
+              memory: gpMemory, resilience: gpResilience, kernel: gpKernel,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -5400,6 +5728,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             : `popularity captured this cycle — corruption logged, sovereignty ${sovereignIdentityState.sovereigntyScore}/10 → ${evolvedIdentity.sovereigntyScore}/10`,
         });
 
+        // ─── Wave 16 — generative presence resolves. Did the brand
+        // create beauty/meaning, or did it force reality?
+        const evolvedGenerative = gpKernel.damaged_reality_by_forcing
+          ? evolveGenerativeFromForce(generativePresenceState)
+          : evolveGenerativeFromBeauty(generativePresenceState);
+        await generativePresenceStore.save(evolvedGenerative);
+        emit({
+          stage: 'generative-presence',
+          message: gpKernel.damaged_reality_by_forcing
+            ? `the run forced reality — coherence ${generativePresenceState.civilizationCoherenceScore}/10 → ${evolvedGenerative.civilizationCoherenceScore}/10`
+            : `the run created beauty — coherence ${generativePresenceState.civilizationCoherenceScore}/10 → ${evolvedGenerative.civilizationCoherenceScore}/10, ${evolvedGenerative.beautyMomentsCreated} moment(s) on record`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -5580,6 +5921,15 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   emit({
     stage: 'sovereign-identity',
     message: `identity rested through restraint — sovereignty ${sovereignIdentityState.sovereigntyScore}/10 → ${restedIdentity.sovereigntyScore}/10`,
+  });
+
+  // ─── Wave 16 — silence keeps generative presence intact without
+  // spending it. Presence accumulates quietly.
+  const quietGenerative = evolveGenerativeFromQuiet(generativePresenceState);
+  await generativePresenceStore.save(quietGenerative);
+  emit({
+    stage: 'generative-presence',
+    message: `generative presence rested in silence — coherence ${generativePresenceState.civilizationCoherenceScore}/10 → ${quietGenerative.civilizationCoherenceScore}/10`,
   });
 
   throw new ExhaustedAttempts(

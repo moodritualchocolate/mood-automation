@@ -507,6 +507,35 @@ import type { IdentitySovereigntyGovernorReading } from '@lib/identitySovereignt
 import type { SovereignPresenceCheckReading } from '@lib/sovereignPresenceCheck';
 import type { ExistentialResilienceReading } from '@lib/existentialResilienceMonitor';
 import type { ExistentialIntegrityReading } from '@lib/existentialIntegrityEngine';
+// Wave 16 — generative civilization presence (Phases 401–500)
+import type { CivilizationCoherenceRuntimeReading } from '@lib/civilizationCoherenceRuntime';
+import type { GenerativePresenceGovernorReading } from '@lib/generativePresenceGovernor';
+import type { GenerativePresenceBoundaryReading } from '@lib/generativePresenceBoundary';
+import type { GenerativePresencePresenceCheckReading } from '@lib/generativePresencePresenceCheck';
+import type { CivilizationPresenceFieldReading } from '@lib/civilizationPresenceField';
+import type { CoherentHopeArchitectureReading } from '@lib/coherentHopeArchitecture';
+import type { BeautyAsTruthValidatorReading } from '@lib/beautyAsTruthValidator';
+import type { GenerativePresenceWatchdogReading } from '@lib/generativePresenceWatchdog';
+import type { GenerativeAccountabilityReading } from '@lib/generativeAccountabilityArchive';
+import type { GenerativePresenceHealthCheckReading } from '@lib/generativePresenceHealthCheck';
+import type { CivilizationFlourishingScoreReading } from '@lib/civilizationFlourishingScore';
+import type { GenerativeIntegrityCoherenceReading } from '@lib/generativeIntegrityCoherence';
+import type { GenerativePresenceDignityCheckReading } from '@lib/generativePresenceDignityCheck';
+import type { GenerativePresenceCoherenceReading } from '@lib/generativePresenceCoherence';
+import type { NonManipulativeInfluenceReading } from '@lib/nonManipulativeInfluenceSystem';
+import type { InvitationOverPersuasionReading } from '@lib/invitationOverPersuasionGovernor';
+import type { AntiPressurePresenceReading } from '@lib/antiPressurePresence';
+import type { PresenceAsServiceReading } from '@lib/presenceAsServiceMonitor';
+import type { PresenceWithoutPredationReading } from '@lib/presenceWithoutPredation';
+import type { AntiEngagementOptimizationReading } from '@lib/antiEngagementOptimization';
+import type { BeautyOverSpectacleGovernorReading } from '@lib/beautyOverSpectacleGovernor';
+import type { QuietAuthorityReading } from '@lib/quietAuthorityField';
+import type { SymbolicGiftReading } from '@lib/symbolicGiftEngine';
+import type { AntiColonizationLayerReading } from '@lib/antiColonizationLayer';
+import type { PresenceWithoutOwnershipReading } from '@lib/presenceWithoutOwnership';
+import type { AntiOtheringReading } from '@lib/antiOtheringEngine';
+import type { AntiCynicismFieldReading } from '@lib/antiCynicismField';
+import type { AntiNihilismRuntimeReading } from '@lib/antiNihilismRuntime';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -1004,6 +1033,35 @@ export interface MetaInput {
   idPresenceCheck?: SovereignPresenceCheckReading;
   idExistRes?: ExistentialResilienceReading;
   idKernel?: ExistentialIntegrityReading;
+  // Wave 16 — generative civilization presence (Phases 401–500).
+  gpKernel?: CivilizationCoherenceRuntimeReading;
+  gpPresGov?: GenerativePresenceGovernorReading;
+  gpBoundary?: GenerativePresenceBoundaryReading;
+  gpPresCheck?: GenerativePresencePresenceCheckReading;
+  gpField?: CivilizationPresenceFieldReading;
+  gpHope?: CoherentHopeArchitectureReading;
+  gpBeautyAsTruth?: BeautyAsTruthValidatorReading;
+  gpWatchdog?: GenerativePresenceWatchdogReading;
+  gpAcct?: GenerativeAccountabilityReading;
+  gpHealth?: GenerativePresenceHealthCheckReading;
+  gpFlourScore?: CivilizationFlourishingScoreReading;
+  gpIntCoh?: GenerativeIntegrityCoherenceReading;
+  gpDignity?: GenerativePresenceDignityCheckReading;
+  gpPresCoh?: GenerativePresenceCoherenceReading;
+  gpNonManip?: NonManipulativeInfluenceReading;
+  gpInvGov?: InvitationOverPersuasionReading;
+  gpAntiPress?: AntiPressurePresenceReading;
+  gpService?: PresenceAsServiceReading;
+  gpNoPredate?: PresenceWithoutPredationReading;
+  gpNoOptEng?: AntiEngagementOptimizationReading;
+  gpBeautyOverSpec?: BeautyOverSpectacleGovernorReading;
+  gpQuietAuth?: QuietAuthorityReading;
+  gpGift?: SymbolicGiftReading;
+  gpAntiCol?: AntiColonizationLayerReading;
+  gpNotOwn?: PresenceWithoutOwnershipReading;
+  gpAntiOther?: AntiOtheringReading;
+  gpAntiCyn?: AntiCynicismFieldReading;
+  gpAntiNih?: AntiNihilismRuntimeReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -1103,7 +1161,12 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           idResilience, idCoherUnder, idSelfRec, idShape, idVoiceCons,
           idValDep, idReactive, idTrendPull, idAntiAdapt, idStormImm,
           idCultGrav, idSelfErase, idAlienBel, idSelfReadout, idActFilter,
-          idCaptureRisk, idForce, idCohesion, idFid } = input;
+          idCaptureRisk, idForce, idCohesion, idFid,
+          gpKernel, gpPresGov, gpBoundary, gpPresCheck, gpField, gpHope,
+          gpBeautyAsTruth, gpWatchdog, gpAcct, gpHealth, gpFlourScore, gpIntCoh,
+          gpDignity, gpPresCoh, gpNonManip, gpInvGov, gpAntiPress, gpService,
+          gpNoPredate, gpNoOptEng, gpBeautyOverSpec, gpQuietAuth, gpGift,
+          gpAntiCol, gpNotOwn, gpAntiOther, gpAntiCyn, gpAntiNih } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -2461,6 +2524,82 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 16 — GENERATIVE PRESENCE: THE FLOURISHING GATES ════
+  // THE GLOBAL WAVE 16 META-CRITIC QUESTION:
+  //   "How does reality become different because we existed
+  //   beautifully inside it?"
+  // The brand that damaged reality by forcing it instead of giving
+  // beautifully is refused at default brutality.
+  if (gpKernel && gpKernel.damaged_reality_by_forcing && brutality >= 0.65) {
+    reasons.push(`civilization coherence runtime: ${gpKernel.runtime_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Governance is extractive.
+  if (gpPresGov && gpPresGov.governance === 'extractive' && brutality >= 0.6) {
+    reasons.push(`generative presence governor: ${gpPresGov.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Boundary crossed — forcing, manipulating, or predating attention.
+  if (gpBoundary && !gpBoundary.within && brutality >= 0.6) {
+    reasons.push(`generative presence boundary: ${gpBoundary.crossed}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Beauty fails the truth test — decorative without substance.
+  if (gpBeautyAsTruth && !gpBeautyAsTruth.beauty_is_truth && brutality >= 0.7) {
+    reasons.push('beauty as truth: decorative without truth');
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+  // The watchdog is alerted.
+  if (gpWatchdog && gpWatchdog.alert && brutality >= 0.7) {
+    reasons.push(`generative presence watchdog: ${gpWatchdog.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Generative accountability record is damaged.
+  if (gpAcct && !gpAcct.record_clean && brutality >= 0.7) {
+    reasons.push('generative accountability: record damaged — more force than beauty');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Non-manipulative influence violated.
+  if (gpNonManip && !gpNonManip.influence_is_invitation && brutality >= 0.7) {
+    reasons.push('non-manipulative influence: pressuring instead of inviting');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Anti-pressure presence — the brand was pressuring.
+  if (gpAntiPress && !gpAntiPress.does_not_pressure && brutality >= 0.65) {
+    reasons.push('anti-pressure presence: applying pressure');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Presence used as predation.
+  if (gpNoPredate && !gpNoPredate.not_predatory && brutality >= 0.65) {
+    reasons.push('presence without predation: extracting attention');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Engagement optimization detected.
+  if (gpNoOptEng && !gpNoOptEng.refused_to_optimize && brutality >= 0.65) {
+    reasons.push('anti-engagement optimization: optimizing for engagement instead of meaning');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Beauty over spectacle violated.
+  if (gpBeautyOverSpec && !gpBeautyOverSpec.chose_beauty && brutality >= 0.7) {
+    reasons.push('beauty over spectacle governor: spectacle chosen over beauty');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Othering an enemy.
+  if (gpAntiOther && !gpAntiOther.refuses_othering && brutality >= 0.7) {
+    reasons.push('anti-othering: casting an enemy');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Presence layer contradicts itself.
+  if (gpPresCoh && !gpPresCoh.coherent && brutality >= 0.7) {
+    reasons.push(`generative presence coherence: ${gpPresCoh.incoherences[0] ?? 'incoherent'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Final presence check failed.
+  if (gpPresCheck && !gpPresCheck.generative_presence_holds && brutality >= 0.7) {
+    reasons.push('generative presence check: failed');
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -3365,6 +3504,50 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`identity fidelity archive: broken (${idFid.fidelity}/10)`);
   }
 
+  // Wave 16 soft floors — generative civilization presence.
+  if (gpField && !gpField.field_is_generative) {
+    softReasons.push(`presence field thin or non-generative (${gpField.field_strength}/10)`);
+  }
+  if (gpHope && !gpHope.hope_is_coherent) {
+    softReasons.push('coherent hope architecture: hope fragmented');
+  }
+  if (gpHealth && !gpHealth.healthy) {
+    softReasons.push('generative presence health: frail');
+  }
+  if (gpFlourScore && !gpFlourScore.flourishing) {
+    softReasons.push(`civilization flourishing score: ${gpFlourScore.score}/10 — not flourishing`);
+  }
+  if (gpIntCoh && !gpIntCoh.is_coherent) {
+    softReasons.push(`generative integrity coherence: ${gpIntCoh.coherence_score}/10`);
+  }
+  if (gpDignity && !gpDignity.dignified) {
+    softReasons.push('generative presence dignity check: undignified');
+  }
+  if (gpInvGov && !gpInvGov.chose_invitation) {
+    softReasons.push('invitation over persuasion governor: persuading instead of inviting');
+  }
+  if (gpService && !gpService.serves) {
+    softReasons.push('presence as service monitor: extracting instead of serving');
+  }
+  if (gpQuietAuth && !gpQuietAuth.authority_quiet_and_real) {
+    softReasons.push('quiet authority field: demanding instead of earned');
+  }
+  if (gpGift && !gpGift.gift_offered) {
+    softReasons.push('symbolic gift engine: transaction instead of gift');
+  }
+  if (gpAntiCol && !gpAntiCol.refuses_colonization) {
+    softReasons.push('anti-colonization layer: taking over space');
+  }
+  if (gpNotOwn && !gpNotOwn.releases_what_it_offers) {
+    softReasons.push('presence without ownership: clinging to control');
+  }
+  if (gpAntiCyn && !gpAntiCyn.cynicism_repelled) {
+    softReasons.push(`anti-cynicism field: absorbing cynicism (${gpAntiCyn.field_strength}/10)`);
+  }
+  if (gpAntiNih && !gpAntiNih.resisting_nihilism) {
+    softReasons.push('anti-nihilism runtime: absorbing despair');
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -3394,15 +3577,15 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 400 phases of judgement — Wave 15 adds
-  // identity preservation on top of live coupling, feedback,
-  // autonomous action, strategic future, reality coupling, the OS,
-  // and the organism — every banner produces 110-150 soft signals
-  // routinely. Threshold band:
-  //   lenient (0.50)   → 113 soft reasons required to reject
-  //   default (0.65)   → 102 soft reasons required
-  //   brutal  (0.90)   → 91 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 91 : brutality >= 0.6 ? 102 : 113;
+  // the cognition stack. After 500 phases of judgement — Wave 16 adds
+  // generative civilization presence on top of identity preservation,
+  // live coupling, feedback, action, future, coupling, OS, and
+  // organism — every banner produces 130-180 soft signals routinely.
+  // Threshold band:
+  //   lenient (0.50)   → 130 soft reasons required to reject
+  //   default (0.65)   → 117 soft reasons required
+  //   brutal  (0.90)   → 105 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 105 : brutality >= 0.6 ? 117 : 130;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.
