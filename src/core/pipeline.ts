@@ -452,6 +452,51 @@ import {
   readExecutionCoherenceValidator,
   readAutonomousActionGovernor,
   readAutonomousExecutionSynthesisCore,
+  // Wave 13 — reality feedback infrastructure (Phases 221–260)
+  createFeedbackStore,
+  evolveFeedbackFromCoherentReception,
+  evolveFeedbackFromContradictoryReception,
+  evolveFeedbackFromSilence,
+  readRealAudienceReactionIngestion,
+  readTrustShiftDetection,
+  readResonanceDecayTracking,
+  readSilenceImpactMeasurement,
+  readEmotionalTruthAlignment,
+  readContradictionFeedbackScanner,
+  readDelayedImpactAttribution,
+  readCollectiveMoodInference,
+  readMemeticIntegrityTracking,
+  readAdaptiveIdentityCorrection,
+  readFeedbackSignalQualityFilter,
+  readEmotionalEchoTracker,
+  readAudienceNervousSystemReadout,
+  readReactionLatencyAnalyzer,
+  readSentimentDriftDetector,
+  readReactionAuthenticityVerifier,
+  readActionResultLedger,
+  readFeedbackBiasFilter,
+  readReactionPatternMemory,
+  readFeedbackToIdentityBridge,
+  readFeedbackToStrategyAdjustment,
+  readFeedbackToExecutionRefinement,
+  readTemporalImpactCurve,
+  readNarrativeReceptionMapping,
+  readCounterNarrativeDetection,
+  readSecondHandResonanceTracking,
+  readSilenceAsFeedbackInterpreter,
+  readReactionGenreClassifier,
+  readTrustEvolutionGraph,
+  readMeaningPersistenceTracker,
+  readFalseSuccessDetector,
+  readFeedbackContradictionResolver,
+  readSlowMovingTruthDetector,
+  readFeedbackSignalIntegrityValidator,
+  readFeedbackEcologyMonitor,
+  readFeedbackMemoryArchive,
+  readRealityAttributionAuditor,
+  readFeedbackCoherenceValidator,
+  readRealityFeedbackGovernor,
+  readCivilizationFeedbackLoopCore,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -796,6 +841,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: executionState.executionCycles === 0
       ? 'the organism is preparing to act in the world for the first time'
       : `autonomous action: ${executionState.executionCycles} cycles · restraint ${executionState.restraintBudget}/10 · cadence ${executionState.cadenceHealth}/10 · ${executionState.actionsAuthorized} acted / ${executionState.actionsWithheld} withheld`,
+  });
+
+  // ─── Wave 13 — load the organism's reality feedback state ─────
+  // The organism now closes the loop with reality: every cycle it
+  // asks not just "did we publish?" but "what did this action become
+  // inside real human nervous systems over time?"
+  const feedbackStore = createFeedbackStore();
+  const feedbackState = await feedbackStore.read();
+  emit({
+    stage: 'reality-feedback',
+    message: feedbackState.feedbackCycles === 0
+      ? 'the organism is beginning to read what its actions become for the first time'
+      : `reality feedback: ${feedbackState.feedbackCycles} cycles · trust net gain ${feedbackState.trustNetGain} · ${feedbackState.reactionsIngested} reactions · ${feedbackState.slowTruthsDetected} slow truth(s)`,
   });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
@@ -3088,6 +3146,245 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 13 — REALITY FEEDBACK (Phases 221–260) ═══════════
+      // The organism stops asking "did we publish?" and starts asking
+      // "what did this action become inside real human nervous systems
+      // over time?" Feedback signals are synthesised from existing
+      // proxies until real telemetry is connected.
+      const fbBannerShipped = actPublish.publish_decision === 'publish';
+      const fbAudienceEmotionalCharge = executiveWorldState.emotional_volatility;
+      const fbTrustTrendProxy = couplingState.trustLevel - 5;
+      const fbAuthenticityProxy = couplingState.authenticityReserve;
+      const fbIngestion = readRealAudienceReactionIngestion({
+        bannerShipped: fbBannerShipped,
+        audienceEmotionalCharge: fbAudienceEmotionalCharge,
+        trustTrendProxy: fbTrustTrendProxy,
+        authenticityProxy: fbAuthenticityProxy,
+        externalSignalVolume: cplIngestion.external_signal_volume,
+      });
+      const fbTrustShift = readTrustShiftDetection({
+        trustNetGain: feedbackState.trustNetGain,
+        trustForming: cplTrust.trust_trend === 'forming',
+        trustDecaying: cplTrust.trust_is_decaying,
+        actionResonance: couplingState.trustLevel,
+      });
+      const fbResonanceDecay = readResonanceDecayTracking({
+        initialResonance: couplingState.trustLevel,
+        oneStepLaterResonance: feedbackState.meaningPersistenceScore,
+        wasStimulus: cplResonance.is_stimulus_addiction,
+      });
+      const fbSilenceImpact = readSilenceImpactMeasurement({
+        wasSilent: !fbBannerShipped,
+        fatigueBefore: cplSocialExhaustion.social_exhaustion,
+        fatigueAfter: cplSocialExhaustion.social_exhaustion,
+        consecutiveSilenceCycles: couplingState.silenceHonored,
+      });
+      const fbEmotionalTruth = readEmotionalTruthAlignment({
+        intendedValence: 3,
+        receivedValence: Math.round(fbTrustTrendProxy * 10) / 10,
+        intendedIntensity: 5,
+        receivedIntensity: fbAudienceEmotionalCharge,
+      });
+      const fbContradictions = readContradictionFeedbackScanner({
+        promisedTruthReceivedAsStimulus: cplResonance.is_stimulus_addiction,
+        claimedAdditionReceivedAsNoise: cplSaturation.saturation >= 8 && fbBannerShipped,
+        claimedRestraintShowsFlooding: !fbBannerShipped ? false : (executionState.actionsAuthorized > executionState.actionsWithheld * 3),
+      });
+      const fbDelayedImpact = readDelayedImpactAttribution({
+        thisCycleTrustShift: fbTrustShift.shift_magnitude,
+        thisCycleActed: fbBannerShipped,
+        recentPriorAction: executionState.actionsAuthorized > 0,
+      });
+      const fbCollectiveMood = readCollectiveMoodInference({
+        averageReactionIntensity: fbAudienceEmotionalCharge,
+        averageTrustSignal: couplingState.trustLevel,
+        collectiveExhaustion: executiveWorldState.collective_exhaustion,
+        trustErosion: executiveWorldState.trust_erosion,
+      });
+      const fbMemetic = readMemeticIntegrityTracking({
+        emotionalAlignment: fbEmotionalTruth.alignment,
+        receptionDrift: futNarrative.drift_from_origin,
+        counterNarrativeForming: false,
+      });
+      const fbIdentityCorrection = readAdaptiveIdentityCorrection({
+        perceivedIdentityAlignment: fbEmotionalTruth.alignment,
+        meaningDistorting: fbMemetic.meaning_is_distorting,
+        identityHeld: civIdentityHeld,
+      });
+      const fbSignalQuality = readFeedbackSignalQualityFilter({
+        reactionClarity: fbIngestion.reaction_clarity,
+        reactionCount: fbIngestion.reactions.length,
+        feedbackContradicted: fbContradictions.any_serious_contradiction,
+      });
+      const fbEcho = readEmotionalEchoTracker({
+        meaningPersistence: feedbackState.meaningPersistenceScore,
+        recentResonance: couplingState.trustLevel,
+        cyclesSinceAction: fbBannerShipped ? 0 : couplingState.silenceHonored,
+      });
+      const fbNervousSystem = readAudienceNervousSystemReadout({
+        audienceFatigue: cplSocialExhaustion.social_exhaustion,
+        emotionalVolatility: executiveWorldState.emotional_volatility,
+        digitalOverload: executiveWorldState.digital_overload,
+      });
+      const fbLatency = readReactionLatencyAnalyzer({
+        immediateReactions: cplResonance.is_stimulus_addiction ? 4 : 1,
+        delayedReactions: cplResonance.is_stimulus_addiction ? 0 : 2,
+      });
+      const fbSentimentDrift = readSentimentDriftDetector({
+        sentimentEarlier: feedbackState.trustNetGain * 0.6,
+        sentimentNow: fbTrustShift.shift_magnitude + feedbackState.trustNetGain * 0.6,
+      });
+      const fbAuthenticity = readReactionAuthenticityVerifier({
+        averageAuthenticity: couplingState.authenticityReserve,
+        audiencePerforming: cplResonance.is_stimulus_addiction,
+      });
+      const fbResultLedger = readActionResultLedger({
+        actionShipped: fbBannerShipped,
+        trustShift: fbTrustShift.shift_magnitude,
+        meaningPersistence: feedbackState.meaningPersistenceScore,
+        priorEntries: feedbackState.reactionsIngested,
+        priorAverage: 0,
+      });
+      const fbBiasFilter = readFeedbackBiasFilter({
+        confirmingPriorBeliefs: feedbackState.feedbackCycles >= 4 && feedbackState.contradictionsFound === 0,
+        discountingPositive: false,
+        positiveToNegativeRatio: feedbackState.trustNetGain >= 0 ? 2 : 0.5,
+      });
+      const fbPatternMemory = readReactionPatternMemory({
+        reactionsIngested: feedbackState.reactionsIngested,
+        softensAfterQuiet: !fbBannerShipped,
+        fastMetricReverses: cplResonance.is_stimulus_addiction,
+      });
+      const fbIdentityBridge = readFeedbackToIdentityBridge({
+        signalUsable: fbSignalQuality.signal_is_usable,
+        correctionRecommended: fbIdentityCorrection.correction_recommended,
+        correctionPreservesIdentity: fbIdentityCorrection.correction_preserves_identity,
+      });
+      const fbStrategyAdjust = readFeedbackToStrategyAdjustment({
+        trustShift: fbTrustShift.shift_magnitude,
+        underperformed: fbTrustShift.shift_direction === 'eroding',
+        reflexReactions: fbLatency.pattern === 'reflex',
+      });
+      const fbExecRefine = readFeedbackToExecutionRefinement({
+        emotionalTruthMisaligned: !fbEmotionalTruth.aligned,
+        cadenceIsFlooding: actCadence.cadence_pattern === 'flooding',
+        audienceFatigued: fbNervousSystem.next_action_would_harm,
+      });
+      const fbImpactCurve = readTemporalImpactCurve({
+        impactNow: couplingState.trustLevel,
+        impactNext: feedbackState.meaningPersistenceScore,
+        impactPrior: feedbackState.resonanceCurveAUC,
+      });
+      const fbNarrativeReception = readNarrativeReceptionMapping({
+        intendedNarrative: futNarrative.narrative_destination,
+        emotionalAlignment: fbEmotionalTruth.alignment,
+        receptionDrift: futNarrative.drift_from_origin,
+      });
+      const fbCounterNarrative = readCounterNarrativeDetection({
+        contradictionDetected: fbContradictions.any_serious_contradiction,
+        meaningDistortion: 10 - fbMemetic.integrity_score,
+        sentimentReversed: fbSentimentDrift.has_reversed,
+      });
+      const fbSecondHand = readSecondHandResonanceTracking({
+        wordOfMouthReactions: fbBannerShipped ? 1 : 0,
+        meaningPersistence: feedbackState.meaningPersistenceScore,
+        averageAuthenticity: couplingState.authenticityReserve,
+      });
+      const fbSilenceAsFeedback = readSilenceAsFeedbackInterpreter({
+        reactionCount: fbIngestion.reactions.length,
+        meaningPersistence: feedbackState.meaningPersistenceScore,
+        audienceFatigue: cplSocialExhaustion.social_exhaustion,
+        cyclesSinceAction: fbBannerShipped ? 0 : couplingState.silenceHonored,
+      });
+      const fbGenre = readReactionGenreClassifier({
+        averageIntensity: fbAudienceEmotionalCharge,
+        averageTrustSignal: couplingState.trustLevel,
+        contradictionDetected: fbContradictions.any_serious_contradiction,
+        reactionCount: fbIngestion.reactions.length,
+      });
+      const fbTrustGraph = readTrustEvolutionGraph({
+        trustNetGain: feedbackState.trustNetGain,
+        trustShiftCount: feedbackState.trustShifts,
+        hasReversed: fbSentimentDrift.has_reversed,
+      });
+      const fbMeaning = readMeaningPersistenceTracker({
+        priorPersistence: feedbackState.meaningPersistenceScore,
+        echoMagnitude: fbEcho.echo_magnitude,
+        beingCarried: fbSecondHand.action_is_being_carried,
+        reactionAuthenticity: fbAuthenticity.authentic_share,
+      });
+      const fbFalseSuccess = readFalseSuccessDetector({
+        apparentEngagement: fbAudienceEmotionalCharge,
+        actualTrustShift: fbTrustShift.shift_magnitude,
+        ranOnStimulus: cplResonance.is_stimulus_addiction,
+        reflexReactions: fbLatency.pattern === 'reflex',
+      });
+      const fbContradictionResolved = readFeedbackContradictionResolver({
+        trustShift: fbTrustShift.shift_magnitude,
+        resonance: couplingState.trustLevel,
+        argumentReactions: fbGenre.dominant_genre === 'argument',
+        applauseReactions: fbGenre.dominant_genre === 'applause',
+      });
+      const fbSlowTruth = readSlowMovingTruthDetector({
+        priorSlowTruths: feedbackState.slowTruthsDetected,
+        delayedTruthLatency: fbLatency.pattern === 'delayed-truth',
+        slowSentimentDrift: Math.abs(fbSentimentDrift.drift_magnitude) >= 0.5,
+        trustQuietlyBuilding: fbTrustGraph.evolution_shape === 'building',
+      });
+      const fbSignalIntegrity = readFeedbackSignalIntegrityValidator({
+        signalQuality: fbSignalQuality.signal_quality,
+        reactionsAuthentic: fbAuthenticity.reactions_are_authentic,
+        biasDetected: fbBiasFilter.detected_bias !== 'balanced',
+        unresolvedContradictions: fbContradictions.any_serious_contradiction && !fbContradictionResolved.contradictions_resolved,
+      });
+      const fbEcology = readFeedbackEcologyMonitor({
+        channelDiversity: Math.min(10, fbIngestion.reactions.length * 2),
+        averageAuthenticity: fbAuthenticity.authentic_share,
+        counterNarrativeForming: fbCounterNarrative.counter_narrative_forming,
+        anyReactionsAtAll: fbIngestion.reactions_observed,
+      });
+      const fbArchive = readFeedbackMemoryArchive({
+        feedbackCycles: feedbackState.feedbackCycles,
+        reactionsIngested: feedbackState.reactionsIngested,
+        contradictionsFound: feedbackState.contradictionsFound,
+        slowTruthsDetected: feedbackState.slowTruthsDetected,
+      });
+      const fbAttribution = readRealityAttributionAuditor({
+        shiftClaimedAsCaused: fbBannerShipped && fbTrustShift.shift_direction !== 'stable',
+        isDelayedAttribution: fbDelayedImpact.shift_is_delayed,
+        worldShiftedIndependently: executiveWorldState.world_tension >= 7,
+        reactionClarity: fbIngestion.reaction_clarity,
+      });
+      const fbCoherence = readFeedbackCoherenceValidator({
+        trustGaining: fbTrustShift.shift_direction === 'gaining',
+        resonanceCollapsed: fbResonanceDecay.decay_profile === 'collapse',
+        narrativeLanded: fbNarrativeReception.narrative_landed_as_intended,
+        counterNarrativeForming: fbCounterNarrative.counter_narrative_forming,
+        signalHasIntegrity: fbSignalIntegrity.signal_has_integrity,
+      });
+      const fbGovernor = readRealityFeedbackGovernor({
+        signalHasIntegrity: fbSignalIntegrity.signal_has_integrity,
+        ecologySupportsLearning: fbEcology.ecology_supports_learning,
+        feedbackCoherent: fbCoherence.feedback_is_coherent,
+        anyReactionsAtAll: fbIngestion.reactions_observed,
+        organismIsListeningToOnlyItself: feedbackState.feedbackCycles >= 5 && feedbackState.reactionsIngested === 0,
+      });
+      const fbCore = readCivilizationFeedbackLoopCore({
+        state: feedbackState, governor: fbGovernor, trustShift: fbTrustShift,
+        resonanceDecay: fbResonanceDecay, meaningPersistence: fbMeaning, coherence: fbCoherence,
+      });
+      emit({
+        stage: 'reality-feedback',
+        message: `${fbCore.feedback_state} (integrity ${fbCore.feedback_integrity_score}/10) · ${fbGovernor.governance} · ${fbTrustShift.shift_direction} trust · "${fbCore.what_the_action_became}"`,
+      });
+      if (fbCore.organism_is_in_echo_chamber) {
+        emit({ stage: 'reality-feedback', message: 'META-CRITIC FLAG — the organism is in an echo chamber, only hearing itself' });
+      }
+      if (fbFalseSuccess.false_success_detected) {
+        emit({ stage: 'reality-feedback', message: `META-CRITIC FLAG — false success detected: ${fbFalseSuccess.false_success_kind}` });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -3364,6 +3661,15 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         actOverreach, actReversibility, actDeploymentWindow, actRestraintBudget, actIntent,
         actCadence, actThrottle, actWorthiness, actRouting, actFeedbackLoop, actWithholding,
         actPortfolio, actHealth, actBoundary, actAccountability, actCoherence, actGovernor, actCore,
+        // Wave 13 — reality feedback infrastructure
+        fbIngestion, fbTrustShift, fbResonanceDecay, fbSilenceImpact, fbEmotionalTruth,
+        fbContradictions, fbDelayedImpact, fbCollectiveMood, fbMemetic, fbIdentityCorrection,
+        fbSignalQuality, fbEcho, fbNervousSystem, fbLatency, fbSentimentDrift, fbAuthenticity,
+        fbResultLedger, fbBiasFilter, fbPatternMemory, fbIdentityBridge, fbStrategyAdjust,
+        fbExecRefine, fbImpactCurve, fbNarrativeReception, fbCounterNarrative, fbSecondHand,
+        fbSilenceAsFeedback, fbGenre, fbTrustGraph, fbMeaning, fbFalseSuccess, fbContradictionResolved,
+        fbSlowTruth, fbSignalIntegrity, fbEcology, fbArchive, fbAttribution, fbCoherence,
+        fbGovernor, fbCore,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -3895,6 +4201,26 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               boundary: actBoundary, accountability: actAccountability,
               coherence: actCoherence, governor: actGovernor, core: actCore,
             },
+            feedback: {
+              ingestion: fbIngestion, trustShift: fbTrustShift, resonanceDecay: fbResonanceDecay,
+              silenceImpact: fbSilenceImpact, emotionalTruth: fbEmotionalTruth,
+              contradictions: fbContradictions, delayedImpact: fbDelayedImpact,
+              collectiveMood: fbCollectiveMood, memetic: fbMemetic,
+              identityCorrection: fbIdentityCorrection, signalQuality: fbSignalQuality,
+              echo: fbEcho, nervousSystem: fbNervousSystem, latency: fbLatency,
+              sentimentDrift: fbSentimentDrift, authenticity: fbAuthenticity,
+              resultLedger: fbResultLedger, biasFilter: fbBiasFilter,
+              patternMemory: fbPatternMemory, identityBridge: fbIdentityBridge,
+              strategyAdjust: fbStrategyAdjust, executionRefine: fbExecRefine,
+              impactCurve: fbImpactCurve, narrativeReception: fbNarrativeReception,
+              counterNarrative: fbCounterNarrative, secondHand: fbSecondHand,
+              silenceFeedback: fbSilenceAsFeedback, genre: fbGenre,
+              trustGraph: fbTrustGraph, meaning: fbMeaning, falseSuccess: fbFalseSuccess,
+              contradictionResolved: fbContradictionResolved, slowTruth: fbSlowTruth,
+              signalIntegrity: fbSignalIntegrity, ecology: fbEcology, archive: fbArchive,
+              attribution: fbAttribution, coherence: fbCoherence,
+              governor: fbGovernor, core: fbCore,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -4131,6 +4457,20 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             : `the action was governed — restraint ${executionState.restraintBudget}/10 → ${evolvedExecution.restraintBudget}/10, ${evolvedExecution.actionsAuthorized} actions on record`,
         });
 
+        // ─── Wave 13 — feedback closes the loop. Reception either
+        // cohered with intent (trust accrues) or contradicted it (a
+        // contradiction is logged, trust slips).
+        const evolvedFeedback = fbContradictions.any_serious_contradiction
+          ? evolveFeedbackFromContradictoryReception(feedbackState)
+          : evolveFeedbackFromCoherentReception(feedbackState);
+        await feedbackStore.save(evolvedFeedback);
+        emit({
+          stage: 'reality-feedback',
+          message: fbContradictions.any_serious_contradiction
+            ? `feedback contradicted intent — trust net gain ${feedbackState.trustNetGain} → ${evolvedFeedback.trustNetGain}, contradictions ${evolvedFeedback.contradictionsFound}`
+            : `feedback cohered with intent — trust net gain ${feedbackState.trustNetGain} → ${evolvedFeedback.trustNetGain}, resonance AUC ${feedbackState.resonanceCurveAUC} → ${evolvedFeedback.resonanceCurveAUC}`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -4285,6 +4625,15 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   emit({
     stage: 'autonomous-action',
     message: `the organism withheld action — restraint ${executionState.restraintBudget}/10 → ${withheldExecution.restraintBudget}/10, ${withheldExecution.actionsWithheld} withholdings on record`,
+  });
+
+  // ─── Wave 13 — silence becomes its own feedback signal: meaning
+  // has time to settle, slow truths surface.
+  const silentFeedback = evolveFeedbackFromSilence(feedbackState);
+  await feedbackStore.save(silentFeedback);
+  emit({
+    stage: 'reality-feedback',
+    message: `silence is its own feedback — meaning persistence ${feedbackState.meaningPersistenceScore}/10 → ${silentFeedback.meaningPersistenceScore}/10, slow truths ${silentFeedback.slowTruthsDetected}`,
   });
 
   throw new ExhaustedAttempts(

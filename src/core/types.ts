@@ -781,6 +781,49 @@ export interface BannerTasteSystem {
     governor: import('@lib/autonomousActionGovernor').AutonomousActionGovernorReading;
     core: import('@lib/autonomousExecutionSynthesisCore').ExecutionSynthesisReading;
   };
+  // Wave 13 — reality feedback infrastructure (Phases 221–260)
+  feedback: {
+    ingestion: import('@lib/realAudienceReactionIngestion').AudienceReactionReading;
+    trustShift: import('@lib/trustShiftDetection').TrustShiftReading;
+    resonanceDecay: import('@lib/resonanceDecayTracking').ResonanceDecayReading;
+    silenceImpact: import('@lib/silenceImpactMeasurement').SilenceImpactReading;
+    emotionalTruth: import('@lib/emotionalTruthAlignment').EmotionalTruthAlignmentReading;
+    contradictions: import('@lib/contradictionFeedbackScanner').ContradictionScannerReading;
+    delayedImpact: import('@lib/delayedImpactAttribution').DelayedImpactReading;
+    collectiveMood: import('@lib/collectiveMoodInference').CollectiveMoodReading;
+    memetic: import('@lib/memeticIntegrityTracking').MemeticIntegrityReading;
+    identityCorrection: import('@lib/adaptiveIdentityCorrection').IdentityCorrectionReading;
+    signalQuality: import('@lib/feedbackSignalQualityFilter').FeedbackSignalQualityReading;
+    echo: import('@lib/emotionalEchoTracker').EmotionalEchoReading;
+    nervousSystem: import('@lib/audienceNervousSystemReadout').AudienceNervousSystemReadoutReading;
+    latency: import('@lib/reactionLatencyAnalyzer').ReactionLatencyReading;
+    sentimentDrift: import('@lib/sentimentDriftDetector').SentimentDriftReading;
+    authenticity: import('@lib/reactionAuthenticityVerifier').ReactionAuthenticityReading;
+    resultLedger: import('@lib/actionResultLedger').ActionResultLedgerReading;
+    biasFilter: import('@lib/feedbackBiasFilter').FeedbackBiasReading;
+    patternMemory: import('@lib/reactionPatternMemory').ReactionPatternMemoryReading;
+    identityBridge: import('@lib/feedbackToIdentityBridge').FeedbackToIdentityReading;
+    strategyAdjust: import('@lib/feedbackToStrategyAdjustment').FeedbackToStrategyReadingW13;
+    executionRefine: import('@lib/feedbackToExecutionRefinement').ExecutionRefinementReading;
+    impactCurve: import('@lib/temporalImpactCurve').TemporalImpactCurveReading;
+    narrativeReception: import('@lib/narrativeReceptionMapping').NarrativeReceptionReading;
+    counterNarrative: import('@lib/counterNarrativeDetection').CounterNarrativeReading;
+    secondHand: import('@lib/secondHandResonanceTracking').SecondHandResonanceReading;
+    silenceFeedback: import('@lib/silenceAsFeedbackInterpreter').SilenceAsFeedbackReading;
+    genre: import('@lib/reactionGenreClassifier').ReactionGenreReading;
+    trustGraph: import('@lib/trustEvolutionGraph').TrustEvolutionReading;
+    meaning: import('@lib/meaningPersistenceTracker').MeaningPersistenceReading;
+    falseSuccess: import('@lib/falseSuccessDetector').FalseSuccessReading;
+    contradictionResolved: import('@lib/feedbackContradictionResolver').FeedbackContradictionResolverReading;
+    slowTruth: import('@lib/slowMovingTruthDetector').SlowTruthReading;
+    signalIntegrity: import('@lib/feedbackSignalIntegrityValidator').FeedbackSignalIntegrityReading;
+    ecology: import('@lib/feedbackEcologyMonitor').FeedbackEcologyReading;
+    archive: import('@lib/feedbackMemoryArchive').FeedbackMemoryArchiveReading;
+    attribution: import('@lib/realityAttributionAuditor').RealityAttributionReading;
+    coherence: import('@lib/feedbackCoherenceValidator').FeedbackCoherenceReading;
+    governor: import('@lib/realityFeedbackGovernor').RealityFeedbackGovernorReading;
+    core: import('@lib/civilizationFeedbackLoopCore').CivilizationFeedbackLoopReading;
+  };
 }
 
 export interface Banner {

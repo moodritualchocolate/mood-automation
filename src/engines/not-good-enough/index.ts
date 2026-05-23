@@ -324,6 +324,47 @@ import type { ActionAccountabilityReading } from '@lib/actionAccountabilityLedge
 import type { ExecutionCoherenceReading } from '@lib/executionCoherenceValidator';
 import type { AutonomousActionGovernorReading } from '@lib/autonomousActionGovernor';
 import type { ExecutionSynthesisReading } from '@lib/autonomousExecutionSynthesisCore';
+// Wave 13 — reality feedback infrastructure (Phases 221–260)
+import type { AudienceReactionReading } from '@lib/realAudienceReactionIngestion';
+import type { TrustShiftReading } from '@lib/trustShiftDetection';
+import type { ResonanceDecayReading } from '@lib/resonanceDecayTracking';
+import type { SilenceImpactReading } from '@lib/silenceImpactMeasurement';
+import type { EmotionalTruthAlignmentReading } from '@lib/emotionalTruthAlignment';
+import type { ContradictionScannerReading } from '@lib/contradictionFeedbackScanner';
+import type { DelayedImpactReading } from '@lib/delayedImpactAttribution';
+import type { CollectiveMoodReading } from '@lib/collectiveMoodInference';
+import type { MemeticIntegrityReading } from '@lib/memeticIntegrityTracking';
+import type { IdentityCorrectionReading } from '@lib/adaptiveIdentityCorrection';
+import type { FeedbackSignalQualityReading } from '@lib/feedbackSignalQualityFilter';
+import type { EmotionalEchoReading } from '@lib/emotionalEchoTracker';
+import type { AudienceNervousSystemReadoutReading } from '@lib/audienceNervousSystemReadout';
+import type { ReactionLatencyReading } from '@lib/reactionLatencyAnalyzer';
+import type { SentimentDriftReading } from '@lib/sentimentDriftDetector';
+import type { ReactionAuthenticityReading } from '@lib/reactionAuthenticityVerifier';
+import type { ActionResultLedgerReading } from '@lib/actionResultLedger';
+import type { FeedbackBiasReading } from '@lib/feedbackBiasFilter';
+import type { ReactionPatternMemoryReading } from '@lib/reactionPatternMemory';
+import type { FeedbackToIdentityReading } from '@lib/feedbackToIdentityBridge';
+import type { FeedbackToStrategyReadingW13 } from '@lib/feedbackToStrategyAdjustment';
+import type { ExecutionRefinementReading } from '@lib/feedbackToExecutionRefinement';
+import type { TemporalImpactCurveReading } from '@lib/temporalImpactCurve';
+import type { NarrativeReceptionReading } from '@lib/narrativeReceptionMapping';
+import type { CounterNarrativeReading } from '@lib/counterNarrativeDetection';
+import type { SecondHandResonanceReading } from '@lib/secondHandResonanceTracking';
+import type { SilenceAsFeedbackReading } from '@lib/silenceAsFeedbackInterpreter';
+import type { ReactionGenreReading } from '@lib/reactionGenreClassifier';
+import type { TrustEvolutionReading } from '@lib/trustEvolutionGraph';
+import type { MeaningPersistenceReading } from '@lib/meaningPersistenceTracker';
+import type { FalseSuccessReading } from '@lib/falseSuccessDetector';
+import type { FeedbackContradictionResolverReading } from '@lib/feedbackContradictionResolver';
+import type { SlowTruthReading } from '@lib/slowMovingTruthDetector';
+import type { FeedbackSignalIntegrityReading } from '@lib/feedbackSignalIntegrityValidator';
+import type { FeedbackEcologyReading } from '@lib/feedbackEcologyMonitor';
+import type { FeedbackMemoryArchiveReading } from '@lib/feedbackMemoryArchive';
+import type { RealityAttributionReading } from '@lib/realityAttributionAuditor';
+import type { FeedbackCoherenceReading as W13FeedbackCoherenceReading } from '@lib/feedbackCoherenceValidator';
+import type { RealityFeedbackGovernorReading } from '@lib/realityFeedbackGovernor';
+import type { CivilizationFeedbackLoopReading } from '@lib/civilizationFeedbackLoopCore';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -638,6 +679,47 @@ export interface MetaInput {
   actCoherence?: ExecutionCoherenceReading;
   actGovernor?: AutonomousActionGovernorReading;
   actCore?: ExecutionSynthesisReading;
+  // Wave 13 — reality feedback infrastructure (Phases 221–260).
+  fbIngestion?: AudienceReactionReading;
+  fbTrustShift?: TrustShiftReading;
+  fbResonanceDecay?: ResonanceDecayReading;
+  fbSilenceImpact?: SilenceImpactReading;
+  fbEmotionalTruth?: EmotionalTruthAlignmentReading;
+  fbContradictions?: ContradictionScannerReading;
+  fbDelayedImpact?: DelayedImpactReading;
+  fbCollectiveMood?: CollectiveMoodReading;
+  fbMemetic?: MemeticIntegrityReading;
+  fbIdentityCorrection?: IdentityCorrectionReading;
+  fbSignalQuality?: FeedbackSignalQualityReading;
+  fbEcho?: EmotionalEchoReading;
+  fbNervousSystem?: AudienceNervousSystemReadoutReading;
+  fbLatency?: ReactionLatencyReading;
+  fbSentimentDrift?: SentimentDriftReading;
+  fbAuthenticity?: ReactionAuthenticityReading;
+  fbResultLedger?: ActionResultLedgerReading;
+  fbBiasFilter?: FeedbackBiasReading;
+  fbPatternMemory?: ReactionPatternMemoryReading;
+  fbIdentityBridge?: FeedbackToIdentityReading;
+  fbStrategyAdjust?: FeedbackToStrategyReadingW13;
+  fbExecRefine?: ExecutionRefinementReading;
+  fbImpactCurve?: TemporalImpactCurveReading;
+  fbNarrativeReception?: NarrativeReceptionReading;
+  fbCounterNarrative?: CounterNarrativeReading;
+  fbSecondHand?: SecondHandResonanceReading;
+  fbSilenceAsFeedback?: SilenceAsFeedbackReading;
+  fbGenre?: ReactionGenreReading;
+  fbTrustGraph?: TrustEvolutionReading;
+  fbMeaning?: MeaningPersistenceReading;
+  fbFalseSuccess?: FalseSuccessReading;
+  fbContradictionResolved?: FeedbackContradictionResolverReading;
+  fbSlowTruth?: SlowTruthReading;
+  fbSignalIntegrity?: FeedbackSignalIntegrityReading;
+  fbEcology?: FeedbackEcologyReading;
+  fbArchive?: FeedbackMemoryArchiveReading;
+  fbAttribution?: RealityAttributionReading;
+  fbCoherence?: W13FeedbackCoherenceReading;
+  fbGovernor?: RealityFeedbackGovernorReading;
+  fbCore?: CivilizationFeedbackLoopReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -715,7 +797,14 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           actWorthiness, actWithholding, actPortfolio, actHealth, actBoundary,
           actAccountability, actCoherence, actGovernor, actCore,
           actConsequence, actEscalation, actMutation, actFeedbackLoop, actPlatform,
-          actExperimentation, actPacing } = input;
+          actExperimentation, actPacing,
+          fbCore, fbGovernor, fbContradictions, fbSignalIntegrity, fbCoherence,
+          fbEcology, fbFalseSuccess, fbCounterNarrative, fbAttribution,
+          fbIdentityCorrection, fbIdentityBridge, fbTrustShift, fbTrustGraph,
+          fbResonanceDecay, fbMeaning, fbAuthenticity, fbNervousSystem, fbMemetic,
+          fbStrategyAdjust, fbExecRefine, fbEmotionalTruth, fbSentimentDrift,
+          fbLatency, fbBiasFilter, fbSilenceImpact, fbSilenceAsFeedback,
+          fbSlowTruth, fbGenre, fbSecondHand, fbImpactCurve } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -1876,6 +1965,62 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 13 — REALITY FEEDBACK: THE LISTENING GATES ═════════
+  // THE GLOBAL WAVE 13 META-CRITIC QUESTION:
+  //   "What did this action become inside real human nervous systems?"
+  // An organism that has closed into an echo chamber — only hearing
+  // itself — is refused at default brutality.
+  if (fbCore && fbCore.organism_is_in_echo_chamber && brutality >= 0.65) {
+    reasons.push(`reality feedback: ${fbCore.feedback_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // An organism acting blind to what its actions become.
+  if (fbGovernor && fbGovernor.governance === 'blind' && brutality >= 0.65) {
+    reasons.push(`reality feedback governor: ${fbGovernor.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A false success — apparent engagement charged to the trust account.
+  if (fbFalseSuccess && fbFalseSuccess.false_success_detected && brutality >= 0.7) {
+    reasons.push(`false success: ${fbFalseSuccess.false_success_kind}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A serious contradiction between what the brand claimed and how it
+  // was received.
+  if (fbContradictions && fbContradictions.any_serious_contradiction && brutality >= 0.7) {
+    reasons.push(`feedback contradiction: ${fbContradictions.contradictions_found[0]?.claim} → ${fbContradictions.contradictions_found[0]?.reality}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Feedback signal integrity collapsed — beliefs cannot be updated.
+  if (fbSignalIntegrity && !fbSignalIntegrity.signal_has_integrity && brutality >= 0.7) {
+    reasons.push(`feedback signal integrity: ${fbSignalIntegrity.integrity_issues.join('; ')}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Reality attribution failed — the credit being claimed is unsound.
+  if (fbAttribution && !fbAttribution.attribution_holds_up && brutality >= 0.7) {
+    reasons.push(`reality attribution: ${fbAttribution.attribution_issue ?? 'attribution does not hold up'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The feedback layer itself contradicts itself.
+  if (fbCoherence && !fbCoherence.feedback_is_coherent && brutality >= 0.7) {
+    reasons.push(`feedback coherence: ${fbCoherence.incoherences[0] ?? 'the feedback layer contradicts itself'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The feedback ecology has collapsed.
+  if (fbEcology && fbEcology.ecology_state === 'collapsed' && brutality >= 0.7) {
+    reasons.push(`feedback ecology: ${fbEcology.ecology_note}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A counter-narrative is genuinely forming around the brand.
+  if (fbCounterNarrative && fbCounterNarrative.counter_narrative_forming && brutality >= 0.75) {
+    reasons.push(`counter-narrative: ${fbCounterNarrative.counter_shape}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The audience nervous system would be harmed by another action.
+  if (fbNervousSystem && fbNervousSystem.next_action_would_harm && brutality >= 0.7) {
+    reasons.push(`audience nervous system: another action now would harm — ${fbNervousSystem.nervous_system_state}, absorb capacity ${fbNervousSystem.absorb_capacity}/10`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -2597,6 +2742,65 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`autonomous experimentation: ${actExperimentation.experiment_bounds}`);
   }
 
+  // Wave 13 soft floors — reality feedback infrastructure.
+  if (fbTrustShift && fbTrustShift.shift_direction === 'eroding') {
+    softReasons.push(`trust shift: ${fbTrustShift.shift_note}`);
+  }
+  if (fbResonanceDecay && !fbResonanceDecay.decay_is_healthy) {
+    softReasons.push(`resonance decay: ${fbResonanceDecay.decay_profile} (half-life ${fbResonanceDecay.half_life_cycles} cycles)`);
+  }
+  if (fbMeaning && !fbMeaning.meaning_persists) {
+    softReasons.push(`meaning persistence: ${fbMeaning.persistence_note}`);
+  }
+  if (fbEmotionalTruth && !fbEmotionalTruth.aligned) {
+    softReasons.push(`emotional truth alignment: ${fbEmotionalTruth.divergence}`);
+  }
+  if (fbMemetic && fbMemetic.meaning_is_distorting) {
+    softReasons.push(`memetic integrity: ${fbMemetic.integrity_state} — the meaning is being reshaped as it travels`);
+  }
+  if (fbIdentityCorrection && fbIdentityCorrection.correction_recommended) {
+    softReasons.push(`adaptive identity correction: ${fbIdentityCorrection.correction_proposal}`);
+  }
+  if (fbAuthenticity && !fbAuthenticity.reactions_are_authentic) {
+    softReasons.push(`reaction authenticity: ${fbAuthenticity.authenticity_note}`);
+  }
+  if (fbTrustGraph && fbTrustGraph.evolution_shape === 'declining') {
+    softReasons.push(`trust evolution graph: declining (net gain ${fbTrustGraph.trust_net_gain})`);
+  }
+  if (fbSentimentDrift && (fbSentimentDrift.drift_direction === 'cooling' || fbSentimentDrift.drift_direction === 'reversing')) {
+    softReasons.push(`sentiment drift: ${fbSentimentDrift.drift_direction} (${fbSentimentDrift.drift_magnitude})`);
+  }
+  if (fbLatency && fbLatency.pattern === 'reflex') {
+    softReasons.push(`reaction latency: reactions were reflex more than reflection (thoughtfulness ${fbLatency.thoughtfulness}/10)`);
+  }
+  if (fbGenre && fbGenre.dominant_genre === 'indifference') {
+    softReasons.push('reaction genre: indifference — the action did not get a reaction worth classifying');
+  }
+  if (fbBiasFilter && fbBiasFilter.detected_bias !== 'balanced') {
+    softReasons.push(`feedback bias: ${fbBiasFilter.bias_note}`);
+  }
+  if (fbSilenceAsFeedback && fbSilenceAsFeedback.audience_silence === 'forgotten-silence') {
+    softReasons.push(`silence as feedback: ${fbSilenceAsFeedback.silence_meaning}`);
+  }
+  if (fbStrategyAdjust && fbStrategyAdjust.adjustment_proposed) {
+    softReasons.push(`feedback → strategy: ${fbStrategyAdjust.adjustment}`);
+  }
+  if (fbExecRefine && fbExecRefine.refinement_proposed) {
+    softReasons.push(`feedback → execution: ${fbExecRefine.refinement}`);
+  }
+  if (fbSecondHand && !fbSecondHand.action_is_being_carried) {
+    softReasons.push('second-hand resonance: the action is not being passed on — its life ends with the people who saw it directly');
+  }
+  if (fbSlowTruth && fbSlowTruth.slow_truth_detected && fbSlowTruth.slow_truth) {
+    softReasons.push(`slow truth detected: ${fbSlowTruth.slow_truth}`);
+  }
+  if (fbImpactCurve && fbImpactCurve.curve_shape === 'peaked-past') {
+    softReasons.push(`temporal impact: ${fbImpactCurve.curve_note}`);
+  }
+  if (fbSilenceImpact && fbSilenceImpact.silence_impact === 'was-forgotten') {
+    softReasons.push(`silence impact: ${fbSilenceImpact.silence_did_work ? '' : 'extended silence has cost the brand presence'}`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -2626,14 +2830,14 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 220 phases of judgement — Wave 12 now
-  // layers autonomous action on top of strategic future, reality
-  // coupling, the operating system, and the organism — every banner
-  // produces 60-95 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 75 soft reasons required to reject
-  //   default (0.65)   → 67 soft reasons required
-  //   brutal  (0.90)   → 60 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 60 : brutality >= 0.6 ? 67 : 75;
+  // the cognition stack. After 260 phases of judgement — Wave 13 now
+  // layers reality feedback on top of autonomous action, strategic
+  // future, reality coupling, the OS, and the organism — every banner
+  // produces 75-115 soft signals routinely. Threshold band:
+  //   lenient (0.50)   → 83 soft reasons required to reject
+  //   default (0.65)   → 74 soft reasons required
+  //   brutal  (0.90)   → 67 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 67 : brutality >= 0.6 ? 74 : 83;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.

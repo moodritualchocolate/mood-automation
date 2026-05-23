@@ -68,6 +68,57 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 13 — Reality Feedback Infrastructure (Phases 221–260)
+
+Wave 12 let the organism act; Wave 13 closes the loop with reality itself. The governing shift: the organism stops asking *"did we publish?"* and begins asking **"what did this action become inside real human nervous systems over time?"** State persists to `data/runtime/feedback.json` — trust net gain across the campaign's life, resonance curve, contradictions found, slow truths detected, and a record of how every action was actually received.
+
+| Phase | Module | Role |
+|---|---|---|
+| 221 | `realAudienceReactionIngestion` | Ingests reactions from the world. |
+| 222 | `trustShiftDetection` | Reads the direction and magnitude of trust shifts. |
+| 223 | `resonanceDecayTracking` | Distinguishes healthy decay from collapse. |
+| 224 | `silenceImpactMeasurement` | Measures silence as its own kind of action. |
+| 225 | `emotionalTruthAlignment` | Compares intended feeling to received feeling. |
+| 226 | `contradictionFeedbackScanner` | Catches gaps between claim and reception. |
+| 227 | `delayedImpactAttribution` | Credits today's shift to its actual earlier cause. |
+| 228 | `collectiveMoodInference` | Infers the felt tone beneath the signal scatter. |
+| 229 | `memeticIntegrityTracking` | Tracks how meaning mutates as it spreads. |
+| 230 | `adaptiveIdentityCorrection` | Proposes the smallest correction that preserves identity. |
+| 231 | `feedbackSignalQualityFilter` | Separates updatable signal from noise. |
+| 232 | `emotionalEchoTracker` | Reads how long the action keeps reverberating. |
+| 233 | `audienceNervousSystemReadout` | Reads the audience as a nervous system. |
+| 234 | `reactionLatencyAnalyzer` | Reflex vs reflection — from when reactions arrived. |
+| 235 | `sentimentDriftDetector` | Catches the slow drift and the sign reversal. |
+| 236 | `reactionAuthenticityVerifier` | Distinguishes honest warmth from performed enthusiasm. |
+| 237 | `actionResultLedger` | Pairs every action with its actual outcome. |
+| 238 | `feedbackBiasFilter` | Counterweights the organism reading itself flatteringly. |
+| 239 | `reactionPatternMemory` | Names recurring patterns across cycles. |
+| 240 | `feedbackToIdentityBridge` | Routes signal up to identity — only on strong signal. |
+| 241 | `feedbackToStrategyAdjustment` | Proposes concrete strategy adjustments. |
+| 242 | `feedbackToExecutionRefinement` | Proposes concrete execution refinements. |
+| 243 | `temporalImpactCurve` | The shape of impact in the time dimension. |
+| 244 | `narrativeReceptionMapping` | The story told vs the story received. |
+| 245 | `counterNarrativeDetection` | Flags when the audience writes its own version. |
+| 246 | `secondHandResonanceTracking` | The action being carried by other people. |
+| 247 | `silenceAsFeedbackInterpreter` | Attentive silence vs forgotten silence. |
+| 248 | `reactionGenreClassifier` | Applause vs recognition vs argument vs indifference. |
+| 249 | `trustEvolutionGraph` | The long arc — building, plateau, declining, volatile. |
+| 250 | `meaningPersistenceTracker` | Did the meaning outlive the moment? |
+| 251 | `falseSuccessDetector` | Catches applause that quietly cost trust. |
+| 252 | `feedbackContradictionResolver` | Resolves contradictory feedback signals. |
+| 253 | `slowMovingTruthDetector` | Finds slow truths under the noisy fast signals. |
+| 254 | `feedbackSignalIntegrityValidator` | Refuses to update beliefs on unsound feedback. |
+| 255 | `feedbackEcologyMonitor` | Healthy / thin / polluted / collapsed feedback ecology. |
+| 256 | `feedbackMemoryArchive` | The organism's persisted memory of feedback. |
+| 257 | `realityAttributionAuditor` | Refuses credit when the world shifted on its own. |
+| 258 | `feedbackCoherenceValidator` | Catches the feedback layer contradicting itself. |
+| 259 | `realityFeedbackGovernor` | Reality-evolving, learning, echo-chamber, or blind. |
+| 260 | `civilizationFeedbackLoopCore` | Persistent feedback state + closing synthesis. |
+
+Wave 13 meta-critic — the governing question: **"What did this action become inside real human nervous systems over time?"** The hard gates refuse the organism that has closed into an echo chamber, is acting blind to what its actions become, has produced false success that cost trust, is being received as a serious contradiction of what it claimed, has lost feedback signal integrity, has failed reality attribution (claiming credit for shifts the world produced on its own), has an internally incoherent feedback layer, has collapsed its feedback ecology, has a counter-narrative forming around it, or would harm an already-fatigued audience nervous system with another action. An approved run with coherent reception accrues trust and resonance; a run whose reception contradicts intent logs the contradiction and erodes trust; an exhausted run lets silence settle — meaning persistence rises, slow truths surface. Soft-floor threshold recalibrated for the 260-phase stack: **lenient=83 · default=74 · brutal=67**.
+
+Verified by `scripts/test-reality-feedback.ts` — 33 checks across ingestion, trust shift, resonance decay, silence impact, emotional truth, contradictions, delayed attribution, collective mood, memetic integrity, identity correction, signal quality, bias filter, authenticity, nervous system, latency, genre, narrative reception, counter-narrative, second-hand resonance, silence-as-feedback, sentiment drift, trust evolution, meaning persistence, false success, slow truth, signal integrity, ecology, reality attribution, coherence, governance, persistence, and the closing synthesis. 33/33 pass.
+
 ## Wave 12 — Autonomous Action Architecture (Phases 181–220)
 
 Wave 11 reasoned about futures; Wave 12 lets the organism **act** — but never compulsively. Every action must pass through eight strategic gates (identity, resonance, trust, timing, strategic debt, audience capacity, reality coupling, future preservation) and then through worthiness, dignity, intent, and boundary checks. The governing shift: the organism stops asking *"can we act?"* and starts asking **"should this action exist in the world at all?"** State persists to `data/runtime/execution.json` — restraint budget, audience recovery debt, cadence health, and a ledger of every action taken or withheld.
