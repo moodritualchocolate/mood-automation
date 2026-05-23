@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -81,6 +81,12 @@ export default function RuntimePage() {
 
       <PulseBanner m={m} />
 
+      {/* Wave 17 — the unified Silence Engine reading. Aggregates
+          silence signals from every layer (saturation, restraint,
+          patience, meaning persistence, world tension) into one
+          canonical directive: speak / hold / be-silent / go-quiet-now. */}
+      <SilenceBanner m={m} />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {m.layout.panels.map((p) => (
           <RuntimePanel
@@ -92,6 +98,12 @@ export default function RuntimePage() {
           />
         ))}
       </div>
+
+      {/* Wave 17 — Waves 10–16 surfaced. Each persistent store
+          (reality coupling, strategic future, autonomous action,
+          reality feedback, live coupling, sovereign identity,
+          generative presence) is shown as its own card. */}
+      <DeepCognitionGrid m={m} />
 
       <footer className="text-[10px] tracking-[0.22em] text-bone-200/30 uppercase pt-3 border-t hairline flex flex-wrap gap-x-4 gap-y-1">
         <span>{m.runtime_is_visible ? 'runtime visible' : 'runtime dormant'}</span>

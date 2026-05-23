@@ -777,3 +777,6 @@ export * from './generativeIntegrityCoherence';
 export * from './generativePresenceMemoryArchive';
 export * from './existentialPresenceResilienceMonitor';
 export * from './civilizationCoherenceRuntime';
+// ─── WAVE 17 — Embodied Runtime Presence ─────────────────────────
+export * from './silenceEngine';
+export * from './deepCognitionView';

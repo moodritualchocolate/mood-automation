@@ -68,6 +68,18 @@ Phase 13 meta-critic gates:
 - stakes_clarity decorative_emotion → reject-concept at brutal
 - soft floors: pressure_specificity < 4, stakes_clarity < 5, functional_collapse_score < 4, modern compulsion missing while shared pattern present
 
+## Wave 17 — Embodied Runtime Presence
+
+A deliberate pivot. Waves 10–16 built immense conceptual scaffolding — 11 persistent stores, hundreds of cognition modules — but only 5 of those stores were ever visible on the `/runtime` dashboard. The deep cognition layers persisted to disk and never reached the surface. Wave 17 makes them visible. No new philosophy modules; embodiment instead.
+
+**`lib/silenceEngine.ts`** — the unified Silence Engine. The user identified silence as the central distinction between optimization systems and civilization-scale intelligence systems. Across Waves 10–16, many independent layers emit silence signals (reality coupling recommends silence, strategic patience holds the line, autonomous action enforces silence, live coupling detects silence windows, sovereign identity rests through restraint, generative presence rests quietly). This module consolidates them into one canonical reading: a `directive` (`speak` / `hold` / `be-silent` / `go-quiet-now`), a `silence_strength` (0..10), the contributing reasons, and one statement the UI renders. Most autonomous systems maximise output. This organism protects meaning.
+
+**`lib/deepCognitionView.ts`** — surfaces all 7 Wave 10–16 stores as a render-ready grid. Each layer gets a statement, gauges, and a tone that the dashboard reads as a coloured dot. Reality coupling, strategic future, autonomous action, reality feedback, live coupling, sovereign identity, generative presence — every layer that previously lived only in JSON is now legible at a glance.
+
+**`/runtime` dashboard extended** — `RuntimeSnapshot` now carries the 7 Wave 10–16 states; `/api/runtime` loads them all; `manifestationCore` wires the `DeepCognitionViewModel` into the manifestation. The page renders the new `SilenceBanner` (hero strip with directive, statement, contributing reasons, and a strength bar) and the new `DeepCognitionGrid` (one card per layer with its own gauges).
+
+Verified end-to-end: a fresh approved-run populates all 11 persistent stores; the API surfaces them; the silence engine returns `speak` under clean conditions and `go-quiet-now (10/10)` under saturation + restraint depletion + cultural storm + recovery debt; the dashboard renders all 7 deep-cognition cards with live state. Full Wave 6–16 regression remains green.
+
 ## Wave 16 — Generative Civilization Presence (Phases 401–500)
 
 Wave 15 made the organism unbreakable; Wave 16 asks what it gives back. The governing shift: the organism stops asking *"how do we survive reality?"* and begins asking **"how does reality become different because we existed beautifully inside it?"** State persists to `data/runtime/generative-presence.json` — civilization coherence, generative impact, beauty moments created, hope seeds planted, cynicism repelled, collective healing dispatched.

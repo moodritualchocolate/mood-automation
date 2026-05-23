@@ -49,6 +49,9 @@ import type { LivePresenceViewModel } from './livePresenceLayer';
 import { buildLivePresenceLayer } from './livePresenceLayer';
 import type { ManifestationLayoutViewModel } from './manifestationLayout';
 import { buildManifestationLayout } from './manifestationLayout';
+// Wave 17 — embodied runtime presence: deep cognition layer.
+import type { DeepCognitionViewModel } from './deepCognitionView';
+import { buildDeepCognitionView } from './deepCognitionView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -69,6 +72,8 @@ export interface RuntimeManifestation {
   health: RuntimeHealthViewModel;
   escalation: EscalationSurfaceViewModel;
   orchestration: RuntimeOrchestrationViewModel;
+  /** Wave 17 — the deep cognition layer makes Waves 10–16 visible. */
+  deepCognition: DeepCognitionViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -99,6 +104,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const health = buildRuntimeHealthView(snap);
   const escalation = buildEscalationSurfaceView(snap);
   const orchestration = buildRuntimeOrchestrationView(snap);
+  const deepCognition = buildDeepCognitionView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -118,7 +124,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   return {
     brain, presence, organism, pulse, timeline, directives, memoryGraph,
     worldState, pressureMap, season, drift, council, conflict, identity,
-    interrupts, health, escalation, orchestration, layout,
+    interrupts, health, escalation, orchestration, deepCognition, layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,
   };

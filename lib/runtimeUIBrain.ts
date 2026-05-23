@@ -16,15 +16,32 @@ import type { OSRuntimeState } from './operatingSystemCore';
 import type { CivilizationState } from './civilizationArchive';
 import type { ExecutiveWorldState } from './worldStateEngine';
 import type { RuntimeBook } from './runtimeMemoryStore';
+import type { RealityCouplingState } from './realityCouplingCore';
+import type { StrategicFutureState } from './autonomousStrategicPlanningCore';
+import type { ExecutionState } from './autonomousExecutionSynthesisCore';
+import type { FeedbackState } from './civilizationFeedbackLoopCore';
+import type { LiveCouplingState } from './civilizationCouplingKernel';
+import type { SovereignIdentityState } from './existentialIntegrityEngine';
+import type { GenerativePresenceState } from './civilizationCoherenceRuntime';
 
 /** The complete persistent runtime state every manifestation surface
- *  reads from. Nothing in Wave 9 renders anything not derived here. */
+ *  reads from. Nothing in Wave 9 renders anything not derived here.
+ *  Waves 10–16 contributed additional persistent stores; Wave 17 makes
+ *  them all visible in one place. */
 export interface RuntimeSnapshot {
   organism: OrganismVitalState | null;
   os: OSRuntimeState | null;
   civilization: CivilizationState | null;
   worldState: ExecutiveWorldState | null;
   runtime: RuntimeBook | null;
+  // ─── Waves 10–16 — added to the manifestation in Wave 17. ────
+  coupling?: RealityCouplingState | null;
+  strategicFuture?: StrategicFutureState | null;
+  execution?: ExecutionState | null;
+  feedback?: FeedbackState | null;
+  liveCoupling?: LiveCouplingState | null;
+  sovereignIdentity?: SovereignIdentityState | null;
+  generativePresence?: GenerativePresenceState | null;
   capturedAt: number;
 }
 

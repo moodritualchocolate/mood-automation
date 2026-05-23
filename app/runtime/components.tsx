@@ -435,3 +435,123 @@ export function RuntimePanel({
     </Panel>
   );
 }
+
+// ─── WAVE 17 — Embodied Runtime Presence ───────────────────────
+// Surfaces the deepest cognition layers (Waves 10–16) and the
+// canonical Silence Engine reading the user identified as central.
+
+const SILENCE_TONE: Record<string, Tone> = {
+  speak: 'good',
+  hold: 'cool',
+  'be-silent': 'warn',
+  'go-quiet-now': 'bad',
+};
+
+const SILENCE_LABEL: Record<string, string> = {
+  speak: 'SPEAK',
+  hold: 'HOLD',
+  'be-silent': 'BE SILENT',
+  'go-quiet-now': 'GO QUIET',
+};
+
+/**
+ * The canonical Silence Engine banner. The single most important
+ * runtime surface in Wave 17: should the brand be silent right now,
+ * and why? Aggregated from every layer that has a notion of silence.
+ */
+export function SilenceBanner({ m }: { m: RuntimeManifestation }) {
+  const s = m.deepCognition.silence;
+  const tone = SILENCE_TONE[s.directive] ?? 'neutral';
+  const color = toneOf(tone);
+  const label = SILENCE_LABEL[s.directive] ?? s.directive.toUpperCase();
+  const strengthPct = Math.max(4, Math.min(100, (s.silence_strength / 10) * 100));
+
+  return (
+    <div className="border hairline bg-ink-900/50 px-5 py-4 flex flex-col gap-3">
+      <div className="flex items-baseline justify-between gap-3">
+        <div className="flex items-baseline gap-3">
+          <span className="eyebrow">silence engine</span>
+          <span className="text-[10px] tracking-[0.28em] uppercase" style={{ color: 'rgba(247,245,242,0.4)' }}>
+            the central distinction
+          </span>
+        </div>
+        <span
+          className="text-[11px] tracking-[0.3em] font-medium"
+          style={{ color }}
+        >
+          {label} · {s.silence_strength}/10
+        </span>
+      </div>
+      <p className="text-[13px] leading-relaxed text-bone-50/85">
+        {s.statement}
+      </p>
+      {s.contributing_reasons.length > 0 && s.contributing_reasons[0] !== 'none' && (
+        <div className="flex flex-wrap gap-x-2 gap-y-1 text-[10px] tracking-[0.18em] uppercase text-bone-200/45">
+          {s.contributing_reasons.map((r) => (
+            <span key={r} className="border hairline px-2 py-[2px]" style={{ borderColor: 'rgba(247,245,242,0.12)' }}>
+              {r}
+            </span>
+          ))}
+        </div>
+      )}
+      <div className="h-[2px] bg-white/[0.06] mt-1">
+        <div className="h-full transition-all duration-700" style={{ width: `${strengthPct}%`, background: color }} />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The deep cognition grid — one card per Wave 10–16 layer, each
+ * showing its current statement and a small set of gauges. The
+ * deepest cognition becomes legible in a glance.
+ */
+export function DeepCognitionGrid({ m }: { m: RuntimeManifestation }) {
+  const dc = m.deepCognition;
+
+  if (!dc.any_layer_present) {
+    return (
+      <section className="border hairline bg-ink-900/50 p-5">
+        <h2 className="eyebrow mb-2">deep cognition</h2>
+        <Empty>{dc.statement}</Empty>
+      </section>
+    );
+  }
+
+  return (
+    <section className="flex flex-col gap-3">
+      <div className="flex items-baseline justify-between">
+        <h2 className="eyebrow">deep cognition</h2>
+        <span className="text-[10px] tracking-[0.22em] uppercase text-bone-200/40">
+          waves 10–16 · {dc.layers.length} layer(s) visible
+        </span>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {dc.layers.map((layer) => (
+          <article key={layer.name} className="border hairline bg-ink-900/50 p-4 flex flex-col gap-2">
+            <div className="flex items-baseline justify-between gap-2">
+              <div className="flex items-baseline gap-2">
+                <span
+                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                  style={{ background: toneOf(layer.tone), opacity: 0.85 }}
+                />
+                <h3 className="text-[12px] tracking-[0.2em] uppercase text-bone-100/85">
+                  {layer.name}
+                </h3>
+              </div>
+              <span className="text-[10px] tracking-[0.18em] uppercase text-bone-200/35">
+                wave {layer.wave}
+              </span>
+            </div>
+            <Statement>{layer.statement}</Statement>
+            <div className="flex flex-col gap-1.5 pt-1">
+              {layer.gauges.map((g) => (
+                <GaugeBar key={g.label} g={g} />
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
