@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -60,20 +60,22 @@ export default function RuntimePage() {
   const b = m.brain;
   const dot = LIVENESS_COLOR[b.liveness];
 
-  // Wave 17.6 — memory pressure subtly biases the vignette deeper
-  // when the organism's recent history has been heavy (scars and
-  // protections close together). The page literally feels shaped by
-  // memory. The transition variable inherits from data-weather and
-  // is overridden here only when memory adds weight.
+  // Wave 17.6 / 17.7 — vignette bias from two sources:
+  //   memory pressure (recent scars and protections)         × 0.08
+  //   external pressure field magnitude (digested signals)   × 0.06
+  // Both are subtle and additive. Neither alone can override the
+  // data-weather baseline; together they bias the atmosphere by a
+  // perceptible-but-not-loud amount. The cognitive weather word
+  // remains fully sovereign — pressure cannot recolour it.
   const memoryPressure = m.deepCognition.weatherTrail.memory_pressure;
+  const fieldPressure = m.deepCognition.pressureField.field_magnitude;
+  const bias = memoryPressure * 0.08 + fieldPressure * 0.06;
   const atmosStyle: React.CSSProperties = {
     gap: 'var(--atmos-gap)',
     transition: 'gap var(--atmos-transition) ease-in-out',
   };
-  if (memoryPressure > 0) {
-    // Add up to +0.08 to the vignette. Subtle. The baseline still
-    // comes from --atmos-vignette in the stylesheet.
-    (atmosStyle as Record<string, string>)['--atmos-vignette-bias'] = `${memoryPressure * 0.08}`;
+  if (bias > 0) {
+    (atmosStyle as Record<string, string>)['--atmos-vignette-bias'] = `${bias}`;
   }
 
   return (
@@ -141,6 +143,12 @@ export default function RuntimePage() {
           reality feedback, live coupling, sovereign identity,
           generative presence) is shown as its own card. */}
       <DeepCognitionGrid m={m} />
+
+      {/* Wave 17.7 — external pressure field. Architectural
+          preparation for real-world coupling: digested weak signals
+          enter here as pressure, never as commands. The dashboard
+          shows them; the cognitive weather remains sovereign. */}
+      <PressureField m={m} />
 
       {/* Wave 17 — the protection / scar twin trails. Protection
           shows what restraint preserved; scars show what shipped

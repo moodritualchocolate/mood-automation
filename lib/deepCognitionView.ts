@@ -16,6 +16,7 @@ import type { RuntimeSnapshot, Tone, Gauge } from './runtimeUIBrain';
 import { readSilenceEngine, type SilenceEngineReading, type SilenceDirective, type SilenceReason } from './silenceEngine';
 import type { ContradictionKind } from './contradictionScarsArchive';
 import type { WeatherSampleKind } from './weatherLogArchive';
+import { pressureFieldMagnitude, type ExternalPressureKind } from './pressureIngestionGateway';
 
 export interface DeepCognitionLayer {
   /** Display name of the layer (e.g. "reality coupling"). */
@@ -141,8 +142,36 @@ export interface DeepCognitionViewModel {
   /** Temporal continuity for the atmosphere — where the organism
    *  came from, not just where it is. */
   weatherTrail: WeatherTrail;
+  /** Wave 17.7 — the external pressure field. The organism's read
+   *  of how loaded its world is right now. Pressure influences the
+   *  page atmosphere as bias; it never sets the weather. */
+  pressureField: PressureField;
   /** A one-line statement summarising the deep cognition state. */
   statement: string;
+}
+
+/** A single dimensional read of external pressure — digested, never raw. */
+export interface PressureDimension {
+  kind: ExternalPressureKind;
+  /** -1..1 — the smoothed vector. */
+  vector: number;
+  /** Tone for the dashboard. */
+  tone: Tone;
+  /** Short human label of where this pressure is now. */
+  label: string;
+}
+
+export interface PressureField {
+  /** True when any pressure has ever been ingested. */
+  has_pressure_field: boolean;
+  /** The six dimensions of external pressure, smoothed. */
+  dimensions: PressureDimension[];
+  /** 0..1 — total field magnitude (used as vignette bias contribution). */
+  field_magnitude: number;
+  /** Total readings ever ingested. */
+  readings_ingested: number;
+  /** A short summary line for the dashboard. */
+  summary: string;
 }
 
 function gauge(label: string, value: number, max: number, tone: Tone, display?: string): Gauge {
@@ -324,6 +353,68 @@ function buildWeatherTrail(snap: RuntimeSnapshot): WeatherTrail {
         : `${samples.length} samples on record — the atmosphere has held`;
 
   return { dots, has_history, transition, memory_pressure, summary };
+}
+
+function pressureLabel(kind: ExternalPressureKind, vector: number): string {
+  const sign = vector > 0.15 ? '+' : vector < -0.15 ? '−' : '·';
+  const intensity = Math.abs(vector) >= 0.6 ? 'strong'
+                  : Math.abs(vector) >= 0.3 ? 'present'
+                  : Math.abs(vector) >= 0.1 ? 'faint' : 'still';
+  // The "still" line reads as quiet rather than empty.
+  return intensity === 'still' ? `${kind} · still` : `${kind} · ${sign} ${intensity}`;
+}
+
+function pressureTone(vector: number): Tone {
+  const mag = Math.abs(vector);
+  if (mag >= 0.6) return 'warn';
+  if (mag >= 0.3) return 'cool';
+  if (mag >= 0.1) return 'neutral';
+  return 'neutral';
+}
+
+/** Read the external pressure field — six dimensions, all digested.
+ *  Pressure is *information*, not direction; the dashboard shows it
+ *  but the cognitive weather remains sovereign. */
+function buildPressureField(snap: RuntimeSnapshot): PressureField {
+  const gw = snap.pressureGateway ?? null;
+  if (!gw) {
+    return {
+      has_pressure_field: false,
+      dimensions: [],
+      field_magnitude: 0,
+      readings_ingested: 0,
+      summary: 'no external pressure ingested — the gateway is ready, waiting',
+    };
+  }
+
+  const kinds: ExternalPressureKind[] = [
+    'audience-fatigue', 'cultural-tension', 'attention-availability',
+    'sentiment-drift', 'resonance-decay', 'trust-velocity',
+  ];
+  const dimensions: PressureDimension[] = kinds.map((kind) => {
+    const vector = gw.smoothed[kind] ?? 0;
+    return {
+      kind,
+      vector: Math.round(vector * 100) / 100,
+      tone: pressureTone(vector),
+      label: pressureLabel(kind, vector),
+    };
+  });
+
+  const field_magnitude = pressureFieldMagnitude(gw);
+  const readings_ingested = gw.readingsIngested;
+
+  const summary = readings_ingested === 0
+    ? 'pressure gateway open, no readings yet'
+    : field_magnitude < 0.1
+      ? `field is still — ${readings_ingested} reading(s) digested, all settled near zero`
+      : field_magnitude < 0.3
+        ? `low pressure across the field — ${readings_ingested} reading(s) digested`
+        : field_magnitude < 0.6
+          ? `moderate pressure across the field — the organism is feeling its world`
+          : `loaded field — pressure is high across multiple dimensions`;
+
+  return { has_pressure_field: true, dimensions, field_magnitude, readings_ingested, summary };
 }
 
 function buildScarTrail(snap: RuntimeSnapshot): ScarTrail {
@@ -553,11 +644,15 @@ export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionView
   const scarTrail = buildScarTrail(snap);
   const weather = buildCognitiveWeather(snap, silence, layers);
   const weatherTrail = buildWeatherTrail(snap);
+  const pressureField = buildPressureField(snap);
 
   const any_layer_present = layers.length > 0;
   const statement = !any_layer_present
     ? 'the deepest layers have not yet drawn breath'
     : `${layers.length} deep cognition layer(s) visible · ${silence.directive} · ${protectionTrail.total_protections} protection(s) · ${scarTrail.total_scars} scar(s)`;
 
-  return { any_layer_present, layers, silence, protectionTrail, scarTrail, weather, weatherTrail, statement };
+  return {
+    any_layer_present, layers, silence, protectionTrail, scarTrail,
+    weather, weatherTrail, pressureField, statement,
+  };
 }

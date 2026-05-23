@@ -820,3 +820,66 @@ export function ScarTrail({ m }: { m: RuntimeManifestation }) {
     </section>
   );
 }
+
+/**
+ * The external pressure field — Wave 17.7's preparation surface
+ * for real-world coupling. Six dimensions, each shown as a small
+ * bar that points left or right from a center axis. The bars are
+ * smoothed (EMA in the gateway), so they move slowly even if raw
+ * signals spike.
+ *
+ * Pressure is shown but never spoken for. The dashboard surfaces
+ * the field; the cognitive weather remains sovereign.
+ */
+export function PressureField({ m }: { m: RuntimeManifestation }) {
+  const pf = m.deepCognition.pressureField;
+
+  return (
+    <section className="border hairline bg-ink-900/50 p-5 flex flex-col gap-3">
+      <div className="flex items-baseline justify-between">
+        <h2 className="eyebrow">external pressure field</h2>
+        <span className="text-[10px] tracking-[0.22em] uppercase text-bone-200/40">
+          {pf.has_pressure_field
+            ? `${pf.readings_ingested} reading${pf.readings_ingested === 1 ? '' : 's'} · magnitude ${Math.round(pf.field_magnitude * 100)}%`
+            : 'gateway open · awaiting'}
+        </span>
+      </div>
+      <p className="text-[12px] text-bone-200/55 leading-relaxed italic">
+        {pf.summary}
+      </p>
+      {pf.has_pressure_field && (
+        <ul className="flex flex-col gap-1.5 pt-1">
+          {pf.dimensions.map((d) => {
+            const pct = Math.round(Math.abs(d.vector) * 100);
+            const color = toneOf(d.tone);
+            const isRight = d.vector >= 0;
+            return (
+              <li key={d.kind} className="flex items-center gap-3 text-[11px]">
+                <span className="w-[140px] tracking-[0.16em] uppercase text-bone-200/55 shrink-0">
+                  {d.kind.replace(/-/g, ' ')}
+                </span>
+                {/* Bipolar bar: center at 50%, fill grows left or right
+                    depending on the sign of the vector. */}
+                <div className="flex-1 h-[6px] relative">
+                  <div className="absolute inset-y-0 left-1/2 w-px bg-white/[0.08]" />
+                  <div
+                    className="absolute inset-y-0 transition-all atmos-breathe-faint"
+                    style={{
+                      [isRight ? 'left' : 'right']: '50%',
+                      width: `${pct / 2}%`,
+                      background: color,
+                      opacity: 0.7,
+                    }}
+                  />
+                </div>
+                <span className="w-12 text-right text-bone-200/40 tabular-nums shrink-0">
+                  {d.vector >= 0 ? '+' : ''}{d.vector.toFixed(2)}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}

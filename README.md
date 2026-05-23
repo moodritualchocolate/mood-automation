@@ -138,6 +138,18 @@ The atmosphere knows where it is. It didn't yet know where it came from. This pa
 
 Verified: a synthetic 5-sample log (`awake → restrained → restrained → strained → restrained`) produces the correct trail order, correctly identifies the `strained → restrained` transition front, computes memory pressure of 0.36, and yields a vignette bias of ~0.029. Full Wave 6–16 regression remains green.
 
+### Wave 17.7 — Pressure Ingestion Gateway: external signals as pressure, never commands
+
+The architectural preparation for real-world coupling. Real platform adapters (saves, repost velocity, watch decay, sentiment drift, attention availability, trust velocity) eventually plug in here — this wave readies the gateway they'll arrive into.
+
+**`lib/pressureIngestionGateway.ts`** — six dimensions of external pressure, each with its own EMA. Default `digestionInertia` is 0.85, which makes the EMA alpha 0.15 at full confidence. A single high-confidence spike at vector 1.0 moves the smoothed value by precisely 0.15 — *exactly* the alpha, never more. Sustained pressure across many readings approaches the steady state but never snaps; opposing readings reverse the trend over time. Low-confidence readings carry proportionally less weight. The architecture metabolizes pressure; it never reacts to it.
+
+**Dashboard `PressureField` panel** — six bipolar bars rendered with a centered axis. Each bar grows left or right depending on the sign of the vector. Bars use `.atmos-breathe-faint` so they pulse in unison with the rest of the page. Labels read as `audience-fatigue · + present` or `sentiment-drift · − faint` or `cultural-tension · still`.
+
+**Vignette bias composition** — the page's `--atmos-vignette-bias` now combines two sources: `memory_pressure × 0.08` (recent scars and protections, from 17.6) + `field_magnitude × 0.06` (digested external pressure). Both are subtle and additive. The cognitive weather word remains fully sovereign; pressure cannot recolour it. The runtime feels its world without obeying it.
+
+Verified with six unit smoke tests: single spike at vector 1.0 → smoothed exactly 0.150; 12 sustained → 0.858 (approaching 1.0 without snap); confidence 0.2 → smoothed 0.030; 8 opposing → -0.494 (reversing without snap); magnitude bounded; persistence round-trips through disk. API integration test with 30 seeded readings across three dimensions surfaces field magnitude 0.236, vignette bias contribution 0.014. Full Wave 6–16 regression remains green.
+
 ## Wave 16 — Generative Civilization Presence (Phases 401–500)
 
 Wave 15 made the organism unbreakable; Wave 16 asks what it gives back. The governing shift: the organism stops asking *"how do we survive reality?"* and begins asking **"how does reality become different because we existed beautifully inside it?"** State persists to `data/runtime/generative-presence.json` — civilization coherence, generative impact, beauty moments created, hope seeds planted, cynicism repelled, collective healing dispatched.

@@ -26,6 +26,7 @@ import type { GenerativePresenceState } from './civilizationCoherenceRuntime';
 import type { ProtectionMemoryState } from './protectionMemoryArchive';
 import type { ContradictionScarsState } from './contradictionScarsArchive';
 import type { WeatherLogState } from './weatherLogArchive';
+import type { PressureGatewayState } from './pressureIngestionGateway';
 
 /** The complete persistent runtime state every manifestation surface
  *  reads from. Nothing in Wave 9 renders anything not derived here.
@@ -51,6 +52,10 @@ export interface RuntimeSnapshot {
   contradictionScars?: ContradictionScarsState | null;
   /** Wave 17.6 — weather log: temporal continuity for the atmosphere. */
   weatherLog?: WeatherLogState | null;
+  /** Wave 17.7 — external pressure gateway: weighted, digestive,
+   *  never commanding. The architecture is ready to receive real-
+   *  world weak signals; they enter here as pressure, not orders. */
+  pressureGateway?: PressureGatewayState | null;
   capturedAt: number;
 }
 

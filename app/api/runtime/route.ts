@@ -27,6 +27,7 @@ import {
   createProtectionMemoryStore,
   createContradictionScarsStore,
   createWeatherLogStore,
+  createPressureGatewayStore,
   buildRuntimeManifestation,
 } from '@lib/index';
 import type { RuntimeSnapshot } from '@lib/index';
@@ -39,7 +40,7 @@ export async function GET() {
     organism, os, civilization, worldState, runtimeBook,
     coupling, strategicFuture, execution, feedback,
     liveCoupling, sovereignIdentity, generativePresence,
-    protectionMemory, contradictionScars, weatherLog,
+    protectionMemory, contradictionScars, weatherLog, pressureGateway,
   ] = await Promise.all([
     createOrganismCoreStore().read(),
     createOSRuntimeStore().read(),
@@ -54,10 +55,11 @@ export async function GET() {
     createLiveCouplingStore().read(),
     createSovereignIdentityStore().read(),
     createGenerativePresenceStore().read(),
-    // ─── Wave 17 — runtime continuity: protection + scars + weather log ──
+    // ─── Wave 17 — runtime continuity + 17.7 external pressure gateway ──
     createProtectionMemoryStore().read(),
     createContradictionScarsStore().read(),
     createWeatherLogStore().read(),
+    createPressureGatewayStore().read(),
   ]);
 
   const snapshot: RuntimeSnapshot = {
@@ -76,6 +78,7 @@ export async function GET() {
     protectionMemory,
     contradictionScars,
     weatherLog,
+    pressureGateway,
     capturedAt: Date.now(),
   };
 
