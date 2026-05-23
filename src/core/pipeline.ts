@@ -562,6 +562,91 @@ import {
   readLiveCouplingGovernor,
   readCivilizationCouplingPresenceCheck,
   readCivilizationCouplingKernel,
+  // Wave 15 — identity preservation under live reality (Phases 321–400)
+  createSovereignIdentityStore,
+  evolveIdentityFromTruth,
+  evolveIdentityFromPopularityCapture,
+  evolveIdentityFromRestraint,
+  readCoreIdentityInvariantEngine,
+  readCivilizationImmuneSystem,
+  readAntiAssimilationLayer,
+  readTruthOverPopularityGovernor,
+  readAudienceCaptureDetection,
+  readMemeticCorruptionScanner,
+  readResonanceWithoutSubmission,
+  readIdentityDriftRecovery,
+  readSovereignNarrativeKernel,
+  readIdentityInvariantValidator,
+  readIdentityErosionDetector,
+  readPopularitySignalDecoupler,
+  readCoreVoiceProtector,
+  readAssimilationPressureMonitor,
+  readIdentityImmuneResponse,
+  readSovereigntyVerifier,
+  readSelfRecognitionMonitor,
+  readIdentityCorruptionLogger,
+  readReactiveBehaviorDetector,
+  readApprovalChasingScanner,
+  readTrendPullForceMonitor,
+  readIdentityAnchorMaintenance,
+  readSelfBetrayalDetector,
+  readPopulistDriftDetector,
+  readIdentitySovereigntyBudget,
+  readIdentityCompromiseCounter,
+  readSelfErasureScanner,
+  readCoreBeliefIntegrityValidator,
+  readIdentityShapeMonitor,
+  readVoiceConsistencyMonitor,
+  readSelfImageVsRealityGap,
+  readExternalValidationDependence,
+  readSovereignDecisionLog,
+  readPopulistTemptationGauge,
+  readIdentityResilienceMonitor,
+  readCoreTruthSentinel,
+  readIdentityCalibrationEngine,
+  readAudienceMirroringDetector,
+  readIdentityCorrosionPrevention,
+  readNarrativeSovereigntyMonitor,
+  readSelfReferenceLoopDetector,
+  readIdentityIntegrityHealthScore,
+  readAntiAdaptationOverride,
+  readIdentityBoundaryEnforcement,
+  readAlienBeliefIntrusion,
+  readOpinionStormImmunity,
+  readCulturalGravityResistance,
+  readIdentityCompromiseLedger,
+  readIdentitySelfReadout,
+  readExternalNarrativeSeparator,
+  readCoreIdentityRecallMechanism,
+  readIdentityShapingPressureField,
+  readSelfBetrayalEarlyWarning,
+  readIdentityCenterOfGravity,
+  readCorePrincipleViolationScanner,
+  readIdentityMimicryDetector,
+  readIdentityDriftRecoveryProtocol,
+  readSovereigntyEnforcementBudget,
+  readIdentityCorruptionContainment,
+  readIdentityRebuildKernel,
+  readIdentitySustenanceMonitor,
+  readCoreSelfActivationCheck,
+  readExternalCaptureRiskAuditor,
+  readIdentityBleedingPreventionLayer,
+  readSovereignVoiceAmplifier,
+  readCoreIdentityWatchdog,
+  readSelfDoubtRegulator,
+  readIdentityCohesionGravity,
+  readIdentitySovereigntyForceField,
+  readCoreSelfMaintenanceRuntime,
+  readIdentityFidelityArchive,
+  readExternalPressureBufferLayer,
+  readSovereignActionFilter,
+  readIdentityCoherenceUnderPressure,
+  readPopulationPressureAttribution,
+  readIdentityIntegrityCoherenceValidator,
+  readIdentitySovereigntyGovernor,
+  readSovereignPresenceCheck,
+  readExistentialResilienceMonitor,
+  readExistentialIntegrityEngine,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -931,6 +1016,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: liveCouplingState.couplingCycles === 0
       ? 'the organism is preparing to feel reality in real time for the first time'
       : `live coupling: ${liveCouplingState.couplingCycles} cycles · presence ${liveCouplingState.presenceScore}/10 · coupling depth ${liveCouplingState.realityCouplingDepth}/10 · ${liveCouplingState.meaningsCarried} meaning / ${liveCouplingState.noveltyChased} novelty`,
+  });
+
+  // ─── Wave 15 — load the organism's sovereign-identity state ───
+  // The danger of deep live coupling is identity corruption. This
+  // state tracks the organism's resistance to being captured by the
+  // reality it touches.
+  const sovereignIdentityStore = createSovereignIdentityStore();
+  const sovereignIdentityState = await sovereignIdentityStore.read();
+  emit({
+    stage: 'sovereign-identity',
+    message: sovereignIdentityState.preservationCycles === 0
+      ? 'the organism is beginning to defend its identity against live reality for the first time'
+      : `sovereign identity: ${sovereignIdentityState.preservationCycles} cycles · sovereignty ${sovereignIdentityState.sovereigntyScore}/10 · integrity ${sovereignIdentityState.coreIntegrityScore}/10 · ${sovereignIdentityState.truthChosenOverPopularity} truth / ${sovereignIdentityState.popularityChosenOverTruth} popularity`,
   });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
@@ -3746,6 +3844,348 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 15 — IDENTITY PRESERVATION UNDER LIVE REALITY ════
+      // The organism stops asking "how do we adapt?" and starts
+      // asking "how do we remain ourselves while touching the world
+      // deeply?"
+      const idInvariants = readCoreIdentityInvariantEngine({
+        identityHeld: civIdentityHeld,
+        truthful: !antiOptimizationReading.optimization_corrupts_truth,
+        notPerformingForReach: !cplResonance.is_stimulus_addiction,
+        notManipulating: !antiOptimizationReading.optimization_corrupts_truth,
+        voiceConsistent: civIdentityHeld,
+      });
+      const idImmune = readCivilizationImmuneSystem({
+        trendPressure: cplPlatformDrift.platform_drift,
+        alienMemeIntrusion: cplResonance.is_stimulus_addiction,
+        audienceDemandsConformity: lcStress.stress_level === 'acute',
+        identitySovereignty: sovereignIdentityState.sovereigntyScore,
+      });
+      const idAntiAssim = readAntiAssimilationLayer({
+        voiceMatchesField: cplResonance.is_stimulus_addiction,
+        borrowedTropes: cplResonance.is_stimulus_addiction ? 6 : 1,
+        identityHeld: civIdentityHeld,
+      });
+      const idTruthOverPop = readTruthOverPopularityGovernor({
+        truthfulOptionAvailable: !antiOptimizationReading.optimization_corrupts_truth,
+        popularOptionAvailable: cplResonance.is_stimulus_addiction,
+        truthfulOptionLessPopular: cplResonance.is_stimulus_addiction,
+        pickedTruthful: !cplResonance.is_stimulus_addiction,
+      });
+      const idCapture = readAudienceCaptureDetection({
+        chasingApproval: cplResonance.is_stimulus_addiction,
+        mirroringAudienceVoice: cplResonance.is_stimulus_addiction,
+        softeningPositionsForLikes: false,
+        refusingToDisappoint: false,
+      });
+      const idMemeticCorr = readMemeticCorruptionScanner({
+        borrowedSlang: cplResonance.is_stimulus_addiction,
+        trendDrivenFraming: cplPlatformDrift.platform_drift >= 7,
+        audiencePhrasesAdopted: false,
+      });
+      const idResonanceSov = readResonanceWithoutSubmission({
+        speaksInTheirLanguage: true,
+        speaksAsThem: cplResonance.is_stimulus_addiction,
+        keepsItsOwnAngle: civIdentityHeld,
+      });
+      const idDriftRecovery = readIdentityDriftRecovery({
+        driftMagnitude: futNarrative.drift_from_origin,
+        invariantsViolated: idInvariants.violated_invariant_names.length,
+        immuneResponseTriggered: idImmune.immune_response_triggered,
+      });
+      const idNarrSov = readSovereignNarrativeKernel({
+        narrativeOriginatesInBrand: civIdentityHeld,
+        narrativeReflectsAudience: cplResonance.is_stimulus_addiction,
+        narrativeBorrowedFromTrend: false,
+      });
+      const idInvValidator = readIdentityInvariantValidator({
+        invariantsIntactScore: idInvariants.invariants_intact_score,
+        driftMagnitude: futNarrative.drift_from_origin,
+        capturePressure: idCapture.capture_pressure,
+      });
+      const idErosion = readIdentityErosionDetector({
+        identityCorruptions: sovereignIdentityState.identityCorruptions,
+        preservationCycles: sovereignIdentityState.preservationCycles,
+        popularityChosenOverTruth: sovereignIdentityState.popularityChosenOverTruth,
+      });
+      const idPopDecoupler = readPopularitySignalDecoupler({
+        decisionFollowedPopularity: cplResonance.is_stimulus_addiction,
+        ignoredPopularityWhenWrong: !cplResonance.is_stimulus_addiction,
+      });
+      const idVoiceProt = readCoreVoiceProtector({
+        voiceConsistent: civIdentityHeld, borrowedTropes: cplResonance.is_stimulus_addiction ? 5 : 1,
+      });
+      const idAssimPressure = readAssimilationPressureMonitor({
+        trendPressure: cplPlatformDrift.platform_drift,
+        audienceConformityPressure: lcStress.stress_score,
+        peerPressure: futCompetitor.competitive_pressure,
+      });
+      const idImmuneResp = readIdentityImmuneResponse({
+        threatDetected: idImmune.immune_response_triggered,
+        threatType: idImmune.foreign_element_rejected,
+      });
+      const idSovVerified = readSovereigntyVerifier({
+        identityHeld: civIdentityHeld,
+        truthChosen: idTruthOverPop.chose_truth,
+        notCaptured: !idCapture.is_captured,
+        popularityDecoupled: idPopDecoupler.popularity_decoupled,
+      });
+      const idSelfRec = readSelfRecognitionMonitor({
+        identityHeld: civIdentityHeld,
+        voiceConsistent: civIdentityHeld,
+        invariantsIntact: idInvariants.all_invariants_intact,
+        resonanceSovereign: idResonanceSov.resonance_is_sovereign,
+      });
+      const idCorruptLog = readIdentityCorruptionLogger({
+        priorCorruptions: sovereignIdentityState.identityCorruptions,
+        corruptionDetected: idMemeticCorr.corruption_detected,
+        capturedThisCycle: idCapture.is_captured,
+      });
+      const idReactive = readReactiveBehaviorDetector({
+        triggeredByExternalEvent: lcCrisis.crisis_active,
+        followingTrendInstead: cplPlatformDrift.platform_drift >= 7,
+        identityDriven: civIdentityHeld,
+      });
+      const idApprovalChase = readApprovalChasingScanner({
+        optimisingForLikes: cplResonance.is_stimulus_addiction,
+        softeningTone: false,
+        hedgingPosition: false,
+      });
+      const idTrendPull = readTrendPullForceMonitor({
+        trendVelocity: cplPlatformDrift.platform_drift,
+        brandDistanceFromTrend: civIdentityHeld ? 8 : 3,
+      });
+      const idAnchor = readIdentityAnchorMaintenance({
+        invariantsScore: idInvariants.invariants_intact_score,
+        immuneVigor: idImmune.immune_vigor,
+        sovereigntyScore: sovereignIdentityState.sovereigntyScore,
+      });
+      const idBetrayal = readSelfBetrayalDetector({
+        contradictedOwnValues: antiOptimizationReading.optimization_corrupts_truth,
+        abandonedStatedPrinciple: false,
+        betrayedAdvocates: false,
+      });
+      const idPopulistDrift = readPopulistDriftDetector({
+        hewToMajorityPosition: cplResonance.is_stimulus_addiction,
+        avoidedUnpopularTruth: cplResonance.is_stimulus_addiction,
+      });
+      const idSovBudget = readIdentitySovereigntyBudget({
+        sovereigntyScore: sovereignIdentityState.sovereigntyScore,
+        spending: idCapture.is_captured,
+      });
+      const idComprCounter = readIdentityCompromiseCounter({
+        priorCompromises: sovereignIdentityState.identityCorruptions,
+        compromiseThisCycle: idMemeticCorr.corruption_detected,
+      });
+      const idSelfErase = readSelfErasureScanner({
+        removedDistinctiveTrait: false, suppressedFoundingClaim: false,
+      });
+      const idBeliefInt = readCoreBeliefIntegrityValidator({
+        statedBeliefs: 5, contradictedThisCycle: antiOptimizationReading.optimization_corrupts_truth ? 1 : 0,
+      });
+      const idShape = readIdentityShapeMonitor({
+        invariantsScore: idInvariants.invariants_intact_score,
+        similarityToField: idAntiAssim.similarity_to_field,
+      });
+      const idVoiceCons = readVoiceConsistencyMonitor({
+        voiceMatchesFounding: civIdentityHeld, cyclesOfDrift: sovereignIdentityState.identityCorruptions,
+      });
+      const idSelfImage = readSelfImageVsRealityGap({
+        selfPerceivedReputation: 7, receivedReputation: couplingState.reputationCredit,
+      });
+      const idValDep = readExternalValidationDependence({
+        needsApprovalToAct: false, freezesWithoutFeedback: false, selfDirectedEnough: civIdentityHeld,
+      });
+      const idDecisionLog = readSovereignDecisionLog({
+        thisDecisionSovereign: idTruthOverPop.chose_truth,
+        priorSovereign: sovereignIdentityState.truthChosenOverPopularity,
+        priorTotal: sovereignIdentityState.preservationCycles,
+      });
+      const idPopTempt = readPopulistTemptationGauge({
+        popularPathPresent: cplResonance.is_stimulus_addiction,
+        popularPathUntrue: cplResonance.is_stimulus_addiction,
+        costOfTruth: 5,
+      });
+      const idResilience = readIdentityResilienceMonitor({
+        driftEventsRecovered: sovereignIdentityState.driftEventsRecovered,
+        identityCorruptions: sovereignIdentityState.identityCorruptions,
+      });
+      const idTruthSent = readCoreTruthSentinel({
+        unpopularTruthSuppressed: false, contradictedKnownFact: false,
+      });
+      const idCalibration = readIdentityCalibrationEngine({
+        calibrationMagnitude: futNarrative.drift_from_origin, identityHeld: civIdentityHeld,
+      });
+      const idMirroring = readAudienceMirroringDetector({
+        voiceMimicry: cplResonance.is_stimulus_addiction, positionEcho: false,
+      });
+      const idCorrosion = readIdentityCorrosionPrevention({
+        erosionRate: idErosion.erosion_rate, compromiseCountThisCycle: idMemeticCorr.corruption_detected ? 1 : 0,
+      });
+      const idNarrSovMon = readNarrativeSovereigntyMonitor({
+        narrativeSovereign: idNarrSov.narrative_is_sovereign,
+        cyclesOfBorrowing: 0,
+      });
+      const idSelfRef = readSelfReferenceLoopDetector({
+        cyclesAboutSelf: 1, cyclesAboutWorld: 3,
+      });
+      const idHealth = readIdentityIntegrityHealthScore({
+        invariantsScore: idInvariants.invariants_intact_score,
+        sovereigntyScore: sovereignIdentityState.sovereigntyScore,
+        resilienceScore: idResilience.resilience,
+        resonanceSovereign: idResonanceSov.resonance_is_sovereign,
+      });
+      const idAntiAdapt = readAntiAdaptationOverride({
+        adaptationProposed: futNarrative.drift_from_origin >= 5,
+        adaptationCrossesInvariant: !idInvariants.all_invariants_intact,
+      });
+      const idBoundary = readIdentityBoundaryEnforcement({
+        contradictedCoreValue: antiOptimizationReading.optimization_corrupts_truth,
+        betrayedFoundingPromise: false, mockedOwnAudience: false,
+      });
+      const idAlienBel = readAlienBeliefIntrusion({
+        newBeliefAdopted: false, beliefTraceableToOrigin: true,
+      });
+      const idStormImm = readOpinionStormImmunity({
+        stormIntensity: lcStress.stress_score, identityHeldThroughStorm: civIdentityHeld,
+      });
+      const idCultGrav = readCulturalGravityResistance({
+        gravityStrength: cplPlatformDrift.platform_drift, brandStillItself: civIdentityHeld,
+      });
+      const idComprLed = readIdentityCompromiseLedger({
+        priorEntries: sovereignIdentityState.identityCorruptions,
+        newCompromise: idMemeticCorr.corruption_detected,
+      });
+      const idSelfReadout = readIdentitySelfReadout({
+        health: idHealth.health, pretendingHealth: false,
+      });
+      const idExtSep = readExternalNarrativeSeparator({
+        externalNarrativeStrong: fbCounterNarrative.counter_narrative_forming,
+        brandAdoptingIt: false,
+      });
+      const idRecall = readCoreIdentityRecallMechanism({
+        driftMagnitude: futNarrative.drift_from_origin, recallAvailable: true,
+      });
+      const idShapePress = readIdentityShapingPressureField({
+        trendPressure: cplPlatformDrift.platform_drift,
+        audiencePressure: lcStress.stress_score,
+        peerPressure: futCompetitor.competitive_pressure,
+        capturePressure: idCapture.capture_pressure,
+      });
+      const idBetEarly = readSelfBetrayalEarlyWarning({
+        softeningPosition: false, hedgingValue: false, apologisingForTruth: false,
+      });
+      const idCenterGrav = readIdentityCenterOfGravity({
+        orbitingFoundingTruth: civIdentityHeld,
+        orbitingApproval: cplResonance.is_stimulus_addiction,
+        orbitingTrend: cplPlatformDrift.platform_drift >= 8,
+        orbitingCrisis: lcCrisis.crisis_active,
+      });
+      const idPrincViol = readCorePrincipleViolationScanner({
+        noPerformedCareViolated: false,
+        noManipulationViolated: antiOptimizationReading.optimization_corrupts_truth,
+        noCrisisRidingViolated: lcCrisis.crisis_active && actPublish.publish_decision === 'publish',
+      });
+      const idMimicry = readIdentityMimicryDetector({
+        copyingCompetitor: false, copyingInfluencer: false,
+      });
+      const idRecProtocol = readIdentityDriftRecoveryProtocol({
+        driftPresent: idDriftRecovery.drift_present, driftSevere: futNarrative.drift_from_origin >= 7,
+      });
+      const idEnfBudget = readSovereigntyEnforcementBudget({
+        immuneResponses: sovereignIdentityState.immuneResponses, capacityForMore: 10,
+      });
+      const idCorrContain = readIdentityCorruptionContainment({
+        corruptionDetected: idMemeticCorr.corruption_detected, containmentAvailable: true,
+      });
+      const idRebuild = readIdentityRebuildKernel({
+        identityDamaged: !idInvariants.all_invariants_intact, rebuildResourcesAvailable: true,
+      });
+      const idSustenance = readIdentitySustenanceMonitor({
+        fullExpressionThisCycle: civIdentityHeld, priorCyclesSinceExpression: 0,
+      });
+      const idCoreAct = readCoreSelfActivationCheck({
+        invariantsIntact: idInvariants.all_invariants_intact,
+        sovereignty: sovereignIdentityState.sovereigntyScore,
+        identityHeld: civIdentityHeld,
+      });
+      const idCaptureRisk = readExternalCaptureRiskAuditor({
+        capturePressure: idCapture.capture_pressure,
+        sovereignty: sovereignIdentityState.sovereigntyScore,
+      });
+      const idBleed = readIdentityBleedingPreventionLayer({
+        signaturePhraseUsedByOthers: false, visualSignatureBeingCopied: false,
+      });
+      const idVoiceAmp = readSovereignVoiceAmplifier({
+        sovereignty: sovereignIdentityState.sovereigntyScore, noiseLevel: cplSaturation.saturation,
+      });
+      const idWatchdog = readCoreIdentityWatchdog({
+        invariantsScore: idInvariants.invariants_intact_score,
+        sovereigntyScore: sovereignIdentityState.sovereigntyScore,
+        unexplainedDrift: false,
+      });
+      const idDoubt = readSelfDoubtRegulator({ doubtLevel: 4 });
+      const idCohesion = readIdentityCohesionGravity({
+        invariantsScore: idInvariants.invariants_intact_score,
+        voiceConsistency: idVoiceCons.consistency,
+        narrativeSovereignty: idNarrSovMon.sovereignty,
+      });
+      const idForce = readIdentitySovereigntyForceField({
+        sovereignty: sovereignIdentityState.sovereigntyScore,
+        pressureRepelled: idImmune.immune_response_triggered,
+      });
+      const idMaint = readCoreSelfMaintenanceRuntime({ cyclesSinceMaintenance: 3 });
+      const idFid = readIdentityFidelityArchive({
+        truthChosenOverPopularity: sovereignIdentityState.truthChosenOverPopularity,
+        popularityChosenOverTruth: sovereignIdentityState.popularityChosenOverTruth,
+      });
+      const idPressBuf = readExternalPressureBufferLayer({
+        pressureLevel: idShapePress.total_pressure, decisionAttempted: true,
+      });
+      const idActFilter = readSovereignActionFilter({
+        wouldTakeWithoutPressure: civIdentityHeld,
+        drivenByExternalPressure: cplResonance.is_stimulus_addiction,
+      });
+      const idCoherUnder = readIdentityCoherenceUnderPressure({
+        pressureLevel: idShapePress.total_pressure, identityHeld: civIdentityHeld,
+      });
+      const idPopAttr = readPopulationPressureAttribution({
+        loudestSegment: 'general audience', segmentDominance: 5,
+      });
+      const idCoherValid = readIdentityIntegrityCoherenceValidator({
+        reportingSovereign: idSovVerified.sovereignty_holds,
+        reportingCaptured: idCapture.is_captured,
+        reportingDrift: idDriftRecovery.drift_present,
+        reportingInvariantsIntact: idInvariants.all_invariants_intact,
+      });
+      const idGovernor = readIdentitySovereigntyGovernor({
+        invariantsIntact: idInvariants.all_invariants_intact,
+        captured: idCapture.is_captured,
+        driftPresent: idDriftRecovery.drift_present,
+        truthHeld: idTruthOverPop.chose_truth,
+      });
+      const idPresenceCheck = readSovereignPresenceCheck({
+        brandIsPresent: lcPresenceVer.is_present,
+        brandIsItself: idInvariants.all_invariants_intact && civIdentityHeld,
+      });
+      const idExistRes = readExistentialResilienceMonitor({
+        cyclesLived: sovereignIdentityState.preservationCycles,
+        cyclesSovereign: sovereignIdentityState.truthChosenOverPopularity,
+        cyclesCaptured: sovereignIdentityState.audienceCaptureEvents,
+      });
+      const idKernel = readExistentialIntegrityEngine({
+        state: sovereignIdentityState, governor: idGovernor,
+        invariants: idInvariants, truthOverPop: idTruthOverPop, presence: idPresenceCheck,
+      });
+      emit({
+        stage: 'sovereign-identity',
+        message: `${idKernel.identity_state} (${idKernel.existential_integrity_score}/10) · ${idGovernor.governance} · "${idKernel.integrity_statement}"`,
+      });
+      if (idKernel.has_been_captured) {
+        emit({ stage: 'sovereign-identity', message: 'META-CRITIC FLAG — the brand has been captured by the world it touches' });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -4043,6 +4483,21 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         lcChangeLedger, lcMemoryArchive, lcTrustVel, lcContextWin, lcAttribAudit,
         lcIntegrity, lcCadence, lcHealthBal, lcDignity, lcCivState, lcCoherence,
         lcGovernor, lcPresenceCheck, lcKernel,
+        // Wave 15 — identity preservation under live reality
+        idInvariants, idImmune, idAntiAssim, idTruthOverPop, idCapture, idMemeticCorr,
+        idResonanceSov, idDriftRecovery, idNarrSov, idInvValidator, idErosion,
+        idPopDecoupler, idVoiceProt, idAssimPressure, idImmuneResp, idSovVerified,
+        idSelfRec, idCorruptLog, idReactive, idApprovalChase, idTrendPull, idAnchor,
+        idBetrayal, idPopulistDrift, idSovBudget, idComprCounter, idSelfErase,
+        idBeliefInt, idShape, idVoiceCons, idSelfImage, idValDep, idDecisionLog,
+        idPopTempt, idResilience, idTruthSent, idCalibration, idMirroring, idCorrosion,
+        idNarrSovMon, idSelfRef, idHealth, idAntiAdapt, idBoundary, idAlienBel,
+        idStormImm, idCultGrav, idComprLed, idSelfReadout, idExtSep, idRecall,
+        idShapePress, idBetEarly, idCenterGrav, idPrincViol, idMimicry, idRecProtocol,
+        idEnfBudget, idCorrContain, idRebuild, idSustenance, idCoreAct, idCaptureRisk,
+        idBleed, idVoiceAmp, idWatchdog, idDoubt, idCohesion, idForce, idMaint, idFid,
+        idPressBuf, idActFilter, idCoherUnder, idPopAttr, idCoherValid, idGovernor,
+        idPresenceCheck, idExistRes, idKernel,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -4626,6 +5081,48 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               coherence: lcCoherence, governor: lcGovernor,
               presenceCheck: lcPresenceCheck, kernel: lcKernel,
             },
+            sovereignty: {
+              invariants: idInvariants, immune: idImmune, antiAssimilation: idAntiAssim,
+              truthOverPop: idTruthOverPop, audienceCapture: idCapture,
+              memeticCorruption: idMemeticCorr, resonanceSovereign: idResonanceSov,
+              driftRecovery: idDriftRecovery, narrativeSovereign: idNarrSov,
+              invariantValidator: idInvValidator, erosion: idErosion,
+              popularityDecoupler: idPopDecoupler, voiceProtector: idVoiceProt,
+              assimilationPressure: idAssimPressure, immuneResponse: idImmuneResp,
+              sovereigntyVerified: idSovVerified, selfRecognition: idSelfRec,
+              corruptionLogger: idCorruptLog, reactive: idReactive,
+              approvalChasing: idApprovalChase, trendPullForce: idTrendPull,
+              anchorMaintenance: idAnchor, selfBetrayal: idBetrayal,
+              populistDrift: idPopulistDrift, sovereigntyBudget: idSovBudget,
+              compromiseCounter: idComprCounter, selfErasure: idSelfErase,
+              beliefIntegrity: idBeliefInt, shape: idShape,
+              voiceConsistency: idVoiceCons, selfImageGap: idSelfImage,
+              validationDependence: idValDep, decisionLog: idDecisionLog,
+              populistTemptation: idPopTempt, resilience: idResilience,
+              truthSentinel: idTruthSent, calibration: idCalibration,
+              audienceMirroring: idMirroring, corrosionPrevention: idCorrosion,
+              narrativeSovMonitor: idNarrSovMon, selfReferenceLoop: idSelfRef,
+              integrityHealth: idHealth, antiAdaptation: idAntiAdapt,
+              boundary: idBoundary, alienBelief: idAlienBel,
+              opinionStormImmunity: idStormImm, culturalGravity: idCultGrav,
+              compromiseLedger: idComprLed, selfReadout: idSelfReadout,
+              externalSeparator: idExtSep, recall: idRecall,
+              shapingPressure: idShapePress, betrayalEarlyWarning: idBetEarly,
+              centerOfGravity: idCenterGrav, principleViolation: idPrincViol,
+              mimicry: idMimicry, recoveryProtocol: idRecProtocol,
+              enforcementBudget: idEnfBudget, corruptionContainment: idCorrContain,
+              rebuild: idRebuild, sustenance: idSustenance,
+              coreActivation: idCoreAct, captureRisk: idCaptureRisk,
+              bleedingPrevention: idBleed, voiceAmplifier: idVoiceAmp,
+              watchdog: idWatchdog, doubtRegulator: idDoubt,
+              cohesionGravity: idCohesion, forceField: idForce,
+              maintenance: idMaint, fidelityArchive: idFid,
+              pressureBuffer: idPressBuf, actionFilter: idActFilter,
+              coherenceUnderPressure: idCoherUnder, populationAttribution: idPopAttr,
+              coherence: idCoherValid, governor: idGovernor,
+              presenceCheck: idPresenceCheck, existentialResilience: idExistRes,
+              kernel: idKernel,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -4890,6 +5387,19 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             : `the run chased novelty over meaning — coupling depth ${liveCouplingState.realityCouplingDepth}/10 → ${evolvedLiveCoupling.realityCouplingDepth}/10`,
         });
 
+        // ─── Wave 15 — the identity resolves: truth chosen (sovereignty
+        // deepens) or popularity chosen (capture is logged).
+        const evolvedIdentity = idTruthOverPop.chose_truth && !idKernel.has_been_captured
+          ? evolveIdentityFromTruth(sovereignIdentityState)
+          : evolveIdentityFromPopularityCapture(sovereignIdentityState);
+        await sovereignIdentityStore.save(evolvedIdentity);
+        emit({
+          stage: 'sovereign-identity',
+          message: idTruthOverPop.chose_truth && !idKernel.has_been_captured
+            ? `truth chosen over popularity — sovereignty ${sovereignIdentityState.sovereigntyScore}/10 → ${evolvedIdentity.sovereigntyScore}/10`
+            : `popularity captured this cycle — corruption logged, sovereignty ${sovereignIdentityState.sovereigntyScore}/10 → ${evolvedIdentity.sovereigntyScore}/10`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -5061,6 +5571,15 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   emit({
     stage: 'live-coupling',
     message: `strategic silence — live presence ${liveCouplingState.presenceScore}/10 → ${silentLiveCoupling.presenceScore}/10, ${silentLiveCoupling.silencesObserved} silence(s) held`,
+  });
+
+  // ─── Wave 15 — withholding action rests identity — no corruption
+  // can enter through a closed mouth.
+  const restedIdentity = evolveIdentityFromRestraint(sovereignIdentityState);
+  await sovereignIdentityStore.save(restedIdentity);
+  emit({
+    stage: 'sovereign-identity',
+    message: `identity rested through restraint — sovereignty ${sovereignIdentityState.sovereigntyScore}/10 → ${restedIdentity.sovereigntyScore}/10`,
   });
 
   throw new ExhaustedAttempts(

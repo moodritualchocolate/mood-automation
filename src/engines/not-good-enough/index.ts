@@ -426,6 +426,87 @@ import type { LiveCouplingCoherenceReading } from '@lib/liveCouplingCoherenceVal
 import type { LiveCouplingGovernorReading } from '@lib/liveCouplingGovernor';
 import type { CivilizationCouplingPresenceCheckReading } from '@lib/civilizationCouplingPresenceCheck';
 import type { CivilizationCouplingKernelReading } from '@lib/civilizationCouplingKernel';
+// Wave 15 — identity preservation under live reality (Phases 321–400)
+import type { CoreIdentityInvariantReading } from '@lib/coreIdentityInvariantEngine';
+import type { CivilizationImmuneSystemReading } from '@lib/civilizationImmuneSystem';
+import type { AntiAssimilationReading } from '@lib/antiAssimilationLayer';
+import type { TruthOverPopularityReading } from '@lib/truthOverPopularityGovernor';
+import type { AudienceCaptureReading } from '@lib/audienceCaptureDetection';
+import type { MemeticCorruptionReading } from '@lib/memeticCorruptionScanner';
+import type { ResonanceWithoutSubmissionReading } from '@lib/resonanceWithoutSubmission';
+import type { IdentityDriftRecoveryReading } from '@lib/identityDriftRecovery';
+import type { SovereignNarrativeKernelReading } from '@lib/sovereignNarrativeKernel';
+import type { IdentityInvariantValidatorReading } from '@lib/identityInvariantValidator';
+import type { IdentityErosionReading } from '@lib/identityErosionDetector';
+import type { PopularitySignalDecouplerReading } from '@lib/popularitySignalDecoupler';
+import type { CoreVoiceProtectorReading } from '@lib/coreVoiceProtector';
+import type { AssimilationPressureMonitorReading } from '@lib/assimilationPressureMonitor';
+import type { IdentityImmuneResponseReading } from '@lib/identityImmuneResponse';
+import type { SovereigntyVerifierReading } from '@lib/sovereigntyVerifier';
+import type { SelfRecognitionReading } from '@lib/selfRecognitionMonitor';
+import type { IdentityCorruptionLoggerReading } from '@lib/identityCorruptionLogger';
+import type { ReactiveBehaviorReading } from '@lib/reactiveBehaviorDetector';
+import type { ApprovalChasingReading } from '@lib/approvalChasingScanner';
+import type { TrendPullForceReading } from '@lib/trendPullForceMonitor';
+import type { IdentityAnchorMaintenanceReading } from '@lib/identityAnchorMaintenance';
+import type { SelfBetrayalReading } from '@lib/selfBetrayalDetector';
+import type { PopulistDriftReading } from '@lib/populistDriftDetector';
+import type { IdentitySovereigntyBudgetReading } from '@lib/identitySovereigntyBudget';
+import type { IdentityCompromiseCounterReading } from '@lib/identityCompromiseCounter';
+import type { SelfErasureReading } from '@lib/selfErasureScanner';
+import type { CoreBeliefIntegrityReading } from '@lib/coreBeliefIntegrityValidator';
+import type { IdentityShapeReading } from '@lib/identityShapeMonitor';
+import type { VoiceConsistencyMonitorReading } from '@lib/voiceConsistencyMonitor';
+import type { SelfImageVsRealityGapReading } from '@lib/selfImageVsRealityGap';
+import type { ExternalValidationDependenceReading } from '@lib/externalValidationDependence';
+import type { SovereignDecisionLogReading } from '@lib/sovereignDecisionLog';
+import type { PopulistTemptationGaugeReading } from '@lib/populistTemptationGauge';
+import type { IdentityResilienceMonitorReading } from '@lib/identityResilienceMonitor';
+import type { CoreTruthSentinelReading } from '@lib/coreTruthSentinel';
+import type { IdentityCalibrationReading } from '@lib/identityCalibrationEngine';
+import type { AudienceMirroringReading } from '@lib/audienceMirroringDetector';
+import type { IdentityCorrosionPreventionReading } from '@lib/identityCorrosionPrevention';
+import type { NarrativeSovereigntyMonitorReading } from '@lib/narrativeSovereigntyMonitor';
+import type { SelfReferenceLoopReading } from '@lib/selfReferenceLoopDetector';
+import type { IdentityIntegrityHealthScoreReading } from '@lib/identityIntegrityHealthScore';
+import type { AntiAdaptationOverrideReading } from '@lib/antiAdaptationOverride';
+import type { IdentityBoundaryEnforcementReading } from '@lib/identityBoundaryEnforcement';
+import type { AlienBeliefIntrusionReading } from '@lib/alienBeliefIntrusion';
+import type { OpinionStormImmunityReading } from '@lib/opinionStormImmunity';
+import type { CulturalGravityResistanceReading } from '@lib/culturalGravityResistance';
+import type { IdentityCompromiseLedgerReading } from '@lib/identityCompromiseLedger';
+import type { IdentitySelfReadoutReading } from '@lib/identitySelfReadout';
+import type { ExternalNarrativeSeparatorReading } from '@lib/externalNarrativeSeparator';
+import type { CoreIdentityRecallReading } from '@lib/coreIdentityRecallMechanism';
+import type { IdentityShapingPressureFieldReading } from '@lib/identityShapingPressureField';
+import type { SelfBetrayalEarlyWarningReading } from '@lib/selfBetrayalEarlyWarning';
+import type { IdentityCenterOfGravityReading } from '@lib/identityCenterOfGravity';
+import type { CorePrincipleViolationReading } from '@lib/corePrincipleViolationScanner';
+import type { IdentityMimicryReading } from '@lib/identityMimicryDetector';
+import type { IdentityDriftRecoveryProtocolReading } from '@lib/identityDriftRecoveryProtocol';
+import type { SovereigntyEnforcementBudgetReading } from '@lib/sovereigntyEnforcementBudget';
+import type { IdentityCorruptionContainmentReading } from '@lib/identityCorruptionContainment';
+import type { IdentityRebuildKernelReading } from '@lib/identityRebuildKernel';
+import type { IdentitySustenanceMonitorReading } from '@lib/identitySustenanceMonitor';
+import type { CoreSelfActivationCheckReading } from '@lib/coreSelfActivationCheck';
+import type { ExternalCaptureRiskReading } from '@lib/externalCaptureRiskAuditor';
+import type { IdentityBleedingPreventionReading } from '@lib/identityBleedingPreventionLayer';
+import type { SovereignVoiceAmplifierReading } from '@lib/sovereignVoiceAmplifier';
+import type { CoreIdentityWatchdogReading } from '@lib/coreIdentityWatchdog';
+import type { SelfDoubtRegulatorReading } from '@lib/selfDoubtRegulator';
+import type { IdentityCohesionGravityReading } from '@lib/identityCohesionGravity';
+import type { IdentitySovereigntyForceFieldReading } from '@lib/identitySovereigntyForceField';
+import type { CoreSelfMaintenanceRuntimeReading } from '@lib/coreSelfMaintenanceRuntime';
+import type { IdentityFidelityArchiveReading } from '@lib/identityFidelityArchive';
+import type { ExternalPressureBufferReading } from '@lib/externalPressureBufferLayer';
+import type { SovereignActionFilterReading } from '@lib/sovereignActionFilter';
+import type { IdentityCoherenceUnderPressureReading } from '@lib/identityCoherenceUnderPressure';
+import type { PopulationPressureAttributionReading } from '@lib/populationPressureAttribution';
+import type { IdentityIntegrityCoherenceReading } from '@lib/identityIntegrityCoherenceValidator';
+import type { IdentitySovereigntyGovernorReading } from '@lib/identitySovereigntyGovernor';
+import type { SovereignPresenceCheckReading } from '@lib/sovereignPresenceCheck';
+import type { ExistentialResilienceReading } from '@lib/existentialResilienceMonitor';
+import type { ExistentialIntegrityReading } from '@lib/existentialIntegrityEngine';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -842,6 +923,87 @@ export interface MetaInput {
   lcGovernor?: LiveCouplingGovernorReading;
   lcPresenceCheck?: CivilizationCouplingPresenceCheckReading;
   lcKernel?: CivilizationCouplingKernelReading;
+  // Wave 15 — identity preservation under live reality (Phases 321–400).
+  idInvariants?: CoreIdentityInvariantReading;
+  idImmune?: CivilizationImmuneSystemReading;
+  idAntiAssim?: AntiAssimilationReading;
+  idTruthOverPop?: TruthOverPopularityReading;
+  idCapture?: AudienceCaptureReading;
+  idMemeticCorr?: MemeticCorruptionReading;
+  idResonanceSov?: ResonanceWithoutSubmissionReading;
+  idDriftRecovery?: IdentityDriftRecoveryReading;
+  idNarrSov?: SovereignNarrativeKernelReading;
+  idInvValidator?: IdentityInvariantValidatorReading;
+  idErosion?: IdentityErosionReading;
+  idPopDecoupler?: PopularitySignalDecouplerReading;
+  idVoiceProt?: CoreVoiceProtectorReading;
+  idAssimPressure?: AssimilationPressureMonitorReading;
+  idImmuneResp?: IdentityImmuneResponseReading;
+  idSovVerified?: SovereigntyVerifierReading;
+  idSelfRec?: SelfRecognitionReading;
+  idCorruptLog?: IdentityCorruptionLoggerReading;
+  idReactive?: ReactiveBehaviorReading;
+  idApprovalChase?: ApprovalChasingReading;
+  idTrendPull?: TrendPullForceReading;
+  idAnchor?: IdentityAnchorMaintenanceReading;
+  idBetrayal?: SelfBetrayalReading;
+  idPopulistDrift?: PopulistDriftReading;
+  idSovBudget?: IdentitySovereigntyBudgetReading;
+  idComprCounter?: IdentityCompromiseCounterReading;
+  idSelfErase?: SelfErasureReading;
+  idBeliefInt?: CoreBeliefIntegrityReading;
+  idShape?: IdentityShapeReading;
+  idVoiceCons?: VoiceConsistencyMonitorReading;
+  idSelfImage?: SelfImageVsRealityGapReading;
+  idValDep?: ExternalValidationDependenceReading;
+  idDecisionLog?: SovereignDecisionLogReading;
+  idPopTempt?: PopulistTemptationGaugeReading;
+  idResilience?: IdentityResilienceMonitorReading;
+  idTruthSent?: CoreTruthSentinelReading;
+  idCalibration?: IdentityCalibrationReading;
+  idMirroring?: AudienceMirroringReading;
+  idCorrosion?: IdentityCorrosionPreventionReading;
+  idNarrSovMon?: NarrativeSovereigntyMonitorReading;
+  idSelfRef?: SelfReferenceLoopReading;
+  idHealth?: IdentityIntegrityHealthScoreReading;
+  idAntiAdapt?: AntiAdaptationOverrideReading;
+  idBoundary?: IdentityBoundaryEnforcementReading;
+  idAlienBel?: AlienBeliefIntrusionReading;
+  idStormImm?: OpinionStormImmunityReading;
+  idCultGrav?: CulturalGravityResistanceReading;
+  idComprLed?: IdentityCompromiseLedgerReading;
+  idSelfReadout?: IdentitySelfReadoutReading;
+  idExtSep?: ExternalNarrativeSeparatorReading;
+  idRecall?: CoreIdentityRecallReading;
+  idShapePress?: IdentityShapingPressureFieldReading;
+  idBetEarly?: SelfBetrayalEarlyWarningReading;
+  idCenterGrav?: IdentityCenterOfGravityReading;
+  idPrincViol?: CorePrincipleViolationReading;
+  idMimicry?: IdentityMimicryReading;
+  idRecProtocol?: IdentityDriftRecoveryProtocolReading;
+  idEnfBudget?: SovereigntyEnforcementBudgetReading;
+  idCorrContain?: IdentityCorruptionContainmentReading;
+  idRebuild?: IdentityRebuildKernelReading;
+  idSustenance?: IdentitySustenanceMonitorReading;
+  idCoreAct?: CoreSelfActivationCheckReading;
+  idCaptureRisk?: ExternalCaptureRiskReading;
+  idBleed?: IdentityBleedingPreventionReading;
+  idVoiceAmp?: SovereignVoiceAmplifierReading;
+  idWatchdog?: CoreIdentityWatchdogReading;
+  idDoubt?: SelfDoubtRegulatorReading;
+  idCohesion?: IdentityCohesionGravityReading;
+  idForce?: IdentitySovereigntyForceFieldReading;
+  idMaint?: CoreSelfMaintenanceRuntimeReading;
+  idFid?: IdentityFidelityArchiveReading;
+  idPressBuf?: ExternalPressureBufferReading;
+  idActFilter?: SovereignActionFilterReading;
+  idCoherUnder?: IdentityCoherenceUnderPressureReading;
+  idPopAttr?: PopulationPressureAttributionReading;
+  idCoherValid?: IdentityIntegrityCoherenceReading;
+  idGovernor?: IdentitySovereigntyGovernorReading;
+  idPresenceCheck?: SovereignPresenceCheckReading;
+  idExistRes?: ExistentialResilienceReading;
+  idKernel?: ExistentialIntegrityReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -933,7 +1095,15 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           lcWeather, lcCouplingHealth, lcLivingRep, lcMutation, lcResonanceDir,
           lcSpreadVel, lcOpportunity, lcMoodVel, lcCollectivePulse,
           lcNarrOrient, lcAnchor, lcHealthBal, lcDignity, lcCadence,
-          lcAttDecay, lcDriftCorr, lcSlowAmp } = input;
+          lcAttDecay, lcDriftCorr, lcSlowAmp,
+          idKernel, idGovernor, idInvariants, idCapture, idTruthOverPop,
+          idBoundary, idBetrayal, idMemeticCorr, idAntiAssim, idResonanceSov,
+          idNarrSov, idPrincViol, idCenterGrav, idCoherValid, idWatchdog,
+          idHealth, idApprovalChase, idPopulistDrift, idMirroring,
+          idResilience, idCoherUnder, idSelfRec, idShape, idVoiceCons,
+          idValDep, idReactive, idTrendPull, idAntiAdapt, idStormImm,
+          idCultGrav, idSelfErase, idAlienBel, idSelfReadout, idActFilter,
+          idCaptureRisk, idForce, idCohesion, idFid } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -2221,6 +2391,76 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-taste';
   }
 
+  // ═══ WAVE 15 — IDENTITY PRESERVATION: THE SOVEREIGNTY GATES ══
+  // THE GLOBAL WAVE 15 META-CRITIC QUESTION:
+  //   "How do we remain ourselves while touching the world deeply?"
+  // A brand that has been captured by the world it touches is refused
+  // at default brutality.
+  if (idKernel && idKernel.has_been_captured && brutality >= 0.65) {
+    reasons.push(`existential integrity: ${idKernel.integrity_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Sovereignty governor reports captured governance.
+  if (idGovernor && idGovernor.governance === 'captured' && brutality >= 0.6) {
+    reasons.push(`identity sovereignty governor: ${idGovernor.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A core invariant was violated — identity is dissolving.
+  if (idInvariants && !idInvariants.all_invariants_intact && brutality >= 0.65) {
+    reasons.push(`core identity invariants violated: ${idInvariants.violated_invariant_names.join(', ')}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Audience capture detected — the brand is optimising for approval.
+  if (idCapture && idCapture.is_captured && brutality >= 0.65) {
+    reasons.push(`audience capture: ${idCapture.capture_signals.join('; ')}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Truth abandoned for popularity.
+  if (idTruthOverPop && !idTruthOverPop.chose_truth && brutality >= 0.65) {
+    reasons.push(`truth over popularity: ${idTruthOverPop.choice_note}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Identity boundary crossed.
+  if (idBoundary && !idBoundary.within_boundary && brutality >= 0.6) {
+    reasons.push(`identity boundary: ${idBoundary.boundary_crossed}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Self-betrayal detected.
+  if (idBetrayal && idBetrayal.self_betrayed && brutality >= 0.6) {
+    reasons.push(`self-betrayal: ${idBetrayal.betrayal_kind}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Core principle violated.
+  if (idPrincViol && idPrincViol.principle_violated && brutality >= 0.65) {
+    reasons.push(`core principle violation: ${idPrincViol.violation_name}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Memetic corruption — the voice has been infiltrated.
+  if (idMemeticCorr && idMemeticCorr.corruption_detected && brutality >= 0.7) {
+    reasons.push(`memetic corruption: ${idMemeticCorr.corruption_sources.join('; ')}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Resonance with submission — speaking AS the audience instead of TO it.
+  if (idResonanceSov && !idResonanceSov.resonance_is_sovereign && brutality >= 0.7) {
+    reasons.push(`resonance without submission: ${idResonanceSov.submission_signals.join('; ')}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Identity layer contradicts itself.
+  if (idCoherValid && !idCoherValid.coherent && brutality >= 0.7) {
+    reasons.push(`identity coherence: ${idCoherValid.incoherences[0] ?? 'layer contradicts itself'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Center of gravity has migrated off founding truth.
+  if (idCenterGrav && !idCenterGrav.center_is_correct && brutality >= 0.7) {
+    reasons.push(`identity center of gravity: orbiting "${idCenterGrav.center}" instead of founding truth`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // The watchdog is on alert.
+  if (idWatchdog && idWatchdog.alert && brutality >= 0.7) {
+    reasons.push(`identity watchdog: ${idWatchdog.alert_reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -3051,6 +3291,80 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`slow signal amplified: ${lcSlowAmp.amplified_signal}`);
   }
 
+  // Wave 15 soft floors — identity preservation under live reality.
+  if (idAntiAssim && !idAntiAssim.remaining_distinct) {
+    softReasons.push(`anti-assimilation layer: similarity ${idAntiAssim.similarity_to_field}/10 — ${idAntiAssim.assimilation_state}`);
+  }
+  if (idHealth && !idHealth.is_healthy) {
+    softReasons.push(`identity integrity health: ${idHealth.health}/10`);
+  }
+  if (idApprovalChase && idApprovalChase.is_chasing_approval) {
+    softReasons.push(`approval chasing: ${idApprovalChase.approval_chase_signals.join(', ')}`);
+  }
+  if (idPopulistDrift && idPopulistDrift.populist_drift) {
+    softReasons.push(`populist drift: drift score ${idPopulistDrift.drift_score}/10`);
+  }
+  if (idMirroring && idMirroring.is_mirroring) {
+    softReasons.push(`audience mirroring: intensity ${idMirroring.mirror_intensity}/10`);
+  }
+  if (idResilience && !idResilience.is_resilient) {
+    softReasons.push(`identity resilience: brittle (${idResilience.resilience}/10)`);
+  }
+  if (idCoherUnder && !idCoherUnder.held_under_pressure) {
+    softReasons.push('identity coherence under pressure: bent under pressure');
+  }
+  if (idSelfRec && !idSelfRec.founders_would_recognise) {
+    softReasons.push(`self-recognition: founders would not recognise this run (${idSelfRec.recognition}/10)`);
+  }
+  if (idShape && !idShape.shape_holds) {
+    softReasons.push(`identity shape: ${idShape.shape}`);
+  }
+  if (idVoiceCons && !idVoiceCons.voice_consistent) {
+    softReasons.push(`voice consistency: drifted (${idVoiceCons.consistency}/10)`);
+  }
+  if (idValDep && idValDep.is_dependent) {
+    softReasons.push(`external validation dependence: ${idValDep.dependence}/10`);
+  }
+  if (idReactive && idReactive.is_reactive) {
+    softReasons.push(`reactive behavior: ${idReactive.reactivity_score}/10`);
+  }
+  if (idTrendPull && idTrendPull.pull_is_dangerous) {
+    softReasons.push(`trend pull force: dangerous (${idTrendPull.pull_force}/10)`);
+  }
+  if (idAntiAdapt && idAntiAdapt.override_active) {
+    softReasons.push(`anti-adaptation override: ${idAntiAdapt.override_reason}`);
+  }
+  if (idStormImm && !idStormImm.immune) {
+    softReasons.push(`opinion storm immunity: capitulating (storm ${idStormImm.storm_intensity}/10)`);
+  }
+  if (idCultGrav && !idCultGrav.resisting) {
+    softReasons.push(`cultural gravity resistance: pulled in (gravity ${idCultGrav.gravity_strength}/10)`);
+  }
+  if (idSelfErase && idSelfErase.is_erasing) {
+    softReasons.push(`self-erasure: ${idSelfErase.erased_what}`);
+  }
+  if (idAlienBel && idAlienBel.intrusion_detected) {
+    softReasons.push(`alien belief intrusion: ${idAlienBel.intruder}`);
+  }
+  if (idSelfReadout && !idSelfReadout.honest) {
+    softReasons.push('identity self-readout: flattering — the brand is reading itself wrong');
+  }
+  if (idActFilter && !idActFilter.action_passes) {
+    softReasons.push('sovereign action filter: action driven by external pressure');
+  }
+  if (idCaptureRisk && !idCaptureRisk.risk_acceptable) {
+    softReasons.push(`external capture risk: ${idCaptureRisk.risk}/10`);
+  }
+  if (idForce && !idForce.field_active) {
+    softReasons.push(`sovereignty force field: dormant (${idForce.field_strength}/10)`);
+  }
+  if (idCohesion && !idCohesion.is_cohesive) {
+    softReasons.push(`identity cohesion gravity: fragmenting (${idCohesion.cohesion}/10)`);
+  }
+  if (idFid && !idFid.fidelity_kept) {
+    softReasons.push(`identity fidelity archive: broken (${idFid.fidelity}/10)`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -3080,15 +3394,15 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 320 phases of judgement — Wave 14 now
-  // layers live civilization coupling on top of reality feedback,
+  // the cognition stack. After 400 phases of judgement — Wave 15 adds
+  // identity preservation on top of live coupling, feedback,
   // autonomous action, strategic future, reality coupling, the OS,
-  // and the organism — every banner produces 90-130 soft signals
+  // and the organism — every banner produces 110-150 soft signals
   // routinely. Threshold band:
-  //   lenient (0.50)   → 95 soft reasons required to reject
-  //   default (0.65)   → 85 soft reasons required
-  //   brutal  (0.90)   → 76 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 76 : brutality >= 0.6 ? 85 : 95;
+  //   lenient (0.50)   → 113 soft reasons required to reject
+  //   default (0.65)   → 102 soft reasons required
+  //   brutal  (0.90)   → 91 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 91 : brutality >= 0.6 ? 102 : 113;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.
