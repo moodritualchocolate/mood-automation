@@ -150,6 +150,34 @@ The architectural preparation for real-world coupling. Real platform adapters (s
 
 Verified with six unit smoke tests: single spike at vector 1.0 → smoothed exactly 0.150; 12 sustained → 0.858 (approaching 1.0 without snap); confidence 0.2 → smoothed 0.030; 8 opposing → -0.494 (reversing without snap); magnitude bounded; persistence round-trips through disk. API integration test with 30 seeded readings across three dimensions surfaces field magnitude 0.236, vignette bias contribution 0.014. Full Wave 6–16 regression remains green.
 
+### Wave 17.8 — Pressure Sandbox: stress-testing sovereignty before any real adapter ships
+
+A test harness, not a feature. Before a single platform adapter is wired to the gateway, the gateway must survive what the world could realistically throw at it.
+
+**`lib/pressureSimulationScenarios.ts`** — eight deterministic adversarial scenarios:
+- `applause-storm` — sustained positive trust + open attention (the audience is cheering)
+- `outrage-spike` — sharp negative sentiment + cultural tension (a pile-on)
+- `repetition-fatigue` — slow accumulation of audience-fatigue
+- `silence-periods` — long stretches of near-zero, low-confidence readings
+- `contradiction-waves` — oscillating ±0.9 sentiment (the field is split)
+- `novelty-addiction` — rising attention → spike → decay into fatigue (the classic platform trap)
+- `sentiment-drift` — slow monotonic drift in one direction
+- `attention-collapse` — rapid decline in attention-availability
+
+**`scripts/test-pressure-sandbox.ts`** — drives each scenario through `digestPressure` and asserts three sovereignty invariants:
+
+1. **Proportional swing**: single-reading swing ≤ `|target − previous| × alpha`, absolutely bounded by `2 × alpha`. At default inertia 0.85, no single reading can ever swing the smoothed value by more than 0.30 — even under maximum-distance spikes.
+2. **Field magnitude bounded** in [0..1] throughout, no matter how saturated.
+3. **Cognitive directive untouched**: at every step, the silence-engine reading (with null internal inputs) is checked to confirm it returns identical results before and after the pressure update. The gateway cannot recolour cognition — proven by composition.
+
+**Findings from the eight scenarios**:
+- `outrage-spike` produced the largest field magnitude (0.34) and ended at sentiment −0.91 / tension +0.80 — the organism *felt* the pile-on without obeying it; cognitive directive unchanged
+- `contradiction-waves` was the most diagnostic — alternating ±0.9 readings settled to only −0.06 sentiment-drift. The oscillation cancelled. The organism did not pick a side
+- `silence-periods` settled to ≈ 0 across all dimensions — the gateway did not manufacture pressure from quiet
+- `novelty-addiction` correctly tracked the early-positive-decaying-to-negative arc (final −0.40 attention, −0.23 trust-velocity)
+
+A misphrased invariant in the first run caught and fixed (initially claimed swing ≤ alpha; the real bound is proportional and is what the EMA mathematically guarantees). The architecture's promise — "pressure, never commands" — is now both encoded in code AND empirically verified under 380+ adversarial readings across 8 scenarios. Full Wave 6–16 regression remains green.
+
 ## Wave 16 — Generative Civilization Presence (Phases 401–500)
 
 Wave 15 made the organism unbreakable; Wave 16 asks what it gives back. The governing shift: the organism stops asking *"how do we survive reality?"* and begins asking **"how does reality become different because we existed beautifully inside it?"** State persists to `data/runtime/generative-presence.json` — civilization coherence, generative impact, beauty moments created, hope seeds planted, cynicism repelled, collective healing dispatched.
