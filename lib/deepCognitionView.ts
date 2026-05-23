@@ -17,6 +17,7 @@ import { readSilenceEngine, type SilenceEngineReading, type SilenceDirective, ty
 import type { ContradictionKind } from './contradictionScarsArchive';
 import type { WeatherSampleKind } from './weatherLogArchive';
 import { pressureFieldMagnitude, type ExternalPressureKind } from './pressureIngestionGateway';
+import { deriveTemporalCognition, type TemporalCognitionReading } from './temporalCognition';
 
 export interface DeepCognitionLayer {
   /** Display name of the layer (e.g. "reality coupling"). */
@@ -146,6 +147,12 @@ export interface DeepCognitionViewModel {
    *  of how loaded its world is right now. Pressure influences the
    *  page atmosphere as bias; it never sets the weather. */
   pressureField: PressureField;
+  /** Wave 18 — what the organism remembers across time. Pure
+   *  derivation across the existing archives (weather log,
+   *  protection memory, contradiction scars, pressure history).
+   *  Like every layer above, it perceives without writing and
+   *  cannot recolour cognitive weather. */
+  temporal: TemporalCognitionReading;
   /** A one-line statement summarising the deep cognition state. */
   statement: string;
 }
@@ -669,6 +676,12 @@ export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionView
   const weather = buildCognitiveWeather(snap, silence, layers);
   const weatherTrail = buildWeatherTrail(snap);
   const pressureField = buildPressureField(snap);
+  const temporal = deriveTemporalCognition({
+    weatherLog: snap.weatherLog,
+    protectionMemory: snap.protectionMemory,
+    contradictionScars: snap.contradictionScars,
+    pressureGateway: snap.pressureGateway,
+  }, snap.capturedAt);
 
   const any_layer_present = layers.length > 0;
   const statement = !any_layer_present
@@ -677,6 +690,6 @@ export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionView
 
   return {
     any_layer_present, layers, silence, protectionTrail, scarTrail,
-    weather, weatherTrail, pressureField, statement,
+    weather, weatherTrail, pressureField, temporal, statement,
   };
 }

@@ -901,3 +901,131 @@ export function PressureField({ m }: { m: RuntimeManifestation }) {
     </section>
   );
 }
+
+/* ─── WAVE 18 — TemporalCognition ─────────────────────────────────
+ *
+ * The organism remembering. Durations, returns, recoveries, slow
+ * builds, persistent lessons — perception that lives across time
+ * rather than only in the moment. Pure derivation from the four
+ * archives; this panel renders only what is genuinely there. When
+ * the archives hold nothing durable, the panel says so honestly
+ * instead of inventing signal.
+ */
+export function TemporalCognition({ m }: { m: RuntimeManifestation }) {
+  const t = m.deepCognition.temporal;
+  const HOUR = 60 * 60 * 1000;
+  const DAY = 24 * HOUR;
+
+  function ago(ms: number): string {
+    if (ms < HOUR) return `${Math.max(1, Math.round(ms / 60_000))}m`;
+    if (ms < DAY) return `${Math.round(ms / HOUR)}h`;
+    return `${Math.round(ms / DAY)}d`;
+  }
+
+  const hasAny =
+    t.pressure_dynamics.some((d) => d.persisted) ||
+    t.delayed_resonance.length > 0 ||
+    t.slow_emergence.length > 0 ||
+    t.recovery_signals.length > 0 ||
+    t.trust_compounding !== null ||
+    t.persistent_lessons.length > 0;
+
+  const coherenceWord =
+    t.temporal_coherence >= 0.85 ? 'coherent'
+    : t.temporal_coherence >= 0.6 ? 'mostly coherent'
+    : t.temporal_coherence >= 0.3 ? 'unsettled'
+    : 'fragmented';
+
+  return (
+    <section className="border hairline bg-ink-900/50 p-5 flex flex-col gap-3">
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 className="eyebrow">temporal cognition</h2>
+        <span className="text-[10px] tracking-[0.22em] uppercase text-bone-200/40">
+          trajectory {coherenceWord} · {Math.round(t.temporal_coherence * 100)}%
+        </span>
+      </div>
+      <p className="text-[12px] text-bone-200/55 leading-relaxed italic">
+        {t.felt_as}
+      </p>
+
+      {!hasAny ? (
+        <p className="text-[11px] text-bone-200/35 leading-relaxed">
+          the archives do not yet hold enough duration for memory to surface.
+          perception is still in the moment.
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-1.5 pt-1 text-[11px]">
+          {t.pressure_dynamics.filter((d) => d.persisted).map((d) => (
+            <li key={`persist-${d.kind}`} className="flex items-center gap-3 text-bone-200/60">
+              <span className="w-[110px] tracking-[0.16em] uppercase text-bone-200/45 shrink-0">
+                persisted
+              </span>
+              <span className="flex-1">
+                {d.kind.replace(/-/g, ' ')} · held coherent for {ago(d.span_ms)}
+              </span>
+            </li>
+          ))}
+          {t.delayed_resonance.map((d) => (
+            <li key={`return-${d.kind}`} className="flex items-center gap-3 text-bone-200/60">
+              <span className="w-[110px] tracking-[0.16em] uppercase text-bone-200/45 shrink-0">
+                returned
+              </span>
+              <span className="flex-1">
+                {d.kind.replace(/-/g, ' ')} · came back after {ago(d.gap_ms)} of silence
+              </span>
+            </li>
+          ))}
+          {t.slow_emergence.map((s) => (
+            <li key={`emerge-${s.kind}`} className="flex items-center gap-3 text-bone-200/60">
+              <span className="w-[110px] tracking-[0.16em] uppercase text-bone-200/45 shrink-0">
+                emerging
+              </span>
+              <span className="flex-1">
+                {s.kind.replace(/-/g, ' ')} · {s.direction > 0 ? 'building' : 'eroding'} slowly over {ago(s.span_ms)}
+              </span>
+            </li>
+          ))}
+          {t.recovery_signals.map((r) => (
+            <li key={`recov-${r.kind}`} className="flex items-center gap-3 text-bone-200/60">
+              <span className="w-[110px] tracking-[0.16em] uppercase text-bone-200/45 shrink-0">
+                recovered
+              </span>
+              <span className="flex-1">
+                {r.kind.replace(/-/g, ' ')} · peak {r.peak.toFixed(2)} → {r.current.toFixed(2)} over {ago(r.recovery_span_ms)}
+              </span>
+            </li>
+          ))}
+          {t.trust_compounding && (
+            <li className="flex items-center gap-3 text-bone-200/60">
+              <span className="w-[110px] tracking-[0.16em] uppercase text-bone-200/45 shrink-0">
+                compounding
+              </span>
+              <span className="flex-1">
+                trust · {Math.round(t.trust_compounding.positive_share * 100)}% positive across {t.trust_compounding.readings} readings, {ago(t.trust_compounding.span_ms)}
+              </span>
+            </li>
+          )}
+          {t.persistent_lessons.map((l, i) => (
+            <li key={`lesson-${i}`} className="flex items-start gap-3 text-bone-200/55">
+              <span className="w-[110px] tracking-[0.16em] uppercase text-bone-200/45 shrink-0 pt-[1px]">
+                still teaching
+              </span>
+              <span className="flex-1">
+                <span className="text-bone-200/70 italic">&ldquo;{l.wisdom}&rdquo;</span>
+                <span className="text-bone-200/35"> · {l.kind} · {ago(l.age_ms)} ago</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="pt-1 text-[10px] tracking-[0.18em] uppercase text-bone-200/30 flex flex-wrap gap-x-3 gap-y-1">
+        <span>span {ago(t.observed_span_ms)}</span>
+        <span>weather {t.data_points.weather}</span>
+        <span>protection {t.data_points.protection}</span>
+        <span>scars {t.data_points.scars}</span>
+        <span>pressure {t.data_points.pressure}</span>
+      </div>
+    </section>
+  );
+}

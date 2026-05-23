@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -149,6 +149,12 @@ export default function RuntimePage() {
           enter here as pressure, never as commands. The dashboard
           shows them; the cognitive weather remains sovereign. */}
       <PressureField m={m} />
+
+      {/* Wave 18 — temporal cognition. The organism perceiving
+          duration: what persisted, returned, slowly built, recovered,
+          compounded, kept teaching. Pure derivation across the four
+          archives — no new sensing, just memory continuity. */}
+      <TemporalCognition m={m} />
 
       {/* Wave 17 — the protection / scar twin trails. Protection
           shows what restraint preserved; scars show what shipped
