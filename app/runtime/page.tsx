@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -64,7 +64,14 @@ export default function RuntimePage() {
     <main className="min-h-screen px-6 md:px-10 py-8 flex flex-col gap-6">
       <header className="flex flex-col gap-3">
         <div className="flex items-center gap-3">
-          <span className="w-2.5 h-2.5 rounded-full pulse" style={{ background: dot }} />
+          {/* The status dot inherits the cognitive weather breath
+              when silence is the move — so the very heartbeat at the
+              top of the page slows with the organism. Falls back to
+              the existing pulse otherwise. */}
+          <span
+            className={`w-2.5 h-2.5 rounded-full ${m.deepCognition.weather.breath ?? 'pulse'}`}
+            style={{ background: dot }}
+          />
           <span className="eyebrow">runtime manifestation</span>
           <span className="text-[10px] tracking-[0.28em] text-bone-200/35 uppercase">{b.liveness}</span>
         </div>
@@ -109,10 +116,13 @@ export default function RuntimePage() {
           generative presence) is shown as its own card. */}
       <DeepCognitionGrid m={m} />
 
-      {/* Wave 17 — the protection trail. Runtime continuity for
-          what restraint preserved. Each entry is a real moment the
-          organism chose not to act. Silence as a record, not absence. */}
-      <ProtectionTrail m={m} />
+      {/* Wave 17 — the protection / scar twin trails. Protection
+          shows what restraint preserved; scars show what shipped
+          despite restraint. Together: a track record of conscience. */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <ProtectionTrail m={m} />
+        <ScarTrail m={m} />
+      </div>
 
       <footer className="text-[10px] tracking-[0.22em] text-bone-200/30 uppercase pt-3 border-t hairline flex flex-wrap gap-x-4 gap-y-1">
         <span>{m.runtime_is_visible ? 'runtime visible' : 'runtime dormant'}</span>

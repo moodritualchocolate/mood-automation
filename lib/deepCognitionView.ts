@@ -14,6 +14,7 @@
 
 import type { RuntimeSnapshot, Tone, Gauge } from './runtimeUIBrain';
 import { readSilenceEngine, type SilenceEngineReading, type SilenceDirective, type SilenceReason } from './silenceEngine';
+import type { ContradictionKind } from './contradictionScarsArchive';
 
 export interface DeepCognitionLayer {
   /** Display name of the layer (e.g. "reality coupling"). */
@@ -67,6 +68,28 @@ export interface CognitiveWeatherReading {
   breath: 'breathe-hold' | 'breathe-silent' | 'breathe-go-quiet' | null;
 }
 
+/** A historical contradiction — a moment the organism shipped despite
+ *  itself. Scars create wisdom. */
+export interface ScarTrailEntry {
+  at: number;
+  ago: string;
+  kind: ContradictionKind;
+  severity: number;
+  description: string;
+  wisdom: string;
+}
+
+export interface ScarTrail {
+  /** True when any scars are on record. */
+  any_scars: boolean;
+  /** Total scars ever recorded (monotonic). */
+  total_scars: number;
+  /** Most recent scars, oldest → newest. */
+  trail: ScarTrailEntry[];
+  /** A summary line — what the scar record says about the organism. */
+  summary: string;
+}
+
 export interface DeepCognitionViewModel {
   /** True when at least one Wave 10–16 layer has persistent state. */
   any_layer_present: boolean;
@@ -77,6 +100,8 @@ export interface DeepCognitionViewModel {
   silence: SilenceEngineReading;
   /** The historical record of what restraint protected — runtime continuity. */
   protectionTrail: ProtectionTrail;
+  /** The dark counterpart: scars from breaches that shipped. Wisdom. */
+  scarTrail: ScarTrail;
   /** The single-word felt weather of the organism right now. */
   weather: CognitiveWeatherReading;
   /** A one-line statement summarising the deep cognition state. */
@@ -192,6 +217,34 @@ function buildCognitiveWeather(
     tone: 'good',
     breath: null,
   };
+}
+
+function buildScarTrail(snap: RuntimeSnapshot): ScarTrail {
+  const archive = snap.contradictionScars ?? null;
+  const now = snap.capturedAt;
+  const scars = archive?.scars ?? [];
+  const total = archive?.totalScars ?? 0;
+
+  const trail: ScarTrailEntry[] = scars.slice(-12).map((s) => ({
+    at: s.at,
+    ago: humanizeAgo(s.at, now),
+    kind: s.kind,
+    severity: s.severity,
+    description: s.description,
+    wisdom: s.wisdom,
+  }));
+
+  const any_scars = trail.length > 0;
+
+  const summary = !any_scars
+    ? 'no scars yet — every breach so far was caught before it shipped'
+    : total <= 2
+      ? `${total} scar(s) — the organism has been tested and remembers`
+      : total <= 5
+        ? `${total} scars — wisdom is gathering`
+        : `${total} scars — a long record of breaches the organism carries with it`;
+
+  return { any_scars, total_scars: total, trail, summary };
 }
 
 function buildProtectionTrail(snap: RuntimeSnapshot, currentSilence: SilenceEngineReading): ProtectionTrail {
@@ -390,12 +443,13 @@ export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionView
   });
 
   const protectionTrail = buildProtectionTrail(snap, silence);
+  const scarTrail = buildScarTrail(snap);
   const weather = buildCognitiveWeather(snap, silence, layers);
 
   const any_layer_present = layers.length > 0;
   const statement = !any_layer_present
     ? 'the deepest layers have not yet drawn breath'
-    : `${layers.length} deep cognition layer(s) visible · ${silence.directive} · ${protectionTrail.total_protections} protection(s) on record`;
+    : `${layers.length} deep cognition layer(s) visible · ${silence.directive} · ${protectionTrail.total_protections} protection(s) · ${scarTrail.total_scars} scar(s)`;
 
-  return { any_layer_present, layers, silence, protectionTrail, weather, statement };
+  return { any_layer_present, layers, silence, protectionTrail, scarTrail, weather, statement };
 }

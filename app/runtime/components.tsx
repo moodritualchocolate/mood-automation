@@ -689,3 +689,90 @@ export function ProtectionTrail({ m }: { m: RuntimeManifestation }) {
     </section>
   );
 }
+
+const SCAR_TONE: Record<string, Tone> = {
+  'overreach':         'warn',
+  'noise':             'warn',
+  'broken-restraint':  'bad',
+  'meaning-dilution':  'warn',
+  'applause-chasing':  'bad',
+  'identity-drift':    'bad',
+  'compulsive-action': 'bad',
+};
+
+/**
+ * The scar trail — the dark counterpart to the protection trail.
+ * Each entry is a moment the organism shipped despite itself.
+ * Severity, description, wisdom. Permanent memory; scars are how
+ * restraint earns its way to becoming wisdom.
+ */
+export function ScarTrail({ m }: { m: RuntimeManifestation }) {
+  const t = m.deepCognition.scarTrail;
+
+  if (!t.any_scars) {
+    return (
+      <section className="border hairline bg-ink-900/50 p-5 flex flex-col gap-2">
+        <div className="flex items-baseline justify-between">
+          <h2 className="eyebrow">contradiction scars</h2>
+          <span className="text-[10px] tracking-[0.22em] uppercase text-bone-200/35">
+            wisdom · 0 on record
+          </span>
+        </div>
+        <p className="text-[12px] text-bone-200/55 leading-relaxed italic">
+          {t.summary}
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="border hairline bg-ink-900/50 p-5 flex flex-col gap-3">
+      <div className="flex items-baseline justify-between">
+        <h2 className="eyebrow">contradiction scars</h2>
+        <span className="text-[10px] tracking-[0.22em] uppercase text-bone-200/40">
+          wisdom · {t.total_scars} on record
+        </span>
+      </div>
+      <p className="text-[12px] text-bone-200/55 leading-relaxed italic">
+        {t.summary}
+      </p>
+      <div className="relative pl-4 pt-1">
+        <div className="absolute left-[3px] top-1 bottom-1 trail-rail" aria-hidden />
+        <ol className="flex flex-col gap-3">
+          {[...t.trail].reverse().map((entry, idx) => {
+            const tone: Tone = SCAR_TONE[entry.kind] ?? 'warn';
+            const color = toneOf(tone);
+            return (
+              <li key={`${entry.at}-${idx}`} className="relative">
+                <span
+                  className="absolute -left-4 top-[7px] w-[7px] h-[7px] border"
+                  style={{
+                    background: '#050505',
+                    borderColor: color,
+                    boxShadow: `0 0 0 2px rgba(5,5,5,1)`,
+                  }}
+                  aria-hidden
+                />
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-[11px] tracking-[0.2em] uppercase" style={{ color }}>
+                    {entry.kind.replace(/-/g, ' ')}
+                    <span className="text-bone-200/30 ml-2 tracking-[0.18em]">{entry.severity}/10</span>
+                  </span>
+                  <span className="text-[10px] tracking-[0.18em] uppercase text-bone-200/35 shrink-0">
+                    {entry.ago}
+                  </span>
+                </div>
+                <p className="text-[12px] text-bone-200/75 leading-snug mt-0.5">
+                  {entry.description}
+                </p>
+                <p className="text-[11px] italic mt-1" style={{ color: 'rgba(216,210,200,0.55)' }}>
+                  — {entry.wisdom}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  );
+}

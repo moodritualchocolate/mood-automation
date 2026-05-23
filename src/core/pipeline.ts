@@ -756,6 +756,9 @@ import {
   readSilenceEngine,
   createProtectionMemoryStore,
   recordProtectionEvent,
+  // ─── Wave 17.4 — contradiction scars: wisdom from breaches.
+  createContradictionScarsStore,
+  detectAndRecordScars,
 } from '@lib/index';
 import type { SilenceEngineReading } from '@lib/silenceEngine';
 import type { CouncilBriefing } from '@lib/councilTypes';
@@ -5745,6 +5748,31 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             ? `the run forced reality — coherence ${generativePresenceState.civilizationCoherenceScore}/10 → ${evolvedGenerative.civilizationCoherenceScore}/10`
             : `the run created beauty — coherence ${generativePresenceState.civilizationCoherenceScore}/10 → ${evolvedGenerative.civilizationCoherenceScore}/10, ${evolvedGenerative.beautyMomentsCreated} moment(s) on record`,
         });
+
+        // ─── Wave 17.4 — contradiction scars. The meta-critic let
+        // this run ship; check whether any breach the meta-critic
+        // would have caught at default brutality slipped through, and
+        // record it as a permanent scar so the organism remembers.
+        const scarsStore = createContradictionScarsStore();
+        const priorScars = await scarsStore.read();
+        const { state: evolvedScars, newScars } = detectAndRecordScars(priorScars, {
+          overreached: actOverreach.is_overreaching,
+          overreachGap: actOverreach.reach_gap,
+          undignified: !actDignity.action_is_dignified,
+          dignityBreach: actDignity.dignity_breach,
+          brokenRestraint: !actRestraintBudget.can_afford_action,
+          audienceCapture: idCapture.is_captured,
+          popularityChosenOverTruth: !idTruthOverPop.chose_truth,
+          compulsiveAction: actCore.compulsive_automation,
+          feedbackContradicted: fbContradictions.any_serious_contradiction,
+        });
+        if (newScars.length > 0) {
+          await scarsStore.save(evolvedScars);
+          emit({
+            stage: 'contradiction-scars',
+            message: `${newScars.length} scar(s) recorded — ${newScars.map((s) => s.kind).join(', ')} · ${evolvedScars.totalScars} on the organism's record`,
+          });
+        }
 
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };

@@ -90,6 +90,18 @@ Verified end-to-end: a fresh approved-run populates all 11 persistent stores; th
 
 Verified end-to-end: in a sample of 10 runs, the 5 that exhausted produced 5 protection events on disk; the API surfaces them with real timestamps; the dashboard renders the trail with directive labels, contributing-reason tags, and "Ns ago" recency. Full Wave 6–16 regression remains green.
 
+### Wave 17.4 — Contradiction scars: wisdom from breaches
+
+**`lib/contradictionScarsArchive.ts`** — the dark counterpart to protection memory. Where protections record what restraint refused, scars record what shipped *despite* restraint — and what each breach teaches if the organism ever reads itself back. Seven scar kinds (`overreach`, `noise`, `broken-restraint`, `meaning-dilution`, `applause-chasing`, `identity-drift`, `compulsive-action`), each with a severity and a one-line wisdom (e.g. `identity-drift` carries the lesson *"approval is not the same as being known"*).
+
+**Pipeline hook in the approve path** — immediately after a banner is approved, the pipeline reads the actual computed values (`actOverreach.is_overreaching`, `actDignity.dignity_breach`, `actRestraintBudget.can_afford_action`, `idCapture.is_captured`, `idTruthOverPop.chose_truth`, `actCore.compulsive_automation`, `fbContradictions.any_serious_contradiction`) and writes scars for any breach the meta-critic *would* have caught at default brutality but allowed at the current setting. At default brutality nothing slips → no scars accumulate; at lenient brutality some breaches surface and become permanent record.
+
+**Dashboard `ScarTrail` panel** — a sibling of `ProtectionTrail`, rendered side-by-side. Each entry: kind, severity, description, and the wisdom in italics. Same connecting rail as the protection trail (though the dots are squares, not circles — scars look different from protections).
+
+**Atmospheric coherence touch** — the runtime-manifestation status dot at the top of the header now inherits the cognitive weather's breath. When silence is the move, the very heartbeat at the top of the page breathes at the same cadence as the silence banner. One nervous system.
+
+Verified end-to-end: direct unit smoke test shows clean run → 0 scars; capture run → `identity-drift` + `applause-chasing`; overreach run → 1 scar with `gap 6/10`; full collapse → 7 scars; archive round-trips through disk. Two-event seed test shows the trail surfacing through the API with real timestamps, descriptions, and wisdom. Full Wave 6–16 regression remains green.
+
 ## Wave 16 — Generative Civilization Presence (Phases 401–500)
 
 Wave 15 made the organism unbreakable; Wave 16 asks what it gives back. The governing shift: the organism stops asking *"how do we survive reality?"* and begins asking **"how does reality become different because we existed beautifully inside it?"** State persists to `data/runtime/generative-presence.json` — civilization coherence, generative impact, beauty moments created, hope seeds planted, cynicism repelled, collective healing dispatched.

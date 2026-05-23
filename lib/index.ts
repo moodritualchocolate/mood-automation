@@ -781,3 +781,4 @@ export * from './civilizationCoherenceRuntime';
 export * from './silenceEngine';
 export * from './deepCognitionView';
 export * from './protectionMemoryArchive';
+export * from './contradictionScarsArchive';
