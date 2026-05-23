@@ -847,6 +847,24 @@ export function PressureField({ m }: { m: RuntimeManifestation }) {
       <p className="text-[12px] text-bone-200/55 leading-relaxed italic">
         {pf.summary}
       </p>
+      {/* Wave 17.9 — active sources. The world is pressuring the
+          organism through these channels right now. Showing the
+          source names makes the pressure legible without making
+          the organism reactive to it. */}
+      {pf.active_sources.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] tracking-[0.18em] uppercase text-bone-200/45">
+          <span className="text-bone-200/30">world →</span>
+          {pf.active_sources.map((s) => (
+            <span
+              key={s.name}
+              className="border hairline px-2 py-[2px]"
+              style={{ borderColor: 'rgba(247,245,242,0.12)' }}
+            >
+              {s.name} · {s.count}
+            </span>
+          ))}
+        </div>
+      )}
       {pf.has_pressure_field && (
         <ul className="flex flex-col gap-1.5 pt-1">
           {pf.dimensions.map((d) => {

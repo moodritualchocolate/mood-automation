@@ -784,3 +784,4 @@ export * from './protectionMemoryArchive';
 export * from './contradictionScarsArchive';
 export * from './weatherLogArchive';
 export * from './pressureIngestionGateway';
+export * from './adapters/instagramSensoryAdapter';

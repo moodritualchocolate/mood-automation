@@ -170,6 +170,10 @@ export interface PressureField {
   field_magnitude: number;
   /** Total readings ever ingested. */
   readings_ingested: number;
+  /** Wave 17.9 — sources visibly active in the recent buffer. The
+   *  dashboard renders these so the viewer can see WHICH part of
+   *  the world is currently pressuring the organism. */
+  active_sources: Array<{ name: string; count: number; mostRecentAt: number; }>;
   /** A short summary line for the dashboard. */
   summary: string;
 }
@@ -383,6 +387,7 @@ function buildPressureField(snap: RuntimeSnapshot): PressureField {
       dimensions: [],
       field_magnitude: 0,
       readings_ingested: 0,
+      active_sources: [],
       summary: 'no external pressure ingested — the gateway is ready, waiting',
     };
   }
@@ -404,6 +409,25 @@ function buildPressureField(snap: RuntimeSnapshot): PressureField {
   const field_magnitude = pressureFieldMagnitude(gw);
   const readings_ingested = gw.readingsIngested;
 
+  // Distinct sources in the recent buffer, with reading counts and
+  // most-recent timestamps. The dashboard renders these as small
+  // labels so the viewer can see which part of the world is
+  // currently pressuring the organism.
+  const sourceMap = new Map<string, { count: number; mostRecentAt: number }>();
+  for (const r of gw.recent) {
+    const prev = sourceMap.get(r.source);
+    if (prev) {
+      prev.count += 1;
+      if (r.at > prev.mostRecentAt) prev.mostRecentAt = r.at;
+    } else {
+      sourceMap.set(r.source, { count: 1, mostRecentAt: r.at });
+    }
+  }
+  const active_sources = Array.from(sourceMap.entries())
+    .map(([name, info]) => ({ name, count: info.count, mostRecentAt: info.mostRecentAt }))
+    .sort((a, b) => b.mostRecentAt - a.mostRecentAt)
+    .slice(0, 6);
+
   const summary = readings_ingested === 0
     ? 'pressure gateway open, no readings yet'
     : field_magnitude < 0.1
@@ -414,7 +438,7 @@ function buildPressureField(snap: RuntimeSnapshot): PressureField {
           ? `moderate pressure across the field — the organism is feeling its world`
           : `loaded field — pressure is high across multiple dimensions`;
 
-  return { has_pressure_field: true, dimensions, field_magnitude, readings_ingested, summary };
+  return { has_pressure_field: true, dimensions, field_magnitude, readings_ingested, active_sources, summary };
 }
 
 function buildScarTrail(snap: RuntimeSnapshot): ScarTrail {

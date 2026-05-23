@@ -178,6 +178,33 @@ A test harness, not a feature. Before a single platform adapter is wired to the 
 
 A misphrased invariant in the first run caught and fixed (initially claimed swing ≤ alpha; the real bound is proportional and is what the EMA mathematically guarantees). The architecture's promise — "pressure, never commands" — is now both encoded in code AND empirically verified under 380+ adversarial readings across 8 scenarios. Full Wave 6–16 regression remains green.
 
+### Wave 17.9 — Instagram Sensory Adapter: the first weak external coupling
+
+The architecture has been stress-tested under synthetic adversarial pressure. The first weak sensory adapter can now land. **Read-only · meaning-first · typed pressure → gateway · never commands.** No platform credentials touch this layer; the upstream NLP / tone-classification lens is a separate future module. This adapter is a pure transformation: typed observation → typed readings.
+
+**`lib/adapters/instagramSensoryAdapter.ts`** — receives an `InstagramObservation` shape (postId, comments with `tone ∈ [-1..1]`, `trustLanguage`, `coercivePattern`, `repeatsPriorTheme`, plus `silenceAfterPostMs`). Notice what is intentionally **absent**: likes, follower counts, growth metrics. The adapter cannot consume what it cannot receive. The eight meaning-bearing signals the user named map to all six pressure dimensions:
+
+| input signal | output pressure |
+|---|---|
+| emotional polarity / comment tone drift | `sentiment-drift` |
+| audience-fatigue markers / repetition density | `audience-fatigue` |
+| contradiction clustering (pos × neg) | `cultural-tension` |
+| silence after posting | `attention-availability` (negative) |
+| trust language emergence | `trust-velocity` (positive) |
+| coercive engagement patterns | `resonance-decay` (positive) |
+
+**`scripts/test-instagram-sensory-adapter.ts`** — three fixture observations (warm reception, contradictory reception, fatiguing reception) exercise the adapter's full surface. Findings:
+
+- **Warm**: sentiment-drift +0.58 (mostly positive); trust-velocity +0.70 (trust language emerging); cultural-tension 0.00; resonance-decay 0.00
+- **Contradictory**: cultural-tension +1.00 (perfect split via `pos × neg × 4`); resonance-decay +0.60 (coercive); sentiment-drift −0.05 (mean cancels)
+- **Fatiguing**: audience-fatigue +0.75 (high repetition rate); attention-availability −0.13 (4 hours of silence)
+
+The Wave 17.8 sovereignty invariants are re-asserted at the adapter+gateway boundary — every reading the adapter produces is bounded by the same proportional swing rule, and the cognitive directive never shifts as a consequence of any reading. The adapter cannot break sovereignty by construction (it only produces typed `ExternalPressureReading`s; the gateway alone decides how those affect the smoothed state; the cognitive weather reads only internal state).
+
+**Dashboard active-source surface** — the `PressureField` panel now shows which sources are pressuring the organism: a small `world →  instagram-sensory · 6 readings · 4s ago` strip above the dimension bars. The world becomes visible without becoming dominant. The cognitive weather word remains untouched.
+
+Verified end-to-end: API integration with one Instagram fixture (5 comments) produces 6 typed readings, surfaces them through the gateway and into the dashboard as a visible source; cognitive weather stays at `awake` (sovereignty intact); field magnitude correctly registers 0.024 (low but non-zero); the active-sources strip renders the channel name and count. Full Wave 6–16 regression remains green; 8/8 pressure sandbox scenarios still pass; the new adapter test passes.
+
 ## Wave 16 — Generative Civilization Presence (Phases 401–500)
 
 Wave 15 made the organism unbreakable; Wave 16 asks what it gives back. The governing shift: the organism stops asking *"how do we survive reality?"* and begins asking **"how does reality become different because we existed beautifully inside it?"** State persists to `data/runtime/generative-presence.json` — civilization coherence, generative impact, beauty moments created, hope seeds planted, cynicism repelled, collective healing dispatched.
