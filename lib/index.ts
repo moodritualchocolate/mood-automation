@@ -789,3 +789,6 @@ export * from './adapters/longFormReplyAdapter';
 
 // ─── WAVE 18 — Temporal Cognition ────────────────────────────────
 export * from './temporalCognition';
+
+// ─── WAVE 19 — Passive Temporal Accumulation ─────────────────────
+export * from './temporalAccumulation';

@@ -18,6 +18,7 @@ import type { ContradictionKind } from './contradictionScarsArchive';
 import type { WeatherSampleKind } from './weatherLogArchive';
 import { pressureFieldMagnitude, type ExternalPressureKind } from './pressureIngestionGateway';
 import { deriveTemporalCognition, type TemporalCognitionReading } from './temporalCognition';
+import { deriveTemporalAccumulation, type TemporalAccumulationReading } from './temporalAccumulation';
 
 export interface DeepCognitionLayer {
   /** Display name of the layer (e.g. "reality coupling"). */
@@ -153,6 +154,14 @@ export interface DeepCognitionViewModel {
    *  Like every layer above, it perceives without writing and
    *  cannot recolour cognitive weather. */
   temporal: TemporalCognitionReading;
+  /** Wave 19 — passive long-horizon accumulation. Recurring
+   *  signatures, silence durability, persistence vs novelty,
+   *  coherent vs contradictory returns, fragmentation recovery.
+   *  Remains honestly uncertain when insufficient time has passed.
+   *  Like every layer above, observational only — cannot mutate
+   *  cognition. Available in the view model and via API; this wave
+   *  intentionally adds no new rendered surface. */
+  accumulation: TemporalAccumulationReading;
   /** A one-line statement summarising the deep cognition state. */
   statement: string;
 }
@@ -682,6 +691,11 @@ export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionView
     contradictionScars: snap.contradictionScars,
     pressureGateway: snap.pressureGateway,
   }, snap.capturedAt);
+  const accumulation = deriveTemporalAccumulation({
+    weatherLog: snap.weatherLog,
+    contradictionScars: snap.contradictionScars,
+    pressureGateway: snap.pressureGateway,
+  }, snap.capturedAt);
 
   const any_layer_present = layers.length > 0;
   const statement = !any_layer_present
@@ -690,6 +704,6 @@ export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionView
 
   return {
     any_layer_present, layers, silence, protectionTrail, scarTrail,
-    weather, weatherTrail, pressureField, temporal, statement,
+    weather, weatherTrail, pressureField, temporal, accumulation, statement,
   };
 }
