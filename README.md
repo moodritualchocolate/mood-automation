@@ -80,6 +80,16 @@ A deliberate pivot. Waves 10–16 built immense conceptual scaffolding — 11 pe
 
 Verified end-to-end: a fresh approved-run populates all 11 persistent stores; the API surfaces them; the silence engine returns `speak` under clean conditions and `go-quiet-now (10/10)` under saturation + restraint depletion + cultural storm + recovery debt; the dashboard renders all 7 deep-cognition cards with live state. Full Wave 6–16 regression remains green.
 
+### Wave 17.2 — Runtime continuity for what restraint protected
+
+**`lib/protectionMemoryArchive.ts`** — the first runtime-continuity layer. Every time the organism reaches an exhausted attempt limit (i.e. it actually chose not to ship), the pipeline now reads the canonical Silence Engine against the just-evolved state and persists a `ProtectionEvent` (timestamp, directive, strength, contributing reasons, statement) to `data/runtime/protection-memory.json`. Capped at 100 entries; `totalEvents` is monotonic.
+
+**Dashboard `ProtectionTrail` panel** — the dashboard reads the archive and shows the trail: every recent moment the organism withheld, with the reasons it withheld for, and how long ago. Silence stops looking like absence and starts looking like a record.
+
+**Self-aware restraint** — the silence reasons evolve as the state evolves. The first restraint logs only `patience-protects-future`; by the third, the engine recognises `silence-was-already-working` (because `silentLiveCoupling.silencesObserved >= 1` is now true) and `meaning-still-propagating` (because meaning persistence has risen from accumulated silence). The organism reads its own past restraint as part of the present condition.
+
+Verified end-to-end: in a sample of 10 runs, the 5 that exhausted produced 5 protection events on disk; the API surfaces them with real timestamps; the dashboard renders the trail with directive labels, contributing-reason tags, and "Ns ago" recency. Full Wave 6–16 regression remains green.
+
 ## Wave 16 — Generative Civilization Presence (Phases 401–500)
 
 Wave 15 made the organism unbreakable; Wave 16 asks what it gives back. The governing shift: the organism stops asking *"how do we survive reality?"* and begins asking **"how does reality become different because we existed beautifully inside it?"** State persists to `data/runtime/generative-presence.json` — civilization coherence, generative impact, beauty moments created, hope seeds planted, cynicism repelled, collective healing dispatched.

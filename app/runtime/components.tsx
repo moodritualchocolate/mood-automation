@@ -555,3 +555,76 @@ export function DeepCognitionGrid({ m }: { m: RuntimeManifestation }) {
     </section>
   );
 }
+
+/**
+ * The protection trail — runtime continuity for what restraint
+ * preserved. Each row is a moment the organism chose not to act,
+ * the strength of that silence, and the reasons that contributed.
+ * Silence here looks like a record, not absence.
+ */
+export function ProtectionTrail({ m }: { m: RuntimeManifestation }) {
+  const trail = m.deepCognition.protectionTrail;
+
+  if (!trail.any_protection_history) {
+    return (
+      <section className="border hairline bg-ink-900/50 p-5 flex flex-col gap-2">
+        <div className="flex items-baseline justify-between">
+          <h2 className="eyebrow">what restraint protected</h2>
+          <span className="text-[10px] tracking-[0.22em] uppercase text-bone-200/35">
+            runtime continuity
+          </span>
+        </div>
+        <Empty>{trail.summary}</Empty>
+      </section>
+    );
+  }
+
+  return (
+    <section className="border hairline bg-ink-900/50 p-5 flex flex-col gap-3">
+      <div className="flex items-baseline justify-between">
+        <h2 className="eyebrow">what restraint protected</h2>
+        <span className="text-[10px] tracking-[0.22em] uppercase text-bone-200/40">
+          {trail.total_protections} protection{trail.total_protections === 1 ? '' : 's'} · last {trail.trail.length}
+        </span>
+      </div>
+      <p className="text-[12px] text-bone-200/55 leading-relaxed italic">
+        {trail.summary}
+      </p>
+      <ol className="flex flex-col gap-2 pt-1">
+        {[...trail.trail].reverse().map((entry, idx) => {
+          const tone: Tone = SILENCE_TONE[entry.directive] ?? 'cool';
+          const color = toneOf(tone);
+          return (
+            <li key={`${entry.at}-${idx}`} className="flex gap-3 items-start">
+              <span
+                className="w-1.5 h-1.5 rounded-full mt-[7px] shrink-0"
+                style={{ background: color, opacity: 0.8 }}
+              />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-[11px] tracking-[0.2em] uppercase" style={{ color }}>
+                    {SILENCE_LABEL[entry.directive] ?? entry.directive.toUpperCase()}
+                    <span className="text-bone-200/30 ml-2 tracking-[0.18em]">{entry.strength}/10</span>
+                  </span>
+                  <span className="text-[10px] tracking-[0.18em] uppercase text-bone-200/35 shrink-0">
+                    {entry.ago}
+                  </span>
+                </div>
+                <p className="text-[12px] text-bone-200/75 leading-snug mt-0.5">
+                  {entry.statement}
+                </p>
+                {entry.reasons.length > 0 && (
+                  <div className="flex flex-wrap gap-x-2 gap-y-1 mt-1 text-[10px] tracking-[0.16em] uppercase text-bone-200/40">
+                    {entry.reasons.map((r) => (
+                      <span key={r}>{r}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}

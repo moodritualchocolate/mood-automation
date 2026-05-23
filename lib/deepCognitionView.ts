@@ -13,7 +13,7 @@
  */
 
 import type { RuntimeSnapshot, Tone, Gauge } from './runtimeUIBrain';
-import { readSilenceEngine, type SilenceEngineReading } from './silenceEngine';
+import { readSilenceEngine, type SilenceEngineReading, type SilenceDirective, type SilenceReason } from './silenceEngine';
 
 export interface DeepCognitionLayer {
   /** Display name of the layer (e.g. "reality coupling"). */
@@ -30,6 +30,27 @@ export interface DeepCognitionLayer {
   present: boolean;
 }
 
+/** A historical protection — what restraint preserved at a moment in time. */
+export interface ProtectionTrailEntry {
+  at: number;                        // epoch ms
+  ago: string;                       // human-readable: "12s ago", "3 cycles ago", etc.
+  directive: SilenceDirective;
+  strength: number;
+  reasons: SilenceReason[];
+  statement: string;
+}
+
+export interface ProtectionTrail {
+  /** True when the organism has any protection history at all. */
+  any_protection_history: boolean;
+  /** Total protections ever recorded (monotonic, not bounded by trail length). */
+  total_protections: number;
+  /** Most recent N protections, oldest → newest. */
+  trail: ProtectionTrailEntry[];
+  /** A summary line — what this organism's restraint has shown about it. */
+  summary: string;
+}
+
 export interface DeepCognitionViewModel {
   /** True when at least one Wave 10–16 layer has persistent state. */
   any_layer_present: boolean;
@@ -38,6 +59,8 @@ export interface DeepCognitionViewModel {
   /** The unified silence engine reading — the central distinction the
    *  user identified as defining a civilization-scale intelligence. */
   silence: SilenceEngineReading;
+  /** The historical record of what restraint protected — runtime continuity. */
+  protectionTrail: ProtectionTrail;
   /** A one-line statement summarising the deep cognition state. */
   statement: string;
 }
@@ -50,6 +73,46 @@ function toneFor(score: number): Tone {
   if (score >= 7) return 'good';
   if (score >= 4) return 'warn';
   return 'bad';
+}
+
+function humanizeAgo(when: number, now: number): string {
+  const diffMs = Math.max(0, now - when);
+  const s = Math.floor(diffMs / 1000);
+  if (s < 60) return `${s}s ago`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  return `${d}d ago`;
+}
+
+function buildProtectionTrail(snap: RuntimeSnapshot, currentSilence: SilenceEngineReading): ProtectionTrail {
+  const archive = snap.protectionMemory ?? null;
+  const now = snap.capturedAt;
+  const events = archive?.events ?? [];
+  const total = archive?.totalEvents ?? 0;
+
+  // Build the historical trail. Newest last so the UI can render
+  // it as a timeline reading downward.
+  const trail: ProtectionTrailEntry[] = events.slice(-12).map((e) => ({
+    at: e.at,
+    ago: humanizeAgo(e.at, now),
+    directive: e.directive,
+    strength: e.strength,
+    reasons: e.reasons,
+    statement: e.statement,
+  }));
+
+  const any_protection_history = trail.length > 0;
+
+  const summary = any_protection_history
+    ? `this organism has chosen restraint ${total} time(s) — silence is not absence here, it is a record`
+    : currentSilence.silence_is_the_move
+      ? 'restraint is being offered now; once held it will join the record'
+      : 'no restraint history yet — every choice so far has been to speak';
+
+  return { any_protection_history, total_protections: total, trail, summary };
 }
 
 export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionViewModel {
@@ -219,10 +282,12 @@ export function buildDeepCognitionView(snap: RuntimeSnapshot): DeepCognitionView
     worldState: snap.worldState,
   });
 
+  const protectionTrail = buildProtectionTrail(snap, silence);
+
   const any_layer_present = layers.length > 0;
   const statement = !any_layer_present
     ? 'the deepest layers have not yet drawn breath'
-    : `${layers.length} deep cognition layer(s) visible · ${silence.directive}`;
+    : `${layers.length} deep cognition layer(s) visible · ${silence.directive} · ${protectionTrail.total_protections} protection(s) on record`;
 
-  return { any_layer_present, layers, silence, statement };
+  return { any_layer_present, layers, silence, protectionTrail, statement };
 }

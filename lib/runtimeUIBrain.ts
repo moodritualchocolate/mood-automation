@@ -23,6 +23,7 @@ import type { FeedbackState } from './civilizationFeedbackLoopCore';
 import type { LiveCouplingState } from './civilizationCouplingKernel';
 import type { SovereignIdentityState } from './existentialIntegrityEngine';
 import type { GenerativePresenceState } from './civilizationCoherenceRuntime';
+import type { ProtectionMemoryState } from './protectionMemoryArchive';
 
 /** The complete persistent runtime state every manifestation surface
  *  reads from. Nothing in Wave 9 renders anything not derived here.
@@ -42,6 +43,8 @@ export interface RuntimeSnapshot {
   liveCoupling?: LiveCouplingState | null;
   sovereignIdentity?: SovereignIdentityState | null;
   generativePresence?: GenerativePresenceState | null;
+  /** Wave 17 — runtime continuity: the record of what restraint protected. */
+  protectionMemory?: ProtectionMemoryState | null;
   capturedAt: number;
 }
 

@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -104,6 +104,11 @@ export default function RuntimePage() {
           reality feedback, live coupling, sovereign identity,
           generative presence) is shown as its own card. */}
       <DeepCognitionGrid m={m} />
+
+      {/* Wave 17 — the protection trail. Runtime continuity for
+          what restraint preserved. Each entry is a real moment the
+          organism chose not to act. Silence as a record, not absence. */}
+      <ProtectionTrail m={m} />
 
       <footer className="text-[10px] tracking-[0.22em] text-bone-200/30 uppercase pt-3 border-t hairline flex flex-wrap gap-x-4 gap-y-1">
         <span>{m.runtime_is_visible ? 'runtime visible' : 'runtime dormant'}</span>

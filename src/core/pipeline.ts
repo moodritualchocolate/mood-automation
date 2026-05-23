@@ -752,7 +752,12 @@ import {
   readGenerativePresenceMemoryArchive,
   readExistentialPresenceResilienceMonitor,
   readCivilizationCoherenceRuntime,
+  // ─── Wave 17 — embodied runtime presence (silence + protection memory).
+  readSilenceEngine,
+  createProtectionMemoryStore,
+  recordProtectionEvent,
 } from '@lib/index';
+import type { SilenceEngineReading } from '@lib/silenceEngine';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
 import type { CausalChainLink } from '@lib/causalMemoryGraph';
@@ -5930,6 +5935,43 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   emit({
     stage: 'generative-presence',
     message: `generative presence rested in silence — coherence ${generativePresenceState.civilizationCoherenceScore}/10 → ${quietGenerative.civilizationCoherenceScore}/10`,
+  });
+
+  // ─── Wave 17 — runtime continuity: this restraint is now a fact.
+  // Read the canonical Silence Engine against the just-evolved state
+  // and record what was protected. The organism remembers its own
+  // refusals.
+  const protectionStore = createProtectionMemoryStore();
+  const priorProtectionMemory = await protectionStore.read();
+  const silenceAtExhaustion = readSilenceEngine({
+    coupling: restedCoupling,
+    strategicFuture: patientFuture,
+    execution: withheldExecution,
+    feedback: silentFeedback,
+    liveCoupling: silentLiveCoupling,
+    generativePresence: quietGenerative,
+    worldState: executiveWorldState,
+  });
+  // Always log an exhausted run — the act of withholding IS the
+  // protection, even if individual silence signals are mild. We
+  // synthesize a directive when the reading came back "speak" but
+  // the run still produced no banner.
+  const guaranteed: SilenceEngineReading = silenceAtExhaustion.silence_is_the_move
+    ? silenceAtExhaustion
+    : {
+        ...silenceAtExhaustion,
+        directive: 'hold',
+        silence_is_the_move: true,
+        statement: 'Hold — the organism reached its attempt limit without shipping; the choice not to act stands',
+        contributing_reasons: silenceAtExhaustion.contributing_reasons.length
+          ? silenceAtExhaustion.contributing_reasons
+          : ['no-reason-to-speak'],
+      };
+  const evolvedProtectionMemory = recordProtectionEvent(priorProtectionMemory, guaranteed, 'exhausted-run');
+  await protectionStore.save(evolvedProtectionMemory);
+  emit({
+    stage: 'protection-memory',
+    message: `restraint recorded — ${evolvedProtectionMemory.totalEvents} protection(s) on the organism's record · ${guaranteed.directive}`,
   });
 
   throw new ExhaustedAttempts(
