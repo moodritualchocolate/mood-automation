@@ -497,6 +497,71 @@ import {
   readFeedbackCoherenceValidator,
   readRealityFeedbackGovernor,
   readCivilizationFeedbackLoopCore,
+  // Wave 14 — live civilization coupling (Phases 261–320)
+  createLiveCouplingStore,
+  evolveLiveCouplingFromMeaning,
+  evolveLiveCouplingFromNovelty,
+  evolveLiveCouplingFromStrategicSilence,
+  readLiveCommentIngestion,
+  readRealtimeSentimentField,
+  readResonanceVelocityTracking,
+  readAudienceStressDetection,
+  readCulturalWeatherRuntime,
+  readNarrativeContagionMap,
+  readDelayedMeaningRecognition,
+  readMeaningVsNoveltyEngine,
+  readStrategicSilenceTiming,
+  readLivingReputationField,
+  readLiveReactionStreamProcessor,
+  readSentimentFieldGradient,
+  readRealtimeMoodVelocity,
+  readResonanceFieldDirection,
+  readStressContagionTracker,
+  readNervousSystemPulseMonitor,
+  readCulturalFrontDetection,
+  readCulturalPressureGradient,
+  readNarrativeSpreadingVelocity,
+  readNarrativeMutationDuringSpread,
+  readSlowSignalAmplifier,
+  readNoveltyDecayTracker,
+  readMeaningDensityAnalyzer,
+  readSilenceWindowDetector,
+  readReputationFieldGradient,
+  readReputationFieldVelocity,
+  readLiveSignalAggregator,
+  readLiveSignalDecayMonitor,
+  readRealtimeAttentionField,
+  readRealtimeTrustField,
+  readLiveCouplingHealth,
+  readRealityPresenceMeter,
+  readLiveImpactDetector,
+  readRealityChangeAttribution,
+  readLiveFeedbackLatency,
+  readAudienceCollectivePulse,
+  readRealtimeNarrativeOrientation,
+  readLiveDriftDetection,
+  readRealtimeContradictionField,
+  readAudienceAttentionDecay,
+  readCrisisSignalDetector,
+  readRealtimeOpportunityDetector,
+  readLiveCouplingDriftCorrection,
+  readLiveCouplingResonanceAnchor,
+  readLiveCouplingBoundaryEnforcement,
+  readRealityPresenceVerifier,
+  readRealityChangeLedger,
+  readLiveCouplingMemoryArchive,
+  readRealtimeTrustVelocity,
+  readRealtimeContextWindowMonitor,
+  readLiveCouplingIntegrityValidator,
+  readRealityCouplingCadence,
+  readLiveCouplingHealthBalancer,
+  readLiveCouplingDignityMonitor,
+  readRealtimeCivilizationStateReadout,
+  readRealityChangeAttributionAuditor,
+  readLiveCouplingCoherenceValidator,
+  readLiveCouplingGovernor,
+  readCivilizationCouplingPresenceCheck,
+  readCivilizationCouplingKernel,
 } from '@lib/index';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
@@ -854,6 +919,18 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     message: feedbackState.feedbackCycles === 0
       ? 'the organism is beginning to read what its actions become for the first time'
       : `reality feedback: ${feedbackState.feedbackCycles} cycles · trust net gain ${feedbackState.trustNetGain} · ${feedbackState.reactionsIngested} reactions · ${feedbackState.slowTruthsDetected} slow truth(s)`,
+  });
+
+  // ─── Wave 14 — load the organism's live-coupling state ────────
+  // The organism now FEELS reality in real time: every cycle it asks
+  // "what changed in reality because we existed?"
+  const liveCouplingStore = createLiveCouplingStore();
+  const liveCouplingState = await liveCouplingStore.read();
+  emit({
+    stage: 'live-coupling',
+    message: liveCouplingState.couplingCycles === 0
+      ? 'the organism is preparing to feel reality in real time for the first time'
+      : `live coupling: ${liveCouplingState.couplingCycles} cycles · presence ${liveCouplingState.presenceScore}/10 · coupling depth ${liveCouplingState.realityCouplingDepth}/10 · ${liveCouplingState.meaningsCarried} meaning / ${liveCouplingState.noveltyChased} novelty`,
   });
 
   // ─── Phase 15 — longitudinal reality reads (campaign-level) ───
@@ -3385,6 +3462,290 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       }
       // ═══════════════════════════════════════════════════════════
 
+      // ═══ WAVE 14 — LIVE CIVILIZATION COUPLING (Phases 261–320) ═
+      // The organism stops asking "what was received?" and starts
+      // asking "what changed in reality because we existed?" — moving
+      // from remembered feedback to real-time coupling.
+      const lcBannerShipped = actPublish.publish_decision === 'publish';
+      const lcAudienceCharge = executiveWorldState.emotional_volatility;
+      const lcLiveValence = couplingState.trustLevel - 5;
+      const lcAuthenticity = couplingState.authenticityReserve;
+      const lcComment = readLiveCommentIngestion({
+        bannerShipped: lcBannerShipped, audienceCharge: lcAudienceCharge,
+        liveValence: lcLiveValence, authenticity: lcAuthenticity,
+        externalSignalVolume: cplIngestion.external_signal_volume,
+      });
+      const lcStream = readLiveReactionStreamProcessor({ comments: lcComment.comments });
+      const lcSentimentField = readRealtimeSentimentField({ comments: lcComment.comments });
+      const lcSentimentGrad = readSentimentFieldGradient({
+        fieldMean: lcSentimentField.field_mean, fieldVariance: lcSentimentField.field_variance,
+      });
+      const lcMoodVel = readRealtimeMoodVelocity({
+        priorMood: liveCouplingState.presenceScore * 0.5,
+        currentMood: lcSentimentField.field_mean,
+      });
+      const lcResonanceVel = readResonanceVelocityTracking({
+        priorResonance: liveCouplingState.realityCouplingDepth,
+        currentResonance: couplingState.trustLevel,
+      });
+      const lcResonanceDir = readResonanceFieldDirection({
+        resonanceVelocity: lcResonanceVel.velocity, brandReceivedValence: lcSentimentField.field_mean,
+      });
+      const lcStress = readAudienceStressDetection({
+        liveIntensity: lcStream.average_intensity,
+        collectiveExhaustion: executiveWorldState.collective_exhaustion,
+        sentimentVariance: lcSentimentField.field_variance,
+      });
+      const lcStressContagion = readStressContagionTracker({
+        audienceStress: lcStress.stress_score,
+        sentimentVariance: lcSentimentField.field_variance,
+        moodVelocity: lcMoodVel.velocity,
+      });
+      const lcPulse = readNervousSystemPulseMonitor({
+        liveIntensity: lcStream.average_intensity,
+        sentimentVariance: lcSentimentField.field_variance,
+        liveSignalVolume: lcComment.stream_volume,
+      });
+      const lcWeather = readCulturalWeatherRuntime({
+        collectiveExhaustion: executiveWorldState.collective_exhaustion,
+        emotionalVolatility: executiveWorldState.emotional_volatility,
+        worldTension: executiveWorldState.world_tension,
+        trustErosion: executiveWorldState.trust_erosion,
+      });
+      const lcFront = readCulturalFrontDetection({
+        moodVelocity: lcMoodVel.velocity, trustErosion: executiveWorldState.trust_erosion,
+        culturalWeather: lcWeather.weather,
+      });
+      const lcPressureGrad = readCulturalPressureGradient({
+        pressureNow: (executiveWorldState.emotional_volatility + executiveWorldState.world_tension) / 2,
+        pressureEarlier: (executiveWorldState.emotional_volatility + executiveWorldState.world_tension) / 2 - 0.5,
+      });
+      const lcContagion = readNarrativeContagionMap({
+        secondHandResonance: fbSecondHand.second_hand_resonance,
+        memeticIntegrity: fbMemetic.integrity_score,
+        counterNarrative: fbCounterNarrative.counter_narrative_forming,
+      });
+      const lcSpreadVel = readNarrativeSpreadingVelocity({
+        spreadVelocity: lcContagion.spread_velocity, contagionRate: lcStressContagion.contagion_rate,
+      });
+      const lcMutation = readNarrativeMutationDuringSpread({
+        memeticIntegrity: fbMemetic.integrity_score, spreadVelocity: lcContagion.spread_velocity,
+      });
+      const lcDelayedMeaning = readDelayedMeaningRecognition({
+        delayedTruthLatency: fbLatency.pattern === 'delayed-truth',
+        meaningPersistence: feedbackState.meaningPersistenceScore,
+        slowTruthDetected: fbSlowTruth.slow_truth_detected,
+      });
+      const lcSlowAmp = readSlowSignalAmplifier({
+        slowTruthDetected: fbSlowTruth.slow_truth_detected,
+        delayedMeaningRecognised: lcDelayedMeaning.delayed_meaning_recognised,
+        fastNoiseLevel: cplSaturation.saturation,
+      });
+      const lcMeaningVsNov = readMeaningVsNoveltyEngine({
+        meaningDensity: couplingState.trustLevel,
+        noveltyLoad: cplResonance.is_stimulus_addiction ? 8 : 3,
+        marketRewardsNovelty: cplResonance.is_stimulus_addiction,
+      });
+      const lcNoveltyDecay = readNoveltyDecayTracker({
+        initialNovelty: cplResonance.is_stimulus_addiction ? 8 : 3,
+        cyclesSinceNew: 1,
+      });
+      const lcMeaningDensity = readMeaningDensityAnalyzer({
+        resonance: couplingState.trustLevel,
+        truthfulness: !antiOptimizationReading.optimization_corrupts_truth,
+        attentionDemanded: cplSaturation.saturation,
+      });
+      const lcSilenceTiming = readStrategicSilenceTiming({
+        culturalStorm: lcWeather.weather === 'storm',
+        audienceTooStressed: lcStress.too_stressed_to_act_on,
+        delayedMeaningCrystalising: lcDelayedMeaning.delayed_meaning_recognised,
+      });
+      const lcSilenceWindow = readSilenceWindowDetector({
+        culturalWeather: lcWeather.weather, audienceStress: lcStress.stress_score,
+        delayedMeaningStrength: lcDelayedMeaning.meaning_strength,
+      });
+      const lcLivingRep = readLivingReputationField({
+        priorReputation: liveCouplingState.livingReputation,
+        liveTrustShift: fbTrustShift.shift_magnitude,
+        fieldPolarised: !lcSentimentField.field_is_coherent,
+      });
+      const lcRepGrad = readReputationFieldGradient({
+        livingReputation: lcLivingRep.living_reputation, fieldVariance: lcSentimentField.field_variance,
+      });
+      const lcRepVel = readReputationFieldVelocity({
+        reputationNow: lcLivingRep.living_reputation, reputationEarlier: liveCouplingState.livingReputation,
+      });
+      const lcSignalAgg = readLiveSignalAggregator({
+        streamVolume: lcComment.stream_volume, liveValence: lcSentimentField.field_mean,
+        pulseIntensity: lcPulse.pulse_intensity,
+      });
+      const lcSignalDecay = readLiveSignalDecayMonitor({ cyclesSinceIngest: lcBannerShipped ? 0 : 1 });
+      const lcAttention = readRealtimeAttentionField({
+        digitalOverload: executiveWorldState.digital_overload,
+        fieldVolume: lcComment.stream_volume, audienceFatigue: cplSocialExhaustion.social_exhaustion,
+      });
+      const lcTrustField = readRealtimeTrustField({
+        livingReputation: lcLivingRep.living_reputation, trustNetGain: feedbackState.trustNetGain,
+      });
+      const lcCouplingHealth = readLiveCouplingHealth({
+        liveSignalStrength: lcSignalAgg.live_signal_strength,
+        signalIsFresh: lcSignalDecay.signal_is_fresh,
+        fieldIsCoherent: lcSentimentField.field_is_coherent,
+        presenceScore: liveCouplingState.presenceScore,
+      });
+      const lcPresenceMeter = readRealityPresenceMeter({
+        presenceScore: liveCouplingState.presenceScore,
+        meaningGenerated: liveCouplingState.meaningGenerated,
+        liveSignalStrength: lcSignalAgg.live_signal_strength,
+      });
+      const lcPresenceVer = readRealityPresenceVerifier({
+        presenceMeter: lcPresenceMeter.presence,
+        brandActedThisCycle: lcBannerShipped,
+        liveSignalStrength: lcSignalAgg.live_signal_strength,
+      });
+      const lcImpact = readLiveImpactDetector({
+        trustVelocityPositive: fbTrustShift.shift_direction === 'gaining',
+        meaningCarried: feedbackState.meaningPersistenceScore >= 6,
+        narrativeIsSpreading: lcSpreadVel.spreading_velocity === 'spreading' || lcSpreadVel.spreading_velocity === 'viral',
+        brandIsPresent: lcPresenceVer.is_present,
+      });
+      const lcAttribution = readRealityChangeAttribution({
+        realityChanged: lcImpact.reality_demonstrably_changed,
+        worldShiftedAlone: executiveWorldState.world_tension >= 7,
+        liveSignalClarity: lcSignalAgg.live_signal_strength,
+      });
+      const lcLatency = readLiveFeedbackLatency({
+        signalIsFresh: lcSignalDecay.signal_is_fresh, liveSignalStrength: lcSignalAgg.live_signal_strength,
+      });
+      const lcCollectivePulse = readAudienceCollectivePulse({
+        pulseIntensity: lcPulse.pulse_intensity, fieldVariance: lcSentimentField.field_variance,
+      });
+      const lcNarrOrient = readRealtimeNarrativeOrientation({
+        receptionFidelity: fbNarrativeReception.reception_fidelity,
+        counterNarrative: fbCounterNarrative.counter_narrative_forming,
+      });
+      const lcContradictionField = readRealtimeContradictionField({
+        contradictionLoad: fbContradictions.contradiction_load,
+        unresolvedContradictions: fbContradictions.any_serious_contradiction,
+      });
+      const lcAttDecay = readAudienceAttentionDecay({
+        attentionAvailable: lcAttention.attention_available,
+        attentionEarlier: lcAttention.attention_available + (lcBannerShipped ? 0.5 : 0),
+      });
+      const lcCrisis = readCrisisSignalDetector({
+        culturalStorm: lcWeather.weather === 'storm',
+        audienceAcuteStress: lcStress.stress_level === 'acute',
+        contradictionsActive: lcContradictionField.contradictions_active,
+        counterNarrativeForming: fbCounterNarrative.counter_narrative_forming,
+      });
+      const lcOpportunity = readRealtimeOpportunityDetector({
+        culturalCalm: lcWeather.weather === 'calm',
+        attentionAvailable: lcAttention.attention_available,
+        warmGradient: lcSentimentGrad.gradient > 1,
+      });
+      const lcDrift = readLiveDriftDetection({
+        liveCouplingHealth: lcCouplingHealth.health,
+        attributionFails: !lcAttribution.attribution_holds && lcImpact.reality_demonstrably_changed,
+        fieldIsCoherent: lcSentimentField.field_is_coherent,
+      });
+      const lcDriftCorr = readLiveCouplingDriftCorrection({
+        driftDetected: lcDrift.drift_detected, driftMagnitude: lcDrift.drift_magnitude,
+      });
+      const lcAnchor = readLiveCouplingResonanceAnchor({
+        founding_truth_present: civIdentityHeld,
+        meaningDensity: lcMeaningDensity.density_score,
+        identityHeld: civIdentityHeld,
+      });
+      const lcBoundary = readLiveCouplingBoundaryEnforcement({
+        chasingViralityOverMeaning: !lcMeaningVsNov.is_meaning && lcContagion.spread_velocity >= 6,
+        performingForTheLiveField: cplResonance.is_stimulus_addiction,
+        riding_a_crisis_for_reach: lcCrisis.crisis_active && lcBannerShipped,
+      });
+      const lcChangeLedger = readRealityChangeLedger({
+        realityChanged: lcImpact.reality_demonstrably_changed,
+        attributionShare: lcAttribution.attribution_share,
+        priorChanges: liveCouplingState.realityChangesAttributed,
+        priorAttributionAvg: 0,
+      });
+      const lcMemoryArchive = readLiveCouplingMemoryArchive({
+        couplingCycles: liveCouplingState.couplingCycles,
+        meaningsCarried: liveCouplingState.meaningsCarried,
+        noveltyChased: liveCouplingState.noveltyChased,
+        silencesObserved: liveCouplingState.silencesObserved,
+      });
+      const lcTrustVel = readRealtimeTrustVelocity({
+        liveTrust: lcTrustField.live_trust, trustEarlier: lcTrustField.live_trust - fbTrustShift.shift_magnitude * 0.3,
+      });
+      const lcContextWin = readRealtimeContextWindowMonitor({
+        crisisActive: lcCrisis.crisis_active, opportunityOpen: lcOpportunity.opportunity_open,
+        culturalWeather: lcWeather.weather,
+      });
+      const lcAttribAudit = readRealityChangeAttributionAuditor({
+        attributionShare: lcAttribution.attribution_share,
+        worldShiftedAlone: executiveWorldState.world_tension >= 7,
+        fieldIsCoherent: lcSentimentField.field_is_coherent,
+      });
+      const lcIntegrity = readLiveCouplingIntegrityValidator({
+        liveCouplingHealth: lcCouplingHealth.health, signalIsFresh: lcSignalDecay.signal_is_fresh,
+        fieldIsCoherent: lcSentimentField.field_is_coherent,
+        // Only require attribution to hold when an attribution is being made — when
+        // reality is unchanged, there is no claim to validate.
+        attributionHolds: !lcImpact.reality_demonstrably_changed || lcAttribution.attribution_holds,
+      });
+      const lcCadence = readRealityCouplingCadence({
+        couplingCycles: liveCouplingState.couplingCycles,
+        meaningsCarried: liveCouplingState.meaningsCarried,
+        silencesObserved: liveCouplingState.silencesObserved,
+      });
+      const lcHealthBal = readLiveCouplingHealthBalancer({
+        signalVolume: lcComment.stream_volume,
+        contradictionPressure: lcContradictionField.contradiction_pressure,
+        driftMagnitude: lcDrift.drift_magnitude,
+      });
+      const lcDignity = readLiveCouplingDignityMonitor({
+        reactingDefensively: fbCounterNarrative.counter_narrative_forming && lcBannerShipped,
+        joiningPileOn: false,
+        raisingVoiceLive: cplResonance.is_stimulus_addiction,
+      });
+      const lcCivState = readRealtimeCivilizationStateReadout({
+        culturalWeather: lcWeather.weather, crisisActive: lcCrisis.crisis_active,
+        attentionAvailable: lcAttention.attention_available,
+      });
+      const lcCoherence = readLiveCouplingCoherenceValidator({
+        realityChanged: lcImpact.reality_demonstrably_changed,
+        driftDetected: lcDrift.drift_detected,
+        opportunityOpen: lcOpportunity.opportunity_open,
+        crisisActive: lcCrisis.crisis_active,
+        attributionAudit: lcAttribAudit.audit_passed,
+      });
+      const lcGovernor = readLiveCouplingGovernor({
+        integrityHolds: lcIntegrity.integrity_holds, brandIsPresent: lcPresenceVer.is_present,
+        realityChanged: lcImpact.reality_demonstrably_changed, driftDetected: lcDrift.drift_detected,
+        loadIsSustainable: lcHealthBal.load_is_sustainable,
+      });
+      const lcPresenceCheck = readCivilizationCouplingPresenceCheck({
+        isPresent: lcPresenceVer.is_present, governorGovernance: lcGovernor.governance,
+        withinBoundary: lcBoundary.within_boundary,
+      });
+      const lcKernel = readCivilizationCouplingKernel({
+        state: liveCouplingState, governor: lcGovernor, presence: lcPresenceVer,
+        liveImpact: lcImpact, coherence: lcCoherence,
+      });
+      emit({
+        stage: 'live-coupling',
+        message: `${lcKernel.coupling_state} (${lcKernel.reality_coupling_score}/10) · ${lcGovernor.governance} · ${lcWeather.weather} · "${lcKernel.what_reality_became}"`,
+      });
+      if (lcKernel.organism_was_absent_from_reality) {
+        emit({ stage: 'live-coupling', message: 'META-CRITIC FLAG — the brand is absent from the reality it claims to act on' });
+      }
+      if (lcCrisis.crisis_active) {
+        emit({ stage: 'live-coupling', message: `META-CRITIC FLAG — live crisis: ${lcCrisis.crisis_kind}` });
+      }
+      if (lcBoundary.boundary_crossed) {
+        emit({ stage: 'live-coupling', message: `META-CRITIC FLAG — live-coupling boundary crossed: ${lcBoundary.boundary_crossed}` });
+      }
+      // ═══════════════════════════════════════════════════════════
+
       const finalVerdict = decideFinalVerdict({
         ctx,
         scrollStop,
@@ -3670,6 +4031,18 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         fbSilenceAsFeedback, fbGenre, fbTrustGraph, fbMeaning, fbFalseSuccess, fbContradictionResolved,
         fbSlowTruth, fbSignalIntegrity, fbEcology, fbArchive, fbAttribution, fbCoherence,
         fbGovernor, fbCore,
+        // Wave 14 — live civilization coupling
+        lcComment, lcStream, lcSentimentField, lcSentimentGrad, lcMoodVel, lcResonanceVel,
+        lcResonanceDir, lcStress, lcStressContagion, lcPulse, lcWeather, lcFront,
+        lcPressureGrad, lcContagion, lcSpreadVel, lcMutation, lcDelayedMeaning, lcSlowAmp,
+        lcMeaningVsNov, lcNoveltyDecay, lcMeaningDensity, lcSilenceTiming, lcSilenceWindow,
+        lcLivingRep, lcRepGrad, lcRepVel, lcSignalAgg, lcSignalDecay, lcAttention,
+        lcTrustField, lcCouplingHealth, lcPresenceMeter, lcPresenceVer, lcImpact,
+        lcAttribution, lcLatency, lcCollectivePulse, lcNarrOrient, lcContradictionField,
+        lcAttDecay, lcCrisis, lcOpportunity, lcDrift, lcDriftCorr, lcAnchor, lcBoundary,
+        lcChangeLedger, lcMemoryArchive, lcTrustVel, lcContextWin, lcAttribAudit,
+        lcIntegrity, lcCadence, lcHealthBal, lcDignity, lcCivState, lcCoherence,
+        lcGovernor, lcPresenceCheck, lcKernel,
       });
       // ───────────────────────────────────────────────────────────
 
@@ -4221,6 +4594,38 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
               attribution: fbAttribution, coherence: fbCoherence,
               governor: fbGovernor, core: fbCore,
             },
+            liveCoupling: {
+              commentIngest: lcComment, sentimentField: lcSentimentField,
+              resonanceVelocity: lcResonanceVel, audienceStress: lcStress,
+              culturalWeather: lcWeather, narrativeContagion: lcContagion,
+              delayedMeaning: lcDelayedMeaning, meaningVsNovelty: lcMeaningVsNov,
+              silenceTiming: lcSilenceTiming, livingReputation: lcLivingRep,
+              streamProcessor: lcStream, sentimentGradient: lcSentimentGrad,
+              moodVelocity: lcMoodVel, resonanceDirection: lcResonanceDir,
+              stressContagion: lcStressContagion, nervousPulse: lcPulse,
+              culturalFront: lcFront, pressureGradient: lcPressureGrad,
+              spreadVelocity: lcSpreadVel, mutationDuringSpread: lcMutation,
+              slowAmplifier: lcSlowAmp, noveltyDecay: lcNoveltyDecay,
+              meaningDensity: lcMeaningDensity, silenceWindow: lcSilenceWindow,
+              reputationGradient: lcRepGrad, reputationVelocity: lcRepVel,
+              signalAggregator: lcSignalAgg, signalDecay: lcSignalDecay,
+              attentionField: lcAttention, trustField: lcTrustField,
+              couplingHealth: lcCouplingHealth, presenceMeter: lcPresenceMeter,
+              impact: lcImpact, realityAttribution: lcAttribution,
+              feedbackLatency: lcLatency, collectivePulse: lcCollectivePulse,
+              narrativeOrientation: lcNarrOrient, drift: lcDrift,
+              contradictionField: lcContradictionField, attentionDecay: lcAttDecay,
+              crisis: lcCrisis, opportunity: lcOpportunity,
+              driftCorrection: lcDriftCorr, resonanceAnchor: lcAnchor,
+              boundary: lcBoundary, presenceVerified: lcPresenceVer,
+              changeLedger: lcChangeLedger, memoryArchive: lcMemoryArchive,
+              trustVelocity: lcTrustVel, contextWindow: lcContextWin,
+              integrity: lcIntegrity, cadence: lcCadence,
+              healthBalancer: lcHealthBal, dignity: lcDignity,
+              civilizationState: lcCivState, attributionAudit: lcAttribAudit,
+              coherence: lcCoherence, governor: lcGovernor,
+              presenceCheck: lcPresenceCheck, kernel: lcKernel,
+            },
           },
           attempts: attempt,
           rejectedAttempts,
@@ -4471,6 +4876,20 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             : `feedback cohered with intent — trust net gain ${feedbackState.trustNetGain} → ${evolvedFeedback.trustNetGain}, resonance AUC ${feedbackState.resonanceCurveAUC} → ${evolvedFeedback.resonanceCurveAUC}`,
         });
 
+        // ─── Wave 14 — the live coupling resolves. The run either
+        // generated meaning (coupling deepens) or chased novelty
+        // (coupling thins).
+        const evolvedLiveCoupling = lcMeaningVsNov.is_meaning && lcImpact.reality_demonstrably_changed
+          ? evolveLiveCouplingFromMeaning(liveCouplingState)
+          : evolveLiveCouplingFromNovelty(liveCouplingState);
+        await liveCouplingStore.save(evolvedLiveCoupling);
+        emit({
+          stage: 'live-coupling',
+          message: lcMeaningVsNov.is_meaning && lcImpact.reality_demonstrably_changed
+            ? `the run generated meaning — coupling depth ${liveCouplingState.realityCouplingDepth}/10 → ${evolvedLiveCoupling.realityCouplingDepth}/10, presence ${liveCouplingState.presenceScore} → ${evolvedLiveCoupling.presenceScore}`
+            : `the run chased novelty over meaning — coupling depth ${liveCouplingState.realityCouplingDepth}/10 → ${evolvedLiveCoupling.realityCouplingDepth}/10`,
+        });
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -4634,6 +5053,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   emit({
     stage: 'reality-feedback',
     message: `silence is its own feedback — meaning persistence ${feedbackState.meaningPersistenceScore}/10 → ${silentFeedback.meaningPersistenceScore}/10, slow truths ${silentFeedback.slowTruthsDetected}`,
+  });
+
+  // ─── Wave 14 — strategic silence holds presence in live coupling.
+  const silentLiveCoupling = evolveLiveCouplingFromStrategicSilence(liveCouplingState);
+  await liveCouplingStore.save(silentLiveCoupling);
+  emit({
+    stage: 'live-coupling',
+    message: `strategic silence — live presence ${liveCouplingState.presenceScore}/10 → ${silentLiveCoupling.presenceScore}/10, ${silentLiveCoupling.silencesObserved} silence(s) held`,
   });
 
   throw new ExhaustedAttempts(

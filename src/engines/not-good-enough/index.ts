@@ -365,6 +365,67 @@ import type { RealityAttributionReading } from '@lib/realityAttributionAuditor';
 import type { FeedbackCoherenceReading as W13FeedbackCoherenceReading } from '@lib/feedbackCoherenceValidator';
 import type { RealityFeedbackGovernorReading } from '@lib/realityFeedbackGovernor';
 import type { CivilizationFeedbackLoopReading } from '@lib/civilizationFeedbackLoopCore';
+// Wave 14 — live civilization coupling (Phases 261–320)
+import type { LiveCommentIngestionReading } from '@lib/liveCommentIngestion';
+import type { RealtimeSentimentFieldReading } from '@lib/realtimeSentimentField';
+import type { ResonanceVelocityReading } from '@lib/resonanceVelocityTracking';
+import type { AudienceStressReading } from '@lib/audienceStressDetection';
+import type { CulturalWeatherReading } from '@lib/culturalWeatherRuntime';
+import type { NarrativeContagionMapReading } from '@lib/narrativeContagionMap';
+import type { DelayedMeaningReading } from '@lib/delayedMeaningRecognition';
+import type { MeaningVsNoveltyReading } from '@lib/meaningVsNoveltyEngine';
+import type { StrategicSilenceTimingReading } from '@lib/strategicSilenceTiming';
+import type { LivingReputationFieldReading } from '@lib/livingReputationField';
+import type { LiveReactionStreamReading } from '@lib/liveReactionStreamProcessor';
+import type { SentimentFieldGradientReading } from '@lib/sentimentFieldGradient';
+import type { RealtimeMoodVelocityReading } from '@lib/realtimeMoodVelocity';
+import type { ResonanceFieldDirectionReading } from '@lib/resonanceFieldDirection';
+import type { StressContagionReading } from '@lib/stressContagionTracker';
+import type { NervousSystemPulseReading } from '@lib/nervousSystemPulseMonitor';
+import type { CulturalFrontReading } from '@lib/culturalFrontDetection';
+import type { CulturalPressureGradientReading } from '@lib/culturalPressureGradient';
+import type { NarrativeSpreadingVelocityReading } from '@lib/narrativeSpreadingVelocity';
+import type { NarrativeMutationDuringSpreadReading } from '@lib/narrativeMutationDuringSpread';
+import type { SlowSignalAmplifierReading } from '@lib/slowSignalAmplifier';
+import type { NoveltyDecayReading } from '@lib/noveltyDecayTracker';
+import type { MeaningDensityReading } from '@lib/meaningDensityAnalyzer';
+import type { SilenceWindowReading } from '@lib/silenceWindowDetector';
+import type { ReputationFieldGradientReading } from '@lib/reputationFieldGradient';
+import type { ReputationFieldVelocityReading } from '@lib/reputationFieldVelocity';
+import type { LiveSignalAggregatorReading } from '@lib/liveSignalAggregator';
+import type { LiveSignalDecayReading } from '@lib/liveSignalDecayMonitor';
+import type { RealtimeAttentionFieldReading } from '@lib/realtimeAttentionField';
+import type { RealtimeTrustFieldReading } from '@lib/realtimeTrustField';
+import type { LiveCouplingHealthReading } from '@lib/liveCouplingHealth';
+import type { RealityPresenceMeterReading } from '@lib/realityPresenceMeter';
+import type { LiveImpactDetectionReading } from '@lib/liveImpactDetector';
+import type { RealityChangeAttributionReading } from '@lib/realityChangeAttribution';
+import type { LiveFeedbackLatencyReading } from '@lib/liveFeedbackLatency';
+import type { AudienceCollectivePulseReading } from '@lib/audienceCollectivePulse';
+import type { RealtimeNarrativeOrientationReading } from '@lib/realtimeNarrativeOrientation';
+import type { LiveDriftDetectionReading } from '@lib/liveDriftDetection';
+import type { RealtimeContradictionFieldReading } from '@lib/realtimeContradictionField';
+import type { AudienceAttentionDecayReading } from '@lib/audienceAttentionDecay';
+import type { CrisisSignalReading } from '@lib/crisisSignalDetector';
+import type { RealtimeOpportunityReading } from '@lib/realtimeOpportunityDetector';
+import type { LiveCouplingDriftCorrectionReading } from '@lib/liveCouplingDriftCorrection';
+import type { LiveCouplingResonanceAnchorReading } from '@lib/liveCouplingResonanceAnchor';
+import type { LiveCouplingBoundaryReading } from '@lib/liveCouplingBoundaryEnforcement';
+import type { RealityPresenceReading } from '@lib/realityPresenceVerifier';
+import type { RealityChangeLedgerReading } from '@lib/realityChangeLedger';
+import type { LiveCouplingMemoryArchiveReading } from '@lib/liveCouplingMemoryArchive';
+import type { RealtimeTrustVelocityReading } from '@lib/realtimeTrustVelocity';
+import type { RealtimeContextWindowReading } from '@lib/realtimeContextWindowMonitor';
+import type { LiveCouplingIntegrityReading } from '@lib/liveCouplingIntegrityValidator';
+import type { RealityCouplingCadenceReading } from '@lib/realityCouplingCadence';
+import type { LiveCouplingHealthBalancerReading } from '@lib/liveCouplingHealthBalancer';
+import type { LiveCouplingDignityReading } from '@lib/liveCouplingDignityMonitor';
+import type { RealtimeCivilizationStateReading } from '@lib/realtimeCivilizationStateReadout';
+import type { RealityChangeAttributionAuditorReading } from '@lib/realityChangeAttributionAuditor';
+import type { LiveCouplingCoherenceReading } from '@lib/liveCouplingCoherenceValidator';
+import type { LiveCouplingGovernorReading } from '@lib/liveCouplingGovernor';
+import type { CivilizationCouplingPresenceCheckReading } from '@lib/civilizationCouplingPresenceCheck';
+import type { CivilizationCouplingKernelReading } from '@lib/civilizationCouplingKernel';
 
 export interface MetaInput {
   ctx: EngineContext;
@@ -720,6 +781,67 @@ export interface MetaInput {
   fbCoherence?: W13FeedbackCoherenceReading;
   fbGovernor?: RealityFeedbackGovernorReading;
   fbCore?: CivilizationFeedbackLoopReading;
+  // Wave 14 — live civilization coupling (Phases 261–320).
+  lcComment?: LiveCommentIngestionReading;
+  lcStream?: LiveReactionStreamReading;
+  lcSentimentField?: RealtimeSentimentFieldReading;
+  lcSentimentGrad?: SentimentFieldGradientReading;
+  lcMoodVel?: RealtimeMoodVelocityReading;
+  lcResonanceVel?: ResonanceVelocityReading;
+  lcResonanceDir?: ResonanceFieldDirectionReading;
+  lcStress?: AudienceStressReading;
+  lcStressContagion?: StressContagionReading;
+  lcPulse?: NervousSystemPulseReading;
+  lcWeather?: CulturalWeatherReading;
+  lcFront?: CulturalFrontReading;
+  lcPressureGrad?: CulturalPressureGradientReading;
+  lcContagion?: NarrativeContagionMapReading;
+  lcSpreadVel?: NarrativeSpreadingVelocityReading;
+  lcMutation?: NarrativeMutationDuringSpreadReading;
+  lcDelayedMeaning?: DelayedMeaningReading;
+  lcSlowAmp?: SlowSignalAmplifierReading;
+  lcMeaningVsNov?: MeaningVsNoveltyReading;
+  lcNoveltyDecay?: NoveltyDecayReading;
+  lcMeaningDensity?: MeaningDensityReading;
+  lcSilenceTiming?: StrategicSilenceTimingReading;
+  lcSilenceWindow?: SilenceWindowReading;
+  lcLivingRep?: LivingReputationFieldReading;
+  lcRepGrad?: ReputationFieldGradientReading;
+  lcRepVel?: ReputationFieldVelocityReading;
+  lcSignalAgg?: LiveSignalAggregatorReading;
+  lcSignalDecay?: LiveSignalDecayReading;
+  lcAttention?: RealtimeAttentionFieldReading;
+  lcTrustField?: RealtimeTrustFieldReading;
+  lcCouplingHealth?: LiveCouplingHealthReading;
+  lcPresenceMeter?: RealityPresenceMeterReading;
+  lcPresenceVer?: RealityPresenceReading;
+  lcImpact?: LiveImpactDetectionReading;
+  lcAttribution?: RealityChangeAttributionReading;
+  lcLatency?: LiveFeedbackLatencyReading;
+  lcCollectivePulse?: AudienceCollectivePulseReading;
+  lcNarrOrient?: RealtimeNarrativeOrientationReading;
+  lcContradictionField?: RealtimeContradictionFieldReading;
+  lcAttDecay?: AudienceAttentionDecayReading;
+  lcCrisis?: CrisisSignalReading;
+  lcOpportunity?: RealtimeOpportunityReading;
+  lcDrift?: LiveDriftDetectionReading;
+  lcDriftCorr?: LiveCouplingDriftCorrectionReading;
+  lcAnchor?: LiveCouplingResonanceAnchorReading;
+  lcBoundary?: LiveCouplingBoundaryReading;
+  lcChangeLedger?: RealityChangeLedgerReading;
+  lcMemoryArchive?: LiveCouplingMemoryArchiveReading;
+  lcTrustVel?: RealtimeTrustVelocityReading;
+  lcContextWin?: RealtimeContextWindowReading;
+  lcAttribAudit?: RealityChangeAttributionAuditorReading;
+  lcIntegrity?: LiveCouplingIntegrityReading;
+  lcCadence?: RealityCouplingCadenceReading;
+  lcHealthBal?: LiveCouplingHealthBalancerReading;
+  lcDignity?: LiveCouplingDignityReading;
+  lcCivState?: RealtimeCivilizationStateReading;
+  lcCoherence?: LiveCouplingCoherenceReading;
+  lcGovernor?: LiveCouplingGovernorReading;
+  lcPresenceCheck?: CivilizationCouplingPresenceCheckReading;
+  lcKernel?: CivilizationCouplingKernelReading;
 }
 
 export function decideFinalVerdict(input: MetaInput): FinalVerdict {
@@ -804,7 +926,14 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
           fbResonanceDecay, fbMeaning, fbAuthenticity, fbNervousSystem, fbMemetic,
           fbStrategyAdjust, fbExecRefine, fbEmotionalTruth, fbSentimentDrift,
           fbLatency, fbBiasFilter, fbSilenceImpact, fbSilenceAsFeedback,
-          fbSlowTruth, fbGenre, fbSecondHand, fbImpactCurve } = input;
+          fbSlowTruth, fbGenre, fbSecondHand, fbImpactCurve,
+          lcKernel, lcGovernor, lcCrisis, lcBoundary, lcImpact, lcAttribAudit,
+          lcCoherence, lcDrift, lcStress, lcMeaningVsNov, lcSilenceTiming,
+          lcPresenceVer, lcPresenceCheck, lcIntegrity, lcSentimentField,
+          lcWeather, lcCouplingHealth, lcLivingRep, lcMutation, lcResonanceDir,
+          lcSpreadVel, lcOpportunity, lcMoodVel, lcCollectivePulse,
+          lcNarrOrient, lcAnchor, lcHealthBal, lcDignity, lcCadence,
+          lcAttDecay, lcDriftCorr, lcSlowAmp } = input;
 
   // Brutality rises with the campaign's history — if recent banners have
   // approved easily, raise the bar; if many rejections recently, hold
@@ -2021,6 +2150,77 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     if (verdict === 'approve') verdict = 'reject-concept';
   }
 
+  // ═══ WAVE 14 — LIVE CIVILIZATION COUPLING: THE PRESENCE GATES ═
+  // THE GLOBAL WAVE 14 META-CRITIC QUESTION:
+  //   "What changed in reality because we existed?"
+  // The organism that is absent from the reality it claims to act on
+  // is refused at default brutality.
+  if (lcKernel && lcKernel.organism_was_absent_from_reality && brutality >= 0.65) {
+    reasons.push(`civilization coupling kernel: ${lcKernel.kernel_statement}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Live coupling has been severed — the brand is hallucinating presence.
+  if (lcGovernor && lcGovernor.governance === 'severed' && brutality >= 0.6) {
+    reasons.push(`live coupling governor: ${lcGovernor.reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // A live crisis is active — speaking into it is hardly ever the move.
+  if (lcCrisis && lcCrisis.crisis_active && brutality >= 0.65) {
+    reasons.push(`live crisis: ${lcCrisis.crisis_kind}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Live-coupling boundary crossed — virality over meaning, performing,
+  // or riding a crisis for reach.
+  if (lcBoundary && !lcBoundary.within_boundary && brutality >= 0.6) {
+    reasons.push(`live coupling boundary: ${lcBoundary.boundary_crossed}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Reality-change attribution claim failed the audit.
+  if (lcImpact && lcImpact.reality_demonstrably_changed && lcAttribAudit && !lcAttribAudit.audit_passed && brutality >= 0.7) {
+    reasons.push(`reality change attribution audit: ${lcAttribAudit.audit_note}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Live coupling layer contradicts itself.
+  if (lcCoherence && !lcCoherence.live_coupling_is_coherent && brutality >= 0.7) {
+    reasons.push(`live coupling coherence: ${lcCoherence.incoherences[0] ?? 'live coupling layer contradicts itself'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Drift detected — the layer is mis-reading the live field.
+  if (lcDrift && lcDrift.drift_detected && brutality >= 0.7) {
+    reasons.push(`live coupling drift: ${lcDriftCorr ? lcDriftCorr.correction : 'live coupling is drifting'}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Acute audience stress live in the field.
+  if (lcStress && lcStress.stress_level === 'acute' && brutality >= 0.7) {
+    reasons.push(`audience stress: ACUTE (${lcStress.stress_score}/10) — too stressed to act on`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Strategic silence timing recommends silence right now.
+  if (lcSilenceTiming && lcSilenceTiming.deploy_silence && brutality >= 0.7) {
+    reasons.push(`strategic silence timing: ${lcSilenceTiming.silence_reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Meaning vs novelty engine reads novelty without justification.
+  if (lcMeaningVsNov && !lcMeaningVsNov.is_meaning && brutality >= 0.65) {
+    reasons.push(`meaning vs novelty: ${lcMeaningVsNov.balance_note}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Final presence check failed.
+  if (lcPresenceCheck && !lcPresenceCheck.brand_is_in_reality && brutality >= 0.7) {
+    reasons.push(`presence check: ${lcPresenceCheck.check_reason}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Live coupling integrity failed — beliefs cannot be updated from this signal.
+  if (lcIntegrity && !lcIntegrity.integrity_holds && brutality >= 0.7) {
+    reasons.push(`live coupling integrity: ${lcIntegrity.integrity_issues.join('; ')}`);
+    if (verdict === 'approve') verdict = 'reject-concept';
+  }
+  // Live-field dignity breach.
+  if (lcDignity && !lcDignity.dignified && brutality >= 0.7) {
+    reasons.push(`live coupling dignity: ${lcDignity.breach}`);
+    if (verdict === 'approve') verdict = 'reject-taste';
+  }
+
   const softReasons: string[] = [];
   if (scrollStopTotal < floorScrollStop) softReasons.push(`scroll-stop ${scrollStopTotal.toFixed(1)} below floor ${floorScrollStop.toFixed(1)}`);
   if (tasteTotal > ceilingTaste)         softReasons.push(`taste failures ${tasteTotal.toFixed(1)} above ceiling ${ceilingTaste.toFixed(1)}`);
@@ -2801,6 +3001,56 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
     softReasons.push(`silence impact: ${fbSilenceImpact.silence_did_work ? '' : 'extended silence has cost the brand presence'}`);
   }
 
+  // Wave 14 soft floors — live civilization coupling.
+  if (lcSentimentField && !lcSentimentField.field_is_coherent) {
+    softReasons.push(`realtime sentiment field: polarised (variance ${lcSentimentField.field_variance}/10)`);
+  }
+  if (lcWeather && !lcWeather.weather_permits_action) {
+    softReasons.push(`cultural weather: ${lcWeather.weather} — ${lcWeather.weather_directive}`);
+  }
+  if (lcCouplingHealth && !lcCouplingHealth.is_healthy) {
+    softReasons.push(`live coupling health: ${lcCouplingHealth.failure_modes.join(', ')}`);
+  }
+  if (lcLivingRep && !lcLivingRep.field_is_healthy) {
+    softReasons.push(`living reputation field: ${lcLivingRep.field_state} (${lcLivingRep.living_reputation}/10)`);
+  }
+  if (lcMutation && lcMutation.unsafe_mutation) {
+    softReasons.push(`narrative mutation during spread: unsafe mutation as it travels (${lcMutation.mutation_magnitude}/10)`);
+  }
+  if (lcResonanceDir && lcResonanceDir.direction === 'away-from-brand') {
+    softReasons.push('resonance field direction: flowing away from brand');
+  }
+  if (lcSpreadVel && lcSpreadVel.spreading_velocity === 'stalled') {
+    softReasons.push('narrative spreading velocity: stalled — the narrative is not moving through the field');
+  }
+  if (lcOpportunity && !lcOpportunity.opportunity_open && lcImpact && !lcImpact.reality_demonstrably_changed) {
+    softReasons.push('no live opportunity and no reality change — the cycle was not present');
+  }
+  if (lcMoodVel && lcMoodVel.velocity_kind === 'sinking') {
+    softReasons.push(`realtime mood velocity: sinking (Δ ${lcMoodVel.velocity})`);
+  }
+  if (lcCollectivePulse && lcCollectivePulse.pulse_state === 'fragmented') {
+    softReasons.push('audience collective pulse: fragmented — no aligned audience to address');
+  }
+  if (lcNarrOrient && !lcNarrOrient.on_course) {
+    softReasons.push(`realtime narrative orientation: ${lcNarrOrient.orientation}`);
+  }
+  if (lcAnchor && !lcAnchor.anchor_holding) {
+    softReasons.push(`live coupling resonance anchor: ${lcAnchor.anchor}`);
+  }
+  if (lcHealthBal && !lcHealthBal.load_is_sustainable) {
+    softReasons.push(`live coupling health balancer: OVERLOAD (${lcHealthBal.load}/10)`);
+  }
+  if (lcCadence && (lcCadence.cadence === 'spasmodic' || lcCadence.cadence === 'absent')) {
+    softReasons.push(`reality coupling cadence: ${lcCadence.cadence} (${lcCadence.cadence_health}/10)`);
+  }
+  if (lcAttDecay && lcAttDecay.decay_state === 'lost') {
+    softReasons.push('audience attention decay: attention is lost');
+  }
+  if (lcSlowAmp && lcSlowAmp.amplified && lcSlowAmp.amplified_signal) {
+    softReasons.push(`slow signal amplified: ${lcSlowAmp.amplified_signal}`);
+  }
+
   // Phase 4 soft floors — aftertaste + atmosphere.
   if (input.aftertastePrediction) {
     const a = input.aftertastePrediction;
@@ -2830,14 +3080,15 @@ export function decideFinalVerdict(input: MetaInput): FinalVerdict {
   //   default (0.65)   → 4 soft reasons required
   //   brutal  (0.90)   → 3 soft reasons required
   // Soft-floor threshold scales with brutality AND with the depth of
-  // the cognition stack. After 260 phases of judgement — Wave 13 now
-  // layers reality feedback on top of autonomous action, strategic
-  // future, reality coupling, the OS, and the organism — every banner
-  // produces 75-115 soft signals routinely. Threshold band:
-  //   lenient (0.50)   → 83 soft reasons required to reject
-  //   default (0.65)   → 74 soft reasons required
-  //   brutal  (0.90)   → 67 soft reasons required
-  const softFloorThreshold = brutality >= 0.85 ? 67 : brutality >= 0.6 ? 74 : 83;
+  // the cognition stack. After 320 phases of judgement — Wave 14 now
+  // layers live civilization coupling on top of reality feedback,
+  // autonomous action, strategic future, reality coupling, the OS,
+  // and the organism — every banner produces 90-130 soft signals
+  // routinely. Threshold band:
+  //   lenient (0.50)   → 95 soft reasons required to reject
+  //   default (0.65)   → 85 soft reasons required
+  //   brutal  (0.90)   → 76 soft reasons required
+  const softFloorThreshold = brutality >= 0.85 ? 76 : brutality >= 0.6 ? 85 : 95;
   if (verdict === 'approve' && softReasons.length >= softFloorThreshold) {
     // Threshold broken → reject. Decide what kind based on which
     // floors broke first.
