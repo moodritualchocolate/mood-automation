@@ -33,6 +33,8 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   observe: 'cool',
   // Wave 21 — cognitive vocabulary.
   notice: 'cool', consider: 'cool', restrain: 'cool',
+  // Wave 22 — permission gate.
+  permit: 'good', 'permit-refused': 'warn',
 };
 
 export function buildDirectiveStreamView(snap: RuntimeSnapshot): DirectiveStreamViewModel {

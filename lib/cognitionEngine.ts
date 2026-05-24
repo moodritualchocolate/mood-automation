@@ -21,6 +21,7 @@ import {
   evolveOSFromNotice,
   evolveOSFromConsider,
   evolveOSFromRestrain,
+  evolveOSFromPermit,
 } from './operatingSystemCore';
 import {
   createOrganismCoreStore,
@@ -31,9 +32,10 @@ import type {
   DirectiveRecord,
   OperationalPosture,
   StrategicSeasonName,
+  PermissionWindow,
 } from './operatingSystemCore';
 
-export type CognitiveVerb = 'observe' | 'notice' | 'consider' | 'restrain';
+export type CognitiveVerb = 'observe' | 'notice' | 'consider' | 'restrain' | 'permit';
 
 type EvolveOSFn = (state: OSRuntimeState, at?: number) => OSRuntimeState;
 
@@ -42,6 +44,7 @@ const EVOLVE_BY_VERB: Record<CognitiveVerb, EvolveOSFn> = {
   notice: evolveOSFromNotice,
   consider: evolveOSFromConsider,
   restrain: evolveOSFromRestrain,
+  permit: evolveOSFromPermit,
 };
 
 export interface CognitionEventResult {
@@ -57,6 +60,10 @@ export interface CognitionEventResult {
     season: StrategicSeasonName;
     season_age_after: number;
     directive_log_length_after: number;
+    /** Wave 22 — the permission window after this act. null when the
+     *  window is closed (still no permission), populated when a
+     *  successful permit has opened it. */
+    permission_window: PermissionWindow | null;
   };
   organism: {
     age_before: number;
@@ -97,6 +104,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       season: osPost.currentSeason,
       season_age_after: osPost.seasonAge,
       directive_log_length_after: osPost.directiveLog.length,
+      permission_window: osPost.permissionWindow,
     },
     organism: {
       age_before: organismPre.age,
@@ -110,3 +118,4 @@ export const runObservation = () => runCognitiveAct('observe');
 export const runNotice      = () => runCognitiveAct('notice');
 export const runConsider    = () => runCognitiveAct('consider');
 export const runRestrain    = () => runCognitiveAct('restrain');
+export const runPermit      = () => runCognitiveAct('permit');

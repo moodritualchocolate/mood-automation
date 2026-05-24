@@ -34,6 +34,10 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   // Wave 21 — cognitive vocabulary. All three share the 'cool' tone
   // with observe, marking them as the discipline-of-attention class.
   notice: 'cool', consider: 'cool', restrain: 'cool',
+  // Wave 22 — permission gate. Success is 'good' (the chain opened
+  // a forward path); refusal is 'warn' (the gate is closed and the
+  // viewer should see it).
+  permit: 'good', 'permit-refused': 'warn',
 };
 
 export function buildCognitionTimelineView(snap: RuntimeSnapshot): CognitionTimelineViewModel {

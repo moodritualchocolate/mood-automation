@@ -41,6 +41,18 @@ export interface DirectiveRecord {
   at?: number;
 }
 
+/**
+ * Wave 22 — the permission window. Opened by a successful 'permit'
+ * directive; closed (set to null) when an action consumes it (no
+ * action verb exists yet, so for now the window simply stays open
+ * once opened, until reset). null means no permission is currently
+ * granted — actions should refuse to run.
+ */
+export interface PermissionWindow {
+  openedAt: number;       // ms timestamp the window was opened
+  permittedTick: number;  // os.uptime when permit was granted
+}
+
 export interface OSRuntimeState {
   bootedAt: number;
   uptime: number;                       // kernel ticks (runs) the OS has lived
@@ -52,6 +64,8 @@ export interface OSRuntimeState {
   coordinationEMA: number;              // 0..10 — running coordination score
   fragmentationStreak: number;          // consecutive fragmented ticks
   hibernationCount: number;
+  /** Wave 22 — null until a 'permit' directive opens it. */
+  permissionWindow: PermissionWindow | null;
   updatedAt: number;
 }
 
@@ -67,6 +81,7 @@ export function createInitialOS(): OSRuntimeState {
     coordinationEMA: 6,
     fragmentationStreak: 0,
     hibernationCount: 0,
+    permissionWindow: null,
     updatedAt: Date.now(),
   };
 }
@@ -278,6 +293,66 @@ export function evolveOSFromRestrain(
     `did not act — cognition held without output`,
     at,
   );
+}
+
+// ─── Wave 22 — permission gate ─────────────────────────────────
+//
+// The first verb whose outcome depends on cognitive history. permit
+// opens an internal permission window — a small persistent flag that
+// later action-class verbs (Phase 5+) will require — but only if the
+// discipline chain is complete: at least one observe, one notice,
+// one consider, and one restrain must already exist in the directive
+// log. The chain must EXIST in history; ordering is not required.
+//
+// On success:  directive 'permit' is logged, permissionWindow opens.
+// On refusal:  directive 'permit-refused' is logged with a thought
+//              naming the missing verbs. permissionWindow stays as
+//              it was (still null on first run).
+//
+// Both branches are cognitive events — uptime and seasonAge advance,
+// posture transitions out of 'booting' on the first call, organism
+// age increments (from the orchestrator). Refusal is logged because
+// the organism noticing the gate is closed is itself cognition.
+
+export const REQUIRED_DISCIPLINE: ReadonlyArray<string> = [
+  'observe', 'notice', 'consider', 'restrain',
+];
+
+export function disciplineMissing(state: OSRuntimeState): string[] {
+  const seen = new Set(state.directiveLog.map((d) => d.directive));
+  return REQUIRED_DISCIPLINE.filter((v) => !seen.has(v));
+}
+
+export function evolveOSFromPermit(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+): OSRuntimeState {
+  const missing = disciplineMissing(state);
+
+  if (missing.length > 0) {
+    // Refusal — log the blocked attempt, leave permissionWindow as-is.
+    return applyCognitiveAct(state, 'permit-refused', (next) =>
+      `permit refused at tick ${next.uptime}: discipline chain incomplete — ` +
+      `missing [${missing.join(', ')}], no permission opened`,
+      at,
+    );
+  }
+
+  // Success — log permit and open the window.
+  const next = applyCognitiveAct(state, 'permit', (post) => {
+    const counts: Record<string, number> = {};
+    for (const d of post.directiveLog) counts[d.directive] = (counts[d.directive] ?? 0) + 1;
+    const summary = REQUIRED_DISCIPLINE
+      .map((v) => `${counts[v] ?? 0} ${v}`)
+      .join(', ');
+    return `permitted at tick ${post.uptime}: discipline chain complete (${summary}) — ` +
+           `permission window opened`;
+  }, at);
+
+  return {
+    ...next,
+    permissionWindow: { openedAt: at, permittedTick: next.uptime },
+  };
 }
 
 // ─── Phase 110 — the closing synthesis ─────────────────────────
