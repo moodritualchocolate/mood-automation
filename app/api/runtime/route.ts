@@ -33,6 +33,8 @@ import {
 } from '@lib/index';
 import { createCognitiveLineageStore } from '@lib/cognitiveLineage';
 import { createTemporalMemoryStore } from '@lib/temporalMemory';
+import { createPurposeMemoryStore } from '@lib/purposeMemory';
+import { applyHibernationDecay } from '@lib/purposeEngine';
 import { classifyConsciousness, applyPassiveMetabolism } from '@lib/consciousnessView';
 import type { RuntimeSnapshot } from '@lib/index';
 
@@ -75,6 +77,9 @@ export async function GET() {
 
   // ─── Wave 30 — temporal memory (parallel-safe; small file) ──
   const temporalMemory = await createTemporalMemoryStore().read();
+  // ─── Wave 31 — purpose memory ─────────────────────────────────
+  const purposeStore = createPurposeMemoryStore();
+  let purposeMemory = await purposeStore.read();
 
   // The passive tick. Advances only os.uptime and os.seasonAge — no
   // directive, no posture change, no coordination shift, no archive
@@ -99,6 +104,17 @@ export async function GET() {
     } else {
       await osStore.save(os);
     }
+    // Wave 31 — hibernation slow-decay for purpose memory. Only fires
+    // when consciousness is hibernating AND the passive tick produced
+    // a metabolism step (the same boundary the rest of metabolism
+    // honors). Tiny fatigue reduction across active goals only.
+    if (classification === 'hibernating') {
+      const decayed = applyHibernationDecay(purposeMemory, Date.now(), os.uptime);
+      if (decayed) {
+        purposeMemory = decayed;
+        await purposeStore.save(purposeMemory);
+      }
+    }
   }
 
   const snapshot: RuntimeSnapshot = {
@@ -120,6 +136,7 @@ export async function GET() {
     pressureGateway,
     cognitiveLineage,
     temporalMemory,
+    purposeMemory,
     capturedAt: Date.now(),
   };
 

@@ -388,6 +388,82 @@ export function ActionSandbox({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 31 — Purpose / Intent ────────────────────────────────
+//
+// Quiet operational identity. One row per goal with title, state
+// badge, three small score numerals (alignment / drift / fatigue),
+// followed by aggregates and recent transitions. No glow, no
+// animation. The dashboard reads goals as facts the organism carries,
+// not as gamified achievements.
+
+export function PurposeIntent({ m }: { m: RuntimeManifestation }) {
+  const p = m.purposeIntent;
+  if (!p.present) return null;
+
+  const stateTone = (s: string) =>
+    s === 'active'     ? '#8AA98A' :
+    s === 'fragmented' ? '#C9A24B' :
+    s === 'emerging'   ? '#6F8196' :
+    s === 'dormant'    ? '#6F8196' :
+    s === 'abandoned'  ? '#FF4D2D' :
+                         '#6F8196';
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">purpose / intent</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase text-bone-200/40">
+          stability {p.strategicStability.toFixed(1)}/10 · coherence pressure {p.coherencePressure.toFixed(1)}/10 · fatigue {p.purposeFatigue.toFixed(1)}/10
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{p.statement}</div>
+
+      <div className="flex flex-col gap-1.5 pt-3">
+        {p.goalSummaries.map((g) => (
+          <div key={g.id} className="flex items-baseline gap-3 flex-wrap text-[11px]">
+            <span className="text-[10px] tracking-[0.18em] uppercase px-1.5 py-0.5 border hairline" style={{ color: stateTone(g.activationState) }}>
+              {g.activationState}
+            </span>
+            <span className="text-bone-50/85">{g.title}</span>
+            <span className="text-bone-200/40 tabular-nums text-[10px] ml-auto">
+              p{g.priority} · align {g.alignmentScore.toFixed(1)} · drift {g.driftScore.toFixed(1)} · fatigue {g.fatigueScore.toFixed(1)} · risk {g.abandonmentRisk.toFixed(1)}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {(p.strongestAlignment || p.strongestDrift) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 text-[11px] text-bone-200/55">
+          {p.strongestAlignment && (
+            <div>
+              <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40">strongest alignment</span>
+              <div>{p.strongestAlignment.title} <span className="text-bone-200/40 tabular-nums">{p.strongestAlignment.score.toFixed(1)}/10</span></div>
+            </div>
+          )}
+          {p.strongestDrift && (
+            <div>
+              <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40">strongest drift</span>
+              <div>{p.strongestDrift.title} <span className="text-bone-200/40 tabular-nums">{p.strongestDrift.score.toFixed(1)}/10</span></div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {p.recentTransitions.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">recent transitions</div>
+          {p.recentTransitions.map((t, i) => (
+            <div key={i} className="italic tabular-nums text-bone-200/50 text-[10px]">
+              — t{t.tick} · '{t.goalTitle}' {t.from} → {t.to} <span className="text-bone-200/35">({t.reason})</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 30 — Temporal Intelligence ───────────────────────────
 //
 // Quiet operational cognition panel. Six metric numerals, defer

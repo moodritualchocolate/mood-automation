@@ -35,6 +35,9 @@ import {
 import { classifyConsciousness } from './consciousnessView';
 import { createTemporalMemoryStore } from './temporalMemory';
 import { computeTemporalAssessment, suggestDeferReason } from './temporalIntelligenceView';
+import { createPurposeMemoryStore } from './purposeMemory';
+import { updatePurposeFromSignal } from './purposeEngine';
+import { strongestActiveGoalForDefer } from './purposeIntentView';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -113,11 +116,13 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const lineageStore = createCognitiveLineageStore();
 
   const temporalStore = createTemporalMemoryStore();
-  const [osPre, organismPre, lineagePre, temporalPre] = await Promise.all([
+  const purposeStore = createPurposeMemoryStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
     temporalStore.read(),
+    purposeStore.read(),
   ]);
 
   const at = Date.now();
@@ -168,16 +173,19 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   } else if (verb === 'defer') {
     // Compose the defer thought from the CURRENT temporal assessment
     // (computed against pre-evolve state — that's what justified the
-    // patience). The assessment in temporalMemory will update AFTER
-    // this verb completes.
+    // patience). Wave 31 — append the strongest active goal name to
+    // the reason so defer thoughts reference what is being preserved.
     const preSnapshot = {
       organism: organismPre, os: osBeforeVerb,
       civilization: null, worldState: null, runtime: null,
       temporalMemory: temporalPre,
+      purposeMemory: purposePre,
       capturedAt: at,
     } as Parameters<typeof computeTemporalAssessment>[0];
     const assessment = computeTemporalAssessment(preSnapshot);
-    const reason = suggestDeferReason(assessment);
+    let reason = suggestDeferReason(assessment);
+    const goalTitle = strongestActiveGoalForDefer(preSnapshot);
+    if (goalTitle) reason += ` — preserving goal '${goalTitle}'`;
     osPost = evolveOSFromDefer(osBeforeVerb, at, reason);
   } else {
     const EVOLVE_BY_VERB: Record<string, (state: OSRuntimeState, at?: number) => OSRuntimeState> = {
@@ -368,6 +376,34 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     newTemporal.lastObservationAt = at;
 
     await temporalStore.save(newTemporal);
+
+    // Wave 31 — purpose memory update from the same cognitive event.
+    // The signal pulls a fresh temporal assessment (post-temporal-write
+    // is fine; the assessment reads from the just-saved temporalMemory
+    // shape — we pass a snapshot built from the in-memory updated state).
+    const tempAssessmentSnap = {
+      organism: organismPost, os: osPost,
+      civilization: null, worldState: null, runtime: null,
+      temporalMemory: newTemporal,
+      capturedAt: at,
+    } as Parameters<typeof computeTemporalAssessment>[0];
+    const assessment = computeTemporalAssessment(tempAssessmentSnap);
+    const purposeSignal = {
+      at, tick: osPost.uptime,
+      directiveName,
+      isRefusal: directiveName.endsWith('-refused'),
+      contradictionScore: directiveName === 'review'
+        ? (osPost.currentReview?.contradictionScore ?? 0) : 0,
+      restFired: directiveName === 'rest',
+      deferFired: directiveName === 'defer',
+      fragmentationResolved: osPre.fragmentationStreak > 0 && osPost.fragmentationStreak === 0,
+      cadenceHealth: assessment.cadenceHealth,
+      recoveryEfficiency: assessment.recoveryEfficiency,
+      fragmentationRisk: assessment.fragmentationRisk,
+      cognitionDensity: assessment.cognitionDensity,
+    };
+    const purposePost = updatePurposeFromSignal(purposePre, purposeSignal);
+    await purposeStore.save(purposePost);
   }
 
   return {

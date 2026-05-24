@@ -81,6 +81,9 @@ import { buildConsciousnessView } from './consciousnessView';
 // Wave 30 — Temporal Memory + Strategic Patience.
 import type { TemporalIntelligenceViewModel } from './temporalIntelligenceView';
 import { buildTemporalIntelligenceView } from './temporalIntelligenceView';
+// Wave 31 — Purpose / Intent.
+import type { PurposeIntentViewModel } from './purposeIntentView';
+import { buildPurposeIntentView } from './purposeIntentView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -136,6 +139,9 @@ export interface RuntimeManifestation {
    *  recommendation, detected patterns). Present once at least one
    *  cognitive observation has been recorded. */
   temporalIntelligence: TemporalIntelligenceViewModel;
+  /** Wave 31 — Purpose / Intent. Seeded internal-coherence goals
+   *  plus activation/drift/alignment/fatigue tracking. */
+  purposeIntent: PurposeIntentViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -178,6 +184,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const recoveryState = buildRecoveryStateView(snap);
   const consciousness = buildConsciousnessView(snap);
   const temporalIntelligence = buildTemporalIntelligenceView(snap);
+  const purposeIntent = buildPurposeIntentView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -201,6 +208,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     internalDraft, strain, cadence,
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
     actionSandbox, recoveryState, consciousness, temporalIntelligence,
+    purposeIntent,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

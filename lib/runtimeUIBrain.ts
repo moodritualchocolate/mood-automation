@@ -66,6 +66,10 @@ export interface RuntimeSnapshot {
    *  (cadence, recovery, approval reliability, fragmentation cycles,
    *  defers) used to derive the temporal assessment. */
   temporalMemory?: import('./temporalMemory').TemporalMemoryState | null;
+  /** Wave 31 — purpose memory. Persistent goals + activation /
+   *  drift / alignment / fatigue history. Directional pressures
+   *  the organism carries across time. */
+  purposeMemory?: import('./purposeMemory').PurposeMemoryState | null;
   capturedAt: number;
 }
 
