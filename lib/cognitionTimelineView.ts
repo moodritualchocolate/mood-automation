@@ -57,6 +57,9 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   // Wave 29 — wake transition. A calm passage from hibernation back
   // to active cognition. Tone 'cool' — quiet event, not a celebration.
   'wake-transition': 'cool',
+  // Wave 30 — defer. Earned patience. Tone 'cool' — disciplined
+  // choosing-to-wait, neither alarm nor success.
+  defer: 'cool',
 };
 
 export function buildCognitionTimelineView(snap: RuntimeSnapshot): CognitionTimelineViewModel {

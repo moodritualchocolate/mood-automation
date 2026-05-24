@@ -78,6 +78,9 @@ import { buildRecoveryStateView } from './recoveryStateView';
 // Wave 29 — Hibernation & Idle Consciousness.
 import type { ConsciousnessViewModel } from './consciousnessView';
 import { buildConsciousnessView } from './consciousnessView';
+// Wave 30 — Temporal Memory + Strategic Patience.
+import type { TemporalIntelligenceViewModel } from './temporalIntelligenceView';
+import { buildTemporalIntelligenceView } from './temporalIntelligenceView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -128,6 +131,11 @@ export interface RuntimeManifestation {
    *  exists. Surfaces classification (active / idle / recovering /
    *  hibernating), wake events, and passive metabolism status. */
   consciousness: ConsciousnessViewModel;
+  /** Wave 30 — Temporal Intelligence. Long-term operational
+   *  observations + derived assessment (cadence health, defer
+   *  recommendation, detected patterns). Present once at least one
+   *  cognitive observation has been recorded. */
+  temporalIntelligence: TemporalIntelligenceViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -169,6 +177,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const actionSandbox = buildActionSandboxView(snap);
   const recoveryState = buildRecoveryStateView(snap);
   const consciousness = buildConsciousnessView(snap);
+  const temporalIntelligence = buildTemporalIntelligenceView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -191,7 +200,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     interrupts, health, escalation, orchestration, deepCognition,
     internalDraft, strain, cadence,
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
-    actionSandbox, recoveryState, consciousness,
+    actionSandbox, recoveryState, consciousness, temporalIntelligence,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

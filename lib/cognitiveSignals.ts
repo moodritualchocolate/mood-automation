@@ -55,6 +55,10 @@ export const VERB_DELTAS: Readonly<Record<string, CognitiveSignalDelta>> = {
   // record but is overridden in evolveOSFromRest (which applies an
   // additive +0.3 to coordinationEMA instead of EMA-blending).
   rest:     { energyDelta: +1.2, stressDelta: -0.8, complexityDelta: -0.6, coordinationContribution: 7 },
+  // Wave 30 — defer. Choosing patience relieves pressure but is
+  // still a cognitive act (small energy cost). Smaller magnitudes
+  // than rest: defer is the breath between, not the full pause.
+  defer:    { energyDelta: -0.05, stressDelta: -0.10, complexityDelta: -0.05, coordinationContribution: 7 },
 };
 
 /** Any *-refused directive shares this delta. Small energy debit,

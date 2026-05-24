@@ -404,6 +404,29 @@ export function evolveOSFromPassiveTick(
   };
 }
 
+// ─── Wave 30 — Temporal Memory + Strategic Patience ──────────
+//
+// defer is the verb that lets the organism choose to wait. It is
+// not refusal — defer always succeeds. The thought is composed by
+// the orchestrator from the temporal assessment (so the dashboard
+// and the directive log agree on why waiting was wise).
+//
+// Persistence: appends a 'defer' directive, runs the standard
+// applyCognitiveAct path (uptime, seasonAge, organism age via the
+// orchestrator). The orchestrator separately appends a defer
+// observation to temporal-memory.json.
+
+export function evolveOSFromDefer(
+  state: OSRuntimeState,
+  at: number,
+  thoughtSuffix: string,
+): OSRuntimeState {
+  return applyCognitiveAct(state, 'defer', (next) =>
+    `deferred at tick ${next.uptime}: ${thoughtSuffix}`,
+    at,
+  );
+}
+
 // ─── Wave 29 — Hibernation & Idle Consciousness ────────────────
 //
 // Thresholds for the consciousness-state derivation in

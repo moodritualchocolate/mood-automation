@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -179,6 +179,13 @@ export default function RuntimePage() {
           cognition + last wake ticks, passive metabolism status. The
           state is DERIVED from os + organism every render — not stored. */}
       <Consciousness m={m} />
+
+      {/* Wave 30 — Temporal Intelligence. Long-term operational
+          metrics: cadence health, recovery efficiency, fragmentation
+          risk, approval stability, cognition density, defer
+          recommendation, strategic patience score, detected patterns.
+          Hidden until at least one observation is recorded. */}
+      <TemporalIntelligence m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,

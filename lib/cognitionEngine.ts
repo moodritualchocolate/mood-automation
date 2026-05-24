@@ -30,8 +30,11 @@ import {
   evolveOSFromPropose,
   evolveOSFromRest,
   evolveOSFromWakeTransition,
+  evolveOSFromDefer,
 } from './operatingSystemCore';
 import { classifyConsciousness } from './consciousnessView';
+import { createTemporalMemoryStore } from './temporalMemory';
+import { computeTemporalAssessment, suggestDeferReason } from './temporalIntelligenceView';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -58,7 +61,7 @@ export type CognitiveVerb =
   | 'observe' | 'notice' | 'consider' | 'restrain'
   | 'permit'  | 'prepare' | 'draft'
   | 'review'  | 'revise'  | 'approve'
-  | 'propose' | 'rest';
+  | 'propose' | 'rest'    | 'defer';
 
 export interface CognitionEventResult {
   verb: CognitiveVerb;
@@ -109,10 +112,12 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const organismStore = createOrganismCoreStore();
   const lineageStore = createCognitiveLineageStore();
 
-  const [osPre, organismPre, lineagePre] = await Promise.all([
+  const temporalStore = createTemporalMemoryStore();
+  const [osPre, organismPre, lineagePre, temporalPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
+    temporalStore.read(),
   ]);
 
   const at = Date.now();
@@ -160,6 +165,20 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     osPost = evolveOSFromPropose(osBeforeVerb, at);
   } else if (verb === 'rest') {
     osPost = evolveOSFromRest(osBeforeVerb, organismPre, at);
+  } else if (verb === 'defer') {
+    // Compose the defer thought from the CURRENT temporal assessment
+    // (computed against pre-evolve state — that's what justified the
+    // patience). The assessment in temporalMemory will update AFTER
+    // this verb completes.
+    const preSnapshot = {
+      organism: organismPre, os: osBeforeVerb,
+      civilization: null, worldState: null, runtime: null,
+      temporalMemory: temporalPre,
+      capturedAt: at,
+    } as Parameters<typeof computeTemporalAssessment>[0];
+    const assessment = computeTemporalAssessment(preSnapshot);
+    const reason = suggestDeferReason(assessment);
+    osPost = evolveOSFromDefer(osBeforeVerb, at, reason);
   } else {
     const EVOLVE_BY_VERB: Record<string, (state: OSRuntimeState, at?: number) => OSRuntimeState> = {
       observe: evolveOSFromObservation,
@@ -259,6 +278,98 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     });
   }
 
+  // Wave 30 — temporal memory writes. Every cognitive directive
+  // (success or refusal, except wake-transition which is an OS-only
+  // marker) appends a cadence observation. Verb-specific events
+  // (rest success, approve outcomes, fragmentation resolution,
+  // defer) append their own observations.
+  if (directiveName !== 'wake-transition') {
+    const newTemporal: typeof temporalPre = { ...temporalPre,
+      cadenceHistory: [...temporalPre.cadenceHistory],
+      recoveryHistory: [...temporalPre.recoveryHistory],
+      approvalHistory: [...temporalPre.approvalHistory],
+      fragmentationHistory: [...temporalPre.fragmentationHistory],
+      deferHistory: [...temporalPre.deferHistory],
+    };
+
+    // cadenceHistory — every directive.
+    const lastCadence = temporalPre.cadenceHistory.length > 0
+      ? temporalPre.cadenceHistory[temporalPre.cadenceHistory.length - 1]
+      : null;
+    const interActMs = lastCadence ? at - lastCadence.at : null;
+    const interActTicks = lastCadence ? osPost.uptime - lastCadence.tick : null;
+    newTemporal.cadenceHistory.push({
+      at, tick: osPost.uptime, directive: directiveName,
+      interActMs, interActTicks,
+    });
+
+    // recoveryHistory — rest success only.
+    if (directiveName === 'rest' && organismPost.lastRestSnapshot) {
+      const s = organismPost.lastRestSnapshot;
+      // Effectiveness: how much of the spec's max delta was actually
+      // achieved. Energy max delta = 1.2; stress max delta = 0.8.
+      const energyAchieved = (s.afterEnergy - s.beforeEnergy) / 1.2;
+      const stressAchieved = (s.beforeStress - s.afterStress) / 0.8;
+      const effectiveness = Math.max(0, Math.min(1, (energyAchieved + stressAchieved) / 2));
+      newTemporal.recoveryHistory.push({
+        at, tick: osPost.uptime,
+        beforeEnergy: s.beforeEnergy, afterEnergy: s.afterEnergy,
+        beforeStress: s.beforeStress, afterStress: s.afterStress,
+        beforeComplexity: s.beforeComplexity, afterComplexity: s.afterComplexity,
+        effectiveness: Math.round(effectiveness * 100) / 100,
+      });
+    }
+
+    // approvalHistory — both approve and approve-refused.
+    if (directiveName === 'approve' && osPost.currentApproval) {
+      const s = osPost.currentApproval.scoresSnapshot;
+      newTemporal.approvalHistory.push({
+        at, tick: osPost.uptime, outcome: 'approved',
+        qualityScore: s.qualityScore,
+        coherenceScore: s.coherenceScore,
+        restraintScore: s.restraintScore,
+        contradictionScore: s.contradictionScore,
+      });
+    } else if (directiveName === 'approve-refused') {
+      newTemporal.approvalHistory.push({
+        at, tick: osPost.uptime, outcome: 'refused',
+      });
+    }
+
+    // fragmentationHistory — when streak resets from > 0 to 0 via a
+    // non-refused cognitive verb (the only path Wave 30 tracks).
+    if (osPre.fragmentationStreak > 0 && osPost.fragmentationStreak === 0) {
+      newTemporal.fragmentationHistory.push({
+        at, tick: osPost.uptime,
+        peakStreak: osPre.fragmentationStreak,
+        resolvedBy: 'success',
+      });
+    }
+
+    // deferHistory — defer success.
+    if (directiveName === 'defer') {
+      const preSnapshot = {
+        organism: organismPre, os: osPre,
+        civilization: null, worldState: null, runtime: null,
+        temporalMemory: temporalPre,
+        capturedAt: at,
+      } as Parameters<typeof computeTemporalAssessment>[0];
+      const assessment = computeTemporalAssessment(preSnapshot);
+      newTemporal.deferHistory.push({
+        at, tick: osPost.uptime,
+        reason: directive.thought ?? '(no reason)',
+        cadenceHealthAtDefer: assessment.cadenceHealth,
+        fragmentationRiskAtDefer: assessment.fragmentationRisk,
+      });
+      newTemporal.totalDefers = (temporalPre.totalDefers ?? 0) + 1;
+    }
+
+    newTemporal.firstObservationAt = temporalPre.firstObservationAt ?? at;
+    newTemporal.lastObservationAt = at;
+
+    await temporalStore.save(newTemporal);
+  }
+
   return {
     verb,
     at,
@@ -300,3 +411,4 @@ export const runRevise      = () => runCognitiveAct('revise');
 export const runApprove     = () => runCognitiveAct('approve');
 export const runPropose     = () => runCognitiveAct('propose');
 export const runRest        = () => runCognitiveAct('rest');
+export const runDefer       = () => runCognitiveAct('defer');

@@ -62,6 +62,10 @@ export interface RuntimeSnapshot {
    *  reads from this for revision-trace and rolling-coherence views;
    *  os.currentDraft / currentReview / etc. hold only the most recent. */
   cognitiveLineage?: import('./cognitiveLineage').CognitiveLineageState | null;
+  /** Wave 30 — temporal memory. Long-term operational observations
+   *  (cadence, recovery, approval reliability, fragmentation cycles,
+   *  defers) used to derive the temporal assessment. */
+  temporalMemory?: import('./temporalMemory').TemporalMemoryState | null;
   capturedAt: number;
 }
 

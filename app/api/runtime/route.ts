@@ -32,6 +32,7 @@ import {
   evolveOSFromPassiveTick,
 } from '@lib/index';
 import { createCognitiveLineageStore } from '@lib/cognitiveLineage';
+import { createTemporalMemoryStore } from '@lib/temporalMemory';
 import { classifyConsciousness, applyPassiveMetabolism } from '@lib/consciousnessView';
 import type { RuntimeSnapshot } from '@lib/index';
 
@@ -71,6 +72,9 @@ export async function GET() {
     // ─── Wave 26 — Phase 7 internal review lineage ──
     createCognitiveLineageStore().read(),
   ]);
+
+  // ─── Wave 30 — temporal memory (parallel-safe; small file) ──
+  const temporalMemory = await createTemporalMemoryStore().read();
 
   // The passive tick. Advances only os.uptime and os.seasonAge — no
   // directive, no posture change, no coordination shift, no archive
@@ -115,6 +119,7 @@ export async function GET() {
     weatherLog,
     pressureGateway,
     cognitiveLineage,
+    temporalMemory,
     capturedAt: Date.now(),
   };
 

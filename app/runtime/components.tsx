@@ -388,6 +388,69 @@ export function ActionSandbox({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 30 — Temporal Intelligence ───────────────────────────
+//
+// Quiet operational cognition panel. Six metric numerals, defer
+// recommendation badge, detected patterns as a short paragraph list.
+// Hidden until at least one observation has been recorded. No
+// charts, no animated graphs, no analytics-SaaS chrome.
+
+export function TemporalIntelligence({ m }: { m: RuntimeManifestation }) {
+  const t = m.temporalIntelligence;
+  if (!t.present) return null;
+
+  const recTone =
+    t.assessment.deferRecommendation === 'now'        ? '#C9A24B' :
+    t.assessment.deferRecommendation === 'soon'       ? '#C9A24B' :
+    t.assessment.deferRecommendation === 'not-yet'    ? '#6F8196' :
+                                                        '#8AA98A';
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">temporal intelligence</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: recTone }}>
+          defer · {t.assessment.deferRecommendation} · patience {t.assessment.strategicPatienceScore}/10
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{t.statement}</div>
+
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-3">
+        {([
+          ['cadence', t.assessment.cadenceHealth],
+          ['recovery', t.assessment.recoveryEfficiency],
+          ['fragment', t.assessment.fragmentationRisk],
+          ['approval', t.assessment.approvalStability],
+          ['density', t.assessment.cognitionDensity],
+        ] as Array<[string, number]>).map(([label, val]) => (
+          <div key={label} className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/45">{label}</span>
+            <span className="text-[18px] tabular-nums text-bone-50/85">{val}<span className="text-[10px] text-bone-200/40">/10</span></span>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-3 text-[10px] tabular-nums text-bone-200/45">
+        <div>cadence obs: {t.observationCounts.cadence}</div>
+        <div>recovery obs: {t.observationCounts.recovery}</div>
+        <div>approval obs: {t.observationCounts.approval}</div>
+        <div>fragment obs: {t.observationCounts.fragmentation}</div>
+        <div>defers: {t.totalDefers}</div>
+      </div>
+
+      {t.detectedPatterns.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/60">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">detected patterns</div>
+          {t.detectedPatterns.map((p, i) => (
+            <div key={i} className="italic text-bone-200/55 text-[11px]">— {p}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 29 — Hibernation & Idle Consciousness ───────────────
 //
 // Quiet operational monitor: small status badge colour-coded by
