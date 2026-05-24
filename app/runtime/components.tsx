@@ -388,6 +388,123 @@ export function ActionSandbox({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 33 — Self Model ──────────────────────────────────────
+//
+// Longitudinal operational identity. Ten traits with intensity bars,
+// dominant behavior modes, detected patterns, instability windows,
+// recent trait transitions. Operational psychology, not chatbot
+// personality — no emotional language, no first-person narration.
+// Every value is a deterministic measurement of past behavior.
+
+export function SelfModel({ m }: { m: RuntimeManifestation }) {
+  const sm = m.selfModel;
+  if (!sm.present) return null;
+
+  const tone =
+    sm.status === 'volatile' ? '#C9A24B' :
+    sm.status === 'adaptive' ? '#6F8196' :
+                               '#8AA98A';
+
+  const stateTone = (s: string) =>
+    s === 'active'  ? '#8AA98A' :
+    s === 'fading'  ? '#C9A24B' :
+    s === 'forming' ? '#6F8196' :
+                      'rgba(247,245,242,0.30)';
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">self model</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {sm.status} · longitudinal {sm.longitudinalIdentityScore.toFixed(1)}/10
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{sm.statement}</div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3">
+        {([
+          ['identity coherence', sm.identityCoherence],
+          ['behavior consistency', sm.behaviorConsistency],
+          ['self stability', sm.selfStability],
+          ['strategic maturity', sm.strategicMaturity],
+          ['pressure resilience', sm.pressureResilience],
+          ['fragment volatility', sm.fragmentationVolatility],
+          ['recovery dependence', sm.recoveryDependence],
+          ['adaptation rigidity', sm.adaptationRigidity],
+        ] as Array<[string, number]>).map(([label, val]) => (
+          <div key={label} className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/45">{label}</span>
+            <span className="text-[16px] tabular-nums text-bone-50/85">
+              {val.toFixed(1)}<span className="text-[10px] text-bone-200/40">/10</span>
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">all traits</div>
+        <div className="flex flex-col gap-0.5">
+          {sm.traits.map((t) => (
+            <div key={t.id} className="flex items-center gap-3 text-[10px]">
+              <span className="text-[9px] tracking-[0.18em] uppercase w-[80px] tabular-nums" style={{ color: stateTone(t.state) }}>
+                {t.state}
+              </span>
+              <span className="text-bone-200/65 flex-grow">{t.label}</span>
+              <span className="text-bone-200/40 tabular-nums">{t.intensity.toFixed(1)}/10</span>
+              <span className="text-bone-200/30 tabular-nums w-[60px] text-right">obs {t.observationCount}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {sm.dominantBehaviorModes.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/60">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">dominant traits</div>
+          {sm.dominantBehaviorModes.map((t) => (
+            <div key={t} className="text-bone-200/65">— {t}</div>
+          ))}
+        </div>
+      )}
+
+      {sm.recentPatterns.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/60">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">longitudinal patterns</div>
+          {sm.recentPatterns.map((p, i) => (
+            <div key={i} className="text-bone-200/55 italic text-[11px]">
+              — {p.label} <span className="text-bone-200/35">({p.evidence})</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {sm.recentInstabilityWindows.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/60">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">identity instability windows</div>
+          {sm.recentInstabilityWindows.map((w) => (
+            <div key={w.windowId} className="text-bone-200/55 italic tabular-nums text-[10px]">
+              — t{w.startTick}{w.endTick != null ? ` → t${w.endTick}` : ' → open'} · peak {w.peakInstability.toFixed(1)}
+              {w.dominantPressures.length > 0 && <span className="text-bone-200/35"> · pressures: {w.dominantPressures.join(', ')}</span>}
+              {w.resolutionMechanism && <span className="text-bone-200/35"> · resolved via {w.resolutionMechanism}</span>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {sm.recentTraitTransitions.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">recent trait transitions</div>
+          {sm.recentTraitTransitions.map((t, i) => (
+            <div key={i} className="italic tabular-nums text-bone-200/50 text-[10px]">
+              — t{t.tick} · '{t.traitId}' {t.from} → {t.to} <span className="text-bone-200/35">({t.reason})</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 32 — Contradiction Field ─────────────────────────────
 //
 // Pressure topology. NOT personalities debating — weather systems

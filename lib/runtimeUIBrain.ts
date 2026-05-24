@@ -74,6 +74,10 @@ export interface RuntimeSnapshot {
    *  history of escalations, resolutions, and sacrifice events.
    *  Pure pressure topology — never invented narratives. */
   contradictionMemory?: import('./contradictionMemory').ContradictionMemoryState | null;
+  /** Wave 33 — self-model memory. Ten EWMA-smoothed traits +
+   *  identity history + instability windows + detected patterns.
+   *  Longitudinal operational identity, never narrated. */
+  selfModel?: import('./selfModelMemory').SelfModelMemoryState | null;
   capturedAt: number;
 }
 

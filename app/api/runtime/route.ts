@@ -36,6 +36,7 @@ import { createTemporalMemoryStore } from '@lib/temporalMemory';
 import { createPurposeMemoryStore } from '@lib/purposeMemory';
 import { applyHibernationDecay } from '@lib/purposeEngine';
 import { createContradictionMemoryStore } from '@lib/contradictionMemory';
+import { createSelfModelMemoryStore } from '@lib/selfModelMemory';
 import { classifyConsciousness, applyPassiveMetabolism } from '@lib/consciousnessView';
 import type { RuntimeSnapshot } from '@lib/index';
 
@@ -83,6 +84,8 @@ export async function GET() {
   let purposeMemory = await purposeStore.read();
   // ─── Wave 32 — contradiction memory ───────────────────────────
   const contradictionMemory = await createContradictionMemoryStore().read();
+  // ─── Wave 33 — self-model memory ──────────────────────────────
+  const selfModel = await createSelfModelMemoryStore().read();
 
   // The passive tick. Advances only os.uptime and os.seasonAge — no
   // directive, no posture change, no coordination shift, no archive
@@ -141,6 +144,7 @@ export async function GET() {
     temporalMemory,
     purposeMemory,
     contradictionMemory,
+    selfModel,
     capturedAt: Date.now(),
   };
 

@@ -87,6 +87,9 @@ import { buildPurposeIntentView } from './purposeIntentView';
 // Wave 32 — Contradiction Field.
 import type { ContradictionFieldViewModel } from './contradictionFieldView';
 import { buildContradictionFieldView } from './contradictionFieldView';
+// Wave 33 — Self Model.
+import type { SelfModelViewModel } from './selfModelView';
+import { buildSelfModelView } from './selfModelView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -148,6 +151,10 @@ export interface RuntimeManifestation {
   /** Wave 32 — Contradiction Field. Seeded tension pairs +
    *  deterministic pressure metrics + sacrifice events. */
   contradictionField: ContradictionFieldViewModel;
+  /** Wave 33 — Self Model. Ten EWMA-smoothed traits, identity
+   *  coherence + consistency, instability windows, detected
+   *  longitudinal patterns. */
+  selfModel: SelfModelViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -192,6 +199,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const temporalIntelligence = buildTemporalIntelligenceView(snap);
   const purposeIntent = buildPurposeIntentView(snap);
   const contradictionField = buildContradictionFieldView(snap);
+  const selfModel = buildSelfModelView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -215,7 +223,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     internalDraft, strain, cadence,
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
     actionSandbox, recoveryState, consciousness, temporalIntelligence,
-    purposeIntent, contradictionField,
+    purposeIntent, contradictionField, selfModel,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

@@ -41,6 +41,9 @@ import { strongestActiveGoalForDefer } from './purposeIntentView';
 import { createContradictionMemoryStore } from './contradictionMemory';
 import { updateContradictionFromSignal, applySacrificesToPurpose } from './contradictionEngine';
 import { strongestActiveTensionLabel } from './contradictionFieldView';
+import { createSelfModelMemoryStore } from './selfModelMemory';
+import { updateSelfModelFromSignal } from './selfModelEngine';
+import { strongestActiveTraitLabel } from './selfModelView';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -121,13 +124,15 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const temporalStore = createTemporalMemoryStore();
   const purposeStore = createPurposeMemoryStore();
   const contradictionStore = createContradictionMemoryStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre] = await Promise.all([
+  const selfModelStore = createSelfModelMemoryStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
     temporalStore.read(),
     purposeStore.read(),
     contradictionStore.read(),
+    selfModelStore.read(),
   ]);
 
   const at = Date.now();
@@ -189,6 +194,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       temporalMemory: temporalPre,
       purposeMemory: purposePre,
       contradictionMemory: contradictionPre,
+      selfModel: selfModelPre,
       capturedAt: at,
     } as Parameters<typeof computeTemporalAssessment>[0];
     const assessment = computeTemporalAssessment(preSnapshot);
@@ -197,6 +203,11 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     if (goalTitle) reason += ` — preserving goal '${goalTitle}'`;
     const tensionLabel = strongestActiveTensionLabel(preSnapshot);
     if (tensionLabel) reason += ` — easing tension ${tensionLabel}`;
+    // Wave 33 — append dominant trait if one is active. The defer
+    // becomes a behaviorally-informed pause: the organism names what
+    // it has repeatedly proven itself to be.
+    const traitLabel = strongestActiveTraitLabel(preSnapshot);
+    if (traitLabel) reason += ` — consistent with '${traitLabel}' behavior`;
     osPost = evolveOSFromDefer(osBeforeVerb, at, reason);
   } else {
     const EVOLVE_BY_VERB: Record<string, (state: OSRuntimeState, at?: number) => OSRuntimeState> = {
@@ -434,9 +445,25 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       at, osPost.uptime,
     );
 
+    // Wave 33 — self-model update. Reads post-update state from every
+    // other layer (organism, os, temporal, purpose, contradiction)
+    // and EWMA-smooths its ten traits. Identity evolves slowly by
+    // construction (alpha 0.05); no single event redefines it.
+    const selfModelPost = updateSelfModelFromSignal(
+      selfModelPre,
+      {
+        os: osPost, organism: organismPost,
+        temporal: newTemporal, assessment,
+        purpose: purposeFinal,
+        contradiction: contradictionResult.newState,
+      },
+      { at, tick: osPost.uptime },
+    );
+
     await Promise.all([
       purposeStore.save(purposeFinal),
       contradictionStore.save(contradictionResult.newState),
+      selfModelStore.save(selfModelPost),
     ]);
   }
 
