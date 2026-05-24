@@ -70,6 +70,12 @@ import {
   applyEcologyBias,
   ecologyPressureContribution,
 } from './internalEcologyEngine';
+import { createResourceEconomyStore } from './resourceEconomyMemory';
+import {
+  updateResourceEconomy,
+  applyScarcityBias,
+  scarcityPressureContribution,
+} from './resourceEconomyEngine';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -155,7 +161,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const governanceStore = createCognitiveGovernanceStore();
   const consequenceStore = createConsequenceMemoryStore();
   const ecologyStore = createInternalEcologyStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre] = await Promise.all([
+  const resourceEconomyStore = createResourceEconomyStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -167,6 +174,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     governanceStore.read(),
     consequenceStore.read(),
     ecologyStore.read(),
+    resourceEconomyStore.read(),
   ]);
 
   const at = Date.now();
@@ -551,6 +559,22 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     const ecologyPost = ecologyResult.newState;
     const ecologyBias = ecologyResult.bias;
 
+    // Wave 38 — resource economy update. Compute per-event cost
+    // multiplier from ecology / governance-pre / contradiction tension /
+    // current scarcity. Costs amplified, restorations diminished.
+    // Apply base verb deltas + homeostatic drift + ecology-driven
+    // asymmetric drift. Output ScarcityBias struct (±0.25 per gradient)
+    // that governance composes alongside ecology bias.
+    const resourceEconomyResult = updateResourceEconomy(resourceEconomyPre, {
+      at, tick: osPost.uptime,
+      directiveName,
+      ecology: ecologyPost,
+      governance: governancePre,
+      contradiction: contradictionResult.newState,
+    });
+    const resourceEconomyPost = resourceEconomyResult.newState;
+    const scarcityBias = resourceEconomyResult.bias;
+
     // Wave 35 — governance update. Reads post-update meta-cognitive +
     // contradiction state, evolves the cognitive budget for this event,
     // forecasts instability, composes the next gradients, logs any
@@ -559,9 +583,12 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     // long-horizon survivability biases this event's gradients.
     // Wave 37 — additional pressure from ecology when the system is
     // exhausted / unstable / highly volatile.
+    // Wave 38 — additional pressure from resource collapse states +
+    // ecology/scarcity biases applied to the composed gradients.
     const simulationPressure = simulationPressureFromConsequence(consequencePre);
     const ecologyPressure = ecologyPressureContribution(ecologyPost);
-    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure);
+    const scarcityPressure = scarcityPressureContribution(resourceEconomyPost);
+    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure);
     const governancePre2 = updateGovernance(governancePre, {
       at, tick: osPost.uptime,
       directiveName,
@@ -570,12 +597,15 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       temporal: newTemporal,
       simulationPressure: compositeSimulationPressure,
     });
-    // Wave 37 — apply ecology bias to the just-composed gradients,
-    // clamped to [0,1] per gradient. Each species contributes
-    // ±ECOLOGY_BIAS_CLAMP (0.25) max so soft, bounded influence.
+    // Wave 37 + 38 — apply ecology bias AND scarcity bias to the
+    // just-composed gradients, clamped to [0,1] per gradient. Each
+    // contributes ±0.25 max so influence stays soft and bounded.
     const governancePost = {
       ...governancePre2,
-      gradients: applyEcologyBias(governancePre2.gradients, ecologyBias),
+      gradients: applyScarcityBias(
+        applyEcologyBias(governancePre2.gradients, ecologyBias),
+        scarcityBias,
+      ),
     };
 
     // Wave 36 — strategic simulation. Project the trajectory forward
@@ -617,6 +647,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       governanceStore.save(governancePost),
       consequenceStore.save(consequencePost),
       ecologyStore.save(ecologyPost),
+      resourceEconomyStore.save(resourceEconomyPost),
     ]);
   }
 

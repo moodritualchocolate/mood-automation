@@ -102,6 +102,9 @@ import { buildStrategicSimulationView } from './strategicSimulationView';
 // Wave 37 — Internal Ecology.
 import type { InternalEcologyViewModel } from './internalEcologyView';
 import { buildInternalEcologyView } from './internalEcologyView';
+// Wave 38 — Resource Economy.
+import type { ResourceEconomyViewModel } from './resourceEconomyView';
+import { buildResourceEconomyView } from './resourceEconomyView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -183,6 +186,11 @@ export interface RuntimeManifestation {
    *  tension topology, dominance shifts, and EcologyBias on
    *  governance gradients. NOT personalities — pressure topology. */
   internalEcology: InternalEcologyViewModel;
+  /** Wave 38 — Resource Economy. Seven 0..100 resources with
+   *  dynamic per-event costs, asymmetric recovery, collapse states,
+   *  per-species allocation pressure, cross-species conflicts,
+   *  exhaustion forecast, ScarcityBias on governance gradients. */
+  resourceEconomy: ResourceEconomyViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -232,6 +240,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const cognitiveGovernance = buildCognitiveGovernanceView(snap);
   const strategicSimulation = buildStrategicSimulationView(snap);
   const internalEcology = buildInternalEcologyView(snap);
+  const resourceEconomy = buildResourceEconomyView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -257,6 +266,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     actionSandbox, recoveryState, consciousness, temporalIntelligence,
     purposeIntent, contradictionField, selfModel, adaptiveRegulation,
     cognitiveGovernance, strategicSimulation, internalEcology,
+    resourceEconomy,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

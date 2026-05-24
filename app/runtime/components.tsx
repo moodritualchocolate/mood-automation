@@ -603,6 +603,193 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 38 — Resource Economy ───────────────────────────────
+//
+// Seven independent 0..100 operational resources, each with current
+// level, baseline, last-event delta, EWMA flow rate, burn rate,
+// restore rate, and exhaustion forecast. Collapse-state badge,
+// species allocation pressure rows, cross-species allocation
+// conflicts, scarcity bias on governance gradients. NOT mood —
+// this is the operational metabolism the organism pays cognition with.
+
+export function ResourceEconomy({ m }: { m: RuntimeManifestation }) {
+  const r = m.resourceEconomy;
+  if (!r.present) return null;
+
+  const tone =
+    r.status === 'critical'    ? '#FF4D2D' :
+    r.status === 'cautionary'  ? '#C9A24B' :
+                                 '#8AA98A';
+
+  const resourceTone = (level: number) =>
+    level < 15  ? '#FF4D2D' :
+    level < 35  ? '#C9A24B' :
+    level < 70  ? '#8AA98A' :
+                  '#6F8196';
+
+  const resourceLabel = (id: string) =>
+    id === 'cognitiveEnergy'       ? 'cognitive energy' :
+    id === 'coherenceReserve'      ? 'coherence reserve' :
+    id === 'recoveryReserve'       ? 'recovery reserve' :
+    id === 'explorationCapital'    ? 'exploration capital' :
+    id === 'strategicStability'    ? 'strategic stability' :
+    id === 'contradictionCapacity' ? 'contradiction capacity' :
+    id === 'executionLiquidity'    ? 'execution liquidity' :
+                                     id;
+
+  const biasRow = (label: string, value: number) => {
+    const sign = value === 0 ? '' : value > 0 ? '+' : '';
+    const c =
+      Math.abs(value) < 0.05 ? 'rgba(247,245,242,0.50)' :
+      value > 0 ? '#8AA98A' : '#C9A24B';
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 flex-grow">{label}</span>
+        <span style={{ color: c }} className="w-[60px] text-right">{sign}{value.toFixed(2)}</span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">resource economy</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {r.collapseState} · aggregate {r.reserveAggregate.toFixed(1)}/100 · updates {r.totalUpdates}
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{r.statement}</div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          seven resources · live level / flow / exhaustion forecast
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {r.resources.map((res) => {
+            const pct = Math.round(res.level);
+            const c = resourceTone(res.level);
+            const burning = res.emaRate < -0.1;
+            return (
+              <div key={res.id} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 w-[160px]">{resourceLabel(res.id)}</span>
+                <div className="flex-grow h-[6px] bg-ink-900/70 border hairline relative">
+                  <div className="h-full" style={{ width: `${pct}%`, backgroundColor: c }} />
+                  {/* baseline tick */}
+                  <div
+                    className="absolute top-0 bottom-0 w-[1px]"
+                    style={{ left: `${res.baseline}%`, backgroundColor: 'rgba(247,245,242,0.4)' }}
+                  />
+                </div>
+                <span className="w-[50px] text-right text-bone-50/75">{res.level.toFixed(1)}</span>
+                <span
+                  className="w-[60px] text-right text-[9px]"
+                  style={{ color: res.emaRate < 0 ? '#C9A24B' : res.emaRate > 0 ? '#8AA98A' : 'rgba(247,245,242,0.40)' }}
+                >
+                  {res.emaRate > 0 ? '+' : ''}{res.emaRate.toFixed(2)}/ev
+                </span>
+                <span className="w-[80px] text-right text-[9px] text-bone-200/40">
+                  {burning && res.exhaustionEvents !== null
+                    ? `exhaust ${res.exhaustionEvents}ev`
+                    : res.emaRate > 0.1 ? 'restoring' : '—'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {r.speciesAllocation.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            ecology allocation pressure
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {r.speciesAllocation.map((sa) => {
+              const stressed = sa.scarcityStress > 5;
+              return (
+                <div key={sa.speciesId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                  <span className="text-bone-200/55 w-[100px]">{sa.speciesId}</span>
+                  <span className="text-bone-200/40 w-[100px]">want {sa.desiredScore.toFixed(0)}</span>
+                  <span className="text-bone-200/40 w-[100px]">have {sa.actualScore.toFixed(0)}</span>
+                  <span
+                    className="w-[100px] text-right"
+                    style={{ color: stressed ? '#FF4D2D' : sa.scarcityStress > 0 ? '#C9A24B' : 'rgba(247,245,242,0.40)' }}
+                  >
+                    stress {sa.scarcityStress.toFixed(1)}
+                  </span>
+                  <span className="w-[100px] text-right text-[9px] text-bone-200/40">
+                    {sa.hoardingPressure > 0 ? `hoarding ${sa.hoardingPressure.toFixed(1)}` : '—'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {r.allocationConflicts.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            allocation conflicts
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {r.allocationConflicts.map((c, i) => (
+              <div key={i} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 flex-grow">
+                  {c.speciesA} <span className="text-bone-200/30">↔</span> {c.speciesB}
+                  <span className="text-bone-200/40"> over {resourceLabel(c.resource)}</span>
+                </span>
+                <span
+                  className="w-[80px] text-right"
+                  style={{ color: c.conflictScore > 5 ? '#FF4D2D' : '#C9A24B' }}
+                >
+                  conflict {c.conflictScore.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          scarcity bias on governance gradients
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {biasRow('cognition throughput',  r.scarcityBias.cognitionThroughput)}
+          {biasRow('escalation permission', r.scarcityBias.escalationPermission)}
+          {biasRow('exploration intensity', r.scarcityBias.explorationIntensity)}
+          {biasRow('defer acceptance',      r.scarcityBias.deferAcceptance)}
+          {biasRow('recovery weighting',    r.scarcityBias.recoveryWeighting)}
+          {biasRow('burst tolerance',       r.scarcityBias.burstTolerance)}
+        </div>
+      </div>
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        lifetime consumed {r.totalConsumed.toFixed(0)} · restored {r.totalRestored.toFixed(0)}
+      </div>
+
+      {r.recentObservations.length > 0 && (
+        <div className="pt-2 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            recent significant resource movements
+          </div>
+          {r.recentObservations.slice(0, 6).map((o, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{o.tick} · {resourceLabel(o.resource)} →{' '}
+              <span style={{ color: o.delta < 0 ? '#C9A24B' : '#8AA98A' }}>
+                {o.delta > 0 ? '+' : ''}{o.delta.toFixed(1)}
+              </span>{' '}
+              (now {o.level.toFixed(1)}/100)
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 37 — Internal Ecology ───────────────────────────────
 //
 // Four numeric pressure species: explorer, conservator, optimizer,

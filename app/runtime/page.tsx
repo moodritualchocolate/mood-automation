@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology, ResourceEconomy } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -231,6 +231,13 @@ export default function RuntimePage() {
           (±0.25 per gradient). Inter-species tension matrix, dominance
           shifts, volatility field. NOT personalities — pressure topology. */}
       <InternalEcology m={m} />
+
+      {/* Wave 38 — Resource Economy. Seven independent 0..100 operational
+          resources with dynamic per-event costs that scale with ecology /
+          governance / contradiction / scarcity. Asymmetric ecology-driven
+          recovery. Collapse states, species allocation conflicts, scarcity
+          bias on governance gradients. The metabolism cognition pays. */}
+      <ResourceEconomy m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,

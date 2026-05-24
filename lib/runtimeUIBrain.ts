@@ -95,6 +95,12 @@ export interface RuntimeSnapshot {
    *  fatigue, influenceWeight, tension matrix, dominance, and
    *  EcologyBias output that biases governance gradients ±0.25. */
   internalEcology?: import('./internalEcologyMemory').InternalEcologyState | null;
+  /** Wave 38 — resource economy. Seven independent 0..100 resources
+   *  (cognitiveEnergy, coherenceReserve, recoveryReserve, exploration-
+   *  Capital, strategicStability, contradictionCapacity, executionLiquidity)
+   *  with dynamic per-event costs, asymmetric ecology-driven recovery,
+   *  collapse states, allocation conflicts, and ScarcityBias output. */
+  resourceEconomy?: import('./resourceEconomyMemory').ResourceEconomyState | null;
   capturedAt: number;
 }
 
