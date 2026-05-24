@@ -69,6 +69,9 @@ import type { ApprovalStateViewModel } from './approvalStateView';
 import { buildApprovalStateView } from './approvalStateView';
 import type { CognitiveCoherenceViewModel } from './cognitiveCoherenceView';
 import { buildCognitiveCoherenceView } from './cognitiveCoherenceView';
+// Wave 27 — Phase 8A Action Sandbox.
+import type { ActionSandboxViewModel } from './actionSandboxView';
+import { buildActionSandboxView } from './actionSandboxView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -108,6 +111,9 @@ export interface RuntimeManifestation {
   approvalState: ApprovalStateViewModel;
   /** Wave 26 — rolling coherence over recent reviews in the lineage. */
   cognitiveCoherence: CognitiveCoherenceViewModel;
+  /** Wave 27 — Phase 8A Action Sandbox. Surfaces pending external
+   *  action candidates. Empty when no propose has fired. */
+  actionSandbox: ActionSandboxViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -146,6 +152,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const revisionTrace = buildRevisionTraceView(snap);
   const approvalState = buildApprovalStateView(snap);
   const cognitiveCoherence = buildCognitiveCoherenceView(snap);
+  const actionSandbox = buildActionSandboxView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -168,6 +175,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     interrupts, health, escalation, orchestration, deepCognition,
     internalDraft, strain, cadence,
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
+    actionSandbox,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

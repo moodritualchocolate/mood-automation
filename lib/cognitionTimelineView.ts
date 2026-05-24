@@ -46,6 +46,10 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   review: 'neutral', 'review-refused': 'warn',
   revise: 'neutral', 'revise-refused': 'warn',
   approve: 'good', 'approve-refused': 'warn',
+  // Wave 27 — Phase 8A Action Sandbox. propose is a boundary act;
+  // 'warn' marks that the directive sits at the runtime boundary
+  // without crossing it. Refusal is also 'warn'.
+  propose: 'warn', 'propose-refused': 'warn',
 };
 
 export function buildCognitionTimelineView(snap: RuntimeSnapshot): CognitionTimelineViewModel {

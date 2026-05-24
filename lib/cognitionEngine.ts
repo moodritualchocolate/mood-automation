@@ -27,6 +27,7 @@ import {
   evolveOSFromReview,
   evolveOSFromRevise,
   evolveOSFromApprove,
+  evolveOSFromPropose,
 } from './operatingSystemCore';
 import {
   createOrganismCoreStore,
@@ -47,12 +48,14 @@ import type {
   CurrentReview,
   CurrentRevision,
   ApprovalState,
+  PendingExternalAction,
 } from './operatingSystemCore';
 
 export type CognitiveVerb =
   | 'observe' | 'notice' | 'consider' | 'restrain'
   | 'permit'  | 'prepare' | 'draft'
-  | 'review'  | 'revise'  | 'approve';
+  | 'review'  | 'revise'  | 'approve'
+  | 'propose';
 
 export interface CognitionEventResult {
   verb: CognitiveVerb;
@@ -88,6 +91,9 @@ export interface CognitionEventResult {
     current_revision: CurrentRevision | null;
     /** Wave 26 — approval verdict if approve has fired. */
     current_approval: ApprovalState | null;
+    /** Wave 27 — Phase 8A pending external action candidates. Capped
+     *  array, FIFO eviction at PENDING_ACTIONS_LIMIT. */
+    pending_external_actions: PendingExternalAction[];
   };
   organism: {
     age_before: number;
@@ -132,6 +138,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     osPost = evolveOSFromRevise(osPre, at, revisionCountInChain);
   } else if (verb === 'approve') {
     osPost = evolveOSFromApprove(osPre, at);
+  } else if (verb === 'propose') {
+    osPost = evolveOSFromPropose(osPre, at);
   } else {
     const EVOLVE_BY_VERB: Record<string, (state: OSRuntimeState, at?: number) => OSRuntimeState> = {
       observe: evolveOSFromObservation,
@@ -233,6 +241,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       current_review: osPost.currentReview,
       current_revision: osPost.currentRevision,
       current_approval: osPost.currentApproval,
+      pending_external_actions: osPost.pendingExternalActions ?? [],
     },
     organism: {
       age_before: organismPre.age,
@@ -252,3 +261,4 @@ export const runDraft       = () => runCognitiveAct('draft');
 export const runReview      = () => runCognitiveAct('review');
 export const runRevise      = () => runCognitiveAct('revise');
 export const runApprove     = () => runCognitiveAct('approve');
+export const runPropose     = () => runCognitiveAct('propose');

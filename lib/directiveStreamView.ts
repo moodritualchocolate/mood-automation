@@ -43,6 +43,8 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   review: 'neutral', 'review-refused': 'warn',
   revise: 'neutral', 'revise-refused': 'warn',
   approve: 'good', 'approve-refused': 'warn',
+  // Wave 27 — Phase 8A Action Sandbox.
+  propose: 'warn', 'propose-refused': 'warn',
 };
 
 export function buildDirectiveStreamView(snap: RuntimeSnapshot): DirectiveStreamViewModel {

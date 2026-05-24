@@ -339,6 +339,55 @@ export function CognitiveCoherence({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 27 — Phase 8A Action Sandbox ────────────────────────
+//
+// Pending external action candidates. Calm rendering: one row per
+// entry, status badge in warn-tone (action sits at the boundary
+// without crossing it), restraintTrace and approvalTrace as small
+// dim chips so the protections are visible at a glance. Hidden
+// when the sandbox is empty.
+
+export function ActionSandbox({ m }: { m: RuntimeManifestation }) {
+  const s = m.actionSandbox;
+  if (!s.present) return null;
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-4">
+      <div className="flex items-baseline justify-between mb-3 gap-3 flex-wrap">
+        <span className="eyebrow">action sandbox</span>
+        <span className="text-[10px] tracking-[0.22em] text-bone-200/40 uppercase">
+          {s.count} pending · no execution
+        </span>
+      </div>
+      <div className="flex flex-col gap-3">
+        {s.recent.map((a) => (
+          <div key={a.actionId} className="flex flex-col gap-1.5 border hairline px-3 py-2.5">
+            <div className="flex items-baseline justify-between gap-3 flex-wrap">
+              <span className="text-[11px] text-bone-50/80 tabular-nums">
+                {a.actionType} · t{a.createdTick}
+              </span>
+              <span className="text-[9px] tracking-[0.22em] uppercase" style={{ color: '#C9A24B' }}>
+                {a.status} · risk {a.riskLevel}
+              </span>
+            </div>
+            <div className="text-[10px] text-bone-200/50 italic">{a.expectedOutcome}</div>
+            <div className="flex flex-wrap gap-1 pt-1">
+              {a.restraintTrace.map((r, i) => (
+                <span key={i} className="text-[9px] tracking-[0.14em] text-bone-200/40 uppercase border hairline px-1 py-0.5">
+                  {r}
+                </span>
+              ))}
+            </div>
+            <div className="text-[9px] text-bone-200/30 italic pt-1 tabular-nums">
+              source · draft {a.sourceDraftId.slice(-12)} · review {a.sourceReviewId.slice(-12)} · approval {a.sourceApprovalId.slice(-12)}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="text-[10px] text-bone-200/30 italic pt-3">{s.statement}</div>
+    </div>
+  );
+}
+
 // ─── per-panel renderers ───────────────────────────────────────
 
 function OrganismPanel({ m }: { m: RuntimeManifestation }) {

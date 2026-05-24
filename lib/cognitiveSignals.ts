@@ -44,6 +44,12 @@ export const VERB_DELTAS: Readonly<Record<string, CognitiveSignalDelta>> = {
   review:   { energyDelta: -0.20, stressDelta:  0.00, complexityDelta:  0.00, coordinationContribution: 8 },
   revise:   { energyDelta: -0.30, stressDelta: +0.30, complexityDelta: +0.50, coordinationContribution: 5 },
   approve:  { energyDelta: +0.30, stressDelta: -0.50, complexityDelta: -0.30, coordinationContribution: 9 },
+  // Wave 27 — Phase 8A: Action Sandbox. propose is a boundary act —
+  // not internal cognition (which restores), not external action
+  // (which there isn't one of yet). Modest energy cost; small stress
+  // bump from approaching the boundary; complexity adds (one more
+  // pending candidate to hold in mind).
+  propose:  { energyDelta: -0.25, stressDelta: +0.10, complexityDelta: +0.30, coordinationContribution: 7 },
 };
 
 /** Any *-refused directive shares this delta. Small energy debit,

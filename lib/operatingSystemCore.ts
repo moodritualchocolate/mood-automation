@@ -181,6 +181,48 @@ export interface ApprovalState {
   statement: string;
 }
 
+/**
+ * Wave 27 — Phase 8A: Action Sandbox.
+ *
+ * A PendingExternalAction is the first artifact that LOOKS like an
+ * external action but is NOT one. It is a sandboxed record: the
+ * organism's proposal of a future external action candidate, derived
+ * from an approved internal cognition. Nothing executes. No publish
+ * path is invoked. No external API is called. The record sits in
+ * pendingExternalActions[] until some future phase chooses to act
+ * (or doesn't).
+ *
+ * actionType is a literal-only string. For Phase 8A the only allowed
+ * value is 'prepare_external_candidate'. 'publish' and 'post' are
+ * explicitly NOT in the union — adding them is a deliberate type-level
+ * decision a later phase must make.
+ *
+ * status stays at the literal 'pending' for the entire lifetime of a
+ * Phase 8A entry. A future phase introduces lifecycle transitions
+ * (executed / discarded / expired) and the matching state machine.
+ */
+export type SandboxedActionType = 'prepare_external_candidate';
+
+export interface PendingExternalAction {
+  actionId: string;
+  createdAt: number;
+  createdTick: number;
+  sourceDraftId: string;
+  sourceReviewId: string;
+  sourceApprovalId: string;
+  actionType: SandboxedActionType;
+  status: 'pending';
+  riskLevel: 'low';                  // Sandbox is low-risk by construction
+  expectedOutcome: string;
+  executionCost: string;
+  rollbackPlan: string;
+  restraintTrace: string[];
+  approvalTrace: string[];
+}
+
+// Cap for the pendingExternalActions array. FIFO eviction once exceeded.
+export const PENDING_ACTIONS_LIMIT = 20;
+
 export interface OSRuntimeState {
   bootedAt: number;
   uptime: number;                       // kernel ticks (runs) the OS has lived
@@ -215,6 +257,11 @@ export interface OSRuntimeState {
    *  draft as internally coherent. Preserved across subsequent acts
    *  until a future replace. */
   currentApproval: ApprovalState | null;
+  /** Wave 27 — Phase 8A Action Sandbox. Capped queue of proposed
+   *  external action candidates. Each entry is a record only —
+   *  nothing in this array executes. Phase 8B+ introduces lifecycle
+   *  transitions; Phase 8A only writes 'pending' entries here. */
+  pendingExternalActions: PendingExternalAction[];
   updatedAt: number;
 }
 
@@ -236,6 +283,7 @@ export function createInitialOS(): OSRuntimeState {
     currentReview: null,
     currentRevision: null,
     currentApproval: null,
+    pendingExternalActions: [],
     updatedAt: Date.now(),
   };
 }
@@ -830,6 +878,120 @@ export function evolveOSFromApprove(
   };
 
   return { ...next, currentApproval: approval };
+}
+
+// ─── Wave 27 — Phase 8A: Action Sandbox ────────────────────────
+//
+// propose creates a sandboxed pending external action candidate. The
+// preconditions are strict — there must be an approved cognition
+// chain ending in currentApproval, and that approval must reference
+// a still-current draft and review. No execution follows; the entry
+// is appended to pendingExternalActions[] (capped, FIFO eviction).
+//
+// propose does NOT consume currentApproval. The approval represents
+// an internally-coherent thought that may yield more than one external
+// candidate; the discipline lives in the cognition chain (which gates
+// approval), not in the proposal step. Multiple proposals may stack.
+//
+// All scalar fields on the action record are deterministic:
+//   actionType:      'prepare_external_candidate' (only value allowed
+//                     in Phase 8A)
+//   status:          'pending' (no lifecycle in Phase 8A)
+//   riskLevel:       'low' (sandbox is low-risk by construction; no
+//                     model-driven judgment)
+//   expectedOutcome: honest boilerplate naming what the sandbox does
+//                    and does not do
+//   executionCost:   honest boilerplate naming the zero cost
+//   rollbackPlan:    honest boilerplate naming the discard semantics
+//   restraintTrace:  the protections this phase enforces
+//   approvalTrace:   ticks and scores of the originating chain
+
+const SANDBOX_RESTRAINT_TRACE: ReadonlyArray<string> = [
+  'no publish',
+  'no post',
+  'no external API call',
+  'no social posting',
+  'no marketing output to the outside world',
+  'sandboxed — no execution',
+];
+
+export function evolveOSFromPropose(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+): OSRuntimeState {
+  const draft = state.currentDraft;
+  const review = state.currentReview;
+  const approval = state.currentApproval;
+
+  if (!approval) {
+    return applyCognitiveAct(state, 'propose-refused', (next) =>
+      `propose refused at tick ${next.uptime}: no currentApproval exists — ` +
+      `external candidates may only be proposed from approved cognition.`,
+      at,
+    );
+  }
+  if (!draft || draft.draftId !== approval.approvedDraftId) {
+    return applyCognitiveAct(state, 'propose-refused', (next) =>
+      `propose refused at tick ${next.uptime}: currentDraft does not match ` +
+      `approval.approvedDraftId — the approved draft is no longer current.`,
+      at,
+    );
+  }
+  if (!review || review.reviewId !== approval.basedOnReviewId) {
+    return applyCognitiveAct(state, 'propose-refused', (next) =>
+      `propose refused at tick ${next.uptime}: currentReview does not match ` +
+      `approval.basedOnReviewId — the approval's review is no longer current.`,
+      at,
+    );
+  }
+
+  const next = applyCognitiveAct(state, 'propose', (post) =>
+    `proposed at tick ${post.uptime}: candidate derived from approved draft ` +
+    `${draft.draftId} (approval tick ${approval.approvedTick}, review tick ` +
+    `${review.createdTick}) — actionType prepare_external_candidate, ` +
+    `riskLevel low, status pending. Sandboxed — no execution.`,
+    at,
+  );
+
+  const approvalTrace = [
+    `originating draft tick: ${draft.createdTick}`,
+    `review tick: ${review.createdTick} (recommendation ${review.recommendation})`,
+    `approval tick: ${approval.approvedTick} (verdict ${approval.verdict})`,
+    `review scores: quality ${review.qualityScore}/10, ` +
+      `coherence ${review.coherenceScore}/10, restraint ${review.restraintScore}/10, ` +
+      `contradiction ${review.contradictionScore}`,
+  ];
+
+  const action: PendingExternalAction = {
+    actionId: `action-${at}-${next.uptime}`,
+    createdAt: at,
+    createdTick: next.uptime,
+    sourceDraftId: draft.draftId,
+    sourceReviewId: review.reviewId,
+    sourceApprovalId: approval.approvalId,
+    actionType: 'prepare_external_candidate',
+    status: 'pending',
+    riskLevel: 'low',
+    expectedOutcome:
+      'a candidate for a future external action is recorded; no execution ' +
+      'follows. The entry sits in pendingExternalActions[] until a later ' +
+      'phase decides what to do with it.',
+    executionCost:
+      'zero — Phase 8A writes a record only. No tokens spent, no API ' +
+      'called, no banner shipped, no message sent.',
+    rollbackPlan:
+      'discard: remove the entry from pendingExternalActions. Because ' +
+      'nothing executed, no external rollback is needed. The cognitive ' +
+      'lineage that produced this candidate stays in cognitive-lineage.json.',
+    restraintTrace: [...SANDBOX_RESTRAINT_TRACE],
+    approvalTrace,
+  };
+
+  // FIFO eviction once over cap.
+  const pending = [...state.pendingExternalActions, action]
+    .slice(-PENDING_ACTIONS_LIMIT);
+
+  return { ...next, pendingExternalActions: pending };
 }
 
 // ─── Wave 24 — first internal draft ─────────────────────────────
