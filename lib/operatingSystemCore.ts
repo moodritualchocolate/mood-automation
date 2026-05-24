@@ -69,6 +69,32 @@ export interface IntentionState {
   status: 'open';
 }
 
+/**
+ * Wave 24 — the first internal artifact. Created by a successful
+ * 'draft' directive, which requires an open currentIntention and
+ * consumes it. The draft is bare and internal — no external target,
+ * no publish path. Its body is composed deterministically from the
+ * directiveLog at draft time (counts of each cognitive verb that
+ * led here); its restraintTrace records the explicit constraints
+ * this phase enforces.
+ *
+ * status is the literal 'internal' in Phase 6. kind is the literal
+ * 'first-internal-draft'. Both are deliberate string-literal types
+ * so future phases extending the vocabulary make a type-level
+ * change rather than introducing an unbounded enum.
+ */
+export interface CurrentDraft {
+  draftId: string;
+  createdAt: number;
+  createdTick: number;
+  derivedFromPreparedTick: number;
+  derivedFromPermittedTick: number;
+  status: 'internal';
+  kind: 'first-internal-draft';
+  body: string;
+  restraintTrace: string[];
+}
+
 export interface OSRuntimeState {
   bootedAt: number;
   uptime: number;                       // kernel ticks (runs) the OS has lived
@@ -83,8 +109,14 @@ export interface OSRuntimeState {
   /** Wave 22 — null until a 'permit' directive opens it; cleared
    *  back to null when a 'prepare' directive consumes it. */
   permissionWindow: PermissionWindow | null;
-  /** Wave 23 — null until a 'prepare' directive opens an intention. */
+  /** Wave 23 — null until a 'prepare' directive opens an intention;
+   *  cleared back to null when a 'draft' directive consumes it. */
   currentIntention: IntentionState | null;
+  /** Wave 24 — null until a 'draft' directive creates the first
+   *  internal artifact. The trace of which intention birthed it
+   *  lives in derivedFromPreparedTick / derivedFromPermittedTick,
+   *  so the intention can be nulled cleanly on consumption. */
+  currentDraft: CurrentDraft | null;
   updatedAt: number;
 }
 
@@ -102,6 +134,7 @@ export function createInitialOS(): OSRuntimeState {
     hibernationCount: 0,
     permissionWindow: null,
     currentIntention: null,
+    currentDraft: null,
     updatedAt: Date.now(),
   };
 }
@@ -429,6 +462,103 @@ export function evolveOSFromPrepare(
       preparedTick: next.uptime,
       permittedTick: window.permittedTick,
       status: 'open',
+    },
+  };
+}
+
+// ─── Wave 24 — first internal draft ─────────────────────────────
+//
+// draft is the first verb that consumes the currentIntention opened
+// by 'prepare'. On success it creates currentDraft — the first
+// internal artifact — with a body composed deterministically from
+// the cognitive history that led here.
+//
+// On success:
+//   - directive 'draft' is logged with a thought referencing the
+//     prepared / permitted ticks
+//   - currentIntention is cleared to null (consumed — the draft
+//     itself records the trace via derivedFrom* fields, so the
+//     intention field doesn't need to keep the trace)
+//   - currentDraft is set with a deterministic body and restraintTrace
+//   - permissionWindow is NOT touched (prepare already consumed it)
+//
+// On refusal (no open currentIntention):
+//   - directive 'draft-refused' is logged with a thought naming the
+//     missing precondition
+//   - currentIntention, currentDraft, permissionWindow all unchanged
+//
+// Both branches are cognition: uptime + seasonAge advance,
+// organism.age increments (from the orchestrator).
+//
+// No external archive is written. No publish path is invoked. No
+// banner is generated. The body is text only — a description of the
+// disciplined cognition that brought the organism here.
+
+const PAST_TENSE: Record<string, string> = {
+  observe: 'observed',
+  notice: 'noticed',
+  consider: 'considered',
+  restrain: 'restrained',
+  permit: 'permitted',
+  prepare: 'prepared',
+};
+
+const DRAFT_RESTRAINT_TRACE: ReadonlyArray<string> = [
+  'no generation beyond internal draft',
+  'no publishing',
+  'no external action',
+  'intention consumed',
+];
+
+export function evolveOSFromDraft(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+): OSRuntimeState {
+  const intention = state.currentIntention;
+
+  if (!intention || intention.status !== 'open') {
+    return applyCognitiveAct(state, 'draft-refused', (next) =>
+      `draft refused at tick ${next.uptime}: no open currentIntention exists — ` +
+      `no internal draft created. ` +
+      `Run observe → notice → consider → restrain → permit → prepare first.`,
+      at,
+    );
+  }
+
+  const next = applyCognitiveAct(state, 'draft', (post) =>
+    `drafted at tick ${post.uptime}: first internal artifact created from intention ` +
+    `(prepared tick ${intention.preparedTick}, permitted tick ${intention.permittedTick}) — ` +
+    `intention consumed. Internal only — no generation, no publishing, no external action.`,
+    at,
+  );
+
+  // Deterministic body — counts of each disciplined-cognition verb
+  // in the directiveLog as of this draft. Past-tense forms match the
+  // user's example phrasing; counts make the body actually derived
+  // from history rather than a fixed string.
+  const counts: Record<string, number> = {};
+  for (const d of next.directiveLog) counts[d.directive] = (counts[d.directive] ?? 0) + 1;
+  const phrase = (verb: string) =>
+    `${counts[verb] ?? 0}× ${PAST_TENSE[verb]}`;
+  const body =
+    `Internal draft born from disciplined cognition: ` +
+    `${phrase('observe')}, ${phrase('notice')}, ${phrase('consider')}, ` +
+    `${phrase('restrain')}, ${phrase('permit')}, ${phrase('prepare')}. ` +
+    `No external action taken.`;
+
+  return {
+    ...next,
+    currentIntention: null,
+    currentDraft: {
+      draftId: `draft-${at}-${next.uptime}`,
+      createdAt: at,
+      createdTick: next.uptime,
+      derivedFromPreparedTick: intention.preparedTick,
+      derivedFromPermittedTick: intention.permittedTick,
+      status: 'internal',
+      kind: 'first-internal-draft',
+      body,
+      restraintTrace: [...DRAFT_RESTRAINT_TRACE],
     },
   };
 }

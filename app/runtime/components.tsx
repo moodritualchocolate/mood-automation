@@ -152,6 +152,48 @@ export function PulseBanner({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 24 — first internal draft ────────────────────────────
+//
+// The first internal artifact. Bound directly to m.internalDraft,
+// which reads os.currentDraft from persistent state. Hidden when
+// no draft exists — there is no fallback content, no placeholder
+// activity. The body is composed deterministically at draft time
+// from directiveLog counts; the restraintTrace makes the discipline
+// the draft accepted visible at a glance.
+
+export function InternalDraft({ m }: { m: RuntimeManifestation }) {
+  const d = m.internalDraft;
+  if (!d.present) return null;
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-4">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">internal draft</span>
+        <span className="text-[10px] tracking-[0.22em] text-bone-200/40 uppercase">
+          {d.status} · {d.kind} · t{d.createdTick}
+        </span>
+      </div>
+      <div className="text-[12px] leading-relaxed text-bone-50/85">
+        {d.body}
+      </div>
+      {d.restraintTrace && d.restraintTrace.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-3">
+          {d.restraintTrace.map((r, i) => (
+            <span
+              key={i}
+              className="text-[9px] tracking-[0.18em] text-bone-200/45 uppercase border hairline px-1.5 py-0.5"
+            >
+              {r}
+            </span>
+          ))}
+        </div>
+      )}
+      <div className="text-[10px] text-bone-200/30 pt-2 italic">
+        derived from prepared tick {d.derivedFromPreparedTick}, permitted tick {d.derivedFromPermittedTick}
+      </div>
+    </div>
+  );
+}
+
 // ─── per-panel renderers ───────────────────────────────────────
 
 function OrganismPanel({ m }: { m: RuntimeManifestation }) {

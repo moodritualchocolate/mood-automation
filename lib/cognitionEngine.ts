@@ -23,6 +23,7 @@ import {
   evolveOSFromRestrain,
   evolveOSFromPermit,
   evolveOSFromPrepare,
+  evolveOSFromDraft,
 } from './operatingSystemCore';
 import {
   createOrganismCoreStore,
@@ -35,11 +36,12 @@ import type {
   StrategicSeasonName,
   PermissionWindow,
   IntentionState,
+  CurrentDraft,
 } from './operatingSystemCore';
 
 export type CognitiveVerb =
   | 'observe' | 'notice' | 'consider' | 'restrain'
-  | 'permit'  | 'prepare';
+  | 'permit'  | 'prepare' | 'draft';
 
 type EvolveOSFn = (state: OSRuntimeState, at?: number) => OSRuntimeState;
 
@@ -50,6 +52,7 @@ const EVOLVE_BY_VERB: Record<CognitiveVerb, EvolveOSFn> = {
   restrain: evolveOSFromRestrain,
   permit: evolveOSFromPermit,
   prepare: evolveOSFromPrepare,
+  draft: evolveOSFromDraft,
 };
 
 export interface CognitionEventResult {
@@ -72,8 +75,13 @@ export interface CognitionEventResult {
     permission_window: PermissionWindow | null;
     /** Wave 23 — the internal intention after this act. null until a
      *  successful prepare opens it. No creative content; bare
-     *  readiness only. */
+     *  readiness only. Cleared to null when a successful draft
+     *  consumes it (Wave 24). */
     current_intention: IntentionState | null;
+    /** Wave 24 — the first internal artifact after this act. null
+     *  until a successful draft creates it. Carries the deterministic
+     *  body and restraintTrace; never holds external content. */
+    current_draft: CurrentDraft | null;
   };
   organism: {
     age_before: number;
@@ -116,6 +124,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       directive_log_length_after: osPost.directiveLog.length,
       permission_window: osPost.permissionWindow,
       current_intention: osPost.currentIntention,
+      current_draft: osPost.currentDraft,
     },
     organism: {
       age_before: organismPre.age,
@@ -131,3 +140,4 @@ export const runConsider    = () => runCognitiveAct('consider');
 export const runRestrain    = () => runCognitiveAct('restrain');
 export const runPermit      = () => runCognitiveAct('permit');
 export const runPrepare     = () => runCognitiveAct('prepare');
+export const runDraft       = () => runCognitiveAct('draft');

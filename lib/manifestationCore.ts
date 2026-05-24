@@ -52,6 +52,9 @@ import { buildManifestationLayout } from './manifestationLayout';
 // Wave 17 — embodied runtime presence: deep cognition layer.
 import type { DeepCognitionViewModel } from './deepCognitionView';
 import { buildDeepCognitionView } from './deepCognitionView';
+// Wave 24 — first internal draft.
+import type { InternalDraftViewModel } from './internalDraftView';
+import { buildInternalDraftView } from './internalDraftView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -74,6 +77,9 @@ export interface RuntimeManifestation {
   orchestration: RuntimeOrchestrationViewModel;
   /** Wave 17 — the deep cognition layer makes Waves 10–16 visible. */
   deepCognition: DeepCognitionViewModel;
+  /** Wave 24 — first internal draft. present: false when no draft
+   *  has been created yet; the dashboard surface hides in that case. */
+  internalDraft: InternalDraftViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -105,6 +111,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const escalation = buildEscalationSurfaceView(snap);
   const orchestration = buildRuntimeOrchestrationView(snap);
   const deepCognition = buildDeepCognitionView(snap);
+  const internalDraft = buildInternalDraftView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -124,7 +131,8 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   return {
     brain, presence, organism, pulse, timeline, directives, memoryGraph,
     worldState, pressureMap, season, drift, council, conflict, identity,
-    interrupts, health, escalation, orchestration, deepCognition, layout,
+    interrupts, health, escalation, orchestration, deepCognition,
+    internalDraft, layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,
   };
