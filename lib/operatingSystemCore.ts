@@ -129,6 +129,46 @@ export function evolveOSFromTick(
   return next;
 }
 
+// ─── Wave 19 — passive runtime tick (aging while observed) ──────
+//
+// The cognitive tick (evolveOSFromTick above) runs when the organism
+// actually thinks: it pushes a directive, shifts posture, updates
+// coordination. A passive tick is the lighter cousin — what runs
+// when the organism is merely observed.
+//
+// Strictly:
+//   - no directive emitted (directiveLog untouched)
+//   - no operationalPosture change
+//   - no currentSeason change (only seasonAge advances, because time
+//     in the season passes regardless of cognition)
+//   - no coordinationEMA shift
+//   - no fragmentation / interrupt / hibernation counters touched
+//
+// A passive tick advances only the two pure time fields: uptime and
+// seasonAge. Heartbeat persistence, nothing more.
+//
+// Rate floor: the awakening tick (uptime 0 → 1) is always taken, so
+// a brand-new runtime moves out of the floor on its first observation.
+// Subsequent ticks require MIN_PASSIVE_TICK_MS since the last save —
+// a refresh storm therefore cannot inflate uptime past one tick per
+// MIN_PASSIVE_TICK_MS regardless of how many observers are watching.
+
+export const MIN_PASSIVE_TICK_MS = 1000;
+
+export function evolveOSFromPassiveTick(
+  state: OSRuntimeState,
+  now: number = Date.now(),
+): OSRuntimeState {
+  if (state.uptime > 0) {
+    if (now - state.updatedAt < MIN_PASSIVE_TICK_MS) return state;
+  }
+  return {
+    ...state,
+    uptime: state.uptime + 1,
+    seasonAge: state.seasonAge + 1,
+  };
+}
+
 // ─── Phase 110 — the closing synthesis ─────────────────────────
 
 export interface OperatingSystemReading {
