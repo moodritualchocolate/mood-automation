@@ -23,14 +23,23 @@ const FILE = 'os-runtime.json';
 const DIRECTIVE_LOG_LIMIT = 80;
 
 export type OperationalPosture =
-  | 'booting' | 'coordinated-operation' | 'throttled'
+  | 'booting' | 'observing' | 'coordinated-operation' | 'throttled'
   | 'protective-mode' | 'deep-pause' | 'hibernating';
 
 export type StrategicSeasonName =
   | 'growth' | 'silence' | 'observation' | 'recovery'
   | 'expansion' | 'defense' | 'hibernation';
 
-export interface DirectiveRecord { directive: string; tick: number; }
+export interface DirectiveRecord {
+  directive: string;
+  tick: number;
+  /** Wave 20 — optional richer description of what the directive means.
+   *  Populated by cognitive actions (e.g. observation). Older entries
+   *  written before Wave 20 simply omit this. */
+  thought?: string;
+  /** Wave 20 — wall-clock timestamp the directive was issued. */
+  at?: number;
+}
 
 export interface OSRuntimeState {
   bootedAt: number;
@@ -167,6 +176,41 @@ export function evolveOSFromPassiveTick(
     uptime: state.uptime + 1,
     seasonAge: state.seasonAge + 1,
   };
+}
+
+// ─── Wave 20 — first cognition: observation ─────────────────────
+//
+// The lightest form of cognition. The organism observes itself: it
+// notes what is true at this instant (uptime, posture, season,
+// season-age), emits the directive 'observe', and records a thought
+// describing what was perceived. No randomness, no fabrication —
+// every value in the thought is read from this state at evolve time.
+//
+// Posture transitions out of 'booting' on the first observation;
+// subsequent observations keep posture at 'observing'. This is the
+// only place posture leaves 'booting' on the cognition-engine path —
+// the transition is a cognitive event, not a passive one.
+
+export function evolveOSFromObservation(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+): OSRuntimeState {
+  const next = { ...state, directiveLog: [...state.directiveLog] };
+  next.uptime += 1;
+  next.seasonAge += 1;
+  if (state.operationalPosture === 'booting') {
+    next.operationalPosture = 'observing';
+  }
+  const thought =
+    `observed self at tick ${next.uptime}: posture ${next.operationalPosture}, ` +
+    `season ${next.currentSeason}, season-age ${next.seasonAge}`;
+  next.directiveLog.push({
+    directive: 'observe',
+    tick: next.uptime,
+    thought,
+    at,
+  });
+  return next;
 }
 
 // ─── Phase 110 — the closing synthesis ─────────────────────────

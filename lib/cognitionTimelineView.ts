@@ -29,6 +29,8 @@ export interface CognitionTimelineViewModel {
 const DIRECTIVE_TONE: Record<string, Tone> = {
   publish: 'good', escalate: 'warn', archive: 'neutral', pause: 'cool',
   silence: 'cool', hibernate: 'bad', rebuild: 'warn', 'protect-identity': 'warn',
+  // Wave 20 — observation is the lightest cognition; cool tone.
+  observe: 'cool',
 };
 
 export function buildCognitionTimelineView(snap: RuntimeSnapshot): CognitionTimelineViewModel {
@@ -41,7 +43,10 @@ export function buildCognitionTimelineView(snap: RuntimeSnapshot): CognitionTime
         tick: d.tick,
         kind: 'directive',
         label: `directive "${d.directive}"`,
-        detail: `kernel tick ${d.tick}`,
+        // Wave 20 — when the directive carries a thought (cognitive
+        // actions write one), show the thought as the detail. Older
+        // directive entries without a thought fall back to the tick.
+        detail: d.thought ?? `kernel tick ${d.tick}`,
         tone: DIRECTIVE_TONE[d.directive] ?? 'neutral',
       });
     }

@@ -29,6 +29,8 @@ export interface DirectiveStreamViewModel {
 const DIRECTIVE_TONE: Record<string, Tone> = {
   publish: 'good', escalate: 'warn', archive: 'neutral', pause: 'cool',
   silence: 'cool', hibernate: 'bad', rebuild: 'warn', 'protect-identity': 'warn',
+  // Wave 20 — first cognitive action.
+  observe: 'cool',
 };
 
 export function buildDirectiveStreamView(snap: RuntimeSnapshot): DirectiveStreamViewModel {

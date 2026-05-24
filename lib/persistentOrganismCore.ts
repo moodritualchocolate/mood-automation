@@ -127,6 +127,17 @@ export function recordImmuneEncounter(state: OrganismVitalState, threat: string,
   return state;
 }
 
+/** Wave 20 — the organism OBSERVED itself. Observation is the lightest
+ *  cognition: it advances age (one cognitive run has happened) but
+ *  does NOT consume energy, accumulate stress, increase complexity,
+ *  or count toward consecutiveActions. Observing is not acting; it is
+ *  pure perception of state. */
+export function evolveOrganismFromObservation(state: OrganismVitalState): OrganismVitalState {
+  const next = { ...state, immuneMemory: [...state.immuneMemory] };
+  next.age += 1;
+  return next;
+}
+
 // ─── Phase 90 — the closing synthesis ──────────────────────────
 
 export interface OrganismCoreReading {
