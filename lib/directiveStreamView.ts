@@ -39,6 +39,10 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   prepare: 'good', 'prepare-refused': 'warn',
   // Wave 24 — first internal draft.
   draft: 'good', 'draft-refused': 'warn',
+  // Wave 26 — internal review layer.
+  review: 'neutral', 'review-refused': 'warn',
+  revise: 'neutral', 'revise-refused': 'warn',
+  approve: 'good', 'approve-refused': 'warn',
 };
 
 export function buildDirectiveStreamView(snap: RuntimeSnapshot): DirectiveStreamViewModel {

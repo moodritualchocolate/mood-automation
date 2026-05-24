@@ -16,6 +16,10 @@ export interface OrganismStateViewModel {
   vitality: number;          // 0..10
   gauges: Gauge[];
   age: number;
+  /** Wave 25 — only advances on a successful 'approve' directive.
+   *  Counts internally-coherent transformations rather than total
+   *  runs lived. 0 until the first approval ever. */
+  evolutionary_age: number;
   consecutive_actions: number;
   rest_count: number;
   adaptation_count: number;
@@ -29,7 +33,7 @@ export function buildOrganismStateView(snap: RuntimeSnapshot): OrganismStateView
   if (!o) {
     return {
       present: false, condition: 'dormant', vitality: 0, gauges: [],
-      age: 0, consecutive_actions: 0, rest_count: 0, adaptation_count: 0,
+      age: 0, evolutionary_age: 0, consecutive_actions: 0, rest_count: 0, adaptation_count: 0,
       immune_memory_size: 0, immune_recent_survival: 'no immune history',
       statement: 'the organism has not yet drawn breath',
     };
@@ -65,7 +69,8 @@ export function buildOrganismStateView(snap: RuntimeSnapshot): OrganismStateView
 
   return {
     present: true, condition, vitality, gauges,
-    age: o.age, consecutive_actions: o.consecutiveActions, rest_count: o.restCount,
+    age: o.age, evolutionary_age: o.evolutionaryAge ?? 0,
+    consecutive_actions: o.consecutiveActions, rest_count: o.restCount,
     adaptation_count: o.adaptationCount, immune_memory_size: o.immuneMemory.length,
     immune_recent_survival, statement,
   };

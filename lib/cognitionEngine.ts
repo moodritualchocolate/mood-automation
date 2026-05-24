@@ -24,11 +24,18 @@ import {
   evolveOSFromPermit,
   evolveOSFromPrepare,
   evolveOSFromDraft,
+  evolveOSFromReview,
+  evolveOSFromRevise,
+  evolveOSFromApprove,
 } from './operatingSystemCore';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
 } from './persistentOrganismCore';
+import {
+  createCognitiveLineageStore,
+} from './cognitiveLineage';
+import type { LineageEntry } from './cognitiveLineage';
 import type {
   OSRuntimeState,
   DirectiveRecord,
@@ -37,23 +44,15 @@ import type {
   PermissionWindow,
   IntentionState,
   CurrentDraft,
+  CurrentReview,
+  CurrentRevision,
+  ApprovalState,
 } from './operatingSystemCore';
 
 export type CognitiveVerb =
   | 'observe' | 'notice' | 'consider' | 'restrain'
-  | 'permit'  | 'prepare' | 'draft';
-
-type EvolveOSFn = (state: OSRuntimeState, at?: number) => OSRuntimeState;
-
-const EVOLVE_BY_VERB: Record<CognitiveVerb, EvolveOSFn> = {
-  observe: evolveOSFromObservation,
-  notice: evolveOSFromNotice,
-  consider: evolveOSFromConsider,
-  restrain: evolveOSFromRestrain,
-  permit: evolveOSFromPermit,
-  prepare: evolveOSFromPrepare,
-  draft: evolveOSFromDraft,
-};
+  | 'permit'  | 'prepare' | 'draft'
+  | 'review'  | 'revise'  | 'approve';
 
 export interface CognitionEventResult {
   verb: CognitiveVerb;
@@ -82,6 +81,13 @@ export interface CognitionEventResult {
      *  until a successful draft creates it. Carries the deterministic
      *  body and restraintTrace; never holds external content. */
     current_draft: CurrentDraft | null;
+    /** Wave 26 — the review of currentDraft after this act. null
+     *  until a successful review evaluates it; cleared on revise. */
+    current_review: CurrentReview | null;
+    /** Wave 26 — revision metadata for the latest revise event. */
+    current_revision: CurrentRevision | null;
+    /** Wave 26 — approval verdict if approve has fired. */
+    current_approval: ApprovalState | null;
   };
   organism: {
     age_before: number;
@@ -92,31 +98,73 @@ export interface CognitionEventResult {
 export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEventResult> {
   const osStore = createOSRuntimeStore();
   const organismStore = createOrganismCoreStore();
+  const lineageStore = createCognitiveLineageStore();
 
-  const [osPre, organismPre] = await Promise.all([
+  const [osPre, organismPre, lineagePre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
+    lineageStore.read(),
   ]);
 
   const at = Date.now();
-  const osPost = EVOLVE_BY_VERB[verb](osPre, at);
-  const directive = osPost.directiveLog[osPost.directiveLog.length - 1];
 
-  // Wave 25 — DSA: compose the cognitive act context from real
-  // state-transition facts (no fakery). isFirstDraftEver fires when
-  // currentDraft transitions from null to set AND no prior draft
-  // directive exists in the pre-evolve log. approvalFired fires
-  // when the directive is a successful 'approve' (Wave 26 verb).
-  // isFirstRevisionInChain is wired in Wave 26.
+  // Wave 26 — dispatch with the extra context review and revise need.
+  // review needs priorDraftBodies (for novelty); revise needs the
+  // count of revisions in the current draft chain (for the loop cap).
+  let osPost: OSRuntimeState;
+  if (verb === 'review') {
+    const priorBodies = lineagePre.entries
+      .filter((e): e is Extract<LineageEntry, { kind: 'draft' }> => e.kind === 'draft')
+      .map((e) => e.payload.body);
+    osPost = evolveOSFromReview(osPre, at, priorBodies);
+  } else if (verb === 'revise') {
+    // Count revisions in the lineage that belong to the current draft chain.
+    // The chain id is either the current draft's revisedFrom.originalDraftId
+    // (if it's a revision) or its own draftId (if it's an original).
+    const currentChainOriginalId = osPre.currentDraft
+      ? (osPre.currentDraft.revisedFrom?.originalDraftId ?? osPre.currentDraft.draftId)
+      : null;
+    const revisionCountInChain = currentChainOriginalId
+      ? lineagePre.entries.filter((e): e is Extract<LineageEntry, { kind: 'revision' }> =>
+          e.kind === 'revision' && e.payload.derivedFromOriginalDraftId === currentChainOriginalId,
+        ).length
+      : 0;
+    osPost = evolveOSFromRevise(osPre, at, revisionCountInChain);
+  } else if (verb === 'approve') {
+    osPost = evolveOSFromApprove(osPre, at);
+  } else {
+    const EVOLVE_BY_VERB: Record<string, (state: OSRuntimeState, at?: number) => OSRuntimeState> = {
+      observe: evolveOSFromObservation,
+      notice: evolveOSFromNotice,
+      consider: evolveOSFromConsider,
+      restrain: evolveOSFromRestrain,
+      permit: evolveOSFromPermit,
+      prepare: evolveOSFromPrepare,
+      draft: evolveOSFromDraft,
+    };
+    osPost = EVOLVE_BY_VERB[verb](osPre, at);
+  }
+
+  const directive = osPost.directiveLog[osPost.directiveLog.length - 1];
   const directiveName = directive.directive;
+
+  // Wave 25/26 — cognitive act context for organism vitals.
+  // contradictionScore comes from the freshly-built review on success.
+  // isFirstRevisionInChain fires the first time revise succeeds in the
+  // current draft chain (revisionNumber === 1).
+  const contradictionScore = directiveName === 'review'
+    ? (osPost.currentReview?.contradictionScore ?? 0)
+    : 0;
   const ctx = {
     directiveName,
     isFirstDraftEver:
       directiveName === 'draft' &&
-      !osPre.currentDraft &&
       !osPre.directiveLog.some((d) => d.directive === 'draft'),
+    isFirstRevisionInChain:
+      directiveName === 'revise' &&
+      osPost.currentRevision?.revisionNumber === 1,
     approvalFired: directiveName === 'approve',
-    // contradictionScore + isFirstRevisionInChain populated in Wave 26
+    contradictionScore,
   };
   const organismPost = evolveOrganismFromCognitiveAct(organismPre, ctx);
 
@@ -124,6 +172,47 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     osStore.save(osPost),
     organismStore.save(organismPost),
   ]);
+
+  // Wave 26 — lineage inscription. Only successful structured acts
+  // append. Refusals stay in directiveLog only (no payload to preserve).
+  if (directiveName === 'draft' && osPost.currentDraft) {
+    await lineageStore.append({
+      kind: 'draft', id: osPost.currentDraft.draftId,
+      at, tick: osPost.uptime,
+      payload: osPost.currentDraft,
+    });
+  } else if (directiveName === 'review' && osPost.currentReview) {
+    await lineageStore.append({
+      kind: 'review', id: osPost.currentReview.reviewId,
+      at, tick: osPost.uptime,
+      derivedFromDraftId: osPost.currentReview.derivedFromDraftId,
+      payload: osPost.currentReview,
+    });
+  } else if (directiveName === 'revise' && osPost.currentRevision && osPost.currentDraft) {
+    // Two lineage entries on revise: the revision metadata, then the
+    // revised draft itself. Both link back via derivedFrom fields.
+    await lineageStore.append({
+      kind: 'revision', id: osPost.currentRevision.revisionId,
+      at, tick: osPost.uptime,
+      derivedFromDraftId: osPost.currentRevision.derivedFromPriorDraftId,
+      derivedFromReviewId: osPost.currentRevision.basedOnReviewId,
+      payload: osPost.currentRevision,
+    });
+    await lineageStore.append({
+      kind: 'draft', id: osPost.currentDraft.draftId,
+      at, tick: osPost.uptime,
+      derivedFromPriorDraftId: osPost.currentRevision.derivedFromPriorDraftId,
+      payload: osPost.currentDraft,
+    });
+  } else if (directiveName === 'approve' && osPost.currentApproval) {
+    await lineageStore.append({
+      kind: 'approval', id: osPost.currentApproval.approvalId,
+      at, tick: osPost.uptime,
+      derivedFromDraftId: osPost.currentApproval.approvedDraftId,
+      derivedFromReviewId: osPost.currentApproval.basedOnReviewId,
+      payload: osPost.currentApproval,
+    });
+  }
 
   return {
     verb,
@@ -141,6 +230,9 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       permission_window: osPost.permissionWindow,
       current_intention: osPost.currentIntention,
       current_draft: osPost.currentDraft,
+      current_review: osPost.currentReview,
+      current_revision: osPost.currentRevision,
+      current_approval: osPost.currentApproval,
     },
     organism: {
       age_before: organismPre.age,
@@ -157,3 +249,6 @@ export const runRestrain    = () => runCognitiveAct('restrain');
 export const runPermit      = () => runCognitiveAct('permit');
 export const runPrepare     = () => runCognitiveAct('prepare');
 export const runDraft       = () => runCognitiveAct('draft');
+export const runReview      = () => runCognitiveAct('review');
+export const runRevise      = () => runCognitiveAct('revise');
+export const runApprove     = () => runCognitiveAct('approve');

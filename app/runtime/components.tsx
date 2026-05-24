@@ -194,6 +194,151 @@ export function InternalDraft({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 26 — Phase 7 internal review layer ───────────────────
+//
+// Four small panels, each hidden by default and surfaced only when
+// its underlying state exists. Calm, minimal, non-gamified — small
+// numerals, bordered chips for strengths/weaknesses, a thin row of
+// dots for the rolling coherence. No charts with chrome, no animated
+// graphs. The viewer reads, doesn't get entertained.
+
+export function InternalReview({ m }: { m: RuntimeManifestation }) {
+  const r = m.internalReview;
+  if (!r.present) return null;
+  const recColor =
+    r.recommendation === 'approved-for-approval' ? '#8AA98A' :
+    r.recommendation === 'refused' ? '#FF4D2D' : '#C9A24B';
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-4">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">internal review</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: recColor }}>
+          {r.recommendation} · t{r.createdTick}
+        </span>
+      </div>
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-3 pt-1">
+        {([
+          ['quality', r.qualityScore],
+          ['coherence', r.coherenceScore],
+          ['restraint', r.restraintScore],
+          ['contradiction', r.contradictionScore],
+          ['depth', r.depthScore],
+          ['novelty', r.noveltyScore],
+        ] as Array<[string, number | undefined]>).map(([label, val]) => (
+          <div key={label} className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/45">{label}</span>
+            <span className="text-[18px] tabular-nums text-bone-50/85">{val}</span>
+          </div>
+        ))}
+      </div>
+      <div className="text-[11px] text-bone-200/55 italic pt-3">{r.evaluation}</div>
+      {r.strengths && r.strengths.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-3">
+          {r.strengths.map((s, i) => (
+            <span key={`s${i}`} className="text-[9px] tracking-[0.18em] text-bone-200/50 uppercase border hairline px-1.5 py-0.5">
+              + {s}
+            </span>
+          ))}
+        </div>
+      )}
+      {r.weaknesses && r.weaknesses.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-1.5">
+          {r.weaknesses.map((w, i) => (
+            <span key={`w${i}`} className="text-[9px] tracking-[0.18em] text-bone-200/50 uppercase border hairline px-1.5 py-0.5" style={{ borderColor: 'rgba(201,162,75,0.30)' }}>
+              − {w}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function RevisionTrace({ m }: { m: RuntimeManifestation }) {
+  const t = m.revisionTrace;
+  if (!t.present) return null;
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">revision trace</span>
+        <span className="text-[10px] tracking-[0.22em] text-bone-200/40 uppercase">
+          {t.revisionCount} revision{t.revisionCount === 1 ? '' : 's'}
+        </span>
+      </div>
+      <div className="flex items-center flex-wrap gap-2 text-[11px]">
+        {t.steps?.map((s, i) => (
+          <span key={s.draftId} className="flex items-center gap-2">
+            {i > 0 && <span className="text-bone-200/30">→</span>}
+            <span className="text-bone-200/60 tabular-nums">
+              {s.kind === 'first-internal-draft' ? 'original' : `rev ${s.revisionNumber}`}
+              <span className="text-bone-200/30"> · t{s.createdTick}</span>
+            </span>
+          </span>
+        ))}
+      </div>
+      <div className="text-[10px] text-bone-200/35 italic pt-2">{t.statement}</div>
+    </div>
+  );
+}
+
+export function ApprovalStatePanel({ m }: { m: RuntimeManifestation }) {
+  const a = m.approvalState;
+  if (!a.present) return null;
+  const tone =
+    a.state === 'approved' ? '#8AA98A' :
+    a.state === 'refused' ? '#FF4D2D' :
+    a.state === 'revise-required' ? '#C9A24B' :
+    '#6F8196';
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">approval state</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {a.state}{a.approvedTick != null ? ` · t${a.approvedTick}` : ''}
+        </span>
+      </div>
+      <div className="text-[11px] text-bone-200/60">{a.statement}</div>
+      {a.scoresSnapshot && (
+        <div className="text-[10px] text-bone-200/40 pt-2 tabular-nums">
+          snapshot: quality {a.scoresSnapshot.qualityScore}/10 · coherence {a.scoresSnapshot.coherenceScore}/10 · restraint {a.scoresSnapshot.restraintScore}/10 · contradiction {a.scoresSnapshot.contradictionScore}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function CognitiveCoherence({ m }: { m: RuntimeManifestation }) {
+  const c = m.cognitiveCoherence;
+  if (!c.present) return null;
+  const trendColor =
+    c.trend === 'rising' ? '#8AA98A' :
+    c.trend === 'falling' ? '#C9A24B' :
+    '#6F8196';
+  // A thin row of bars — one per recent review, height ∝ score.
+  // No animation; the bars are static facts.
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">cognitive coherence</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: trendColor }}>
+          {c.rollingAverage}/10 · {c.trend}
+        </span>
+      </div>
+      <div className="flex items-end gap-[3px] h-[28px]">
+        {c.recentScores.map((s, i) => (
+          <div
+            key={i}
+            className="w-[6px] bg-bone-200/35"
+            style={{ height: `${Math.max(2, s * 2.8)}px` }}
+            title={`${s}/10`}
+          />
+        ))}
+      </div>
+      <div className="text-[10px] text-bone-200/35 italic pt-2">{c.statement}</div>
+    </div>
+  );
+}
+
 // ─── per-panel renderers ───────────────────────────────────────
 
 function OrganismPanel({ m }: { m: RuntimeManifestation }) {

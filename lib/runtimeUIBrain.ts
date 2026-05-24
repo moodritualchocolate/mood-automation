@@ -56,6 +56,12 @@ export interface RuntimeSnapshot {
    *  never commanding. The architecture is ready to receive real-
    *  world weak signals; they enter here as pressure, not orders. */
   pressureGateway?: PressureGatewayState | null;
+  /** Wave 26 — Phase 7 internal review architecture. The lineage
+   *  archive (data/memory/cognitive-lineage.json) holds the full
+   *  history of drafts, reviews, revisions, approvals. The dashboard
+   *  reads from this for revision-trace and rolling-coherence views;
+   *  os.currentDraft / currentReview / etc. hold only the most recent. */
+  cognitiveLineage?: import('./cognitiveLineage').CognitiveLineageState | null;
   capturedAt: number;
 }
 

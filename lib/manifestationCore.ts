@@ -60,6 +60,15 @@ import type { StrainViewModel } from './strainView';
 import { buildStrainView } from './strainView';
 import type { CadenceViewModel } from './cadenceView';
 import { buildCadenceView } from './cadenceView';
+// Wave 26 — Phase 7 internal review layer.
+import type { InternalReviewViewModel } from './internalReviewView';
+import { buildInternalReviewView } from './internalReviewView';
+import type { RevisionTraceViewModel } from './revisionTraceView';
+import { buildRevisionTraceView } from './revisionTraceView';
+import type { ApprovalStateViewModel } from './approvalStateView';
+import { buildApprovalStateView } from './approvalStateView';
+import type { CognitiveCoherenceViewModel } from './cognitiveCoherenceView';
+import { buildCognitiveCoherenceView } from './cognitiveCoherenceView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -91,6 +100,14 @@ export interface RuntimeManifestation {
   /** Wave 25 — rhythm of cognition. Derived from directiveLog
    *  timestamps; 'silent' until enough timestamped acts exist. */
   cadence: CadenceViewModel;
+  /** Wave 26 — internal review of currentDraft. */
+  internalReview: InternalReviewViewModel;
+  /** Wave 26 — revision lineage of the current draft chain. */
+  revisionTrace: RevisionTraceViewModel;
+  /** Wave 26 — approval state for the current draft. */
+  approvalState: ApprovalStateViewModel;
+  /** Wave 26 — rolling coherence over recent reviews in the lineage. */
+  cognitiveCoherence: CognitiveCoherenceViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -125,6 +142,10 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const internalDraft = buildInternalDraftView(snap);
   const strain = buildStrainView(snap);
   const cadence = buildCadenceView(snap);
+  const internalReview = buildInternalReviewView(snap);
+  const revisionTrace = buildRevisionTraceView(snap);
+  const approvalState = buildApprovalStateView(snap);
+  const cognitiveCoherence = buildCognitiveCoherenceView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -145,7 +166,9 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     brain, presence, organism, pulse, timeline, directives, memoryGraph,
     worldState, pressureMap, season, drift, council, conflict, identity,
     interrupts, health, escalation, orchestration, deepCognition,
-    internalDraft, strain, cadence, layout,
+    internalDraft, strain, cadence,
+    internalReview, revisionTrace, approvalState, cognitiveCoherence,
+    layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,
   };

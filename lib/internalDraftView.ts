@@ -16,7 +16,7 @@ export interface InternalDraftViewModel {
   present: boolean;
   draftId?: string;
   status?: 'internal';
-  kind?: 'first-internal-draft';
+  kind?: 'first-internal-draft' | 'revised-internal-draft';
   createdTick?: number;
   createdAt?: number;
   derivedFromPreparedTick?: number;

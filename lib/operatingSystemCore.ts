@@ -18,6 +18,10 @@ import type { KernelHealthReading } from './kernelHealthMonitor';
 import type { DirectiveReading } from './directiveEngine';
 import type { StabilizationReading } from './autonomousRuntimeStabilization';
 import { deltaForDirective } from './cognitiveSignals';
+import {
+  computeReviewScores, recommendationFor,
+  deriveStrengths, deriveWeaknesses, deriveEvaluation,
+} from './reviewScoring';
 
 const DEFAULT_DIR = path.resolve(process.cwd(), 'data', 'runtime');
 const FILE = 'os-runtime.json';
@@ -91,9 +95,90 @@ export interface CurrentDraft {
   derivedFromPreparedTick: number;
   derivedFromPermittedTick: number;
   status: 'internal';
-  kind: 'first-internal-draft';
+  kind: 'first-internal-draft' | 'revised-internal-draft';
   body: string;
   restraintTrace: string[];
+  /** Wave 26 — set on revisions. Links to the original draft this
+   *  is a revision of, plus the review that recommended revision. */
+  revisedFrom?: {
+    originalDraftId: string;
+    basedOnReviewId: string;
+    revisionNumber: number;
+  };
+}
+
+/**
+ * Wave 26 — internal review. Created by a successful 'review'
+ * directive, which requires an open currentDraft. Scoring is purely
+ * deterministic — every score derives from real persistent state at
+ * review time (directiveLog counts, draft body claim parsing, lineage
+ * history). No LLM judgments, no random noise.
+ *
+ * recommendation drives what happens next:
+ *   'approved-for-approval' — the chain may proceed to 'approve'
+ *   'revise-required'       — the chain must 'revise' first
+ *   'refused'               — the draft is unsalvageable; chain ends
+ */
+export type ReviewRecommendation =
+  | 'approved-for-approval'
+  | 'revise-required'
+  | 'refused';
+
+export interface CurrentReview {
+  reviewId: string;
+  createdAt: number;
+  createdTick: number;
+  derivedFromDraftId: string;
+  derivedFromDraftTick: number;
+  status: 'internal';
+  qualityScore: number;        // 0..10 — aggregate
+  coherenceScore: number;      // 0..10 — body claims vs actual log counts
+  restraintScore: number;      // 0..10 — discipline preserved
+  contradictionScore: number;  // count of claim mismatches; 0 = clean
+  depthScore: number;          // 0..10 — unique cognitive verbs used
+  noveltyScore: number;        // 0..10 — body distinct from prior drafts
+  evaluation: string;          // one-line summary
+  weaknesses: string[];        // derived from low scores
+  strengths: string[];         // derived from high scores
+  recommendation: ReviewRecommendation;
+}
+
+/**
+ * Wave 26 — revision metadata. Set when 'revise' fires. The revised
+ * draft itself replaces currentDraft (with kind='revised-internal-draft'
+ * and revisedFrom populated); this field carries the revision-event
+ * metadata so the dashboard can show "revision 2 of draft X".
+ */
+export interface CurrentRevision {
+  revisionId: string;
+  createdAt: number;
+  createdTick: number;
+  revisionNumber: number;          // 1 = first revision of the current draft chain
+  derivedFromOriginalDraftId: string;
+  derivedFromPriorDraftId: string; // the draft that was just replaced
+  basedOnReviewId: string;
+  changes: string[];               // human-readable list of addressed weaknesses
+}
+
+/**
+ * Wave 26 — approval state. Set when 'approve' fires. The verdict is
+ * a literal 'internally-coherent' — approval ≠ ready-to-publish; it
+ * means the cognition is internally stable. No external action follows.
+ */
+export interface ApprovalState {
+  approvalId: string;
+  approvedAt: number;
+  approvedTick: number;
+  approvedDraftId: string;
+  basedOnReviewId: string;
+  verdict: 'internally-coherent';
+  scoresSnapshot: {
+    qualityScore: number;
+    coherenceScore: number;
+    restraintScore: number;
+    contradictionScore: number;
+  };
+  statement: string;
 }
 
 export interface OSRuntimeState {
@@ -118,6 +203,18 @@ export interface OSRuntimeState {
    *  lives in derivedFromPreparedTick / derivedFromPermittedTick,
    *  so the intention can be nulled cleanly on consumption. */
   currentDraft: CurrentDraft | null;
+  /** Wave 26 — null until a 'review' directive evaluates currentDraft.
+   *  Cleared back to null when 'revise' produces a new draft (which
+   *  then needs a new review). */
+  currentReview: CurrentReview | null;
+  /** Wave 26 — null until a 'revise' directive replaces currentDraft.
+   *  Carries the revision-event metadata; the revised body itself
+   *  lives in currentDraft (with revisedFrom populated). */
+  currentRevision: CurrentRevision | null;
+  /** Wave 26 — null until an 'approve' directive verdicts the current
+   *  draft as internally coherent. Preserved across subsequent acts
+   *  until a future replace. */
+  currentApproval: ApprovalState | null;
   updatedAt: number;
 }
 
@@ -136,6 +233,9 @@ export function createInitialOS(): OSRuntimeState {
     permissionWindow: null,
     currentIntention: null,
     currentDraft: null,
+    currentReview: null,
+    currentRevision: null,
+    currentApproval: null,
     updatedAt: Date.now(),
   };
 }
@@ -479,6 +579,257 @@ export function evolveOSFromPrepare(
       status: 'open',
     },
   };
+}
+
+// ─── Wave 26 — Phase 7: review / revise / approve ──────────────
+//
+// Three verbs that operate on currentDraft and produce structured
+// artifacts. Each follows the discipline-of-cognition pattern:
+// refusal logged when preconditions aren't met, full state mutation
+// when they are. Lineage writes (data/memory/cognitive-lineage.json)
+// are handled by the orchestrator after these evolves return.
+
+// MAX_REVISIONS_PER_DRAFT — the loop guard the user required.
+// After this many revisions in a single draft chain without an
+// approval, further revise calls are forced to refuse.
+export const MAX_REVISIONS_PER_DRAFT = 3;
+
+// Quality thresholds for approve. Re-checked here so approve refuses
+// if the most recent review dropped below them even though it had
+// been marked approvable.
+export const APPROVE_MIN_COHERENCE = 6;
+// A single 'restrain' in the chain gives restraintScore = 6 via
+// the formula min(10, restrainCount * 2 + 4). The threshold is set
+// so that a single demonstrated restraint passes; refusal fires
+// only if there was zero restraint at all in the chain (score 4).
+export const APPROVE_MIN_RESTRAINT = 6;
+
+export function evolveOSFromReview(
+  state: OSRuntimeState,
+  at: number,
+  priorDraftBodies: string[],
+): OSRuntimeState {
+  const draft = state.currentDraft;
+  if (!draft) {
+    return applyCognitiveAct(state, 'review-refused', (next) =>
+      `review refused at tick ${next.uptime}: no currentDraft exists — ` +
+      `nothing to evaluate. Run draft first.`,
+      at,
+    );
+  }
+
+  const scores = computeReviewScores(draft, state.directiveLog, priorDraftBodies);
+  const recommendation = recommendationFor(scores);
+  const strengths = deriveStrengths(scores);
+  const weaknesses = deriveWeaknesses(scores);
+  const evaluation = deriveEvaluation(scores, recommendation);
+
+  const next = applyCognitiveAct(state, 'review', (post) =>
+    `reviewed at tick ${post.uptime}: draft ${draft.draftId} → ` +
+    `quality ${scores.qualityScore}/10, coherence ${scores.coherenceScore}/10, ` +
+    `contradiction ${scores.contradictionScore} — ${recommendation}`,
+    at,
+  );
+
+  const review: CurrentReview = {
+    reviewId: `review-${at}-${next.uptime}`,
+    createdAt: at,
+    createdTick: next.uptime,
+    derivedFromDraftId: draft.draftId,
+    derivedFromDraftTick: draft.createdTick,
+    status: 'internal',
+    qualityScore: scores.qualityScore,
+    coherenceScore: scores.coherenceScore,
+    restraintScore: scores.restraintScore,
+    contradictionScore: scores.contradictionScore,
+    depthScore: scores.depthScore,
+    noveltyScore: scores.noveltyScore,
+    evaluation,
+    strengths,
+    weaknesses,
+    recommendation,
+  };
+
+  return { ...next, currentReview: review };
+}
+
+export function evolveOSFromRevise(
+  state: OSRuntimeState,
+  at: number,
+  revisionCountInChain: number,
+): OSRuntimeState {
+  const draft = state.currentDraft;
+  const review = state.currentReview;
+
+  if (!draft) {
+    return applyCognitiveAct(state, 'revise-refused', (next) =>
+      `revise refused at tick ${next.uptime}: no currentDraft exists.`,
+      at,
+    );
+  }
+  if (!review) {
+    return applyCognitiveAct(state, 'revise-refused', (next) =>
+      `revise refused at tick ${next.uptime}: no currentReview exists — ` +
+      `run review before revise.`,
+      at,
+    );
+  }
+  if (review.recommendation !== 'revise-required') {
+    return applyCognitiveAct(state, 'revise-refused', (next) =>
+      `revise refused at tick ${next.uptime}: most recent review ` +
+      `recommendation is '${review.recommendation}', not 'revise-required'.`,
+      at,
+    );
+  }
+  if (revisionCountInChain >= MAX_REVISIONS_PER_DRAFT) {
+    return applyCognitiveAct(state, 'revise-refused', (next) =>
+      `revise refused at tick ${next.uptime}: revision cap reached ` +
+      `(${MAX_REVISIONS_PER_DRAFT}). Chain must restart with a new draft.`,
+      at,
+    );
+  }
+
+  const next = applyCognitiveAct(state, 'revise', (post) =>
+    `revised at tick ${post.uptime}: draft ${draft.draftId} → revision ` +
+    `${revisionCountInChain + 1} of ${MAX_REVISIONS_PER_DRAFT}, addressing: ` +
+    `[${review.weaknesses.join(', ') || 'none'}]`,
+    at,
+  );
+
+  const counts: Record<string, number> = {};
+  for (const d of next.directiveLog) counts[d.directive] = (counts[d.directive] ?? 0) + 1;
+  const past = (verb: string): string => ({
+    observe: 'observed', notice: 'noticed', consider: 'considered',
+    restrain: 'restrained', permit: 'permitted', prepare: 'prepared',
+  }[verb] ?? verb);
+  const phrase = (v: string) => `${counts[v] ?? 0}× ${past(v)}`;
+  const body =
+    `Internal draft (revision ${revisionCountInChain + 1}) born from ` +
+    `disciplined cognition: ${phrase('observe')}, ${phrase('notice')}, ` +
+    `${phrase('consider')}, ${phrase('restrain')}, ${phrase('permit')}, ` +
+    `${phrase('prepare')}. Revised to address: ` +
+    `${review.weaknesses.join(', ') || 'incomplete review'}. ` +
+    `No external action taken.`;
+
+  const originalDraftId = draft.revisedFrom?.originalDraftId ?? draft.draftId;
+
+  const revisedDraft: CurrentDraft = {
+    draftId: `draft-${at}-${next.uptime}`,
+    createdAt: at,
+    createdTick: next.uptime,
+    derivedFromPreparedTick: draft.derivedFromPreparedTick,
+    derivedFromPermittedTick: draft.derivedFromPermittedTick,
+    status: 'internal',
+    kind: 'revised-internal-draft',
+    body,
+    restraintTrace: [
+      'no generation beyond internal draft',
+      'no publishing',
+      'no external action',
+      'review weaknesses addressed',
+    ],
+    revisedFrom: {
+      originalDraftId,
+      basedOnReviewId: review.reviewId,
+      revisionNumber: revisionCountInChain + 1,
+    },
+  };
+
+  const revision: CurrentRevision = {
+    revisionId: `revision-${at}-${next.uptime}`,
+    createdAt: at,
+    createdTick: next.uptime,
+    revisionNumber: revisionCountInChain + 1,
+    derivedFromOriginalDraftId: originalDraftId,
+    derivedFromPriorDraftId: draft.draftId,
+    basedOnReviewId: review.reviewId,
+    changes: review.weaknesses.length > 0
+      ? review.weaknesses.map((w) => `addressed: ${w}`)
+      : ['no specific weaknesses — body regenerated from current state'],
+  };
+
+  return {
+    ...next,
+    currentDraft: revisedDraft,
+    currentReview: null,
+    currentRevision: revision,
+  };
+}
+
+export function evolveOSFromApprove(
+  state: OSRuntimeState,
+  at: number,
+): OSRuntimeState {
+  const draft = state.currentDraft;
+  const review = state.currentReview;
+
+  if (!review) {
+    return applyCognitiveAct(state, 'approve-refused', (next) =>
+      `approve refused at tick ${next.uptime}: no currentReview exists.`,
+      at,
+    );
+  }
+  if (!draft) {
+    return applyCognitiveAct(state, 'approve-refused', (next) =>
+      `approve refused at tick ${next.uptime}: no currentDraft exists.`,
+      at,
+    );
+  }
+  if (review.recommendation !== 'approved-for-approval') {
+    return applyCognitiveAct(state, 'approve-refused', (next) =>
+      `approve refused at tick ${next.uptime}: review recommendation is ` +
+      `'${review.recommendation}', not 'approved-for-approval'.`,
+      at,
+    );
+  }
+  if (review.contradictionScore > 0) {
+    return applyCognitiveAct(state, 'approve-refused', (next) =>
+      `approve refused at tick ${next.uptime}: contradictionScore ` +
+      `${review.contradictionScore} must be 0.`,
+      at,
+    );
+  }
+  if (review.coherenceScore < APPROVE_MIN_COHERENCE) {
+    return applyCognitiveAct(state, 'approve-refused', (next) =>
+      `approve refused at tick ${next.uptime}: coherenceScore ` +
+      `${review.coherenceScore} below threshold ${APPROVE_MIN_COHERENCE}.`,
+      at,
+    );
+  }
+  if (review.restraintScore < APPROVE_MIN_RESTRAINT) {
+    return applyCognitiveAct(state, 'approve-refused', (next) =>
+      `approve refused at tick ${next.uptime}: restraintScore ` +
+      `${review.restraintScore} below threshold ${APPROVE_MIN_RESTRAINT}.`,
+      at,
+    );
+  }
+
+  const next = applyCognitiveAct(state, 'approve', (post) =>
+    `approved at tick ${post.uptime}: draft ${draft.draftId} verdict ` +
+    `internally-coherent (quality ${review.qualityScore}/10, ` +
+    `coherence ${review.coherenceScore}/10). Internal only — no external action follows.`,
+    at,
+  );
+
+  const approval: ApprovalState = {
+    approvalId: `approval-${at}-${next.uptime}`,
+    approvedAt: at,
+    approvedTick: next.uptime,
+    approvedDraftId: draft.draftId,
+    basedOnReviewId: review.reviewId,
+    verdict: 'internally-coherent',
+    scoresSnapshot: {
+      qualityScore: review.qualityScore,
+      coherenceScore: review.coherenceScore,
+      restraintScore: review.restraintScore,
+      contradictionScore: review.contradictionScore,
+    },
+    statement:
+      `draft ${draft.draftId} approved as internally-coherent at tick ` +
+      `${next.uptime} — no external action follows`,
+  };
+
+  return { ...next, currentApproval: approval };
 }
 
 // ─── Wave 24 — first internal draft ─────────────────────────────

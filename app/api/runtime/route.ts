@@ -31,6 +31,7 @@ import {
   buildRuntimeManifestation,
   evolveOSFromPassiveTick,
 } from '@lib/index';
+import { createCognitiveLineageStore } from '@lib/cognitiveLineage';
 import type { RuntimeSnapshot } from '@lib/index';
 
 export const runtime = 'nodejs';
@@ -46,6 +47,7 @@ export async function GET() {
     coupling, strategicFuture, execution, feedback,
     liveCoupling, sovereignIdentity, generativePresence,
     protectionMemory, contradictionScars, weatherLog, pressureGateway,
+    cognitiveLineage,
   ] = await Promise.all([
     createOrganismCoreStore().read(),
     osStore.read(),
@@ -65,6 +67,8 @@ export async function GET() {
     createContradictionScarsStore().read(),
     createWeatherLogStore().read(),
     createPressureGatewayStore().read(),
+    // ─── Wave 26 — Phase 7 internal review lineage ──
+    createCognitiveLineageStore().read(),
   ]);
 
   // The passive tick. Advances only os.uptime and os.seasonAge — no
@@ -94,6 +98,7 @@ export async function GET() {
     contradictionScars,
     weatherLog,
     pressureGateway,
+    cognitiveLineage,
     capturedAt: Date.now(),
   };
 

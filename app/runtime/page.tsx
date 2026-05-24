@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -138,6 +138,7 @@ export default function RuntimePage() {
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-[11px] text-bone-200/50">
           <span>uptime {b.uptime_ticks} ticks</span>
           <span>runs lived {b.organism_age}</span>
+          <span>evolutionary age {m.organism.evolutionary_age}</span>
           <span>civilization gen {b.civilization_generation}</span>
           <span className="text-bone-200/40 italic">{m.presence.statement}</span>
         </div>
@@ -148,6 +149,17 @@ export default function RuntimePage() {
       {/* Wave 24 — the first internal draft, when one exists.
           Renders nothing while currentDraft is null on disk. */}
       <InternalDraft m={m} />
+
+      {/* Wave 26 — Phase 7 internal review layer. Each panel renders
+          only when its underlying state exists. Approval / coherence
+          appear after the chain progresses; revision trace appears
+          once a draft has any revision history. */}
+      <InternalReview m={m} />
+      <RevisionTrace m={m} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <ApprovalStatePanel m={m} />
+        <CognitiveCoherence m={m} />
+      </div>
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,
