@@ -39,6 +39,7 @@ import { createContradictionMemoryStore } from '@lib/contradictionMemory';
 import { createSelfModelMemoryStore } from '@lib/selfModelMemory';
 import { createMetaCognitiveStore } from '@lib/metaCognitive';
 import { createCognitiveGovernanceStore } from '@lib/cognitiveGovernance';
+import { createConsequenceMemoryStore } from '@lib/consequenceMemory';
 import { classifyConsciousness, applyPassiveMetabolism } from '@lib/consciousnessView';
 import type { RuntimeSnapshot } from '@lib/index';
 
@@ -92,6 +93,8 @@ export async function GET() {
   const metaCognitive = await createMetaCognitiveStore().read();
   // ─── Wave 35 — cognitive governance ───────────────────────────
   const cognitiveGovernance = await createCognitiveGovernanceStore().read();
+  // ─── Wave 36 — consequence memory ─────────────────────────────
+  const consequenceMemory = await createConsequenceMemoryStore().read();
 
   // The passive tick. Advances only os.uptime and os.seasonAge — no
   // directive, no posture change, no coordination shift, no archive
@@ -153,6 +156,7 @@ export async function GET() {
     selfModel,
     metaCognitive,
     cognitiveGovernance,
+    consequenceMemory,
     capturedAt: Date.now(),
   };
 

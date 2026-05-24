@@ -222,6 +222,10 @@ export function composeGradients(
   /** 0..10 — the maximum CURRENT tensionScore across pairs (bounded),
    *  NOT the lifetime cumulative tension accumulator. */
   maxPairTension: number,
+  /** Wave 36 — recursive feedback from the previous event's
+   *  strategic-simulation long-horizon survivability. 0 = no pressure
+   *  (long-horizon clear); up to ~0.5 when survivability is 0. */
+  simulationPressure: number = 0,
 ): RegulationGradients {
   const base = ZONE_BASE[zone];
 
@@ -239,12 +243,12 @@ export function composeGradients(
     : 0;
 
   return {
-    cognitionThroughput:  clamp01(round2(base.cognitionThroughput  - budgetPressure - forecastPressure - tensionPressure)),
-    escalationPermission: clamp01(round2(base.escalationPermission - forecastPressure - tensionPressure)),
-    explorationIntensity: clamp01(round2(base.explorationIntensity - budgetPressure - forecastPressure)),
-    deferAcceptance:      clamp01(round2(base.deferAcceptance      + budgetPressure + forecastPressure + tensionPressure)),
-    recoveryWeighting:    clamp01(round2(base.recoveryWeighting    + budgetPressure + forecastPressure + tensionPressure)),
-    burstTolerance:       clamp01(round2(base.burstTolerance       - budgetPressure - forecastPressure)),
+    cognitionThroughput:  clamp01(round2(base.cognitionThroughput  - budgetPressure - forecastPressure - tensionPressure - simulationPressure)),
+    escalationPermission: clamp01(round2(base.escalationPermission - forecastPressure - tensionPressure - simulationPressure)),
+    explorationIntensity: clamp01(round2(base.explorationIntensity - budgetPressure - forecastPressure - simulationPressure)),
+    deferAcceptance:      clamp01(round2(base.deferAcceptance      + budgetPressure + forecastPressure + tensionPressure + simulationPressure)),
+    recoveryWeighting:    clamp01(round2(base.recoveryWeighting    + budgetPressure + forecastPressure + tensionPressure + simulationPressure)),
+    burstTolerance:       clamp01(round2(base.burstTolerance       - budgetPressure - forecastPressure - simulationPressure)),
   };
 }
 
@@ -315,6 +319,10 @@ export interface GovernanceSignal {
   meta: MetaCognitiveState;
   contradiction: ContradictionMemoryState | null;
   temporal: TemporalMemoryState | null;
+  /** Wave 36 — recursive weighting pressure from the previous event's
+   *  strategic simulation. 0 when no simulation has been recorded or
+   *  the long-horizon trajectory is clear. */
+  simulationPressure?: number;
 }
 
 export function updateGovernance(
@@ -340,11 +348,13 @@ export function updateGovernance(
   const nextZone = trustZoneTransition(state.zone, signal.meta.cumulativeReliabilityScore);
 
   // 4. Compose gradients from zone + budget + forecast + max current
-  //    pair tension (bounded 0..10, NOT the lifetime cumulative).
+  //    pair tension (bounded 0..10, NOT the lifetime cumulative) +
+  //    Wave 36 recursive simulation pressure.
   const maxPairTension = signal.contradiction
     ? signal.contradiction.pairs.reduce((m, p) => Math.max(m, p.tensionScore), 0)
     : 0;
-  const gradients = composeGradients(nextZone, budget, forecast, maxPairTension);
+  const simulationPressure = signal.simulationPressure ?? 0;
+  const gradients = composeGradients(nextZone, budget, forecast, maxPairTension, simulationPressure);
 
   // 5. Record decisions worth logging.
   const decisions: DecisionRecord[] = [];
@@ -374,6 +384,14 @@ export function updateGovernance(
       at: signal.at, tick: signal.tick,
       kind: 'forecast-warning',
       reason: `projected reliability ${forecast.projectedReliability.toFixed(1)}/10 in ${forecast.horizonEvents} events (slope ${forecast.reliabilitySlope.toFixed(2)})`,
+    });
+  }
+
+  if (simulationPressure >= 0.2) {
+    decisions.push({
+      at: signal.at, tick: signal.tick,
+      kind: 'simulation-pressure',
+      reason: `long-horizon survivability low — recursive pressure ${simulationPressure.toFixed(2)} applied to gradients`,
     });
   }
 

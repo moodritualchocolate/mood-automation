@@ -58,6 +58,12 @@ import {
   governDeferThresholds,
   governRestThresholds,
 } from './governanceEngine';
+import { createConsequenceMemoryStore } from './consequenceMemory';
+import type { SimulatedState } from './consequenceMemory';
+import {
+  updateConsequenceMemory,
+  simulationPressureFromConsequence,
+} from './strategicSimulation';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -141,7 +147,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const selfModelStore = createSelfModelMemoryStore();
   const metaCognitiveStore = createMetaCognitiveStore();
   const governanceStore = createCognitiveGovernanceStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre] = await Promise.all([
+  const consequenceStore = createConsequenceMemoryStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -151,6 +158,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     selfModelStore.read(),
     metaCognitiveStore.read(),
     governanceStore.read(),
+    consequenceStore.read(),
   ]);
 
   const at = Date.now();
@@ -516,12 +524,47 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     // contradiction state, evolves the cognitive budget for this event,
     // forecasts instability, composes the next gradients, logs any
     // zone / budget / forecast / gradient-shift decisions.
+    // Wave 36 — recursive feedback: the PREVIOUS event's simulation
+    // long-horizon survivability biases this event's gradients.
+    const simulationPressure = simulationPressureFromConsequence(consequencePre);
     const governancePost = updateGovernance(governancePre, {
       at, tick: osPost.uptime,
       directiveName,
       meta: metaCognitivePost,
       contradiction: contradictionResult.newState,
       temporal: newTemporal,
+      simulationPressure,
+    });
+
+    // Wave 36 — strategic simulation. Project the trajectory forward
+    // from the NEW post-event state under the NEW gradients. Cost map
+    // updated from observed deltas this event caused (budget, reliability,
+    // max tension). Next event reads this simulation for recursive
+    // governance weighting.
+    const maxPairTensionPost = contradictionResult.newState.pairs
+      .reduce((m, p) => Math.max(m, p.tensionScore), 0);
+    const maxPairTensionPre = contradictionPre.pairs
+      .reduce((m, p) => Math.max(m, p.tensionScore), 0);
+    const idCoherencePost = selfModelPost.identityHistory.length > 0
+      ? selfModelPost.identityHistory[selfModelPost.identityHistory.length - 1].identityCoherence
+      : 5;
+    const simStart: SimulatedState = {
+      reliability: metaCognitivePost.cumulativeReliabilityScore,
+      budget: governancePost.budget.current,
+      maxTension: maxPairTensionPost,
+      fragmentationStreak: osPost.fragmentationStreak,
+      energy: organismPost.energyReserves,
+      stress: organismPost.stressAccumulation,
+      coherence: idCoherencePost,
+    };
+    const consequencePost = updateConsequenceMemory(consequencePre, {
+      at, tick: osPost.uptime,
+      directiveName,
+      start: simStart,
+      gradients: governancePost.gradients,
+      budgetDelta: governancePost.budget.current - governancePre.budget.current,
+      reliabilityDelta: metaCognitivePost.cumulativeReliabilityScore - metaCognitivePre.cumulativeReliabilityScore,
+      tensionDelta: maxPairTensionPost - maxPairTensionPre,
     });
 
     await Promise.all([
@@ -530,6 +573,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       selfModelStore.save(selfModelPost),
       metaCognitiveStore.save(metaCognitivePost),
       governanceStore.save(governancePost),
+      consequenceStore.save(consequencePost),
     ]);
   }
 

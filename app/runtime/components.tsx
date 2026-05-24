@@ -603,6 +603,124 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 36 — Strategic Simulation ───────────────────────────
+//
+// Multi-horizon trajectory projection. Three horizon cards (+5, +20,
+// +50) showing projected end-state vitals + survivability + critical-
+// region flag. Verb cost map (top empirically-expensive verbs) and
+// recursive-feedback pressure surface. Hidden until first simulation.
+
+export function StrategicSimulation({ m }: { m: RuntimeManifestation }) {
+  const s = m.strategicSimulation;
+  if (!s.present) return null;
+
+  const tone =
+    s.status === 'nonviable'  ? '#FF4D2D' :
+    s.status === 'critical'   ? '#FF4D2D' :
+    s.status === 'cautionary' ? '#C9A24B' :
+                                '#8AA98A';
+
+  const survTone = (v: number) =>
+    v < 0.3 ? '#FF4D2D' :
+    v < 0.5 ? '#FF4D2D' :
+    v < 0.7 ? '#C9A24B' :
+              '#8AA98A';
+
+  const vitalBar = (label: string, value: number, max: number, good: 'high' | 'low' | 'mid') => {
+    const ratio = Math.min(1, Math.max(0, value / max));
+    const pct = Math.round(ratio * 100);
+    let c = '#8AA98A';
+    if (good === 'high') c = ratio < 0.3 ? '#FF4D2D' : ratio < 0.5 ? '#C9A24B' : '#8AA98A';
+    if (good === 'low')  c = ratio > 0.7 ? '#FF4D2D' : ratio > 0.5 ? '#C9A24B' : '#8AA98A';
+    if (good === 'mid')  c = ratio < 0.3 || ratio > 0.7 ? '#C9A24B' : '#8AA98A';
+    return (
+      <div className="flex items-center gap-2 text-[9px] tabular-nums">
+        <span className="text-bone-200/50 w-[70px]">{label}</span>
+        <div className="flex-grow h-[4px] bg-ink-900/70 border hairline">
+          <div className="h-full" style={{ width: `${pct}%`, backgroundColor: c }} />
+        </div>
+        <span className="w-[36px] text-right text-bone-50/70">{value.toFixed(1)}</span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">strategic simulation</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {s.status} · feedback {s.feedbackPressure.toFixed(2)} · runs {s.totalSimulations}
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{s.statement}</div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3">
+        {s.horizons.map((h) => (
+          <div key={h.label} className="border hairline bg-ink-900/30 px-3 py-2">
+            <div className="flex items-baseline justify-between mb-1 gap-2">
+              <span className="text-[10px] tracking-[0.22em] uppercase text-bone-200/55">
+                horizon {h.label}
+              </span>
+              <span className="text-[9px] tracking-[0.18em] uppercase tabular-nums" style={{ color: survTone(h.survivability) }}>
+                surv {h.survivability.toFixed(2)}
+              </span>
+            </div>
+            {h.enteredCritical && (
+              <div className="text-[9px] tracking-[0.18em] uppercase text-[#FF4D2D] pb-1">
+                entered critical
+              </div>
+            )}
+            <div className="flex flex-col gap-0.5">
+              {vitalBar('reliability', h.endState.reliability, 10, 'high')}
+              {vitalBar('budget',      h.endState.budget,      50, 'high')}
+              {vitalBar('tension',     h.endState.maxTension,  10, 'low')}
+              {vitalBar('frag streak', h.endState.fragmentationStreak, 10, 'low')}
+              {vitalBar('energy',      h.endState.energy,      10, 'high')}
+              {vitalBar('stress',      h.endState.stress,      10, 'low')}
+              {vitalBar('coherence',   h.endState.coherence,   10, 'high')}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {s.topCostVerbs.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            verb cost map · empirical (EWMA over samples)
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {s.topCostVerbs.map((v) => (
+              <div key={v.verb} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 w-[120px]">{v.verb}</span>
+                <span className="text-bone-200/40 w-[50px]">n={v.samples}</span>
+                <span
+                  className="w-[80px] text-right"
+                  style={{ color: v.avgBudgetImpact < 0 ? '#C9A24B' : '#8AA98A' }}
+                >
+                  bgt {v.avgBudgetImpact > 0 ? '+' : ''}{v.avgBudgetImpact.toFixed(1)}
+                </span>
+                <span
+                  className="w-[80px] text-right"
+                  style={{ color: v.avgReliabilityImpact < 0 ? '#FF4D2D' : 'rgba(247,245,242,0.50)' }}
+                >
+                  rel {v.avgReliabilityImpact > 0 ? '+' : ''}{v.avgReliabilityImpact.toFixed(1)}
+                </span>
+                <span
+                  className="w-[80px] text-right"
+                  style={{ color: v.avgTensionImpact > 0 ? '#FF4D2D' : 'rgba(247,245,242,0.50)' }}
+                >
+                  ten {v.avgTensionImpact > 0 ? '+' : ''}{v.avgTensionImpact.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 35 — Cognitive Governance ───────────────────────────
 //
 // Executive regulation surface. Trust-zone badge, cognitive budget

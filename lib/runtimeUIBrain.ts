@@ -86,6 +86,10 @@ export interface RuntimeSnapshot {
    *  gradients, instability forecast, decision history. Soft throttling
    *  layer that biases (never blocks) adaptive thresholds. */
   cognitiveGovernance?: import('./cognitiveGovernance').CognitiveGovernanceState | null;
+  /** Wave 36 — consequence memory. Deterministic multi-horizon
+   *  trajectory simulations (+5/+20/+50) + empirical verb cost map.
+   *  Long-horizon survivability feeds back into governance gradients. */
+  consequenceMemory?: import('./consequenceMemory').ConsequenceMemoryState | null;
   capturedAt: number;
 }
 

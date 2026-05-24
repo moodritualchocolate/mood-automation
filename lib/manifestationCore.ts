@@ -96,6 +96,9 @@ import { buildAdaptiveRegulationView } from './adaptiveRegulationView';
 // Wave 35 — Cognitive Governance.
 import type { CognitiveGovernanceViewModel } from './cognitiveGovernanceView';
 import { buildCognitiveGovernanceView } from './cognitiveGovernanceView';
+// Wave 36 — Strategic Simulation.
+import type { StrategicSimulationViewModel } from './strategicSimulationView';
+import { buildStrategicSimulationView } from './strategicSimulationView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -168,6 +171,10 @@ export interface RuntimeManifestation {
   /** Wave 35 — Cognitive Governance. Trust zone, cognitive budget,
    *  six regulation gradients, instability forecast, decisions. */
   cognitiveGovernance: CognitiveGovernanceViewModel;
+  /** Wave 36 — Strategic Simulation. Multi-horizon deterministic
+   *  trajectory projections (+5/+20/+50) + survivability + verb
+   *  cost map + recursive feedback pressure. */
+  strategicSimulation: StrategicSimulationViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -215,6 +222,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const selfModel = buildSelfModelView(snap);
   const adaptiveRegulation = buildAdaptiveRegulationView(snap);
   const cognitiveGovernance = buildCognitiveGovernanceView(snap);
+  const strategicSimulation = buildStrategicSimulationView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -239,7 +247,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
     actionSandbox, recoveryState, consciousness, temporalIntelligence,
     purposeIntent, contradictionField, selfModel, adaptiveRegulation,
-    cognitiveGovernance,
+    cognitiveGovernance, strategicSimulation,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

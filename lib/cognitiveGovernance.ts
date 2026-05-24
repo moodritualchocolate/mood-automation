@@ -75,7 +75,7 @@ export interface InstabilityForecast {
 export interface DecisionRecord {
   at: number;
   tick: number;
-  kind: 'zone-transition' | 'budget-warning' | 'forecast-warning' | 'gradient-shift';
+  kind: 'zone-transition' | 'budget-warning' | 'forecast-warning' | 'gradient-shift' | 'simulation-pressure';
   fromZone?: TrustZone;
   toZone?: TrustZone;
   reason: string;
