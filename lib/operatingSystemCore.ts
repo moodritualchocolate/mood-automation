@@ -43,14 +43,30 @@ export interface DirectiveRecord {
 
 /**
  * Wave 22 — the permission window. Opened by a successful 'permit'
- * directive; closed (set to null) when an action consumes it (no
- * action verb exists yet, so for now the window simply stays open
- * once opened, until reset). null means no permission is currently
- * granted — actions should refuse to run.
+ * directive; closed (set to null) when an action consumes it. Wave 23
+ * makes 'prepare' the first consumer.
  */
 export interface PermissionWindow {
   openedAt: number;       // ms timestamp the window was opened
   permittedTick: number;  // os.uptime when permit was granted
+}
+
+/**
+ * Wave 23 — internal intention state. Set by a successful 'prepare'
+ * directive when a permission window is consumed. status is always
+ * 'open' in Phase 5; later phases may add 'consumed' (when an action
+ * verb discharges it) or 'expired' (if a TTL rule is added).
+ *
+ * The intention carries no creative content — no draft text, no
+ * candidate output, no external target. It is the bare fact that the
+ * organism has prepared internally to act, and the trace of which
+ * permission opened it.
+ */
+export interface IntentionState {
+  preparedAt: number;     // ms timestamp prepare succeeded
+  preparedTick: number;   // os.uptime at prepare
+  permittedTick: number;  // os.uptime of the permission that enabled it
+  status: 'open';
 }
 
 export interface OSRuntimeState {
@@ -64,8 +80,11 @@ export interface OSRuntimeState {
   coordinationEMA: number;              // 0..10 — running coordination score
   fragmentationStreak: number;          // consecutive fragmented ticks
   hibernationCount: number;
-  /** Wave 22 — null until a 'permit' directive opens it. */
+  /** Wave 22 — null until a 'permit' directive opens it; cleared
+   *  back to null when a 'prepare' directive consumes it. */
   permissionWindow: PermissionWindow | null;
+  /** Wave 23 — null until a 'prepare' directive opens an intention. */
+  currentIntention: IntentionState | null;
   updatedAt: number;
 }
 
@@ -82,6 +101,7 @@ export function createInitialOS(): OSRuntimeState {
     fragmentationStreak: 0,
     hibernationCount: 0,
     permissionWindow: null,
+    currentIntention: null,
     updatedAt: Date.now(),
   };
 }
@@ -352,6 +372,64 @@ export function evolveOSFromPermit(
   return {
     ...next,
     permissionWindow: { openedAt: at, permittedTick: next.uptime },
+  };
+}
+
+// ─── Wave 23 — first internal intention: prepare ────────────────
+//
+// prepare is the first verb that consumes the permission window.
+// On success the organism records that it has prepared internally
+// to act — without generating, publishing, or targeting anything
+// external. The intention is bare: a timestamp, the tick, and a
+// pointer to the permission that enabled it.
+//
+// On success:
+//   - directive 'prepare' is logged with a thought naming the
+//     consumed permission and stating no generation occurred
+//   - permissionWindow is cleared (consumed — Phase 4 promised:
+//     "stays open until an action consumes it")
+//   - currentIntention is opened
+//
+// On refusal (no permission window):
+//   - directive 'prepare-refused' is logged with a thought naming
+//     the missing precondition (run discipline → permit first)
+//   - permissionWindow and currentIntention stay as they were
+//
+// Both branches are cognition: uptime + seasonAge advance,
+// organism.age increments (from the orchestrator), the entry
+// persists in directiveLog.
+
+export function evolveOSFromPrepare(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+): OSRuntimeState {
+  const window = state.permissionWindow;
+
+  if (!window) {
+    return applyCognitiveAct(state, 'prepare-refused', (next) =>
+      `prepare refused at tick ${next.uptime}: no permission window exists — ` +
+      `no internal intention opened. ` +
+      `Run observe → notice → consider → restrain → permit first.`,
+      at,
+    );
+  }
+
+  const next = applyCognitiveAct(state, 'prepare', (post) =>
+    `prepared at tick ${post.uptime}: permission window from tick ${window.permittedTick} ` +
+    `consumed — internal intention opened. ` +
+    `No generation, no publishing, no external action.`,
+    at,
+  );
+
+  return {
+    ...next,
+    permissionWindow: null,
+    currentIntention: {
+      preparedAt: at,
+      preparedTick: next.uptime,
+      permittedTick: window.permittedTick,
+      status: 'open',
+    },
   };
 }
 

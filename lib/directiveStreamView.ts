@@ -35,6 +35,8 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   notice: 'cool', consider: 'cool', restrain: 'cool',
   // Wave 22 — permission gate.
   permit: 'good', 'permit-refused': 'warn',
+  // Wave 23 — first internal intention.
+  prepare: 'good', 'prepare-refused': 'warn',
 };
 
 export function buildDirectiveStreamView(snap: RuntimeSnapshot): DirectiveStreamViewModel {

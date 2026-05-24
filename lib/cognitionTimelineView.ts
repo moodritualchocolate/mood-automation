@@ -38,6 +38,8 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   // a forward path); refusal is 'warn' (the gate is closed and the
   // viewer should see it).
   permit: 'good', 'permit-refused': 'warn',
+  // Wave 23 — first internal intention.
+  prepare: 'good', 'prepare-refused': 'warn',
 };
 
 export function buildCognitionTimelineView(snap: RuntimeSnapshot): CognitionTimelineViewModel {
