@@ -31,6 +31,8 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   silence: 'cool', hibernate: 'bad', rebuild: 'warn', 'protect-identity': 'warn',
   // Wave 20 — first cognitive action.
   observe: 'cool',
+  // Wave 21 — cognitive vocabulary.
+  notice: 'cool', consider: 'cool', restrain: 'cool',
 };
 
 export function buildDirectiveStreamView(snap: RuntimeSnapshot): DirectiveStreamViewModel {

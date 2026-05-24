@@ -179,21 +179,33 @@ export function evolveOSFromPassiveTick(
 }
 
 // ─── Wave 20 — first cognition: observation ─────────────────────
+// ─── Wave 21 — cognitive vocabulary: notice / consider / restrain ─
 //
-// The lightest form of cognition. The organism observes itself: it
-// notes what is true at this instant (uptime, posture, season,
-// season-age), emits the directive 'observe', and records a thought
-// describing what was perceived. No randomness, no fabrication —
-// every value in the thought is read from this state at evolve time.
+// The lightest forms of cognition. The organism observes, notices,
+// considers, restrains — never inventing facts. Each cognitive verb
+// shares the same persistence shape:
 //
-// Posture transitions out of 'booting' on the first observation;
-// subsequent observations keep posture at 'observing'. This is the
-// only place posture leaves 'booting' on the cognition-engine path —
-// the transition is a cognitive event, not a passive one.
+//   uptime += 1
+//   seasonAge += 1
+//   posture: 'booting' → 'observing' on the very first cognitive act,
+//            otherwise unchanged (no jump to coordinated-operation;
+//            cognition discipline before action)
+//   directiveLog.push({ directive: <verb>, tick, thought, at })
+//
+// Each verb supplies its own thought composer. Thoughts are composed
+// from values in the post-evolve state — no randomness, no fabrication.
+//
+// The Wave 20 observation function is preserved by name and behaviour;
+// the new verbs are layered on the same internal helper so all four
+// agree on persistence shape and posture rules.
 
-export function evolveOSFromObservation(
+type ThoughtComposer = (post: OSRuntimeState) => string;
+
+function applyCognitiveAct(
   state: OSRuntimeState,
-  at: number = Date.now(),
+  directive: string,
+  compose: ThoughtComposer,
+  at: number,
 ): OSRuntimeState {
   const next = { ...state, directiveLog: [...state.directiveLog] };
   next.uptime += 1;
@@ -201,16 +213,71 @@ export function evolveOSFromObservation(
   if (state.operationalPosture === 'booting') {
     next.operationalPosture = 'observing';
   }
-  const thought =
-    `observed self at tick ${next.uptime}: posture ${next.operationalPosture}, ` +
-    `season ${next.currentSeason}, season-age ${next.seasonAge}`;
-  next.directiveLog.push({
-    directive: 'observe',
-    tick: next.uptime,
-    thought,
-    at,
-  });
+  const thought = compose(next);
+  next.directiveLog.push({ directive, tick: next.uptime, thought, at });
   return next;
+}
+
+export function evolveOSFromObservation(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+): OSRuntimeState {
+  return applyCognitiveAct(state, 'observe', (next) =>
+    `observed self at tick ${next.uptime}: posture ${next.operationalPosture}, ` +
+    `season ${next.currentSeason}, season-age ${next.seasonAge}`,
+    at,
+  );
+}
+
+// Wave 21 — notice. Names one salient fact: the most recent directive
+// in the log, or the absence of one. The notice itself is appended
+// AFTER its thought is composed, so 'directiveLog' inside the composer
+// is the prior log — what was already there when the organism noticed.
+export function evolveOSFromNotice(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+): OSRuntimeState {
+  return applyCognitiveAct(state, 'notice', (next) => {
+    const prior = next.directiveLog;
+    if (prior.length === 0) {
+      return `noticed at tick ${next.uptime}: no prior directives in the log — ` +
+             `this is the first cognition`;
+    }
+    const last = prior[prior.length - 1];
+    return `noticed at tick ${next.uptime}: the last directive was '${last.directive}' ` +
+           `at tick ${last.tick} — ${prior.length} prior directive${prior.length === 1 ? '' : 's'} in the log`;
+  }, at);
+}
+
+// Wave 21 — consider. Holds a relation in mind: cognition density
+// (cognitive acts per tick), a real ratio derived from persistent state.
+export function evolveOSFromConsider(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+): OSRuntimeState {
+  return applyCognitiveAct(state, 'consider', (next) => {
+    const acts_after = next.directiveLog.length + 1;
+    const density = next.uptime > 0
+      ? Math.round((acts_after / next.uptime) * 100)
+      : 0;
+    return `considered at tick ${next.uptime}: ${acts_after} cognitive acts across ` +
+           `${next.uptime} ticks of uptime — cognition density ${density}%`;
+  }, at);
+}
+
+// Wave 21 — restrain. Names what was held back. The thought is
+// explicit about the not-acting: no generation, no publishing, no
+// external mutation. Restraint is recorded so the dashboard can see
+// the discipline of holding.
+export function evolveOSFromRestrain(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+): OSRuntimeState {
+  return applyCognitiveAct(state, 'restrain', (next) =>
+    `restrained at tick ${next.uptime}: did not generate, did not publish, ` +
+    `did not act — cognition held without output`,
+    at,
+  );
 }
 
 // ─── Phase 110 — the closing synthesis ─────────────────────────

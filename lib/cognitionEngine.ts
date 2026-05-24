@@ -1,36 +1,51 @@
 /**
- * COGNITION ENGINE — Wave 20: First Cognition
+ * COGNITION ENGINE — Wave 20: First Cognition · Wave 21: Vocabulary
  *
- * The smallest possible cognitive action pipeline. When a runtime
- * trigger arrives, the organism observes itself: it reads its own
- * persistent state, notes what is true at this instant, emits the
- * directive 'observe' with a thought describing what was perceived,
- * increments organism age, and transitions posture from 'booting'
- * to 'observing'.
+ * One orchestrator runs every cognitive verb. The pipeline is fixed:
  *
- * Architectural truthfulness:
- *   - The thought is composed from values read from persistent state
- *     at the moment of observation. No randomness, no invention.
- *   - The directive 'observe' is a real entry in os.directiveLog,
- *     which the existing CognitionTimeline and DirectiveStream views
- *     read directly — no parallel timeline store is introduced.
- *   - organism.age advances by 1; energy, stress, complexity, and
- *     consecutiveActions are not touched (observation is not action).
- *   - Persistence is across two stores (os-runtime.json,
- *     organism.json); both saves happen before this function returns.
+ *   1. read os-runtime.json + organism.json
+ *   2. evolve the OS state via the verb's evolve function
+ *      (pushes a directive with a thought composed from real values)
+ *   3. evolve the organism (age += 1; no energy / stress / complexity
+ *      change — these are not actions, they are cognition)
+ *   4. save both stores atomically before returning
  *
- * The summary returned to the caller is for verification only — it
- * never becomes the source of truth. The source of truth is on disk.
+ * No randomness, no invention. The thought in each directive is
+ * derived at evolve time from the persistent state. The summary
+ * returned is for verification — the source of truth is on disk.
  */
 
-import { createOSRuntimeStore, evolveOSFromObservation } from './operatingSystemCore';
-import { createOrganismCoreStore, evolveOrganismFromObservation } from './persistentOrganismCore';
-import type { DirectiveRecord, OperationalPosture, StrategicSeasonName } from './operatingSystemCore';
+import {
+  createOSRuntimeStore,
+  evolveOSFromObservation,
+  evolveOSFromNotice,
+  evolveOSFromConsider,
+  evolveOSFromRestrain,
+} from './operatingSystemCore';
+import {
+  createOrganismCoreStore,
+  evolveOrganismFromObservation,
+} from './persistentOrganismCore';
+import type {
+  OSRuntimeState,
+  DirectiveRecord,
+  OperationalPosture,
+  StrategicSeasonName,
+} from './operatingSystemCore';
 
-export type CognitionTrigger = 'observation';
+export type CognitiveVerb = 'observe' | 'notice' | 'consider' | 'restrain';
+
+type EvolveOSFn = (state: OSRuntimeState, at?: number) => OSRuntimeState;
+
+const EVOLVE_BY_VERB: Record<CognitiveVerb, EvolveOSFn> = {
+  observe: evolveOSFromObservation,
+  notice: evolveOSFromNotice,
+  consider: evolveOSFromConsider,
+  restrain: evolveOSFromRestrain,
+};
 
 export interface CognitionEventResult {
-  trigger: CognitionTrigger;
+  verb: CognitiveVerb;
   at: number;
   directive: DirectiveRecord;
   thought: string;
@@ -49,7 +64,7 @@ export interface CognitionEventResult {
   };
 }
 
-export async function runObservation(): Promise<CognitionEventResult> {
+export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEventResult> {
   const osStore = createOSRuntimeStore();
   const organismStore = createOrganismCoreStore();
 
@@ -59,7 +74,7 @@ export async function runObservation(): Promise<CognitionEventResult> {
   ]);
 
   const at = Date.now();
-  const osPost = evolveOSFromObservation(osPre, at);
+  const osPost = EVOLVE_BY_VERB[verb](osPre, at);
   const organismPost = evolveOrganismFromObservation(organismPre);
 
   await Promise.all([
@@ -68,13 +83,12 @@ export async function runObservation(): Promise<CognitionEventResult> {
   ]);
 
   const directive = osPost.directiveLog[osPost.directiveLog.length - 1];
-  const thought = directive.thought ?? '(no thought recorded)';
 
   return {
-    trigger: 'observation',
+    verb,
     at,
     directive,
-    thought,
+    thought: directive.thought ?? '(no thought recorded)',
     os: {
       uptime_before: osPre.uptime,
       uptime_after: osPost.uptime,
@@ -90,3 +104,9 @@ export async function runObservation(): Promise<CognitionEventResult> {
     },
   };
 }
+
+// Verb-specific wrappers — what the route handlers call.
+export const runObservation = () => runCognitiveAct('observe');
+export const runNotice      = () => runCognitiveAct('notice');
+export const runConsider    = () => runCognitiveAct('consider');
+export const runRestrain    = () => runCognitiveAct('restrain');

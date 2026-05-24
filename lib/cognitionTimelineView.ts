@@ -31,6 +31,9 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   silence: 'cool', hibernate: 'bad', rebuild: 'warn', 'protect-identity': 'warn',
   // Wave 20 — observation is the lightest cognition; cool tone.
   observe: 'cool',
+  // Wave 21 — cognitive vocabulary. All three share the 'cool' tone
+  // with observe, marking them as the discipline-of-attention class.
+  notice: 'cool', consider: 'cool', restrain: 'cool',
 };
 
 export function buildCognitionTimelineView(snap: RuntimeSnapshot): CognitionTimelineViewModel {
