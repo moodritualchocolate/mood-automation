@@ -54,6 +54,9 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   // 'cool' (calm) — refusing rest means the organism is fine, not
   // that anything went wrong.
   rest: 'good', 'rest-refused': 'cool',
+  // Wave 29 — wake transition. A calm passage from hibernation back
+  // to active cognition. Tone 'cool' — quiet event, not a celebration.
+  'wake-transition': 'cool',
 };
 
 export function buildCognitionTimelineView(snap: RuntimeSnapshot): CognitionTimelineViewModel {

@@ -29,7 +29,9 @@ import {
   evolveOSFromApprove,
   evolveOSFromPropose,
   evolveOSFromRest,
+  evolveOSFromWakeTransition,
 } from './operatingSystemCore';
+import { classifyConsciousness } from './consciousnessView';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -115,34 +117,49 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
 
   const at = Date.now();
 
+  // Wave 29 — wake transition. If the pre-verb consciousness state was
+  // 'hibernating', inject a 'wake-transition' directive BEFORE the verb
+  // dispatches. The wake takes its own tick (uptime + seasonAge + 1)
+  // and bumps wakeCount; the verb that follows takes the next tick.
+  // Organism age increments only once (from the verb), because the
+  // wake itself is an OS-level event, not a cognitive one.
+  const consciousnessPre = classifyConsciousness(osPre, organismPre);
+  let osBeforeVerb = osPre;
+  if (consciousnessPre === 'hibernating') {
+    const lastCognition = osPre.directiveLog.length > 0
+      ? osPre.directiveLog[osPre.directiveLog.length - 1].tick
+      : 0;
+    const hibernatedForTicks = Math.max(0, osPre.uptime - lastCognition);
+    osBeforeVerb = evolveOSFromWakeTransition(osPre, at, hibernatedForTicks);
+  }
+
   // Wave 26 — dispatch with the extra context review and revise need.
   // review needs priorDraftBodies (for novelty); revise needs the
   // count of revisions in the current draft chain (for the loop cap).
+  // Dispatch operates on osBeforeVerb (which equals osPre when no
+  // wake transition fired, or the post-wake state when it did).
   let osPost: OSRuntimeState;
   if (verb === 'review') {
     const priorBodies = lineagePre.entries
       .filter((e): e is Extract<LineageEntry, { kind: 'draft' }> => e.kind === 'draft')
       .map((e) => e.payload.body);
-    osPost = evolveOSFromReview(osPre, at, priorBodies);
+    osPost = evolveOSFromReview(osBeforeVerb, at, priorBodies);
   } else if (verb === 'revise') {
-    // Count revisions in the lineage that belong to the current draft chain.
-    // The chain id is either the current draft's revisedFrom.originalDraftId
-    // (if it's a revision) or its own draftId (if it's an original).
-    const currentChainOriginalId = osPre.currentDraft
-      ? (osPre.currentDraft.revisedFrom?.originalDraftId ?? osPre.currentDraft.draftId)
+    const currentChainOriginalId = osBeforeVerb.currentDraft
+      ? (osBeforeVerb.currentDraft.revisedFrom?.originalDraftId ?? osBeforeVerb.currentDraft.draftId)
       : null;
     const revisionCountInChain = currentChainOriginalId
       ? lineagePre.entries.filter((e): e is Extract<LineageEntry, { kind: 'revision' }> =>
           e.kind === 'revision' && e.payload.derivedFromOriginalDraftId === currentChainOriginalId,
         ).length
       : 0;
-    osPost = evolveOSFromRevise(osPre, at, revisionCountInChain);
+    osPost = evolveOSFromRevise(osBeforeVerb, at, revisionCountInChain);
   } else if (verb === 'approve') {
-    osPost = evolveOSFromApprove(osPre, at);
+    osPost = evolveOSFromApprove(osBeforeVerb, at);
   } else if (verb === 'propose') {
-    osPost = evolveOSFromPropose(osPre, at);
+    osPost = evolveOSFromPropose(osBeforeVerb, at);
   } else if (verb === 'rest') {
-    osPost = evolveOSFromRest(osPre, organismPre, at);
+    osPost = evolveOSFromRest(osBeforeVerb, organismPre, at);
   } else {
     const EVOLVE_BY_VERB: Record<string, (state: OSRuntimeState, at?: number) => OSRuntimeState> = {
       observe: evolveOSFromObservation,
@@ -153,7 +170,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       prepare: evolveOSFromPrepare,
       draft: evolveOSFromDraft,
     };
-    osPost = EVOLVE_BY_VERB[verb](osPre, at);
+    osPost = EVOLVE_BY_VERB[verb](osBeforeVerb, at);
   }
 
   const directive = osPost.directiveLog[osPost.directiveLog.length - 1];

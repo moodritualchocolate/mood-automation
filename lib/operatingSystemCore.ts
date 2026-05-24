@@ -262,6 +262,15 @@ export interface OSRuntimeState {
    *  nothing in this array executes. Phase 8B+ introduces lifecycle
    *  transitions; Phase 8A only writes 'pending' entries here. */
   pendingExternalActions: PendingExternalAction[];
+  /** Wave 29 — Hibernation & Idle Consciousness. Counts the number
+   *  of hibernating → active transitions that have ever happened.
+   *  Advanced by evolveOSFromWakeTransition. 0 on initial state. */
+  wakeCount?: number;
+  /** Wave 29 — wall-clock time of the most recent wake-transition.
+   *  Undefined until the first wake event. */
+  lastWakeAt?: number;
+  /** Wave 29 — os.uptime at the most recent wake-transition. */
+  lastWakeTick?: number;
   updatedAt: number;
 }
 
@@ -393,6 +402,48 @@ export function evolveOSFromPassiveTick(
     uptime: state.uptime + 1,
     seasonAge: state.seasonAge + 1,
   };
+}
+
+// ─── Wave 29 — Hibernation & Idle Consciousness ────────────────
+//
+// Thresholds for the consciousness-state derivation in
+// lib/consciousnessView.ts. The classifier is a pure function of
+// os + organism state; these constants tune it without scattering
+// magic numbers across the codebase.
+
+/** Ticks of no cognition before the organism is considered IDLE. */
+export const IDLE_AFTER_TICKS = 10;
+/** Ticks of no cognition before the organism is considered HIBERNATING.
+ *  Must also have low energy (≤ 4) or several rest cycles (≥ 3) and
+ *  no pending external actions. */
+export const HIBERNATE_AFTER_TICKS = 30;
+/** Metabolism fires once every N passive ticks while non-active.
+ *  At 4s dashboard polling, ≈ one metabolism step every 40s. */
+export const METABOLISM_INTERVAL_TICKS = 10;
+
+/**
+ * Wave 29 — wake transition. Emitted by the orchestrator when a
+ * cognition verb fires AND the consciousness state was 'hibernating'.
+ * The wake-transition takes its own tick (uptime + seasonAge advance
+ * once for the wake, again for the verb that follows). Only the
+ * verb's organism evolve increments organism.age — the wake itself
+ * is an OS-level event, not a cognitive one.
+ */
+export function evolveOSFromWakeTransition(
+  state: OSRuntimeState,
+  at: number = Date.now(),
+  hibernatedForTicks: number = 0,
+): OSRuntimeState {
+  const next = applyCognitiveAct(state, 'wake-transition', (post) =>
+    `wake-transition at tick ${post.uptime}: organism returns from ` +
+    `hibernation after ${hibernatedForTicks} ticks of dormancy. ` +
+    `Cognition verb follows on next tick.`,
+    at,
+  );
+  next.wakeCount = (state.wakeCount ?? 0) + 1;
+  next.lastWakeAt = at;
+  next.lastWakeTick = next.uptime;
+  return next;
 }
 
 // ─── Wave 20 — first cognition: observation ─────────────────────

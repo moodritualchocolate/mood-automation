@@ -388,6 +388,79 @@ export function ActionSandbox({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 29 — Hibernation & Idle Consciousness ───────────────
+//
+// Quiet operational monitor: small status badge colour-coded by
+// state, durations as dim numerals, metabolism as a soft line.
+// No sci-fi chrome, no animated brain, no fake breathing graphic.
+// The organism is observable here; the panel is a window onto its
+// quietness, not a performance.
+
+export function Consciousness({ m }: { m: RuntimeManifestation }) {
+  const c = m.consciousness;
+  if (!c.present) return null;
+
+  const tone =
+    c.state === 'active'      ? '#8AA98A' :
+    c.state === 'idle'        ? '#6F8196' :
+    c.state === 'recovering'  ? '#C9A24B' :
+                                '#6F8196';
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">consciousness</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {c.state} · wake count {c.wakeCount}
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{c.statement}</div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 text-[11px]">
+        {c.lastCognitionTick != null && (
+          <div className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40">last cognition</span>
+            <span className="tabular-nums text-bone-50/80">t{c.lastCognitionTick} · {c.ticksSinceCognition} ticks ago</span>
+          </div>
+        )}
+        {c.lastWakeTick != null && (
+          <div className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40">last wake</span>
+            <span className="tabular-nums text-bone-50/80">t{c.lastWakeTick}</span>
+          </div>
+        )}
+        {c.idleForTicks != null && (
+          <div className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40">idle for</span>
+            <span className="tabular-nums text-bone-50/80">{c.idleForTicks} ticks</span>
+          </div>
+        )}
+        {c.hibernatingForTicks != null && (
+          <div className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40">hibernating for</span>
+            <span className="tabular-nums text-bone-50/80">{c.hibernatingForTicks} ticks</span>
+          </div>
+        )}
+        {c.ticksSinceRest != null && (
+          <div className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40">since rest</span>
+            <span className="tabular-nums text-bone-50/80">{c.ticksSinceRest} ticks{c.cadenceLocked ? ' · cadence locked' : ''}</span>
+          </div>
+        )}
+        <div className="flex flex-col">
+          <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40">passive metabolism</span>
+          <span className="tabular-nums text-bone-50/80">
+            {c.passiveMetabolismActive
+              ? `drifting${c.passiveMetabolismInTicks != null ? ` · next in ${c.passiveMetabolismInTicks} ticks` : ''}`
+              : 'dormant'}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Wave 28 — Rest + Recovery Physiology ─────────────────────
 //
 // Calm recovery surface. Status label colour-coded by state, before/

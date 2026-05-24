@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -172,6 +172,13 @@ export default function RuntimePage() {
           since last rest, depletion flags, and the before/after
           snapshot from the most recent successful rest. */}
       <RecoveryState m={m} />
+
+      {/* Wave 29 — Hibernation & Idle Consciousness. Quiet operational
+          monitor: classification (active / idle / recovering /
+          hibernating), wake count, idle/hibernation durations, last
+          cognition + last wake ticks, passive metabolism status. The
+          state is DERIVED from os + organism every render — not stored. */}
+      <Consciousness m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,

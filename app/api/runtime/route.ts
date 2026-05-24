@@ -32,6 +32,7 @@ import {
   evolveOSFromPassiveTick,
 } from '@lib/index';
 import { createCognitiveLineageStore } from '@lib/cognitiveLineage';
+import { classifyConsciousness, applyPassiveMetabolism } from '@lib/consciousnessView';
 import type { RuntimeSnapshot } from '@lib/index';
 
 export const runtime = 'nodejs';
@@ -73,16 +74,31 @@ export async function GET() {
 
   // The passive tick. Advances only os.uptime and os.seasonAge — no
   // directive, no posture change, no coordination shift, no archive
-  // mutation. Rate-limited internally by MIN_PASSIVE_TICK_MS, so a
-  // refresh storm cannot inflate the count. If the rate floor is hit
-  // the function returns the same reference and no write occurs.
-  const os = evolveOSFromPassiveTick(osPre);
-  if (os.uptime !== osPre.uptime) {
-    await osStore.save(os);
+  // mutation. Rate-limited internally by MIN_PASSIVE_TICK_MS.
+  let os = evolveOSFromPassiveTick(osPre);
+  let organismCurrent = organism;
+  const tickedThisCall = os.uptime !== osPre.uptime;
+
+  // Wave 29 — passive metabolism. After the passive tick, if the
+  // organism is in idle / recovering / hibernating state and the new
+  // uptime is a metabolism-interval boundary, apply tiny adjustments
+  // to stress (organism), fragmentation + coordinationEMA (OS). Never
+  // touches energy (rest's job) and never adds directive entries
+  // (metabolism is physiological, not cognitive).
+  if (tickedThisCall) {
+    const classification = classifyConsciousness(os, organismCurrent);
+    const metabolism = applyPassiveMetabolism(os, organismCurrent, classification);
+    if (metabolism) {
+      os = metabolism.os;
+      organismCurrent = metabolism.organism;
+      await Promise.all([osStore.save(os), createOrganismCoreStore().save(organismCurrent)]);
+    } else {
+      await osStore.save(os);
+    }
   }
 
   const snapshot: RuntimeSnapshot = {
-    organism,
+    organism: organismCurrent,
     os,
     civilization,
     worldState,

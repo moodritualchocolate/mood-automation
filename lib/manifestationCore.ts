@@ -75,6 +75,9 @@ import { buildActionSandboxView } from './actionSandboxView';
 // Wave 28 — Rest + Recovery Physiology.
 import type { RecoveryStateViewModel } from './recoveryStateView';
 import { buildRecoveryStateView } from './recoveryStateView';
+// Wave 29 — Hibernation & Idle Consciousness.
+import type { ConsciousnessViewModel } from './consciousnessView';
+import { buildConsciousnessView } from './consciousnessView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -121,6 +124,10 @@ export interface RuntimeManifestation {
    *  Surfaces restCount, lastRestTick, depletion flags, and the
    *  before/after snapshot from the most recent rest. */
   recoveryState: RecoveryStateViewModel;
+  /** Wave 29 — Consciousness state. Always present once organism
+   *  exists. Surfaces classification (active / idle / recovering /
+   *  hibernating), wake events, and passive metabolism status. */
+  consciousness: ConsciousnessViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -161,6 +168,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const cognitiveCoherence = buildCognitiveCoherenceView(snap);
   const actionSandbox = buildActionSandboxView(snap);
   const recoveryState = buildRecoveryStateView(snap);
+  const consciousness = buildConsciousnessView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -183,7 +191,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     interrupts, health, escalation, orchestration, deepCognition,
     internalDraft, strain, cadence,
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
-    actionSandbox, recoveryState,
+    actionSandbox, recoveryState, consciousness,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

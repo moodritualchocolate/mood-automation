@@ -47,6 +47,8 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   propose: 'warn', 'propose-refused': 'warn',
   // Wave 28 — Rest.
   rest: 'good', 'rest-refused': 'cool',
+  // Wave 29 — wake transition.
+  'wake-transition': 'cool',
 };
 
 export function buildDirectiveStreamView(snap: RuntimeSnapshot): DirectiveStreamViewModel {
