@@ -603,6 +603,139 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 35 — Cognitive Governance ───────────────────────────
+//
+// Executive regulation surface. Trust-zone badge, cognitive budget
+// gauge, six permission gradients with progress-bar visualization,
+// instability forecast (current → projected), recent governance
+// decisions. NO narratives — every value is a deterministic measurement.
+// Hidden when no governance state has been recorded.
+
+export function CognitiveGovernance({ m }: { m: RuntimeManifestation }) {
+  const c = m.cognitiveGovernance;
+  if (!c.present) return null;
+
+  const tone =
+    c.status === 'paused'       ? '#FF4D2D' :
+    c.status === 'throttled'    ? '#C9A24B' :
+    c.status === 'governed'     ? '#6F8196' :
+                                  '#8AA98A';
+
+  const budgetPct = Math.round(c.budget.ratio * 100);
+  const budgetTone =
+    c.budget.ratio < 0.1 ? '#FF4D2D' :
+    c.budget.ratio < 0.25 ? '#C9A24B' :
+                            '#8AA98A';
+
+  const gradientBar = (label: string, value: number, semantic: 'restrict' | 'accept') => {
+    // restrict semantic: 1 = full permission, 0 = no permission (color shifts to red as it drops)
+    // accept semantic: 0 = no acceptance, 1 = full acceptance (color shifts to gold as it climbs)
+    const pct = Math.round(value * 100);
+    const c =
+      semantic === 'restrict'
+        ? (value < 0.4 ? '#FF4D2D' : value < 0.7 ? '#C9A24B' : '#8AA98A')
+        : (value > 0.75 ? '#C9A24B' : value > 0.5 ? '#6F8196' : '#8AA98A');
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 w-[140px]">{label}</span>
+        <div className="flex-grow h-[6px] bg-ink-900/70 border hairline">
+          <div className="h-full" style={{ width: `${pct}%`, backgroundColor: c }} />
+        </div>
+        <span className="w-[40px] text-right text-bone-50/75">{value.toFixed(2)}</span>
+      </div>
+    );
+  };
+
+  const forecastTone = (zone: string) =>
+    zone === 'suspended'  ? '#FF4D2D' :
+    zone === 'restricted' ? '#C9A24B' :
+    zone === 'watchful'   ? '#6F8196' :
+                            '#8AA98A';
+
+  const decisionTone = (kind: string) =>
+    kind === 'budget-warning'   ? '#FF4D2D' :
+    kind === 'forecast-warning' ? '#C9A24B' :
+    kind === 'zone-transition'  ? '#6F8196' :
+                                  'rgba(247,245,242,0.50)';
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">cognitive governance</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {c.status} · {c.zone} · transitions {c.zoneTransitions}
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{c.statement}</div>
+
+      <div className="pt-3">
+        <div className="flex items-center gap-3 text-[10px] tabular-nums">
+          <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/45 w-[140px]">cognitive budget</span>
+          <div className="flex-grow h-[8px] bg-ink-900/70 border hairline">
+            <div className="h-full" style={{ width: `${budgetPct}%`, backgroundColor: budgetTone }} />
+          </div>
+          <span className="w-[80px] text-right text-bone-50/75">
+            {c.budget.current.toFixed(1)}/{c.budget.max}
+          </span>
+        </div>
+        <div className="flex items-center gap-3 pt-1 text-[9px] tabular-nums text-bone-200/40">
+          <span className="w-[140px]"> </span>
+          <span className="flex-grow"> </span>
+          <span>consumed {c.budget.consumedTotal.toFixed(0)} · replenished {c.budget.replenishedTotal.toFixed(0)}</span>
+        </div>
+      </div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">regulation gradients</div>
+        <div className="flex flex-col gap-1">
+          {gradientBar('cognition throughput',  c.gradients.cognitionThroughput,  'restrict')}
+          {gradientBar('escalation permission', c.gradients.escalationPermission, 'restrict')}
+          {gradientBar('exploration intensity', c.gradients.explorationIntensity, 'restrict')}
+          {gradientBar('burst tolerance',       c.gradients.burstTolerance,       'restrict')}
+          {gradientBar('defer acceptance',      c.gradients.deferAcceptance,      'accept')}
+          {gradientBar('recovery weighting',    c.gradients.recoveryWeighting,    'accept')}
+        </div>
+      </div>
+
+      {c.forecast && (
+        <div className="pt-3 text-[11px] text-bone-200/60">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">instability forecast</div>
+          <div className="flex items-center gap-3 text-[10px] tabular-nums">
+            <span className="text-bone-200/55">current {c.forecast.currentReliability.toFixed(1)}/10</span>
+            <span className="text-bone-200/30">→</span>
+            <span className="text-bone-50/75">projected {c.forecast.projectedReliability.toFixed(1)}/10</span>
+            <span className="text-bone-200/40">in {c.forecast.horizonEvents} events</span>
+            <span className="text-bone-200/40">slope {c.forecast.reliabilitySlope > 0 ? '+' : ''}{c.forecast.reliabilitySlope.toFixed(2)}</span>
+            <span className="text-[9px] tracking-[0.18em] uppercase" style={{ color: forecastTone(c.forecast.projectedZone) }}>
+              → {c.forecast.projectedZone}
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        significant gradient shifts — {c.significantShifts}
+      </div>
+
+      {c.recentDecisions.length > 0 && (
+        <div className="pt-2 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">recent governance decisions</div>
+          {c.recentDecisions.map((d, i) => (
+            <div key={i} className="italic tabular-nums text-[10px]">
+              — t{d.tick} · <span style={{ color: decisionTone(d.kind) }}>{d.kind}</span>
+              {d.fromZone && d.toZone && (
+                <span className="text-bone-200/40"> ({d.fromZone} → {d.toZone})</span>
+              )}
+              <span className="text-bone-200/55"> · {d.reason}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 32 — Contradiction Field ─────────────────────────────
 //
 // Pressure topology. NOT personalities debating — weather systems

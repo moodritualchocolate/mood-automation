@@ -47,9 +47,17 @@ import { strongestActiveTraitLabel } from './selfModelView';
 import {
   getAdaptiveEscalationThreshold,
   getAdaptiveRestThresholds,
+  getAdaptiveDeferThresholds,
 } from './adaptiveRegulation';
 import { createMetaCognitiveStore } from './metaCognitive';
 import { updateMetaCognitive } from './metaCognitiveEngine';
+import { createCognitiveGovernanceStore } from './cognitiveGovernance';
+import {
+  updateGovernance,
+  governEscalationThreshold,
+  governDeferThresholds,
+  governRestThresholds,
+} from './governanceEngine';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -132,7 +140,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const contradictionStore = createContradictionMemoryStore();
   const selfModelStore = createSelfModelMemoryStore();
   const metaCognitiveStore = createMetaCognitiveStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre] = await Promise.all([
+  const governanceStore = createCognitiveGovernanceStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -141,6 +150,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     contradictionStore.read(),
     selfModelStore.read(),
     metaCognitiveStore.read(),
+    governanceStore.read(),
   ]);
 
   const at = Date.now();
@@ -188,8 +198,10 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     osPost = evolveOSFromPropose(osBeforeVerb, at);
   } else if (verb === 'rest') {
     // Wave 34 — adaptive rest thresholds biased by recovery-dependent trait.
+    // Wave 35 — soft-throttled further by governance recovery-weighting.
     const adaptiveRest = getAdaptiveRestThresholds(selfModelPre);
-    osPost = evolveOSFromRest(osBeforeVerb, organismPre, at, adaptiveRest);
+    const governedRest = governRestThresholds(adaptiveRest, governancePre.gradients);
+    osPost = evolveOSFromRest(osBeforeVerb, organismPre, at, governedRest);
   } else if (verb === 'defer') {
     // Compose the defer thought from the CURRENT temporal assessment
     // (computed against pre-evolve state — that's what justified the
@@ -442,7 +454,9 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     // contradiction memory PLUS a list of sacrifice mutations to
     // apply to purpose state (active → fragmented, etc.).
     // Wave 34 — escalation threshold biased by pressure-resilient trait.
+    // Wave 35 — soft-throttled further by governance escalation-permission.
     const adaptiveEscalation = getAdaptiveEscalationThreshold(selfModelPre);
+    const governedEscalation = governEscalationThreshold(adaptiveEscalation, governancePre.gradients);
     const contradictionResult = updateContradictionFromSignal(
       contradictionPre,
       purposePost.goals,
@@ -450,7 +464,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       osPost,
       organismPost,
       { at, tick: osPost.uptime },
-      adaptiveEscalation,
+      governedEscalation,
     );
     const purposeFinal = applySacrificesToPurpose(
       purposePost,
@@ -498,11 +512,24 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       },
     );
 
+    // Wave 35 — governance update. Reads post-update meta-cognitive +
+    // contradiction state, evolves the cognitive budget for this event,
+    // forecasts instability, composes the next gradients, logs any
+    // zone / budget / forecast / gradient-shift decisions.
+    const governancePost = updateGovernance(governancePre, {
+      at, tick: osPost.uptime,
+      directiveName,
+      meta: metaCognitivePost,
+      contradiction: contradictionResult.newState,
+      temporal: newTemporal,
+    });
+
     await Promise.all([
       purposeStore.save(purposeFinal),
       contradictionStore.save(contradictionResult.newState),
       selfModelStore.save(selfModelPost),
       metaCognitiveStore.save(metaCognitivePost),
+      governanceStore.save(governancePost),
     ]);
   }
 

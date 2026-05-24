@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -212,6 +212,12 @@ export default function RuntimePage() {
           reasoning decay, prediction reliability, recovery trend) plus
           open/closed defer prediction traces. */}
       <AdaptiveSelfRegulation m={m} />
+
+      {/* Wave 35 — Cognitive Governance. Executive regulation layer:
+          trust zones, cognitive budget, six permission gradients,
+          instability forecast, decision log. Soft throttling only —
+          gradients bias thresholds; nothing is hard-blocked. */}
+      <CognitiveGovernance m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,

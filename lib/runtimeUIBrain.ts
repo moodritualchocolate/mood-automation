@@ -82,6 +82,10 @@ export interface RuntimeSnapshot {
    *  reasoning decay, prediction reliability, recovery efficiency
    *  trend + open/closed defer prediction traces. */
   metaCognitive?: import('./metaCognitive').MetaCognitiveState | null;
+  /** Wave 35 — cognitive governance. Trust zone, budget, regulation
+   *  gradients, instability forecast, decision history. Soft throttling
+   *  layer that biases (never blocks) adaptive thresholds. */
+  cognitiveGovernance?: import('./cognitiveGovernance').CognitiveGovernanceState | null;
   capturedAt: number;
 }
 

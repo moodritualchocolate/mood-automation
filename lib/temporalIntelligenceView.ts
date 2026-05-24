@@ -20,6 +20,7 @@ import type {
   RecoveryObservation,
 } from './temporalMemory';
 import { getAdaptiveDeferThresholds } from './adaptiveRegulation';
+import { governDeferThresholds } from './governanceEngine';
 
 export type DeferRecommendation = 'now' | 'soon' | 'not-yet' | 'not-needed';
 
@@ -271,8 +272,14 @@ export function computeTemporalAssessment(snap: RuntimeSnapshot): TemporalAssess
     cognitionDensity: cognitionDensity(mem.cadenceHistory, os.uptime),
   };
   // Wave 34 — adaptive defer thresholds from self-model if present.
+  // Wave 35 — further governed by cognitive-governance defer-acceptance
+  //           gradient if present (soft throttling, never blocks).
   const sm = snap.selfModel ?? null;
-  const thresholds = sm ? getAdaptiveDeferThresholds(sm) : BASELINE_DEFER_THRESHOLDS;
+  const adaptive = sm ? getAdaptiveDeferThresholds(sm) : BASELINE_DEFER_THRESHOLDS;
+  const cg = snap.cognitiveGovernance ?? null;
+  const thresholds = cg
+    ? governDeferThresholds(adaptive, cg.gradients)
+    : adaptive;
   const deferRec = deferRecommendation(base, thresholds);
   const patience = strategicPatienceScore(
     { ...base, deferRecommendation: deferRec },

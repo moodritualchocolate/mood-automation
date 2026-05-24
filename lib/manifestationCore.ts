@@ -93,6 +93,9 @@ import { buildSelfModelView } from './selfModelView';
 // Wave 34 — Adaptive Self-Regulation + Meta-Cognitive Reliability.
 import type { AdaptiveRegulationViewModel } from './adaptiveRegulationView';
 import { buildAdaptiveRegulationView } from './adaptiveRegulationView';
+// Wave 35 — Cognitive Governance.
+import type { CognitiveGovernanceViewModel } from './cognitiveGovernanceView';
+import { buildCognitiveGovernanceView } from './cognitiveGovernanceView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -162,6 +165,9 @@ export interface RuntimeManifestation {
    *  + meta-cognitive reliability metrics (cognition stability,
    *  reasoning decay, prediction reliability, recovery trend). */
   adaptiveRegulation: AdaptiveRegulationViewModel;
+  /** Wave 35 — Cognitive Governance. Trust zone, cognitive budget,
+   *  six regulation gradients, instability forecast, decisions. */
+  cognitiveGovernance: CognitiveGovernanceViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -208,6 +214,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const contradictionField = buildContradictionFieldView(snap);
   const selfModel = buildSelfModelView(snap);
   const adaptiveRegulation = buildAdaptiveRegulationView(snap);
+  const cognitiveGovernance = buildCognitiveGovernanceView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -232,6 +239,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
     actionSandbox, recoveryState, consciousness, temporalIntelligence,
     purposeIntent, contradictionField, selfModel, adaptiveRegulation,
+    cognitiveGovernance,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,
