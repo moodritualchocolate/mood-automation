@@ -55,6 +55,11 @@ import { buildDeepCognitionView } from './deepCognitionView';
 // Wave 24 — first internal draft.
 import type { InternalDraftViewModel } from './internalDraftView';
 import { buildInternalDraftView } from './internalDraftView';
+// Wave 25 — Dynamic Signal Architecture: derived signal views.
+import type { StrainViewModel } from './strainView';
+import { buildStrainView } from './strainView';
+import type { CadenceViewModel } from './cadenceView';
+import { buildCadenceView } from './cadenceView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -80,6 +85,12 @@ export interface RuntimeManifestation {
   /** Wave 24 — first internal draft. present: false when no draft
    *  has been created yet; the dashboard surface hides in that case. */
   internalDraft: InternalDraftViewModel;
+  /** Wave 25 — unresolved cognitive load. Derived from current state;
+   *  zero when nothing is pending. */
+  strain: StrainViewModel;
+  /** Wave 25 — rhythm of cognition. Derived from directiveLog
+   *  timestamps; 'silent' until enough timestamped acts exist. */
+  cadence: CadenceViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -112,6 +123,8 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const orchestration = buildRuntimeOrchestrationView(snap);
   const deepCognition = buildDeepCognitionView(snap);
   const internalDraft = buildInternalDraftView(snap);
+  const strain = buildStrainView(snap);
+  const cadence = buildCadenceView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -132,7 +145,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     brain, presence, organism, pulse, timeline, directives, memoryGraph,
     worldState, pressureMap, season, drift, council, conflict, identity,
     interrupts, health, escalation, orchestration, deepCognition,
-    internalDraft, layout,
+    internalDraft, strain, cadence, layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,
   };

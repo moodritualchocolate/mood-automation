@@ -17,6 +17,7 @@ import type { KernelReading } from './cognitiveKernel';
 import type { KernelHealthReading } from './kernelHealthMonitor';
 import type { DirectiveReading } from './directiveEngine';
 import type { StabilizationReading } from './autonomousRuntimeStabilization';
+import { deltaForDirective } from './cognitiveSignals';
 
 const DEFAULT_DIR = path.resolve(process.cwd(), 'data', 'runtime');
 const FILE = 'os-runtime.json';
@@ -283,6 +284,20 @@ function applyCognitiveAct(
   }
   const thought = compose(next);
   next.directiveLog.push({ directive, tick: next.uptime, thought, at });
+
+  // Wave 25 — DSA: coordination EMA + fragmentation streak.
+  // EMA blend 0.8/0.2 so coordination doesn't whipsaw on a single act.
+  // fragmentationStreak resets on any non-refused act, increments on
+  // any refusal — captures runs of bad cognition for the dashboard's
+  // liveness branch to react to.
+  const delta = deltaForDirective(directive);
+  next.coordinationEMA = clamp10(round1(
+    state.coordinationEMA * 0.8 + delta.coordinationContribution * 0.2,
+  ));
+  next.fragmentationStreak = directive.endsWith('-refused')
+    ? state.fragmentationStreak + 1
+    : 0;
+
   return next;
 }
 

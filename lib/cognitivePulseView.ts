@@ -78,8 +78,19 @@ export function buildCognitivePulseView(snap: RuntimeSnapshot): CognitivePulseVi
   }
 
   const vitality = organism.energyReserves * 0.5 + (10 - organism.stressAccumulation) * 0.5;
-  // Rate rises with stress and consecutive action, falls with rest.
-  let rate = 48 + organism.stressAccumulation * 4 + Math.min(20, organism.consecutiveActions * 2.5);
+  // Wave 25 — DSA: rate is driven by stress + cognitive intensity.
+  // The classic 'consecutiveActions' term assumed ship-class actions
+  // (banner generation, publishing) which cognition never moves, so
+  // it locked the rate at the initial-state value. cognitiveIntensity
+  // is derived from current unresolved cognitive load: a pending
+  // intention, an unreviewed draft, plus the fragmentation streak.
+  // Wave 26 will add a +3 term for review.recommendation === 'revise-required'
+  // when that field exists.
+  const cognitiveIntensity =
+    (os.currentIntention ? 1 : 0) +
+    (os.currentDraft ? 2 : 0) +
+    os.fragmentationStreak;
+  let rate = 48 + organism.stressAccumulation * 4 + Math.min(20, cognitiveIntensity * 2);
   rate = Math.round(Math.max(36, Math.min(150, rate)));
 
   const amplitude = round1(Math.max(0.1, Math.min(1, vitality / 10)) * 100) / 100;

@@ -15,6 +15,8 @@
 
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import { deltaForDirective } from './cognitiveSignals';
+import type { CognitiveActContext } from './cognitiveSignals';
 
 const DEFAULT_DIR = path.resolve(process.cwd(), 'data', 'runtime');
 const FILE = 'organism.json';
@@ -28,7 +30,12 @@ export interface ImmuneRecord {
 
 export interface OrganismVitalState {
   bornAt: number;
-  age: number;                  // runs the organism has lived
+  age: number;                  // runs the organism has lived (every cognitive act)
+  /** Wave 25 — only advances on a successful 'approve' directive.
+   *  Age counts cognitive runs; evolutionaryAge counts approved
+   *  transformations. One cycle of disciplined cognition that ends
+   *  in approval = +1 evolutionary tick. */
+  evolutionaryAge: number;
   energyReserves: number;       // 0..10 — depletes with action, restores with rest
   stressAccumulation: number;   // 0..10
   complexityLoad: number;       // 0..10 — accumulated internal complexity
@@ -43,6 +50,7 @@ export function createInitialOrganism(): OrganismVitalState {
   return {
     bornAt: Date.now(),
     age: 0,
+    evolutionaryAge: 0,
     energyReserves: 8,
     stressAccumulation: 2,
     complexityLoad: 3,
@@ -127,15 +135,61 @@ export function recordImmuneEncounter(state: OrganismVitalState, threat: string,
   return state;
 }
 
-/** Wave 20 — the organism OBSERVED itself. Observation is the lightest
- *  cognition: it advances age (one cognitive run has happened) but
- *  does NOT consume energy, accumulate stress, increase complexity,
- *  or count toward consecutiveActions. Observing is not acting; it is
- *  pure perception of state. */
-export function evolveOrganismFromObservation(state: OrganismVitalState): OrganismVitalState {
+/**
+ * Wave 25 — the organism's response to a cognitive act.
+ *
+ * Every cognitive verb (success or refusal) advances 'age' by 1; the
+ * organism has lived through one more run. On top of that, a per-verb
+ * delta from VERB_DELTAS shifts energy / stress / complexity, and the
+ * orchestrator's context can add transition deltas (first draft ever,
+ * first revision in chain, approval just fired).
+ *
+ * approvalFired is the only thing that advances evolutionaryAge.
+ * Every other cognitive act counts toward 'age' (runs lived) but not
+ * toward 'evolutionaryAge' (approved transformations). The two clocks
+ * are kept distinct so a viewer can tell the difference between an
+ * organism that has lived a lot and an organism that has actually
+ * grown a lot.
+ *
+ * No randomness, no time-based decay. Deltas fire only on cognitive
+ * events; passive ticks (Wave 19 heartbeat) leave vitals unchanged.
+ */
+export function evolveOrganismFromCognitiveAct(
+  state: OrganismVitalState,
+  ctx: CognitiveActContext,
+): OrganismVitalState {
   const next = { ...state, immuneMemory: [...state.immuneMemory] };
   next.age += 1;
+
+  if (ctx.approvalFired) {
+    next.evolutionaryAge = (state.evolutionaryAge ?? 0) + 1;
+  }
+
+  const base = deltaForDirective(ctx.directiveName);
+
+  let stressDelta = base.stressDelta;
+  if (ctx.contradictionScore && ctx.contradictionScore > 0) {
+    stressDelta += 0.5 * ctx.contradictionScore;
+  }
+
+  let complexityDelta = base.complexityDelta;
+  if (ctx.isFirstDraftEver) complexityDelta += 1.00;
+  if (ctx.isFirstRevisionInChain) complexityDelta += 0.50;
+  if (ctx.approvalFired) complexityDelta += -0.30;
+
+  next.energyReserves = clamp10(round1(state.energyReserves + base.energyDelta));
+  next.stressAccumulation = clamp10(round1(state.stressAccumulation + stressDelta));
+  next.complexityLoad = clamp10(round1(state.complexityLoad + complexityDelta));
+
   return next;
+}
+
+/** Back-compat wrapper. Wave 20 → 24 callers pass no context; this
+ *  forwards as an observation (no transitions, no contradictions).
+ *  New Wave 25+ call-sites should use evolveOrganismFromCognitiveAct
+ *  directly with a real context. */
+export function evolveOrganismFromObservation(state: OrganismVitalState): OrganismVitalState {
+  return evolveOrganismFromCognitiveAct(state, { directiveName: 'observe' });
 }
 
 // ─── Phase 90 — the closing synthesis ──────────────────────────

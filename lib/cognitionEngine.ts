@@ -27,7 +27,7 @@ import {
 } from './operatingSystemCore';
 import {
   createOrganismCoreStore,
-  evolveOrganismFromObservation,
+  evolveOrganismFromCognitiveAct,
 } from './persistentOrganismCore';
 import type {
   OSRuntimeState,
@@ -100,14 +100,30 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
 
   const at = Date.now();
   const osPost = EVOLVE_BY_VERB[verb](osPre, at);
-  const organismPost = evolveOrganismFromObservation(organismPre);
+  const directive = osPost.directiveLog[osPost.directiveLog.length - 1];
+
+  // Wave 25 — DSA: compose the cognitive act context from real
+  // state-transition facts (no fakery). isFirstDraftEver fires when
+  // currentDraft transitions from null to set AND no prior draft
+  // directive exists in the pre-evolve log. approvalFired fires
+  // when the directive is a successful 'approve' (Wave 26 verb).
+  // isFirstRevisionInChain is wired in Wave 26.
+  const directiveName = directive.directive;
+  const ctx = {
+    directiveName,
+    isFirstDraftEver:
+      directiveName === 'draft' &&
+      !osPre.currentDraft &&
+      !osPre.directiveLog.some((d) => d.directive === 'draft'),
+    approvalFired: directiveName === 'approve',
+    // contradictionScore + isFirstRevisionInChain populated in Wave 26
+  };
+  const organismPost = evolveOrganismFromCognitiveAct(organismPre, ctx);
 
   await Promise.all([
     osStore.save(osPost),
     organismStore.save(organismPost),
   ]);
-
-  const directive = osPost.directiveLog[osPost.directiveLog.length - 1];
 
   return {
     verb,
