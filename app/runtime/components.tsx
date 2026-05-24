@@ -505,6 +505,104 @@ export function SelfModel({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 34 — Adaptive Self-Regulation + Meta-Cognitive ──────
+//
+// Two-part dashboard: the biased thresholds that traits are currently
+// imposing on internal regulation, and the reliability metrics that
+// track how well the organism is reasoning over time. Every number
+// is deterministic; the panel hides when there is no self-model and
+// no meta-cognitive history.
+
+export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
+  const a = m.adaptiveRegulation;
+  if (!a.present) return null;
+
+  const tone =
+    a.status === 'volatile' ? '#FF4D2D' :
+    a.status === 'biasing'  ? '#C9A24B' :
+                              '#8AA98A';
+
+  const thresholdRow = (label: string, base: number, adaptive: number) => {
+    const delta = adaptive - base;
+    const arrow = delta > 0 ? '↑' : delta < 0 ? '↓' : '·';
+    const arrowColor = delta > 0 ? '#C9A24B' : delta < 0 ? '#6F8196' : 'rgba(247,245,242,0.30)';
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 flex-grow">{label}</span>
+        <span className="text-bone-200/40">{base.toFixed(1)}</span>
+        <span style={{ color: arrowColor }}>{arrow}</span>
+        <span className="text-bone-50/75">{adaptive.toFixed(1)}</span>
+        <span className="text-bone-200/30 w-[40px] text-right">
+          {delta === 0 ? '—' : `${delta > 0 ? '+' : ''}${delta.toFixed(1)}`}
+        </span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">adaptive self-regulation</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {a.status} · reliability {a.meta.cumulativeReliabilityScore.toFixed(1)}/10
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{a.statement}</div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">trait-biased thresholds</div>
+        <div className="flex flex-col gap-0.5">
+          {thresholdRow('contradiction escalation', a.thresholds.escalationThreshold.base, a.thresholds.escalationThreshold.adaptive)}
+          {thresholdRow('defer now · frag-risk',    a.thresholds.defer.fragmentationRiskNow.base, a.thresholds.defer.fragmentationRiskNow.adaptive)}
+          {thresholdRow('defer now · cadence',      a.thresholds.defer.cadenceHealthNow.base,     a.thresholds.defer.cadenceHealthNow.adaptive)}
+          {thresholdRow('defer soon · density',     a.thresholds.defer.cognitionDensitySoon.base, a.thresholds.defer.cognitionDensitySoon.adaptive)}
+          {thresholdRow('rest · energy low',        a.thresholds.rest.energyLow.base,             a.thresholds.rest.energyLow.adaptive)}
+          {thresholdRow('rest · stress high',       a.thresholds.rest.stressHigh.base,            a.thresholds.rest.stressHigh.adaptive)}
+          {thresholdRow('rest · complexity high',   a.thresholds.rest.complexityHigh.base,        a.thresholds.rest.complexityHigh.adaptive)}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3">
+        {([
+          ['cognition stability',     a.meta.cognitionStability],
+          ['reasoning decay',         a.meta.reasoningDecay],
+          ['prediction reliability',  a.meta.predictionReliability],
+          ['recovery trend',          a.meta.recoveryEfficiencyTrend],
+        ] as Array<[string, number]>).map(([label, val]) => (
+          <div key={label} className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/45">{label}</span>
+            <span className="text-[16px] tabular-nums text-bone-50/85">
+              {val.toFixed(1)}<span className="text-[10px] text-bone-200/40">/10</span>
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        defer predictions — open {a.meta.openPredictionsCount} · closed {a.meta.closedPredictionsCount}
+      </div>
+
+      {a.meta.recentClosedPredictions.length > 0 && (
+        <div className="pt-2 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">recent closed defer predictions</div>
+          {a.meta.recentClosedPredictions.map((p, i) => {
+            const outcomeColor =
+              p.outcome === 'improved'  ? '#8AA98A' :
+              p.outcome === 'worsened'  ? '#FF4D2D' :
+                                          'rgba(247,245,242,0.45)';
+            return (
+              <div key={i} className="italic tabular-nums text-bone-200/55 text-[10px]">
+                — t{p.deferTick} · <span style={{ color: outcomeColor }}>{p.outcome}</span> · reliability {p.reliabilityScore.toFixed(1)}/10
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 32 — Contradiction Field ─────────────────────────────
 //
 // Pressure topology. NOT personalities debating — weather systems

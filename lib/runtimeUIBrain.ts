@@ -78,6 +78,10 @@ export interface RuntimeSnapshot {
    *  identity history + instability windows + detected patterns.
    *  Longitudinal operational identity, never narrated. */
   selfModel?: import('./selfModelMemory').SelfModelMemoryState | null;
+  /** Wave 34 — meta-cognitive reliability. Cognition stability,
+   *  reasoning decay, prediction reliability, recovery efficiency
+   *  trend + open/closed defer prediction traces. */
+  metaCognitive?: import('./metaCognitive').MetaCognitiveState | null;
   capturedAt: number;
 }
 

@@ -90,6 +90,9 @@ import { buildContradictionFieldView } from './contradictionFieldView';
 // Wave 33 — Self Model.
 import type { SelfModelViewModel } from './selfModelView';
 import { buildSelfModelView } from './selfModelView';
+// Wave 34 — Adaptive Self-Regulation + Meta-Cognitive Reliability.
+import type { AdaptiveRegulationViewModel } from './adaptiveRegulationView';
+import { buildAdaptiveRegulationView } from './adaptiveRegulationView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -155,6 +158,10 @@ export interface RuntimeManifestation {
    *  coherence + consistency, instability windows, detected
    *  longitudinal patterns. */
   selfModel: SelfModelViewModel;
+  /** Wave 34 — Adaptive Self-Regulation. Trait-biased thresholds
+   *  + meta-cognitive reliability metrics (cognition stability,
+   *  reasoning decay, prediction reliability, recovery trend). */
+  adaptiveRegulation: AdaptiveRegulationViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -200,6 +207,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const purposeIntent = buildPurposeIntentView(snap);
   const contradictionField = buildContradictionFieldView(snap);
   const selfModel = buildSelfModelView(snap);
+  const adaptiveRegulation = buildAdaptiveRegulationView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -223,7 +231,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     internalDraft, strain, cadence,
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
     actionSandbox, recoveryState, consciousness, temporalIntelligence,
-    purposeIntent, contradictionField, selfModel,
+    purposeIntent, contradictionField, selfModel, adaptiveRegulation,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

@@ -1005,18 +1005,36 @@ export interface RestDepletionReason {
   pending_with_low_energy: boolean;
 }
 
+/** Wave 34 — when adaptive thresholds are passed in, use them; otherwise
+ *  baseline constants. Pre-Wave-34 callers can ignore the second arg. */
+export interface AdaptiveRestThresholdsLike {
+  energyLow: number;
+  stressHigh: number;
+  complexityHigh: number;
+  fragmentHigh: number;
+  pendingEnergyLow: number;
+}
+
 export function isOrganismDepleted(
   os: OSRuntimeState,
   organism: { energyReserves: number; stressAccumulation: number; complexityLoad: number },
+  thresholds?: AdaptiveRestThresholdsLike,
 ): RestDepletionReason {
+  const t = thresholds ?? {
+    energyLow: REST_ENERGY_THRESHOLD,
+    stressHigh: REST_STRESS_THRESHOLD,
+    complexityHigh: REST_COMPLEXITY_THRESHOLD,
+    fragmentHigh: REST_FRAGMENT_THRESHOLD,
+    pendingEnergyLow: REST_PENDING_ENERGY_THRESHOLD,
+  };
   return {
-    energy_low: organism.energyReserves <= REST_ENERGY_THRESHOLD,
-    stress_high: organism.stressAccumulation >= REST_STRESS_THRESHOLD,
-    complexity_high: organism.complexityLoad >= REST_COMPLEXITY_THRESHOLD,
-    fragmented: os.fragmentationStreak >= REST_FRAGMENT_THRESHOLD,
+    energy_low: organism.energyReserves <= t.energyLow,
+    stress_high: organism.stressAccumulation >= t.stressHigh,
+    complexity_high: organism.complexityLoad >= t.complexityHigh,
+    fragmented: os.fragmentationStreak >= t.fragmentHigh,
     pending_with_low_energy:
       os.pendingExternalActions.length > 0 &&
-      organism.energyReserves <= REST_PENDING_ENERGY_THRESHOLD,
+      organism.energyReserves <= t.pendingEnergyLow,
   };
 }
 
@@ -1044,10 +1062,11 @@ export function evolveOSFromRest(
     lastRestTick?: number;
   },
   at: number = Date.now(),
+  adaptiveThresholds?: AdaptiveRestThresholdsLike,
 ): OSRuntimeState {
   // Depletion check first — if the organism isn't depleted, rest
   // isn't needed at all and cadence is irrelevant.
-  const depletion = isOrganismDepleted(state, organism);
+  const depletion = isOrganismDepleted(state, organism, adaptiveThresholds);
   if (!depletionMet(depletion)) {
     return applyCognitiveAct(state, 'rest-refused', (next) =>
       `rest refused at tick ${next.uptime}: organism is not depleted ` +

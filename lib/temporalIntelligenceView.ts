@@ -19,6 +19,7 @@ import type {
   FragmentationObservation,
   RecoveryObservation,
 } from './temporalMemory';
+import { getAdaptiveDeferThresholds } from './adaptiveRegulation';
 
 export type DeferRecommendation = 'now' | 'soon' | 'not-yet' | 'not-needed';
 
@@ -130,10 +131,36 @@ function cognitionDensity(history: CadenceObservation[], currentTick: number): n
   return Math.round(Math.max(0, Math.min(10, density * 10)));
 }
 
-function deferRecommendation(a: Omit<TemporalAssessment, 'deferRecommendation' | 'strategicPatienceScore'>): DeferRecommendation {
-  if (a.fragmentationRisk >= 7 || a.cadenceHealth <= 3) return 'now';
-  if (a.fragmentationRisk >= 5 || a.cadenceHealth <= 5 || a.cognitionDensity >= 8) return 'soon';
-  if (a.recoveryEfficiency < 4 || a.approvalStability < 5) return 'not-yet';
+/** Wave 34 — defer thresholds can be biased by the defer-resistant
+ *  trait via getAdaptiveDeferThresholds. When biasing is supplied,
+ *  use those values; otherwise fall back to baseline constants. */
+interface DeferThresholdInputs {
+  fragmentationRiskNow: number;
+  cadenceHealthNow: number;
+  fragmentationRiskSoon: number;
+  cadenceHealthSoon: number;
+  cognitionDensitySoon: number;
+  recoveryEfficiencyNotYet: number;
+  approvalStabilityNotYet: number;
+}
+
+const BASELINE_DEFER_THRESHOLDS: DeferThresholdInputs = {
+  fragmentationRiskNow: 7,
+  cadenceHealthNow: 3,
+  fragmentationRiskSoon: 5,
+  cadenceHealthSoon: 5,
+  cognitionDensitySoon: 8,
+  recoveryEfficiencyNotYet: 4,
+  approvalStabilityNotYet: 5,
+};
+
+function deferRecommendation(
+  a: Omit<TemporalAssessment, 'deferRecommendation' | 'strategicPatienceScore'>,
+  thresholds: DeferThresholdInputs = BASELINE_DEFER_THRESHOLDS,
+): DeferRecommendation {
+  if (a.fragmentationRisk >= thresholds.fragmentationRiskNow || a.cadenceHealth <= thresholds.cadenceHealthNow) return 'now';
+  if (a.fragmentationRisk >= thresholds.fragmentationRiskSoon || a.cadenceHealth <= thresholds.cadenceHealthSoon || a.cognitionDensity >= thresholds.cognitionDensitySoon) return 'soon';
+  if (a.recoveryEfficiency < thresholds.recoveryEfficiencyNotYet || a.approvalStability < thresholds.approvalStabilityNotYet) return 'not-yet';
   return 'not-needed';
 }
 
@@ -243,7 +270,10 @@ export function computeTemporalAssessment(snap: RuntimeSnapshot): TemporalAssess
     approvalStability: approvalStability(mem.approvalHistory),
     cognitionDensity: cognitionDensity(mem.cadenceHistory, os.uptime),
   };
-  const deferRec = deferRecommendation(base);
+  // Wave 34 — adaptive defer thresholds from self-model if present.
+  const sm = snap.selfModel ?? null;
+  const thresholds = sm ? getAdaptiveDeferThresholds(sm) : BASELINE_DEFER_THRESHOLDS;
+  const deferRec = deferRecommendation(base, thresholds);
   const patience = strategicPatienceScore(
     { ...base, deferRecommendation: deferRec },
     mem.totalDefers,

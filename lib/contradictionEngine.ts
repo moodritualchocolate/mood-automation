@@ -29,7 +29,10 @@ import type { TemporalAssessment } from './temporalIntelligenceView';
 
 // ─── thresholds / hysteresis bands ─────────────────────────────
 
-/** Tension rises when opposing pressure is at or above this. */
+/** Default tension rises when opposing pressure is at or above this.
+ *  Wave 34 — the actual escalation threshold per event can be
+ *  RAISED by the pressure-resilient trait via getAdaptiveEscalationThreshold;
+ *  this constant is the BASELINE when self-model traits are inactive. */
 export const ESCALATION_PRESSURE_THRESHOLD = 6;
 /** Tension falls only when opposing pressure is at or below this. */
 export const RECOVERY_PRESSURE_THRESHOLD = 3;
@@ -120,8 +123,13 @@ export function updateContradictionFromSignal(
   os: OSRuntimeState,
   organism: OrganismVitalState,
   signal: { at: number; tick: number },
+  /** Wave 34 — when supplied, escalation threshold is adapted via
+   *  pressure-resilient trait intensity. Pass null/undefined for
+   *  pre-Wave-34 behavior (baseline 6). */
+  adaptiveEscalationThreshold?: number,
 ): { newState: ContradictionMemoryState; sacrifices: SacrificeApplication[] } {
   const pressureLevels = computePressureLevels(temporal, os, organism);
+  const escalationThreshold = adaptiveEscalationThreshold ?? ESCALATION_PRESSURE_THRESHOLD;
 
   let contradictionHistory = state.contradictionHistory;
   let resolvedTensions = state.resolvedTensions;
@@ -141,7 +149,7 @@ export function updateContradictionFromSignal(
     let newTension = pair.tensionScore;
     let cause: ContradictionEvent['cause'] | null = null;
 
-    if (goalAvailable && pressure >= ESCALATION_PRESSURE_THRESHOLD) {
+    if (goalAvailable && pressure >= escalationThreshold) {
       // escalate — scaled by how strongly pressure exceeds threshold.
       const escalationFactor = pressure / 10;
       newTension = clamp10(round1(pair.tensionScore + pair.escalationRate * escalationFactor));

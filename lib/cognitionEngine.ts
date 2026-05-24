@@ -45,6 +45,12 @@ import { createSelfModelMemoryStore } from './selfModelMemory';
 import { updateSelfModelFromSignal } from './selfModelEngine';
 import { strongestActiveTraitLabel } from './selfModelView';
 import {
+  getAdaptiveEscalationThreshold,
+  getAdaptiveRestThresholds,
+} from './adaptiveRegulation';
+import { createMetaCognitiveStore } from './metaCognitive';
+import { updateMetaCognitive } from './metaCognitiveEngine';
+import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
 } from './persistentOrganismCore';
@@ -125,7 +131,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const purposeStore = createPurposeMemoryStore();
   const contradictionStore = createContradictionMemoryStore();
   const selfModelStore = createSelfModelMemoryStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre] = await Promise.all([
+  const metaCognitiveStore = createMetaCognitiveStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -133,6 +140,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     purposeStore.read(),
     contradictionStore.read(),
     selfModelStore.read(),
+    metaCognitiveStore.read(),
   ]);
 
   const at = Date.now();
@@ -179,7 +187,9 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   } else if (verb === 'propose') {
     osPost = evolveOSFromPropose(osBeforeVerb, at);
   } else if (verb === 'rest') {
-    osPost = evolveOSFromRest(osBeforeVerb, organismPre, at);
+    // Wave 34 — adaptive rest thresholds biased by recovery-dependent trait.
+    const adaptiveRest = getAdaptiveRestThresholds(selfModelPre);
+    osPost = evolveOSFromRest(osBeforeVerb, organismPre, at, adaptiveRest);
   } else if (verb === 'defer') {
     // Compose the defer thought from the CURRENT temporal assessment
     // (computed against pre-evolve state — that's what justified the
@@ -431,6 +441,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     // current temporal/organism/os state, returns the updated
     // contradiction memory PLUS a list of sacrifice mutations to
     // apply to purpose state (active → fragmented, etc.).
+    // Wave 34 — escalation threshold biased by pressure-resilient trait.
+    const adaptiveEscalation = getAdaptiveEscalationThreshold(selfModelPre);
     const contradictionResult = updateContradictionFromSignal(
       contradictionPre,
       purposePost.goals,
@@ -438,6 +450,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       osPost,
       organismPost,
       { at, tick: osPost.uptime },
+      adaptiveEscalation,
     );
     const purposeFinal = applySacrificesToPurpose(
       purposePost,
@@ -460,10 +473,36 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       { at, tick: osPost.uptime },
     );
 
+    // Wave 34 — meta-cognitive update. Reads post-update state from every
+    // layer and tracks four reliability metrics (cognitionStability,
+    // reasoningDecay, predictionReliability, recoveryEfficiencyTrend)
+    // plus open/closed defer prediction traces.
+    const metaCognitivePost = updateMetaCognitive(
+      metaCognitivePre,
+      {
+        at, tick: osPost.uptime,
+        directiveName,
+        currentReview: directiveName === 'review' ? osPost.currentReview : null,
+        restFired: directiveName === 'rest',
+        restEffectiveness: directiveName === 'rest' && organismPost.lastRestSnapshot
+          ? Math.max(0, Math.min(1,
+              (((organismPost.lastRestSnapshot.afterEnergy - organismPost.lastRestSnapshot.beforeEnergy) / 1.2)
+              + ((organismPost.lastRestSnapshot.beforeStress - organismPost.lastRestSnapshot.afterStress) / 0.8)) / 2,
+            ))
+          : undefined,
+        deferFired: directiveName === 'defer',
+        assessment,
+        selfModelIdentityCoherence: selfModelPost.identityHistory.length > 0
+          ? selfModelPost.identityHistory[selfModelPost.identityHistory.length - 1].identityCoherence
+          : 5,
+      },
+    );
+
     await Promise.all([
       purposeStore.save(purposeFinal),
       contradictionStore.save(contradictionResult.newState),
       selfModelStore.save(selfModelPost),
+      metaCognitiveStore.save(metaCognitivePost),
     ]);
   }
 
