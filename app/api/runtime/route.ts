@@ -42,6 +42,7 @@ import { createCognitiveGovernanceStore } from '@lib/cognitiveGovernance';
 import { createConsequenceMemoryStore } from '@lib/consequenceMemory';
 import { createInternalEcologyStore } from '@lib/internalEcologyMemory';
 import { createResourceEconomyStore } from '@lib/resourceEconomyMemory';
+import { createEnvironmentMemoryStore } from '@lib/environmentMemory';
 import { classifyConsciousness, applyPassiveMetabolism } from '@lib/consciousnessView';
 import type { RuntimeSnapshot } from '@lib/index';
 
@@ -101,6 +102,8 @@ export async function GET() {
   const internalEcology = await createInternalEcologyStore().read();
   // ─── Wave 38 — resource economy ───────────────────────────────
   const resourceEconomy = await createResourceEconomyStore().read();
+  // ─── Wave 39 — environmental reality ──────────────────────────
+  const environment = await createEnvironmentMemoryStore().read();
 
   // The passive tick. Advances only os.uptime and os.seasonAge — no
   // directive, no posture change, no coordination shift, no archive
@@ -165,6 +168,7 @@ export async function GET() {
     consequenceMemory,
     internalEcology,
     resourceEconomy,
+    environment,
     capturedAt: Date.now(),
   };
 

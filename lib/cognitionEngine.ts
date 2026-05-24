@@ -76,6 +76,13 @@ import {
   applyScarcityBias,
   scarcityPressureContribution,
 } from './resourceEconomyEngine';
+import { createEnvironmentMemoryStore } from './environmentMemory';
+import {
+  updateEnvironment,
+  computeEnvironmentBias,
+  applyEnvironmentBias,
+  environmentPressureContribution,
+} from './environmentEngine';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -162,7 +169,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const consequenceStore = createConsequenceMemoryStore();
   const ecologyStore = createInternalEcologyStore();
   const resourceEconomyStore = createResourceEconomyStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre] = await Promise.all([
+  const environmentStore = createEnvironmentMemoryStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre, environmentPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -175,6 +183,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     consequenceStore.read(),
     ecologyStore.read(),
     resourceEconomyStore.read(),
+    environmentStore.read(),
   ]);
 
   const at = Date.now();
@@ -585,10 +594,13 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     // exhausted / unstable / highly volatile.
     // Wave 38 — additional pressure from resource collapse states +
     // ecology/scarcity biases applied to the composed gradients.
+    // Wave 39 — additional pressure from hostile / collapse-prone
+    // environment states + environment bias applied to gradients.
     const simulationPressure = simulationPressureFromConsequence(consequencePre);
     const ecologyPressure = ecologyPressureContribution(ecologyPost);
     const scarcityPressure = scarcityPressureContribution(resourceEconomyPost);
-    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure);
+    const envPressure = environmentPressureContribution(environmentPre);
+    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure + envPressure);
     const governancePre2 = updateGovernance(governancePre, {
       at, tick: osPost.uptime,
       directiveName,
@@ -597,14 +609,19 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       temporal: newTemporal,
       simulationPressure: compositeSimulationPressure,
     });
-    // Wave 37 + 38 — apply ecology bias AND scarcity bias to the
-    // just-composed gradients, clamped to [0,1] per gradient. Each
-    // contributes ±0.25 max so influence stays soft and bounded.
+    // Wave 37 + 38 + 39 — apply ecology, scarcity, AND environment
+    // bias to the just-composed gradients, clamped to [0,1] per
+    // gradient. Each contributes a bounded delta so influence stays
+    // soft, composable, and never exceeds [0,1] domain.
+    const envBias = computeEnvironmentBias(environmentPre.levels);
     const governancePost = {
       ...governancePre2,
-      gradients: applyScarcityBias(
-        applyEcologyBias(governancePre2.gradients, ecologyBias),
-        scarcityBias,
+      gradients: applyEnvironmentBias(
+        applyScarcityBias(
+          applyEcologyBias(governancePre2.gradients, ecologyBias),
+          scarcityBias,
+        ),
+        envBias,
       ),
     };
 
@@ -639,6 +656,22 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       tensionDelta: maxPairTensionPost - maxPairTensionPre,
     });
 
+    // Wave 39 — environment evolves at the end from the POST-event
+    // state. One-event-lagged feedback: NEXT event reads this updated
+    // environment when biasing its own dynamics. Bidirectional
+    // coupling without within-event recursion.
+    const environmentPost = updateEnvironment(environmentPre, {
+      at, tick: osPost.uptime,
+      directiveName,
+      ecology: ecologyPost,
+      governance: governancePost,
+      contradiction: contradictionResult.newState,
+      resourceEconomy: resourceEconomyPost,
+      consequence: consequencePost,
+      meta: metaCognitivePost,
+      assessment,
+    });
+
     await Promise.all([
       purposeStore.save(purposeFinal),
       contradictionStore.save(contradictionResult.newState),
@@ -648,6 +681,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       consequenceStore.save(consequencePost),
       ecologyStore.save(ecologyPost),
       resourceEconomyStore.save(resourceEconomyPost),
+      environmentStore.save(environmentPost),
     ]);
   }
 

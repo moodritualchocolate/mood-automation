@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology, ResourceEconomy } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology, ResourceEconomy, EnvironmentalReality } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -238,6 +238,13 @@ export default function RuntimePage() {
           recovery. Collapse states, species allocation conflicts, scarcity
           bias on governance gradients. The metabolism cognition pays. */}
       <ResourceEconomy m={m} />
+
+      {/* Wave 39 — Environmental Reality. Seven external operational
+          climate fields (volatility / opportunity / threat / recovery /
+          turbulence / stability / adaptation difficulty) with momentum +
+          hysteresis. Bidirectional organism-environment coupling. The
+          climate the organism must adapt to — NOT mood, NOT narrative. */}
+      <EnvironmentalReality m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,

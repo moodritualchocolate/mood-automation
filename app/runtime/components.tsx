@@ -603,6 +603,188 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 39 — Environmental Reality ──────────────────────────
+//
+// Seven external operational climate fields with momentum +
+// hysteresis. Each field shown with current level, last delta,
+// recent trajectory sparkline-style. Climate state + persistence,
+// bidirectional coupling diagnostic, cost / restoration multipliers,
+// bias on governance gradients. NOT mood. Not narrative weather.
+// External operational reality.
+
+export function EnvironmentalReality({ m }: { m: RuntimeManifestation }) {
+  const e = m.environment;
+  if (!e.present) return null;
+
+  const tone =
+    e.status === 'critical'    ? '#FF4D2D' :
+    e.status === 'cautionary'  ? '#C9A24B' :
+                                 '#8AA98A';
+
+  const fieldLabel = (id: string) =>
+    id === 'volatility'             ? 'volatility' :
+    id === 'opportunityDensity'     ? 'opportunity density' :
+    id === 'threatPressure'         ? 'threat pressure' :
+    id === 'recoveryClimate'        ? 'recovery climate' :
+    id === 'informationTurbulence'  ? 'information turbulence' :
+    id === 'stabilityField'         ? 'stability field' :
+    id === 'adaptationDifficulty'   ? 'adaptation difficulty' :
+                                      id;
+
+  /** Color depending on whether HIGH is bad (volatility/threat/turbulence/diff)
+   *  or HIGH is good (opportunity/recovery/stability). */
+  const fieldTone = (id: string, level: number) => {
+    const highIsBad = ['volatility', 'threatPressure', 'informationTurbulence', 'adaptationDifficulty'].includes(id);
+    if (highIsBad) {
+      return level >= 7 ? '#FF4D2D' : level >= 5 ? '#C9A24B' : '#8AA98A';
+    } else {
+      return level <= 3 ? '#FF4D2D' : level <= 5 ? '#C9A24B' : '#8AA98A';
+    }
+  };
+
+  const biasRow = (label: string, value: number) => {
+    const sign = value === 0 ? '' : value > 0 ? '+' : '';
+    const c =
+      Math.abs(value) < 0.04 ? 'rgba(247,245,242,0.50)' :
+      value > 0 ? '#8AA98A' : '#C9A24B';
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 flex-grow">{label}</span>
+        <span style={{ color: c }} className="w-[60px] text-right">{sign}{value.toFixed(2)}</span>
+      </div>
+    );
+  };
+
+  // Inline mini-sparkline from the trajectory points.
+  const sparkline = (points: { level: number }[]) => {
+    if (points.length < 2) {
+      return <div className="text-[9px] text-bone-200/30">no trajectory</div>;
+    }
+    const w = 80, h = 16;
+    const xs = points.map((_, i) => (i / (points.length - 1)) * w);
+    const ys = points.map((p) => h - (p.level / 10) * h);
+    const d = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
+    return (
+      <svg width={w} height={h} className="block">
+        <path d={d} fill="none" stroke="rgba(247,245,242,0.55)" strokeWidth="1" />
+      </svg>
+    );
+  };
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">environmental reality</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {e.state} · held {e.statePersistenceTicks}ev · cost×{e.costMultiplier.toFixed(2)} · updates {e.totalUpdates}
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{e.statement}</div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          seven climate fields · level / momentum / recent trajectory
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {e.fields.map((f) => {
+            const c = fieldTone(f.id, f.level);
+            const pct = Math.round((f.level / 10) * 100);
+            return (
+              <div key={f.id} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 w-[160px]">{fieldLabel(f.id)}</span>
+                <div className="flex-grow h-[5px] bg-ink-900/70 border hairline relative">
+                  <div className="h-full" style={{ width: `${pct}%`, backgroundColor: c }} />
+                  <div
+                    className="absolute top-0 bottom-0 w-[1px]"
+                    style={{ left: `${(f.baseline / 10) * 100}%`, backgroundColor: 'rgba(247,245,242,0.4)' }}
+                  />
+                </div>
+                <span className="w-[40px] text-right text-bone-50/75">{f.level.toFixed(1)}</span>
+                <span
+                  className="w-[50px] text-right text-[9px]"
+                  style={{ color: f.emaRate > 0 ? '#C9A24B' : f.emaRate < 0 ? '#6F8196' : 'rgba(247,245,242,0.40)' }}
+                >
+                  {f.emaRate > 0 ? '+' : ''}{f.emaRate.toFixed(2)}/ev
+                </span>
+                <span className="w-[80px]">{sparkline(f.trajectory)}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {e.coupling && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            organism ↔ environment coupling (this event)
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] tabular-nums">
+            <div className="flex flex-col">
+              <span className="text-[9px] text-bone-200/45 uppercase tracking-[0.16em]">→ volatility</span>
+              <span className="text-bone-50/75">
+                {e.coupling.organismToVolatility > 0 ? '+' : ''}{e.coupling.organismToVolatility.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] text-bone-200/45 uppercase tracking-[0.16em]">→ threat</span>
+              <span className="text-bone-50/75">
+                {e.coupling.organismToThreat > 0 ? '+' : ''}{e.coupling.organismToThreat.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] text-bone-200/45 uppercase tracking-[0.16em]">→ recovery</span>
+              <span className="text-bone-50/75">
+                {e.coupling.organismToRecovery > 0 ? '+' : ''}{e.coupling.organismToRecovery.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] text-bone-200/45 uppercase tracking-[0.16em]">organism impact ema</span>
+              <span className="text-bone-50/75">{e.organismImpactEMA.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          environment bias on governance gradients
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {biasRow('cognition throughput',  e.bias.cognitionThroughput)}
+          {biasRow('escalation permission', e.bias.escalationPermission)}
+          {biasRow('exploration intensity', e.bias.explorationIntensity)}
+          {biasRow('defer acceptance',      e.bias.deferAcceptance)}
+          {biasRow('recovery weighting',    e.bias.recoveryWeighting)}
+          {biasRow('burst tolerance',       e.bias.burstTolerance)}
+        </div>
+      </div>
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        cost × {e.costMultiplier.toFixed(2)} · restoration × {e.restorationMultiplier.toFixed(2)} ·
+        +{e.simulationPressureContribution.toFixed(2)} simulation pressure
+      </div>
+
+      {e.recentObservations.length > 0 && (
+        <div className="pt-2 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            recent significant climate movements
+          </div>
+          {e.recentObservations.slice(0, 6).map((o, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{o.tick} · {fieldLabel(o.field)} →{' '}
+              <span style={{ color: o.delta > 0 ? '#C9A24B' : '#6F8196' }}>
+                {o.delta > 0 ? '+' : ''}{o.delta.toFixed(2)}
+              </span>{' '}
+              (now {o.level.toFixed(1)}/10)
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 38 — Resource Economy ───────────────────────────────
 //
 // Seven independent 0..100 operational resources, each with current

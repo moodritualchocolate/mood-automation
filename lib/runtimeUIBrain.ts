@@ -101,6 +101,12 @@ export interface RuntimeSnapshot {
    *  with dynamic per-event costs, asymmetric ecology-driven recovery,
    *  collapse states, allocation conflicts, and ScarcityBias output. */
   resourceEconomy?: import('./resourceEconomyMemory').ResourceEconomyState | null;
+  /** Wave 39 — external environment. Seven 0..10 operational climate
+   *  fields (volatility, opportunityDensity, threatPressure, recovery-
+   *  Climate, informationTurbulence, stabilityField, adaptationDifficulty)
+   *  evolving with momentum + hysteresis, with bidirectional coupling
+   *  to the organism. Bias bounded ±0.20 per gradient. */
+  environment?: import('./environmentMemory').EnvironmentMemoryState | null;
   capturedAt: number;
 }
 
