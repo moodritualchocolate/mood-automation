@@ -880,6 +880,144 @@ export function evolveOSFromApprove(
   return { ...next, currentApproval: approval };
 }
 
+// ─── Wave 28 — Rest + Recovery Physiology ──────────────────────
+//
+// rest is the first cognitive verb that operates on the organism's
+// physiology directly — restoration rather than accumulation. It is
+// gated by two checks:
+//
+//   1. Depletion check — rest is allowed only if the organism is
+//      actually depleted. At least one of:
+//        energyReserves     <= REST_ENERGY_THRESHOLD     (4)
+//        stressAccumulation >= REST_STRESS_THRESHOLD     (5)
+//        complexityLoad     >= REST_COMPLEXITY_THRESHOLD (6)
+//        fragmentationStreak >= REST_FRAGMENT_THRESHOLD  (3)
+//        pendingExternalActions.length > 0 AND energyReserves <= 6
+//      If none are true, refuse with 'rest is not needed'.
+//
+//   2. Cadence check — rest is allowed only if enough has happened
+//      since the previous successful rest. The condition is OR:
+//        ≥ REST_CADENCE_MIN_ACTS (3) non-rest acts since lastRestTick
+//        ≥ REST_CADENCE_MIN_TICKS (10) uptime ticks since lastRestTick
+//      Either condition relaxes the gate. Refusals don't game the
+//      gate because rest-refused directives are excluded from the
+//      act count.
+//
+// On success the organism's vitals shift by the user-specified
+// magnitudes:
+//   energyReserves      +1.2 (clamped 10)
+//   stressAccumulation  -0.8 (floored 0)
+//   complexityLoad      -0.6 (floored 0)
+//   coordinationEMA     +0.3 (clamped 10, ADDITIVE — overrides
+//                              applyCognitiveAct's EMA blend)
+//   fragmentationStreak -1 (floored 0, OVERRIDES applyCognitiveAct's
+//                            success-reset-to-zero)
+//   restCount           +1
+//   lastRestAt / lastRestTick / lastRestSnapshot set on the organism
+
+export const REST_ENERGY_THRESHOLD = 4;
+export const REST_STRESS_THRESHOLD = 5;
+export const REST_COMPLEXITY_THRESHOLD = 6;
+export const REST_FRAGMENT_THRESHOLD = 3;
+export const REST_PENDING_ENERGY_THRESHOLD = 6;
+export const REST_CADENCE_MIN_ACTS = 3;
+export const REST_CADENCE_MIN_TICKS = 10;
+
+export interface RestDepletionReason {
+  energy_low: boolean;
+  stress_high: boolean;
+  complexity_high: boolean;
+  fragmented: boolean;
+  pending_with_low_energy: boolean;
+}
+
+export function isOrganismDepleted(
+  os: OSRuntimeState,
+  organism: { energyReserves: number; stressAccumulation: number; complexityLoad: number },
+): RestDepletionReason {
+  return {
+    energy_low: organism.energyReserves <= REST_ENERGY_THRESHOLD,
+    stress_high: organism.stressAccumulation >= REST_STRESS_THRESHOLD,
+    complexity_high: organism.complexityLoad >= REST_COMPLEXITY_THRESHOLD,
+    fragmented: os.fragmentationStreak >= REST_FRAGMENT_THRESHOLD,
+    pending_with_low_energy:
+      os.pendingExternalActions.length > 0 &&
+      organism.energyReserves <= REST_PENDING_ENERGY_THRESHOLD,
+  };
+}
+
+function depletionMet(r: RestDepletionReason): boolean {
+  return r.energy_low || r.stress_high || r.complexity_high ||
+         r.fragmented || r.pending_with_low_energy;
+}
+
+function depletionReasons(r: RestDepletionReason): string[] {
+  const reasons: string[] = [];
+  if (r.energy_low) reasons.push('energyReserves low');
+  if (r.stress_high) reasons.push('stressAccumulation high');
+  if (r.complexity_high) reasons.push('complexityLoad high');
+  if (r.fragmented) reasons.push('fragmentationStreak elevated');
+  if (r.pending_with_low_energy) reasons.push('pending actions with low energy');
+  return reasons;
+}
+
+export function evolveOSFromRest(
+  state: OSRuntimeState,
+  organism: {
+    energyReserves: number;
+    stressAccumulation: number;
+    complexityLoad: number;
+    lastRestTick?: number;
+  },
+  at: number = Date.now(),
+): OSRuntimeState {
+  // Depletion check first — if the organism isn't depleted, rest
+  // isn't needed at all and cadence is irrelevant.
+  const depletion = isOrganismDepleted(state, organism);
+  if (!depletionMet(depletion)) {
+    return applyCognitiveAct(state, 'rest-refused', (next) =>
+      `rest refused at tick ${next.uptime}: organism is not depleted ` +
+      `enough to justify recovery (energy ${organism.energyReserves}/10, ` +
+      `stress ${organism.stressAccumulation}/10, complexity ` +
+      `${organism.complexityLoad}/10, fragmentation ${state.fragmentationStreak}).`,
+      at,
+    );
+  }
+
+  // Cadence check — OR semantic: either enough acts OR enough ticks.
+  const lastRestTick = organism.lastRestTick ?? -Infinity;
+  const ticksElapsed = state.uptime - lastRestTick;
+  const actsElapsed = state.directiveLog.filter((d) =>
+    d.tick > lastRestTick && d.directive !== 'rest' && d.directive !== 'rest-refused',
+  ).length;
+  const cadenceOk =
+    ticksElapsed >= REST_CADENCE_MIN_TICKS ||
+    actsElapsed >= REST_CADENCE_MIN_ACTS;
+
+  if (!cadenceOk) {
+    return applyCognitiveAct(state, 'rest-refused', (next) =>
+      `rest refused at tick ${next.uptime}: recovery cadence not yet ` +
+      `elapsed (${ticksElapsed} ticks, ${actsElapsed} non-rest acts ` +
+      `since lastRestTick ${lastRestTick === -Infinity ? 'never' : lastRestTick}; ` +
+      `need ${REST_CADENCE_MIN_TICKS} ticks or ${REST_CADENCE_MIN_ACTS} acts).`,
+      at,
+    );
+  }
+
+  // Success — apply the standard cognitive-act updates, then override
+  // coordinationEMA and fragmentationStreak per spec.
+  const next = applyCognitiveAct(state, 'rest', (post) =>
+    `rested at tick ${post.uptime}: recovery applied — reasons [${depletionReasons(depletion).join(', ')}]. ` +
+    `Internal only — no external action, no sandbox change.`,
+    at,
+  );
+
+  next.coordinationEMA = clamp10(round1(state.coordinationEMA + 0.3));
+  next.fragmentationStreak = Math.max(0, state.fragmentationStreak - 1);
+
+  return next;
+}
+
 // ─── Wave 27 — Phase 8A: Action Sandbox ────────────────────────
 //
 // propose creates a sandboxed pending external action candidate. The

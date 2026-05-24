@@ -43,6 +43,23 @@ export interface OrganismVitalState {
   consecutiveActions: number;   // runs since the last rest
   restCount: number;
   adaptationCount: number;
+  /** Wave 28 — wall-clock time of the most recent successful rest. */
+  lastRestAt?: number;
+  /** Wave 28 — os.uptime at the most recent successful rest. */
+  lastRestTick?: number;
+  /** Wave 28 — pre/post vitals snapshot from the most recent
+   *  successful rest. Lets the dashboard show "before" and "after"
+   *  honestly without needing to remember prior state. */
+  lastRestSnapshot?: {
+    beforeEnergy: number;
+    beforeStress: number;
+    beforeComplexity: number;
+    beforeFragmentation: number;
+    afterEnergy: number;
+    afterStress: number;
+    afterComplexity: number;
+    afterFragmentation: number;
+  };
   updatedAt: number;
 }
 
@@ -180,6 +197,26 @@ export function evolveOrganismFromCognitiveAct(
   next.energyReserves = clamp10(round1(state.energyReserves + base.energyDelta));
   next.stressAccumulation = clamp10(round1(state.stressAccumulation + stressDelta));
   next.complexityLoad = clamp10(round1(state.complexityLoad + complexityDelta));
+
+  // Wave 28 — successful rest sets the rest tracking fields.
+  if (ctx.directiveName === 'rest') {
+    next.restCount = state.restCount + 1;
+    next.consecutiveActions = 0;  // rest clears the action-count
+    if (ctx.restAt != null) next.lastRestAt = ctx.restAt;
+    if (ctx.restTick != null) next.lastRestTick = ctx.restTick;
+    if (ctx.preRestSnapshot != null && ctx.postRestFragmentation != null) {
+      next.lastRestSnapshot = {
+        beforeEnergy: ctx.preRestSnapshot.energyReserves,
+        beforeStress: ctx.preRestSnapshot.stressAccumulation,
+        beforeComplexity: ctx.preRestSnapshot.complexityLoad,
+        beforeFragmentation: ctx.preRestSnapshot.fragmentationStreak,
+        afterEnergy: next.energyReserves,
+        afterStress: next.stressAccumulation,
+        afterComplexity: next.complexityLoad,
+        afterFragmentation: ctx.postRestFragmentation,
+      };
+    }
+  }
 
   return next;
 }

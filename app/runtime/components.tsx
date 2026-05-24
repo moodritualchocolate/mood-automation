@@ -388,6 +388,80 @@ export function ActionSandbox({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 28 — Rest + Recovery Physiology ─────────────────────
+//
+// Calm recovery surface. Status label colour-coded by state, before/
+// after vitals from the most recent successful rest rendered as
+// dim numerals, no animation, no graphs. Always visible once the
+// organism exists (passive baseline state when no rest history).
+
+export function RecoveryState({ m }: { m: RuntimeManifestation }) {
+  const r = m.recoveryState;
+  if (!r.present) return null;
+
+  const tone =
+    r.status === 'needed'         ? '#C9A24B' :
+    r.status === 'recovering'     ? '#6F8196' :
+    r.status === 'recently-rested' ? '#8AA98A' :
+                                     '#6F8196';
+
+  const fmt = (n: number) => n.toFixed(1);
+  const arrow = (a: number, b: number) =>
+    a === b ? '–' : (b > a ? '↑' : '↓');
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">recovery state</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {r.status} · rest count {r.restCount}
+        </span>
+      </div>
+      <div className="text-[11px] text-bone-200/60">{r.statement}</div>
+
+      {r.lastRestTick != null && (
+        <div className="text-[10px] text-bone-200/40 pt-1 tabular-nums">
+          last rest tick {r.lastRestTick} · {r.ticksSinceLastRest} ticks since · {r.actsSinceLastRest} non-rest acts since
+        </div>
+      )}
+
+      {r.lastRestSnapshot && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 text-[11px]">
+          {([
+            ['energy', r.lastRestSnapshot.beforeEnergy, r.lastRestSnapshot.afterEnergy],
+            ['stress', r.lastRestSnapshot.beforeStress, r.lastRestSnapshot.afterStress],
+            ['complexity', r.lastRestSnapshot.beforeComplexity, r.lastRestSnapshot.afterComplexity],
+            ['fragmentation', r.lastRestSnapshot.beforeFragmentation, r.lastRestSnapshot.afterFragmentation],
+          ] as Array<[string, number, number]>).map(([label, before, after]) => (
+            <div key={label} className="flex flex-col">
+              <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40">{label}</span>
+              <span className="tabular-nums text-bone-50/80">
+                {fmt(before)} {arrow(before, after)} {fmt(after)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.depletion && (
+        <div className="flex flex-wrap gap-1 pt-3">
+          {(([
+            ['energy low', r.depletion.energy_low],
+            ['stress high', r.depletion.stress_high],
+            ['complexity high', r.depletion.complexity_high],
+            ['fragmented', r.depletion.fragmented],
+            ['pending + low energy', r.depletion.pending_with_low_energy],
+          ] as Array<[string, boolean]>)).filter(([_, v]) => v).map(([label]) => (
+            <span key={label} className="text-[9px] tracking-[0.14em] uppercase border hairline px-1 py-0.5 text-bone-200/50">
+              {label}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── per-panel renderers ───────────────────────────────────────
 
 function OrganismPanel({ m }: { m: RuntimeManifestation }) {

@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -165,6 +165,13 @@ export default function RuntimePage() {
           action candidates if any exist; hidden otherwise. NOTHING
           here executes — the panel exists to make the SANDBOX visible. */}
       <ActionSandbox m={m} />
+
+      {/* Wave 28 — Rest + Recovery Physiology. Always present once
+          the organism exists. Shows the recovery status (not-needed /
+          needed / recovering / recently-rested), restCount, time
+          since last rest, depletion flags, and the before/after
+          snapshot from the most recent successful rest. */}
+      <RecoveryState m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,

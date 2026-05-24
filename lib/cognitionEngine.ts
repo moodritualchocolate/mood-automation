@@ -28,6 +28,7 @@ import {
   evolveOSFromRevise,
   evolveOSFromApprove,
   evolveOSFromPropose,
+  evolveOSFromRest,
 } from './operatingSystemCore';
 import {
   createOrganismCoreStore,
@@ -55,7 +56,7 @@ export type CognitiveVerb =
   | 'observe' | 'notice' | 'consider' | 'restrain'
   | 'permit'  | 'prepare' | 'draft'
   | 'review'  | 'revise'  | 'approve'
-  | 'propose';
+  | 'propose' | 'rest';
 
 export interface CognitionEventResult {
   verb: CognitiveVerb;
@@ -140,6 +141,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     osPost = evolveOSFromApprove(osPre, at);
   } else if (verb === 'propose') {
     osPost = evolveOSFromPropose(osPre, at);
+  } else if (verb === 'rest') {
+    osPost = evolveOSFromRest(osPre, organismPre, at);
   } else {
     const EVOLVE_BY_VERB: Record<string, (state: OSRuntimeState, at?: number) => OSRuntimeState> = {
       observe: evolveOSFromObservation,
@@ -163,6 +166,22 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const contradictionScore = directiveName === 'review'
     ? (osPost.currentReview?.contradictionScore ?? 0)
     : 0;
+  // Wave 28 — rest context: snapshot pre-rest organism vitals + post-rest
+  // fragmentation so evolveOrganismFromCognitiveAct can build lastRestSnapshot.
+  const isRestSuccess = directiveName === 'rest';
+  const restCtx = isRestSuccess
+    ? {
+        restAt: at,
+        restTick: osPost.uptime,
+        preRestSnapshot: {
+          energyReserves: organismPre.energyReserves,
+          stressAccumulation: organismPre.stressAccumulation,
+          complexityLoad: organismPre.complexityLoad,
+          fragmentationStreak: osPre.fragmentationStreak,
+        },
+        postRestFragmentation: osPost.fragmentationStreak,
+      }
+    : {};
   const ctx = {
     directiveName,
     isFirstDraftEver:
@@ -173,6 +192,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       osPost.currentRevision?.revisionNumber === 1,
     approvalFired: directiveName === 'approve',
     contradictionScore,
+    ...restCtx,
   };
   const organismPost = evolveOrganismFromCognitiveAct(organismPre, ctx);
 
@@ -262,3 +282,4 @@ export const runReview      = () => runCognitiveAct('review');
 export const runRevise      = () => runCognitiveAct('revise');
 export const runApprove     = () => runCognitiveAct('approve');
 export const runPropose     = () => runCognitiveAct('propose');
+export const runRest        = () => runCognitiveAct('rest');

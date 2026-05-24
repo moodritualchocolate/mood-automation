@@ -50,6 +50,10 @@ const DIRECTIVE_TONE: Record<string, Tone> = {
   // 'warn' marks that the directive sits at the runtime boundary
   // without crossing it. Refusal is also 'warn'.
   propose: 'warn', 'propose-refused': 'warn',
+  // Wave 28 — Rest. rest is restoration, marked 'good'. Refusal is
+  // 'cool' (calm) — refusing rest means the organism is fine, not
+  // that anything went wrong.
+  rest: 'good', 'rest-refused': 'cool',
 };
 
 export function buildCognitionTimelineView(snap: RuntimeSnapshot): CognitionTimelineViewModel {

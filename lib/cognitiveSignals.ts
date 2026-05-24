@@ -50,6 +50,11 @@ export const VERB_DELTAS: Readonly<Record<string, CognitiveSignalDelta>> = {
   // bump from approaching the boundary; complexity adds (one more
   // pending candidate to hold in mind).
   propose:  { energyDelta: -0.25, stressDelta: +0.10, complexityDelta: +0.30, coordinationContribution: 7 },
+  // Wave 28 — Rest + Recovery Physiology. The largest restorative
+  // deltas in the system. coordinationContribution is set for the
+  // record but is overridden in evolveOSFromRest (which applies an
+  // additive +0.3 to coordinationEMA instead of EMA-blending).
+  rest:     { energyDelta: +1.2, stressDelta: -0.8, complexityDelta: -0.6, coordinationContribution: 7 },
 };
 
 /** Any *-refused directive shares this delta. Small energy debit,
@@ -88,4 +93,23 @@ export interface CognitiveActContext {
   /** Wave 26 — true on a successful 'approve'; advances
    *  evolutionaryAge and sheds complexity by -0.30. */
   approvalFired?: boolean;
+  /** Wave 28 — on a successful 'rest', the wall-clock time of the
+   *  rest. Used by the organism evolve to set lastRestAt. */
+  restAt?: number;
+  /** Wave 28 — on a successful 'rest', the os.uptime at rest. Used
+   *  to set lastRestTick. */
+  restTick?: number;
+  /** Wave 28 — on a successful 'rest', the pre-rest vitals snapshot
+   *  for the lastRestSnapshot field on organism state. The
+   *  orchestrator captures these before evolveOrganismFromCognitiveAct
+   *  applies the delta, then passes them in. */
+  preRestSnapshot?: {
+    energyReserves: number;
+    stressAccumulation: number;
+    complexityLoad: number;
+    fragmentationStreak: number;
+  };
+  /** Wave 28 — on a successful 'rest', the post-rest fragmentation
+   *  from os state (organism doesn't carry fragmentationStreak itself). */
+  postRestFragmentation?: number;
 }
