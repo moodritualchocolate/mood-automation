@@ -99,6 +99,9 @@ import { buildCognitiveGovernanceView } from './cognitiveGovernanceView';
 // Wave 36 — Strategic Simulation.
 import type { StrategicSimulationViewModel } from './strategicSimulationView';
 import { buildStrategicSimulationView } from './strategicSimulationView';
+// Wave 37 — Internal Ecology.
+import type { InternalEcologyViewModel } from './internalEcologyView';
+import { buildInternalEcologyView } from './internalEcologyView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -175,6 +178,11 @@ export interface RuntimeManifestation {
    *  trajectory projections (+5/+20/+50) + survivability + verb
    *  cost map + recursive feedback pressure. */
   strategicSimulation: StrategicSimulationViewModel;
+  /** Wave 37 — Internal Ecology. Four numeric pressure species
+   *  (explorer / conservator / optimizer / guardian), inter-species
+   *  tension topology, dominance shifts, and EcologyBias on
+   *  governance gradients. NOT personalities — pressure topology. */
+  internalEcology: InternalEcologyViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -223,6 +231,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const adaptiveRegulation = buildAdaptiveRegulationView(snap);
   const cognitiveGovernance = buildCognitiveGovernanceView(snap);
   const strategicSimulation = buildStrategicSimulationView(snap);
+  const internalEcology = buildInternalEcologyView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -247,7 +256,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
     actionSandbox, recoveryState, consciousness, temporalIntelligence,
     purposeIntent, contradictionField, selfModel, adaptiveRegulation,
-    cognitiveGovernance, strategicSimulation,
+    cognitiveGovernance, strategicSimulation, internalEcology,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

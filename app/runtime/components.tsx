@@ -603,6 +603,170 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 37 — Internal Ecology ───────────────────────────────
+//
+// Four numeric pressure species: explorer, conservator, optimizer,
+// guardian. Each tracked as intensity / fatigue / influenceWeight /
+// volatility / activationState. NOT personalities. Pure operational
+// pressure topology. Inter-species tension matrix shown alongside.
+// EcologyBias surfaces the deltas applied to governance gradients.
+
+export function InternalEcology({ m }: { m: RuntimeManifestation }) {
+  const e = m.internalEcology;
+  if (!e.present) return null;
+
+  const tone =
+    e.state === 'exhausted'      ? '#FF4D2D' :
+    e.state === 'unstable'       ? '#FF4D2D' :
+    e.state === 'over-optimized' ? '#C9A24B' :
+    e.state === 'defensive'      ? '#6F8196' :
+    e.state === 'exploratory'    ? '#C9A24B' :
+                                   '#8AA98A';
+
+  const stateTone = (s: string) =>
+    s === 'active'     ? '#8AA98A' :
+    s === 'fatigued'   ? '#FF4D2D' :
+    s === 'recovering' ? '#C9A24B' :
+    s === 'forming'    ? '#6F8196' :
+                         'rgba(247,245,242,0.30)';
+
+  const intensityBar = (label: string, value: number, max: number, color: string) => {
+    const pct = Math.round(Math.min(1, value / max) * 100);
+    return (
+      <div className="flex items-center gap-2 text-[9px] tabular-nums">
+        <span className="text-bone-200/45 w-[60px]">{label}</span>
+        <div className="flex-grow h-[4px] bg-ink-900/70 border hairline">
+          <div className="h-full" style={{ width: `${pct}%`, backgroundColor: color }} />
+        </div>
+        <span className="w-[34px] text-right text-bone-50/70">{value.toFixed(1)}</span>
+      </div>
+    );
+  };
+
+  const biasRow = (label: string, value: number) => {
+    // value range −0.25..+0.25
+    const sign = value === 0 ? '' : value > 0 ? '+' : '';
+    const c =
+      Math.abs(value) < 0.05 ? 'rgba(247,245,242,0.50)' :
+      value > 0 ? '#8AA98A' : '#C9A24B';
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 flex-grow">{label}</span>
+        <span style={{ color: c }} className="w-[60px] text-right">{sign}{value.toFixed(2)}</span>
+      </div>
+    );
+  };
+
+  const tensionTone = (t: number) =>
+    t >= 7 ? '#FF4D2D' :
+    t >= 4 ? '#C9A24B' :
+             '#8AA98A';
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">internal ecology</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {e.state} · dominant {e.dominantSpecies ?? 'none'} · balance {e.ecologicalBalance.toFixed(1)}/10
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{e.statement}</div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3">
+        {e.species.map((sp) => {
+          const isDom = sp.id === e.dominantSpecies;
+          const speciesColor =
+            sp.id === 'explorer'    ? '#C9A24B' :
+            sp.id === 'conservator' ? '#6F8196' :
+            sp.id === 'optimizer'   ? '#8AA98A' :
+                                      '#FF4D2D';
+          return (
+            <div key={sp.id} className="border hairline bg-ink-900/30 px-3 py-2">
+              <div className="flex items-baseline justify-between mb-1 gap-2">
+                <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: speciesColor }}>
+                  {sp.id}{isDom ? ' ·' : ''}
+                </span>
+                <span className="text-[9px] tracking-[0.18em] uppercase" style={{ color: stateTone(sp.activationState) }}>
+                  {sp.activationState} · w/l {sp.cumulativeWins}/{sp.cumulativeLosses}
+                </span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                {intensityBar('intensity', sp.intensity, 10, speciesColor)}
+                {intensityBar('fatigue',   sp.fatigue,   10, '#FF4D2D')}
+                {intensityBar('influence', sp.influenceWeight * 10, 10, '#8AA98A')}
+                {intensityBar('volatility',sp.volatility, 10, '#C9A24B')}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          inter-species tension matrix
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {e.tensionPairs.map((p) => (
+            <div key={p.pairId} className="flex items-center gap-2 text-[10px] tabular-nums">
+              <span className="text-bone-200/55 w-[180px]">
+                {p.speciesA} <span className="text-bone-200/30">↔</span> {p.speciesB}
+              </span>
+              <span className="w-[60px] text-right" style={{ color: tensionTone(p.tension) }}>
+                {p.tension.toFixed(1)}/10
+              </span>
+              <span className="text-bone-200/40 w-[80px] text-right">stab {p.stability.toFixed(1)}</span>
+              <span className="text-bone-200/40 w-[80px] text-right">mean {p.historicalMean.toFixed(1)}</span>
+              <span className="text-bone-200/30 w-[120px] text-right text-[9px]">
+                esc {p.escalationVelocity > 0 ? '+' : ''}{p.escalationVelocity.toFixed(2)}
+                {' · '}
+                rec {p.recoveryVelocity.toFixed(2)}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          ecology bias on governance gradients (±0.25 max per species)
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {biasRow('cognition throughput',  e.bias.cognitionThroughput)}
+          {biasRow('escalation permission', e.bias.escalationPermission)}
+          {biasRow('exploration intensity', e.bias.explorationIntensity)}
+          {biasRow('defer acceptance',      e.bias.deferAcceptance)}
+          {biasRow('recovery weighting',    e.bias.recoveryWeighting)}
+          {biasRow('burst tolerance',       e.bias.burstTolerance)}
+        </div>
+      </div>
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        volatility field {e.volatilityField.toFixed(1)}/10 · updates {e.totalUpdates} ·
+        expansion {e.expansionBias > 0 ? '+' : ''}{e.expansionBias.toFixed(2)} ·
+        conservation {e.conservationBias > 0 ? '+' : ''}{e.conservationBias.toFixed(2)} ·
+        survivability {e.survivabilityBias > 0 ? '+' : ''}{e.survivabilityBias.toFixed(2)}
+      </div>
+
+      {e.recentShifts.length > 0 && (
+        <div className="pt-2 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            recent dominance shifts
+          </div>
+          {e.recentShifts.map((s, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{s.tick} · <span className="text-bone-200/40">{s.from ?? 'null'}</span>
+              {' → '}
+              <span className="text-bone-50/75">{s.to}</span>
+              <span className="text-bone-200/40"> · {s.reason}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 36 — Strategic Simulation ───────────────────────────
 //
 // Multi-horizon trajectory projection. Three horizon cards (+5, +20,

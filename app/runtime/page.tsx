@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -224,6 +224,13 @@ export default function RuntimePage() {
           critical-region flag, verb cost map, recursive-feedback pressure.
           Long-horizon survivability biases next-event governance. */}
       <StrategicSimulation m={m} />
+
+      {/* Wave 37 — Internal Ecology. Four numeric pressure species
+          (explorer / conservator / optimizer / guardian) compete for
+          influence over governance gradients via bounded EcologyBias
+          (±0.25 per gradient). Inter-species tension matrix, dominance
+          shifts, volatility field. NOT personalities — pressure topology. */}
+      <InternalEcology m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,

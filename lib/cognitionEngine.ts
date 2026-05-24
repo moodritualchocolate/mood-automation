@@ -64,6 +64,12 @@ import {
   updateConsequenceMemory,
   simulationPressureFromConsequence,
 } from './strategicSimulation';
+import { createInternalEcologyStore } from './internalEcologyMemory';
+import {
+  updateEcology,
+  applyEcologyBias,
+  ecologyPressureContribution,
+} from './internalEcologyEngine';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -148,7 +154,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const metaCognitiveStore = createMetaCognitiveStore();
   const governanceStore = createCognitiveGovernanceStore();
   const consequenceStore = createConsequenceMemoryStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre] = await Promise.all([
+  const ecologyStore = createInternalEcologyStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -159,6 +166,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     metaCognitiveStore.read(),
     governanceStore.read(),
     consequenceStore.read(),
+    ecologyStore.read(),
   ]);
 
   const at = Date.now();
@@ -520,21 +528,55 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       },
     );
 
+    // Wave 37 — internal ecology update. Four numeric pressure species
+    // (explorer / conservator / optimizer / guardian) accumulate
+    // independently from this event's verb + state context, then
+    // compete for influenceWeight. Output is an EcologyBias struct
+    // bounded ±0.25 per gradient that governance composes WITH its
+    // own pressure terms below. NOT chat. NOT personalities.
+    const maxPairTensionForEcology = contradictionResult.newState.pairs
+      .reduce((m, p) => Math.max(m, p.tensionScore), 0);
+    const ecologyResult = updateEcology(ecologyPre, {
+      at, tick: osPost.uptime,
+      directiveName,
+      context: {
+        energyReserves:        organismPost.energyReserves,
+        stressAccumulation:    organismPost.stressAccumulation,
+        fragmentationStreak:   osPost.fragmentationStreak,
+        maxPairTension:        maxPairTensionForEcology,
+        cognitionDensity:      assessment.cognitionDensity,
+        cumulativeReliability: metaCognitivePost.cumulativeReliabilityScore,
+      },
+    });
+    const ecologyPost = ecologyResult.newState;
+    const ecologyBias = ecologyResult.bias;
+
     // Wave 35 — governance update. Reads post-update meta-cognitive +
     // contradiction state, evolves the cognitive budget for this event,
     // forecasts instability, composes the next gradients, logs any
     // zone / budget / forecast / gradient-shift decisions.
     // Wave 36 — recursive feedback: the PREVIOUS event's simulation
     // long-horizon survivability biases this event's gradients.
+    // Wave 37 — additional pressure from ecology when the system is
+    // exhausted / unstable / highly volatile.
     const simulationPressure = simulationPressureFromConsequence(consequencePre);
-    const governancePost = updateGovernance(governancePre, {
+    const ecologyPressure = ecologyPressureContribution(ecologyPost);
+    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure);
+    const governancePre2 = updateGovernance(governancePre, {
       at, tick: osPost.uptime,
       directiveName,
       meta: metaCognitivePost,
       contradiction: contradictionResult.newState,
       temporal: newTemporal,
-      simulationPressure,
+      simulationPressure: compositeSimulationPressure,
     });
+    // Wave 37 — apply ecology bias to the just-composed gradients,
+    // clamped to [0,1] per gradient. Each species contributes
+    // ±ECOLOGY_BIAS_CLAMP (0.25) max so soft, bounded influence.
+    const governancePost = {
+      ...governancePre2,
+      gradients: applyEcologyBias(governancePre2.gradients, ecologyBias),
+    };
 
     // Wave 36 — strategic simulation. Project the trajectory forward
     // from the NEW post-event state under the NEW gradients. Cost map
@@ -574,6 +616,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       metaCognitiveStore.save(metaCognitivePost),
       governanceStore.save(governancePost),
       consequenceStore.save(consequencePost),
+      ecologyStore.save(ecologyPost),
     ]);
   }
 

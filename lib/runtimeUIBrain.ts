@@ -90,6 +90,11 @@ export interface RuntimeSnapshot {
    *  trajectory simulations (+5/+20/+50) + empirical verb cost map.
    *  Long-horizon survivability feeds back into governance gradients. */
   consequenceMemory?: import('./consequenceMemory').ConsequenceMemoryState | null;
+  /** Wave 37 — internal ecology. Four numeric pressure species
+   *  (explorer / conservator / optimizer / guardian) with intensity,
+   *  fatigue, influenceWeight, tension matrix, dominance, and
+   *  EcologyBias output that biases governance gradients ±0.25. */
+  internalEcology?: import('./internalEcologyMemory').InternalEcologyState | null;
   capturedAt: number;
 }
 
