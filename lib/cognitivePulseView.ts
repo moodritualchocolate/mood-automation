@@ -11,7 +11,7 @@
 import type { RuntimeSnapshot } from './runtimeUIBrain';
 import { round1 } from './runtimeUIBrain';
 
-export type PulseRhythm = 'steady' | 'strong' | 'racing' | 'faint' | 'irregular' | 'flatline';
+export type PulseRhythm = 'steady' | 'strong' | 'racing' | 'faint' | 'irregular' | 'flatline' | 'passive';
 
 export interface CognitivePulseViewModel {
   present: boolean;
@@ -23,6 +23,18 @@ export interface CognitivePulseViewModel {
   /** A normalised waveform (0..1) the UI animates as a heartbeat trace. */
   waveform: number[];
   statement: string;
+  /**
+   * Wave 19 — passive heartbeat surface. Populated when the organism
+   * has not yet run any cognitive action; in that mode the cognitive
+   * pulse fields (rate / amplitude / rhythm) are not meaningful, and
+   * the UI should render this object instead. Bound directly to the
+   * persisted OS uptime — no derivation, no fabrication.
+   */
+  passive?: {
+    uptime_ticks: number;
+    season_age: number;
+    last_tick_at: number;
+  };
 }
 
 export function buildCognitivePulseView(snap: RuntimeSnapshot): CognitivePulseViewModel {
@@ -32,6 +44,36 @@ export function buildCognitivePulseView(snap: RuntimeSnapshot): CognitivePulseVi
       present: false, rate: 0, amplitude: 0, rhythm: 'flatline',
       waveform: new Array(24).fill(0),
       statement: 'no pulse — the runtime is dormant',
+    };
+  }
+
+  // Wave 19 — passive heartbeat mode. The cognitive pulse is derived
+  // from stress, action count, energy, coordination — none of which
+  // advance under passive ticking. Presenting a fixed 56-bpm 'steady'
+  // pulse before any cognition has occurred is a stale derivation, not
+  // a felt heartbeat. While there is no cognitive activity, the panel
+  // shows the passive heartbeat instead: the count of OS ticks the
+  // organism has lived through, bound straight from os-runtime.json.
+  const hasCognitiveActivity =
+    organism.age > 0 ||
+    organism.consecutiveActions > 0 ||
+    organism.restCount > 0 ||
+    organism.adaptationCount > 0;
+  if (!hasCognitiveActivity) {
+    return {
+      present: false,
+      rate: 0,
+      amplitude: 0,
+      rhythm: 'passive',
+      waveform: new Array(24).fill(0.12),
+      statement: os.uptime === 0
+        ? 'passive heartbeat — the runtime has not yet drawn its first breath'
+        : `passive heartbeat — ${os.uptime} ticks lived, no cognitive activity yet`,
+      passive: {
+        uptime_ticks: os.uptime,
+        season_age: os.seasonAge,
+        last_tick_at: os.updatedAt,
+      },
     };
   }
 

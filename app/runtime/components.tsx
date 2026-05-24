@@ -88,6 +88,37 @@ function Empty({ children }: { children: React.ReactNode }) {
 
 export function PulseBanner({ m }: { m: RuntimeManifestation }) {
   const p = m.pulse;
+
+  // Wave 19 — passive heartbeat surface. When no cognitive activity
+  // has happened yet, the cognitive-pulse fields are stale derivations
+  // (a fixed rate computed from initial-state defaults). This branch
+  // binds the panel directly to the persisted OS uptime so the visible
+  // heartbeat reflects the real passive tick, not a fabricated rate.
+  if (p.passive) {
+    const since = Math.max(0, Math.floor((Date.now() - p.passive.last_tick_at) / 1000));
+    return (
+      <div className="border hairline bg-ink-900/50 px-5 py-4">
+        <div className="flex items-baseline justify-between mb-2">
+          <span className="eyebrow">passive heartbeat</span>
+          <span className="text-[11px] tracking-widest text-bone-200/60">
+            UPTIME {p.passive.uptime_ticks} · SEASON AGE {p.passive.season_age}
+          </span>
+        </div>
+        <div className="flex items-baseline gap-3">
+          <span className="text-[2rem] tabular-nums text-bone-50 leading-none">
+            {p.passive.uptime_ticks}
+          </span>
+          <span className="text-[11px] text-bone-200/45 uppercase tracking-[0.18em]">
+            ticks lived · last tick {since}s ago
+          </span>
+        </div>
+        <div className="text-[11px] text-bone-200/40 italic pt-2">
+          {p.statement}
+        </div>
+      </div>
+    );
+  }
+
   const w = 720;
   const h = 70;
   const pts = p.waveform

@@ -137,7 +137,7 @@ export default function RuntimePage() {
         <CognitiveWeather m={m} />
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-[11px] text-bone-200/50">
           <span>uptime {b.uptime_ticks} ticks</span>
-          <span>organism age {b.organism_age}</span>
+          <span>runs lived {b.organism_age}</span>
           <span>civilization gen {b.civilization_generation}</span>
           <span className="text-bone-200/40 italic">{m.presence.statement}</span>
         </div>
