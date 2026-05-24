@@ -388,6 +388,95 @@ export function ActionSandbox({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 32 — Contradiction Field ─────────────────────────────
+//
+// Pressure topology. NOT personalities debating — weather systems
+// colliding. Status badge colour-coded, six metric numerals, top
+// tensions listed as `goal ↔ pressure (score)`, unstable goals named,
+// recent resolutions and sacrifices as plain trace lines. No story,
+// no glow.
+
+export function ContradictionField({ m }: { m: RuntimeManifestation }) {
+  const c = m.contradictionField;
+  if (!c.present) return null;
+
+  const tone =
+    c.status === 'critical' ? '#FF4D2D' :
+    c.status === 'tense'    ? '#C9A24B' :
+                              '#8AA98A';
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">contradiction field</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {c.status} · intensity {c.conflictIntensity.toFixed(1)}/10
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{c.statement}</div>
+
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-3">
+        {([
+          ['system tension', c.systemTension],
+          ['identity stress', c.identityStress],
+          ['collision rate', c.goalCollisionRate],
+          ['instability', c.strategicInstability],
+          ['intensity', c.conflictIntensity],
+          ['resolution', c.resolutionCapacity],
+        ] as Array<[string, number]>).map(([label, val]) => (
+          <div key={label} className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/45">{label}</span>
+            <span className="text-[18px] tabular-nums text-bone-50/85">{val.toFixed(1)}<span className="text-[10px] text-bone-200/40">/10</span></span>
+          </div>
+        ))}
+      </div>
+
+      {c.dominantTensions.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/60">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">dominant tensions</div>
+          {c.dominantTensions.map((t) => (
+            <div key={t.pairId} className="text-bone-200/65 text-[11px] tabular-nums">
+              — {t.goalATitle} <span className="text-bone-200/40">↔</span> {t.opposingPressureLabel} <span className="text-bone-200/40">({t.tensionScore.toFixed(1)}/10, weight {t.tensionWeight})</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.unstableGoals.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/60">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">unstable goals</div>
+          {c.unstableGoals.map((g) => (
+            <div key={g} className="text-bone-200/55 text-[11px]">— {g}</div>
+          ))}
+        </div>
+      )}
+
+      {c.recentSacrifices.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">recent sacrifices</div>
+          {c.recentSacrifices.map((s, i) => (
+            <div key={i} className="italic tabular-nums text-bone-200/50 text-[10px]">
+              — t{s.tick} · '{s.goalTitle}' {s.from} → {s.to} <span className="text-bone-200/35">(tension {s.tensionAtSacrifice.toFixed(1)} vs '{s.opposingPressureLabel}')</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.recentResolutions.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">recent resolutions</div>
+          {c.recentResolutions.map((r, i) => (
+            <div key={i} className="italic tabular-nums text-bone-200/50 text-[10px]">
+              — t{r.tick} · '{r.pairId}' resolved from peak {r.resolvedFromPeak.toFixed(1)} to {r.finalScore.toFixed(1)}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Wave 31 — Purpose / Intent ────────────────────────────────
 //
 // Quiet operational identity. One row per goal with title, state

@@ -70,6 +70,10 @@ export interface RuntimeSnapshot {
    *  drift / alignment / fatigue history. Directional pressures
    *  the organism carries across time. */
   purposeMemory?: import('./purposeMemory').PurposeMemoryState | null;
+  /** Wave 32 — contradiction memory. Seeded tension pairs +
+   *  history of escalations, resolutions, and sacrifice events.
+   *  Pure pressure topology — never invented narratives. */
+  contradictionMemory?: import('./contradictionMemory').ContradictionMemoryState | null;
   capturedAt: number;
 }
 

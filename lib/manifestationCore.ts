@@ -84,6 +84,9 @@ import { buildTemporalIntelligenceView } from './temporalIntelligenceView';
 // Wave 31 — Purpose / Intent.
 import type { PurposeIntentViewModel } from './purposeIntentView';
 import { buildPurposeIntentView } from './purposeIntentView';
+// Wave 32 — Contradiction Field.
+import type { ContradictionFieldViewModel } from './contradictionFieldView';
+import { buildContradictionFieldView } from './contradictionFieldView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -142,6 +145,9 @@ export interface RuntimeManifestation {
   /** Wave 31 — Purpose / Intent. Seeded internal-coherence goals
    *  plus activation/drift/alignment/fatigue tracking. */
   purposeIntent: PurposeIntentViewModel;
+  /** Wave 32 — Contradiction Field. Seeded tension pairs +
+   *  deterministic pressure metrics + sacrifice events. */
+  contradictionField: ContradictionFieldViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -185,6 +191,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const consciousness = buildConsciousnessView(snap);
   const temporalIntelligence = buildTemporalIntelligenceView(snap);
   const purposeIntent = buildPurposeIntentView(snap);
+  const contradictionField = buildContradictionFieldView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -208,7 +215,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     internalDraft, strain, cadence,
     internalReview, revisionTrace, approvalState, cognitiveCoherence,
     actionSandbox, recoveryState, consciousness, temporalIntelligence,
-    purposeIntent,
+    purposeIntent, contradictionField,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

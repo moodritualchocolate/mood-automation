@@ -38,6 +38,9 @@ import { computeTemporalAssessment, suggestDeferReason } from './temporalIntelli
 import { createPurposeMemoryStore } from './purposeMemory';
 import { updatePurposeFromSignal } from './purposeEngine';
 import { strongestActiveGoalForDefer } from './purposeIntentView';
+import { createContradictionMemoryStore } from './contradictionMemory';
+import { updateContradictionFromSignal, applySacrificesToPurpose } from './contradictionEngine';
+import { strongestActiveTensionLabel } from './contradictionFieldView';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -117,12 +120,14 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
 
   const temporalStore = createTemporalMemoryStore();
   const purposeStore = createPurposeMemoryStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre] = await Promise.all([
+  const contradictionStore = createContradictionMemoryStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
     temporalStore.read(),
     purposeStore.read(),
+    contradictionStore.read(),
   ]);
 
   const at = Date.now();
@@ -175,17 +180,23 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     // (computed against pre-evolve state — that's what justified the
     // patience). Wave 31 — append the strongest active goal name to
     // the reason so defer thoughts reference what is being preserved.
+    // Wave 32 — additionally inline the strongest active tension when
+    // one is meaningful, so the defer thought names BOTH the goal and
+    // the pressure pushing against it.
     const preSnapshot = {
       organism: organismPre, os: osBeforeVerb,
       civilization: null, worldState: null, runtime: null,
       temporalMemory: temporalPre,
       purposeMemory: purposePre,
+      contradictionMemory: contradictionPre,
       capturedAt: at,
     } as Parameters<typeof computeTemporalAssessment>[0];
     const assessment = computeTemporalAssessment(preSnapshot);
     let reason = suggestDeferReason(assessment);
     const goalTitle = strongestActiveGoalForDefer(preSnapshot);
     if (goalTitle) reason += ` — preserving goal '${goalTitle}'`;
+    const tensionLabel = strongestActiveTensionLabel(preSnapshot);
+    if (tensionLabel) reason += ` — easing tension ${tensionLabel}`;
     osPost = evolveOSFromDefer(osBeforeVerb, at, reason);
   } else {
     const EVOLVE_BY_VERB: Record<string, (state: OSRuntimeState, at?: number) => OSRuntimeState> = {
@@ -403,7 +414,30 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       cognitionDensity: assessment.cognitionDensity,
     };
     const purposePost = updatePurposeFromSignal(purposePre, purposeSignal);
-    await purposeStore.save(purposePost);
+
+    // Wave 32 — contradiction update + sacrifice application.
+    // The engine reads the post-purpose-update goal states and the
+    // current temporal/organism/os state, returns the updated
+    // contradiction memory PLUS a list of sacrifice mutations to
+    // apply to purpose state (active → fragmented, etc.).
+    const contradictionResult = updateContradictionFromSignal(
+      contradictionPre,
+      purposePost.goals,
+      assessment,
+      osPost,
+      organismPost,
+      { at, tick: osPost.uptime },
+    );
+    const purposeFinal = applySacrificesToPurpose(
+      purposePost,
+      contradictionResult.sacrifices,
+      at, osPost.uptime,
+    );
+
+    await Promise.all([
+      purposeStore.save(purposeFinal),
+      contradictionStore.save(contradictionResult.newState),
+    ]);
   }
 
   return {

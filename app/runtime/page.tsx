@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -192,6 +192,13 @@ export default function RuntimePage() {
           Goals do not execute — they influence defer reasoning and
           carry directional pressure across time. */}
       <PurposeIntent m={m} />
+
+      {/* Wave 32 — Contradiction Field. Pressure topology between
+          active goals and the derived pressures opposing them. Five
+          seeded tension pairs, deterministic metrics, hysteresis-
+          banded escalation/recovery. Sacrifice events degrade goals
+          when sustained high tension can't be resolved. */}
+      <ContradictionField m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,
