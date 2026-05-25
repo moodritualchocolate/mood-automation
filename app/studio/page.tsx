@@ -39,6 +39,7 @@ import type { QualityLongitudinalView } from '@lib/qualityLongitudinalView';
 import type { PolicyAuditView } from '@lib/copyQualityPolicyAuditView';
 import type { CulturalPerceptionLongitudinalView } from '@lib/culturalPerceptionView';
 import type { ConflictLongitudinalView } from '@lib/conflictLongitudinalView';
+import type { CognitiveWeightLongitudinalView } from '@lib/cognitiveWeightLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -90,6 +91,8 @@ function StudioInner() {
   const [cultural, setCultural] = useState<CulturalPerceptionLongitudinalView | null>(null);
   // Cross-Brain Conflict (read-only internal disagreement) — same lifecycle.
   const [conflict, setConflict] = useState<ConflictLongitudinalView | null>(null);
+  // Cognitive Weight Evolution (read-only authority drift) — same lifecycle.
+  const [cogWeight, setCogWeight] = useState<CognitiveWeightLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -175,6 +178,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setConflict(v as ConflictLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/cognitive-weight', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setCogWeight(v as CognitiveWeightLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -201,6 +208,10 @@ function StudioInner() {
     fetch('/api/cross-brain-conflict', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setConflict(v as ConflictLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/cognitive-weight', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCogWeight(v as CognitiveWeightLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -458,17 +469,19 @@ function StudioInner() {
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
               {cultural && <CulturalIntelligencePanel view={cultural} />}
               {conflict && <CrossBrainConflictPanel view={conflict} />}
+              {cogWeight && <CognitiveWeightEvolutionPanel view={cogWeight} />}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
               {cultural && <CulturalIntelligencePanel view={cultural} />}
               {conflict && <CrossBrainConflictPanel view={conflict} />}
+              {cogWeight && <CognitiveWeightEvolutionPanel view={cogWeight} />}
             </div>
           )}
 
@@ -1656,6 +1669,258 @@ function CrossBrainConflictPanel({ view: v }: { view: ConflictLongitudinalView }
         observations {v.totalObservations} · avg tension {v.averageTension.toFixed(1)}/10 ·
         avg stability {v.averageStability.toFixed(1)}/10 ·
         silent-risk rate {(v.silentRiskRate * 100).toFixed(0)}%
+      </div>
+    </div>
+  );
+}
+
+// ─── cognitive weight evolution panel ─────────────────────────
+
+function CognitiveWeightEvolutionPanel({
+  view: v,
+}: { view: CognitiveWeightLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && !c) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">cognitive weight evolution · authority drift</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.fragmentationTrend === 'rising'  ? 'text-signal-warning' :
+    v.fragmentationTrend === 'falling' ? 'text-bone-50/85' :
+    v.fragmentationTrend === 'stable'  ? 'text-bone-200/85' :
+                                         'text-bone-200/65';
+
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const WeightBar = ({ label, value, sub }: { label: string; value: number; sub?: string }) => {
+    const w = Math.min(100, (value / 10) * 100);
+    const tone =
+      value >= 7 ? 'bg-bone-50/70' :
+      value >= 4 ? 'bg-bone-200/55' :
+                   'bg-signal-warning/55';
+    return (
+      <div className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/65 w-[100px] shrink-0 truncate">{label}</span>
+        <div className="flex-grow h-[6px] border hairline relative">
+          <div className={`absolute inset-y-0 left-0 ${tone}`} style={{ width: `${w}%` }} />
+        </div>
+        <span className="w-[36px] text-right text-bone-50/75">{value.toFixed(1)}</span>
+        {sub && <span className="w-[40px] text-right text-bone-200/45 text-[9px]">{sub}</span>}
+      </div>
+    );
+  };
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">cognitive weight evolution · authority drift</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+
+      {c && (
+        <>
+          <div className="grid grid-cols-3 gap-2 text-xs tabular-nums pt-1">
+            <div>
+              <div className="eyebrow">STABILITY</div>
+              <div className={`mt-0.5 ${heatTone(c.globalStability)}`}>{c.globalStability.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">ADAPTATION</div>
+              <div className={`mt-0.5 ${heatTone(c.adaptationPressure, true)}`}>{c.adaptationPressure.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">FRAGMENTATION</div>
+              <div className={`mt-0.5 ${heatTone(c.cognitiveFragmentation, true)}`}>{c.cognitiveFragmentation.toFixed(1)}/10</div>
+            </div>
+          </div>
+
+          {c.dominantSystems.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">DOMINANT BRAINS</div>
+              <div className="flex flex-col gap-0.5">
+                {c.dominantSystems.map((d) => (
+                  <div key={d.system}>
+                    <WeightBar label={d.system} value={d.weight} sub={`conf ${d.confidence.toFixed(1)}`} />
+                    <div className="text-bone-200/45 text-[9px] mt-0.5 ml-[108px] break-words">
+                      {d.explanation}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {c.suppressedSystems.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">SUPPRESSED BRAINS</div>
+              <div className="flex flex-col gap-0.5">
+                {c.suppressedSystems.map((s) => (
+                  <div key={s.system} className="text-[10px] tabular-nums">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-200/55 w-[100px] shrink-0 truncate">{s.system}</span>
+                      <span className="text-signal-warning/75">−{s.suppressionScore.toFixed(1)}</span>
+                    </div>
+                    <div className="text-bone-200/45 text-[9px] ml-[108px] break-words">{s.reason}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {c.unstableWeights.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">UNSTABLE WEIGHTS</div>
+              <div className="flex flex-col gap-0.5">
+                {c.unstableWeights.map((u) => (
+                  <div key={u.system} className="text-[10px] tabular-nums">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-200/65 flex-grow truncate">{u.system}</span>
+                      <span className={`w-[40px] text-right ${heatTone(u.volatility, true)}`}>
+                        {u.volatility.toFixed(1)}
+                      </span>
+                    </div>
+                    <div className="text-bone-200/45 text-[9px] break-words">{u.explanation}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="pt-2">
+            <div className="eyebrow mb-1">ENVIRONMENTAL SENSITIVITY</div>
+            <div className="grid grid-cols-2 gap-2 text-[10px] tabular-nums">
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">fatigue</span>
+                <span className={heatTone(c.environmentalSensitivity.fatigueSensitivity, true)}>
+                  {c.environmentalSensitivity.fatigueSensitivity.toFixed(1)}/10
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">trust</span>
+                <span className={heatTone(c.environmentalSensitivity.trustSensitivity, true)}>
+                  {c.environmentalSensitivity.trustSensitivity.toFixed(1)}/10
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">novelty</span>
+                <span className="text-bone-50/75">
+                  {c.environmentalSensitivity.noveltySensitivity.toFixed(1)}/10
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">culture</span>
+                <span className="text-bone-50/75">
+                  {c.environmentalSensitivity.culturalSensitivity.toFixed(1)}/10
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {c.contextualAuthority.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">CONTEXTUAL AUTHORITY</div>
+              <ul className="space-y-1.5 text-[10px]">
+                {c.contextualAuthority.map((row, i) => (
+                  <li key={i} className="leading-snug">
+                    <div className="text-bone-200/65 break-words">when {row.condition}</div>
+                    <div className="text-bone-50/85 uppercase tracking-wider">→ {row.dominantSystem}</div>
+                    <div className="text-bone-200/45 text-[9px] italic break-words">{row.reason}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.weightDrift.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">WEIGHT DRIFT (RECENT vs EWMA)</div>
+              <div className="flex flex-col gap-0.5">
+                {c.weightDrift.slice(0, 5).map((d) => {
+                  const driftTone = d.drift > 0 ? 'text-bone-50/85' : 'text-signal-warning/75';
+                  return (
+                    <div key={d.system} className="flex items-center gap-2 text-[10px] tabular-nums">
+                      <span className="text-bone-200/65 w-[100px] shrink-0 truncate">{d.system}</span>
+                      <span className="w-[40px] text-right text-bone-200/55">{d.historicalWeight.toFixed(1)}</span>
+                      <span className="w-[10px] text-bone-200/45 text-center">→</span>
+                      <span className="w-[40px] text-right text-bone-50/75">{d.recentWeight.toFixed(1)}</span>
+                      <span className={`w-[40px] text-right ${driftTone}`}>
+                        {d.drift > 0 ? '+' : ''}{d.drift.toFixed(1)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {v.systemDominanceRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">DOMINANCE OVER TIME</div>
+          <div className="flex flex-col gap-0.5">
+            {v.systemDominanceRanking.slice(0, 6).map((r) => (
+              <div key={r.system} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.system}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className="w-[50px] text-right text-bone-200/55">ewma {r.ewmaWeight.toFixed(1)}</span>
+                <span className="w-[40px] text-right text-bone-200/45">{(r.share * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.losingAuthority.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">LOSING AUTHORITY</div>
+          <div className="flex flex-col gap-0.5">
+            {v.losingAuthority.map((r) => (
+              <div key={r.system} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.system}</span>
+                <span className="w-[40px] text-right text-bone-200/55">{r.historicalWeight.toFixed(1)}</span>
+                <span className="w-[10px] text-bone-200/45 text-center">→</span>
+                <span className="w-[40px] text-right text-bone-50/75">{r.recentWeight.toFixed(1)}</span>
+                <span className="w-[40px] text-right text-signal-warning/75">−{r.collapseDelta.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.authorityTransitions.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">AUTHORITY TRANSITIONS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.authorityTransitions.slice(0, 5).map((t) => (
+              <div key={`${t.fromSystem}-${t.toSystem}`} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 flex-grow truncate">
+                  <span className="uppercase tracking-wider">{t.fromSystem}</span>
+                  <span className="text-bone-200/45"> → </span>
+                  <span className="uppercase tracking-wider text-bone-50/75">{t.toSystem}</span>
+                </span>
+                <span className="w-[40px] text-right text-bone-50/75">×{t.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        observations {v.totalObservations} ·
+        avg stability {v.averageStability.toFixed(1)}/10 ·
+        avg fragmentation {v.averageFragmentation.toFixed(1)}/10 ·
+        adaptation {v.averageAdaptationPressure.toFixed(1)}/10
       </div>
     </div>
   );

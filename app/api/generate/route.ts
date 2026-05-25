@@ -33,7 +33,14 @@ import { computeCulturalPerception } from '@lib/culturalPerceptionEngine';
 import { computeCrossBrainConflict } from '@lib/crossBrainConflictEngine';
 import {
   recordConflictObservation, buildConflictObservation,
+  createConflictMemoryStore,
 } from '@lib/conflictMemory';
+import { buildConflictLongitudinalView } from '@lib/conflictLongitudinalView';
+import { computeCognitiveWeightEvolution } from '@lib/cognitiveWeightEvolution';
+import {
+  recordCognitiveWeightObservation, buildHistoryContext,
+  createCognitiveWeightMemoryStore,
+} from '@lib/cognitiveWeightMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -251,6 +258,67 @@ export async function POST(req: NextRequest) {
             agreementZones: conflict.agreementZones,
             silentRiskCount: conflict.silentRisks.length,
           }));
+
+          // ─── Dynamic Cognitive Weight Evolution ───────────────
+          // Compute per-brain weights using the just-shipped conflict
+          // + cultural perception + historical context, emit as a
+          // pipeline event, and persist one observation so the
+          // longitudinal view can detect authority drift. Write
+          // failure is non-fatal.
+          try {
+            const conflictMemAfter = await createConflictMemoryStore()
+              .read().catch(() => null);
+            const conflictLongitudinal = buildConflictLongitudinalView({
+              memory: conflictMemAfter,
+              current: conflict,
+            });
+            const weightMemBefore = await createCognitiveWeightMemoryStore()
+              .read().catch(() => null);
+            const weights = computeCognitiveWeightEvolution({
+              conflict,
+              strategy: banner.adStrategy ?? null,
+              copyQuality: liveQuality,
+              culturalPerception,
+              policyAudit: null,
+              qualityLongitudinal: null,
+              conflictLongitudinal,
+              history: buildHistoryContext(weightMemBefore),
+            });
+            write({
+              type: 'event',
+              event: {
+                ts: Date.now(),
+                stage: 'cognitive-weight',
+                message:
+                  `stability ${weights.globalStability}/10 · ` +
+                  `adaptation ${weights.adaptationPressure}/10 · ` +
+                  `fragmentation ${weights.cognitiveFragmentation}/10 · ` +
+                  `dominant ${weights.dominantSystems.map((d) => d.system).join(',') || 'none'}`,
+                data: {
+                  globalStability: weights.globalStability,
+                  adaptationPressure: weights.adaptationPressure,
+                  cognitiveFragmentation: weights.cognitiveFragmentation,
+                  dominantSystems: weights.dominantSystems.map((d) => ({
+                    system: d.system, weight: d.weight,
+                  })),
+                },
+              },
+            });
+            await recordCognitiveWeightObservation({
+              at: banner.createdAt,
+              bannerId: banner.id,
+              formula: banner.formula,
+              campaignMode: banner.campaignMode,
+              weights: weights.weights,
+              globalStability: weights.globalStability,
+              adaptationPressure: weights.adaptationPressure,
+              cognitiveFragmentation: weights.cognitiveFragmentation,
+              dominantSystem: weights.dominantSystems[0]?.system ?? null,
+              suppressedSystems: weights.suppressedSystems.map((s) => s.system),
+            });
+          } catch {
+            // non-fatal — cognitive weight observation never blocks generation
+          }
         } catch {
           // non-fatal — conflict observation never blocks generation
         }
