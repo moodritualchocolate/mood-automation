@@ -119,6 +119,11 @@ export interface RuntimeSnapshot {
    *  scar memory under repeated harm, seven collapse-archetype
    *  detectors, civilization maturity score + state, HistoricalBias. */
   historicalMemory?: import('./historicalMemory').HistoricalMemoryState | null;
+  /** Wave 43 — counterfactual memory. Alternate-civilization branch
+   *  simulation (8 strategies per event), per-strategy regret records,
+   *  missed opportunities + false recoveries, civilization strategic
+   *  state, CounterfactualBias for governance. */
+  counterfactualMemory?: import('./counterfactualMemory').CounterfactualMemoryState | null;
   capturedAt: number;
 }
 

@@ -97,6 +97,13 @@ import {
   applyHistoricalBias,
   historicalPressureContribution,
 } from './historicalMemoryEngine';
+import { createCounterfactualMemoryStore } from './counterfactualMemory';
+import { updateCounterfactualMemory } from './counterfactualOrchestrator';
+import {
+  computeCounterfactualBias,
+  applyCounterfactualBias,
+  counterfactualPressureContribution,
+} from './regretEngine';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -186,7 +193,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const environmentStore = createEnvironmentMemoryStore();
   const missionContinuityStore = createMissionContinuityStore();
   const historicalMemoryStore = createHistoricalMemoryStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre, environmentPre, missionContinuityPre, historicalMemoryPre] = await Promise.all([
+  const counterfactualStore = createCounterfactualMemoryStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre, environmentPre, missionContinuityPre, historicalMemoryPre, counterfactualPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -202,6 +210,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     environmentStore.read(),
     missionContinuityStore.read(),
     historicalMemoryStore.read(),
+    counterfactualStore.read(),
   ]);
 
   const at = Date.now();
@@ -658,7 +667,10 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     const envPressure = environmentPressureContribution(environmentPre);
     const missionPressure = missionPressureContribution(missionContinuityPost);
     const historicalPressure = historicalPressureContribution(historicalMemoryPost);
-    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure + envPressure + missionPressure + historicalPressure);
+    // Wave 43 — counterfactual regret pressure from the PREVIOUS event's
+    // alternate-trajectory analysis. One-event-lagged feedback.
+    const counterfactualPressure = counterfactualPressureContribution(counterfactualPre);
+    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure + envPressure + missionPressure + historicalPressure + counterfactualPressure);
     const governancePre2 = updateGovernance(governancePre, {
       at, tick: osPost.uptime,
       directiveName,
@@ -672,20 +684,25 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     // gradient. Each contributes a bounded delta so influence stays
     // soft, composable, and never exceeds [0,1] domain.
     const envBias = computeEnvironmentBias(environmentPre.levels);
+    // Wave 43 — counterfactual bias from previous-event regret pressure.
+    const counterfactualBias = computeCounterfactualBias(counterfactualPre.regrets);
     const governancePost = {
       ...governancePre2,
-      gradients: applyHistoricalBias(
-        applyMissionBias(
-          applyEnvironmentBias(
-            applyScarcityBias(
-              applyEcologyBias(governancePre2.gradients, ecologyBias),
-              scarcityBias,
+      gradients: applyCounterfactualBias(
+        applyHistoricalBias(
+          applyMissionBias(
+            applyEnvironmentBias(
+              applyScarcityBias(
+                applyEcologyBias(governancePre2.gradients, ecologyBias),
+                scarcityBias,
+              ),
+              envBias,
             ),
-            envBias,
+            missionBias,
           ),
-          missionBias,
+          historicalBias,
         ),
-        historicalBias,
+        counterfactualBias,
       ),
     };
 
@@ -736,6 +753,18 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       assessment,
     });
 
+    // Wave 43 — counterfactual civilization analysis. Run all 8
+    // strategy branches from the same starting state as the actual
+    // sim; rank them, accumulate regret for branches that consistently
+    // outperform actual, detect missed opportunities + false recoveries.
+    // One-event-lagged: NEXT event's governance reads this regret as
+    // counterfactualBias + pressure contribution.
+    const counterfactualPost = updateCounterfactualMemory(counterfactualPre, {
+      at, tick: osPost.uptime,
+      start: simStart,
+      actualGradients: governancePost.gradients,
+    });
+
     await Promise.all([
       purposeStore.save(purposeFinal),
       contradictionStore.save(contradictionResult.newState),
@@ -748,6 +777,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       environmentStore.save(environmentPost),
       missionContinuityStore.save(missionContinuityPost),
       historicalMemoryStore.save(historicalMemoryPost),
+      counterfactualStore.save(counterfactualPost),
     ]);
   }
 

@@ -603,6 +603,201 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 43 — Counterfactual Civilization ────────────────────
+//
+// Alternate-trajectory analysis. Eight strategy branches simulated
+// from same starting state per event. Ranked by composite score.
+// Per-strategy regret pressure accumulates when alternates consistently
+// outperform actual. Missed opportunities (alternates that would have
+// avoided collapse) and false recoveries (short-term wins that degraded)
+// logged. NOT imagination — deterministic operational alternatives.
+
+export function CounterfactualCivilization({ m }: { m: RuntimeManifestation }) {
+  const c = m.counterfactualCivilization;
+  if (!c.present) return null;
+
+  const tone =
+    c.status === 'dissatisfied' ? '#FF4D2D' :
+    c.status === 'optimizing'   ? '#C9A24B' :
+    c.status === 'observing'    ? '#6F8196' :
+                                  'rgba(247,245,242,0.50)';
+
+  const strategyTone = (id: string) =>
+    id === 'actual'                  ? '#8AA98A' :
+    id === 'conservative'            ? '#6F8196' :
+    id === 'aggressive'              ? '#FF4D2D' :
+    id === 'recovery-heavy'          ? '#8AA98A' :
+    id === 'continuity-first'        ? '#6F8196' :
+    id === 'mutation-first'          ? '#C9A24B' :
+    id === 'governance-restrictive'  ? '#6F8196' :
+    id === 'exploration-heavy'       ? '#C9A24B' :
+                                       'rgba(247,245,242,0.50)';
+
+  const survTone = (v: number) =>
+    v < 0.4 ? '#FF4D2D' :
+    v < 0.6 ? '#C9A24B' :
+              '#8AA98A';
+
+  const biasRow = (label: string, value: number) => {
+    const sign = value === 0 ? '' : value > 0 ? '+' : '';
+    const col =
+      Math.abs(value) < 0.04 ? 'rgba(247,245,242,0.50)' :
+      value > 0 ? '#8AA98A' : '#C9A24B';
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 flex-grow">{label}</span>
+        <span style={{ color: col }} className="w-[60px] text-right">{sign}{value.toFixed(2)}</span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">counterfactual civilization</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {c.strategicState} · held {c.statePersistenceTicks}ev · comparisons {c.totalComparisons} · underperf {(c.actualUnderperformanceRate * 100).toFixed(0)}%
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{c.statement}</div>
+
+      {c.lastBranches.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            timeline ranking · top: <span style={{ color: strategyTone(c.lastTopStrategy ?? '') }}>{c.lastTopStrategy}</span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {c.lastBranches.map((b) => (
+              <div key={b.strategyId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/40 w-[20px] text-right">{b.rank}</span>
+                <span className="text-[9px] tracking-[0.16em] uppercase w-[180px]" style={{ color: strategyTone(b.strategyId) }}>
+                  {b.strategyId}
+                </span>
+                <span className="w-[60px] text-right text-bone-50/75">
+                  {b.compositeScore.toFixed(1)}/10
+                </span>
+                <span style={{ color: survTone(b.shortSurvivability) }} className="w-[60px] text-right text-[9px]">
+                  +5 {b.shortSurvivability.toFixed(2)}{b.shortCritical ? '*' : ''}
+                </span>
+                <span style={{ color: survTone(b.mediumSurvivability) }} className="w-[60px] text-right text-[9px]">
+                  +20 {b.mediumSurvivability.toFixed(2)}{b.mediumCritical ? '*' : ''}
+                </span>
+                <span style={{ color: survTone(b.longSurvivability) }} className="w-[60px] text-right text-[9px]">
+                  +50 {b.longSurvivability.toFixed(2)}{b.longCritical ? '*' : ''}
+                </span>
+                <span className="w-[80px] text-right text-[9px] text-bone-200/40">
+                  rel {b.endReliability.toFixed(1)} · bgt {b.endBudget.toFixed(0)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {c.regrets.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            regret pressure (strategies outperforming actual)
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {c.regrets.map((r) => (
+              <div key={r.strategyId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-[9px] tracking-[0.16em] uppercase w-[180px]" style={{ color: strategyTone(r.strategyId) }}>
+                  {r.strategyId}
+                </span>
+                <div className="flex-grow h-[5px] bg-ink-900/70 border hairline">
+                  <div className="h-full" style={{ width: `${r.accumulatedPressure * 10}%`, backgroundColor: r.accumulatedPressure >= 5 ? '#FF4D2D' : '#C9A24B' }} />
+                </div>
+                <span className="w-[60px] text-right" style={{ color: r.accumulatedPressure >= 5 ? '#FF4D2D' : '#C9A24B' }}>
+                  {r.accumulatedPressure.toFixed(1)}
+                </span>
+                <span className="w-[60px] text-right text-[9px] text-bone-200/40">
+                  conf {r.recurrenceConfidence.toFixed(2)}
+                </span>
+                <span style={{ color: r.survivabilityDelta >= 0 ? '#8AA98A' : '#FF4D2D' }} className="w-[70px] text-right text-[9px]">
+                  surv {r.survivabilityDelta >= 0 ? '+' : ''}{r.survivabilityDelta.toFixed(2)}
+                </span>
+                <span style={{ color: r.continuityDelta >= 0 ? '#8AA98A' : '#FF4D2D' }} className="w-[70px] text-right text-[9px]">
+                  cont {r.continuityDelta >= 0 ? '+' : ''}{r.continuityDelta.toFixed(2)}
+                </span>
+                <span className="w-[40px] text-right text-[9px] text-bone-200/30">
+                  ×{r.observationCount}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {c.missedOpportunities.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            missed opportunities
+          </div>
+          {c.missedOpportunities.map((mo, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{mo.tick} · <span style={{ color: strategyTone(mo.alternateStrategy) }}>{mo.alternateStrategy}</span>{' '}
+              would have improved long-surv by{' '}
+              <span style={{ color: '#FF4D2D' }}>+{mo.avoidedCollapseRisk.toFixed(2)}</span>{' '}
+              ({mo.actualLongSurvivability.toFixed(2)} → {mo.alternateLongSurvivability.toFixed(2)})
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.falseRecoveries.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            false recoveries
+          </div>
+          {c.falseRecoveries.map((fr, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{fr.tick} · <span style={{ color: strategyTone(fr.strategyId) }}>{fr.strategyId}</span>{' '}
+              short-surv {fr.shortHorizonSurvivability.toFixed(2)} → long-surv{' '}
+              <span style={{ color: '#FF4D2D' }}>{fr.longHorizonSurvivability.toFixed(2)}</span>{' '}
+              (degraded {fr.degradationDelta.toFixed(2)})
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          counterfactual bias on governance gradients
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {biasRow('cognition throughput',  c.bias.cognitionThroughput)}
+          {biasRow('escalation permission', c.bias.escalationPermission)}
+          {biasRow('exploration intensity', c.bias.explorationIntensity)}
+          {biasRow('defer acceptance',      c.bias.deferAcceptance)}
+          {biasRow('recovery weighting',    c.bias.recoveryWeighting)}
+          {biasRow('burst tolerance',       c.bias.burstTolerance)}
+        </div>
+      </div>
+
+      {c.recentTransitions.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            strategic-state transitions
+          </div>
+          {c.recentTransitions.map((t, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{t.tick} · <span className="text-bone-200/40">{t.from}</span>{' → '}
+              <span className="text-bone-50/75">{t.to}</span>
+              <span className="text-bone-200/40"> · {t.reason}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        +{c.simulationPressureContribution.toFixed(2)} simulation pressure
+      </div>
+    </div>
+  );
+}
+
 // ─── Wave 42 — Historical Memory ──────────────────────────────
 //
 // Civilizational precedent. Epoch timeline, doctrine recurrence

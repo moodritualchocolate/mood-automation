@@ -114,6 +114,9 @@ import { buildMissionContinuityView } from './missionContinuityView';
 // Wave 42 — Historical Memory.
 import type { HistoricalMemoryViewModel } from './historicalMemoryView';
 import { buildHistoricalMemoryView } from './historicalMemoryView';
+// Wave 43 — Counterfactual Civilization.
+import type { CounterfactualViewModel } from './counterfactualView';
+import { buildCounterfactualView } from './counterfactualView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -214,6 +217,11 @@ export interface RuntimeManifestation {
    *  recurrence, scars, collapse archetypes, maturity score + state,
    *  HistoricalBias on governance. */
   historicalMemory: HistoricalMemoryViewModel;
+  /** Wave 43 — Counterfactual Civilization. Alternate-trajectory
+   *  branches (8 per event), per-strategy regret pressure, missed
+   *  opportunities, false recoveries, civilization strategic state,
+   *  CounterfactualBias on governance. */
+  counterfactualCivilization: CounterfactualViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -267,6 +275,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const environment = buildEnvironmentView(snap);
   const missionContinuity = buildMissionContinuityView(snap);
   const historicalMemory = buildHistoricalMemoryView(snap);
+  const counterfactualCivilization = buildCounterfactualView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -293,6 +302,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     purposeIntent, contradictionField, selfModel, adaptiveRegulation,
     cognitiveGovernance, strategicSimulation, internalEcology,
     resourceEconomy, environment, missionContinuity, historicalMemory,
+    counterfactualCivilization,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,
