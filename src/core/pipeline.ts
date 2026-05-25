@@ -777,6 +777,9 @@ import {
   recordStrategyAssessment,
   recordStrategyOutcome,
 } from '@lib/adStrategyEngine';
+import { createCopywriterMemoryStore } from '@lib/copywriterMemory';
+import type { CopywriterOutput } from '@lib/copywriterEngine';
+import { composeCopy, recordCopyOutput } from '@lib/copywriterEngine';
 import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
 import type { ApprovalRecord } from '@lib/approvalMemory';
 import type { CognitiveFieldState } from '@lib/cognitiveField';
@@ -1244,6 +1247,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   let adStrategyMemory = await adStrategyStore.read();
   let adStrategy: AdStrategyAssessment | null = null;
 
+  // Copywriter Brain (Phase Next) — same lifecycle: load memory once,
+  // compute per attempt right after the strategy assessment, persist
+  // on ship. Read-only with respect to runtime systems.
+  const copywriterStore = createCopywriterMemoryStore();
+  let copywriterMemory = await copywriterStore.read();
+  let copywriterOutput: CopywriterOutput | null = null;
+  const brutality = opts.brutality ?? 0.65;
+
   while (attempt < maxAttempts) {
     attempt += 1;
 
@@ -1306,6 +1317,40 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         forbiddenAngle: adStrategy.forbiddenAngle,
         creativeConstraints: adStrategy.creativeConstraints,
         reasonCodes: adStrategy.reasonCodes.slice(0, 5),
+      },
+    });
+
+    // ─── Copywriter Brain (Phase Next) ──────────────────────────
+    // Strategy-conditioned Hebrew copy. Deterministic from the
+    // assessment + memory + brutality. Emitted as a trace event and
+    // attached to the banner on ship. Does NOT modify direction,
+    // composition, image generation, or the critic.
+    copywriterOutput = composeCopy({
+      strategy: adStrategy,
+      brutality,
+      memory: copywriterMemory,
+      context: {
+        stateLabel: state.label,
+        truthSummary: truth.truth,
+      },
+    });
+    emit({
+      stage: 'copywriter',
+      message:
+        `${copywriterOutput.persuasionTone} · restraint ${copywriterOutput.restraintLevel}/10 · ` +
+        `urgency:${copywriterOutput.urgencyStyle} · product:${copywriterOutput.productPresence} · ` +
+        `trust ${copywriterOutput.trustAlignment}/10 · dignity ${copywriterOutput.dignityAlignment}/10 · ` +
+        `repetition ${copywriterOutput.repetitionSimilarity}/10 · confidence ${copywriterOutput.confidence}/10` +
+        (copywriterOutput.forbiddenPhrasesTriggered.length > 0
+          ? ` · forbidden:${copywriterOutput.forbiddenPhrasesTriggered.length}`
+          : ''),
+      data: {
+        hook: copywriterOutput.hook,
+        body: copywriterOutput.body,
+        cta: copywriterOutput.cta,
+        proofLine: copywriterOutput.proofLine,
+        forbiddenPhrasesTriggered: copywriterOutput.forbiddenPhrasesTriggered,
+        reasonCodes: copywriterOutput.reasonCodes.slice(0, 5),
       },
     });
 
@@ -5027,6 +5072,7 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           critique: scrollStop,
           taste, psychology, productPresence, referenceMatch: reference, finalVerdict,
           adStrategy: adStrategy ?? undefined,
+          copywriter: copywriterOutput ?? undefined,
           tasteSystem: {
             dna, judge, reaction, fatigue, evolutionAtRunStart,
             campaignBrain: {
@@ -5883,6 +5929,29 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
             emit({
               stage: 'ad-strategy',
               message: `assessment commit failed (non-fatal): ${(e as Error).message}`,
+            });
+          }
+        }
+
+        // Copywriter Brain — persist this copy output on ship. Same
+        // try/catch envelope so a write failure cannot block the
+        // shipped banner.
+        if (copywriterOutput && adStrategy) {
+          try {
+            const now = Date.now();
+            copywriterMemory = recordCopyOutput(copywriterMemory, copywriterOutput, adStrategy, bannerId, now);
+            await copywriterStore.save(copywriterMemory);
+            emit({
+              stage: 'copywriter',
+              message:
+                `copy committed · totalProduced ${copywriterMemory.totalCopiesProduced} · ` +
+                `dignityErosion ${copywriterMemory.dignityErosionScore}/10 · ` +
+                `repeatedStructures ${copywriterMemory.repeatedStructuresScore}/10`,
+            });
+          } catch (e) {
+            emit({
+              stage: 'copywriter',
+              message: `copy commit failed (non-fatal): ${(e as Error).message}`,
             });
           }
         }

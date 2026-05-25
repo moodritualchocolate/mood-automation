@@ -32,6 +32,7 @@ import {
   type Banner, type CampaignMode, type Formula, type PipelineEvent,
 } from '@/core/types';
 import type { AdStrategyAssessment } from '@lib/adStrategyEngine';
+import type { CopywriterOutput } from '@lib/copywriterEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -388,6 +389,7 @@ function StudioInner() {
               </div>
 
               {banner.adStrategy && <AdStrategyBrainPanel strategy={banner.adStrategy} />}
+              {banner.copywriter && <CopywriterBrainPanel copy={banner.copywriter} />}
             </div>
           )}
 
@@ -641,6 +643,90 @@ function AdStrategyBrainPanel({ strategy: s }: { strategy: AdStrategyAssessment 
           <div className="eyebrow mb-1">REASON CODES</div>
           <ul className="space-y-0.5">
             {s.reasonCodes.slice(0, 8).map((r, i) => (
+              <li key={i} className="break-words">· {r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── copywriter brain panel ───────────────────────────────────
+
+function CopywriterBrainPanel({ copy: c }: { copy: CopywriterOutput }) {
+  const riskTone = (v: number) =>
+    v >= 7 ? 'text-signal-warning' :
+    v >= 4 ? 'text-bone-200/85' :
+            'text-bone-200/65';
+  const alignTone = (v: number) =>
+    v >= 7 ? 'text-bone-50/85' :
+    v >= 4 ? 'text-bone-200/85' :
+            'text-signal-warning';
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">copywriter brain</div>
+      <div>
+        <div className="eyebrow">HOOK</div>
+        <div dir="rtl" className="mt-0.5 leading-snug text-bone-50/90">{c.hook}</div>
+      </div>
+      <div>
+        <div className="eyebrow">BODY</div>
+        <div dir="rtl" className="mt-0.5 leading-snug whitespace-pre-line text-bone-50/85">{c.body}</div>
+      </div>
+      <div>
+        <div className="eyebrow">CTA</div>
+        <div dir="rtl" className="mt-0.5 leading-snug text-bone-50/85">{c.cta}</div>
+      </div>
+      {c.proofLine && (
+        <div>
+          <div className="eyebrow">PROOF LINE</div>
+          <div dir="rtl" className="mt-0.5 leading-snug text-bone-200/75 italic">{c.proofLine}</div>
+        </div>
+      )}
+      <Field label="PERSUASION TONE" value={`${c.persuasionTone} · ${c.urgencyStyle} urgency`} />
+      <Field label="PRODUCT PRESENCE" value={c.productPresence} />
+      <div className="grid grid-cols-2 gap-2 text-xs tabular-nums">
+        <div>
+          <div className="eyebrow">TRUST ALIGNMENT</div>
+          <div className={`mt-0.5 ${alignTone(c.trustAlignment)}`}>{c.trustAlignment.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">STRATEGIC ALIGNMENT</div>
+          <div className={`mt-0.5 ${alignTone(c.strategicAlignment)}`}>{c.strategicAlignment.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">DIGNITY ALIGNMENT</div>
+          <div className={`mt-0.5 ${alignTone(c.dignityAlignment)}`}>{c.dignityAlignment.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">REPETITION SIM</div>
+          <div className={`mt-0.5 ${riskTone(c.repetitionSimilarity)}`}>{c.repetitionSimilarity.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">RESTRAINT</div>
+          <div className="mt-0.5 text-bone-200/85">{c.restraintLevel.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">CONFIDENCE</div>
+          <div className="mt-0.5 text-bone-200/85">{c.confidence.toFixed(1)}/10</div>
+        </div>
+      </div>
+      {c.forbiddenPhrasesTriggered.length > 0 && (
+        <div className="text-[10px] text-signal-warning/85 leading-snug">
+          <div className="eyebrow mb-1">FORBIDDEN PHRASES TRIGGERED</div>
+          <ul className="space-y-0.5">
+            {c.forbiddenPhrasesTriggered.map((p, i) => (
+              <li key={i}>· {p}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {c.reasonCodes.length > 0 && (
+        <div className="text-[10px] text-bone-200/55 leading-snug">
+          <div className="eyebrow mb-1">REASON CODES</div>
+          <ul className="space-y-0.5">
+            {c.reasonCodes.slice(0, 8).map((r, i) => (
               <li key={i} className="break-words">· {r}</li>
             ))}
           </ul>

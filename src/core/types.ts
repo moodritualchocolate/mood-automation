@@ -1101,6 +1101,10 @@ export interface Banner {
    *  assessment. Surfaced on the banner so studio + downstream can
    *  inspect. Does NOT modify critic or generation logic. */
   adStrategy?: import('@lib/adStrategyEngine').AdStrategyAssessment;
+  /** Copywriter-Brain Phase — deterministic strategy-conditioned
+   *  copy (Hebrew hook/body/cta + alignment scores + reason codes).
+   *  Surfaced on the banner; does NOT modify critic or generation. */
+  copywriter?: import('@lib/copywriterEngine').CopywriterOutput;
   attempts: number;
   rejectedAttempts: Array<{ stage: string; reason: string }>;
   memorySnapshot: MemorySnapshot;
