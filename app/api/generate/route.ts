@@ -22,6 +22,7 @@ import type { GenerateRequest } from '@/core/types';
 import { composeBannerSvg } from '@/components/banner-svg';
 import { rememberBanner } from '@/core/banner-cache';
 import { runCopyQualityPolicyPreflight } from '@lib/copyQualityPolicyPreflight';
+import { recordPolicyAudit } from '@lib/copyQualityPolicyAudit';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -33,6 +34,11 @@ interface GenerateBody extends GenerateRequest {
 
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as GenerateBody;
+
+  // Capture the ORIGINAL request flag before the preflight may
+  // overwrite it. The audit trail records this verbatim so the
+  // governance memory shows what the caller actually asked for.
+  const requestedFlag = body.copyQualityRefusalEnabled;
 
   // ─── Copy-Quality Policy Preflight ──────────────────────────
   // EXPLICIT request value (true or false) ALWAYS wins. Only when
@@ -83,6 +89,42 @@ export async function POST(req: NextRequest) {
         rememberBanner(result.banner);
         const svg = composeBannerSvg(result.banner);
         write({ type: 'banner', banner: result.banner, svg });
+
+        // ─── Policy Audit Trail ─────────────────────────────────
+        // Governance memory: one entry per generation attempt. The
+        // pipeline computes a fuller policy recommendation with real
+        // signal — prefer that over the preflight's pre-pipeline
+        // synthesis when present. Write failure is swallowed inside
+        // recordPolicyAudit; nothing downstream blocks on the audit.
+        const banner = result.banner;
+        const livePolicy = banner.copyQualityPolicy ?? null;
+        const liveQuality = banner.copyQuality ?? null;
+        await recordPolicyAudit({
+          at: banner.createdAt,
+          formula: banner.formula,
+          campaignMode: banner.campaignMode,
+          brutality: banner.finalVerdict.brutality,
+          attempt: banner.attempts,
+          requestedFlag,
+          preflightRecommendedEnabled: preflight.enabled,
+          preflightSource: preflight.source,
+          finalAppliedEnabled: body.copyQualityRefusalEnabled === true,
+          policyBand: livePolicy?.policyBand ?? preflight.policyBand,
+          confidence: livePolicy?.confidence ?? preflight.confidence,
+          suggestedIntegrityThreshold: livePolicy?.suggestedIntegrityThreshold ?? 0,
+          suggestedBrutalityThreshold: livePolicy?.suggestedBrutalityThreshold ?? 0,
+          reasonCodes: [
+            ...preflight.reasonCodes,
+            ...(livePolicy?.reasonCodes ?? []),
+          ],
+          policyRecommendsEnabled: livePolicy?.recommendedEnabled ?? preflight.enabled,
+          outcomeVerdict: banner.finalVerdict.verdict,
+          outcomeReasons: banner.finalVerdict.reasons,
+          copyIntegrity:     liveQuality?.copyIntegrity     ?? null,
+          trustSafety:       liveQuality?.trustSafety       ?? null,
+          dignitySafety:     liveQuality?.dignitySafety     ?? null,
+          repetitionConcern: liveQuality?.repetitionConcern ?? null,
+        });
       } catch (e) {
         write({ type: 'error', error: (e as Error).message });
       } finally {

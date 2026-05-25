@@ -36,6 +36,7 @@ import type { CopywriterOutput } from '@lib/copywriterEngine';
 import type { CopyQualityAxis } from '@lib/copyQualityAdapter';
 import type { CopyQualityPolicyRecommendation } from '@lib/copyQualityPolicy';
 import type { QualityLongitudinalView } from '@lib/qualityLongitudinalView';
+import type { PolicyAuditView } from '@lib/copyQualityPolicyAuditView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -81,6 +82,8 @@ function StudioInner() {
   const [running, setRunning] = useState(false);
   // Longitudinal Quality (read-only) — fetched on mount + after each run.
   const [longitudinal, setLongitudinal] = useState<QualityLongitudinalView | null>(null);
+  // Policy Audit (read-only governance trail) — same lifecycle.
+  const [policyAudit, setPolicyAudit] = useState<PolicyAuditView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -154,6 +157,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setLongitudinal(v as QualityLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/policy-audit', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setPolicyAudit(v as PolicyAuditView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -168,6 +175,10 @@ function StudioInner() {
     fetch('/api/quality-longitudinal', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setLongitudinal(v as QualityLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/policy-audit', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setPolicyAudit(v as PolicyAuditView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -422,14 +433,16 @@ function StudioInner() {
                 />
               )}
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
+              {policyAudit && <PolicyAuditPanel view={policyAudit} />}
             </div>
           )}
 
-          {/* Show the longitudinal panel even without a banner, so the
-              dashboard is visible on first load or after refusal. */}
-          {!banner && longitudinal && (
+          {/* Show the longitudinal + audit panels even without a banner,
+              so the dashboards are visible on first load or after refusal. */}
+          {!banner && (longitudinal || policyAudit) && (
             <div className="space-y-4 text-sm">
-              <LongitudinalQualityPanel view={longitudinal} />
+              {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
+              {policyAudit && <PolicyAuditPanel view={policyAudit} />}
             </div>
           )}
 
@@ -1037,6 +1050,169 @@ function CopyQualityPolicyPanel({
               <li key={i} className="break-words">· {r}</li>
             ))}
           </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── policy audit panel ───────────────────────────────────────
+
+function PolicyAuditPanel({ view: v }: { view: PolicyAuditView }) {
+  if (!v.present) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">policy audit · governance memory</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const verdictTone = (verdict: string | null) =>
+    verdict === 'approve'         ? 'text-bone-50/85' :
+    verdict === 'reject-image'    ? 'text-signal-warning/85' :
+    verdict === 'reject-concept'  ? 'text-signal-warning/85' :
+    verdict === 'reject-taste'    ? 'text-signal-warning/85' :
+                                    'text-bone-200/55';
+
+  const bandTone = (band: string) =>
+    band === 'strict'  ? 'text-signal-warning' :
+    band === 'warn'    ? 'text-bone-50/85' :
+    band === 'observe' ? 'text-bone-200/85' :
+                         'text-bone-200/55';
+
+  const overrideTone = (kind: string) =>
+    kind === 'auto-applied'            ? 'text-bone-50/85' :
+    kind === 'explicit-override-true'  ? 'text-bone-50/85' :
+    kind === 'explicit-override-false' ? 'text-bone-200/65' :
+    kind === 'recommended-only'        ? 'text-signal-warning/85' :
+                                         'text-bone-200/55';
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">policy audit · governance memory</div>
+      <div className="text-xs text-bone-200/75">{v.statement}</div>
+
+      <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+        <div>
+          <div className="eyebrow">TOTAL AUDITED</div>
+          <div className="mt-0.5 text-bone-50/85">{v.totalAudited}</div>
+        </div>
+        <div>
+          <div className="eyebrow">REFUSAL-ENABLED RATE</div>
+          <div className="mt-0.5 text-bone-50/85">{(v.refusalEnabledRate * 100).toFixed(0)}%</div>
+        </div>
+        <div>
+          <div className="eyebrow">AUTO-APPLIED</div>
+          <div className="mt-0.5 text-bone-50/85">{v.autoAppliedCount}</div>
+        </div>
+        <div>
+          <div className="eyebrow">EXPLICIT OVERRIDES</div>
+          <div className="mt-0.5 text-bone-50/85">{v.explicitOverrideCount}</div>
+        </div>
+      </div>
+
+      {v.overrideTypeBreakdown.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">OVERRIDE TYPE BREAKDOWN</div>
+          <div className="flex flex-col gap-0.5">
+            {v.overrideTypeBreakdown.map((row) => (
+              <div key={row.overrideType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className={`flex-grow ${overrideTone(row.overrideType)}`}>{row.overrideType}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{row.count}</span>
+                <span className="w-[50px] text-right text-bone-200/55">{(row.share * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.topReasonCodes.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">TOP REASON CODES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.topReasonCodes.map((r) => (
+              <div key={r.code} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow break-words">{r.code}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.formulaPressureRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">FORMULA PRESSURE RANKING</div>
+          <div className="flex flex-col gap-0.5">
+            {v.formulaPressureRanking.map((row) => (
+              <div key={row.formula} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow">{row.formula}</span>
+                <span className="w-[40px] text-right text-bone-50/75">{row.pressureScore.toFixed(2)}</span>
+                <span className="w-[80px] text-right text-bone-200/55">
+                  s{row.strictCount}/w{row.warnCount}/o{row.observeCount}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.modeRiskRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">MODE COPY RISK RANKING</div>
+          <div className="flex flex-col gap-0.5">
+            {v.modeRiskRanking.map((row) => (
+              <div key={row.mode} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow">{row.mode}</span>
+                <span className="w-[60px] text-right text-bone-50/75">
+                  {row.averageCopyIntegrity !== null ? `int ${row.averageCopyIntegrity.toFixed(1)}` : '—'}
+                </span>
+                <span className="w-[60px] text-right text-bone-200/55">
+                  {row.averageRepetitionConcern !== null ? `rep ${row.averageRepetitionConcern.toFixed(1)}` : '—'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.formulaIntegrityAverages.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">AVG COPY INTEGRITY BY FORMULA</div>
+          <div className="flex flex-col gap-0.5">
+            {v.formulaIntegrityAverages.map((row) => (
+              <div key={row.formula} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow">{row.formula}</span>
+                <span className="w-[40px] text-right text-bone-50/75">
+                  {row.averageCopyIntegrity !== null ? row.averageCopyIntegrity.toFixed(1) : '—'}
+                </span>
+                <span className="w-[60px] text-right text-bone-200/55">{row.samples} samples</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.recentEntries.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">RECENT AUDIT ENTRIES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.recentEntries.map((row) => (
+              <div key={row.id} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 w-[42px] shrink-0">{row.formula}</span>
+                <span className={`w-[58px] uppercase tracking-widest ${bandTone(row.policyBand)}`}>
+                  {row.policyBand}
+                </span>
+                <span className={`flex-grow truncate ${overrideTone(row.overrideType)}`}>
+                  {row.overrideType}
+                </span>
+                <span className={`w-[68px] text-right truncate ${verdictTone(row.outcomeVerdict)}`}>
+                  {row.outcomeVerdict ?? '—'}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
