@@ -1097,6 +1097,10 @@ export interface Banner {
   finalVerdict: FinalVerdict;
   // Phase 2.5 — explicit taste system
   tasteSystem: BannerTasteSystem;
+  /** Strategist-Brain Phase — deterministic advertising strategy
+   *  assessment. Surfaced on the banner so studio + downstream can
+   *  inspect. Does NOT modify critic or generation logic. */
+  adStrategy?: import('@lib/adStrategyEngine').AdStrategyAssessment;
   attempts: number;
   rejectedAttempts: Array<{ stage: string; reason: string }>;
   memorySnapshot: MemorySnapshot;

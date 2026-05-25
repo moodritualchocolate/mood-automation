@@ -31,6 +31,7 @@ import {
   CAMPAIGN_MODES, FORMULAS,
   type Banner, type CampaignMode, type Formula, type PipelineEvent,
 } from '@/core/types';
+import type { AdStrategyAssessment } from '@lib/adStrategyEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -385,6 +386,8 @@ function StudioInner() {
                 )}
                 <Field label="ATTEMPTS" value={String(banner.attempts)} />
               </div>
+
+              {banner.adStrategy && <AdStrategyBrainPanel strategy={banner.adStrategy} />}
             </div>
           )}
 
@@ -575,6 +578,74 @@ function Field({ label, value, multiline }: { label: string; value: string; mult
     <div>
       <div className="eyebrow">{label}</div>
       <div className={`mt-0.5 ${multiline ? 'leading-snug' : 'truncate'}`}>{value}</div>
+    </div>
+  );
+}
+
+// ─── ad strategy brain panel ──────────────────────────────────
+
+function AdStrategyBrainPanel({ strategy: s }: { strategy: AdStrategyAssessment }) {
+  const riskTone = (v: number) =>
+    v >= 7 ? 'text-signal-warning' :
+    v >= 4 ? 'text-bone-200/85' :
+            'text-bone-200/65';
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">ad strategy brain</div>
+      <Field label="PRIMARY AUDIENCE" value={s.primaryAudience} />
+      {s.secondaryAudience && <Field label="SECONDARY AUDIENCE" value={s.secondaryAudience} />}
+      <Field label="EMOTIONAL WOUND" value={s.emotionalWound} multiline />
+      <Field label="HIDDEN DESIRE" value={s.hiddenDesire} multiline />
+      <Field label="SURFACE OBJECTION" value={s.surfaceObjection} multiline />
+      <Field label="DEEPER OBJECTION" value={s.deeperObjection} multiline />
+      <Field label="TRUST BARRIER" value={s.trustBarrier} multiline />
+      <Field label="CAMPAIGN ROLE" value={s.campaignRole.toUpperCase()} />
+      <Field label="RECOMMENDED ANGLE" value={s.recommendedAngle} multiline />
+      <Field label="FORBIDDEN ANGLE" value={s.forbiddenAngle} multiline />
+      <Field label="PERSUASION MODE" value={`${s.persuasionMode} · ${s.storyShape}`} />
+      <Field label="PROOF NEED" value={s.proofNeed} />
+      <div className="grid grid-cols-2 gap-2 text-xs tabular-nums">
+        <div>
+          <div className="eyebrow">URGENCY</div>
+          <div className={`mt-0.5 ${riskTone(s.urgencyLevel)}`}>{s.urgencyLevel.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">REPETITION RISK</div>
+          <div className={`mt-0.5 ${riskTone(s.repetitionRisk)}`}>{s.repetitionRisk.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">TRUST DEBT</div>
+          <div className={`mt-0.5 ${riskTone(s.trustDebt)}`}>{s.trustDebt.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">BRAND RISK</div>
+          <div className={`mt-0.5 ${riskTone(s.brandRisk)}`}>{s.brandRisk.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">STRATEGIC DEPTH</div>
+          <div className="mt-0.5 text-bone-200/85">{s.strategicDepth.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">CONFIDENCE</div>
+          <div className="mt-0.5 text-bone-200/85">{s.confidence.toFixed(1)}/10</div>
+        </div>
+      </div>
+      <div className="text-[10px] text-bone-200/55 leading-snug">
+        <div className="eyebrow mb-1">CREATIVE CONSTRAINTS · ADVISORY</div>
+        <div>hook {s.creativeConstraints.hookIntensity}/10 · product {s.creativeConstraints.productVisibility}/10 · cta {s.creativeConstraints.ctaStrength}/10 · emotional {s.creativeConstraints.emotionalDirectness}/10</div>
+        <div>text: {s.creativeConstraints.textAmount} · proof: {s.creativeConstraints.proofRequirement} · critic: {s.creativeConstraints.criticStrictnessRecommendation}</div>
+      </div>
+      {s.reasonCodes.length > 0 && (
+        <div className="text-[10px] text-bone-200/55 leading-snug">
+          <div className="eyebrow mb-1">REASON CODES</div>
+          <ul className="space-y-0.5">
+            {s.reasonCodes.slice(0, 8).map((r, i) => (
+              <li key={i} className="break-words">· {r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

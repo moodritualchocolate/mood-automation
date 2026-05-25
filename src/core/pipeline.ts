@@ -768,6 +768,15 @@ import type { SilenceEngineReading } from '@lib/silenceEngine';
 import type { CouncilBriefing } from '@lib/councilTypes';
 import type { ModuleVote } from '@lib/cognitiveContradictionResolver';
 import type { CausalChainLink } from '@lib/causalMemoryGraph';
+import {
+  createAdStrategyMemoryStore,
+} from '@lib/adStrategyMemory';
+import type { AdStrategyAssessment } from '@lib/adStrategyEngine';
+import {
+  computeAdStrategy,
+  recordStrategyAssessment,
+  recordStrategyOutcome,
+} from '@lib/adStrategyEngine';
 import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
 import type { ApprovalRecord } from '@lib/approvalMemory';
 import type { CognitiveFieldState } from '@lib/cognitiveField';
@@ -1227,6 +1236,14 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     },
   });
 
+  // Strategist Brain (Phase Next) — load persistent ad-strategy memory
+  // once per pipeline run. The assessment itself is computed per attempt
+  // (after direction is decided) and the latest one is attached to the
+  // shipped banner. Memory writes happen on shipped + final outcomes.
+  const adStrategyStore = createAdStrategyMemoryStore();
+  let adStrategyMemory = await adStrategyStore.read();
+  let adStrategy: AdStrategyAssessment | null = null;
+
   while (attempt < maxAttempts) {
     attempt += 1;
 
@@ -1258,6 +1275,39 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
     });
     const composition = planComposition({ ctx, direction });
     decideProductIntegration({ ctx, direction });
+
+    // ─── Strategist Brain (Phase Next) ──────────────────────────
+    // Deterministic ad-strategy assessment from the current state /
+    // truth / direction / mode + persistent ad-strategy memory.
+    // Read-only with respect to runtime systems: emits a trace event
+    // and is attached to the banner on ship; does NOT modify direction,
+    // composition, critic, or refusal behavior.
+    adStrategy = computeAdStrategy({
+      state, truth, direction,
+      campaignMode: ctx.campaignMode,
+      bannerId,
+      memory: adStrategyMemory,
+    });
+    emit({
+      stage: 'ad-strategy',
+      message:
+        `${adStrategy.primaryAudience} · ${adStrategy.campaignRole} · ` +
+        `wound:"${adStrategy.emotionalWound}" → desire:"${adStrategy.hiddenDesire}" · ` +
+        `${adStrategy.persuasionMode}/${adStrategy.storyShape} · ` +
+        `urgency ${adStrategy.urgencyLevel}/10 · ` +
+        `repetition ${adStrategy.repetitionRisk}/10 · ` +
+        `trustDebt ${adStrategy.trustDebt}/10 · ` +
+        `depth ${adStrategy.strategicDepth}/10 · ` +
+        `confidence ${adStrategy.confidence}/10`,
+      data: {
+        primaryAudience: adStrategy.primaryAudience,
+        campaignRole: adStrategy.campaignRole,
+        recommendedAngle: adStrategy.recommendedAngle,
+        forbiddenAngle: adStrategy.forbiddenAngle,
+        creativeConstraints: adStrategy.creativeConstraints,
+        reasonCodes: adStrategy.reasonCodes.slice(0, 5),
+      },
+    });
 
     // Image-level inner loop (max 2 image regens before bumping to concept).
     let imageAttempts = 0;
@@ -4976,6 +5026,7 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           imageBrief: brief, image, typography, cta,
           critique: scrollStop,
           taste, psychology, productPresence, referenceMatch: reference, finalVerdict,
+          adStrategy: adStrategy ?? undefined,
           tasteSystem: {
             dna, judge, reaction, fatigue, evolutionAtRunStart,
             campaignBrain: {
@@ -5804,6 +5855,38 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           }));
         }
 
+        // Strategist Brain — persist this assessment to memory on ship,
+        // then mark the outcome as approved. Failures during persist
+        // never block the shipped banner.
+        if (adStrategy) {
+          try {
+            const now = Date.now();
+            adStrategyMemory = recordStrategyAssessment(adStrategyMemory, adStrategy, bannerId, now);
+            adStrategyMemory = recordStrategyOutcome(
+              adStrategyMemory, adStrategy, bannerId, 'approved', undefined, now,
+            );
+            await adStrategyStore.save(adStrategyMemory);
+            emit({
+              stage: 'ad-strategy',
+              message:
+                `assessment committed (approved) · trustDebt ${adStrategyMemory.trustDebt}/10 · ` +
+                `brandDignity ${adStrategyMemory.brandDignityScore}/10 · ` +
+                `${adStrategyMemory.totalAssessments} total assessments`,
+              data: {
+                totalAssessments: adStrategyMemory.totalAssessments,
+                audienceFatigue: Object.fromEntries(
+                  Object.entries(adStrategyMemory.audienceFatigue).map(([k, v]) => [k, v.usageCount]),
+                ),
+              },
+            });
+          } catch (e) {
+            emit({
+              stage: 'ad-strategy',
+              message: `assessment commit failed (non-fatal): ${(e as Error).message}`,
+            });
+          }
+        }
+
         emit({ stage: 'pipeline', message: 'banner approved', data: { attempt, imageAttempts, totals: finalVerdict.totals } });
         return { banner, events };
       }
@@ -6054,6 +6137,30 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
       protection_recorded: true,
       scar_recorded: false,
     }));
+  }
+
+  // Strategist Brain — on exhaustion, record the last assessment as a
+  // refused outcome so failed angles accumulate. Non-fatal if it errors.
+  if (adStrategy) {
+    try {
+      const now = Date.now();
+      adStrategyMemory = recordStrategyAssessment(adStrategyMemory, adStrategy, bannerId, now);
+      adStrategyMemory = recordStrategyOutcome(
+        adStrategyMemory, adStrategy, bannerId, 'refused',
+        rejectedAttempts.slice(-3).map((r) => `${r.stage}: ${r.reason}`),
+        now,
+      );
+      await adStrategyStore.save(adStrategyMemory);
+      emit({
+        stage: 'ad-strategy',
+        message: `assessment committed (refused) · failedAngles ${adStrategyMemory.failedAngles.length}`,
+      });
+    } catch (e) {
+      emit({
+        stage: 'ad-strategy',
+        message: `assessment commit failed on exhaustion (non-fatal): ${(e as Error).message}`,
+      });
+    }
   }
 
   throw new ExhaustedAttempts(
