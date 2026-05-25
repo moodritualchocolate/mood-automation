@@ -108,6 +108,9 @@ import { buildResourceEconomyView } from './resourceEconomyView';
 // Wave 39 — Environmental Reality.
 import type { EnvironmentViewModel } from './environmentView';
 import { buildEnvironmentView } from './environmentView';
+// Wave 40 — Mission Continuity.
+import type { MissionContinuityViewModel } from './missionContinuityView';
+import { buildMissionContinuityView } from './missionContinuityView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -199,6 +202,11 @@ export interface RuntimeManifestation {
    *  coupling, EnvironmentBias on governance gradients, and
    *  cost / restoration multipliers for the resource economy. */
   environment: EnvironmentViewModel;
+  /** Wave 40 — Mission Continuity. Persistent civilizational gravity:
+   *  strategic-direction vectors, lineage chains, ten top-level
+   *  metrics, eight civilization states, MissionBias on governance,
+   *  drift accumulation, conflict topology. */
+  missionContinuity: MissionContinuityViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -250,6 +258,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const internalEcology = buildInternalEcologyView(snap);
   const resourceEconomy = buildResourceEconomyView(snap);
   const environment = buildEnvironmentView(snap);
+  const missionContinuity = buildMissionContinuityView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -275,7 +284,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     actionSandbox, recoveryState, consciousness, temporalIntelligence,
     purposeIntent, contradictionField, selfModel, adaptiveRegulation,
     cognitiveGovernance, strategicSimulation, internalEcology,
-    resourceEconomy, environment,
+    resourceEconomy, environment, missionContinuity,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

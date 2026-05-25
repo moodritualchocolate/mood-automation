@@ -603,6 +603,192 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 40 — Mission Continuity ─────────────────────────────
+//
+// Civilizational gravity. Mission vectors with persistence weights +
+// lineage chains, ten top-level metrics, civilization state with
+// hysteresis, drift / lineage / conflict logs, MissionBias on
+// governance gradients. NOT philosophy. NOT meaning. Operational
+// continuity physics across long horizons.
+
+export function MissionContinuity({ m }: { m: RuntimeManifestation }) {
+  const c = m.missionContinuity;
+  if (!c.present) return null;
+
+  const tone =
+    c.status === 'critical'  ? '#FF4D2D' :
+    c.status === 'drifting'  ? '#C9A24B' :
+                               '#8AA98A';
+
+  const stateTone = (s: string) =>
+    s === 'active'         ? '#8AA98A' :
+    s === 'forming'        ? '#6F8196' :
+    s === 'fading'         ? '#C9A24B' :
+    s === 'lineage-stored' ? 'rgba(247,245,242,0.45)' :
+                             'rgba(247,245,242,0.30)';
+
+  const metricTone = (value: number, highIsGood: boolean) => {
+    if (highIsGood) {
+      return value >= 7 ? '#8AA98A' : value >= 4 ? '#C9A24B' : '#FF4D2D';
+    }
+    return value <= 3 ? '#8AA98A' : value <= 6 ? '#C9A24B' : '#FF4D2D';
+  };
+
+  const biasRow = (label: string, value: number) => {
+    const sign = value === 0 ? '' : value > 0 ? '+' : '';
+    const c =
+      Math.abs(value) < 0.04 ? 'rgba(247,245,242,0.50)' :
+      value > 0 ? '#8AA98A' : '#C9A24B';
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 flex-grow">{label}</span>
+        <span style={{ color: c }} className="w-[60px] text-right">{sign}{value.toFixed(2)}</span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">mission continuity</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {c.civilizationState} · age {c.civilizationAge}ev · held {c.statePersistenceTicks}ev
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{c.statement}</div>
+
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-3">
+        {([
+          ['continuity',       c.continuityStrength,    true],
+          ['integrity',        c.missionIntegrity,      true],
+          ['drift',            c.existentialDrift,      false],
+          ['lineage stability',c.lineageStability,      true],
+          ['horizon coherence',c.longHorizonCoherence,  true],
+          ['adapt continuity', c.adaptationContinuity,  true],
+          ['persistence',      c.strategicPersistence,  true],
+          ['mission pressure', c.missionPressure,       false],
+        ] as Array<[string, number, boolean]>).map(([label, val, highIsGood]) => (
+          <div key={label} className="flex flex-col">
+            <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/45">{label}</span>
+            <span className="text-[16px] tabular-nums" style={{ color: metricTone(val, highIsGood) }}>
+              {val.toFixed(1)}<span className="text-[10px] text-bone-200/40">/10</span>
+            </span>
+          </div>
+        ))}
+        <div className="flex flex-col">
+          <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/45">momentum</span>
+          <span className="text-[16px] tabular-nums" style={{ color: c.continuityMomentum >= 0 ? '#8AA98A' : '#FF4D2D' }}>
+            {c.continuityMomentum >= 0 ? '+' : ''}{c.continuityMomentum.toFixed(2)}
+          </span>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-[9px] tracking-[0.18em] uppercase text-bone-200/45">sim pressure</span>
+          <span className="text-[16px] tabular-nums text-bone-50/85">
+            +{c.simulationPressureContribution.toFixed(2)}
+          </span>
+        </div>
+      </div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          mission vectors · {c.vectors.length} total · {c.vectors.filter((v) => v.isMutation).length} mutations
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {c.vectors.map((v) => (
+            <div key={v.id} className="flex items-center gap-2 text-[10px] tabular-nums">
+              <span className="text-[9px] tracking-[0.16em] uppercase w-[80px]" style={{ color: stateTone(v.activationState) }}>
+                {v.activationState}
+              </span>
+              <span className="text-bone-200/65 w-[160px]">
+                {v.strategicDirection}
+                {v.isMutation && <span className="text-bone-200/40 text-[9px]"> · mut</span>}
+              </span>
+              <div className="flex-grow h-[5px] bg-ink-900/70 border hairline">
+                <div className="h-full" style={{ width: `${v.persistenceWeight * 10}%`, backgroundColor: '#8AA98A' }} />
+              </div>
+              <span className="w-[40px] text-right text-bone-50/75">{v.persistenceWeight.toFixed(1)}</span>
+              <span className="w-[70px] text-right text-[9px] text-bone-200/40">
+                anchor {v.continuityAnchor.toFixed(1)}
+              </span>
+              <span className="w-[70px] text-right text-[9px] text-bone-200/40">
+                age {v.ageEvents}ev
+              </span>
+              <span className="w-[60px] text-right text-[9px] text-bone-200/40">
+                r {v.historicalReinforcement}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          mission bias on governance gradients
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {biasRow('cognition throughput',  c.bias.cognitionThroughput)}
+          {biasRow('escalation permission', c.bias.escalationPermission)}
+          {biasRow('exploration intensity', c.bias.explorationIntensity)}
+          {biasRow('defer acceptance',      c.bias.deferAcceptance)}
+          {biasRow('recovery weighting',    c.bias.recoveryWeighting)}
+          {biasRow('burst tolerance',       c.bias.burstTolerance)}
+        </div>
+      </div>
+
+      {c.recentLineageEvents.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            recent lineage events
+          </div>
+          {c.recentLineageEvents.map((l, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{l.tick} · <span className="text-bone-50/75">{l.kind}</span>{' '}
+              <span className="text-bone-200/40">{l.fromVectorId}</span> → {l.toVectorId}{' '}
+              <span className="text-bone-200/35">
+                · mut-dist {l.mutationDistance.toFixed(1)} · inherit {l.inheritanceStrength.toFixed(1)} · cont-preserved {l.continuityPreserved.toFixed(1)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.recentDriftEvents.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            recent drift events
+          </div>
+          {c.recentDriftEvents.map((d, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{d.tick} · drift {d.existentialDrift.toFixed(1)}/10{' '}
+              <span className="text-bone-200/40">driver: {d.driver}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.recentConflicts.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            continuity conflicts
+          </div>
+          {c.recentConflicts.map((cf, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{cf.tick} · <span style={{ color: cf.intensity >= 6 ? '#FF4D2D' : '#C9A24B' }}>{cf.kind}</span>{' '}
+              · intensity {cf.intensity.toFixed(1)}/10{' '}
+              <span className="text-bone-200/40">— {cf.description}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        updates {c.totalUpdates}
+      </div>
+    </div>
+  );
+}
+
 // ─── Wave 39 — Environmental Reality ──────────────────────────
 //
 // Seven external operational climate fields with momentum +

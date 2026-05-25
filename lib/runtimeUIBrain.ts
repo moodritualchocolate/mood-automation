@@ -107,6 +107,13 @@ export interface RuntimeSnapshot {
    *  evolving with momentum + hysteresis, with bidirectional coupling
    *  to the organism. Bias bounded ±0.20 per gradient. */
   environment?: import('./environmentMemory').EnvironmentMemoryState | null;
+  /** Wave 40 — mission continuity. Persistent civilizational gravity:
+   *  five+ strategic-direction vectors with lineage chains, ten
+   *  top-level metrics (continuityStrength, missionIntegrity,
+   *  existentialDrift, lineageStability, longHorizonCoherence,
+   *  adaptationContinuity, strategicPersistence, missionPressure,
+   *  continuityMomentum, civilizationAge), eight civilization states. */
+  missionContinuity?: import('./missionContinuityMemory').MissionContinuityState | null;
   capturedAt: number;
 }
 
