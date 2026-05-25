@@ -47,6 +47,11 @@ import {
   createIdentityContinuityMemoryStore,
 } from '@lib/identityContinuityMemory';
 import { buildPolicyAuditView } from '@lib/copyQualityPolicyAuditView';
+import { computeExecutiveGovernance } from '@lib/executiveGovernanceEngine';
+import {
+  recordGovernanceObservation, buildGovernanceObservation, buildGovernanceHistoryContext,
+  createExecutiveGovernanceMemoryStore,
+} from '@lib/executiveGovernanceMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -381,6 +386,58 @@ export async function POST(req: NextRequest) {
                 collapsingVectors: identity.collapsingIdentityVectors.map((c) => c.vector),
                 contradictionCount: identity.identityContradictions.length,
               });
+
+              // ─── Executive Cognitive Governance ─────────────────
+              // With weights + conflict + identity all persisted,
+              // derive the contextual governance structure for this
+              // run and store it so the longitudinal view can detect
+              // recurring executives, stabilizers, shadow executives,
+              // and overreach. STRICTLY observational — no autonomous
+              // orchestration, no runtime authority enforcement.
+              try {
+                const governanceMemBefore = await createExecutiveGovernanceMemoryStore()
+                  .read().catch(() => null);
+                const governance = computeExecutiveGovernance({
+                  cognitiveWeight: weights,
+                  conflict,
+                  culturalPerception,
+                  identityContinuity: identity,
+                  qualityLongitudinal: null,
+                  history: buildGovernanceHistoryContext(governanceMemBefore),
+                });
+                write({
+                  type: 'event',
+                  event: {
+                    ts: Date.now(),
+                    stage: 'executive-governance',
+                    message:
+                      `executive ${governance.dominantGovernanceStructure.primaryExecutive ?? 'none'} · ` +
+                      `legitimacy ${governance.executiveLegitimacy}/10 · ` +
+                      `stability ${governance.governanceStability}/10 · ` +
+                      `fragmentation ${governance.authorityFragmentation}/10 · ` +
+                      `overreach-risks ${governance.executiveOverreachRisks.length}`,
+                    data: {
+                      primaryExecutive: governance.dominantGovernanceStructure.primaryExecutive,
+                      governanceStability: governance.governanceStability,
+                      executiveLegitimacy: governance.executiveLegitimacy,
+                      authorityFragmentation: governance.authorityFragmentation,
+                      shadowExecutives: governance.shadowExecutives.map((s) => s.system),
+                      overreachRisks: governance.executiveOverreachRisks.map((o) => o.system),
+                    },
+                  },
+                });
+                await recordGovernanceObservation(buildGovernanceObservation({
+                  at: banner.createdAt,
+                  bannerId: banner.id,
+                  formula: banner.formula,
+                  campaignMode: banner.campaignMode,
+                  governance,
+                  authorities: weights.weights,
+                  suppressed: weights.suppressedSystems.map((s) => s.system),
+                }));
+              } catch {
+                // non-fatal — governance observation never blocks generation
+              }
             } catch {
               // non-fatal — identity observation never blocks generation
             }

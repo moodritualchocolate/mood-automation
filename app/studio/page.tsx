@@ -41,6 +41,7 @@ import type { CulturalPerceptionLongitudinalView } from '@lib/culturalPerception
 import type { ConflictLongitudinalView } from '@lib/conflictLongitudinalView';
 import type { CognitiveWeightLongitudinalView } from '@lib/cognitiveWeightLongitudinalView';
 import type { IdentityContinuityLongitudinalView } from '@lib/identityContinuityLongitudinalView';
+import type { ExecutiveGovernanceLongitudinalView } from '@lib/executiveGovernanceLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -96,6 +97,8 @@ function StudioInner() {
   const [cogWeight, setCogWeight] = useState<CognitiveWeightLongitudinalView | null>(null);
   // Identity Continuity (read-only persistent selfhood) — same lifecycle.
   const [identity, setIdentity] = useState<IdentityContinuityLongitudinalView | null>(null);
+  // Executive Governance (read-only internal leadership) — same lifecycle.
+  const [governance, setGovernance] = useState<ExecutiveGovernanceLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -189,6 +192,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setIdentity(v as IdentityContinuityLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/executive-governance', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setGovernance(v as ExecutiveGovernanceLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -223,6 +230,10 @@ function StudioInner() {
     fetch('/api/identity-continuity', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setIdentity(v as IdentityContinuityLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/executive-governance', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setGovernance(v as ExecutiveGovernanceLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -482,12 +493,13 @@ function StudioInner() {
               {conflict && <CrossBrainConflictPanel view={conflict} />}
               {cogWeight && <CognitiveWeightEvolutionPanel view={cogWeight} />}
               {identity && <IdentityContinuityPanel view={identity} />}
+              {governance && <ExecutiveGovernancePanel view={governance} />}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
@@ -495,6 +507,7 @@ function StudioInner() {
               {conflict && <CrossBrainConflictPanel view={conflict} />}
               {cogWeight && <CognitiveWeightEvolutionPanel view={cogWeight} />}
               {identity && <IdentityContinuityPanel view={identity} />}
+              {governance && <ExecutiveGovernancePanel view={governance} />}
             </div>
           )}
 
@@ -2253,6 +2266,375 @@ function IdentityContinuityPanel({ view: v }: { view: IdentityContinuityLongitud
         avg stability {v.averageStability.toFixed(1)}/10 ·
         avg fragmentation {v.averageFragmentation.toFixed(1)}/10 ·
         avg continuity-risk {v.averageContinuityRisk.toFixed(1)}/10
+      </div>
+    </div>
+  );
+}
+
+// ─── executive governance panel ───────────────────────────────
+
+function ExecutiveGovernancePanel({ view: v }: { view: ExecutiveGovernanceLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && !c) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">executive governance · internal leadership</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.governanceTrend === 'fragmentation-rising' ? 'text-signal-warning' :
+    v.governanceTrend === 'consolidating'        ? 'text-bone-50/85' :
+    v.governanceTrend === 'stable'               ? 'text-bone-200/85' :
+                                                   'text-bone-200/65';
+
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const roleTone = (role: string) =>
+    role === 'executive'              ? 'text-bone-50 border-bone-50/40' :
+    role === 'stabilizer'             ? 'text-bone-50/85 border-bone-50/30' :
+    role === 'trust-guardian'         ? 'text-bone-50/85 border-bone-50/30' :
+    role === 'identity-preserver'     ? 'text-bone-50/75 border-bone-50/25' :
+    role === 'shadow-executive'       ? 'text-signal-warning/85 border-signal-warning/30' :
+    role === 'fragmentation-risk'     ? 'text-signal-warning border-signal-warning/40' :
+    role === 'executive-overreach' /* future */ ? 'text-signal-warning border-signal-warning/40' :
+                                        'text-bone-200/65 border-bone-200/25';
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">executive governance · internal leadership</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+
+      {c && (
+        <>
+          <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+            <div>
+              <div className="eyebrow">GOV STABILITY</div>
+              <div className={`mt-0.5 ${heatTone(c.governanceStability)}`}>{c.governanceStability.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">EXEC LEGITIMACY</div>
+              <div className={`mt-0.5 ${heatTone(c.executiveLegitimacy)}`}>{c.executiveLegitimacy.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">AUTH FRAGMENTATION</div>
+              <div className={`mt-0.5 ${heatTone(c.authorityFragmentation, true)}`}>{c.authorityFragmentation.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">ADAPTIVE BALANCE</div>
+              <div className={`mt-0.5 ${heatTone(c.adaptiveBalance)}`}>{c.adaptiveBalance.toFixed(1)}/10</div>
+            </div>
+          </div>
+
+          <div className="pt-2 text-[11px] leading-snug">
+            <div className="eyebrow mb-1">CURRENT EXECUTIVE STRUCTURE</div>
+            <div className="text-bone-50/85">
+              executive: <span className="uppercase tracking-wider">{c.dominantGovernanceStructure.primaryExecutive ?? 'none'}</span>
+            </div>
+            {c.dominantGovernanceStructure.supportingSystems.length > 0 && (
+              <div className="text-bone-200/65">
+                supporting: {c.dominantGovernanceStructure.supportingSystems.join(' · ')}
+              </div>
+            )}
+            {c.dominantGovernanceStructure.suppressedSystems.length > 0 && (
+              <div className="text-bone-200/55">
+                suppressed: {c.dominantGovernanceStructure.suppressedSystems.join(' · ')}
+              </div>
+            )}
+            <div className="text-bone-200/45 text-[10px] italic mt-0.5">{c.dominantGovernanceStructure.explanation}</div>
+          </div>
+
+          {c.governanceRoles.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">GOVERNANCE ROLES</div>
+              <ul className="space-y-1.5 text-[10px]">
+                {c.governanceRoles.slice(0, 6).map((row) => (
+                  <li key={row.system} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-200/65 uppercase tracking-wider w-[100px] shrink-0 truncate">{row.system}</span>
+                      <span className={`px-1.5 py-0.5 text-[9px] tracking-widest uppercase border ${roleTone(row.role)} shrink-0`}>
+                        {row.role}
+                      </span>
+                      <span className="flex-grow" />
+                      <span className="w-[40px] text-right text-bone-50/75">a {row.authority.toFixed(1)}</span>
+                      <span className="w-[40px] text-right text-bone-200/55">s {row.stability.toFixed(1)}</span>
+                      <span className="w-[40px] text-right text-bone-200/55">L {row.contextualLegitimacy.toFixed(1)}</span>
+                    </div>
+                    <div className="text-bone-200/45 text-[9px] mt-0.5 break-words">{row.explanation}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.shadowExecutives.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">SHADOW EXECUTIVES</div>
+              <ul className="text-[10px] text-signal-warning/85 leading-snug space-y-0.5">
+                {c.shadowExecutives.slice(0, 3).map((s) => (
+                  <li key={s.system} className="break-words">
+                    · <span className="uppercase tracking-wider">{s.system}</span> — {s.reason}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.suppressedAuthorities.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">SUPPRESSED AUTHORITIES</div>
+              <ul className="text-[10px] text-bone-200/65 leading-snug space-y-0.5">
+                {c.suppressedAuthorities.slice(0, 3).map((s) => (
+                  <li key={s.system} className="break-words">
+                    · <span className="uppercase tracking-wider">{s.system}</span>
+                    {' '}— suppression {s.suppressionScore.toFixed(1)}, historical legitimacy {s.historicalLegitimacy.toFixed(1)}/10
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.governanceConflicts.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">GOVERNANCE CONFLICTS</div>
+              <ul className="space-y-1 text-[10px]">
+                {c.governanceConflicts.map((row, i) => (
+                  <li key={i} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">
+                        {row.systems.join(' ⇄ ')}
+                      </span>
+                      <span className={`w-[40px] text-right ${heatTone(row.severity, true)}`}>
+                        {row.severity.toFixed(1)}/10
+                      </span>
+                    </div>
+                    <div className="text-bone-200/55 break-words">{row.explanation}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.contextualLeadershipRules.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">CONTEXTUAL LEADERSHIP</div>
+              <ul className="space-y-1.5 text-[10px]">
+                {c.contextualLeadershipRules.map((row, i) => (
+                  <li key={i} className="leading-snug">
+                    <div className="text-bone-200/65 break-words">when {row.condition}</div>
+                    <div className="text-bone-50/85 uppercase tracking-wider">→ {row.leader} leads</div>
+                    <div className="text-bone-200/45 text-[9px] italic break-words">{row.rationale}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.executiveOverreachRisks.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">EXECUTIVE OVERREACH RISK</div>
+              <ul className="text-[10px] text-signal-warning/85 leading-snug space-y-0.5">
+                {c.executiveOverreachRisks.map((r) => (
+                  <li key={r.system} className="break-words">
+                    · <span className="uppercase tracking-wider">{r.system}</span>
+                    {' '}({r.overreachScore.toFixed(1)}/10) — {r.reason}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.authorityCollapseRisks.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">AUTHORITY COLLAPSE RISK</div>
+              <ul className="text-[10px] text-signal-warning/75 leading-snug space-y-0.5">
+                {c.authorityCollapseRisks.map((r) => (
+                  <li key={r.system} className="break-words">
+                    · <span className="uppercase tracking-wider">{r.system}</span>
+                    {' '}({r.riskScore.toFixed(1)}/10) — {r.reason}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="pt-2">
+            <div className="eyebrow mb-1">GOVERNANCE PRESSURE</div>
+            <div className="grid grid-cols-2 gap-2 text-[10px] tabular-nums">
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">trust</span>
+                <span className={heatTone(c.governancePressure.trustPressure, true)}>
+                  {c.governancePressure.trustPressure.toFixed(1)}/10
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">novelty</span>
+                <span className="text-bone-50/75">{c.governancePressure.noveltyPressure.toFixed(1)}/10</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">adaptation</span>
+                <span className={heatTone(c.governancePressure.adaptationPressure, true)}>
+                  {c.governancePressure.adaptationPressure.toFixed(1)}/10
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">fragmentation</span>
+                <span className={heatTone(c.governancePressure.fragmentationPressure, true)}>
+                  {c.governancePressure.fragmentationPressure.toFixed(1)}/10
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {c.longTermAuthorityDrift.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">LONG-TERM AUTHORITY DRIFT</div>
+              <div className="flex flex-col gap-0.5">
+                {c.longTermAuthorityDrift.slice(0, 5).map((d) => {
+                  const driftTone = d.drift > 0 ? 'text-bone-50/85' : 'text-signal-warning/75';
+                  return (
+                    <div key={d.system} className="flex items-center gap-2 text-[10px] tabular-nums">
+                      <span className="text-bone-200/65 w-[100px] shrink-0 truncate">{d.system}</span>
+                      <span className="w-[40px] text-right text-bone-200/55">{d.historicalAuthority.toFixed(1)}</span>
+                      <span className="w-[10px] text-bone-200/45 text-center">→</span>
+                      <span className="w-[40px] text-right text-bone-50/75">{d.recentAuthority.toFixed(1)}</span>
+                      <span className={`w-[40px] text-right ${driftTone}`}>
+                        {d.drift > 0 ? '+' : ''}{d.drift.toFixed(1)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {v.executiveRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">EXECUTIVE RANKING OVER TIME</div>
+          <div className="flex flex-col gap-0.5">
+            {v.executiveRanking.slice(0, 6).map((r) => (
+              <div key={r.system} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.system}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.executiveCount}</span>
+                <span className="w-[50px] text-right text-bone-200/55">ewma {r.authorityEwma.toFixed(1)}</span>
+                <span className="w-[40px] text-right text-bone-200/45">{(r.share * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.stabilizerRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">STABILIZER RANKING</div>
+          <div className="flex flex-col gap-0.5">
+            {v.stabilizerRanking.slice(0, 5).map((r) => (
+              <div key={r.system} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow uppercase tracking-wider truncate">{r.system}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.stabilizerCount}</span>
+                <span className="w-[40px] text-right text-bone-200/45">{(r.share * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.suppressionCycles.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">SUPPRESSION CYCLES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.suppressionCycles.slice(0, 4).map((r) => (
+              <div key={r.system} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.system}</span>
+                <span className="w-[50px] text-right text-bone-200/55">supp ×{r.totalSuppressions}</span>
+                <span className="w-[50px] text-right text-bone-50/75">shadow ×{r.shadowEmergences}</span>
+                <span className="w-[40px] text-right text-bone-50/75">{r.predictiveRatio.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.authorityTransitions.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">AUTHORITY TRANSITIONS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.authorityTransitions.slice(0, 5).map((t) => (
+              <div key={`${t.fromSystem}-${t.toSystem}`} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 flex-grow truncate">
+                  <span className="uppercase tracking-wider">{t.fromSystem}</span>
+                  <span className="text-bone-200/45"> → </span>
+                  <span className="uppercase tracking-wider text-bone-50/75">{t.toSystem}</span>
+                </span>
+                <span className="w-[40px] text-right text-bone-50/75">×{t.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.authorityConcentrationRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">AUTHORITY CONCENTRATION</div>
+          <div className="flex flex-col gap-0.5">
+            {v.authorityConcentrationRanking.slice(0, 4).map((r) => (
+              <div key={r.system} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.system}</span>
+                <span className="w-[40px] text-right text-bone-200/55">{(r.share * 100).toFixed(0)}%</span>
+                <span className="w-[40px] text-right text-bone-200/55">×{r.consecutive}</span>
+                <span className={`w-[40px] text-right ${heatTone(r.concentrationScore, true)}`}>
+                  {r.concentrationScore.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.recurringGovernanceStructures.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">RECURRING GOVERNANCE STRUCTURES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.recurringGovernanceStructures.slice(0, 5).map((r) => (
+              <div key={r.pattern} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow break-words">{r.pattern}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.governanceCollapsePatterns.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">GOVERNANCE COLLAPSE PATTERNS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.governanceCollapsePatterns.slice(0, 4).map((r) => (
+              <div key={r.pattern} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow break-words">{r.pattern}</span>
+                <span className="w-[40px] text-right text-signal-warning/75">×{r.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        observations {v.totalObservations} ·
+        avg stability {v.averageStability.toFixed(1)}/10 ·
+        avg fragmentation {v.averageFragmentation.toFixed(1)}/10 ·
+        avg legitimacy {v.averageLegitimacy.toFixed(1)}/10
       </div>
     </div>
   );
