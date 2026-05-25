@@ -783,6 +783,7 @@ import { composeCopy, recordCopyOutput } from '@lib/copywriterEngine';
 import type { CopyQualityAxis } from '@lib/copyQualityAdapter';
 import { evaluateCopyQuality } from '@lib/copyQualityAdapter';
 import { axisToSample, createCopyQualityMemoryStore } from '@lib/copyQualityMemory';
+import { buildCopyQualityAdvisory, appendAdvisoryToNotes } from '@lib/copyQualityAdvisory';
 import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
 import type { ApprovalRecord } from '@lib/approvalMemory';
 import type { CognitiveFieldState } from '@lib/cognitiveField';
@@ -4942,6 +4943,26 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         gpGift, gpAntiCol, gpNotOwn, gpAntiOther, gpAntiCyn, gpAntiNih,
       });
       // ───────────────────────────────────────────────────────────
+
+      // ─── Soft Advisory Inlay (Phase Next) ──────────────────────
+      // Read-only inlay: append a single advisory line to the
+      // meta-critic's notes when copy-quality signals warrant it.
+      // DOES NOT alter verdict / reasons / totals / brutality / refusal.
+      // Surfaces what the critic SEES without changing what it DECIDES.
+      const advisory = buildCopyQualityAdvisory({
+        copyQuality: copyQualitySignal,
+        copywriter: copywriterOutput,
+      });
+      if (advisory.shouldAppend && advisory.advisoryLine) {
+        // Mutate ONLY the notes string — verdict, reasons, totals,
+        // and every other field on finalVerdict remain untouched.
+        finalVerdict.notes = appendAdvisoryToNotes(finalVerdict.notes, advisory);
+        emit({
+          stage: 'copy-quality',
+          message: `advisory inlaid into critic notes (verdict unchanged: ${finalVerdict.verdict})`,
+          data: { advisoryLine: advisory.advisoryLine, reasonCodes: advisory.reasonCodes },
+        });
+      }
 
       if (finalVerdict.verdict === 'approve') {
         const shippedAt = Date.now();
