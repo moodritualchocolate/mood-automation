@@ -61,6 +61,12 @@ import { computeCounterfactualCognition } from '@lib/counterfactualCognitionEngi
 import {
   recordCounterfactualObservation, buildCounterfactualObservation,
 } from '@lib/counterfactualCognitionMemory';
+import { computeCampaignEvolution } from '@lib/campaignLifecycleEngine';
+import {
+  recordCampaignLifecycleObservation, buildCampaignLifecycleObservation,
+  buildCampaignLifecycleHistoryContext,
+  createCampaignLifecycleMemoryStore,
+} from '@lib/campaignLifecycleMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -574,6 +580,65 @@ export async function POST(req: NextRequest) {
                       trustOptimizedArchetype: counterfactual.trustOptimizedPath?.counterfactualCampaignArchetype ?? null,
                       durabilityOptimizedArchetype: counterfactual.durabilityOptimizedPath?.counterfactualCampaignArchetype ?? null,
                     }));
+
+                    // ─── Campaign Lifecycle Evolution ────────────────
+                    // With every upstream layer persisted, derive the
+                    // campaign-level evolution reading for this run
+                    // (phase + freshness vs fatigue + trust momentum
+                    // + decay risk + branch readiness + audience
+                    // rotation need + strategic durability) and store
+                    // one observation. STRICTLY observational — no
+                    // autonomous publishing, no branching, no budget
+                    // decisions, no prompt mutation.
+                    try {
+                      const lifecycleMemBefore = await createCampaignLifecycleMemoryStore()
+                        .read().catch(() => null);
+                      const evolution = computeCampaignEvolution({
+                        strategy: banner.adStrategy ?? null,
+                        copyQuality: liveQuality,
+                        culturalPerception,
+                        identityContinuity: identity,
+                        executiveGovernance: governance,
+                        strategicOutcome: outcome,
+                        counterfactualCognition: counterfactual,
+                        history: buildCampaignLifecycleHistoryContext(lifecycleMemBefore),
+                      });
+                      write({
+                        type: 'event',
+                        event: {
+                          ts: Date.now(),
+                          stage: 'campaign-evolution',
+                          message:
+                            `phase ${evolution.currentPhase} · ` +
+                            `health ${evolution.campaignHealth}/10 · ` +
+                            `trust-momentum ${evolution.trustMomentum}/10 · ` +
+                            `fatigue ${evolution.fatiguePressure}/10 · ` +
+                            `decay ${evolution.decayRisk}/10 · ` +
+                            `branch ${evolution.branchReadiness}/10 · ` +
+                            `audience-rotation ${evolution.audienceRotationNeed}/10`,
+                          data: {
+                            currentPhase: evolution.currentPhase,
+                            campaignHealth: evolution.campaignHealth,
+                            trustMomentum: evolution.trustMomentum,
+                            fatiguePressure: evolution.fatiguePressure,
+                            decayRisk: evolution.decayRisk,
+                            branchReadiness: evolution.branchReadiness,
+                            audienceRotationNeed: evolution.audienceRotationNeed,
+                            strategicDurability: evolution.strategicDurability,
+                            dominantCampaignPattern: evolution.dominantCampaignPattern,
+                          },
+                        },
+                      });
+                      await recordCampaignLifecycleObservation(buildCampaignLifecycleObservation({
+                        at: banner.createdAt,
+                        bannerId: banner.id,
+                        formula: banner.formula,
+                        campaignMode: banner.campaignMode,
+                        evolution,
+                      }));
+                    } catch {
+                      // non-fatal — lifecycle observation never blocks generation
+                    }
                   } catch {
                     // non-fatal — counterfactual observation never blocks generation
                   }

@@ -44,6 +44,7 @@ import type { IdentityContinuityLongitudinalView } from '@lib/identityContinuity
 import type { ExecutiveGovernanceLongitudinalView } from '@lib/executiveGovernanceLongitudinalView';
 import type { StrategicOutcomeLongitudinalView } from '@lib/strategicOutcomeLongitudinalView';
 import type { CounterfactualCognitionLongitudinalView } from '@lib/counterfactualCognitionLongitudinalView';
+import type { CampaignLifecycleLongitudinalView } from '@lib/campaignLifecycleLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -105,6 +106,8 @@ function StudioInner() {
   const [outcome, setOutcome] = useState<StrategicOutcomeLongitudinalView | null>(null);
   // Counterfactual Cognition (read-only multi-path campaign simulation) — same lifecycle.
   const [counterfactual, setCounterfactual] = useState<CounterfactualCognitionLongitudinalView | null>(null);
+  // Campaign Lifecycle Evolution (read-only) — same lifecycle.
+  const [campaignLifecycle, setCampaignLifecycle] = useState<CampaignLifecycleLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -210,6 +213,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setCounterfactual(v as CounterfactualCognitionLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/campaign-evolution', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setCampaignLifecycle(v as CampaignLifecycleLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -256,6 +263,10 @@ function StudioInner() {
     fetch('/api/counterfactual-cognition', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setCounterfactual(v as CounterfactualCognitionLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/campaign-evolution', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCampaignLifecycle(v as CampaignLifecycleLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -518,12 +529,13 @@ function StudioInner() {
               {governance && <ExecutiveGovernancePanel view={governance} />}
               {outcome && <StrategicOutcomeIntelligencePanel view={outcome} />}
               {counterfactual && <CounterfactualCognitionPanel view={counterfactual} />}
+              {campaignLifecycle && <CampaignEvolutionPanel view={campaignLifecycle} />}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
@@ -534,6 +546,7 @@ function StudioInner() {
               {governance && <ExecutiveGovernancePanel view={governance} />}
               {outcome && <StrategicOutcomeIntelligencePanel view={outcome} />}
               {counterfactual && <CounterfactualCognitionPanel view={counterfactual} />}
+              {campaignLifecycle && <CampaignEvolutionPanel view={campaignLifecycle} />}
             </div>
           )}
 
@@ -3276,6 +3289,311 @@ function CounterfactualCognitionPanel({
         observations {v.totalObservations} ·
         recurring pathways {v.recurringPathways.length} ·
         actual-leader variety {v.actualLeaderShares.length}
+      </div>
+    </div>
+  );
+}
+
+// ─── campaign evolution panel ─────────────────────────────────
+
+function CampaignEvolutionPanel({ view: v }: { view: CampaignLifecycleLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && !c) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">campaign evolution · living lifecycle</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.trend === 'compounding'            ? 'text-bone-50/85' :
+    v.trend === 'fatiguing'              ? 'text-signal-warning/85' :
+    v.trend === 'branch-pressure-rising' ? 'text-signal-warning/85' :
+    v.trend === 'rest-needed-rising'     ? 'text-signal-warning/85' :
+    v.trend === 'stable'                 ? 'text-bone-200/85' :
+                                           'text-bone-200/65';
+
+  const phaseTone = (phase: string) => {
+    if (phase === 'strategically-stable' || phase === 'compounding') return 'text-bone-50 border-bone-50/40';
+    if (phase === 'fatiguing' || phase === 'decaying' || phase === 'needs-rest' || phase === 'needs-branch') {
+      return 'text-signal-warning border-signal-warning/40';
+    }
+    return 'text-bone-200/75 border-bone-200/30';
+  };
+
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const Spark = ({ points, invert = false }: { points: { value: number }[]; invert?: boolean }) => {
+    if (points.length < 2) return <span className="text-[10px] text-bone-200/30">—</span>;
+    const w = 80, h = 14;
+    const xs = points.map((_, i) => (i / (points.length - 1)) * w);
+    const ys = points.map((p) => h - (p.value / 10) * h);
+    const d = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
+    const last = points[points.length - 1].value;
+    const first = points[0].value;
+    const delta = last - first;
+    const rising = delta > 0.3;
+    const falling = delta < -0.3;
+    const stroke = invert
+      ? rising ? '#C9A24B' : falling ? '#8AA98A' : 'rgba(247,245,242,0.55)'
+      : rising ? '#8AA98A' : falling ? '#C9A24B' : 'rgba(247,245,242,0.55)';
+    return <svg width={w} height={h}><path d={d} fill="none" stroke={stroke} strokeWidth="1" /></svg>;
+  };
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">campaign evolution · living lifecycle</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+
+      {c && (
+        <>
+          <div className="flex items-center gap-2 pt-1">
+            <span className="text-[10px] text-bone-200/55">phase:</span>
+            <span className={`px-1.5 py-0.5 text-[10px] tracking-widest uppercase border ${phaseTone(c.currentPhase)}`}>
+              {c.currentPhase}
+            </span>
+            <span className="text-[10px] text-bone-200/45 truncate">
+              {c.dominantCampaignPattern ?? 'no dominant pattern yet'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+            <div>
+              <div className="eyebrow">CAMPAIGN HEALTH</div>
+              <div className={`mt-0.5 ${heatTone(c.campaignHealth)}`}>{c.campaignHealth.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">TRUST MOMENTUM</div>
+              <div className={`mt-0.5 ${heatTone(c.trustMomentum)}`}>{c.trustMomentum.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">CREATIVE FRESHNESS</div>
+              <div className={`mt-0.5 ${heatTone(c.creativeFreshness)}`}>{c.creativeFreshness.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">FATIGUE PRESSURE</div>
+              <div className={`mt-0.5 ${heatTone(c.fatiguePressure, true)}`}>{c.fatiguePressure.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">DECAY RISK</div>
+              <div className={`mt-0.5 ${heatTone(c.decayRisk, true)}`}>{c.decayRisk.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">STRATEGIC DURABILITY</div>
+              <div className={`mt-0.5 ${heatTone(c.strategicDurability)}`}>{c.strategicDurability.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">BRANCH READINESS</div>
+              <div className={`mt-0.5 ${heatTone(c.branchReadiness, true)}`}>{c.branchReadiness.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">AUDIENCE ROTATION NEED</div>
+              <div className={`mt-0.5 ${heatTone(c.audienceRotationNeed, true)}`}>{c.audienceRotationNeed.toFixed(1)}/10</div>
+            </div>
+          </div>
+
+          {(c.trustSignals.length > 0 || c.freshnessSignals.length > 0) && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">POSITIVE SIGNALS</div>
+              <ul className="text-[10px] text-bone-50/80 leading-snug space-y-0.5">
+                {c.trustSignals.concat(c.freshnessSignals).slice(0, 5).map((s, i) => (
+                  <li key={i} className="break-words">· {s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {(c.decaySignals.length > 0 || c.fatigueSignals.length > 0) && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">PRESSURE SIGNALS</div>
+              <ul className="text-[10px] text-signal-warning/80 leading-snug space-y-0.5">
+                {c.decaySignals.concat(c.fatigueSignals).slice(0, 5).map((s, i) => (
+                  <li key={i} className="break-words">· {s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.possibleBranches.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">POSSIBLE BRANCHES</div>
+              <ul className="space-y-1.5 text-[10px]">
+                {c.possibleBranches.slice(0, 4).map((b, i) => (
+                  <li key={i} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">{b.branchName}</span>
+                      <span className={`w-[40px] text-right ${heatTone(b.durabilityPotential)}`}>
+                        dur {b.durabilityPotential.toFixed(1)}
+                      </span>
+                      <span className={`w-[40px] text-right ${heatTone(b.risk, true)}`}>
+                        risk {b.risk.toFixed(1)}
+                      </span>
+                    </div>
+                    <div className="text-bone-200/65 mt-0.5 break-words">{b.expectedStrategicPurpose}</div>
+                    <div className="text-bone-200/45 text-[9px] italic break-words">→ {b.reason}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.recommendedObservations.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">RECOMMENDED OBSERVATIONS</div>
+              <ul className="text-[10px] text-bone-200/65 leading-snug space-y-0.5">
+                {c.recommendedObservations.slice(0, 4).map((s, i) => (
+                  <li key={i} className="break-words">· {s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="pt-2 text-[11px] leading-snug">
+            <div className="eyebrow mb-1">AUDIENCE EVOLUTION</div>
+            <div className="text-bone-50/85">
+              current: <span className="uppercase tracking-wider">{c.audienceEvolution.currentAudience ?? 'none'}</span>
+              {' '}<span className="text-bone-200/55">(fatigue {c.audienceEvolution.audienceFatigue.toFixed(1)}/10)</span>
+            </div>
+            {c.audienceEvolution.rotationCandidate && (
+              <div className="text-bone-200/65">
+                candidate: <span className="uppercase tracking-wider">{c.audienceEvolution.rotationCandidate}</span>
+              </div>
+            )}
+            <div className="text-bone-200/45 text-[10px] italic mt-0.5 break-words">{c.audienceEvolution.reason}</div>
+          </div>
+        </>
+      )}
+
+      {(v.campaignHealthTrace.length >= 2 || v.trustMomentumTrace.length >= 2) && (
+        <div className="pt-2 flex flex-col gap-1">
+          <div className="eyebrow mb-1">LIFECYCLE TRAJECTORIES</div>
+          <div className="flex items-center gap-2 text-[10px] tabular-nums">
+            <span className="text-bone-200/55 flex-grow">campaign health</span>
+            <Spark points={v.campaignHealthTrace} />
+          </div>
+          <div className="flex items-center gap-2 text-[10px] tabular-nums">
+            <span className="text-bone-200/55 flex-grow">trust momentum</span>
+            <Spark points={v.trustMomentumTrace} />
+          </div>
+          <div className="flex items-center gap-2 text-[10px] tabular-nums">
+            <span className="text-bone-200/55 flex-grow">fatigue pressure</span>
+            <Spark points={v.fatiguePressureTrace} invert />
+          </div>
+          <div className="flex items-center gap-2 text-[10px] tabular-nums">
+            <span className="text-bone-200/55 flex-grow">creative freshness</span>
+            <Spark points={v.creativeFreshnessTrace} />
+          </div>
+          <div className="flex items-center gap-2 text-[10px] tabular-nums">
+            <span className="text-bone-200/55 flex-grow">branch readiness</span>
+            <Spark points={v.branchReadinessTrace} invert />
+          </div>
+          <div className="flex items-center gap-2 text-[10px] tabular-nums">
+            <span className="text-bone-200/55 flex-grow">audience rotation need</span>
+            <Spark points={v.audienceRotationTrace} invert />
+          </div>
+        </div>
+      )}
+
+      {v.phaseDistribution.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">PHASE DISTRIBUTION</div>
+          <div className="flex flex-col gap-0.5">
+            {v.phaseDistribution.slice(0, 6).map((r) => (
+              <div key={r.phase} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 uppercase tracking-wider flex-grow truncate">{r.phase}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className="w-[40px] text-right text-bone-200/45">{(r.share * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.durablePatterns.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">DURABLE CAMPAIGN PATTERNS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.durablePatterns.slice(0, 4).map((r) => (
+              <div key={r.pattern} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow break-words">{r.pattern}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className="w-[50px] text-right text-bone-50/75">{r.averageHealth.toFixed(1)}/10</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.fragilePatterns.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">FRAGILE CAMPAIGN PATTERNS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.fragilePatterns.slice(0, 4).map((r) => (
+              <div key={r.pattern} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-signal-warning/75 flex-grow break-words">{r.pattern}</span>
+                <span className="w-[40px] text-right text-bone-200/55">×{r.count}</span>
+                <span className="w-[50px] text-right text-signal-warning/75">{r.averageHealth.toFixed(1)}/10</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.audienceFatigueRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">AUDIENCE FATIGUE RANKING</div>
+          <div className="flex flex-col gap-0.5">
+            {v.audienceFatigueRanking.slice(0, 4).map((r) => (
+              <div key={r.audience} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.audience}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.ewmaFatigue, true)}`}>
+                  {r.ewmaFatigue.toFixed(1)}/10
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(v.compoundingSignals.length > 0 || v.restNeededSignals.length > 0) && (
+        <div className="pt-2 grid grid-cols-1 gap-2">
+          {v.compoundingSignals.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">COMPOUNDING SIGNALS</div>
+              <ul className="text-[10px] text-bone-50/80 leading-snug space-y-0.5">
+                {v.compoundingSignals.slice(0, 3).map((s, i) => (
+                  <li key={i} className="break-words">· {s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {v.restNeededSignals.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">REST-NEEDED SIGNALS</div>
+              <ul className="text-[10px] text-signal-warning/80 leading-snug space-y-0.5">
+                {v.restNeededSignals.slice(0, 3).map((s, i) => (
+                  <li key={i} className="break-words">· {s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        observations {v.totalObservations} ·
+        avg health {v.averageCampaignHealth.toFixed(1)}/10 ·
+        avg trust {v.averageTrustMomentum.toFixed(1)}/10 ·
+        avg fatigue {v.averageFatiguePressure.toFixed(1)}/10
       </div>
     </div>
   );
