@@ -25,8 +25,15 @@ import { runCopyQualityPolicyPreflight } from '@lib/copyQualityPolicyPreflight';
 import { recordPolicyAudit } from '@lib/copyQualityPolicyAudit';
 import {
   recordCulturalObservation, buildHookFingerprint,
+  createCulturalPerceptionMemoryStore,
+  applyObservation as applyCulturalObservation,
   type CulturalObservation,
 } from '@lib/culturalPerceptionMemory';
+import { computeCulturalPerception } from '@lib/culturalPerceptionEngine';
+import { computeCrossBrainConflict } from '@lib/crossBrainConflictEngine';
+import {
+  recordConflictObservation, buildConflictObservation,
+} from '@lib/conflictMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -163,6 +170,90 @@ export async function POST(req: NextRequest) {
           outcomeVerdict:    banner.finalVerdict.verdict,
         };
         await recordCulturalObservation(observation);
+
+        // ─── Cross-Brain Conflict Engine ────────────────────────
+        // Compute the conflict reading using the just-updated cultural
+        // perception (memory now includes the observation) + the live
+        // banner signals. Persist one observation so the longitudinal
+        // view can detect recurring tensions. Write failure is non-fatal.
+        try {
+          const culturalState = await createCulturalPerceptionMemoryStore()
+            .read().catch(() => null);
+          // The store already applied the observation when recordCulturalObservation
+          // succeeded; if it failed (which would have been swallowed),
+          // synthesize the post-observation state purely so the engine
+          // still sees the live frame.
+          const culturalForEngine = culturalState ?? null;
+          const culturalForCurrentFrame = culturalState
+            ? culturalState
+            : applyCulturalObservation(
+                {
+                  observations: [], visualPatternFrequency: {}, emotionalPatternFrequency: {},
+                  pacingFrequency: {}, hookFrequency: {}, ctaFrequency: {}, toneFrequency: {},
+                  firstSeenAt: {}, lastSeenAt: {}, trustTrajectory: [], noveltyDecayTrace: [],
+                  emotionalDriftBuckets: [], resistanceMarkers: [], totalObservations: 0,
+                  firstUpdatedAt: null, updatedAt: 0,
+                },
+                observation,
+              );
+          void culturalForCurrentFrame;
+
+          const culturalPerception = computeCulturalPerception({
+            memory: culturalForEngine,
+            current: { observation },
+          });
+
+          const conflict = computeCrossBrainConflict({
+            formula: banner.formula,
+            campaignMode: banner.campaignMode,
+            brutality: banner.finalVerdict.brutality,
+            strategy: banner.adStrategy ?? null,
+            copywriter: banner.copywriter ?? null,
+            copyQuality: liveQuality,
+            culturalPerception,
+            policyAudit: null,
+            qualityLongitudinal: null,
+          });
+
+          // Emit conflict reading as a pipeline event so the studio
+          // trace shows it. Uses the existing PipelineEvent envelope.
+          write({
+            type: 'event',
+            event: {
+              ts: Date.now(),
+              stage: 'cross-brain-conflict',
+              message:
+                `tension ${conflict.overallTension}/10 · ` +
+                `stability ${conflict.cognitiveStability}/10 · ` +
+                `alignment ${conflict.alignmentScore}/10 · ` +
+                `active ${conflict.activeConflicts.length}` +
+                (conflict.dominantConflict ? ` · dominant ${conflict.dominantConflict}` : ''),
+              data: {
+                overallTension: conflict.overallTension,
+                dominantConflict: conflict.dominantConflict,
+                activeConflicts: conflict.activeConflicts.map((c) => ({
+                  type: c.type, severity: c.severity,
+                })),
+              },
+            },
+          });
+
+          await recordConflictObservation(buildConflictObservation({
+            at: banner.createdAt,
+            bannerId: banner.id,
+            formula: banner.formula,
+            campaignMode: banner.campaignMode,
+            overallTension: conflict.overallTension,
+            cognitiveStability: conflict.cognitiveStability,
+            alignmentScore: conflict.alignmentScore,
+            dominantConflict: conflict.dominantConflict,
+            activeConflicts: conflict.activeConflicts,
+            agreementZones: conflict.agreementZones,
+            silentRiskCount: conflict.silentRisks.length,
+          }));
+        } catch {
+          // non-fatal — conflict observation never blocks generation
+        }
       } catch (e) {
         write({ type: 'error', error: (e as Error).message });
       } finally {

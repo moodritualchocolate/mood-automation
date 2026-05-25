@@ -38,6 +38,7 @@ import type { CopyQualityPolicyRecommendation } from '@lib/copyQualityPolicy';
 import type { QualityLongitudinalView } from '@lib/qualityLongitudinalView';
 import type { PolicyAuditView } from '@lib/copyQualityPolicyAuditView';
 import type { CulturalPerceptionLongitudinalView } from '@lib/culturalPerceptionView';
+import type { ConflictLongitudinalView } from '@lib/conflictLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -87,6 +88,8 @@ function StudioInner() {
   const [policyAudit, setPolicyAudit] = useState<PolicyAuditView | null>(null);
   // Cultural Perception (read-only emotional weather) — same lifecycle.
   const [cultural, setCultural] = useState<CulturalPerceptionLongitudinalView | null>(null);
+  // Cross-Brain Conflict (read-only internal disagreement) — same lifecycle.
+  const [conflict, setConflict] = useState<ConflictLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -168,6 +171,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setCultural(v as CulturalPerceptionLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/cross-brain-conflict', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setConflict(v as ConflictLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -190,6 +197,10 @@ function StudioInner() {
     fetch('/api/cultural-perception', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setCultural(v as CulturalPerceptionLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/cross-brain-conflict', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setConflict(v as ConflictLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -446,17 +457,18 @@ function StudioInner() {
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
               {cultural && <CulturalIntelligencePanel view={cultural} />}
+              {conflict && <CrossBrainConflictPanel view={conflict} />}
             </div>
           )}
 
-          {/* Show the longitudinal + audit + cultural panels even without
-              a banner, so the dashboards are visible on first load or
-              after refusal. */}
-          {!banner && (longitudinal || policyAudit || cultural) && (
+          {/* Show all read-only longitudinal panels even without a
+              banner — first load / after refusal still has data. */}
+          {!banner && (longitudinal || policyAudit || cultural || conflict) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
               {cultural && <CulturalIntelligencePanel view={cultural} />}
+              {conflict && <CrossBrainConflictPanel view={conflict} />}
             </div>
           )}
 
@@ -1426,6 +1438,224 @@ function CulturalIntelligencePanel({
       <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
         observations {v.totalObservations} · quality samples {v.totalQualitySamples} ·
         policy audits {v.totalPolicyAudits}
+      </div>
+    </div>
+  );
+}
+
+// ─── cross-brain conflict panel ───────────────────────────────
+
+function CrossBrainConflictPanel({ view: v }: { view: ConflictLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && !c) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">cross-brain conflict · internal cognition</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.instabilityTrend === 'rising'  ? 'text-signal-warning' :
+    v.instabilityTrend === 'falling' ? 'text-bone-50/85' :
+    v.instabilityTrend === 'stable'  ? 'text-bone-200/85' :
+                                       'text-bone-200/65';
+
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const SystemBar = ({ label, value }: { label: string; value: number }) => {
+    const w = Math.min(100, (value / 10) * 100);
+    const tone =
+      value >= 7 ? 'bg-bone-50/70' :
+      value >= 4 ? 'bg-bone-200/55' :
+                   'bg-signal-warning/55';
+    return (
+      <div className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 w-[60px] shrink-0">{label}</span>
+        <div className="flex-grow h-[6px] border hairline relative">
+          <div className={`absolute inset-y-0 left-0 ${tone}`} style={{ width: `${w}%` }} />
+        </div>
+        <span className="w-[40px] text-right text-bone-50/75">{value.toFixed(1)}</span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">cross-brain conflict · internal cognition</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+
+      {c && (
+        <>
+          <div className="grid grid-cols-3 gap-2 text-xs tabular-nums pt-1">
+            <div>
+              <div className="eyebrow">TENSION</div>
+              <div className={`mt-0.5 ${heatTone(c.overallTension, true)}`}>{c.overallTension.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">STABILITY</div>
+              <div className={`mt-0.5 ${heatTone(c.cognitiveStability)}`}>{c.cognitiveStability.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">ALIGNMENT</div>
+              <div className={`mt-0.5 ${heatTone(c.alignmentScore)}`}>{c.alignmentScore.toFixed(1)}/10</div>
+            </div>
+          </div>
+
+          {c.dominantConflict && (
+            <div className="text-[11px] text-signal-warning/85 tracking-wider uppercase pt-1">
+              dominant: {c.dominantConflict}
+            </div>
+          )}
+
+          {c.activeConflicts.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">ACTIVE CONFLICTS</div>
+              <ul className="space-y-1.5">
+                {c.activeConflicts.slice(0, 5).map((a) => (
+                  <li key={a.type} className="text-[10px] leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">{a.type}</span>
+                      <span className={`w-[40px] text-right ${heatTone(a.severity, true)}`}>
+                        {a.severity.toFixed(1)}/10
+                      </span>
+                    </div>
+                    <div className="text-bone-200/55 mt-0.5 break-words">{a.explanation}</div>
+                    <div className="text-bone-200/45 text-[9px] mt-0.5">
+                      systems: {a.systemsInvolved.join(' · ')}
+                    </div>
+                    <div className="text-bone-200/45 text-[9px] italic mt-0.5 break-words">
+                      → {a.suggestedObservation}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="pt-2">
+            <div className="eyebrow mb-1">SYSTEM WEIGHTS</div>
+            <div className="flex flex-col gap-0.5">
+              <SystemBar label="strategy" value={c.systemWeights.strategy} />
+              <SystemBar label="culture"  value={c.systemWeights.culture} />
+              <SystemBar label="trust"    value={c.systemWeights.trust} />
+              <SystemBar label="novelty"  value={c.systemWeights.novelty} />
+              <SystemBar label="fatigue"  value={c.systemWeights.fatigue} />
+              <SystemBar label="quality"  value={c.systemWeights.quality} />
+            </div>
+          </div>
+
+          {c.agreementZones.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">AGREEMENT ZONES</div>
+              <ul className="text-[10px] text-bone-50/75 leading-snug space-y-0.5">
+                {c.agreementZones.slice(0, 4).map((z, i) => <li key={i} className="break-words">· {z}</li>)}
+              </ul>
+            </div>
+          )}
+
+          {c.unstableZones.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">UNSTABLE ZONES</div>
+              <ul className="text-[10px] text-signal-warning/80 leading-snug space-y-0.5">
+                {c.unstableZones.slice(0, 4).map((z, i) => <li key={i} className="break-words">· {z}</li>)}
+              </ul>
+            </div>
+          )}
+
+          {c.silentRisks.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">SILENT RISKS</div>
+              <ul className="text-[10px] text-bone-200/55 leading-snug space-y-0.5">
+                {c.silentRisks.slice(0, 4).map((z, i) => <li key={i} className="break-words">· {z}</li>)}
+              </ul>
+            </div>
+          )}
+
+          {(c.confidenceGradient.highConfidenceAreas.length > 0 || c.confidenceGradient.uncertainAreas.length > 0) && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">CONFIDENCE GRADIENT</div>
+              {c.confidenceGradient.highConfidenceAreas.length > 0 && (
+                <div className="text-[10px] text-bone-50/75 leading-snug">
+                  <div className="text-bone-200/55 text-[9px] uppercase tracking-widest">high confidence</div>
+                  <ul className="space-y-0.5">
+                    {c.confidenceGradient.highConfidenceAreas.slice(0, 3).map((s, i) => <li key={i} className="break-words">· {s}</li>)}
+                  </ul>
+                </div>
+              )}
+              {c.confidenceGradient.uncertainAreas.length > 0 && (
+                <div className="text-[10px] text-bone-200/55 leading-snug mt-1">
+                  <div className="text-bone-200/55 text-[9px] uppercase tracking-widest">uncertain</div>
+                  <ul className="space-y-0.5">
+                    {c.confidenceGradient.uncertainAreas.slice(0, 3).map((s, i) => <li key={i} className="break-words">· {s}</li>)}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {v.recurringConflicts.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">RECURRING CONFLICTS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.recurringConflicts.slice(0, 6).map((r) => (
+              <div key={r.type} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.type}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.ewmaSeverity, true)}`}>
+                  ewma {r.ewmaSeverity.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.conflictHotspots.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">CONFLICT HOTSPOTS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.conflictHotspots.slice(0, 4).map((row) => (
+              <div key={row.key} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow truncate">{row.key}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{row.count}</span>
+                <span className={`w-[40px] text-right ${heatTone(row.averageSeverity, true)}`}>
+                  {row.averageSeverity.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.stableAgreementZones.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">STABLE AGREEMENT ZONES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.stableAgreementZones.slice(0, 4).map((z) => (
+              <div key={z.zone} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow truncate">{z.zone}</span>
+                <span className="w-[40px] text-right text-bone-200/55">×{z.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        observations {v.totalObservations} · avg tension {v.averageTension.toFixed(1)}/10 ·
+        avg stability {v.averageStability.toFixed(1)}/10 ·
+        silent-risk rate {(v.silentRiskRate * 100).toFixed(0)}%
       </div>
     </div>
   );
