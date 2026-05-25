@@ -57,6 +57,10 @@ import {
   recordOutcomeObservation, buildOutcomeHistoryContext,
   createStrategicOutcomeMemoryStore,
 } from '@lib/strategicOutcomeMemory';
+import { computeCounterfactualCognition } from '@lib/counterfactualCognitionEngine';
+import {
+  recordCounterfactualObservation, buildCounterfactualObservation,
+} from '@lib/counterfactualCognitionMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -517,6 +521,62 @@ export async function POST(req: NextRequest) {
                     audienceNumbness: culturalPerception.audienceNumbness,
                     decaySignal: Math.round(decaySignal * 10) / 10,
                   });
+
+                  // ─── Counterfactual Cognition ─────────────────────
+                  // Multi-path CREATIVE STRATEGY simulation: for each
+                  // suppressed/shadow brain + a few alternates, project
+                  // the campaign archetype that would have emerged and
+                  // its impact across the 7 axes (creative · emotional ·
+                  // trust · fatigue · durability · conversion · brand).
+                  // STRICTLY simulation-only — no autonomous branching.
+                  try {
+                    const counterfactual = computeCounterfactualCognition({
+                      strategy: banner.adStrategy ?? null,
+                      conflict,
+                      culturalPerception,
+                      cognitiveWeight: weights,
+                      identityContinuity: identity,
+                      executiveGovernance: governance,
+                      strategicOutcome: outcome,
+                    });
+                    write({
+                      type: 'event',
+                      event: {
+                        ts: Date.now(),
+                        stage: 'counterfactual-cognition',
+                        message:
+                          `actual ${counterfactual.actualArchetype ?? 'none'} (${counterfactual.actualLeader ?? 'none'}) · ` +
+                          `projections ${counterfactual.projections.length} · ` +
+                          `trust-optimal ${counterfactual.trustOptimizedPath?.counterfactualCampaignArchetype ?? 'none'} · ` +
+                          `durability-optimal ${counterfactual.durabilityOptimizedPath?.counterfactualCampaignArchetype ?? 'none'} · ` +
+                          `fatigue-aware ${counterfactual.fatigueAwarePath?.counterfactualCampaignArchetype ?? 'none'}`,
+                        data: {
+                          actualLeader: counterfactual.actualLeader,
+                          actualArchetype: counterfactual.actualArchetype,
+                          projections: counterfactual.projections.map((p) => ({
+                            alternateLeader: p.alternateLeader,
+                            archetype: p.counterfactualCampaignArchetype,
+                            trustImpact: p.trustImpact,
+                            durabilityImpact: p.durabilityImpact,
+                            divergenceFromActual: p.divergenceFromActual,
+                          })),
+                        },
+                      },
+                    });
+                    await recordCounterfactualObservation(buildCounterfactualObservation({
+                      at: banner.createdAt,
+                      bannerId: banner.id,
+                      formula: banner.formula,
+                      campaignMode: banner.campaignMode,
+                      actualLeader: counterfactual.actualLeader,
+                      actualArchetype: counterfactual.actualArchetype,
+                      projections: counterfactual.projections,
+                      trustOptimizedArchetype: counterfactual.trustOptimizedPath?.counterfactualCampaignArchetype ?? null,
+                      durabilityOptimizedArchetype: counterfactual.durabilityOptimizedPath?.counterfactualCampaignArchetype ?? null,
+                    }));
+                  } catch {
+                    // non-fatal — counterfactual observation never blocks generation
+                  }
                 } catch {
                   // non-fatal — outcome observation never blocks generation
                 }

@@ -43,6 +43,7 @@ import type { CognitiveWeightLongitudinalView } from '@lib/cognitiveWeightLongit
 import type { IdentityContinuityLongitudinalView } from '@lib/identityContinuityLongitudinalView';
 import type { ExecutiveGovernanceLongitudinalView } from '@lib/executiveGovernanceLongitudinalView';
 import type { StrategicOutcomeLongitudinalView } from '@lib/strategicOutcomeLongitudinalView';
+import type { CounterfactualCognitionLongitudinalView } from '@lib/counterfactualCognitionLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -102,6 +103,8 @@ function StudioInner() {
   const [governance, setGovernance] = useState<ExecutiveGovernanceLongitudinalView | null>(null);
   // Strategic Outcome Intelligence (read-only durable-success modeling) — same lifecycle.
   const [outcome, setOutcome] = useState<StrategicOutcomeLongitudinalView | null>(null);
+  // Counterfactual Cognition (read-only multi-path campaign simulation) — same lifecycle.
+  const [counterfactual, setCounterfactual] = useState<CounterfactualCognitionLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -203,6 +206,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setOutcome(v as StrategicOutcomeLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/counterfactual-cognition', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setCounterfactual(v as CounterfactualCognitionLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -245,6 +252,10 @@ function StudioInner() {
     fetch('/api/strategic-outcome', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setOutcome(v as StrategicOutcomeLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/counterfactual-cognition', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCounterfactual(v as CounterfactualCognitionLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -506,12 +517,13 @@ function StudioInner() {
               {identity && <IdentityContinuityPanel view={identity} />}
               {governance && <ExecutiveGovernancePanel view={governance} />}
               {outcome && <StrategicOutcomeIntelligencePanel view={outcome} />}
+              {counterfactual && <CounterfactualCognitionPanel view={counterfactual} />}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
@@ -521,6 +533,7 @@ function StudioInner() {
               {identity && <IdentityContinuityPanel view={identity} />}
               {governance && <ExecutiveGovernancePanel view={governance} />}
               {outcome && <StrategicOutcomeIntelligencePanel view={outcome} />}
+              {counterfactual && <CounterfactualCognitionPanel view={counterfactual} />}
             </div>
           )}
 
@@ -2993,6 +3006,276 @@ function StrategicOutcomeIntelligencePanel({
         avg stability {v.averageStability.toFixed(1)}/10 ·
         avg trust durability {v.averageTrustDurability.toFixed(1)}/10 ·
         avg risk {v.averageStrategicRisk.toFixed(1)}/10
+      </div>
+    </div>
+  );
+}
+
+// ─── counterfactual cognition panel ───────────────────────────
+
+function CounterfactualCognitionPanel({
+  view: v,
+}: { view: CounterfactualCognitionLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && !c) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">counterfactual cognition · multi-path simulation</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.trend === 'trust-optimal-shifting'     ? 'text-bone-50/85' :
+    v.trend === 'durability-optimal-shifting'? 'text-bone-50/85' :
+    v.trend === 'stable'                     ? 'text-bone-200/85' :
+                                               'text-bone-200/65';
+
+  const impactTone = (n: number, invert = false) => {
+    const positive = invert ? n < 0 : n > 0;
+    const negative = invert ? n > 0 : n < 0;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">counterfactual cognition · multi-path simulation</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+
+      {c && (
+        <>
+          <div className="text-[11px] leading-snug pt-1">
+            <div className="eyebrow mb-1">ACTUAL CAMPAIGN PATH</div>
+            <div className="text-bone-50/85">
+              <span className="uppercase tracking-wider">{c.actualLeader ?? 'none'}</span>
+              {c.actualArchetype && <span className="text-bone-200/65"> → {c.actualArchetype}</span>}
+            </div>
+          </div>
+
+          {c.projections.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">COUNTERFACTUAL PATHS · WHAT COULD HAVE BEEN</div>
+              <ul className="space-y-2 text-[10px]">
+                {c.projections.slice(0, 5).map((p, i) => (
+                  <li key={i} className="leading-snug border-l hairline pl-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider w-[88px] shrink-0 truncate">
+                        if {p.alternateLeader}
+                      </span>
+                      <span className="text-bone-50/85 break-words flex-grow">→ {p.counterfactualCampaignArchetype}</span>
+                      <span className="w-[44px] text-right text-bone-200/55">div {p.divergenceFromActual.toFixed(1)}</span>
+                      <span className="w-[44px] text-right text-bone-200/55">plaus {p.plausibility.toFixed(1)}</span>
+                    </div>
+                    <div className="text-bone-200/65 mt-0.5 break-words">{p.archetypeDescription}</div>
+                    <div className="text-bone-200/55 text-[9px] mt-0.5 break-words">
+                      · creative: {p.creativeDirectionShift}
+                    </div>
+                    <div className="text-bone-200/55 text-[9px] break-words">
+                      · audience: {p.audienceEmotionalShift}
+                    </div>
+                    <div className="text-bone-200/55 text-[9px] break-words">
+                      · conversion: {p.conversionStyleShift}
+                    </div>
+                    <div className="text-bone-200/55 text-[9px] break-words">
+                      · long-term: {p.longTermBrandEffect}
+                    </div>
+                    <div className="flex items-center gap-2 text-[9px] tabular-nums mt-1">
+                      <span className="text-bone-200/55">impact:</span>
+                      <span className={impactTone(p.trustImpact)}>
+                        trust {p.trustImpact > 0 ? '+' : ''}{p.trustImpact.toFixed(1)}
+                      </span>
+                      <span className={impactTone(p.fatigueImpact, true)}>
+                        fatigue {p.fatigueImpact > 0 ? '+' : ''}{p.fatigueImpact.toFixed(1)}
+                      </span>
+                      <span className={impactTone(p.durabilityImpact)}>
+                        durability {p.durabilityImpact > 0 ? '+' : ''}{p.durabilityImpact.toFixed(1)}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {(c.trustOptimizedPath || c.durabilityOptimizedPath || c.fatigueAwarePath) && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">OPTIMAL ALTERNATE PATHS</div>
+              <ul className="text-[10px] leading-snug space-y-0.5">
+                {c.trustOptimizedPath && (
+                  <li className="break-words">
+                    · <span className="text-bone-200/65">trust-optimal:</span>{' '}
+                    <span className="uppercase tracking-wider text-bone-50/85">{c.trustOptimizedPath.counterfactualCampaignArchetype}</span>
+                    {' '}<span className="text-bone-50/75">(trust {c.trustOptimizedPath.trustImpact > 0 ? '+' : ''}{c.trustOptimizedPath.trustImpact.toFixed(1)})</span>
+                    {' '}<span className="text-bone-200/45">if {c.trustOptimizedPath.alternateLeader} led</span>
+                  </li>
+                )}
+                {c.durabilityOptimizedPath && (
+                  <li className="break-words">
+                    · <span className="text-bone-200/65">durability-optimal:</span>{' '}
+                    <span className="uppercase tracking-wider text-bone-50/85">{c.durabilityOptimizedPath.counterfactualCampaignArchetype}</span>
+                    {' '}<span className="text-bone-50/75">(durability {c.durabilityOptimizedPath.durabilityImpact > 0 ? '+' : ''}{c.durabilityOptimizedPath.durabilityImpact.toFixed(1)})</span>
+                    {' '}<span className="text-bone-200/45">if {c.durabilityOptimizedPath.alternateLeader} led</span>
+                  </li>
+                )}
+                {c.fatigueAwarePath && (
+                  <li className="break-words">
+                    · <span className="text-bone-200/65">fatigue-aware:</span>{' '}
+                    <span className="uppercase tracking-wider text-bone-50/85">{c.fatigueAwarePath.counterfactualCampaignArchetype}</span>
+                    {' '}<span className="text-bone-50/75">(fatigue {c.fatigueAwarePath.fatigueImpact > 0 ? '+' : ''}{c.fatigueAwarePath.fatigueImpact.toFixed(1)})</span>
+                    {' '}<span className="text-bone-200/45">if {c.fatigueAwarePath.alternateLeader} led</span>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
+
+          {c.lowDivergencePaths.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">CLOSE-TO-ACTUAL PATHS</div>
+              <ul className="text-[10px] leading-snug space-y-0.5">
+                {c.lowDivergencePaths.slice(0, 3).map((p, i) => (
+                  <li key={i} className="break-words text-bone-200/65">
+                    · <span className="uppercase tracking-wider text-bone-50/75">{p.counterfactualCampaignArchetype}</span>
+                    {' '}<span className="text-bone-200/45">(div {p.divergenceFromActual.toFixed(1)}, if {p.alternateLeader})</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
+      )}
+
+      {v.recurringPathways.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">RECURRING ALTERNATE PATHS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.recurringPathways.slice(0, 6).map((r) => (
+              <div key={`${r.alternateLeader}-${r.archetype}`} className="text-[10px] tabular-nums">
+                <div className="flex items-center gap-2">
+                  <span className="text-bone-50/75 uppercase tracking-wider w-[88px] shrink-0 truncate">{r.alternateLeader}</span>
+                  <span className="text-bone-200/65 flex-grow break-words">→ {r.archetype}</span>
+                  <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                </div>
+                <div className="flex items-center gap-2 text-[9px] ml-[96px]">
+                  <span className={impactTone(r.averageTrustImpact)}>
+                    trust {r.averageTrustImpact > 0 ? '+' : ''}{r.averageTrustImpact.toFixed(1)}
+                  </span>
+                  <span className={impactTone(r.averageFatigueImpact, true)}>
+                    fatigue {r.averageFatigueImpact > 0 ? '+' : ''}{r.averageFatigueImpact.toFixed(1)}
+                  </span>
+                  <span className={impactTone(r.averageDurabilityImpact)}>
+                    durability {r.averageDurabilityImpact > 0 ? '+' : ''}{r.averageDurabilityImpact.toFixed(1)}
+                  </span>
+                  <span className="text-bone-200/45">plaus {r.averagePlausibility.toFixed(1)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.highTrustPathways.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">HIGH-TRUST ALTERNATE PATHS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.highTrustPathways.slice(0, 4).map((r) => (
+              <div key={`t-${r.alternateLeader}-${r.archetype}`} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 uppercase tracking-wider w-[88px] shrink-0 truncate">{r.alternateLeader}</span>
+                <span className="text-bone-200/65 flex-grow break-words">→ {r.archetype}</span>
+                <span className="w-[40px] text-right text-bone-50/85">+{r.averageTrustImpact.toFixed(1)}</span>
+                <span className="w-[30px] text-right text-bone-200/55">×{r.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.highDurabilityPathways.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">HIGH-DURABILITY ALTERNATE PATHS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.highDurabilityPathways.slice(0, 4).map((r) => (
+              <div key={`d-${r.alternateLeader}-${r.archetype}`} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 uppercase tracking-wider w-[88px] shrink-0 truncate">{r.alternateLeader}</span>
+                <span className="text-bone-200/65 flex-grow break-words">→ {r.archetype}</span>
+                <span className="w-[40px] text-right text-bone-50/85">+{r.averageDurabilityImpact.toFixed(1)}</span>
+                <span className="w-[30px] text-right text-bone-200/55">×{r.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.fatigueRelievingPathways.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">FATIGUE-RELIEVING ALTERNATE PATHS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.fatigueRelievingPathways.slice(0, 4).map((r) => (
+              <div key={`f-${r.alternateLeader}-${r.archetype}`} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 uppercase tracking-wider w-[88px] shrink-0 truncate">{r.alternateLeader}</span>
+                <span className="text-bone-200/65 flex-grow break-words">→ {r.archetype}</span>
+                <span className="w-[40px] text-right text-bone-50/85">{r.averageFatigueImpact.toFixed(1)}</span>
+                <span className="w-[30px] text-right text-bone-200/55">×{r.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.archetypeProjectionFrequency.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">ARCHETYPE PROJECTION FREQUENCY</div>
+          <div className="flex flex-col gap-0.5">
+            {v.archetypeProjectionFrequency.slice(0, 5).map((r) => (
+              <div key={r.archetype} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow break-words">{r.archetype}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className="w-[40px] text-right text-bone-200/45">{(r.share * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(v.trustOptimizedFrequency.length > 0 || v.durabilityOptimizedFrequency.length > 0) && (
+        <div className="pt-2 grid grid-cols-2 gap-3">
+          {v.trustOptimizedFrequency.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">TRUST-OPTIMAL ARCHETYPES</div>
+              <div className="flex flex-col gap-0.5">
+                {v.trustOptimizedFrequency.slice(0, 4).map((r) => (
+                  <div key={r.archetype} className="flex items-center gap-2 text-[10px] tabular-nums">
+                    <span className="text-bone-200/65 flex-grow break-words">{r.archetype}</span>
+                    <span className="w-[30px] text-right text-bone-50/75">×{r.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {v.durabilityOptimizedFrequency.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">DURABILITY-OPTIMAL ARCHETYPES</div>
+              <div className="flex flex-col gap-0.5">
+                {v.durabilityOptimizedFrequency.slice(0, 4).map((r) => (
+                  <div key={r.archetype} className="flex items-center gap-2 text-[10px] tabular-nums">
+                    <span className="text-bone-200/65 flex-grow break-words">{r.archetype}</span>
+                    <span className="w-[30px] text-right text-bone-50/75">×{r.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        observations {v.totalObservations} ·
+        recurring pathways {v.recurringPathways.length} ·
+        actual-leader variety {v.actualLeaderShares.length}
       </div>
     </div>
   );
