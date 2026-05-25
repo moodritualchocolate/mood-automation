@@ -41,6 +41,12 @@ import {
   recordCognitiveWeightObservation, buildHistoryContext,
   createCognitiveWeightMemoryStore,
 } from '@lib/cognitiveWeightMemory';
+import { computeIdentityContinuity } from '@lib/identityContinuityEngine';
+import {
+  recordIdentityObservation, buildIdentityHistoryContext,
+  createIdentityContinuityMemoryStore,
+} from '@lib/identityContinuityMemory';
+import { buildPolicyAuditView } from '@lib/copyQualityPolicyAuditView';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -316,6 +322,68 @@ export async function POST(req: NextRequest) {
               dominantSystem: weights.dominantSystems[0]?.system ?? null,
               suppressedSystems: weights.suppressedSystems.map((s) => s.system),
             });
+
+            // ─── Persistent Identity Continuity ─────────────────
+            // With weights now persisted, derive the identity reading
+            // for this run and store it so the longitudinal view can
+            // surface persistent behavioral identity. STRICTLY
+            // observational — no self-modification, no goal mutation.
+            try {
+              const identityMemBefore = await createIdentityContinuityMemoryStore()
+                .read().catch(() => null);
+              const policyAuditView = buildPolicyAuditView(null);
+              const identity = computeIdentityContinuity({
+                cognitiveWeight: weights,
+                conflict,
+                culturalPerception,
+                strategy: banner.adStrategy ?? null,
+                copyQuality: liveQuality,
+                qualityLongitudinal: null,
+                policyAuditView,
+                directionRestraint: banner.direction.restraint,
+                history: buildIdentityHistoryContext(identityMemBefore),
+              });
+              write({
+                type: 'event',
+                event: {
+                  ts: Date.now(),
+                  stage: 'identity-continuity',
+                  message:
+                    `stability ${identity.identityStability}/10 · ` +
+                    `consistency ${identity.behavioralConsistency}/10 · ` +
+                    `fragmentation ${identity.identityFragmentation}/10 · ` +
+                    `dominant ${identity.dominantIdentityVectors.map((d) => d.vector).join(',') || 'none'} · ` +
+                    `continuity-risk ${identity.continuityRisk}/10`,
+                  data: {
+                    identityStability: identity.identityStability,
+                    identityFragmentation: identity.identityFragmentation,
+                    behavioralConsistency: identity.behavioralConsistency,
+                    continuityRisk: identity.continuityRisk,
+                    dominantIdentityVectors: identity.dominantIdentityVectors.map((d) => ({
+                      vector: d.vector, strength: d.strength, persistence: d.persistence,
+                    })),
+                  },
+                },
+              });
+              await recordIdentityObservation({
+                at: banner.createdAt,
+                bannerId: banner.id,
+                formula: banner.formula,
+                campaignMode: banner.campaignMode,
+                vectorStrengths: identity.vectorStrengths,
+                identityStability: identity.identityStability,
+                identityFragmentation: identity.identityFragmentation,
+                behavioralConsistency: identity.behavioralConsistency,
+                adaptationVelocity: identity.adaptationVelocity,
+                continuityRisk: identity.continuityRisk,
+                dominantVector: identity.dominantIdentityVectors[0]?.vector ?? null,
+                emergingVectors: identity.emergingIdentityVectors.map((e) => e.vector),
+                collapsingVectors: identity.collapsingIdentityVectors.map((c) => c.vector),
+                contradictionCount: identity.identityContradictions.length,
+              });
+            } catch {
+              // non-fatal — identity observation never blocks generation
+            }
           } catch {
             // non-fatal — cognitive weight observation never blocks generation
           }

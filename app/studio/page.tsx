@@ -40,6 +40,7 @@ import type { PolicyAuditView } from '@lib/copyQualityPolicyAuditView';
 import type { CulturalPerceptionLongitudinalView } from '@lib/culturalPerceptionView';
 import type { ConflictLongitudinalView } from '@lib/conflictLongitudinalView';
 import type { CognitiveWeightLongitudinalView } from '@lib/cognitiveWeightLongitudinalView';
+import type { IdentityContinuityLongitudinalView } from '@lib/identityContinuityLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -93,6 +94,8 @@ function StudioInner() {
   const [conflict, setConflict] = useState<ConflictLongitudinalView | null>(null);
   // Cognitive Weight Evolution (read-only authority drift) — same lifecycle.
   const [cogWeight, setCogWeight] = useState<CognitiveWeightLongitudinalView | null>(null);
+  // Identity Continuity (read-only persistent selfhood) — same lifecycle.
+  const [identity, setIdentity] = useState<IdentityContinuityLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -182,6 +185,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setCogWeight(v as CognitiveWeightLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/identity-continuity', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setIdentity(v as IdentityContinuityLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -212,6 +219,10 @@ function StudioInner() {
     fetch('/api/cognitive-weight', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setCogWeight(v as CognitiveWeightLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/identity-continuity', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setIdentity(v as IdentityContinuityLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -470,18 +481,20 @@ function StudioInner() {
               {cultural && <CulturalIntelligencePanel view={cultural} />}
               {conflict && <CrossBrainConflictPanel view={conflict} />}
               {cogWeight && <CognitiveWeightEvolutionPanel view={cogWeight} />}
+              {identity && <IdentityContinuityPanel view={identity} />}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
               {cultural && <CulturalIntelligencePanel view={cultural} />}
               {conflict && <CrossBrainConflictPanel view={conflict} />}
               {cogWeight && <CognitiveWeightEvolutionPanel view={cogWeight} />}
+              {identity && <IdentityContinuityPanel view={identity} />}
             </div>
           )}
 
@@ -1921,6 +1934,325 @@ function CognitiveWeightEvolutionPanel({
         avg stability {v.averageStability.toFixed(1)}/10 ·
         avg fragmentation {v.averageFragmentation.toFixed(1)}/10 ·
         adaptation {v.averageAdaptationPressure.toFixed(1)}/10
+      </div>
+    </div>
+  );
+}
+
+// ─── identity continuity panel ────────────────────────────────
+
+function IdentityContinuityPanel({ view: v }: { view: IdentityContinuityLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && !c) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">identity continuity · persistent selfhood</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.continuityTrend === 'rising-fragmentation' ? 'text-signal-warning' :
+    v.continuityTrend === 'consolidating'        ? 'text-bone-50/85' :
+    v.continuityTrend === 'stable'               ? 'text-bone-200/85' :
+                                                   'text-bone-200/65';
+
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const VectorBar = ({
+    label, strength, persistence,
+  }: { label: string; strength: number; persistence?: number }) => {
+    const w = Math.min(100, (strength / 10) * 100);
+    const pw = persistence !== undefined ? Math.min(100, (persistence / 10) * 100) : 0;
+    const tone =
+      strength >= 7 ? 'bg-bone-50/70' :
+      strength >= 4 ? 'bg-bone-200/55' :
+                      'bg-signal-warning/55';
+    return (
+      <div className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/65 w-[130px] shrink-0 truncate">{label}</span>
+        <div className="flex-grow h-[6px] border hairline relative">
+          <div className={`absolute inset-y-0 left-0 ${tone}`} style={{ width: `${w}%` }} />
+          {persistence !== undefined && (
+            <div className="absolute inset-y-0 left-0 border-r border-bone-50/40" style={{ width: `${pw}%` }} />
+          )}
+        </div>
+        <span className="w-[36px] text-right text-bone-50/75">{strength.toFixed(1)}</span>
+        {persistence !== undefined && (
+          <span className="w-[44px] text-right text-bone-200/45 text-[9px]">p {persistence.toFixed(1)}</span>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">identity continuity · persistent selfhood</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+
+      {c && (
+        <>
+          <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+            <div>
+              <div className="eyebrow">IDENTITY STABILITY</div>
+              <div className={`mt-0.5 ${heatTone(c.identityStability)}`}>{c.identityStability.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">CONSISTENCY</div>
+              <div className={`mt-0.5 ${heatTone(c.behavioralConsistency)}`}>{c.behavioralConsistency.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">FRAGMENTATION</div>
+              <div className={`mt-0.5 ${heatTone(c.identityFragmentation, true)}`}>{c.identityFragmentation.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">ADAPTATION VELOCITY</div>
+              <div className={`mt-0.5 ${heatTone(c.adaptationVelocity, true)}`}>{c.adaptationVelocity.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">CONTINUITY RISK</div>
+              <div className={`mt-0.5 ${heatTone(c.continuityRisk, true)}`}>{c.continuityRisk.toFixed(1)}/10</div>
+            </div>
+          </div>
+
+          {c.dominantIdentityVectors.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">DOMINANT IDENTITY VECTORS</div>
+              <div className="flex flex-col gap-0.5">
+                {c.dominantIdentityVectors.map((d) => (
+                  <div key={d.vector}>
+                    <VectorBar label={d.vector} strength={d.strength} persistence={d.persistence} />
+                    <div className="text-bone-200/45 text-[9px] mt-0.5 ml-[138px] break-words">
+                      {d.explanation}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {c.emergingIdentityVectors.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">EMERGING IDENTITIES</div>
+              <ul className="text-[10px] text-bone-50/80 leading-snug space-y-0.5">
+                {c.emergingIdentityVectors.slice(0, 3).map((e) => (
+                  <li key={e.vector} className="break-words">
+                    · <span className="uppercase tracking-wider">{e.vector}</span> — {e.explanation}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.collapsingIdentityVectors.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">COLLAPSING IDENTITIES</div>
+              <ul className="text-[10px] text-signal-warning/75 leading-snug space-y-0.5">
+                {c.collapsingIdentityVectors.slice(0, 3).map((d) => (
+                  <li key={d.vector} className="break-words">
+                    · <span className="uppercase tracking-wider">{d.vector}</span> — {d.explanation}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.identityContradictions.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">IDENTITY CONTRADICTIONS</div>
+              <ul className="space-y-1.5 text-[10px]">
+                {c.identityContradictions.map((row, i) => (
+                  <li key={i} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">
+                        {row.vectors.join(' ↔ ')}
+                      </span>
+                      <span className={`w-[40px] text-right ${heatTone(row.severity, true)}`}>
+                        {row.severity.toFixed(1)}/10
+                      </span>
+                    </div>
+                    <div className="text-bone-200/55 mt-0.5 break-words">{row.explanation}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.contextualIdentityModes.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">CONTEXTUAL IDENTITY MODES</div>
+              <ul className="space-y-1.5 text-[10px]">
+                {c.contextualIdentityModes.map((row, i) => (
+                  <li key={i} className="leading-snug">
+                    <div className="text-bone-200/65 break-words">when {row.condition}</div>
+                    <div className="text-bone-50/85 uppercase tracking-wider">→ {row.activeIdentity}</div>
+                    <div className="text-bone-200/45 text-[9px] italic break-words">{row.explanation}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="pt-2">
+            <div className="eyebrow mb-1">IDENTITY PRESSURE</div>
+            <div className="grid grid-cols-2 gap-2 text-[10px] tabular-nums">
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">novelty</span>
+                <span className="text-bone-50/75">{c.identityPressure.noveltyPressure.toFixed(1)}/10</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">trust</span>
+                <span className={heatTone(c.identityPressure.trustPressure, true)}>
+                  {c.identityPressure.trustPressure.toFixed(1)}/10
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">fatigue</span>
+                <span className={heatTone(c.identityPressure.fatiguePressure, true)}>
+                  {c.identityPressure.fatiguePressure.toFixed(1)}/10
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">adaptation</span>
+                <span className={heatTone(c.identityPressure.adaptationPressure, true)}>
+                  {c.identityPressure.adaptationPressure.toFixed(1)}/10
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {c.longTermDrift.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">LONG-TERM DRIFT</div>
+              <div className="flex flex-col gap-0.5">
+                {c.longTermDrift.slice(0, 5).map((d) => {
+                  const driftTone = d.drift > 0 ? 'text-bone-50/85' : 'text-signal-warning/75';
+                  return (
+                    <div key={d.vector} className="flex items-center gap-2 text-[10px] tabular-nums">
+                      <span className="text-bone-200/65 w-[130px] shrink-0 truncate">{d.vector}</span>
+                      <span className="w-[40px] text-right text-bone-200/55">{d.historical.toFixed(1)}</span>
+                      <span className="w-[10px] text-bone-200/45 text-center">→</span>
+                      <span className="w-[40px] text-right text-bone-50/75">{d.recent.toFixed(1)}</span>
+                      <span className={`w-[40px] text-right ${driftTone}`}>
+                        {d.drift > 0 ? '+' : ''}{d.drift.toFixed(1)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {v.dominantOverTime.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">IDENTITY DOMINANCE OVER TIME</div>
+          <div className="flex flex-col gap-0.5">
+            {v.dominantOverTime.slice(0, 6).map((r) => (
+              <div key={r.vector} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.vector}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className="w-[50px] text-right text-bone-200/55">ewma {r.ewmaStrength.toFixed(1)}</span>
+                <span className="w-[40px] text-right text-bone-200/45">{(r.share * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.collapsingOverTime.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">LOSING IDENTITY</div>
+          <div className="flex flex-col gap-0.5">
+            {v.collapsingOverTime.slice(0, 4).map((r) => (
+              <div key={r.vector} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.vector}</span>
+                <span className="w-[40px] text-right text-bone-200/55">{r.historicalStrength.toFixed(1)}</span>
+                <span className="w-[10px] text-bone-200/45 text-center">→</span>
+                <span className="w-[40px] text-right text-bone-50/75">{r.recentStrength.toFixed(1)}</span>
+                <span className="w-[40px] text-right text-signal-warning/75">−{r.decay.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.identityTransitions.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">IDENTITY TRANSITIONS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.identityTransitions.slice(0, 5).map((t) => (
+              <div key={`${t.fromVector}-${t.toVector}`} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 flex-grow truncate">
+                  <span className="uppercase tracking-wider">{t.fromVector}</span>
+                  <span className="text-bone-200/45"> → </span>
+                  <span className="uppercase tracking-wider text-bone-50/75">{t.toVector}</span>
+                </span>
+                <span className="w-[40px] text-right text-bone-50/75">×{t.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.recurringBehavioralFingerprints.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">RECURRING BEHAVIORAL FINGERPRINTS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.recurringBehavioralFingerprints.slice(0, 5).map((r) => (
+              <div key={r.pattern} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow break-words">{r.pattern}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className="w-[40px] text-right text-bone-200/55">{(r.share * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.pressureOnlyVectors.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">ONLY APPEARS UNDER PRESSURE</div>
+          <div className="flex flex-col gap-0.5">
+            {v.pressureOnlyVectors.slice(0, 4).map((r) => (
+              <div key={r.vector} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.vector}</span>
+                <span className="w-[60px] text-right text-bone-200/55">pressure ×{r.pressureAppearances}</span>
+                <span className="w-[50px] text-right text-bone-50/75">ratio {r.ratio.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.audienceAgnosticVectors.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">PERSISTS REGARDLESS OF AUDIENCE</div>
+          <div className="flex flex-col gap-0.5">
+            {v.audienceAgnosticVectors.slice(0, 4).map((r) => (
+              <div key={r.vector} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow uppercase tracking-wider truncate">{r.vector}</span>
+                <span className="w-[50px] text-right text-bone-200/55">ewma {r.ewmaStrength.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        observations {v.totalObservations} ·
+        avg stability {v.averageStability.toFixed(1)}/10 ·
+        avg fragmentation {v.averageFragmentation.toFixed(1)}/10 ·
+        avg continuity-risk {v.averageContinuityRisk.toFixed(1)}/10
       </div>
     </div>
   );
