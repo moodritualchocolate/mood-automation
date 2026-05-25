@@ -784,6 +784,7 @@ import type { CopyQualityAxis } from '@lib/copyQualityAdapter';
 import { evaluateCopyQuality } from '@lib/copyQualityAdapter';
 import { axisToSample, createCopyQualityMemoryStore } from '@lib/copyQualityMemory';
 import { buildCopyQualityAdvisory, appendAdvisoryToNotes } from '@lib/copyQualityAdvisory';
+import { evaluateCopyQualityRefusal } from '@lib/copyQualityRefusal';
 import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
 import type { ApprovalRecord } from '@lib/approvalMemory';
 import type { CognitiveFieldState } from '@lib/cognitiveField';
@@ -4961,6 +4962,44 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           stage: 'copy-quality',
           message: `advisory inlaid into critic notes (verdict unchanged: ${finalVerdict.verdict})`,
           data: { advisoryLine: advisory.advisoryLine, reasonCodes: advisory.reasonCodes },
+        });
+      }
+
+      // ─── Feature-flagged Copy-Quality Refusal ──────────────────
+      // First intentional consumption of the copyQuality signal. Strictly
+      // opt-in via request.copyQualityRefusalEnabled (default false).
+      // When triggered: appends `copy-quality-threshold` to reasons,
+      // appends a clear note line, promotes `approve` → `reject-concept`.
+      // Baseline critic logic / brutality semantics unchanged.
+      const copyQualityRefusal = evaluateCopyQualityRefusal({
+        enabled: request.copyQualityRefusalEnabled === true,
+        brutality,
+        copyQuality: copyQualitySignal,
+        currentVerdict: finalVerdict.verdict,
+      });
+      if (copyQualityRefusal.triggered) {
+        if (copyQualityRefusal.refusalReason
+            && !finalVerdict.reasons.includes(copyQualityRefusal.refusalReason)) {
+          finalVerdict.reasons.push(copyQualityRefusal.refusalReason);
+        }
+        if (copyQualityRefusal.refusalNote) {
+          const sep = finalVerdict.notes.length > 0 && !finalVerdict.notes.endsWith('\n') ? '\n' : '';
+          finalVerdict.notes = `${finalVerdict.notes}${sep}${copyQualityRefusal.refusalNote}`;
+        }
+        const verdictChanged = finalVerdict.verdict !== copyQualityRefusal.nextVerdict;
+        finalVerdict.verdict = copyQualityRefusal.nextVerdict;
+        emit({
+          stage: 'copy-quality',
+          message:
+            `copy-quality refusal active (brutality ${brutality.toFixed(2)}, ` +
+            `integrity ${copyQualitySignal?.copyIntegrity.toFixed(1) ?? '—'}/10) — ` +
+            (verdictChanged
+              ? `verdict promoted approve → ${finalVerdict.verdict}`
+              : `verdict already ${finalVerdict.verdict}, reason appended`),
+          data: {
+            refusalReason: copyQualityRefusal.refusalReason,
+            reasonCodes: copyQualityRefusal.reasonCodes,
+          },
         });
       }
 

@@ -361,6 +361,12 @@ export interface GenerateRequest {
   /** Phase 27 — the persistent-runtime campaign this run belongs to.
    *  When omitted the runtime uses the formula as the campaign id. */
   campaignId?: string;
+  /** Feature-flagged Copy-Quality Refusal — opt-in. Default false.
+   *  When true AND brutality >= 0.8 AND copyQuality.copyIntegrity < 4.0
+   *  the pipeline appends `copy-quality-threshold` to finalVerdict.reasons
+   *  and promotes an approve verdict to reject-concept. No effect when
+   *  false (the global default) — baseline critic behavior is preserved. */
+  copyQualityRefusalEnabled?: boolean;
 }
 
 /**
