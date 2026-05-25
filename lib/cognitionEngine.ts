@@ -104,6 +104,13 @@ import {
   applyCounterfactualBias,
   counterfactualPressureContribution,
 } from './regretEngine';
+import { createEvolutionMemoryStore } from './evolutionMemory';
+import {
+  updateEvolution,
+  computeEvolutionBias,
+  applyEvolutionBias,
+  evolutionPressureContribution,
+} from './evolutionEngine';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -194,7 +201,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const missionContinuityStore = createMissionContinuityStore();
   const historicalMemoryStore = createHistoricalMemoryStore();
   const counterfactualStore = createCounterfactualMemoryStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre, environmentPre, missionContinuityPre, historicalMemoryPre, counterfactualPre] = await Promise.all([
+  const evolutionStore = createEvolutionMemoryStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre, environmentPre, missionContinuityPre, historicalMemoryPre, counterfactualPre, evolutionPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -211,6 +219,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     missionContinuityStore.read(),
     historicalMemoryStore.read(),
     counterfactualStore.read(),
+    evolutionStore.read(),
   ]);
 
   const at = Date.now();
@@ -670,7 +679,10 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     // Wave 43 — counterfactual regret pressure from the PREVIOUS event's
     // alternate-trajectory analysis. One-event-lagged feedback.
     const counterfactualPressure = counterfactualPressureContribution(counterfactualPre);
-    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure + envPressure + missionPressure + historicalPressure + counterfactualPressure);
+    // Wave 41 — evolutionary pressure from the PREVIOUS event's evolution
+    // analysis. One-event-lagged feedback.
+    const evolutionPressure = evolutionPressureContribution(evolutionPre);
+    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure + envPressure + missionPressure + historicalPressure + counterfactualPressure + evolutionPressure);
     const governancePre2 = updateGovernance(governancePre, {
       at, tick: osPost.uptime,
       directiveName,
@@ -686,23 +698,28 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     const envBias = computeEnvironmentBias(environmentPre.levels);
     // Wave 43 — counterfactual bias from previous-event regret pressure.
     const counterfactualBias = computeCounterfactualBias(counterfactualPre.regrets);
+    // Wave 41 — evolution bias from PREVIOUS event's dominant lineage genome.
+    const evolutionBias = computeEvolutionBias(evolutionPre);
     const governancePost = {
       ...governancePre2,
-      gradients: applyCounterfactualBias(
-        applyHistoricalBias(
-          applyMissionBias(
-            applyEnvironmentBias(
-              applyScarcityBias(
-                applyEcologyBias(governancePre2.gradients, ecologyBias),
-                scarcityBias,
+      gradients: applyEvolutionBias(
+        applyCounterfactualBias(
+          applyHistoricalBias(
+            applyMissionBias(
+              applyEnvironmentBias(
+                applyScarcityBias(
+                  applyEcologyBias(governancePre2.gradients, ecologyBias),
+                  scarcityBias,
+                ),
+                envBias,
               ),
-              envBias,
+              missionBias,
             ),
-            missionBias,
+            historicalBias,
           ),
-          historicalBias,
+          counterfactualBias,
         ),
-        counterfactualBias,
+        evolutionBias,
       ),
     };
 
@@ -765,6 +782,26 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       actualGradients: governancePost.gradients,
     });
 
+    // Wave 41 — evolutionary selection. Sample fitness for all active
+    // lineages from the same starting state; trigger generation cycle
+    // every GENERATION_INTERVAL_EVENTS when evolutionary pressure crosses
+    // threshold; spawn deterministic mutations from the top pressure
+    // sources; select dominant with hysteresis. One-event-lagged: NEXT
+    // event's governance reads the dominant lineage's genome via
+    // evolutionBias + pressure contribution.
+    const evolutionPost = updateEvolution(evolutionPre, {
+      at, tick: osPost.uptime,
+      start: simStart,
+      pressureSignal: {
+        historical: historicalMemoryPost,
+        counterfactual: counterfactualPost,
+        mission: missionContinuityPost,
+        resource: resourceEconomyPost,
+        ecology: ecologyPost,
+        meta: metaCognitivePost,
+      },
+    });
+
     await Promise.all([
       purposeStore.save(purposeFinal),
       contradictionStore.save(contradictionResult.newState),
@@ -778,6 +815,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       missionContinuityStore.save(missionContinuityPost),
       historicalMemoryStore.save(historicalMemoryPost),
       counterfactualStore.save(counterfactualPost),
+      evolutionStore.save(evolutionPost),
     ]);
   }
 

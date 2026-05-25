@@ -124,6 +124,11 @@ export interface RuntimeSnapshot {
    *  missed opportunities + false recoveries, civilization strategic
    *  state, CounterfactualBias for governance. */
   counterfactualMemory?: import('./counterfactualMemory').CounterfactualMemoryState | null;
+  /** Wave 41 — evolution memory. Deterministic civilization evolution
+   *  tree with genome lineages, structural mutations driven by
+   *  accumulated operational pressure, multi-horizon fitness
+   *  simulation, selection with hysteresis, extinction trajectories. */
+  evolutionMemory?: import('./evolutionMemory').EvolutionMemoryState | null;
   capturedAt: number;
 }
 

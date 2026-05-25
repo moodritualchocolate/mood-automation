@@ -117,6 +117,9 @@ import { buildHistoricalMemoryView } from './historicalMemoryView';
 // Wave 43 — Counterfactual Civilization.
 import type { CounterfactualViewModel } from './counterfactualView';
 import { buildCounterfactualView } from './counterfactualView';
+// Wave 41 — Evolutionary Civilization.
+import type { EvolutionViewModel } from './evolutionView';
+import { buildEvolutionView } from './evolutionView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -222,6 +225,11 @@ export interface RuntimeManifestation {
    *  opportunities, false recoveries, civilization strategic state,
    *  CounterfactualBias on governance. */
   counterfactualCivilization: CounterfactualViewModel;
+  /** Wave 41 — Evolutionary Civilization. Deterministic civilization
+   *  evolution tree with genome lineages, structural mutations,
+   *  multi-horizon fitness simulation, selection with hysteresis,
+   *  extinction trajectories, EvolutionBias on governance. */
+  evolutionaryCivilization: EvolutionViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -276,6 +284,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const missionContinuity = buildMissionContinuityView(snap);
   const historicalMemory = buildHistoricalMemoryView(snap);
   const counterfactualCivilization = buildCounterfactualView(snap);
+  const evolutionaryCivilization = buildEvolutionView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -302,7 +311,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     purposeIntent, contradictionField, selfModel, adaptiveRegulation,
     cognitiveGovernance, strategicSimulation, internalEcology,
     resourceEconomy, environment, missionContinuity, historicalMemory,
-    counterfactualCivilization,
+    counterfactualCivilization, evolutionaryCivilization,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

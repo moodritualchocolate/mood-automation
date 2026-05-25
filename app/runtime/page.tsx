@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology, ResourceEconomy, EnvironmentalReality, MissionContinuity, HistoricalMemory, CounterfactualCivilization } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology, ResourceEconomy, EnvironmentalReality, MissionContinuity, HistoricalMemory, CounterfactualCivilization, EvolutionaryCivilization } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -264,6 +264,12 @@ export default function RuntimePage() {
           when alternates outperform actual. Missed opportunities, false
           recoveries, civilization strategic state, CounterfactualBias. */}
       <CounterfactualCivilization m={m} />
+
+      {/* Wave 41 — Evolutionary Civilization. Deterministic civilization
+          evolution tree. Structural mutations from accumulated pressure,
+          multi-horizon fitness simulation per lineage, dominant selection
+          with hysteresis, extinction trajectories, EvolutionBias. */}
+      <EvolutionaryCivilization m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,

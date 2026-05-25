@@ -603,6 +603,186 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 41 — Evolutionary Civilization ──────────────────────
+//
+// Deterministic civilization evolution tree. Dominant lineage's genome
+// + species classification, full lineage list (parent/children/extinct),
+// generation events, evolutionary pressure breakdown by source,
+// EvolutionBias on governance. NOT genetic algorithm — pure structural
+// mutation physics derived from accumulated operational pressure.
+
+export function EvolutionaryCivilization({ m }: { m: RuntimeManifestation }) {
+  const e = m.evolutionaryCivilization;
+  if (!e.present) return null;
+
+  const tone =
+    e.status === 'unstable' ? '#FF4D2D' :
+    e.status === 'mature'   ? '#8AA98A' :
+    e.status === 'evolving' ? '#C9A24B' :
+                              '#6F8196';
+
+  const speciesTone = (s: string) =>
+    s === 'preservation-civilization' ? '#8AA98A' :
+    s === 'expansion-civilization'    ? '#C9A24B' :
+    s === 'adaptive-civilization'     ? '#6F8196' :
+    s === 'mutation-civilization'     ? '#C9A24B' :
+    s === 'governance-civilization'   ? '#6F8196' :
+    s === 'recovery-civilization'     ? '#8AA98A' :
+    s === 'continuity-civilization'   ? '#8AA98A' :
+                                        'rgba(247,245,242,0.50)';
+
+  const statusTone = (s: string) =>
+    s === 'dominant'  ? '#8AA98A' :
+    s === 'declining' ? '#C9A24B' :
+    s === 'extinct'   ? '#FF4D2D' :
+    s === 'active'    ? '#6F8196' :
+                        'rgba(247,245,242,0.50)';
+
+  const biasRow = (label: string, value: number) => {
+    const sign = value === 0 ? '' : value > 0 ? '+' : '';
+    const col =
+      Math.abs(value) < 0.04 ? 'rgba(247,245,242,0.50)' :
+      value > 0 ? '#8AA98A' : '#C9A24B';
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 flex-grow">{label}</span>
+        <span style={{ color: col }} className="w-[60px] text-right">{sign}{value.toFixed(2)}</span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">evolutionary civilization</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {e.status} · gen {e.currentGeneration} · pressure {e.evolutionaryPressure.toFixed(1)}/10 · spawned {e.totalLineagesSpawned} · extinct {e.totalExtinctions}
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{e.statement}</div>
+
+      {e.dominantLineageId && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            dominant genome ·{' '}
+            <span style={{ color: speciesTone(e.dominantSpecies) }}>{e.dominantSpecies}</span>
+            {' · '}fitness {e.dominantFitness.toFixed(1)}/10
+            {' · '}stability {e.dominantStability.toFixed(1)}
+            {' · '}adaptation {e.dominantAdaptation.toFixed(1)}
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {e.dominantGenome.map((g) => (
+              <div key={g.key} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 w-[200px]">{g.key}</span>
+                <div className="flex-grow h-[4px] bg-ink-900/70 border hairline relative">
+                  <div className="h-full" style={{ width: `${g.value * 100}%`, backgroundColor: '#8AA98A' }} />
+                  <div className="absolute top-0 bottom-0 w-[1px]" style={{ left: '50%', backgroundColor: 'rgba(247,245,242,0.4)' }} />
+                </div>
+                <span className="w-[50px] text-right text-bone-50/75">{g.value.toFixed(2)}</span>
+                {g.delta !== null && Math.abs(g.delta) >= 0.005 && (
+                  <span className="w-[60px] text-right text-[9px]" style={{ color: g.delta > 0 ? '#C9A24B' : '#6F8196' }}>
+                    {g.delta > 0 ? '+' : ''}{g.delta.toFixed(2)}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {e.pressureBreakdown && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            evolutionary pressure breakdown
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-[10px] tabular-nums">
+            {([
+              ['collapse recurrence', e.pressureBreakdown.collapseRecurrenceContrib],
+              ['regret accumulation', e.pressureBreakdown.regretContrib],
+              ['doctrine scars',      e.pressureBreakdown.doctrineScarsContrib],
+              ['survivability fail',  e.pressureBreakdown.survivabilityFailureContrib],
+              ['ecology instability', e.pressureBreakdown.ecologyInstabilityContrib],
+              ['continuity fragment', e.pressureBreakdown.continuityFragmentationContrib],
+            ] as Array<[string, number]>).map(([label, val]) => (
+              <div key={label} className="flex flex-col">
+                <span className="text-[9px] text-bone-200/45 uppercase tracking-[0.16em]">{label}</span>
+                <span className="text-bone-50/75" style={{ color: val >= 3 ? '#C9A24B' : 'rgba(247,245,242,0.65)' }}>
+                  {val.toFixed(2)}/10
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {e.lineages.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            lineage tree · {e.activeLineageCount} active / {e.lineages.length} total
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {e.lineages.slice(0, 12).map((l) => (
+              <div key={l.lineageId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-[9px] tracking-[0.16em] uppercase w-[80px]" style={{ color: statusTone(l.status) }}>
+                  {l.status}
+                </span>
+                <span className="text-bone-200/40 w-[40px] text-right">g{l.generation}</span>
+                <span className="text-[9px] tracking-[0.16em] uppercase w-[180px]" style={{ color: speciesTone(l.species) }}>
+                  {l.species.replace('-civilization', '')}
+                </span>
+                <span className="w-[60px] text-right text-bone-50/75">
+                  fit {l.selectionScore.toFixed(1)}
+                </span>
+                <span className="w-[80px] text-right text-[9px]" style={{ color: l.extinctionRisk > 0.5 ? '#FF4D2D' : l.extinctionRisk > 0.3 ? '#C9A24B' : 'rgba(247,245,242,0.40)' }}>
+                  ext-risk {l.extinctionRisk.toFixed(2)}
+                </span>
+                <span className="text-bone-200/40 flex-grow text-[9px] truncate">
+                  {l.mutationOrigin} · {l.mutationDeltaSummary}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {e.generationEvents.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            generation events
+          </div>
+          {e.generationEvents.map((g, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{g.tick} · gen {g.generation} · pressure {g.triggerPressure.toFixed(1)} · spawned {g.spawnedLineageIds.length}
+              {g.dominantShifted && (
+                <span className="text-bone-50/75"> · dominant shifted {g.priorDominantId ?? '—'} → {g.newDominantId ?? '—'}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          evolution bias on governance gradients
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {biasRow('cognition throughput',  e.bias.cognitionThroughput)}
+          {biasRow('escalation permission', e.bias.escalationPermission)}
+          {biasRow('exploration intensity', e.bias.explorationIntensity)}
+          {biasRow('defer acceptance',      e.bias.deferAcceptance)}
+          {biasRow('recovery weighting',    e.bias.recoveryWeighting)}
+          {biasRow('burst tolerance',       e.bias.burstTolerance)}
+        </div>
+      </div>
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        +{e.simulationPressureContribution.toFixed(2)} simulation pressure
+      </div>
+    </div>
+  );
+}
+
 // ─── Wave 43 — Counterfactual Civilization ────────────────────
 //
 // Alternate-trajectory analysis. Eight strategy branches simulated

@@ -46,6 +46,7 @@ import { createEnvironmentMemoryStore } from '@lib/environmentMemory';
 import { createMissionContinuityStore } from '@lib/missionContinuityMemory';
 import { createHistoricalMemoryStore } from '@lib/historicalMemory';
 import { createCounterfactualMemoryStore } from '@lib/counterfactualMemory';
+import { createEvolutionMemoryStore } from '@lib/evolutionMemory';
 import { classifyConsciousness, applyPassiveMetabolism } from '@lib/consciousnessView';
 import type { RuntimeSnapshot } from '@lib/index';
 
@@ -113,6 +114,8 @@ export async function GET() {
   const historicalMemory = await createHistoricalMemoryStore().read();
   // ─── Wave 43 — counterfactual memory ──────────────────────────
   const counterfactualMemory = await createCounterfactualMemoryStore().read();
+  // ─── Wave 41 — evolution memory ───────────────────────────────
+  const evolutionMemory = await createEvolutionMemoryStore().read();
 
   // The passive tick. Advances only os.uptime and os.seasonAge — no
   // directive, no posture change, no coordination shift, no archive
@@ -181,6 +184,7 @@ export async function GET() {
     missionContinuity,
     historicalMemory,
     counterfactualMemory,
+    evolutionMemory,
     capturedAt: Date.now(),
   };
 
