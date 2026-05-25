@@ -603,6 +603,240 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 42 — Civilization Market Dynamics ───────────────────
+//
+// Multi-civilization competitive ecosystem. Ten global resource pools
+// shared across all lineages, per-civ consumption/production shares,
+// coalitions from complementary profiles, monopoly detection,
+// cascade collapse propagation, MarketBias on governance. NOT chat,
+// NOT narrative — civilizational market physics.
+
+export function CivilizationMarket({ m }: { m: RuntimeManifestation }) {
+  const c = m.marketDynamics;
+  if (!c.present) return null;
+
+  const tone =
+    c.status === 'collapsing'  ? '#FF4D2D' :
+    c.status === 'stressed'    ? '#C9A24B' :
+    c.status === 'competitive' ? '#6F8196' :
+                                 '#8AA98A';
+
+  const resourceLabel = (id: string) =>
+    id === 'cognitiveEnergy'       ? 'cognitive energy' :
+    id === 'recoveryCapacity'      ? 'recovery capacity' :
+    id === 'governanceBandwidth'   ? 'governance bandwidth' :
+    id === 'mutationCapacity'      ? 'mutation capacity' :
+    id === 'continuityReserve'     ? 'continuity reserve' :
+    id === 'ecologicalStability'   ? 'ecological stability' :
+    id === 'adaptationLiquidity'   ? 'adaptation liquidity' :
+    id === 'strategicAttention'    ? 'strategic attention' :
+    id === 'explorationBudget'     ? 'exploration budget' :
+    id === 'survivabilityCapital'  ? 'survivability capital' :
+                                     id;
+
+  const resourceTone = (level: number) =>
+    level < 20 ? '#FF4D2D' :
+    level < 40 ? '#C9A24B' :
+    level < 70 ? '#8AA98A' :
+                 '#6F8196';
+
+  const speciesTone = (s: string) =>
+    s === 'preservation-civilization' ? '#8AA98A' :
+    s === 'expansion-civilization'    ? '#C9A24B' :
+    s === 'adaptive-civilization'     ? '#6F8196' :
+    s === 'mutation-civilization'     ? '#C9A24B' :
+    s === 'governance-civilization'   ? '#6F8196' :
+    s === 'recovery-civilization'     ? '#8AA98A' :
+    s === 'continuity-civilization'   ? '#8AA98A' :
+                                        'rgba(247,245,242,0.50)';
+
+  const biasRow = (label: string, value: number) => {
+    const sign = value === 0 ? '' : value > 0 ? '+' : '';
+    const col =
+      Math.abs(value) < 0.04 ? 'rgba(247,245,242,0.50)' :
+      value > 0 ? '#8AA98A' : '#C9A24B';
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 flex-grow">{label}</span>
+        <span style={{ color: col }} className="w-[60px] text-right">{sign}{value.toFixed(2)}</span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">civilization market</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {c.ecosystemState} · held {c.ecosystemPersistenceTicks}ev · pressure {c.marketPressure.toFixed(1)}/10 · avg pool {c.averageResourceLevel.toFixed(0)}/100
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{c.statement}</div>
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          ten global resource pools
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {c.resources.map((r) => {
+            const tn = resourceTone(r.level);
+            return (
+              <div key={r.id} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 w-[180px]">{resourceLabel(r.id)}</span>
+                <div className="flex-grow h-[5px] bg-ink-900/70 border hairline relative">
+                  <div className="h-full" style={{ width: `${r.level}%`, backgroundColor: tn }} />
+                  <div className="absolute top-0 bottom-0 w-[1px]" style={{ left: `${r.baseline}%`, backgroundColor: 'rgba(247,245,242,0.4)' }} />
+                </div>
+                <span className="w-[50px] text-right text-bone-50/75">{r.level.toFixed(0)}</span>
+                <span
+                  className="w-[60px] text-right text-[9px]"
+                  style={{ color: r.emaRate < 0 ? '#C9A24B' : r.emaRate > 0 ? '#8AA98A' : 'rgba(247,245,242,0.40)' }}
+                >
+                  {r.emaRate > 0 ? '+' : ''}{r.emaRate.toFixed(2)}/ev
+                </span>
+                <span className="w-[80px] text-right text-[9px] text-bone-200/40">
+                  c{r.consumptionRate.toFixed(2)} / p{r.productionRate.toFixed(2)}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {c.economyRecords.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            civilizations · sorted by consumption share
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {c.economyRecords.slice(0, 10).map((r) => (
+              <div key={r.lineageId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/40 w-[100px] truncate text-[9px]">{r.lineageId.slice(0, 14)}</span>
+                <span className="text-[9px] tracking-[0.14em] uppercase w-[140px]" style={{ color: speciesTone(r.species) }}>
+                  {r.species.replace('-civilization', '')}
+                </span>
+                <span className="w-[80px] text-right text-bone-50/75">
+                  c {(r.consumptionShare * 100).toFixed(0)}%
+                </span>
+                <span className="w-[80px] text-right text-bone-200/40 text-[9px]">
+                  p {(r.productionShare * 100).toFixed(0)}%
+                </span>
+                <span className="w-[80px] text-right" style={{ color: r.efficiency >= 1 ? '#8AA98A' : '#C9A24B' }}>
+                  eff {r.efficiency.toFixed(2)}
+                </span>
+                <span className="w-[80px] text-right text-[9px]" style={{ color: r.sustainabilityScore >= 5 ? '#8AA98A' : '#C9A24B' }}>
+                  sust {r.sustainabilityScore.toFixed(1)}
+                </span>
+                <span className="w-[80px] text-right text-[9px]" style={{ color: r.survivabilityROI >= 0 ? '#8AA98A' : '#FF4D2D' }}>
+                  ROI {r.survivabilityROI >= 0 ? '+' : ''}{r.survivabilityROI.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {c.coalitions.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            coalitions · {c.totalCoalitionsFormed} formed lifetime
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {c.coalitions.map((co) => (
+              <div key={co.coalitionId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow text-[9px]">
+                  {co.memberLineageIds.map((m) => m.slice(0, 14)).join(' + ')}
+                </span>
+                <span className="w-[60px] text-right" style={{ color: co.strength >= 5 ? '#8AA98A' : '#C9A24B' }}>
+                  str {co.strength.toFixed(1)}
+                </span>
+                <span className="w-[70px] text-right text-[9px] text-bone-200/40">
+                  eff {co.aggregateEfficiency.toFixed(2)}
+                </span>
+                <span className="w-[60px] text-right text-[9px]" style={{ color: co.active ? '#8AA98A' : 'rgba(247,245,242,0.40)' }}>
+                  {co.active ? 'active' : 'idle'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {c.monopolies.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            monopolies · {c.totalMonopolies} detected lifetime
+          </div>
+          {c.monopolies.map((mo, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{mo.tick} · {mo.lineageId.slice(0, 24)} holds {(mo.consumptionShare * 100).toFixed(0)}% (persisted {mo.persistedTicks}ev)
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.cascades.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            cascade collapses · {c.totalCascadeCollapses} lifetime
+          </div>
+          {c.cascades.map((cc, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{cc.tick} · <span style={{ color: '#FF4D2D' }}>{cc.collapsedLineageId.slice(0, 24)}</span> extinct (share {cc.collapsedShare.toFixed(2)});
+              shocked {cc.shockedPools.length} pools, {cc.downstreamLineages.length} downstream at risk
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.pressureBreakdown && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            market pressure breakdown
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] tabular-nums">
+            {([
+              ['scarcity',          c.pressureBreakdown.scarcityContrib],
+              ['monopolization',    c.pressureBreakdown.monopolizationContrib],
+              ['ecology instab',    c.pressureBreakdown.ecologicalInstabilityContrib],
+              ['coalition fragile', c.pressureBreakdown.coalitionFragilityContrib],
+              ['depletion',         c.pressureBreakdown.resourceDepletionContrib],
+              ['extinction conc',   c.pressureBreakdown.extinctionConcentrationContrib],
+              ['cascade propagation', c.pressureBreakdown.collapsePropagationContrib],
+            ] as Array<[string, number]>).map(([label, val]) => (
+              <div key={label} className="flex flex-col">
+                <span className="text-[9px] text-bone-200/45 uppercase tracking-[0.16em]">{label}</span>
+                <span style={{ color: val >= 3 ? '#C9A24B' : 'rgba(247,245,242,0.65)' }}>
+                  {val.toFixed(2)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          market bias on governance gradients
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {biasRow('cognition throughput',  c.bias.cognitionThroughput)}
+          {biasRow('escalation permission', c.bias.escalationPermission)}
+          {biasRow('exploration intensity', c.bias.explorationIntensity)}
+          {biasRow('defer acceptance',      c.bias.deferAcceptance)}
+          {biasRow('recovery weighting',    c.bias.recoveryWeighting)}
+          {biasRow('burst tolerance',       c.bias.burstTolerance)}
+        </div>
+      </div>
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        +{c.simulationPressureContribution.toFixed(2)} simulation pressure
+      </div>
+    </div>
+  );
+}
+
 // ─── Wave 41 — Evolutionary Civilization ──────────────────────
 //
 // Deterministic civilization evolution tree. Dominant lineage's genome

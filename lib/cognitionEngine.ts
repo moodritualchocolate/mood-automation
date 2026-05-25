@@ -111,6 +111,13 @@ import {
   applyEvolutionBias,
   evolutionPressureContribution,
 } from './evolutionEngine';
+import { createCivilizationMarketStore } from './civilizationMarket';
+import {
+  updateMarket,
+  computeMarketBias,
+  applyMarketBias,
+  marketPressureContribution,
+} from './civilizationMarket';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -202,7 +209,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const historicalMemoryStore = createHistoricalMemoryStore();
   const counterfactualStore = createCounterfactualMemoryStore();
   const evolutionStore = createEvolutionMemoryStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre, environmentPre, missionContinuityPre, historicalMemoryPre, counterfactualPre, evolutionPre] = await Promise.all([
+  const civilizationMarketStore = createCivilizationMarketStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre, environmentPre, missionContinuityPre, historicalMemoryPre, counterfactualPre, evolutionPre, civilizationMarketPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -220,6 +228,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     historicalMemoryStore.read(),
     counterfactualStore.read(),
     evolutionStore.read(),
+    civilizationMarketStore.read(),
   ]);
 
   const at = Date.now();
@@ -682,7 +691,10 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     // Wave 41 — evolutionary pressure from the PREVIOUS event's evolution
     // analysis. One-event-lagged feedback.
     const evolutionPressure = evolutionPressureContribution(evolutionPre);
-    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure + envPressure + missionPressure + historicalPressure + counterfactualPressure + evolutionPressure);
+    // Wave 42 — civilization market pressure from PREVIOUS event's
+    // market state (scarcity / monopoly / cascade).
+    const marketPressure = marketPressureContribution(civilizationMarketPre);
+    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure + envPressure + missionPressure + historicalPressure + counterfactualPressure + evolutionPressure + marketPressure);
     const governancePre2 = updateGovernance(governancePre, {
       at, tick: osPost.uptime,
       directiveName,
@@ -700,26 +712,31 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     const counterfactualBias = computeCounterfactualBias(counterfactualPre.regrets);
     // Wave 41 — evolution bias from PREVIOUS event's dominant lineage genome.
     const evolutionBias = computeEvolutionBias(evolutionPre);
+    // Wave 42 — civilization market bias from PREVIOUS event's market state.
+    const marketBias = computeMarketBias(civilizationMarketPre);
     const governancePost = {
       ...governancePre2,
-      gradients: applyEvolutionBias(
-        applyCounterfactualBias(
-          applyHistoricalBias(
-            applyMissionBias(
-              applyEnvironmentBias(
-                applyScarcityBias(
-                  applyEcologyBias(governancePre2.gradients, ecologyBias),
-                  scarcityBias,
+      gradients: applyMarketBias(
+        applyEvolutionBias(
+          applyCounterfactualBias(
+            applyHistoricalBias(
+              applyMissionBias(
+                applyEnvironmentBias(
+                  applyScarcityBias(
+                    applyEcologyBias(governancePre2.gradients, ecologyBias),
+                    scarcityBias,
+                  ),
+                  envBias,
                 ),
-                envBias,
+                missionBias,
               ),
-              missionBias,
+              historicalBias,
             ),
-            historicalBias,
+            counterfactualBias,
           ),
-          counterfactualBias,
+          evolutionBias,
         ),
-        evolutionBias,
+        marketBias,
       ),
     };
 
@@ -802,6 +819,25 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       },
     });
 
+    // Wave 42 — multi-civilization market dynamics. All non-extinct
+    // lineages compete over the same 10 finite global resource pools.
+    // Coalitions emerge from complementary profiles, monopolies from
+    // sustained consumption-share dominance, cascade collapses from
+    // dominant-consumer extinctions. One-event-lagged: NEXT event's
+    // governance reads the market state via marketBias + pressure.
+    const activeLineages = Object.values(evolutionPost.lineages)
+      .filter((l) => l.status !== 'extinct');
+    const newlyExtinctIds = Object.values(evolutionPost.lineages)
+      .filter((l) => l.status === 'extinct'
+        && evolutionPre.lineages[l.lineageId]
+        && evolutionPre.lineages[l.lineageId].status !== 'extinct')
+      .map((l) => l.lineageId);
+    const civilizationMarketPost = updateMarket(civilizationMarketPre, {
+      at, tick: osPost.uptime,
+      activeLineages,
+      newlyExtinctIds,
+    });
+
     await Promise.all([
       purposeStore.save(purposeFinal),
       contradictionStore.save(contradictionResult.newState),
@@ -816,6 +852,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       historicalMemoryStore.save(historicalMemoryPost),
       counterfactualStore.save(counterfactualPost),
       evolutionStore.save(evolutionPost),
+      civilizationMarketStore.save(civilizationMarketPost),
     ]);
   }
 

@@ -120,6 +120,9 @@ import { buildCounterfactualView } from './counterfactualView';
 // Wave 41 — Evolutionary Civilization.
 import type { EvolutionViewModel } from './evolutionView';
 import { buildEvolutionView } from './evolutionView';
+// Wave 42 — Civilization Market Dynamics.
+import type { MarketDynamicsViewModel } from './marketDynamicsView';
+import { buildMarketDynamicsView } from './marketDynamicsView';
 
 export interface RuntimeManifestation {
   brain: RuntimeUIBrainViewModel;
@@ -230,6 +233,11 @@ export interface RuntimeManifestation {
    *  multi-horizon fitness simulation, selection with hysteresis,
    *  extinction trajectories, EvolutionBias on governance. */
   evolutionaryCivilization: EvolutionViewModel;
+  /** Wave 42 — Civilization Market Dynamics. Ten finite global
+   *  resource pools shared across all lineages, per-civ economic
+   *  profiles + consumption shares, coalitions, monopolies, cascade
+   *  collapses, MarketBias on governance. */
+  marketDynamics: MarketDynamicsViewModel;
   layout: ManifestationLayoutViewModel;
   /** True when there is enough persistent state to render a living runtime. */
   runtime_is_visible: boolean;
@@ -285,6 +293,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
   const historicalMemory = buildHistoricalMemoryView(snap);
   const counterfactualCivilization = buildCounterfactualView(snap);
   const evolutionaryCivilization = buildEvolutionView(snap);
+  const marketDynamics = buildMarketDynamicsView(snap);
   const layout = buildManifestationLayout(snap, brain.foreground);
 
   // The runtime is visible when the kernel has booted and the organism
@@ -312,6 +321,7 @@ export function buildRuntimeManifestation(snap: RuntimeSnapshot): RuntimeManifes
     cognitiveGovernance, strategicSimulation, internalEcology,
     resourceEconomy, environment, missionContinuity, historicalMemory,
     counterfactualCivilization, evolutionaryCivilization,
+    marketDynamics,
     layout,
     runtime_is_visible, surface_is_true_to_cognition, manifestation_statement,
     captured_at: snap.capturedAt,

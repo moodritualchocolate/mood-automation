@@ -129,6 +129,11 @@ export interface RuntimeSnapshot {
    *  accumulated operational pressure, multi-horizon fitness
    *  simulation, selection with hysteresis, extinction trajectories. */
   evolutionMemory?: import('./evolutionMemory').EvolutionMemoryState | null;
+  /** Wave 42 — civilization market dynamics. Ten finite global
+   *  resource pools shared across all lineages, per-civ economic
+   *  profiles, coalitions, monopolies, cascade collapses,
+   *  MarketBias on governance. */
+  civilizationMarket?: import('./civilizationMarket').CivilizationMarketState | null;
   capturedAt: number;
 }
 

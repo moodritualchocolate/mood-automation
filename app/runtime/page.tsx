@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology, ResourceEconomy, EnvironmentalReality, MissionContinuity, HistoricalMemory, CounterfactualCivilization, EvolutionaryCivilization } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology, ResourceEconomy, EnvironmentalReality, MissionContinuity, HistoricalMemory, CounterfactualCivilization, EvolutionaryCivilization, CivilizationMarket } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -270,6 +270,13 @@ export default function RuntimePage() {
           multi-horizon fitness simulation per lineage, dominant selection
           with hysteresis, extinction trajectories, EvolutionBias. */}
       <EvolutionaryCivilization m={m} />
+
+      {/* Wave 42 — Civilization Market Dynamics. Ten finite global
+          resource pools shared across all lineages. Coalitions emerge
+          from complementary profiles, monopolies from sustained
+          consumption share, cascade collapses from extinction shocks.
+          MarketBias on governance. */}
+      <CivilizationMarket m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,
