@@ -114,6 +114,11 @@ export interface RuntimeSnapshot {
    *  adaptationContinuity, strategicPersistence, missionPressure,
    *  continuityMomentum, civilizationAge), eight civilization states. */
   missionContinuity?: import('./missionContinuityMemory').MissionContinuityState | null;
+  /** Wave 42 — historical memory. Civilization-level epoch segmentation,
+   *  eight statistical doctrine templates with EWMA outcome tracking,
+   *  scar memory under repeated harm, seven collapse-archetype
+   *  detectors, civilization maturity score + state, HistoricalBias. */
+  historicalMemory?: import('./historicalMemory').HistoricalMemoryState | null;
   capturedAt: number;
 }
 

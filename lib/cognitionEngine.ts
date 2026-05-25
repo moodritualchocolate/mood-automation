@@ -90,6 +90,13 @@ import {
   applyMissionBias,
   missionPressureContribution,
 } from './missionContinuityEngine';
+import { createHistoricalMemoryStore } from './historicalMemory';
+import {
+  updateHistoricalMemory,
+  computeHistoricalBias,
+  applyHistoricalBias,
+  historicalPressureContribution,
+} from './historicalMemoryEngine';
 import {
   createOrganismCoreStore,
   evolveOrganismFromCognitiveAct,
@@ -178,7 +185,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
   const resourceEconomyStore = createResourceEconomyStore();
   const environmentStore = createEnvironmentMemoryStore();
   const missionContinuityStore = createMissionContinuityStore();
-  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre, environmentPre, missionContinuityPre] = await Promise.all([
+  const historicalMemoryStore = createHistoricalMemoryStore();
+  const [osPre, organismPre, lineagePre, temporalPre, purposePre, contradictionPre, selfModelPre, metaCognitivePre, governancePre, consequencePre, ecologyPre, resourceEconomyPre, environmentPre, missionContinuityPre, historicalMemoryPre] = await Promise.all([
     osStore.read(),
     organismStore.read(),
     lineageStore.read(),
@@ -193,6 +201,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     resourceEconomyStore.read(),
     environmentStore.read(),
     missionContinuityStore.read(),
+    historicalMemoryStore.read(),
   ]);
 
   const at = Date.now();
@@ -611,6 +620,26 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     });
     const missionBias = computeMissionBias(missionContinuityPost);
 
+    // Wave 42 — historical memory update. Segments history into
+    // epochs, evaluates eight doctrine templates against current
+    // state, accumulates scars under repeated harm, detects collapse
+    // archetypes statistically, computes civilization maturity.
+    // Output is HistoricalBias (±0.20 per gradient) governance composes
+    // alongside the others.
+    const historicalMemoryPost = updateHistoricalMemory(historicalMemoryPre, {
+      at, tick: osPost.uptime,
+      ecology: ecologyPost,
+      mission: missionContinuityPost,
+      governance: governancePre,
+      environment: environmentPre,
+      resource: resourceEconomyPost,
+      contradiction: contradictionResult.newState,
+      meta: metaCognitivePost,
+      prevReliability: metaCognitivePre.cumulativeReliabilityScore,
+      prevContinuity: missionContinuityPre.missionIntegrity,
+    });
+    const historicalBias = computeHistoricalBias(historicalMemoryPost);
+
     // Wave 35 — governance update. Reads post-update meta-cognitive +
     // contradiction state, evolves the cognitive budget for this event,
     // forecasts instability, composes the next gradients, logs any
@@ -628,7 +657,8 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     const scarcityPressure = scarcityPressureContribution(resourceEconomyPost);
     const envPressure = environmentPressureContribution(environmentPre);
     const missionPressure = missionPressureContribution(missionContinuityPost);
-    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure + envPressure + missionPressure);
+    const historicalPressure = historicalPressureContribution(historicalMemoryPost);
+    const compositeSimulationPressure = Math.min(0.5, simulationPressure + ecologyPressure + scarcityPressure + envPressure + missionPressure + historicalPressure);
     const governancePre2 = updateGovernance(governancePre, {
       at, tick: osPost.uptime,
       directiveName,
@@ -644,15 +674,18 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
     const envBias = computeEnvironmentBias(environmentPre.levels);
     const governancePost = {
       ...governancePre2,
-      gradients: applyMissionBias(
-        applyEnvironmentBias(
-          applyScarcityBias(
-            applyEcologyBias(governancePre2.gradients, ecologyBias),
-            scarcityBias,
+      gradients: applyHistoricalBias(
+        applyMissionBias(
+          applyEnvironmentBias(
+            applyScarcityBias(
+              applyEcologyBias(governancePre2.gradients, ecologyBias),
+              scarcityBias,
+            ),
+            envBias,
           ),
-          envBias,
+          missionBias,
         ),
-        missionBias,
+        historicalBias,
       ),
     };
 
@@ -714,6 +747,7 @@ export async function runCognitiveAct(verb: CognitiveVerb): Promise<CognitionEve
       resourceEconomyStore.save(resourceEconomyPost),
       environmentStore.save(environmentPost),
       missionContinuityStore.save(missionContinuityPost),
+      historicalMemoryStore.save(historicalMemoryPost),
     ]);
   }
 

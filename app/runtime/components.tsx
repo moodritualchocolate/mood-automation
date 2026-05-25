@@ -603,6 +603,207 @@ export function AdaptiveSelfRegulation({ m }: { m: RuntimeManifestation }) {
   );
 }
 
+// ─── Wave 42 — Historical Memory ──────────────────────────────
+//
+// Civilizational precedent. Epoch timeline, doctrine recurrence
+// statistics, scar pressures, collapse archetype detection, maturity
+// score + state with hysteresis, HistoricalBias on governance.
+// NOT lore. NOT story. Pure statistical precedent physics over the
+// longitudinal operational history.
+
+export function HistoricalMemory({ m }: { m: RuntimeManifestation }) {
+  const h = m.historicalMemory;
+  if (!h.present) return null;
+
+  const tone =
+    h.status === 'traumatized' ? '#FF4D2D' :
+    h.status === 'mature'      ? '#8AA98A' :
+    h.status === 'developing'  ? '#C9A24B' :
+                                 '#6F8196';
+
+  const epochTone = (archetype: string) =>
+    archetype === 'fragmentation'           ? '#FF4D2D' :
+    archetype === 'scarcity'                ? '#C9A24B' :
+    archetype === 'ecological-hostility'    ? '#FF4D2D' :
+    archetype === 'continuity-preservation' ? '#8AA98A' :
+    archetype === 'expansion'               ? '#C9A24B' :
+    archetype === 'recovery'                ? '#6F8196' :
+    archetype === 'hyper-optimization'      ? '#C9A24B' :
+                                              'rgba(247,245,242,0.50)';
+
+  const biasRow = (label: string, value: number) => {
+    const sign = value === 0 ? '' : value > 0 ? '+' : '';
+    const c =
+      Math.abs(value) < 0.04 ? 'rgba(247,245,242,0.50)' :
+      value > 0 ? '#8AA98A' : '#C9A24B';
+    return (
+      <div key={label} className="flex items-center gap-2 text-[10px] tabular-nums">
+        <span className="text-bone-200/55 flex-grow">{label}</span>
+        <span style={{ color: c }} className="w-[60px] text-right">{sign}{value.toFixed(2)}</span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="border hairline bg-ink-900/40 px-5 py-3">
+      <div className="flex items-baseline justify-between mb-2 gap-3 flex-wrap">
+        <span className="eyebrow">historical memory</span>
+        <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: tone }}>
+          {h.maturityState} · maturity {h.maturityScore.toFixed(1)}/10 · held {h.maturityPersistenceTicks}ev · epochs {h.totalEpochs}
+        </span>
+      </div>
+
+      <div className="text-[11px] text-bone-200/60">{h.statement}</div>
+
+      {h.recentEpochs.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            civilization timeline
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {h.recentEpochs.map((e) => (
+              <div key={e.id} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-[9px] tracking-[0.16em] uppercase w-[170px]" style={{ color: epochTone(e.archetype) }}>
+                  {e.archetype}{e.isActive ? ' · ▸' : ''}
+                </span>
+                <span className="text-bone-200/50 w-[80px]">
+                  t{e.startTick}–{e.endTick ?? '...'}
+                </span>
+                <span className="text-bone-200/40 w-[60px] text-right">{e.duration}ev</span>
+                <span className="text-bone-200/40 flex-grow text-[9px]">
+                  {e.dominantSpecies ?? '—'} · {e.environmentSignature} · {e.continuityState}
+                </span>
+                <span className="text-bone-200/40 w-[80px] text-right text-[9px]">
+                  collapse {e.collapseRisk.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {h.doctrines.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            doctrines · {h.doctrines.length} discovered · {h.totalDoctrineMatches} total matches
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {h.doctrines.map((d) => (
+              <div key={d.doctrineId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 w-[200px]">{d.doctrineId.replace('-doctrine', '')}</span>
+                <span className="text-bone-200/40 w-[60px] text-right">×{d.recurrenceCount}</span>
+                <span
+                  className="w-[80px] text-right"
+                  style={{ color: d.survivabilityImpact >= 0 ? '#8AA98A' : '#FF4D2D' }}
+                >
+                  surv {d.survivabilityImpact >= 0 ? '+' : ''}{d.survivabilityImpact.toFixed(2)}
+                </span>
+                <span
+                  className="w-[80px] text-right"
+                  style={{ color: d.continuityImpact >= 0 ? '#8AA98A' : '#FF4D2D' }}
+                >
+                  cont {d.continuityImpact >= 0 ? '+' : ''}{d.continuityImpact.toFixed(2)}
+                </span>
+                <span className="w-[80px] text-right text-bone-50/75">
+                  LH {d.longHorizonScore.toFixed(1)}
+                </span>
+                <span className="w-[100px] text-right text-[9px] text-bone-200/40">
+                  collapse {d.collapseAssociation} · rec {d.recoveryAssociation}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {h.scars.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            civilizational scars · {h.scars.length} active
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {h.scars.map((s, i) => (
+              <div key={i} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 w-[200px]">{s.doctrineId.replace('-doctrine', '')}</span>
+                <div className="flex-grow h-[5px] bg-ink-900/70 border hairline">
+                  <div className="h-full" style={{ width: `${s.intensity * 10}%`, backgroundColor: '#FF4D2D' }} />
+                </div>
+                <span className="w-[60px] text-right" style={{ color: s.intensity >= 5 ? '#FF4D2D' : '#C9A24B' }}>
+                  {s.intensity.toFixed(1)}
+                </span>
+                <span className="w-[80px] text-right text-[9px] text-bone-200/40">
+                  ×{s.incidentCount}
+                </span>
+                <span className="w-[80px] text-right text-[9px] text-bone-200/40">
+                  harm {s.averageHarm.toFixed(2)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {h.collapseArchetypes.length > 0 && (
+        <div className="pt-3">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            collapse archetypes
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {h.collapseArchetypes.map((c) => (
+              <div key={c.archetypeId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 w-[280px]">{c.archetypeId.replace(/-/g, ' ')}</span>
+                <span className="text-bone-200/40 w-[60px] text-right">×{c.detectionCount}</span>
+                <span
+                  className="w-[100px] text-right"
+                  style={{ color: c.recurrenceConfidence > 0.5 ? '#FF4D2D' : c.recurrenceConfidence > 0.3 ? '#C9A24B' : 'rgba(247,245,242,0.50)' }}
+                >
+                  conf {c.recurrenceConfidence.toFixed(2)}
+                </span>
+                <span className="w-[100px] text-right text-[9px] text-bone-200/40">
+                  sev {c.averageSeverity.toFixed(1)}/10
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-3">
+        <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+          historical bias on governance gradients
+        </div>
+        <div className="flex flex-col gap-0.5">
+          {biasRow('cognition throughput',  h.bias.cognitionThroughput)}
+          {biasRow('escalation permission', h.bias.escalationPermission)}
+          {biasRow('exploration intensity', h.bias.explorationIntensity)}
+          {biasRow('defer acceptance',      h.bias.deferAcceptance)}
+          {biasRow('recovery weighting',    h.bias.recoveryWeighting)}
+          {biasRow('burst tolerance',       h.bias.burstTolerance)}
+        </div>
+      </div>
+
+      {h.recentTransitions.length > 0 && (
+        <div className="pt-3 text-[11px] text-bone-200/55">
+          <div className="text-[9px] tracking-[0.18em] uppercase text-bone-200/40 pb-1">
+            maturity transitions
+          </div>
+          {h.recentTransitions.map((t, i) => (
+            <div key={i} className="italic tabular-nums text-[10px] text-bone-200/55">
+              — t{t.tick} · <span className="text-bone-200/40">{t.from}</span>{' → '}
+              <span className="text-bone-50/75">{t.to}</span>
+              <span className="text-bone-200/40"> · {t.reason}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="pt-3 text-[10px] text-bone-200/55 tabular-nums">
+        +{h.simulationPressureContribution.toFixed(2)} simulation pressure
+      </div>
+    </div>
+  );
+}
+
 // ─── Wave 40 — Mission Continuity ─────────────────────────────
 //
 // Civilizational gravity. Mission vectors with persistence weights +

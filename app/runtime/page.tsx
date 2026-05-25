@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RuntimeManifestation, LivenessState } from '@lib/index';
-import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology, ResourceEconomy, EnvironmentalReality, MissionContinuity } from './components';
+import { PulseBanner, RuntimePanel, SilenceBanner, DeepCognitionGrid, ProtectionTrail, CognitiveWeather, ScarTrail, PressureField, TemporalCognition, InternalDraft, InternalReview, RevisionTrace, ApprovalStatePanel, CognitiveCoherence, ActionSandbox, RecoveryState, Consciousness, TemporalIntelligence, PurposeIntent, ContradictionField, SelfModel, AdaptiveSelfRegulation, CognitiveGovernance, StrategicSimulation, InternalEcology, ResourceEconomy, EnvironmentalReality, MissionContinuity, HistoricalMemory } from './components';
 
 const LIVENESS_COLOR: Record<LivenessState, string> = {
   awakening: '#C9A24B',
@@ -252,6 +252,12 @@ export default function RuntimePage() {
           metrics, eight civilization states. Optimizes across immediate
           + medium + long-horizon survivability. NOT philosophy. */}
       <MissionContinuity m={m} />
+
+      {/* Wave 42 — Historical Memory. Civilization-level epoch segmentation,
+          statistical doctrine discovery, scars under repeated harm,
+          collapse archetype detection, maturity score + state. Past
+          civilizations bias future governance via HistoricalBias. */}
+      <HistoricalMemory m={m} />
 
       {/* Wave 17 — the unified Silence Engine reading. Aggregates
           silence signals from every layer (saturation, restraint,
