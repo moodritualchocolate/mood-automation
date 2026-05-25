@@ -52,6 +52,11 @@ import {
   recordGovernanceObservation, buildGovernanceObservation, buildGovernanceHistoryContext,
   createExecutiveGovernanceMemoryStore,
 } from '@lib/executiveGovernanceMemory';
+import { computeStrategicOutcomeIntelligence } from '@lib/strategicOutcomeIntelligence';
+import {
+  recordOutcomeObservation, buildOutcomeHistoryContext,
+  createStrategicOutcomeMemoryStore,
+} from '@lib/strategicOutcomeMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -435,6 +440,86 @@ export async function POST(req: NextRequest) {
                   authorities: weights.weights,
                   suppressed: weights.suppressedSystems.map((s) => s.system),
                 }));
+
+                // ─── Strategic Outcome Intelligence ────────────────
+                // With identity + governance both persisted, derive
+                // the strategic-outcome reading for this run and
+                // record one observation so the longitudinal view
+                // can correlate which structures produce durable vs
+                // temporary success. STRICTLY observational — no
+                // autonomous optimization, no runtime mutation.
+                try {
+                  const outcomeMemBefore = await createStrategicOutcomeMemoryStore()
+                    .read().catch(() => null);
+                  const outcome = computeStrategicOutcomeIntelligence({
+                    strategy: banner.adStrategy ?? null,
+                    conflict,
+                    culturalPerception,
+                    identityContinuity: identity,
+                    executiveGovernance: governance,
+                    qualityLongitudinal: null,
+                    policyAuditView: null,
+                    history: buildOutcomeHistoryContext(outcomeMemBefore),
+                  });
+                  write({
+                    type: 'event',
+                    event: {
+                      ts: Date.now(),
+                      stage: 'strategic-outcome',
+                      message:
+                        `stability ${outcome.strategicStability}/10 · ` +
+                        `trust-durability ${outcome.trustDurability}/10 · ` +
+                        `audience-resilience ${outcome.audienceResilience}/10 · ` +
+                        `novelty-fragility ${outcome.noveltyFragility}/10 · ` +
+                        `risk ${outcome.strategicRisk}/10 · ` +
+                        `dominant ${outcome.dominantStrategicSignatures.map((d) => d.signature).join(',') || 'none'}`,
+                      data: {
+                        strategicStability: outcome.strategicStability,
+                        trustDurability: outcome.trustDurability,
+                        audienceResilience: outcome.audienceResilience,
+                        noveltyFragility: outcome.noveltyFragility,
+                        strategicRisk: outcome.strategicRisk,
+                        dominantSignatures: outcome.dominantStrategicSignatures.map((d) => ({
+                          signature: d.signature, durability: d.durability,
+                        })),
+                      },
+                    },
+                  });
+                  // Build a compact governance fingerprint (exec + top-2 supporters).
+                  const govFingerprint = (() => {
+                    const exec = governance.dominantGovernanceStructure.primaryExecutive ?? 'none';
+                    const support = governance.dominantGovernanceStructure.supportingSystems.slice(0, 2).join('+') || 'none';
+                    return `${exec}|${support}`;
+                  })();
+                  const decaySignal = (
+                    outcome.noveltyFragility +
+                    outcome.signatureStrengths['trust-erosive'] +
+                    outcome.strategicRisk
+                  ) / 3;
+                  await recordOutcomeObservation({
+                    at: banner.createdAt,
+                    bannerId: banner.id,
+                    formula: banner.formula,
+                    campaignMode: banner.campaignMode,
+                    signatureStrengths: outcome.signatureStrengths,
+                    dominantSignature: outcome.dominantStrategicSignatures[0]?.signature ?? null,
+                    emergingSignatures: outcome.emergingStrategicSignatures.map((e) => e.signature),
+                    collapsingSignatures: outcome.collapsingStrategicSignatures.map((c) => c.signature),
+                    strategicStability: outcome.strategicStability,
+                    trustDurability: outcome.trustDurability,
+                    audienceResilience: outcome.audienceResilience,
+                    noveltyFragility: outcome.noveltyFragility,
+                    longTermConsistency: outcome.longTermConsistency,
+                    strategicRisk: outcome.strategicRisk,
+                    identityVector: identity.dominantIdentityVectors[0]?.vector ?? null,
+                    governanceExecutive: governance.dominantGovernanceStructure.primaryExecutive ?? null,
+                    governanceFingerprint: govFingerprint,
+                    audienceNumbness: culturalPerception.audienceNumbness,
+                    decaySignal: Math.round(decaySignal * 10) / 10,
+                  });
+                } catch {
+                  // non-fatal — outcome observation never blocks generation
+                }
               } catch {
                 // non-fatal — governance observation never blocks generation
               }

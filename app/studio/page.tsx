@@ -42,6 +42,7 @@ import type { ConflictLongitudinalView } from '@lib/conflictLongitudinalView';
 import type { CognitiveWeightLongitudinalView } from '@lib/cognitiveWeightLongitudinalView';
 import type { IdentityContinuityLongitudinalView } from '@lib/identityContinuityLongitudinalView';
 import type { ExecutiveGovernanceLongitudinalView } from '@lib/executiveGovernanceLongitudinalView';
+import type { StrategicOutcomeLongitudinalView } from '@lib/strategicOutcomeLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -99,6 +100,8 @@ function StudioInner() {
   const [identity, setIdentity] = useState<IdentityContinuityLongitudinalView | null>(null);
   // Executive Governance (read-only internal leadership) — same lifecycle.
   const [governance, setGovernance] = useState<ExecutiveGovernanceLongitudinalView | null>(null);
+  // Strategic Outcome Intelligence (read-only durable-success modeling) — same lifecycle.
+  const [outcome, setOutcome] = useState<StrategicOutcomeLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -196,6 +199,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setGovernance(v as ExecutiveGovernanceLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/strategic-outcome', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setOutcome(v as StrategicOutcomeLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -234,6 +241,10 @@ function StudioInner() {
     fetch('/api/executive-governance', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setGovernance(v as ExecutiveGovernanceLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/strategic-outcome', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setOutcome(v as StrategicOutcomeLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -494,12 +505,13 @@ function StudioInner() {
               {cogWeight && <CognitiveWeightEvolutionPanel view={cogWeight} />}
               {identity && <IdentityContinuityPanel view={identity} />}
               {governance && <ExecutiveGovernancePanel view={governance} />}
+              {outcome && <StrategicOutcomeIntelligencePanel view={outcome} />}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
@@ -508,6 +520,7 @@ function StudioInner() {
               {cogWeight && <CognitiveWeightEvolutionPanel view={cogWeight} />}
               {identity && <IdentityContinuityPanel view={identity} />}
               {governance && <ExecutiveGovernancePanel view={governance} />}
+              {outcome && <StrategicOutcomeIntelligencePanel view={outcome} />}
             </div>
           )}
 
@@ -2635,6 +2648,351 @@ function ExecutiveGovernancePanel({ view: v }: { view: ExecutiveGovernanceLongit
         avg stability {v.averageStability.toFixed(1)}/10 ·
         avg fragmentation {v.averageFragmentation.toFixed(1)}/10 ·
         avg legitimacy {v.averageLegitimacy.toFixed(1)}/10
+      </div>
+    </div>
+  );
+}
+
+// ─── strategic outcome intelligence panel ─────────────────────
+
+function StrategicOutcomeIntelligencePanel({
+  view: v,
+}: { view: StrategicOutcomeLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && !c) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">strategic outcome intelligence · durable persuasion</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.strategicTrend === 'eroding'      ? 'text-signal-warning' :
+    v.strategicTrend === 'consolidating'? 'text-bone-50/85' :
+    v.strategicTrend === 'stable'       ? 'text-bone-200/85' :
+                                          'text-bone-200/65';
+
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const Spark = ({ points, invert = false }: { points: { value: number }[]; invert?: boolean }) => {
+    if (points.length < 2) return <span className="text-[10px] text-bone-200/30">—</span>;
+    const w = 80, h = 14;
+    const xs = points.map((_, i) => (i / (points.length - 1)) * w);
+    const ys = points.map((p) => h - (p.value / 10) * h);
+    const d = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
+    const last = points[points.length - 1].value;
+    const first = points[0].value;
+    const delta = last - first;
+    const rising = delta > 0.3;
+    const falling = delta < -0.3;
+    const stroke = invert
+      ? rising ? '#C9A24B' : falling ? '#8AA98A' : 'rgba(247,245,242,0.55)'
+      : rising ? '#8AA98A' : falling ? '#C9A24B' : 'rgba(247,245,242,0.55)';
+    return <svg width={w} height={h}><path d={d} fill="none" stroke={stroke} strokeWidth="1" /></svg>;
+  };
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">strategic outcome intelligence · durable persuasion</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+
+      {c && (
+        <>
+          <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+            <div>
+              <div className="eyebrow">STRATEGIC STABILITY</div>
+              <div className={`mt-0.5 ${heatTone(c.strategicStability)}`}>{c.strategicStability.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">TRUST DURABILITY</div>
+              <div className={`mt-0.5 ${heatTone(c.trustDurability)}`}>{c.trustDurability.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">AUDIENCE RESILIENCE</div>
+              <div className={`mt-0.5 ${heatTone(c.audienceResilience)}`}>{c.audienceResilience.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">NOVELTY FRAGILITY</div>
+              <div className={`mt-0.5 ${heatTone(c.noveltyFragility, true)}`}>{c.noveltyFragility.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">LONG-TERM CONSISTENCY</div>
+              <div className={`mt-0.5 ${heatTone(c.longTermConsistency)}`}>{c.longTermConsistency.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">STRATEGIC RISK</div>
+              <div className={`mt-0.5 ${heatTone(c.strategicRisk, true)}`}>{c.strategicRisk.toFixed(1)}/10</div>
+            </div>
+          </div>
+
+          {c.dominantStrategicSignatures.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">DOMINANT STRATEGIC SIGNATURES</div>
+              <ul className="space-y-1.5 text-[10px]">
+                {c.dominantStrategicSignatures.slice(0, 5).map((s) => (
+                  <li key={s.signature} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">{s.signature}</span>
+                      <span className="w-[40px] text-right text-bone-50/75">s {s.strength.toFixed(1)}</span>
+                      <span className="w-[44px] text-right text-bone-200/55">p {s.persistence.toFixed(1)}</span>
+                      <span className="w-[44px] text-right text-bone-50/75">d {s.durability.toFixed(1)}</span>
+                    </div>
+                    <div className="text-bone-200/45 text-[9px] mt-0.5 break-words">{s.explanation}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.emergingStrategicSignatures.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">EMERGING SIGNATURES</div>
+              <ul className="text-[10px] text-bone-50/80 leading-snug space-y-0.5">
+                {c.emergingStrategicSignatures.slice(0, 3).map((e) => (
+                  <li key={e.signature} className="break-words">
+                    · <span className="uppercase tracking-wider">{e.signature}</span> — {e.explanation}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.collapsingStrategicSignatures.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">COLLAPSING SIGNATURES</div>
+              <ul className="text-[10px] text-signal-warning/75 leading-snug space-y-0.5">
+                {c.collapsingStrategicSignatures.slice(0, 3).map((d) => (
+                  <li key={d.signature} className="break-words">
+                    · <span className="uppercase tracking-wider">{d.signature}</span> — {d.explanation}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.strategicContradictions.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">STRATEGIC CONTRADICTIONS · SHORT VS LONG-TERM</div>
+              <ul className="space-y-1.5 text-[10px]">
+                {c.strategicContradictions.map((row, i) => (
+                  <li key={i} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">
+                        {row.signatures.join(' ↔ ')}
+                      </span>
+                      <span className={`w-[40px] text-right ${heatTone(row.severity, true)}`}>
+                        {row.severity.toFixed(1)}/10
+                      </span>
+                      <span className="w-[50px] text-right text-bone-200/55">
+                        div {row.divergence.toFixed(1)}
+                      </span>
+                    </div>
+                    <div className="text-bone-200/55 mt-0.5 break-words">{row.explanation}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.counterfactualOutcomeComparisons.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">SHORT-TERM VS LONG-TERM DIVERGENCE</div>
+              <ul className="space-y-1 text-[10px]">
+                {c.counterfactualOutcomeComparisons.slice(0, 4).map((r) => (
+                  <li key={r.signature} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-200/65 uppercase tracking-wider flex-grow truncate">{r.signature}</span>
+                      <span className="w-[44px] text-right text-bone-50/75">now {r.observedShortTerm.toFixed(1)}</span>
+                      <span className="w-[10px] text-bone-200/45 text-center">·</span>
+                      <span className="w-[44px] text-right text-bone-200/55">ewma {r.observedLongTerm.toFixed(1)}</span>
+                      <span className={`w-[44px] text-right ${heatTone(r.divergence, true)}`}>div {r.divergence.toFixed(1)}</span>
+                    </div>
+                    <div className="text-bone-200/45 text-[9px] mt-0.5 break-words">{r.interpretation}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="pt-2">
+            <div className="eyebrow mb-1">STRATEGIC PRESSURE MAP</div>
+            <div className="grid grid-cols-2 gap-2 text-[10px] tabular-nums">
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">trust</span>
+                <span className={heatTone(c.strategicPressureMap.trustPressure, true)}>
+                  {c.strategicPressureMap.trustPressure.toFixed(1)}/10
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">fatigue</span>
+                <span className={heatTone(c.strategicPressureMap.fatiguePressure, true)}>
+                  {c.strategicPressureMap.fatiguePressure.toFixed(1)}/10
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">novelty</span>
+                <span className="text-bone-50/75">{c.strategicPressureMap.noveltyPressure.toFixed(1)}/10</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-bone-200/55 flex-grow">conversion</span>
+                <span className={heatTone(c.strategicPressureMap.conversionPressure, true)}>
+                  {c.strategicPressureMap.conversionPressure.toFixed(1)}/10
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {c.longTermOutcomeDrift.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">LONG-TERM OUTCOME DRIFT</div>
+              <div className="flex flex-col gap-0.5">
+                {c.longTermOutcomeDrift.slice(0, 5).map((d) => {
+                  const driftTone = d.drift > 0 ? 'text-bone-50/85' : 'text-signal-warning/75';
+                  return (
+                    <div key={d.signature} className="flex items-center gap-2 text-[10px] tabular-nums">
+                      <span className="text-bone-200/65 w-[150px] shrink-0 uppercase tracking-wider truncate">{d.signature}</span>
+                      <span className="w-[40px] text-right text-bone-200/55">{d.historical.toFixed(1)}</span>
+                      <span className="w-[10px] text-bone-200/45 text-center">→</span>
+                      <span className="w-[40px] text-right text-bone-50/75">{d.recent.toFixed(1)}</span>
+                      <span className={`w-[40px] text-right ${driftTone}`}>
+                        {d.drift > 0 ? '+' : ''}{d.drift.toFixed(1)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {(v.trustAccumulationTrajectory.length >= 2 || v.fatigueAccumulationTrajectory.length >= 2) && (
+        <div className="pt-2 flex flex-col gap-1">
+          <div className="eyebrow mb-1">TRAJECTORIES</div>
+          <div className="flex items-center gap-2 text-[10px] tabular-nums">
+            <span className="text-bone-200/55 flex-grow">trust accumulation</span>
+            <Spark points={v.trustAccumulationTrajectory.map((p) => ({ value: p.trustDurability }))} />
+          </div>
+          <div className="flex items-center gap-2 text-[10px] tabular-nums">
+            <span className="text-bone-200/55 flex-grow">fatigue accumulation</span>
+            <Spark points={v.fatigueAccumulationTrajectory.map((p) => ({ value: p.audienceNumbness }))} invert />
+          </div>
+          <div className="flex items-center gap-2 text-[10px] tabular-nums">
+            <span className="text-bone-200/55 flex-grow">strategic stability</span>
+            <Spark points={v.strategicDriftTrace.map((p) => ({ value: p.strategicStability }))} />
+          </div>
+        </div>
+      )}
+
+      {v.longestSurvivingStructures.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">LONGEST-SURVIVING STRUCTURES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.longestSurvivingStructures.slice(0, 5).map((r) => (
+              <div key={r.signature} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow uppercase tracking-wider truncate">{r.signature}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className="w-[50px] text-right text-bone-200/55">ewma {r.ewmaStrength.toFixed(1)}</span>
+                <span className="w-[50px] text-right text-bone-50/75">stab {r.averageStabilityWhenActive.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.fastestDecayingStructures.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">FASTEST-DECAYING STRUCTURES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.fastestDecayingStructures.slice(0, 5).map((r) => (
+              <div key={r.signature} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.signature}</span>
+                <span className="w-[40px] text-right text-bone-200/55">{r.historicalStrength.toFixed(1)}</span>
+                <span className="w-[10px] text-bone-200/45 text-center">→</span>
+                <span className="w-[40px] text-right text-bone-50/75">{r.recentStrength.toFixed(1)}</span>
+                <span className="w-[40px] text-right text-signal-warning/75">−{r.decay.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.resilientGovernanceStructures.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">RESILIENT GOVERNANCE STRUCTURES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.resilientGovernanceStructures.slice(0, 4).map((r) => (
+              <div key={r.pattern} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow break-words">{r.pattern}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className="w-[50px] text-right text-bone-200/55">stab {r.averageStability.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.resilientIdentitySignatures.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">RESILIENT IDENTITY SIGNATURES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.resilientIdentitySignatures.slice(0, 4).map((r) => (
+              <div key={r.pattern} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow uppercase tracking-wider truncate">{r.pattern}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className="w-[50px] text-right text-bone-200/55">stab {r.averageStability.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.audienceSynchronizationPatterns.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">AUDIENCE SYNC PATTERNS · LOW NUMBNESS = SYNCED</div>
+          <div className="flex flex-col gap-0.5">
+            {v.audienceSynchronizationPatterns.slice(0, 4).map((r) => (
+              <div key={r.pattern} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow break-words">{r.pattern}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{r.count}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.averageNumbness, true)}`}>
+                  num {r.averageNumbness.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.strategicErosionPatterns.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">STRATEGIC EROSION PATTERNS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.strategicErosionPatterns.slice(0, 4).map((r) => (
+              <div key={r.pattern} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow break-words">{r.pattern}</span>
+                <span className="w-[40px] text-right text-signal-warning/75">×{r.count}</span>
+                <span className="w-[50px] text-right text-signal-warning/75">decay {r.averageDecay.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        observations {v.totalObservations} ·
+        avg stability {v.averageStability.toFixed(1)}/10 ·
+        avg trust durability {v.averageTrustDurability.toFixed(1)}/10 ·
+        avg risk {v.averageStrategicRisk.toFixed(1)}/10
       </div>
     </div>
   );
