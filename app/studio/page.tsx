@@ -34,6 +34,7 @@ import {
 import type { AdStrategyAssessment } from '@lib/adStrategyEngine';
 import type { CopywriterOutput } from '@lib/copywriterEngine';
 import type { CopyQualityAxis } from '@lib/copyQualityAdapter';
+import type { QualityLongitudinalView } from '@lib/qualityLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -77,6 +78,8 @@ function StudioInner() {
   const [svg, setSvg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
+  // Longitudinal Quality (read-only) — fetched on mount + after each run.
+  const [longitudinal, setLongitudinal] = useState<QualityLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -143,11 +146,30 @@ function StudioInner() {
         if (!cancelled) setError((e as Error).message);
       } finally {
         if (!cancelled) setRunning(false);
+        // Refresh the longitudinal view after the run settles (success
+        // or failure). Read-only fetch; no effect on generation.
+        if (!cancelled) {
+          fetch('/api/quality-longitudinal', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setLongitudinal(v as QualityLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
+        }
       }
     }
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runCounter]);
+
+  // Mount-time fetch of the longitudinal view so the panel is populated
+  // even on initial page load before the first run completes.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/quality-longitudinal', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setLongitudinal(v as QualityLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    return () => { cancelled = true; };
+  }, []);
 
   // Keep the URL in sync with current selection (shareable / bookmarkable)
   // WITHOUT triggering a new run.
@@ -392,6 +414,15 @@ function StudioInner() {
               {banner.adStrategy && <AdStrategyBrainPanel strategy={banner.adStrategy} />}
               {banner.copywriter && <CopywriterBrainPanel copy={banner.copywriter} />}
               {banner.copyQuality && <CopyQualityPanel quality={banner.copyQuality} />}
+              {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
+            </div>
+          )}
+
+          {/* Show the longitudinal panel even without a banner, so the
+              dashboard is visible on first load or after refusal. */}
+          {!banner && longitudinal && (
+            <div className="space-y-4 text-sm">
+              <LongitudinalQualityPanel view={longitudinal} />
             </div>
           )}
 
@@ -784,6 +815,155 @@ function CopyQualityPanel({ quality: q }: { quality: CopyQualityAxis }) {
           </ul>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── longitudinal quality panel ───────────────────────────────
+
+function LongitudinalQualityPanel({ view: v }: { view: QualityLongitudinalView }) {
+  if (!v.present) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">longitudinal quality</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const statusTone =
+    v.driftStatus === 'critical' ? 'text-signal-warning' :
+    v.driftStatus === 'eroding'  ? 'text-signal-warning' :
+    v.driftStatus === 'cautious' ? 'text-bone-200/85' :
+    v.driftStatus === 'healthy'  ? 'text-bone-50/85' :
+                                   'text-bone-200/65';
+
+  const Spark = ({ points, invert = false }: { points: { value: number }[]; invert?: boolean }) => {
+    if (points.length < 2) {
+      return <span className="text-[10px] text-bone-200/30">—</span>;
+    }
+    const w = 80, h = 14;
+    const xs = points.map((_, i) => (i / (points.length - 1)) * w);
+    const ys = points.map((p) => h - (p.value / 10) * h);
+    const d = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
+    const last = points[points.length - 1].value;
+    const first = points[0].value;
+    const delta = last - first;
+    // For "invert" axes (concern / debt), rising = bad.
+    const rising = delta > 0.3;
+    const falling = delta < -0.3;
+    const stroke = invert
+      ? rising ? '#C9A24B' : falling ? '#8AA98A' : 'rgba(247,245,242,0.55)'
+      : rising ? '#8AA98A' : falling ? '#C9A24B' : 'rgba(247,245,242,0.55)';
+    return <svg width={w} height={h}><path d={d} fill="none" stroke={stroke} strokeWidth="1" /></svg>;
+  };
+
+  const trendRow = (label: string, current: number | string, points: { at: number; value: number }[], invert = false) => (
+    <div className="flex items-center gap-2 text-[10px] tabular-nums">
+      <span className="text-bone-200/55 flex-grow">{label}</span>
+      <span className="w-[60px] text-right text-bone-50/80">{current}</span>
+      <Spark points={points} invert={invert} />
+    </div>
+  );
+
+  const driftTone = (delta: number, invert = false) => {
+    if (Math.abs(delta) < 0.2) return 'text-bone-200/55';
+    const positive = delta > 0;
+    return invert
+      ? positive ? 'text-signal-warning' : 'text-bone-50/85'
+      : positive ? 'text-bone-50/85' : 'text-signal-warning';
+  };
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">longitudinal quality · brand health monitor</div>
+      <div className={`text-xs ${statusTone}`}>{v.statement}</div>
+
+      <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+        <div>
+          <div className="eyebrow">TRUST DEBT</div>
+          <div className="mt-0.5 text-bone-50/85">{v.trustDebtCurrent.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">BRAND DIGNITY</div>
+          <div className="mt-0.5 text-bone-50/85">{v.brandDignityCurrent.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">DIGNITY EROSION</div>
+          <div className="mt-0.5 text-bone-50/85">{v.dignityErosionCurrent.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">REPEATED STRUCTURES</div>
+          <div className="mt-0.5 text-bone-50/85">{v.repeatedStructuresCurrent.toFixed(1)}/10</div>
+        </div>
+      </div>
+
+      <div className="pt-2 flex flex-col gap-1">
+        {trendRow('trust debt',        v.trustDebtCurrent.toFixed(1),     v.trustDebtTrend, true)}
+        {trendRow('brand risk',        v.brandRiskTrend.length > 0 ? v.brandRiskTrend[v.brandRiskTrend.length - 1].value.toFixed(1) : '—', v.brandRiskTrend, true)}
+        {trendRow('repetition risk',   v.repetitionRiskTrend.length > 0 ? v.repetitionRiskTrend[v.repetitionRiskTrend.length - 1].value.toFixed(1) : '—', v.repetitionRiskTrend, true)}
+        {trendRow('copy integrity',    v.copyIntegrityTrend.length > 0 ? v.copyIntegrityTrend[v.copyIntegrityTrend.length - 1].value.toFixed(1) : '—', v.copyIntegrityTrend)}
+        {trendRow('repetition concern',v.repetitionConcernTrend.length > 0 ? v.repetitionConcernTrend[v.repetitionConcernTrend.length - 1].value.toFixed(1) : '—', v.repetitionConcernTrend, true)}
+        {trendRow('proof adequacy',    v.proofAdequacyTrend.length > 0 ? v.proofAdequacyTrend[v.proofAdequacyTrend.length - 1].value.toFixed(1) : '—', v.proofAdequacyTrend)}
+        {trendRow('hebrew naturalness',v.hebrewNaturalnessTrend.length > 0 ? v.hebrewNaturalnessTrend[v.hebrewNaturalnessTrend.length - 1].value.toFixed(1) : '—', v.hebrewNaturalnessTrend)}
+        {trendRow('strategic copy fit',v.strategicCopyFitTrend.length > 0 ? v.strategicCopyFitTrend[v.strategicCopyFitTrend.length - 1].value.toFixed(1) : '—', v.strategicCopyFitTrend)}
+      </div>
+
+      {v.axisAverages.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">AXIS AVERAGES · RECENT VS OVERALL</div>
+          <div className="flex flex-col gap-0.5">
+            {v.axisAverages.map((a) => {
+              const inverted = a.axis === 'repetitionConcern';
+              return (
+                <div key={a.axis} className="flex items-center gap-2 text-[10px] tabular-nums">
+                  <span className="text-bone-200/55 flex-grow">{a.axis}</span>
+                  <span className="w-[60px] text-right text-bone-50/75">recent {a.averageRecent.toFixed(1)}</span>
+                  <span className="w-[60px] text-right text-bone-200/55">over {a.averageOverall.toFixed(1)}</span>
+                  <span className={`w-[60px] text-right ${driftTone(a.driftRecentVsOverall, inverted)}`}>
+                    {a.driftRecentVsOverall > 0 ? '+' : ''}{a.driftRecentVsOverall.toFixed(1)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {v.audienceFatigueRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">AUDIENCE FATIGUE RANKING</div>
+          <div className="flex flex-col gap-0.5">
+            {v.audienceFatigueRanking.map((a) => (
+              <div key={a.audience} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 flex-grow">{a.audience}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{a.usageCount}</span>
+                <span className="w-[60px] text-right text-bone-200/55">rec {a.recency.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.topForbiddenTriggers.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">TOP FORBIDDEN TRIGGERS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.topForbiddenTriggers.map((t) => (
+              <div key={t.phrase} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow break-words">{t.phrase}</span>
+                <span className="w-[40px] text-right text-signal-warning/85">×{t.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        mirror success {(v.mirrorSuccessRate * 100).toFixed(0)}% ({v.mirrorCount}/{v.totalCopiesProduced}) ·
+        strategy assessments {v.totalStrategyAssessments} ·
+        quality samples {v.totalCopyQualitySamples}
+      </div>
     </div>
   );
 }

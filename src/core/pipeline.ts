@@ -782,6 +782,7 @@ import type { CopywriterOutput } from '@lib/copywriterEngine';
 import { composeCopy, recordCopyOutput } from '@lib/copywriterEngine';
 import type { CopyQualityAxis } from '@lib/copyQualityAdapter';
 import { evaluateCopyQuality } from '@lib/copyQualityAdapter';
+import { axisToSample, createCopyQualityMemoryStore } from '@lib/copyQualityMemory';
 import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
 import type { ApprovalRecord } from '@lib/approvalMemory';
 import type { CognitiveFieldState } from '@lib/cognitiveField';
@@ -1261,6 +1262,9 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   // copy output. Surfaced via event + banner field; never modifies
   // critic verdicts or refusal behavior.
   let copyQualitySignal: CopyQualityAxis | null = null;
+  // Longitudinal Quality store — persisted per assessment for the
+  // dashboard. Independent of strategy + copywriter memories.
+  const copyQualityHistoryStore = createCopyQualityMemoryStore();
 
   while (attempt < maxAttempts) {
     attempt += 1;
@@ -1389,6 +1393,16 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         reasonCodes: copyQualitySignal.reasonCodes.slice(0, 8),
       },
     });
+    // Longitudinal — append the sample so the dashboard can show drift.
+    // Wrapped in try/catch so a write failure cannot block the run.
+    try {
+      await copyQualityHistoryStore.append(axisToSample(copyQualitySignal, bannerId, Date.now()));
+    } catch (e) {
+      emit({
+        stage: 'copy-quality',
+        message: `longitudinal append failed (non-fatal): ${(e as Error).message}`,
+      });
+    }
 
     // Image-level inner loop (max 2 image regens before bumping to concept).
     let imageAttempts = 0;
