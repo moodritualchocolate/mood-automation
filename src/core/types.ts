@@ -1119,6 +1119,11 @@ export interface Banner {
    *  copyQualityRefusalEnabled flag SHOULD be on. Does NOT flip the
    *  flag, does NOT alter finalVerdict. Display + audit only. */
   copyQualityPolicy?: import('@lib/copyQualityPolicy').CopyQualityPolicyRecommendation;
+  /** Route-side Copy-Quality Policy PREFLIGHT — records whether the
+   *  /api/generate route applied a policy default for the
+   *  copyQualityRefusalEnabled flag, or whether the request set it
+   *  explicitly. Display only — does not affect any pipeline logic. */
+  copyQualityPolicyPreflight?: import('@lib/copyQualityPolicyPreflight').CopyQualityPolicyPreflight;
   attempts: number;
   rejectedAttempts: Array<{ stage: string; reason: string }>;
   memorySnapshot: MemorySnapshot;

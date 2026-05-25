@@ -802,6 +802,10 @@ export interface RunOptions {
   onEvent?: (event: PipelineEvent) => void;
   /** Override the meta-critic brutality for this run. 0..1. */
   brutality?: number;
+  /** Route-side preflight metadata about how copyQualityRefusalEnabled
+   *  ended up set for this run. Opaque to the pipeline — only attached
+   *  to the shipped banner for display/audit. */
+  copyQualityPolicyPreflight?: import('@lib/copyQualityPolicyPreflight').CopyQualityPolicyPreflight;
 }
 
 export interface RunResult {
@@ -5223,6 +5227,7 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           copywriter: copywriterOutput ?? undefined,
           copyQuality: copyQualitySignal ?? undefined,
           copyQualityPolicy: copyQualityPolicySignal ?? undefined,
+          copyQualityPolicyPreflight: opts.copyQualityPolicyPreflight,
           tasteSystem: {
             dna, judge, reaction, fatigue, evolutionAtRunStart,
             campaignBrain: {

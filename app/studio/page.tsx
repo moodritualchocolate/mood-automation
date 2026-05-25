@@ -415,7 +415,12 @@ function StudioInner() {
               {banner.adStrategy && <AdStrategyBrainPanel strategy={banner.adStrategy} />}
               {banner.copywriter && <CopywriterBrainPanel copy={banner.copywriter} />}
               {banner.copyQuality && <CopyQualityPanel quality={banner.copyQuality} />}
-              {banner.copyQualityPolicy && <CopyQualityPolicyPanel policy={banner.copyQualityPolicy} />}
+              {banner.copyQualityPolicy && (
+                <CopyQualityPolicyPanel
+                  policy={banner.copyQualityPolicy}
+                  preflightSource={banner.copyQualityPolicyPreflight?.source ?? null}
+                />
+              )}
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
             </div>
           )}
@@ -972,18 +977,34 @@ function LongitudinalQualityPanel({ view: v }: { view: QualityLongitudinalView }
 
 // ─── copy quality policy panel ────────────────────────────────
 
-function CopyQualityPolicyPanel({ policy: p }: { policy: CopyQualityPolicyRecommendation }) {
+function CopyQualityPolicyPanel({
+  policy: p,
+  preflightSource,
+}: {
+  policy: CopyQualityPolicyRecommendation;
+  preflightSource: 'explicit-true' | 'explicit-false' | 'policy-default' | null;
+}) {
   const bandTone =
     p.policyBand === 'strict'  ? 'text-signal-warning' :
     p.policyBand === 'warn'    ? 'text-bone-50/85' :
     p.policyBand === 'observe' ? 'text-bone-200/85' :
                                  'text-bone-200/65';
+  const sourceLabel =
+    preflightSource === 'explicit-true'  ? 'explicit (request: true)'  :
+    preflightSource === 'explicit-false' ? 'explicit (request: false)' :
+    preflightSource === 'policy-default' ? 'policy default'             :
+                                           null;
   return (
     <div className="border-t hairline pt-3 space-y-2">
       <div className="eyebrow">copy quality policy · advisory</div>
       <div className="text-xs text-bone-200/65 italic">
         recommendation only — does not flip <code>copyQualityRefusalEnabled</code>.
       </div>
+      {sourceLabel && (
+        <div className="text-[10px] text-bone-200/55">
+          policy source: <span className="text-bone-50/75">{sourceLabel}</span>
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-2 text-xs tabular-nums">
         <div>
           <div className="eyebrow">RECOMMENDED BAND</div>
