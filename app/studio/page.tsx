@@ -33,6 +33,7 @@ import {
 } from '@/core/types';
 import type { AdStrategyAssessment } from '@lib/adStrategyEngine';
 import type { CopywriterOutput } from '@lib/copywriterEngine';
+import type { CopyQualityAxis } from '@lib/copyQualityAdapter';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -390,6 +391,7 @@ function StudioInner() {
 
               {banner.adStrategy && <AdStrategyBrainPanel strategy={banner.adStrategy} />}
               {banner.copywriter && <CopywriterBrainPanel copy={banner.copywriter} />}
+              {banner.copyQuality && <CopyQualityPanel quality={banner.copyQuality} />}
             </div>
           )}
 
@@ -727,6 +729,56 @@ function CopywriterBrainPanel({ copy: c }: { copy: CopywriterOutput }) {
           <div className="eyebrow mb-1">REASON CODES</div>
           <ul className="space-y-0.5">
             {c.reasonCodes.slice(0, 8).map((r, i) => (
+              <li key={i} className="break-words">· {r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── copy quality panel ───────────────────────────────────────
+
+function CopyQualityPanel({ quality: q }: { quality: CopyQualityAxis }) {
+  const tone = (v: number, inverted = false) => {
+    const good = inverted ? v <= 3 : v >= 7;
+    const bad  = inverted ? v >= 7 : v <= 3;
+    return good ? 'text-bone-50/85' : bad ? 'text-signal-warning' : 'text-bone-200/85';
+  };
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">copy quality · read-only signal</div>
+      <Field label="COPY INTEGRITY" value={`${q.copyIntegrity.toFixed(1)}/10`} />
+      <div className="grid grid-cols-2 gap-2 text-xs tabular-nums">
+        <div><div className="eyebrow">TRUST SAFETY</div>
+          <div className={`mt-0.5 ${tone(q.trustSafety)}`}>{q.trustSafety.toFixed(1)}/10</div></div>
+        <div><div className="eyebrow">DIGNITY SAFETY</div>
+          <div className={`mt-0.5 ${tone(q.dignitySafety)}`}>{q.dignitySafety.toFixed(1)}/10</div></div>
+        <div><div className="eyebrow">PROOF ADEQUACY</div>
+          <div className={`mt-0.5 ${tone(q.proofAdequacy)}`}>{q.proofAdequacy.toFixed(1)}/10</div></div>
+        <div><div className="eyebrow">CTA RESTRAINT</div>
+          <div className={`mt-0.5 ${tone(q.ctaRestraint)}`}>{q.ctaRestraint.toFixed(1)}/10</div></div>
+        <div><div className="eyebrow">HEBREW NATURALNESS</div>
+          <div className={`mt-0.5 ${tone(q.hebrewNaturalness)}`}>{q.hebrewNaturalness.toFixed(1)}/10</div></div>
+        <div><div className="eyebrow">STRATEGIC FIT</div>
+          <div className={`mt-0.5 ${tone(q.strategicCopyFit)}`}>{q.strategicCopyFit.toFixed(1)}/10</div></div>
+        <div><div className="eyebrow">REPETITION CONCERN</div>
+          <div className={`mt-0.5 ${tone(q.repetitionConcern, true)}`}>{q.repetitionConcern.toFixed(1)}/10</div></div>
+      </div>
+      {q.warnings.length > 0 && (
+        <div className="text-[10px] text-signal-warning/85 leading-snug">
+          <div className="eyebrow mb-1">WARNINGS</div>
+          <ul className="space-y-0.5">
+            {q.warnings.map((w, i) => (<li key={i}>· {w}</li>))}
+          </ul>
+        </div>
+      )}
+      {q.reasonCodes.length > 0 && (
+        <div className="text-[10px] text-bone-200/55 leading-snug">
+          <div className="eyebrow mb-1">REASON CODES</div>
+          <ul className="space-y-0.5">
+            {q.reasonCodes.slice(0, 10).map((r, i) => (
               <li key={i} className="break-words">· {r}</li>
             ))}
           </ul>

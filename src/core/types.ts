@@ -1105,6 +1105,10 @@ export interface Banner {
    *  copy (Hebrew hook/body/cta + alignment scores + reason codes).
    *  Surfaced on the banner; does NOT modify critic or generation. */
   copywriter?: import('@lib/copywriterEngine').CopywriterOutput;
+  /** Copy-Quality Adapter — READ-ONLY signal the meta-critic may
+   *  inspect alongside its existing inputs. Does NOT modify critic
+   *  verdicts, refusal behavior, or brutality semantics. */
+  copyQuality?: import('@lib/copyQualityAdapter').CopyQualityAxis;
   attempts: number;
   rejectedAttempts: Array<{ stage: string; reason: string }>;
   memorySnapshot: MemorySnapshot;

@@ -780,6 +780,8 @@ import {
 import { createCopywriterMemoryStore } from '@lib/copywriterMemory';
 import type { CopywriterOutput } from '@lib/copywriterEngine';
 import { composeCopy, recordCopyOutput } from '@lib/copywriterEngine';
+import type { CopyQualityAxis } from '@lib/copyQualityAdapter';
+import { evaluateCopyQuality } from '@lib/copyQualityAdapter';
 import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
 import type { ApprovalRecord } from '@lib/approvalMemory';
 import type { CognitiveFieldState } from '@lib/cognitiveField';
@@ -1255,6 +1257,11 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   let copywriterOutput: CopywriterOutput | null = null;
   const brutality = opts.brutality ?? 0.65;
 
+  // Copy-Quality Adapter — READ-ONLY signal computed alongside the
+  // copy output. Surfaced via event + banner field; never modifies
+  // critic verdicts or refusal behavior.
+  let copyQualitySignal: CopyQualityAxis | null = null;
+
   while (attempt < maxAttempts) {
     attempt += 1;
 
@@ -1351,6 +1358,35 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         proofLine: copywriterOutput.proofLine,
         forbiddenPhrasesTriggered: copywriterOutput.forbiddenPhrasesTriggered,
         reasonCodes: copywriterOutput.reasonCodes.slice(0, 5),
+      },
+    });
+
+    // ─── Copy-Quality Adapter (read-only) ───────────────────────
+    // Composite quality signal derived from the copywriter output +
+    // strategy + brutality. Surfaced via trace + banner field; the
+    // meta-critic may consult it but is NOT modified by it.
+    copyQualitySignal = evaluateCopyQuality({
+      copywriter: copywriterOutput,
+      strategy: adStrategy,
+      brutality,
+    });
+    emit({
+      stage: 'copy-quality',
+      message:
+        `integrity ${copyQualitySignal.copyIntegrity}/10 · ` +
+        `trust-safe ${copyQualitySignal.trustSafety}/10 · ` +
+        `dignity-safe ${copyQualitySignal.dignitySafety}/10 · ` +
+        `proof ${copyQualitySignal.proofAdequacy}/10 · ` +
+        `cta-restraint ${copyQualitySignal.ctaRestraint}/10 · ` +
+        `hebrew ${copyQualitySignal.hebrewNaturalness}/10 · ` +
+        `strategic-fit ${copyQualitySignal.strategicCopyFit}/10 · ` +
+        `repetition-concern ${copyQualitySignal.repetitionConcern}/10` +
+        (copyQualitySignal.warnings.length > 0
+          ? ` · ${copyQualitySignal.warnings.length} warning(s)`
+          : ''),
+      data: {
+        warnings: copyQualitySignal.warnings,
+        reasonCodes: copyQualitySignal.reasonCodes.slice(0, 8),
       },
     });
 
@@ -5073,6 +5109,7 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           taste, psychology, productPresence, referenceMatch: reference, finalVerdict,
           adStrategy: adStrategy ?? undefined,
           copywriter: copywriterOutput ?? undefined,
+          copyQuality: copyQualitySignal ?? undefined,
           tasteSystem: {
             dna, judge, reaction, fatigue, evolutionAtRunStart,
             campaignBrain: {
