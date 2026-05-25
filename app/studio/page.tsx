@@ -37,6 +37,7 @@ import type { CopyQualityAxis } from '@lib/copyQualityAdapter';
 import type { CopyQualityPolicyRecommendation } from '@lib/copyQualityPolicy';
 import type { QualityLongitudinalView } from '@lib/qualityLongitudinalView';
 import type { PolicyAuditView } from '@lib/copyQualityPolicyAuditView';
+import type { CulturalPerceptionLongitudinalView } from '@lib/culturalPerceptionView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -84,6 +85,8 @@ function StudioInner() {
   const [longitudinal, setLongitudinal] = useState<QualityLongitudinalView | null>(null);
   // Policy Audit (read-only governance trail) — same lifecycle.
   const [policyAudit, setPolicyAudit] = useState<PolicyAuditView | null>(null);
+  // Cultural Perception (read-only emotional weather) — same lifecycle.
+  const [cultural, setCultural] = useState<CulturalPerceptionLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -161,6 +164,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setPolicyAudit(v as PolicyAuditView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/cultural-perception', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setCultural(v as CulturalPerceptionLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -179,6 +186,10 @@ function StudioInner() {
     fetch('/api/policy-audit', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setPolicyAudit(v as PolicyAuditView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/cultural-perception', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCultural(v as CulturalPerceptionLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -434,15 +445,18 @@ function StudioInner() {
               )}
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
+              {cultural && <CulturalIntelligencePanel view={cultural} />}
             </div>
           )}
 
-          {/* Show the longitudinal + audit panels even without a banner,
-              so the dashboards are visible on first load or after refusal. */}
-          {!banner && (longitudinal || policyAudit) && (
+          {/* Show the longitudinal + audit + cultural panels even without
+              a banner, so the dashboards are visible on first load or
+              after refusal. */}
+          {!banner && (longitudinal || policyAudit || cultural) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
+              {cultural && <CulturalIntelligencePanel view={cultural} />}
             </div>
           )}
 
@@ -1215,6 +1229,204 @@ function PolicyAuditPanel({ view: v }: { view: PolicyAuditView }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── cultural intelligence panel ──────────────────────────────
+
+function CulturalIntelligencePanel({
+  view: v,
+}: { view: CulturalPerceptionLongitudinalView }) {
+  const p = v.perception;
+
+  if (!v.present) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">cultural intelligence · emotional weather</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const climateTone =
+    p.humanResonance >= 7 ? 'text-bone-50/85' :
+    p.humanResonance >= 5 ? 'text-bone-200/85' :
+                            'text-signal-warning/85';
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const SignalChip = ({ s }: { s: string }) => {
+    const isWarning =
+      s === 'emotionally-numb' || s === 'over-performed' || s === 'trust-fragile' ||
+      s === 'visually-exhausted' || s === 'algorithmically-obvious' ||
+      s === 'aesthetic-burnout' || s === 'high-pattern-density' ||
+      s === 'novel-but-unsafe' || s === 'emotionally-understimulated';
+    const isGood = s === 'human-resonant' || s === 'emotionally-fresh' || s === 'trend-rising';
+    const tone = isWarning ? 'text-signal-warning/85 border-signal-warning/30'
+               : isGood ? 'text-bone-50/85 border-bone-50/30'
+               : 'text-bone-200/75 border-bone-200/30';
+    return (
+      <span className={`px-1.5 py-0.5 text-[9px] tracking-widest uppercase border ${tone}`}>
+        {s}
+      </span>
+    );
+  };
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">cultural intelligence · emotional weather</div>
+      <div className={`text-xs ${climateTone}`}>{v.statement}</div>
+
+      {p.dominantSignals.length > 0 && (
+        <div className="flex flex-wrap gap-1 pt-1">
+          {p.dominantSignals.map((s) => <SignalChip key={s} s={s} />)}
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+        <div>
+          <div className="eyebrow">HUMAN RESONANCE</div>
+          <div className={`mt-0.5 ${heatTone(p.humanResonance)}`}>{p.humanResonance.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">TRUST CLIMATE</div>
+          <div className={`mt-0.5 ${heatTone(p.trustClimate)}`}>{p.trustClimate.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">NOVELTY</div>
+          <div className={`mt-0.5 ${heatTone(p.noveltyScore)}`}>{p.noveltyScore.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">EMOTIONAL FRESHNESS</div>
+          <div className={`mt-0.5 ${heatTone(p.emotionalFreshness)}`}>{p.emotionalFreshness.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">AESTHETIC FATIGUE</div>
+          <div className={`mt-0.5 ${heatTone(p.aestheticFatigue, true)}`}>{p.aestheticFatigue.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">AUDIENCE NUMBNESS</div>
+          <div className={`mt-0.5 ${heatTone(p.audienceNumbness, true)}`}>{p.audienceNumbness.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">CONFORMITY RISK</div>
+          <div className={`mt-0.5 ${heatTone(p.conformityRisk, true)}`}>{p.conformityRisk.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">AUTHENTICITY</div>
+          <div className={`mt-0.5 ${heatTone(p.perceivedAuthenticity)}`}>{p.perceivedAuthenticity.toFixed(1)}/10</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 text-xs tabular-nums">
+        <div>
+          <div className="eyebrow">PACING FATIGUE</div>
+          <div className={`mt-0.5 ${heatTone(p.pacingFatigue, true)}`}>{p.pacingFatigue.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">HOOK SATURATION</div>
+          <div className={`mt-0.5 ${heatTone(p.hookSaturation, true)}`}>{p.hookSaturation.toFixed(1)}/10</div>
+        </div>
+      </div>
+
+      {(p.emotionalDrift.movingToward.length > 0 || p.emotionalDrift.movingAwayFrom.length > 0) && (
+        <div className="pt-2 text-[10px]">
+          <div className="eyebrow mb-1">EMOTIONAL DRIFT</div>
+          {p.emotionalDrift.movingToward.length > 0 && (
+            <div className="text-bone-50/75">→ moving toward: {p.emotionalDrift.movingToward.join(', ')}</div>
+          )}
+          {p.emotionalDrift.movingAwayFrom.length > 0 && (
+            <div className="text-bone-200/55">← moving away from: {p.emotionalDrift.movingAwayFrom.join(', ')}</div>
+          )}
+        </div>
+      )}
+
+      {p.culturalWarnings.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">CULTURAL WARNINGS</div>
+          <ul className="text-[10px] text-signal-warning/80 leading-snug space-y-0.5">
+            {p.culturalWarnings.slice(0, 5).map((w, i) => <li key={i} className="break-words">· {w}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {p.strategicOpportunities.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">OPPORTUNITY ZONES</div>
+          <ul className="text-[10px] text-bone-50/80 leading-snug space-y-0.5">
+            {p.strategicOpportunities.slice(0, 5).map((o, i) => <li key={i} className="break-words">· {o}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {p.forbiddenDirections.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">FORBIDDEN DIRECTIONS</div>
+          <ul className="text-[10px] text-bone-200/55 leading-snug space-y-0.5">
+            {p.forbiddenDirections.slice(0, 5).map((f, i) => <li key={i} className="break-words">· {f}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {v.aestheticCollapseZones.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">AESTHETIC COLLAPSE ZONES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.aestheticCollapseZones.slice(0, 3).map((z) => (
+              <div key={z.patternKey} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow truncate">{z.patternKey}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{z.freq}</span>
+                <span className="w-[50px] text-right text-bone-200/55">{(z.share * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.platformFatigueRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">PLATFORM FATIGUE RANKING</div>
+          <div className="flex flex-col gap-0.5">
+            {v.platformFatigueRanking.slice(0, 4).map((row) => (
+              <div key={row.mode} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow">{row.mode}</span>
+                <span className={`w-[40px] text-right ${heatTone(row.fatigueScore, true)}`}>
+                  {row.fatigueScore.toFixed(1)}
+                </span>
+                <span className="w-[60px] text-right text-bone-200/55">×{row.observations}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.dyingCreativePatterns.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">DYING CREATIVE PATTERNS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.dyingCreativePatterns.slice(0, 3).map((row) => (
+              <div key={row.patternKey} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/55 flex-grow truncate">{row.patternKey}</span>
+                <span className="w-[40px] text-right text-bone-50/65">×{row.freq}</span>
+                <span className="w-[50px] text-right text-bone-200/55">
+                  {(row.recentActivityRatio * 100).toFixed(0)}%
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        observations {v.totalObservations} · quality samples {v.totalQualitySamples} ·
+        policy audits {v.totalPolicyAudits}
+      </div>
     </div>
   );
 }

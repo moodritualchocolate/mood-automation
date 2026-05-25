@@ -23,6 +23,10 @@ import { composeBannerSvg } from '@/components/banner-svg';
 import { rememberBanner } from '@/core/banner-cache';
 import { runCopyQualityPolicyPreflight } from '@lib/copyQualityPolicyPreflight';
 import { recordPolicyAudit } from '@lib/copyQualityPolicyAudit';
+import {
+  recordCulturalObservation, buildHookFingerprint,
+  type CulturalObservation,
+} from '@lib/culturalPerceptionMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -125,6 +129,40 @@ export async function POST(req: NextRequest) {
           dignitySafety:     liveQuality?.dignitySafety     ?? null,
           repetitionConcern: liveQuality?.repetitionConcern ?? null,
         });
+
+        // ─── Cultural Perception Memory ─────────────────────────
+        // Append one compact observation of the shipped banner so the
+        // perception layer can read collective creative-pattern drift
+        // over time. STRICTLY observational — no effect on generation,
+        // verdicts, brutality, or refusal. Failure is non-fatal.
+        const observation: CulturalObservation = {
+          at: banner.createdAt,
+          bannerId: banner.id,
+          formula: banner.formula,
+          campaignMode: banner.campaignMode,
+          layoutFamily: banner.direction.layoutFamily,
+          productRole: banner.direction.productRole,
+          typographyDominance: banner.direction.typographyDominance,
+          focalPoint: banner.direction.focalPoint,
+          emotionalFamily: banner.state.family,
+          stateLabel: banner.state.label,
+          emotionalFrame: banner.copywriter?.emotionalFrame ?? null,
+          persuasionTone: banner.copywriter?.persuasionTone ?? null,
+          pacing: banner.direction.emotionalPacing,
+          restraint: banner.direction.restraint,
+          hookFingerprint: buildHookFingerprint(banner.direction.hook),
+          ctaStyle: banner.cta.style,
+          ctaBehavior: banner.direction.ctaBehavior,
+          copyIntegrity:     liveQuality?.copyIntegrity     ?? null,
+          trustSafety:       liveQuality?.trustSafety       ?? null,
+          dignitySafety:     liveQuality?.dignitySafety     ?? null,
+          repetitionConcern: liveQuality?.repetitionConcern ?? null,
+          ctaRestraint:      liveQuality?.ctaRestraint      ?? null,
+          hebrewNaturalness: liveQuality?.hebrewNaturalness ?? null,
+          policyBand:        livePolicy?.policyBand          ?? null,
+          outcomeVerdict:    banner.finalVerdict.verdict,
+        };
+        await recordCulturalObservation(observation);
       } catch (e) {
         write({ type: 'error', error: (e as Error).message });
       } finally {
