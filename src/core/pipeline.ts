@@ -785,6 +785,8 @@ import { evaluateCopyQuality } from '@lib/copyQualityAdapter';
 import { axisToSample, createCopyQualityMemoryStore } from '@lib/copyQualityMemory';
 import { buildCopyQualityAdvisory, appendAdvisoryToNotes } from '@lib/copyQualityAdvisory';
 import { evaluateCopyQualityRefusal } from '@lib/copyQualityRefusal';
+import type { CopyQualityPolicyRecommendation } from '@lib/copyQualityPolicy';
+import { computeCopyQualityPolicy } from '@lib/copyQualityPolicy';
 import type { RuntimeHistoryEntry } from '@lib/runtimeMemoryStore';
 import type { ApprovalRecord } from '@lib/approvalMemory';
 import type { CognitiveFieldState } from '@lib/cognitiveField';
@@ -1264,6 +1266,10 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
   // copy output. Surfaced via event + banner field; never modifies
   // critic verdicts or refusal behavior.
   let copyQualitySignal: CopyQualityAxis | null = null;
+  // Copy-Quality Policy — advisory recommendation for whether the
+  // copyQualityRefusalEnabled flag SHOULD be on. Does NOT auto-flip
+  // the flag; surfaced as a banner field + event for operator review.
+  let copyQualityPolicySignal: CopyQualityPolicyRecommendation | null = null;
   // Longitudinal Quality store — persisted per assessment for the
   // dashboard. Independent of strategy + copywriter memories.
   const copyQualityHistoryStore = createCopyQualityMemoryStore();
@@ -5003,6 +5009,38 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
         });
       }
 
+      // ─── Copy-Quality Policy (advisory) ────────────────────────
+      // Deterministic recommendation for whether the
+      // copyQualityRefusalEnabled flag SHOULD be on for this kind of
+      // run. Does NOT flip the flag, does NOT alter finalVerdict.
+      // Studio surfaces the band + thresholds so operators can see
+      // when stricter policy would be safe.
+      if (adStrategy) {
+        copyQualityPolicySignal = computeCopyQualityPolicy({
+          formula: ctx.formula,
+          campaignMode: ctx.campaignMode,
+          brutality,
+          strategy: adStrategy,
+          strategyMemory: adStrategyMemory,
+          copyQuality: copyQualitySignal,
+          longitudinal: null,    // pipeline holds memories not view; dashboard joins them
+        });
+        emit({
+          stage: 'copy-quality-policy',
+          message:
+            `band:${copyQualityPolicySignal.policyBand} · ` +
+            `recommendEnabled:${copyQualityPolicySignal.recommendedEnabled} · ` +
+            `confidence ${copyQualityPolicySignal.confidence}/10 · ` +
+            `suggested thresholds integrity<${copyQualityPolicySignal.suggestedIntegrityThreshold} ` +
+            `brutality>=${copyQualityPolicySignal.suggestedBrutalityThreshold}`,
+          data: {
+            policyBand: copyQualityPolicySignal.policyBand,
+            recommendedEnabled: copyQualityPolicySignal.recommendedEnabled,
+            reasonCodes: copyQualityPolicySignal.reasonCodes.slice(0, 8),
+          },
+        });
+      }
+
       if (finalVerdict.verdict === 'approve') {
         const shippedAt = Date.now();
         // Phase 4 — the aftertaste + atmosphere already computed
@@ -5184,6 +5222,7 @@ export async function runPipeline(request: GenerateRequest, opts: RunOptions = {
           adStrategy: adStrategy ?? undefined,
           copywriter: copywriterOutput ?? undefined,
           copyQuality: copyQualitySignal ?? undefined,
+          copyQualityPolicy: copyQualityPolicySignal ?? undefined,
           tasteSystem: {
             dna, judge, reaction, fatigue, evolutionAtRunStart,
             campaignBrain: {

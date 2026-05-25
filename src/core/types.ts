@@ -1115,6 +1115,10 @@ export interface Banner {
    *  inspect alongside its existing inputs. Does NOT modify critic
    *  verdicts, refusal behavior, or brutality semantics. */
   copyQuality?: import('@lib/copyQualityAdapter').CopyQualityAxis;
+  /** Copy-Quality Policy — ADVISORY recommendation for whether the
+   *  copyQualityRefusalEnabled flag SHOULD be on. Does NOT flip the
+   *  flag, does NOT alter finalVerdict. Display + audit only. */
+  copyQualityPolicy?: import('@lib/copyQualityPolicy').CopyQualityPolicyRecommendation;
   attempts: number;
   rejectedAttempts: Array<{ stage: string; reason: string }>;
   memorySnapshot: MemorySnapshot;

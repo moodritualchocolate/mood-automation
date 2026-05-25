@@ -34,6 +34,7 @@ import {
 import type { AdStrategyAssessment } from '@lib/adStrategyEngine';
 import type { CopywriterOutput } from '@lib/copywriterEngine';
 import type { CopyQualityAxis } from '@lib/copyQualityAdapter';
+import type { CopyQualityPolicyRecommendation } from '@lib/copyQualityPolicy';
 import type { QualityLongitudinalView } from '@lib/qualityLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
@@ -414,6 +415,7 @@ function StudioInner() {
               {banner.adStrategy && <AdStrategyBrainPanel strategy={banner.adStrategy} />}
               {banner.copywriter && <CopywriterBrainPanel copy={banner.copywriter} />}
               {banner.copyQuality && <CopyQualityPanel quality={banner.copyQuality} />}
+              {banner.copyQualityPolicy && <CopyQualityPolicyPanel policy={banner.copyQualityPolicy} />}
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
             </div>
           )}
@@ -964,6 +966,58 @@ function LongitudinalQualityPanel({ view: v }: { view: QualityLongitudinalView }
         strategy assessments {v.totalStrategyAssessments} ·
         quality samples {v.totalCopyQualitySamples}
       </div>
+    </div>
+  );
+}
+
+// ─── copy quality policy panel ────────────────────────────────
+
+function CopyQualityPolicyPanel({ policy: p }: { policy: CopyQualityPolicyRecommendation }) {
+  const bandTone =
+    p.policyBand === 'strict'  ? 'text-signal-warning' :
+    p.policyBand === 'warn'    ? 'text-bone-50/85' :
+    p.policyBand === 'observe' ? 'text-bone-200/85' :
+                                 'text-bone-200/65';
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">copy quality policy · advisory</div>
+      <div className="text-xs text-bone-200/65 italic">
+        recommendation only — does not flip <code>copyQualityRefusalEnabled</code>.
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs tabular-nums">
+        <div>
+          <div className="eyebrow">RECOMMENDED BAND</div>
+          <div className={`mt-0.5 uppercase tracking-widest ${bandTone}`}>{p.policyBand}</div>
+        </div>
+        <div>
+          <div className="eyebrow">RECOMMEND ENABLED?</div>
+          <div className={`mt-0.5 ${p.recommendedEnabled ? 'text-bone-50/85' : 'text-bone-200/65'}`}>
+            {p.recommendedEnabled ? 'yes' : 'no'}
+          </div>
+        </div>
+        <div>
+          <div className="eyebrow">CONFIDENCE</div>
+          <div className="mt-0.5 text-bone-200/85">{p.confidence.toFixed(1)}/10</div>
+        </div>
+        <div>
+          <div className="eyebrow">SUGGESTED THRESHOLDS</div>
+          <div className="mt-0.5 text-bone-200/85">
+            {p.suggestedIntegrityThreshold > 0
+              ? `integrity < ${p.suggestedIntegrityThreshold.toFixed(1)} · brutality ≥ ${p.suggestedBrutalityThreshold.toFixed(2)}`
+              : '—'}
+          </div>
+        </div>
+      </div>
+      {p.reasonCodes.length > 0 && (
+        <div className="text-[10px] text-bone-200/55 leading-snug">
+          <div className="eyebrow mb-1">REASON CODES</div>
+          <ul className="space-y-0.5">
+            {p.reasonCodes.slice(0, 10).map((r, i) => (
+              <li key={i} className="break-words">· {r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
