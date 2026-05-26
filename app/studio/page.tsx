@@ -80,6 +80,11 @@ import type { SymbolicResonanceReading } from '@lib/symbolicResonanceEngine';
 import type { ArchetypeRecognitionReport } from '@lib/archetypeRecognition';
 import type { RitualBehaviorReport } from '@lib/ritualBehaviorEngine';
 import type { GenerationalEmotionMapReport } from '@lib/generationalEmotionMap';
+import type { ConfidenceReading } from '@lib/confidenceModel';
+import type { ContradictionReading } from '@lib/contradictionDetector';
+import type { AmbiguityReading } from '@lib/ambiguityLayer';
+import type { CognitiveBoundaryReading } from '@lib/cognitiveBoundaryEngine';
+import type { MultiPerspectiveReading } from '@lib/multiPerspectiveEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -172,6 +177,15 @@ function StudioInner() {
   const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
   // Adaptation orchestrator — coordinated priority + energy + cadence.
   const [orchestration, setOrchestration] = useState<{ orchestration: AdaptationOrchestration; energy: SystemEnergyModel; cadence: AdaptiveCadence } | null>(null);
+  // Meta-cognition — epistemic humility observatory.
+  const [metaCognition, setMetaCognition] = useState<{
+    confidence: ConfidenceReading;
+    contradictions: ContradictionReading;
+    ambiguities: AmbiguityReading;
+    cognitiveBoundaries: CognitiveBoundaryReading;
+    competingInterpretations: MultiPerspectiveReading;
+    interpretiveStability: number;
+  } | null>(null);
   // Cultural memory — collective emotional cognition.
   const [culturalMemory, setCulturalMemory] = useState<{
     culturalPatterns: CulturalMemoryReading;
@@ -387,6 +401,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setCulturalMemory(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/meta-cognition', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setMetaCognition(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -501,6 +519,10 @@ function StudioInner() {
     fetch('/api/cultural-memory', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setCulturalMemory(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/meta-cognition', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setMetaCognition(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -634,6 +656,7 @@ function StudioInner() {
           {realityIntel && <RealityIntelligencePanel r={realityIntel} />}
           {humanTruth && <HumanTruthPanel h={humanTruth} />}
           {culturalMemory && <CulturalMemoryPanel c={culturalMemory} />}
+          {metaCognition && <MetaCognitionPanel m={metaCognition} />}
 
           {preGenStability && (
             <>
@@ -5182,6 +5205,112 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Meta-Cognition Panel ──────────────────────────────────────────
+// Epistemic humility observatory: confidence, contradictions,
+// ambiguities, cognitive boundaries, competing interpretations.
+// Uncertainty is PRESERVED, never suppressed.
+interface MetaCognitionProps {
+  confidence: ConfidenceReading;
+  contradictions: ContradictionReading;
+  ambiguities: AmbiguityReading;
+  cognitiveBoundaries: CognitiveBoundaryReading;
+  competingInterpretations: MultiPerspectiveReading;
+  interpretiveStability: number;
+}
+function MetaCognitionPanel({ m }: { m: MetaCognitionProps }) {
+  const confColor =
+    m.confidence.overallLevel === 'high' ? 'text-green-300' :
+    m.confidence.overallLevel === 'stable' ? 'text-bone-200/90' :
+    m.confidence.overallLevel === 'moderate' ? 'text-amber-300' :
+    'text-orange-400';
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">meta-cognition</div>
+      <div className="text-[10px] text-bone-200/50">
+        Observatory only — uncertainty is preserved, never suppressed.
+      </div>
+      <div className="flex items-baseline gap-2">
+        <span className="eyebrow">confidence</span>
+        <span className={`text-base font-semibold tracking-widest ${confColor}`}>
+          {m.confidence.overallLevel.toUpperCase()}
+        </span>
+        <span className="text-bone-200/60 ml-auto text-[10px]">{m.confidence.overallScore}/10</span>
+      </div>
+
+      {m.confidence.axes.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">axis confidence</div>
+          {m.confidence.axes.slice(0, 6).map((ax, i) => (
+            <div key={i} className="flex justify-between text-bone-200/70">
+              <span>{ax.axis}</span>
+              <span className={
+                ax.level === 'high' ? 'text-green-300' :
+                ax.level === 'stable' ? 'text-bone-200/80' :
+                ax.level === 'moderate' ? 'text-amber-300' :
+                'text-orange-400'
+              }>{ax.level} · {ax.sampleSize}n</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {m.contradictions.contradictions.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">contradictions (both sides preserved)</div>
+          {m.contradictions.contradictions.slice(0, 4).map((c, i) => (
+            <div key={i} className="text-bone-200/70">
+              <div className="text-bone-200/90">{c.key} · {c.severity}/10</div>
+              <div className="text-bone-200/60 text-[10px]">A: {c.sideA}</div>
+              <div className="text-bone-200/60 text-[10px]">B: {c.sideB}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {m.ambiguities.ambiguities.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">ambiguity zones</div>
+          {m.ambiguities.ambiguities.slice(0, 4).map((a, i) => (
+            <div key={i} className="text-bone-200/70">
+              <div className="text-bone-200/90">{a.zone} · {a.severity}/10</div>
+              <div className="text-bone-200/60 text-[10px]">{a.description}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {m.cognitiveBoundaries.boundaries.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">cognitive boundaries ("we do not know yet")</div>
+          {m.cognitiveBoundaries.boundaries.slice(0, 4).map((b, i) => (
+            <div key={i} className="text-bone-200/70">
+              <div className="text-bone-200/90">{b.zone}</div>
+              <div className="text-bone-200/60 text-[10px]">{b.description}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {m.competingInterpretations.highVarianceFingerprints.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">competing interpretations</div>
+          {m.competingInterpretations.highVarianceFingerprints.slice(0, 3).map((fp, i) => (
+            <div key={i} className="text-bone-200/70">
+              <div className="font-mono text-[10px] text-bone-200/50">{fp.fingerprint.slice(0, 50)}</div>
+              {fp.perspectives.filter((p) => p.weight >= 4).map((p, j) => (
+                <div key={j} className="text-bone-200/70 text-[10px]">· {p.label} · {p.weight}/10</div>
+              ))}
+              {fp.notes.map((n, j) => (
+                <div key={j} className="text-bone-200/50 text-[10px]">{n}</div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
