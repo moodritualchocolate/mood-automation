@@ -31,6 +31,8 @@ import {
 } from '@lib/culturalPerceptionMemory';
 import { computeCreativeDrift } from '@lib/creativeDriftEngine';
 import { recordCreativeDriftObservation } from '@lib/creativeDriftMemory';
+import { recordVisualDNAFingerprint } from '@lib/visualDNAMemory';
+import { recordNarrativeDNAFingerprint } from '@lib/narrativeDNAMemory';
 import { createCopywriterMemoryStore } from '@lib/copywriterMemory';
 import { createCopyQualityMemoryStore } from '@lib/copyQualityMemory';
 import { createAdStrategyMemoryStore } from '@lib/adStrategyMemory';
@@ -854,6 +856,23 @@ export async function POST(req: NextRequest) {
           });
         } catch {
           // non-fatal — creative drift observation never blocks generation
+        }
+
+        // ─── Visual + Narrative DNA Fingerprints ────────────────
+        // Token-extracted fingerprints — NOT image analysis. Each
+        // fingerprint compresses the banner's structural fields into
+        // deterministic strings + scalar 0..10 readings. They feed
+        // the creative-fatigue engine. Append-only FIFOs, wrapped so
+        // failure never blocks generation.
+        try {
+          await recordVisualDNAFingerprint(result.banner as never);
+        } catch {
+          // non-fatal — visual DNA fingerprint never blocks generation
+        }
+        try {
+          await recordNarrativeDNAFingerprint(result.banner as never);
+        } catch {
+          // non-fatal — narrative DNA fingerprint never blocks generation
         }
       } catch (e) {
         write({ type: 'error', error: (e as Error).message });

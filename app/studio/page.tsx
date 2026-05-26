@@ -54,6 +54,9 @@ import type { ProductionConservativeMode } from '@lib/productionConservativeMode
 import type { PreGenerationStabilizer } from '@lib/preGenerationStabilizer';
 import type { CreativeDrift } from '@lib/creativeDriftEngine';
 import type { CreativeDriftLongitudinalView } from '@lib/creativeDriftLongitudinalView';
+import type { CreativeFatigue } from '@lib/creativeFatigueEngine';
+import type { MutationPlan } from '@lib/generationMutationPlanner';
+import type { RefusalNarrativeOutput } from '@lib/refusalNarrativeEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -138,6 +141,12 @@ function StudioInner() {
     current: CreativeDrift;
     longitudinal: CreativeDriftLongitudinalView;
   } | null>(null);
+  // Creative fatigue / mutation planner / refusal narrative / DNAs — all advisory.
+  const [creativeFatigue, setCreativeFatigue] = useState<CreativeFatigue | null>(null);
+  const [mutationPlan, setMutationPlan] = useState<{ plan: MutationPlan; fatigueSummary: { fatigueLevel: number; freshnessScore: number; predictabilityScore: number; collapseRisk: number } } | null>(null);
+  const [refusalNarrative, setRefusalNarrative] = useState<RefusalNarrativeOutput | null>(null);
+  const [visualDNA, setVisualDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageRealism: number; averagePolish: number } | null>(null);
+  const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -271,6 +280,26 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setCreativeDrift(v as { current: CreativeDrift; longitudinal: CreativeDriftLongitudinalView }); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/creative-fatigue', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setCreativeFatigue(v as CreativeFatigue); })
+            .catch(() => { /* non-fatal */ });
+          fetch('/api/mutation-planner', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setMutationPlan(v); })
+            .catch(() => { /* non-fatal */ });
+          fetch('/api/refusal-narrative', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setRefusalNarrative(v as RefusalNarrativeOutput); })
+            .catch(() => { /* non-fatal */ });
+          fetch('/api/visual-dna', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setVisualDNA(v); })
+            .catch(() => { /* non-fatal */ });
+          fetch('/api/narrative-dna', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setNarrativeDNA(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -345,6 +374,26 @@ function StudioInner() {
     fetch('/api/creative-drift', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setCreativeDrift(v as { current: CreativeDrift; longitudinal: CreativeDriftLongitudinalView }); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/creative-fatigue', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCreativeFatigue(v as CreativeFatigue); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/mutation-planner', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setMutationPlan(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/refusal-narrative', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setRefusalNarrative(v as RefusalNarrativeOutput); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/visual-dna', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setVisualDNA(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/narrative-dna', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setNarrativeDNA(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -482,6 +531,11 @@ function StudioInner() {
               longitudinal={creativeDrift.longitudinal}
             />
           )}
+          {refusalNarrative && <RefusalIntelligencePanel r={refusalNarrative} />}
+          {creativeFatigue && <CreativeFatiguePanel f={creativeFatigue} />}
+          {mutationPlan && <MutationPlannerPanel plan={mutationPlan.plan} summary={mutationPlan.fatigueSummary} />}
+          {visualDNA && <VisualDNAPanel d={visualDNA} />}
+          {narrativeDNA && <NarrativeDNAPanel d={narrativeDNA} />}
 
           {banner && (
             <div className="space-y-4 text-sm">
@@ -5009,6 +5063,178 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Refusal Intelligence Panel ────────────────────────────────────
+// Surfaces the refusal narrative engine's elite-creative-leadership voice.
+function RefusalIntelligencePanel({ r }: { r: RefusalNarrativeOutput }) {
+  const sevColor =
+    r.severity === 'severe' ? 'text-red-400' :
+    r.severity === 'serious' ? 'text-orange-400' :
+    r.severity === 'moderate' ? 'text-amber-300' :
+    'text-bone-200/80';
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">refusal intelligence</div>
+      <div className="text-[10px] text-bone-200/50">Advisory only — describes, does not refuse.</div>
+      <div className="flex items-baseline gap-2">
+        <span className="eyebrow">severity</span>
+        <span className={`text-base font-semibold tracking-widest ${sevColor}`}>{r.severity.toUpperCase()}</span>
+      </div>
+      <div className="text-sm text-bone-200/90 leading-snug">{r.narrativeReason}</div>
+      <div className="border-t hairline pt-2 space-y-1 text-xs text-bone-200/70">
+        <div><span className="text-bone-200/50">diagnosis:</span> {r.creativeDiagnosis}</div>
+        <div><span className="text-bone-200/50">strategic risk:</span> {r.strategicRisk}</div>
+        <div><span className="text-bone-200/50">suggested direction:</span> {r.suggestedDirection}</div>
+        <div><span className="text-bone-200/50">emotional reading:</span> {r.emotionalInterpretation}</div>
+        <div><span className="text-bone-200/50">trust impact:</span> {r.trustImpact}</div>
+        <div><span className="text-bone-200/50">dignity impact:</span> {r.dignityImpact}</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Creative Fatigue Panel ────────────────────────────────────────
+function CreativeFatiguePanel({ f }: { f: CreativeFatigue }) {
+  const color = f.fatigueLevel >= 7 ? 'text-red-400' : f.fatigueLevel >= 4 ? 'text-amber-300' : 'text-green-300';
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">creative fatigue</div>
+      <div className="text-[10px] text-bone-200/50">{f.advisoryNotice}</div>
+      <div className="flex items-baseline gap-2">
+        <span className="eyebrow">fatigue</span>
+        <span className={`text-base font-semibold tracking-widest ${color}`}>{f.fatigueLevel}/10</span>
+      </div>
+      <div className="text-xs space-y-0.5 text-bone-200/80">
+        <div className="flex justify-between"><span>freshness</span><span>{f.freshnessScore}/10</span></div>
+        <div className="flex justify-between"><span>predictability</span><span>{f.predictabilityScore}/10</span></div>
+        <div className="flex justify-between"><span>collapse risk</span><span>{f.collapseRisk}/10</span></div>
+        <div className="flex justify-between"><span>mutation pressure</span><span>{f.mutationPressure}/10</span></div>
+      </div>
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">vectors</div>
+        {f.fatigueVectors.map((v) => (
+          <div key={v.vector} className="flex justify-between text-bone-200/70">
+            <span>{v.vector}</span>
+            <span className={v.fatigue >= 7 ? 'text-red-400' : v.fatigue >= 4 ? 'text-amber-300' : 'text-bone-200/80'}>{v.fatigue}/10</span>
+          </div>
+        ))}
+      </div>
+      {f.saturationSignals.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">saturation signals</div>
+          {f.saturationSignals.slice(0, 5).map((s, i) => (
+            <div key={i} className="text-bone-200/70">
+              <span className="text-bone-200/50">[{s.vector}/{s.dimension}]</span> {s.token.slice(0, 40)} · {Math.round(s.share * 100)}%
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Mutation Planner Panel ────────────────────────────────────────
+function MutationPlannerPanel({ plan, summary }: { plan: MutationPlan; summary: { fatigueLevel: number; freshnessScore: number; predictabilityScore: number; collapseRisk: number } }) {
+  const categories: Array<[string, MutationPlan['pacingMutations']]> = [
+    ['pacing', plan.pacingMutations],
+    ['composition', plan.compositionMutations],
+    ['emotional', plan.emotionalMutations],
+    ['narrative', plan.narrativeMutations],
+    ['persuasion', plan.persuasionMutations],
+    ['visual', plan.visualMutations],
+    ['restraint', plan.restraintMutations],
+    ['novelty', plan.noveltyMutations],
+  ];
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">mutation planner</div>
+      <div className="text-[10px] text-bone-200/50">{plan.advisoryNotice}</div>
+      <Field label="TOTAL PRESSURE" value={`${plan.totalMutationPressure}/10`} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>fatigue {summary.fatigueLevel}</span>
+        <span>freshness {summary.freshnessScore}</span>
+        <span>predict {summary.predictabilityScore}</span>
+        <span>collapse {summary.collapseRisk}</span>
+      </div>
+      {plan.topPriorityMutations.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">top priority (NOT applied)</div>
+          {plan.topPriorityMutations.map((m, i) => (
+            <div key={i} className="text-bone-200/80 mb-1">
+              <span className="text-bone-200/90">{m.mutation}</span> · {m.intensity}/10
+              <div className="text-bone-200/50 text-[10px]">{m.rationale}</div>
+              <div className="text-bone-200/40 text-[10px]">would affect: {m.wouldAffect}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      {categories.filter(([, xs]) => xs.length > 0).length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">per category</div>
+          {categories.filter(([, xs]) => xs.length > 0).map(([cat, xs]) => (
+            <div key={cat} className="text-bone-200/70">
+              <span className="text-bone-200/90">{cat}</span> · {xs.length} suggestion{xs.length === 1 ? '' : 's'} ·
+              top: {xs[0]?.mutation.slice(0, 50)}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Visual DNA Panel ──────────────────────────────────────────────
+function VisualDNAPanel({ d }: { d: { totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageRealism: number; averagePolish: number } }) {
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">visual DNA</div>
+      <div className="text-[10px] text-bone-200/50">Observatory only — visual DNA never modifies generation.</div>
+      <Field label="OBSERVATIONS" value={String(d.totalObservations)} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>avg realism {d.averageRealism}/10</span>
+        <span>avg polish {d.averagePolish}/10</span>
+      </div>
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">dimension saturation</div>
+        {Object.entries(d.saturations).map(([dim, s]) => (
+          <div key={dim} className="flex justify-between text-bone-200/70">
+            <span>{dim}</span>
+            <span className={s.share >= 0.5 ? 'text-amber-300' : 'text-bone-200/80'}>
+              {Math.round(s.share * 100)}% · {s.distinct} distinct
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Narrative DNA Panel ───────────────────────────────────────────
+function NarrativeDNAPanel({ d }: { d: { totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } }) {
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">narrative DNA</div>
+      <div className="text-[10px] text-bone-200/50">Observatory only — narrative DNA never modifies generation.</div>
+      <Field label="OBSERVATIONS" value={String(d.totalObservations)} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>observ. density {d.averageObservationalDensity}/10</span>
+        <span>human realism {d.averageHumanRealism}/10</span>
+        <span>CTA pressure {d.averageCtaPressure}/10</span>
+      </div>
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">dimension saturation</div>
+        {Object.entries(d.saturations).map(([dim, s]) => (
+          <div key={dim} className="flex justify-between text-bone-200/70">
+            <span>{dim}</span>
+            <span className={s.share >= 0.5 ? 'text-amber-300' : 'text-bone-200/80'}>
+              {Math.round(s.share * 100)}% · {s.distinct} distinct
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
