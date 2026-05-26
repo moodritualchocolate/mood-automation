@@ -17,6 +17,7 @@
  */
 
 import type { CampaignMode, Formula } from '@/core/types';
+import { CAMPAIGN_MODES, FORMULAS } from '@/core/types';
 import type { AdStrategyAssessment } from './adStrategyEngine';
 import type {
   AdStrategyMemoryState, AudienceArchetype, CampaignRole,
@@ -54,6 +55,37 @@ const AUTO_DEFAULT = {
   defaultAudience: 'office_worker' as AudienceArchetype,
 };
 
+const SAFE_FALLBACK_FORMULA: Formula = 'ENERGY';
+
+/** Resolve a possibly-unknown campaign mode to a known one, or null
+ *  to mean "AUTO". Never throws. Returns a tag describing whether the
+ *  input was honored or coerced so the audit trail can record it. */
+function resolveCampaignMode(
+  raw: CampaignMode | null | undefined,
+): { mode: CampaignMode | null; coerced: boolean; originalLabel: string | null } {
+  if (raw === null || raw === undefined) {
+    return { mode: null, coerced: false, originalLabel: null };
+  }
+  if ((CAMPAIGN_MODES as readonly string[]).includes(raw as string)) {
+    return { mode: raw as CampaignMode, coerced: false, originalLabel: raw as string };
+  }
+  return { mode: null, coerced: true, originalLabel: String(raw) };
+}
+
+/** Resolve a possibly-unknown formula to a known one. Unknown values
+ *  fall back to ENERGY (the V1 ship target). Never throws. */
+function resolveFormula(
+  raw: Formula | null | undefined,
+): { formula: Formula; coerced: boolean; originalLabel: string | null } {
+  if (raw === null || raw === undefined) {
+    return { formula: SAFE_FALLBACK_FORMULA, coerced: true, originalLabel: null };
+  }
+  if ((FORMULAS as readonly string[]).includes(raw as string)) {
+    return { formula: raw as Formula, coerced: false, originalLabel: raw as string };
+  }
+  return { formula: SAFE_FALLBACK_FORMULA, coerced: true, originalLabel: String(raw) };
+}
+
 // ─── output shape ─────────────────────────────────────────────
 
 export type PreflightSource = 'explicit-true' | 'explicit-false' | 'policy-default';
@@ -77,7 +109,11 @@ function synthesizeMinimalStrategy(
   campaignMode: CampaignMode | null,
   memory: AdStrategyMemoryState | null,
 ): AdStrategyAssessment {
-  const md = campaignMode ? MODE_DEFAULTS[campaignMode] : AUTO_DEFAULT;
+  // Defensive lookup: an unknown campaignMode (e.g. case-mismatched
+  // input from a caller) must never crash the preflight. Fall back
+  // to AUTO_DEFAULT silently — the resolveCampaignMode caller logs
+  // the coercion in reasonCodes.
+  const md = (campaignMode && MODE_DEFAULTS[campaignMode]) || AUTO_DEFAULT;
   // Use the memory's running trustDebt — that's the realistic
   // pre-pipeline starting point for this layer.
   const trustDebt = memory?.trustDebt ?? 0;
@@ -122,6 +158,21 @@ export interface PreflightInput {
   strategyMemory?: AdStrategyMemoryState | null;
 }
 
+/** Safe degraded return used whenever the preflight cannot complete
+ *  for any reason. Architecture rule: preflight is advisory; it must
+ *  never crash generation. recommendedEnabled=false is the safe
+ *  default (the pipeline still runs; the flag simply stays off). */
+function safeDegraded(reasonCodes: string[]): CopyQualityPolicyPreflight {
+  return {
+    applied: true,
+    source: 'policy-default',
+    enabled: false,
+    policyBand: 'off',
+    confidence: 0,
+    reasonCodes,
+  };
+}
+
 export async function runCopyQualityPolicyPreflight(
   input: PreflightInput,
 ): Promise<CopyQualityPolicyPreflight> {
@@ -141,34 +192,65 @@ export async function runCopyQualityPolicyPreflight(
     };
   }
 
-  // 2. Omitted → compute policy from minimal-but-safe inputs.
-  let memory: AdStrategyMemoryState | null = input.strategyMemory ?? null;
-  if (!memory) {
-    try {
-      memory = await createAdStrategyMemoryStore().read();
-    } catch {
-      // degrade gracefully — empty memory means policy will lean off.
-      memory = null;
-    }
+  // 2. Defensive normalization — never trust raw inputs.
+  // Unknown formula → ENERGY safe profile. Unknown mode → AUTO.
+  const fallbackCodes: string[] = [];
+  const resolvedMode = resolveCampaignMode(input.campaignMode);
+  if (resolvedMode.coerced) {
+    fallbackCodes.push(
+      `preflight:unknown-campaignMode-coerced-to-AUTO[${resolvedMode.originalLabel}]`,
+    );
+  }
+  const resolvedFormula = resolveFormula(input.formula);
+  if (resolvedFormula.coerced) {
+    fallbackCodes.push(
+      `preflight:unknown-formula-coerced-to-${SAFE_FALLBACK_FORMULA}[${resolvedFormula.originalLabel}]`,
+    );
   }
 
-  const strategy = synthesizeMinimalStrategy(input.campaignMode, memory);
-  const recommendation = computeCopyQualityPolicy({
-    formula: input.formula,
-    campaignMode: input.campaignMode,
-    brutality: input.brutality,
-    strategy,
-    strategyMemory: memory,
-    copyQuality: null,           // unknown pre-pipeline
-    longitudinal: null,          // not joined at preflight time
-  });
+  // 3. Omitted → compute policy from minimal-but-safe inputs.
+  // Whole compute block is wrapped: any unexpected throw degrades to
+  // safe "off" rather than crashing /api/generate.
+  try {
+    let memory: AdStrategyMemoryState | null = input.strategyMemory ?? null;
+    if (!memory) {
+      try {
+        memory = await createAdStrategyMemoryStore().read();
+      } catch {
+        // degrade gracefully — empty memory means policy will lean off.
+        memory = null;
+      }
+    }
 
-  return {
-    applied: true,
-    source: 'policy-default',
-    enabled: recommendation.recommendedEnabled,
-    policyBand: recommendation.policyBand,
-    confidence: recommendation.confidence,
-    reasonCodes: ['preflight:omitted-flag', ...recommendation.reasonCodes.slice(0, 8)],
-  };
+    const strategy = synthesizeMinimalStrategy(resolvedMode.mode, memory);
+    const recommendation = computeCopyQualityPolicy({
+      formula: resolvedFormula.formula,
+      campaignMode: resolvedMode.mode,
+      brutality: input.brutality,
+      strategy,
+      strategyMemory: memory,
+      copyQuality: null,           // unknown pre-pipeline
+      longitudinal: null,          // not joined at preflight time
+    });
+
+    return {
+      applied: true,
+      source: 'policy-default',
+      enabled: recommendation.recommendedEnabled,
+      policyBand: recommendation.policyBand,
+      confidence: recommendation.confidence,
+      reasonCodes: [
+        'preflight:omitted-flag',
+        ...fallbackCodes,
+        ...recommendation.reasonCodes.slice(0, 8),
+      ],
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return safeDegraded([
+      'preflight:omitted-flag',
+      ...fallbackCodes,
+      `preflight:exception-degraded-to-off[${message.slice(0, 120)}]`,
+    ]);
+  }
 }
