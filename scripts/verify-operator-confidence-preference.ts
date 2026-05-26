@@ -132,14 +132,53 @@ async function main() {
   }
 
   // ── F. generation untouched (static check) ───────────────────
+  // Pipeline must NEVER import operator preference. The /api/generate
+  // route may legitimately READ operator preferences as a join key
+  // for reconciliation-snapshot purposes (observation), but operator
+  // preference values must NEVER flow into:
+  //   - runPipeline arguments
+  //   - body mutation
+  //   - the banner / shipped result
+  // We verify this by ensuring operator-preference reads in the route
+  // appear only inside the reconciliation try/catch (the only
+  // legitimate observation path).
   {
     const route = await fs.readFile(path.resolve(process.cwd(), 'app/api/generate/route.ts'), 'utf8');
     const pipeline = await fs.readFile(path.resolve(process.cwd(), 'src/core/pipeline.ts'), 'utf8');
-    const routeRefs = /from\s+['"][^'"]*operatorConfidencePreference[^'"]*['"]/i.test(route);
     const pipelineRefs = /from\s+['"][^'"]*operatorConfidencePreference[^'"]*['"]/i.test(pipeline);
-    check('F · generation route + pipeline do not import operator preference',
-      !routeRefs && !pipelineRefs,
-      !routeRefs && !pipelineRefs ? 'verified clean — generation paths isolated from operator sliders' : `leak: route=${routeRefs} pipeline=${pipelineRefs}`);
+
+    // Find every line that CALLS an operator preference function (symbol
+    // followed by `(` — skips import-list entries).
+    const operatorSymbols = [
+      'createOperatorConfidencePreferenceMemoryStore',
+      'getAllPreferencesForOperator',
+    ];
+    const lines = route.split('\n');
+    const symbolLineNumbers: number[] = [];
+    lines.forEach((line, i) => {
+      if (operatorSymbols.some((s) => new RegExp(`\\b${s}\\s*\\(`).test(line))) {
+        symbolLineNumbers.push(i);
+      }
+    });
+    // Find the reconciliation try block (proximity boundary).
+    const reconcileStart = lines.findIndex((l) => l.includes('Operator Calibration Reconciliation'));
+    const reconcileEnd = reconcileStart >= 0
+      ? lines.findIndex((l, i) => i > reconcileStart && /non-fatal — reconciliation snapshot/.test(l))
+      : -1;
+    // All operator-symbol usage lines must fall within [reconcileStart, reconcileEnd].
+    const leakedLines = symbolLineNumbers.filter((n) => reconcileStart < 0 || n < reconcileStart || n > reconcileEnd);
+
+    // Also check: operator preference values never appear in runPipeline call or banner mutation.
+    const runPipelineMatch = route.match(/runPipeline\s*\([\s\S]{0,600}?\)/);
+    const runPipelineLeak = runPipelineMatch
+      ? operatorSymbols.some((s) => runPipelineMatch[0].includes(s))
+      : false;
+
+    check('F · generation isolated — pipeline no import, route reads only for reconciliation observation',
+      !pipelineRefs && leakedLines.length === 0 && !runPipelineLeak,
+      !pipelineRefs && leakedLines.length === 0 && !runPipelineLeak
+        ? `verified clean — pipeline no-import + ${symbolLineNumbers.length} read(s) all within reconciliation observation block`
+        : `pipelineRefs=${pipelineRefs} leakedLines=${leakedLines.length} runPipelineLeak=${runPipelineLeak}`);
   }
 
   // ── G. no external APIs ──────────────────────────────────────

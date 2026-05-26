@@ -48,6 +48,7 @@ import type { CampaignLifecycleLongitudinalView } from '@lib/campaignLifecycleLo
 import type { BranchActivationLongitudinalView } from '@lib/branchActivationLongitudinalView';
 import type { ProjectionCalibrationLongitudinalView } from '@lib/projectionCalibrationLongitudinalView';
 import type { OperatorConfidencePreferenceView } from '@lib/operatorConfidencePreferenceView';
+import type { OperatorCalibrationReconciliationLongitudinalView } from '@lib/operatorCalibrationReconciliationView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -117,6 +118,8 @@ function StudioInner() {
   const [projectionCalibration, setProjectionCalibration] = useState<ProjectionCalibrationLongitudinalView | null>(null);
   // Operator Confidence Preference (visual-overlay sliders) — same lifecycle.
   const [operatorConfidence, setOperatorConfidence] = useState<OperatorConfidencePreferenceView | null>(null);
+  // Operator Calibration Reconciliation (intuition-vs-evidence observatory) — same lifecycle.
+  const [operatorReconciliation, setOperatorReconciliation] = useState<OperatorCalibrationReconciliationLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -238,6 +241,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setOperatorConfidence(v as OperatorConfidencePreferenceView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/operator-calibration-reconciliation?operatorId=studio', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setOperatorReconciliation(v as OperatorCalibrationReconciliationLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -300,6 +307,10 @@ function StudioInner() {
     fetch('/api/operator-confidence-preference?operatorId=studio', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setOperatorConfidence(v as OperatorConfidencePreferenceView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/operator-calibration-reconciliation?operatorId=studio', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setOperatorReconciliation(v as OperatorCalibrationReconciliationLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -577,12 +588,15 @@ function StudioInner() {
                   onUpdate={(req) => { void updateConfidencePreference(req, setOperatorConfidence); }}
                 />
               )}
+              {operatorReconciliation && (
+                <OperatorCalibrationReconciliationPanel view={operatorReconciliation} />
+              )}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle || branchActivation || projectionCalibration || operatorConfidence) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle || branchActivation || projectionCalibration || operatorConfidence || operatorReconciliation) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
@@ -607,6 +621,9 @@ function StudioInner() {
                   projectionCalibration={projectionCalibration}
                   onUpdate={(req) => { void updateConfidencePreference(req, setOperatorConfidence); }}
                 />
+              )}
+              {operatorReconciliation && (
+                <OperatorCalibrationReconciliationPanel view={operatorReconciliation} />
               )}
             </div>
           )}
@@ -4460,6 +4477,300 @@ function OperatorConfidencePreferencePanel({
 
       <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
         {v.operatorId} · {v.totalUpdates} update(s)
+      </div>
+    </div>
+  );
+}
+
+// ─── operator calibration reconciliation panel ───────────────
+
+function OperatorCalibrationReconciliationPanel({
+  view: v,
+}: { view: OperatorCalibrationReconciliationLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && (!c || c.totalReconciliations === 0)) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">operator vs system · reconciliation observatory</div>
+        <div className="text-xs text-bone-200/65 italic break-words">{v.observationOnlyNotice}</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.trend === 'agreement-improving' ? 'text-bone-50/85' :
+    v.trend === 'agreement-degrading' ? 'text-signal-warning/85' :
+    v.trend === 'agreement-stable'    ? 'text-bone-200/85' :
+                                        'text-bone-200/65';
+
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const relationshipTone = (rel: string) =>
+    rel === 'aligned'                       ? 'text-bone-50 border-bone-50/40' :
+    rel === 'improving-alignment'           ? 'text-bone-50/85 border-bone-50/30' :
+    rel === 'historically-corrected'        ? 'text-bone-50/85 border-bone-50/30' :
+    rel === 'operator-more-optimistic'      ? 'text-bone-200/75 border-bone-200/30' :
+    rel === 'operator-more-skeptical'       ? 'text-bone-200/75 border-bone-200/30' :
+    rel === 'historically-overconfident'    ? 'text-signal-warning border-signal-warning/40' :
+    rel === 'historically-underconfident'   ? 'text-signal-warning border-signal-warning/40' :
+    rel === 'unstable-intuition'            ? 'text-signal-warning/85 border-signal-warning/30' :
+                                              'text-bone-200/65 border-bone-200/25';
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">operator vs system · reconciliation observatory</div>
+      <div className="text-xs text-bone-200/65 italic break-words">{v.observationOnlyNotice}</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+
+      {c && (
+        <>
+          <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+            <div>
+              <div className="eyebrow">OVERALL AGREEMENT</div>
+              <div className={`mt-0.5 ${heatTone(c.overallAgreement)}`}>{c.overallAgreement.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">OVERALL DIVERGENCE</div>
+              <div className={`mt-0.5 ${heatTone(c.overallDivergence, true)}`}>{c.overallDivergence.toFixed(1)}/10</div>
+            </div>
+          </div>
+
+          {c.reconciliations.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">PER-PROJECTION RECONCILIATION</div>
+              <ul className="space-y-2 text-[10px]">
+                {c.reconciliations.slice(0, 6).map((r) => (
+                  <li key={r.projectionType} className="leading-snug border-l hairline pl-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">
+                        {r.projectionType}
+                      </span>
+                      <span className={`px-1.5 py-0.5 text-[9px] tracking-widest uppercase border ${relationshipTone(r.relationshipType)} shrink-0`}>
+                        {r.relationshipType}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[9px] mt-0.5">
+                      <span className="text-bone-200/55">system</span>
+                      <span className={heatTone(r.systemConfidence)}>{r.systemConfidence.toFixed(1)}/10</span>
+                      <span className="text-bone-200/45">·</span>
+                      <span className="text-bone-200/55">operator</span>
+                      <span className={heatTone(r.operatorConfidence)}>{r.operatorConfidence.toFixed(1)}/10</span>
+                      <span className="text-bone-200/45">·</span>
+                      <span className="text-bone-200/55">agreement</span>
+                      <span className={heatTone(r.agreementLevel)}>{r.agreementLevel.toFixed(1)}/10</span>
+                    </div>
+                    {(r.operatorAccuracy.trustSensitivity > 0 ||
+                      r.operatorAccuracy.fatigueSensitivity > 0 ||
+                      r.operatorAccuracy.durabilitySensitivity > 0) && (
+                      <div className="flex items-center gap-2 text-[9px] mt-0.5">
+                        <span className="text-bone-200/55">intuition:</span>
+                        <span className={heatTone(r.operatorAccuracy.trustSensitivity)}>trust {r.operatorAccuracy.trustSensitivity.toFixed(1)}</span>
+                        <span className={heatTone(r.operatorAccuracy.fatigueSensitivity)}>fatigue {r.operatorAccuracy.fatigueSensitivity.toFixed(1)}</span>
+                        <span className={heatTone(r.operatorAccuracy.durabilitySensitivity)}>dur {r.operatorAccuracy.durabilitySensitivity.toFixed(1)}</span>
+                        <span className="text-bone-200/55">short {r.operatorAccuracy.shortTerm.toFixed(1)}</span>
+                        <span className="text-bone-200/55">long {r.operatorAccuracy.longTerm.toFixed(1)}</span>
+                      </div>
+                    )}
+                    {r.reconciliationAnnotations.length > 0 && (
+                      <ul className="mt-0.5 text-bone-200/65 text-[9px] space-y-0.5">
+                        {r.reconciliationAnnotations.slice(0, 3).map((ann, i) => (
+                          <li key={i} className="break-words italic">· {ann}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
+      )}
+
+      {v.highestAgreement.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">HIGHEST AGREEMENT</div>
+          <div className="flex flex-col gap-0.5">
+            {v.highestAgreement.slice(0, 4).map((r) => (
+              <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.agreement)}`}>
+                  {r.agreement.toFixed(1)}/10
+                </span>
+                <span className="w-[120px] text-right text-bone-200/55 text-[9px] uppercase tracking-widest">{r.relationship}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.chronicDisagreement.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">CHRONIC DISAGREEMENT</div>
+          <div className="flex flex-col gap-0.5">
+            {v.chronicDisagreement.slice(0, 4).map((r) => (
+              <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.agreement)}`}>
+                  {r.agreement.toFixed(1)}/10
+                </span>
+                <span className="w-[120px] text-right text-signal-warning/75 text-[9px] uppercase tracking-widest">{r.relationship}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(v.strongestIntuitionDomains.length > 0 || v.weakestIntuitionDomains.length > 0) && (
+        <div className="pt-2 grid grid-cols-2 gap-3">
+          {v.strongestIntuitionDomains.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">STRONGEST INTUITION</div>
+              <div className="flex flex-col gap-0.5">
+                {v.strongestIntuitionDomains.slice(0, 4).map((r) => (
+                  <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                    <span className="text-bone-50/75 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                    <span className="w-[44px] text-right text-bone-50/75">{r.compositeAccuracy.toFixed(1)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {v.weakestIntuitionDomains.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">WEAKEST INTUITION</div>
+              <div className="flex flex-col gap-0.5">
+                {v.weakestIntuitionDomains.slice(0, 4).map((r) => (
+                  <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                    <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                    <span className="w-[44px] text-right text-signal-warning/75">{r.compositeAccuracy.toFixed(1)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {v.improvingAlignmentTypes.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">IMPROVING ALIGNMENT</div>
+          <ul className="text-[10px] text-bone-50/80 leading-snug space-y-0.5">
+            {v.improvingAlignmentTypes.slice(0, 3).map((r) => (
+              <li key={r.projectionType} className="break-words">
+                · <span className="uppercase tracking-wider">{r.projectionType}</span>
+                {' '}<span className="text-bone-200/55">×{r.count}/{r.totalSnapshots} snapshots</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {(v.overtrustPatterns.length > 0 || v.undertrustPatterns.length > 0) && (
+        <div className="pt-2 grid grid-cols-2 gap-3">
+          {v.overtrustPatterns.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">CHRONIC OVERTRUST</div>
+              <ul className="text-[10px] text-signal-warning/80 leading-snug space-y-0.5">
+                {v.overtrustPatterns.slice(0, 3).map((r) => (
+                  <li key={r.projectionType} className="break-words">
+                    · <span className="uppercase tracking-wider">{r.projectionType}</span>
+                    {' '}<span className="text-bone-200/55">×{r.count}/{r.totalSnapshots}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {v.undertrustPatterns.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">CHRONIC UNDERTRUST</div>
+              <ul className="text-[10px] text-signal-warning/75 leading-snug space-y-0.5">
+                {v.undertrustPatterns.slice(0, 3).map((r) => (
+                  <li key={r.projectionType} className="break-words">
+                    · <span className="uppercase tracking-wider">{r.projectionType}</span>
+                    {' '}<span className="text-bone-200/55">×{r.count}/{r.totalSnapshots}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      {v.unstableIntuitionTypes.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">UNSTABLE INTUITION</div>
+          <ul className="text-[10px] text-signal-warning/75 leading-snug space-y-0.5">
+            {v.unstableIntuitionTypes.slice(0, 3).map((r) => (
+              <li key={r.projectionType} className="break-words">
+                · <span className="uppercase tracking-wider">{r.projectionType}</span>
+                {' '}<span className="text-bone-200/55">×{r.count}/{r.totalSnapshots}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {v.divergenceHeatmap.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">DIVERGENCE HEATMAP (recent deltas, op-system)</div>
+          <div className="flex flex-col gap-0.5">
+            {v.divergenceHeatmap.slice(0, 5).map((row) => (
+              <div key={row.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 w-[140px] shrink-0 uppercase tracking-wider truncate">{row.projectionType}</span>
+                <span className="flex-grow flex items-center gap-0.5">
+                  {row.trajectory.map((d, i) => {
+                    const intensity = Math.min(1, Math.abs(d) / 5);
+                    const positive = d > 0;
+                    const bg = d === 0 ? 'rgba(247,245,242,0.15)'
+                            : positive ? `rgba(201,162,75,${0.2 + intensity * 0.6})`
+                                      : `rgba(138,169,138,${0.2 + intensity * 0.6})`;
+                    return (
+                      <span key={i} className="inline-block w-[8px] h-[8px]"
+                        style={{ background: bg }}
+                        title={`Δ ${d.toFixed(1)}`}
+                      />
+                    );
+                  })}
+                </span>
+                <span className={`w-[40px] text-right ${heatTone(row.averageAbsDelta, true)}`}>
+                  Δ {row.averageAbsDelta.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.operatorEvolution.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">OPERATOR EVOLUTION</div>
+          <div className="flex flex-col gap-0.5">
+            {v.operatorEvolution.slice(0, 4).map((op) => (
+              <div key={op.operatorId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{op.operatorId}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{op.totalSnapshots}</span>
+                <span className={`w-[100px] text-right uppercase tracking-widest text-[9px] ${
+                  op.recentAlignmentTrend === 'improving' ? 'text-bone-50/85' :
+                  op.recentAlignmentTrend === 'degrading' ? 'text-signal-warning/85' :
+                  'text-bone-200/55'}`}>
+                  {op.recentAlignmentTrend}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        {v.operatorId} · {v.totalSnapshots} snapshot(s)
       </div>
     </div>
   );

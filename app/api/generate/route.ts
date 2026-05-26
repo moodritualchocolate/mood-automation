@@ -72,6 +72,15 @@ import { computeProjectionCalibration } from '@lib/projectionCalibrationEngine';
 import {
   recordCalibrationSnapshot, createProjectionCalibrationMemoryStore,
 } from '@lib/projectionCalibrationMemory';
+import {
+  createOperatorConfidencePreferenceMemoryStore,
+  getAllPreferencesForOperator,
+} from '@lib/operatorConfidencePreferenceMemory';
+import { computeOperatorCalibrationReconciliation } from '@lib/operatorCalibrationReconciliation';
+import {
+  recordReconciliationSnapshot,
+  createOperatorCalibrationReconciliationMemoryStore,
+} from '@lib/operatorCalibrationReconciliationMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -706,6 +715,56 @@ export async function POST(req: NextRequest) {
                             overallAccuracy: report.overallAccuracy,
                             perTypeAccuracy,
                           });
+
+                          // ─── Operator Calibration Reconciliation ────
+                          // After a fresh calibration report exists,
+                          // compare it to the operator's current
+                          // confidence sliders for every operator with
+                          // recorded preferences. Persist one snapshot
+                          // per operator so the longitudinal view can
+                          // trace divergence/convergence. STRICTLY
+                          // observation only — never modifies operator
+                          // sliders or system calibration.
+                          try {
+                            const opPrefMem = await createOperatorConfidencePreferenceMemoryStore()
+                              .read().catch(() => null);
+                            const reconcileMemBefore = await createOperatorCalibrationReconciliationMemoryStore()
+                              .read().catch(() => null);
+                            const operators = opPrefMem
+                              ? Object.keys(opPrefMem.operatorUpdateCounts)
+                              : [];
+                            for (const operatorId of operators) {
+                              const prefs = getAllPreferencesForOperator(opPrefMem!, operatorId);
+                              if (prefs.length === 0) continue;
+                              const reconciliation = computeOperatorCalibrationReconciliation({
+                                operatorId,
+                                calibrationReport: report,
+                                operatorPreferences: prefs,
+                                reconciliationMemory: reconcileMemBefore,
+                              });
+                              if (reconciliation.totalReconciliations === 0) continue;
+                              const perTypeSummary: Record<string, {
+                                system: number; operator: number;
+                                agreement: number; relationship: string;
+                              }> = {};
+                              for (const r of reconciliation.reconciliations) {
+                                perTypeSummary[r.projectionType] = {
+                                  system: r.systemConfidence,
+                                  operator: r.operatorConfidence,
+                                  agreement: r.agreementLevel,
+                                  relationship: r.relationshipType,
+                                };
+                              }
+                              await recordReconciliationSnapshot({
+                                at: banner.createdAt,
+                                bannerId: banner.id,
+                                operatorId,
+                                perTypeSummary,
+                              });
+                            }
+                          } catch {
+                            // non-fatal — reconciliation snapshot never blocks generation
+                          }
                         }
                       } catch {
                         // non-fatal — calibration snapshot never blocks generation
