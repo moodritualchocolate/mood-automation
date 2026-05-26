@@ -195,28 +195,32 @@ async function main(): Promise<void> {
   }
 
   // ── K · no cognition mutation ───────────────────────────────
-  // The runner may POST only to /api/generate. Direct fs.writeFile
-  // into data/memory would mutate memory bypassing the FIFO contract.
+  // The runner may POST only to /api/generate (cognition entry point)
+  // and /api/pre-generation-stability (READ-ONLY advisory probe — the
+  // endpoint accepts a body but never mutates state). Direct
+  // fs.writeFile into data/memory would mutate memory bypassing the
+  // FIFO contract.
   {
+    const POST_WHITELIST = ['/api/generate', '/api/pre-generation-stability'];
     const postPattern = /method:\s*['"]POST['"]/g;
     const posts = src.match(postPattern) ?? [];
-    // Allow POST count >= 1 only if all such fetches target /api/generate.
-    // Pull every fetch(...) URL block and check.
     const fetchCalls = src.match(/fetch\([^)]*\)/g) ?? [];
-    const nonGeneratePosts = fetchCalls.filter((f) =>
-      /method:\s*['"]POST['"]/.test(src.slice(src.indexOf(f), src.indexOf(f) + 800))
-      && !/`\$\{base\}\/api\/generate`|['"]\/api\/generate/.test(f),
-    );
-    // Check fs.writeFile targets — must not write into data/memory.
+    const nonWhitelistedPosts = fetchCalls.filter((f) => {
+      const block = src.slice(src.indexOf(f), src.indexOf(f) + 800);
+      if (!/method:\s*['"]POST['"]/.test(block)) return false;
+      return !POST_WHITELIST.some((route) =>
+        new RegExp(`\\\`\\$\\{base\\}${route}\\\`|['"]${route}`).test(f),
+      );
+    });
     const writeFileBlock = src.match(/fs\.writeFile\([^)]*\)/g) ?? [];
     const memoryWrites = writeFileBlock.filter((w) => /data\/memory/.test(w));
 
-    const passed = nonGeneratePosts.length === 0 && memoryWrites.length === 0;
+    const passed = nonWhitelistedPosts.length === 0 && memoryWrites.length === 0;
     record(
       'K',
-      'no cognition mutation (POST only /api/generate; no data/memory writes)',
+      `no cognition mutation (POST only [${POST_WHITELIST.join(', ')}]; no data/memory writes)`,
       passed,
-      `posts:${posts.length} non-generate-posts:${nonGeneratePosts.length} memory-writes:${memoryWrites.length}`,
+      `posts:${posts.length} non-whitelisted:${nonWhitelistedPosts.length} memory-writes:${memoryWrites.length}`,
     );
   }
 

@@ -50,6 +50,8 @@ import type { ProjectionCalibrationLongitudinalView } from '@lib/projectionCalib
 import type { OperatorConfidencePreferenceView } from '@lib/operatorConfidencePreferenceView';
 import type { OperatorCalibrationReconciliationLongitudinalView } from '@lib/operatorCalibrationReconciliationView';
 import type { SystemIntegrityReport } from '@lib/systemIntegrityReport';
+import type { ProductionConservativeMode } from '@lib/productionConservativeMode';
+import type { PreGenerationStabilizer } from '@lib/preGenerationStabilizer';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -123,6 +125,12 @@ function StudioInner() {
   const [operatorReconciliation, setOperatorReconciliation] = useState<OperatorCalibrationReconciliationLongitudinalView | null>(null);
   // System Integrity (stability + safety probe) — same lifecycle.
   const [systemIntegrity, setSystemIntegrity] = useState<SystemIntegrityReport | null>(null);
+  // Pre-generation stability (advisory only; never auto-applies).
+  const [preGenStability, setPreGenStability] = useState<{
+    productionConservativeMode: ProductionConservativeMode;
+    preGenerationStabilizer: PreGenerationStabilizer;
+    envelopePresent: boolean;
+  } | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -337,6 +345,22 @@ function StudioInner() {
     router.replace(`/studio?${params.toString()}`, { scroll: false });
   }, [formula, mode, brutality, router]);
 
+  // Pre-generation stability check (advisory only — never gates Generate).
+  // Re-fetches whenever the selection changes so the panel reflects the
+  // CURRENT requested combination before the operator clicks Generate.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/pre-generation-stability', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ formula, campaignMode: mode, brutality: BRUTALITY_VALUES[brutality] }),
+    })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setPreGenStability(v); })
+      .catch(() => { /* non-fatal */ });
+    return () => { cancelled = true; };
+  }, [formula, mode, brutality]);
+
   function triggerRun() {
     setRunCounter((n) => n + 1);
   }
@@ -427,6 +451,16 @@ function StudioInner() {
             <div className="mt-1 text-lg tracking-widest font-medium">{formula}</div>
             {mode && <div className="mt-1 text-xs text-bone-200/60">{mode.toUpperCase()} MODE</div>}
           </div>
+
+          {preGenStability && (
+            <>
+              <ProductionConservativeModePanel
+                conservative={preGenStability.productionConservativeMode}
+                envelopePresent={preGenStability.envelopePresent}
+              />
+              <PreGenerationStabilizerPanel stab={preGenStability.preGenerationStabilizer} />
+            </>
+          )}
 
           {banner && (
             <div className="space-y-4 text-sm">
@@ -4954,6 +4988,137 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Production Conservative Mode Panel ──────────────────────────────
+// Pre-flight checklist showing the requested combination's safety tier,
+// production/testing allowance, recommended action, fallback suggestion,
+// instability reasons, and guardrails. ADVISORY ONLY — no auto-apply.
+function ProductionConservativeModePanel({
+  conservative, envelopePresent,
+}: { conservative: ProductionConservativeMode; envelopePresent: boolean }) {
+  const tier = conservative.safetyTier;
+  const tierColor =
+    tier === 'safe' ? 'text-green-300' :
+    tier === 'warning' ? 'text-amber-300' :
+    tier === 'forbidden' ? 'text-red-400' :
+    'text-bone-200/60';
+  const req = conservative.requestedCombination;
+  return (
+    <div className="border hairline p-4 space-y-3">
+      <div className="eyebrow">pre-flight · production conservative mode</div>
+      <div className="text-[10px] text-bone-200/50">
+        {conservative.advisoryNotice}
+      </div>
+      {!envelopePresent && (
+        <div className="text-[11px] text-amber-300/80 border hairline px-2 py-1">
+          envelope not present — run the matrix + envelope builder first
+        </div>
+      )}
+      <div className="space-y-1 text-sm">
+        <Field label="REQUESTED" value={`${req.formula} / ${req.campaignMode ?? 'AUTO'} / b=${req.brutality}`} />
+        <div className="flex items-baseline gap-2">
+          <span className="eyebrow">safety tier</span>
+          <span className={`text-base font-semibold tracking-widest ${tierColor}`}>
+            {tier.toUpperCase()}
+          </span>
+        </div>
+        <Field label="READINESS" value={`${conservative.productionReadinessScore}/10`} />
+        <Field label="PRODUCTION" value={conservative.allowedForProduction ? 'allowed' : 'NOT allowed'} />
+        <Field label="TESTING" value={conservative.allowedForTesting ? 'allowed' : 'NOT allowed'} />
+        <Field label="ACTION" value={conservative.recommendedAction} />
+      </div>
+      {conservative.safeFallback && (
+        <div className="border-t hairline pt-2 space-y-1 text-xs">
+          <div className="eyebrow">suggested fallback (NOT applied)</div>
+          <div>
+            {conservative.safeFallback.formula} / {conservative.safeFallback.campaignMode ?? 'AUTO'} / b={conservative.safeFallback.brutality}
+          </div>
+          <div className="text-bone-200/60">{conservative.safeFallback.reason}</div>
+        </div>
+      )}
+      {conservative.instabilityReasons.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">instability reasons</div>
+          <ul className="space-y-1 text-bone-200/70">
+            {conservative.instabilityReasons.slice(0, 5).map((r, i) => (
+              <li key={i}>· {r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <div className="border-t hairline pt-2 text-[11px] text-bone-200/60">
+        <div className="eyebrow mb-1">guardrails</div>
+        <div>max brutality: {conservative.guardrails.maxRecommendedBrutality}</div>
+        <div>latency ceiling: {conservative.guardrails.latencyCeilingMs}ms</div>
+        <div>refusal tolerance: {conservative.guardrails.refusalTolerance}</div>
+        {conservative.guardrails.preferredModes.length > 0 && (
+          <div>preferred modes: {conservative.guardrails.preferredModes.slice(0, 4).join(', ')}</div>
+        )}
+        {conservative.guardrails.avoidedModes.length > 0 && (
+          <div>avoid modes: {conservative.guardrails.avoidedModes.slice(0, 4).join(', ')}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Pre-Generation Stabilizer Panel ────────────────────────────────
+// Shows the system pressure map + plain-English stabilization status +
+// non-applied operator suggestions. ADVISORY ONLY — never blocks Generate.
+function PreGenerationStabilizerPanel({ stab }: { stab: PreGenerationStabilizer }) {
+  const status = stab.stabilizationStatus;
+  const statusColor =
+    status === 'stable' ? 'text-green-300' :
+    status === 'caution' ? 'text-amber-200' :
+    status === 'testing-only' ? 'text-amber-300' :
+    status === 'unstable' ? 'text-orange-400' :
+    'text-red-400';
+  const pressureAxes: Array<[string, number]> = Object.entries(stab.pressureMap);
+  return (
+    <div className="border hairline p-4 space-y-3">
+      <div className="eyebrow">pre-flight · pre-generation stabilizer</div>
+      <div className="text-[10px] text-bone-200/50">{stab.advisoryNotice}</div>
+      <div className="flex items-baseline gap-2">
+        <span className="eyebrow">status</span>
+        <span className={`text-base font-semibold tracking-widest ${statusColor}`}>
+          {status.toUpperCase()}
+        </span>
+      </div>
+      <Field label="SCORE" value={`${stab.stabilizationScore}/10`} />
+      <Field label="TESTING" value={stab.shouldGenerateInTesting ? 'OK' : 'BLOCKED'} />
+      <Field label="PRODUCTION" value={stab.shouldGenerateInProduction ? 'OK' : 'BLOCKED'} />
+      <Field label="DECISION" value={stab.recommendedHumanDecision} />
+      <div className="border-t hairline pt-2 space-y-1 text-xs">
+        <div className="eyebrow mb-1">pressure map (0..10)</div>
+        {pressureAxes.map(([k, v]) => (
+          <div key={k} className="flex justify-between">
+            <span className="text-bone-200/70">{k.replace('Pressure', '')}</span>
+            <span className={v >= 7 ? 'text-red-400' : v >= 4 ? 'text-amber-300' : 'text-bone-200/80'}>
+              {v}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="border-t hairline pt-2 text-xs text-bone-200/80">
+        {stab.plainEnglishReason}
+      </div>
+      {stab.nonAppliedSuggestions.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">operator suggestions (NOT applied)</div>
+          <ul className="space-y-2 text-bone-200/70">
+            {stab.nonAppliedSuggestions.map((s, i) => (
+              <li key={i}>
+                <div className="font-medium text-bone-200/90">{s.suggestion}</div>
+                <div className="text-bone-200/60">{s.reason}</div>
+                <div className="text-bone-200/50 text-[10px]">would affect: {s.wouldAffect}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

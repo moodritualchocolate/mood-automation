@@ -334,6 +334,39 @@ async function getJson<T>(
   }
 }
 
+/** Read-only advisory probe — recorded per cell, never used to gate. */
+interface AdvisoryProbeResult {
+  ok: boolean;
+  safetyTier: string | null;
+  stabilizationStatus: string | null;
+  fallbackSuggested: boolean;
+}
+async function probePreGenAdvisory(
+  base: string, formula: string, canonicalMode: string | null, brutality: number,
+): Promise<AdvisoryProbeResult> {
+  try {
+    const res = await fetch(`${base}/api/pre-generation-stability`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ formula, campaignMode: canonicalMode, brutality }),
+    });
+    if (!res.ok) return { ok: false, safetyTier: null, stabilizationStatus: null, fallbackSuggested: false };
+    const data = await res.json() as {
+      productionConservativeMode?: { safetyTier?: string; safeFallback?: unknown };
+      preGenerationStabilizer?: { stabilizationStatus?: string };
+    };
+    return {
+      ok: true,
+      safetyTier: data.productionConservativeMode?.safetyTier ?? null,
+      stabilizationStatus: data.preGenerationStabilizer?.stabilizationStatus ?? null,
+      fallbackSuggested: data.productionConservativeMode?.safeFallback !== null
+        && data.productionConservativeMode?.safeFallback !== undefined,
+    };
+  } catch {
+    return { ok: false, safetyTier: null, stabilizationStatus: null, fallbackSuggested: false };
+  }
+}
+
 // ─── memory probing ───────────────────────────────────────────
 
 interface MemorySnapshot { files: Record<string, number>; }
@@ -501,6 +534,18 @@ export interface FullHardeningMatrixReport {
   deterministicConsistencyScore: number;
   deterministicConsistencyDetails: string[];
 
+  /** Advisory-only readout from /api/pre-generation-stability — recorded
+   *  per matrix cell, never used to gate execution. The runner ignores
+   *  this signal for control flow. */
+  preGenerationAdvisory: {
+    preGenerationStatusDistribution: Record<string, number>;
+    productionTierDistribution: Record<string, number>;
+    fallbackSuggestedCount: number;
+    testingOnlyCount: number;
+    blockedForProductionCount: number;
+    advisoryEndpointUnreachable: boolean;
+  };
+
   stoppedEarly: boolean;
   stoppedReason: string | null;
   warnings: string[];
@@ -619,6 +664,7 @@ async function main(): Promise<void> {
   console.log(`PHASE 2: executing ${cells.length * flags.repeat} runs across ${cells.length} matrix cells`);
   const outcomes: CellOutcome[] = [];
   const crashMatrix: FailureDetail[] = [];
+  const advisoryProbes: AdvisoryProbeResult[] = [];
   let stoppedEarly = false;
   let stoppedReason: string | null = null;
   let fifoTriggerCell: { formula: string; mode: string; brutality: number } | null = null;
@@ -630,6 +676,12 @@ async function main(): Promise<void> {
       const tag =
         `[${String(i).padStart(3, '0')}.${r}] ` +
         `${cell.formula}/${cell.modeLabel}/b=${cell.brutality}`;
+      // Read-only advisory probe BEFORE generation. Result is recorded
+      // and ignored for control flow.
+      const advisory = await probePreGenAdvisory(
+        flags.baseUrl, cell.formula, cell.canonicalMode, cell.brutality,
+      );
+      advisoryProbes.push(advisory);
       process.stdout.write(`  ${tag} ... `);
       const { status, out } = await runGenerate(
         flags.baseUrl, cell.formula, cell.canonicalMode, cell.brutality, flags.timeoutMs,
@@ -919,6 +971,34 @@ async function main(): Promise<void> {
     brutalityStressRanking,
     deterministicConsistencyScore,
     deterministicConsistencyDetails,
+    preGenerationAdvisory: (() => {
+      const statusDist: Record<string, number> = {};
+      const tierDist: Record<string, number> = {};
+      let fallbackSuggestedCount = 0;
+      let testingOnlyCount = 0;
+      let blockedForProductionCount = 0;
+      let endpointUnreachable = false;
+      for (const a of advisoryProbes) {
+        if (!a.ok) { endpointUnreachable = true; continue; }
+        if (a.stabilizationStatus) {
+          statusDist[a.stabilizationStatus] = (statusDist[a.stabilizationStatus] ?? 0) + 1;
+        }
+        if (a.safetyTier) {
+          tierDist[a.safetyTier] = (tierDist[a.safetyTier] ?? 0) + 1;
+        }
+        if (a.fallbackSuggested) fallbackSuggestedCount += 1;
+        if (a.stabilizationStatus === 'testing-only') testingOnlyCount += 1;
+        if (a.stabilizationStatus === 'blocked-for-production') blockedForProductionCount += 1;
+      }
+      return {
+        preGenerationStatusDistribution: statusDist,
+        productionTierDistribution: tierDist,
+        fallbackSuggestedCount,
+        testingOnlyCount,
+        blockedForProductionCount,
+        advisoryEndpointUnreachable: endpointUnreachable,
+      };
+    })(),
     stoppedEarly,
     stoppedReason,
     warnings,
