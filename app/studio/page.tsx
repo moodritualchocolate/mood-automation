@@ -47,6 +47,7 @@ import type { CounterfactualCognitionLongitudinalView } from '@lib/counterfactua
 import type { CampaignLifecycleLongitudinalView } from '@lib/campaignLifecycleLongitudinalView';
 import type { BranchActivationLongitudinalView } from '@lib/branchActivationLongitudinalView';
 import type { ProjectionCalibrationLongitudinalView } from '@lib/projectionCalibrationLongitudinalView';
+import type { OperatorConfidencePreferenceView } from '@lib/operatorConfidencePreferenceView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -114,6 +115,8 @@ function StudioInner() {
   const [branchActivation, setBranchActivation] = useState<BranchActivationLongitudinalView | null>(null);
   // Projection Calibration (annotation-only observatory) — same lifecycle.
   const [projectionCalibration, setProjectionCalibration] = useState<ProjectionCalibrationLongitudinalView | null>(null);
+  // Operator Confidence Preference (visual-overlay sliders) — same lifecycle.
+  const [operatorConfidence, setOperatorConfidence] = useState<OperatorConfidencePreferenceView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -231,6 +234,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setProjectionCalibration(v as ProjectionCalibrationLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/operator-confidence-preference?operatorId=studio', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setOperatorConfidence(v as OperatorConfidencePreferenceView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -289,6 +296,10 @@ function StudioInner() {
     fetch('/api/projection-calibration', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setProjectionCalibration(v as ProjectionCalibrationLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/operator-confidence-preference?operatorId=studio', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setOperatorConfidence(v as OperatorConfidencePreferenceView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -559,12 +570,19 @@ function StudioInner() {
               )}
               {branchActivation && <BranchActivationPanel view={branchActivation} />}
               {projectionCalibration && <ProjectionCalibrationPanel view={projectionCalibration} />}
+              {operatorConfidence && (
+                <OperatorConfidencePreferencePanel
+                  view={operatorConfidence}
+                  projectionCalibration={projectionCalibration}
+                  onUpdate={(req) => { void updateConfidencePreference(req, setOperatorConfidence); }}
+                />
+              )}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle || branchActivation || projectionCalibration) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle || branchActivation || projectionCalibration || operatorConfidence) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
@@ -583,6 +601,13 @@ function StudioInner() {
               )}
               {branchActivation && <BranchActivationPanel view={branchActivation} />}
               {projectionCalibration && <ProjectionCalibrationPanel view={projectionCalibration} />}
+              {operatorConfidence && (
+                <OperatorConfidencePreferencePanel
+                  view={operatorConfidence}
+                  projectionCalibration={projectionCalibration}
+                  onUpdate={(req) => { void updateConfidencePreference(req, setOperatorConfidence); }}
+                />
+              )}
             </div>
           )}
 
@@ -4250,6 +4275,191 @@ function ProjectionCalibrationPanel({
 
       <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
         snapshots {v.totalSnapshots} · projection types tracked {c?.calibrations.length ?? 0}
+      </div>
+    </div>
+  );
+}
+
+// ─── operator confidence preference panel ────────────────────
+
+interface ConfidencePreferenceUpdateRequest {
+  operatorId: string;
+  projectionType: string;
+  confidenceWeight: number;
+  reasonNote?: string;
+}
+
+async function updateConfidencePreference(
+  req: ConfidencePreferenceUpdateRequest,
+  setOperatorConfidence: (v: OperatorConfidencePreferenceView | null) => void,
+): Promise<void> {
+  try {
+    const res = await fetch('/api/operator-confidence-preference', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(req),
+    });
+    if (!res.ok) return;
+    const refresh = await fetch(
+      `/api/operator-confidence-preference?operatorId=${encodeURIComponent(req.operatorId)}`,
+      { cache: 'no-store' },
+    );
+    if (refresh.ok) {
+      const v = await refresh.json();
+      if (v) setOperatorConfidence(v as OperatorConfidencePreferenceView);
+    }
+  } catch {
+    /* non-fatal — slider write never blocks UI */
+  }
+}
+
+function OperatorConfidencePreferencePanel({
+  view: v,
+  projectionCalibration,
+  onUpdate,
+}: {
+  view: OperatorConfidencePreferenceView;
+  projectionCalibration: ProjectionCalibrationLongitudinalView | null;
+  onUpdate?: (req: ConfidencePreferenceUpdateRequest) => void;
+}) {
+  const labelTone = (label: string) =>
+    label === 'high'        ? 'text-bone-50/85' :
+    label === 'medium-high' ? 'text-bone-50/75' :
+    label === 'medium'      ? 'text-bone-200/75' :
+    label === 'low'         ? 'text-signal-warning/85' :
+                              'text-signal-warning';
+
+  // Lookup calibration row for a given projection type to render
+  // the side-by-side raw + calibration + operator-weight block.
+  const calibrationByType = new Map<string, {
+    historicalAccuracy: number;
+    overestimationBias: number;
+    underestimationBias: number;
+    annotations: string[];
+  }>();
+  if (projectionCalibration?.current?.calibrations) {
+    for (const c of projectionCalibration.current.calibrations) {
+      calibrationByType.set(c.projectionType, {
+        historicalAccuracy: c.historicalAccuracy,
+        overestimationBias: c.overestimationBias,
+        underestimationBias: c.underestimationBias,
+        annotations: c.calibrationAnnotations,
+      });
+    }
+  }
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">operator confidence preference · interpretation overlay</div>
+      <div className="text-xs text-bone-200/65 italic break-words">{v.visualOnlyNotice}</div>
+      <div className="text-[10px] text-bone-200/55">{v.statement}</div>
+
+      <div className="pt-2 space-y-3">
+        {v.preferences.map((p) => {
+          const cal = calibrationByType.get(p.projectionType);
+          return (
+            <div key={p.projectionType} className="border-l hairline pl-2 space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate text-[11px]">
+                  {p.projectionType}
+                </span>
+                <span className={`text-[10px] tabular-nums ${labelTone(p.confidenceLabel)}`}>
+                  {p.confidenceWeight}%
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={5}
+                  defaultValue={p.confidenceWeight}
+                  onMouseUp={(e) => {
+                    const val = parseInt((e.target as HTMLInputElement).value, 10);
+                    if (!Number.isFinite(val)) return;
+                    if (val === p.confidenceWeight) return;
+                    onUpdate?.({
+                      operatorId: p.operatorId,
+                      projectionType: p.projectionType,
+                      confidenceWeight: val,
+                    });
+                  }}
+                  className="flex-grow accent-bone-50"
+                  aria-label={`${p.projectionType} confidence weight`}
+                />
+                <span className={`w-[100px] text-right text-[9px] uppercase tracking-widest ${labelTone(p.confidenceLabel)}`}>
+                  {p.confidenceLabel}
+                </span>
+              </div>
+
+              <div className="text-[9px] text-bone-200/55 italic break-words">
+                {p.interpretation}
+              </div>
+
+              {cal && (
+                <div className="text-[9px] text-bone-200/45 leading-snug space-y-0.5">
+                  <div>
+                    calibration: historical accuracy {cal.historicalAccuracy.toFixed(1)}/10
+                    {cal.overestimationBias >= 3 ? ` · overestimation bias +${cal.overestimationBias.toFixed(1)}` : ''}
+                    {cal.underestimationBias >= 3 ? ` · underestimation bias -${cal.underestimationBias.toFixed(1)}` : ''}
+                  </div>
+                  {cal.annotations.length > 0 && (
+                    <div className="break-words">
+                      annotation: {cal.annotations[0]}
+                    </div>
+                  )}
+                </div>
+              )}
+              {!cal && (
+                <div className="text-[9px] text-bone-200/45 italic">
+                  calibration: no resolved activations of this projection type yet
+                </div>
+              )}
+
+              {p.reasonNote && (
+                <div className="text-[9px] text-bone-200/55 break-words">
+                  reason note: {p.reasonNote}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {v.recentHistory.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">RECENT PREFERENCE UPDATES</div>
+          <ul className="text-[10px] leading-snug space-y-0.5">
+            {v.recentHistory.slice(0, 6).map((h, i) => (
+              <li key={i} className="break-words text-bone-200/65">
+                · <span className="uppercase tracking-wider">{h.projectionType}</span>
+                {' '}<span className="text-bone-50/75">{h.confidenceWeight}%</span>
+                {' '}<span className="text-bone-200/45">by {h.operatorId}</span>
+                {h.reasonNote && <span className="text-bone-200/55"> · {h.reasonNote}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {v.operatorSummaries.length > 1 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">OPERATOR SUMMARIES</div>
+          <div className="flex flex-col gap-0.5">
+            {v.operatorSummaries.slice(0, 4).map((op) => (
+              <div key={op.operatorId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{op.operatorId}</span>
+                <span className="w-[50px] text-right text-bone-50/75">avg {op.averageWeight.toFixed(1)}</span>
+                <span className="w-[40px] text-right text-bone-200/55">×{op.totalUpdates}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        {v.operatorId} · {v.totalUpdates} update(s)
       </div>
     </div>
   );
