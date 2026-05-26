@@ -12,10 +12,16 @@
 import { z } from 'zod';
 
 // ───────────────────────────────────────────────────────────
-// FORMULAS — V1 ships ENERGY only. Architecture supports more.
+// FORMULAS — four independent operational contexts.
 // ───────────────────────────────────────────────────────────
+//
+// Each formula tags every observation record so longitudinal views
+// can be filtered per-formula. Pipeline-internal engines that
+// require formula-specific tuning (currently only
+// src/engines/imperfection) gracefully degrade to default
+// directives for any formula they haven't been tuned for.
 
-export const FORMULAS = ['ENERGY'] as const;
+export const FORMULAS = ['ENERGY', 'FOCUS', 'RELAX', 'SLEEP'] as const;
 export type Formula = (typeof FORMULAS)[number];
 
 export const CAMPAIGN_MODES = [

@@ -43,6 +43,11 @@ export interface NegativeSpaceReading {
 
 const FORMULA_BEHAVIOR: Record<Formula, NegativeSpaceReading['prescribed_behavior']> = {
   ENERGY: 'compressed-pressure',
+  // Non-ENERGY formulas use mood-appropriate defaults so the
+  // engine handles them without falling back to a generic value.
+  FOCUS:  'structured-isolation',
+  RELAX:  'breathable-silence',
+  SLEEP:  'drifting-emptiness',
 };
 
 export interface NegativeSpaceInput {

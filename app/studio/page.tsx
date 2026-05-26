@@ -694,18 +694,11 @@ function ControlBar({
                 className={`px-3 py-1.5 border hairline text-[11px] tracking-widest font-medium transition-colors ${
                   formula === f ? 'bg-bone-50 text-ink-900' : 'text-bone-50 hover:bg-white/5'
                 }`}
+                title={f === 'ENERGY'
+                  ? 'ENERGY — fully tuned formula'
+                  : `${f} — operational context (pipeline gracefully degrades imperfection directives to defaults)`}
               >
                 {f}
-              </button>
-            ))}
-            {['CALM', 'FOCUS', 'SLEEP'].map((dim) => (
-              <button
-                key={dim}
-                disabled
-                className="px-3 py-1.5 border hairline text-[11px] tracking-widest font-medium opacity-25 cursor-not-allowed"
-                title="reserved — not in V1"
-              >
-                {dim}
               </button>
             ))}
           </div>
