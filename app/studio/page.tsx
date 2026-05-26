@@ -57,6 +57,9 @@ import type { CreativeDriftLongitudinalView } from '@lib/creativeDriftLongitudin
 import type { CreativeFatigue } from '@lib/creativeFatigueEngine';
 import type { MutationPlan } from '@lib/generationMutationPlanner';
 import type { RefusalNarrativeOutput } from '@lib/refusalNarrativeEngine';
+import type { AdaptationOrchestration } from '@lib/adaptationOrchestrator';
+import type { SystemEnergyModel } from '@lib/systemEnergyModel';
+import type { AdaptiveCadence } from '@lib/adaptiveCadenceEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -147,6 +150,8 @@ function StudioInner() {
   const [refusalNarrative, setRefusalNarrative] = useState<RefusalNarrativeOutput | null>(null);
   const [visualDNA, setVisualDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageRealism: number; averagePolish: number } | null>(null);
   const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
+  // Adaptation orchestrator — coordinated priority + energy + cadence.
+  const [orchestration, setOrchestration] = useState<{ orchestration: AdaptationOrchestration; energy: SystemEnergyModel; cadence: AdaptiveCadence } | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -300,6 +305,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setNarrativeDNA(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/adaptation-orchestrator', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setOrchestration(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -394,6 +403,10 @@ function StudioInner() {
     fetch('/api/narrative-dna', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setNarrativeDNA(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/adaptation-orchestrator', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setOrchestration(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -515,6 +528,14 @@ function StudioInner() {
             <div className="mt-1 text-lg tracking-widest font-medium">{formula}</div>
             {mode && <div className="mt-1 text-xs text-bone-200/60">{mode.toUpperCase()} MODE</div>}
           </div>
+
+          {orchestration && (
+            <>
+              <AdaptationOrchestratorPanel o={orchestration.orchestration} />
+              <SystemEnergyPanel e={orchestration.energy} />
+              <AdaptiveCadencePanel c={orchestration.cadence} />
+            </>
+          )}
 
           {preGenStability && (
             <>
@@ -5063,6 +5084,139 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Adaptation Orchestrator Panel ─────────────────────────────────
+// Coordinated priority + conflict resolution + system state.
+function AdaptationOrchestratorPanel({ o }: { o: AdaptationOrchestration }) {
+  const stateColor =
+    o.systemState === 'stable' ? 'text-green-300' :
+    o.systemState === 'protecting' ? 'text-amber-200' :
+    o.systemState === 'mutating' ? 'text-blue-300' :
+    o.systemState === 'recovering' ? 'text-amber-300' :
+    'text-red-400';
+  const escColor =
+    o.escalationLevel === 'low' ? 'text-bone-200/70' :
+    o.escalationLevel === 'medium' ? 'text-amber-300' :
+    o.escalationLevel === 'high' ? 'text-orange-400' :
+    'text-red-400';
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">adaptation orchestrator</div>
+      <div className="text-[10px] text-bone-200/50">{o.advisoryNotice}</div>
+      <div className="flex items-baseline gap-2">
+        <span className="eyebrow">state</span>
+        <span className={`text-base font-semibold tracking-widest ${stateColor}`}>{o.systemState.toUpperCase()}</span>
+        <span className={`text-[10px] ml-auto ${escColor}`}>{o.escalationLevel}</span>
+      </div>
+      <Field label="DOMINANT RISK" value={o.dominantRisk} />
+      <Field label="DOMINANT PRESSURE" value={o.dominantPressure} />
+      <Field label="PRIORITY" value={o.adaptationPriority} />
+      <div className="text-sm text-bone-200/90 leading-snug">{o.strategicSummary}</div>
+      <div className="text-xs text-bone-200/70">
+        <span className="text-bone-200/50">focus:</span> {o.recommendedFocus}
+      </div>
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">strategy weights</div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>trust protection</span><span>{o.trustProtectionWeight}/10</span>
+        </div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>originality protection</span><span>{o.originalityProtectionWeight}/10</span>
+        </div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>persuasion reduction</span><span>{o.persuasionReductionWeight}/10</span>
+        </div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>restraint</span><span>{o.restraintWeight}/10</span>
+        </div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>stabilization</span><span>{o.stabilizationWeight}/10</span>
+        </div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>mutation urgency</span><span>{o.mutationUrgency}/10</span>
+        </div>
+      </div>
+      {o.adaptationConflicts.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">conflicts resolved</div>
+          {o.adaptationConflicts.slice(0, 6).map((c, i) => (
+            <div key={i} className="text-bone-200/70">
+              <span className="text-bone-200/90">{c.winner}</span>
+              <span className="text-bone-200/50"> ▸ suppresses ▸ </span>
+              <span className="text-bone-200/60">{c.loser}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── System Energy Model Panel ─────────────────────────────────────
+function SystemEnergyPanel({ e }: { e: SystemEnergyModel }) {
+  const stateColor =
+    e.energyState === 'fresh' ? 'text-green-300' :
+    e.energyState === 'measured' ? 'text-bone-200/80' :
+    e.energyState === 'taxed' ? 'text-amber-300' :
+    'text-red-400';
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">system energy model</div>
+      <div className="text-[10px] text-bone-200/50">{e.advisoryNotice}</div>
+      <div className="flex items-baseline gap-2">
+        <span className="eyebrow">energy</span>
+        <span className={`text-base font-semibold tracking-widest ${stateColor}`}>{e.energyState.toUpperCase()}</span>
+      </div>
+      <div className="text-xs space-y-0.5 text-bone-200/80">
+        <div className="flex justify-between"><span>available bandwidth</span><span>{e.availableBandwidth}/10</span></div>
+        <div className="flex justify-between"><span>mutation capacity</span><span>{e.mutationCapacity}/10</span></div>
+        <div className="flex justify-between"><span>stabilization load</span><span>{e.stabilizationLoad}/10</span></div>
+        <div className="flex justify-between"><span>exhaustion risk</span><span>{e.exhaustionRisk}/10</span></div>
+        <div className="flex justify-between"><span>recovery need</span><span>{e.recoveryNeed}/10</span></div>
+        <div className="flex justify-between"><span>adaptation budget</span><span>{e.adaptationBudget}/10</span></div>
+        <div className="flex justify-between"><span>overload risk</span><span className={e.overloadRisk >= 7 ? 'text-red-400' : ''}>{e.overloadRisk}/10</span></div>
+        <div className="flex justify-between"><span>sustainable rate</span><span>{e.sustainableMutationRate}/10 runs</span></div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Adaptive Cadence Panel ────────────────────────────────────────
+function AdaptiveCadencePanel({ c }: { c: AdaptiveCadence }) {
+  const stateColor =
+    c.cadenceState === 'paused' ? 'text-red-400' :
+    c.cadenceState === 'stabilizing' ? 'text-amber-300' :
+    c.cadenceState === 'gradual' ? 'text-bone-200/80' :
+    c.cadenceState === 'normal' ? 'text-green-300' :
+    'text-blue-300';
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">adaptive cadence</div>
+      <div className="text-[10px] text-bone-200/50">{c.advisoryNotice}</div>
+      <div className="flex items-baseline gap-2">
+        <span className="eyebrow">cadence</span>
+        <span className={`text-base font-semibold tracking-widest ${stateColor}`}>{c.cadenceState.toUpperCase()}</span>
+      </div>
+      <Field label="MUTATIONS / RUN" value={`${c.recommendedMutationsPerRun}`} />
+      <Field label="COOLDOWN" value={`${c.cooldownRemaining} runs`} />
+      <div className="text-xs text-bone-200/70">{c.cadenceJustification}</div>
+      <div className="border-t hairline pt-2 text-xs space-y-0.5 text-bone-200/70">
+        <div className="flex justify-between">
+          <span>novelty cooldown</span>
+          <span>{c.noveltyCooldownActive ? 'active' : '—'}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>trust restoration</span>
+          <span>{c.trustRestorationActive ? 'active' : '—'}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>fatigue recovery window</span>
+          <span>{c.fatigueRecoveryWindowOpen ? 'open' : '—'}</span>
+        </div>
+      </div>
     </div>
   );
 }
