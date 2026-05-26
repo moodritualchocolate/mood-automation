@@ -69,6 +69,12 @@ import type { PatternLifecycle } from '@lib/decayIntelligence';
 import type { HookLifecycle } from '@lib/hookLifecycleEngine';
 import type { AudienceSegmentReport } from '@lib/audienceSegmentMemory';
 import type { EmotionalResponseMap } from '@lib/emotionalResponseMap';
+import type { HumanTruthReading } from '@lib/humanTruthIntelligence';
+import type { ManipulationPressureReading } from '@lib/manipulationPressureAnalyzer';
+import type { AuthenticityContinuityReading } from '@lib/authenticityContinuity';
+import type { SoulPreservationReading } from '@lib/soulPreservationLayer';
+import type { AntiOptimizationReading } from '@lib/antiOptimizationDetector';
+import type { EmotionalDignityReading } from '@lib/emotionalDignityModel';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -161,6 +167,16 @@ function StudioInner() {
   const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
   // Adaptation orchestrator — coordinated priority + energy + cadence.
   const [orchestration, setOrchestration] = useState<{ orchestration: AdaptationOrchestration; energy: SystemEnergyModel; cadence: AdaptiveCadence } | null>(null);
+  // Human truth — ethical observatory.
+  const [humanTruth, setHumanTruth] = useState<{
+    authenticity: HumanTruthReading;
+    manipulationPressure: ManipulationPressureReading;
+    humanContinuity: AuthenticityContinuityReading;
+    soulPreservation: SoulPreservationReading;
+    antiOptimizationSignals: AntiOptimizationReading;
+    dignitySignals: EmotionalDignityReading;
+    trustVsPerformance: { gap: number; highPerformingThreat: boolean; performanceWithoutTrustCount: number };
+  } | null>(null);
   // Reality intelligence — real-world outcomes attached to fingerprints.
   const [realityIntel, setRealityIntel] = useState<{
     totalOutcomes: number;
@@ -349,6 +365,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setRealityIntel(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/human-truth', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setHumanTruth(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -455,6 +475,10 @@ function StudioInner() {
     fetch('/api/reality-intelligence', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setRealityIntel(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/human-truth', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setHumanTruth(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -586,6 +610,7 @@ function StudioInner() {
           )}
           {consequenceIntel && <ConsequenceIntelligencePanel c={consequenceIntel} />}
           {realityIntel && <RealityIntelligencePanel r={realityIntel} />}
+          {humanTruth && <HumanTruthPanel h={humanTruth} />}
 
           {preGenStability && (
             <>
@@ -5134,6 +5159,138 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Human Truth Panel ─────────────────────────────────────────────
+// Single consolidated panel for the ethical observatory: authenticity,
+// manipulation pressure, continuity, soul preservation, anti-optimization,
+// emotional dignity. Human-protective — never amplifies any of these signals.
+interface HumanTruthProps {
+  authenticity: HumanTruthReading;
+  manipulationPressure: ManipulationPressureReading;
+  humanContinuity: AuthenticityContinuityReading;
+  soulPreservation: SoulPreservationReading;
+  antiOptimizationSignals: AntiOptimizationReading;
+  dignitySignals: EmotionalDignityReading;
+  trustVsPerformance: { gap: number; highPerformingThreat: boolean; performanceWithoutTrustCount: number };
+}
+function HumanTruthPanel({ h }: { h: HumanTruthProps }) {
+  const classColor =
+    h.authenticity.classification === 'felt-human' ? 'text-green-300' :
+    h.authenticity.classification === 'optimized-content' ? 'text-red-400' :
+    'text-amber-300';
+  const pressureColor =
+    h.manipulationPressure.pressureLevel === 'low' ? 'text-green-300' :
+    h.manipulationPressure.pressureLevel === 'moderate' ? 'text-amber-200' :
+    h.manipulationPressure.pressureLevel === 'high' ? 'text-orange-400' :
+    'text-red-400';
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">human truth</div>
+      <div className="text-[10px] text-bone-200/50">
+        Observatory only — HUMAN-PROTECTIVE. The system never optimizes against these signals.
+      </div>
+      <div className="flex items-baseline gap-2">
+        <span className="eyebrow">classification</span>
+        <span className={`text-base font-semibold tracking-widest ${classColor}`}>
+          {h.authenticity.classification.replace('-', ' ').toUpperCase()}
+        </span>
+      </div>
+      <Field label="AUTHENTICITY" value={`${h.authenticity.authenticityScore}/10`} />
+      <Field label="FELT HUMAN" value={`${h.authenticity.feltHumanScore}/10`} />
+      <Field label="OVER-OPTIMIZATION RISK" value={`${h.authenticity.overOptimizationRisk}/10`} />
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">authenticity signals (top 6)</div>
+        {Object.entries(h.authenticity.signals)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 6)
+          .map(([k, v]) => (
+            <div key={k} className="flex justify-between text-bone-200/70">
+              <span>{k.replace(/([A-Z])/g, ' $1').toLowerCase()}</span>
+              <span className={v >= 7 ? 'text-green-300' : v <= 3 ? 'text-amber-300' : 'text-bone-200/80'}>{v}/10</span>
+            </div>
+          ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="flex items-baseline gap-2">
+          <span className="eyebrow">manipulation pressure</span>
+          <span className={`tracking-widest font-medium ${pressureColor}`}>
+            {h.manipulationPressure.pressureLevel.toUpperCase()}
+          </span>
+          <span className="text-bone-200/60 ml-auto text-[10px]">{h.manipulationPressure.pressureScore}/10</span>
+        </div>
+        {h.manipulationPressure.signals.slice(0, 4).map((s, i) => (
+          <div key={i} className="text-bone-200/70">· {s.signal} ({s.severity}/10)</div>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">authenticity continuity</div>
+        <div className="text-bone-200/80">
+          direction: <span className="font-medium">{h.humanContinuity.direction}</span> ·
+          continuity {h.humanContinuity.humanContinuityScore}/10
+        </div>
+        {h.humanContinuity.toneBecameSynthetic && <div className="text-amber-300/80">· tone became synthetic</div>}
+        {h.humanContinuity.emotionalPacingOptimized && <div className="text-amber-300/80">· emotional pacing optimized</div>}
+        {h.humanContinuity.persuasionReplacedStorytelling && <div className="text-amber-300/80">· persuasion replaced storytelling</div>}
+        {h.humanContinuity.identityDriftedToPerformance && <div className="text-amber-300/80">· identity drifted to performance</div>}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">soul preservation</div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>integrity</span>
+          <span>{h.soulPreservation.soulIntegrity}/10</span>
+        </div>
+        {h.soulPreservation.aiFeelingDetected && <div className="text-red-400">· AI feeling detected</div>}
+        {h.soulPreservation.signals.slice(0, 4).map((s, i) => (
+          <div key={i} className="text-bone-200/70 text-[10px]">· {s.signal} ({s.severity}/10)</div>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">anti-optimization</div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>exploitation pressure</span>
+          <span className={h.antiOptimizationSignals.exploitationPressure >= 6 ? 'text-red-400' : 'text-bone-200/80'}>
+            {h.antiOptimizationSignals.exploitationPressure}/10
+          </span>
+        </div>
+        {h.antiOptimizationSignals.performanceWithoutTrustDetected && (
+          <div className="text-amber-300/80">· performance without trust detected ({h.antiOptimizationSignals.performanceWithoutTrustCount} records)</div>
+        )}
+        {h.antiOptimizationSignals.signals.slice(0, 4).map((s, i) => (
+          <div key={i} className="text-bone-200/70 text-[10px]">· {s.pattern} ({s.severity}/10) · {s.occurrences} occurrences</div>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">emotional dignity</div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>dignity score</span>
+          <span className={h.dignitySignals.dignityScore <= 4 ? 'text-red-400' : 'text-bone-200/80'}>
+            {h.dignitySignals.dignityScore}/10
+          </span>
+        </div>
+        <div className="flex justify-between text-bone-200/70">
+          <span>trust vs performance gap</span>
+          <span className={h.trustVsPerformance.gap >= 4 ? 'text-red-400' : 'text-bone-200/80'}>
+            {h.trustVsPerformance.gap}/10
+          </span>
+        </div>
+        {h.trustVsPerformance.highPerformingThreat && (
+          <div className="text-amber-300/80">· high-performing content threatening long-term trust</div>
+        )}
+        {Object.entries(h.dignitySignals.signals).map(([k, v]) => (
+          <div key={k} className="flex justify-between text-bone-200/60 text-[10px]">
+            <span>{k.replace(/([A-Z])/g, ' $1').toLowerCase()}</span><span>{v}/10</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
