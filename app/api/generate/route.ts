@@ -22,13 +22,18 @@ import type { GenerateRequest } from '@/core/types';
 import { composeBannerSvg } from '@/components/banner-svg';
 import { rememberBanner } from '@/core/banner-cache';
 import { runCopyQualityPolicyPreflight } from '@lib/copyQualityPolicyPreflight';
-import { recordPolicyAudit } from '@lib/copyQualityPolicyAudit';
+import { recordPolicyAudit, createPolicyAuditStore } from '@lib/copyQualityPolicyAudit';
 import {
   recordCulturalObservation, buildHookFingerprint,
   createCulturalPerceptionMemoryStore,
   applyObservation as applyCulturalObservation,
   type CulturalObservation,
 } from '@lib/culturalPerceptionMemory';
+import { computeCreativeDrift } from '@lib/creativeDriftEngine';
+import { recordCreativeDriftObservation } from '@lib/creativeDriftMemory';
+import { createCopywriterMemoryStore } from '@lib/copywriterMemory';
+import { createCopyQualityMemoryStore } from '@lib/copyQualityMemory';
+import { createAdStrategyMemoryStore } from '@lib/adStrategyMemory';
 import { computeCulturalPerception } from '@lib/culturalPerceptionEngine';
 import { computeCrossBrainConflict } from '@lib/crossBrainConflictEngine';
 import {
@@ -789,6 +794,66 @@ export async function POST(req: NextRequest) {
           }
         } catch {
           // non-fatal — conflict observation never blocks generation
+        }
+
+        // ─── Creative Drift Observation ─────────────────────────
+        // Final post-pipeline observation. Reads every existing memory
+        // store (read-only) to compute a drift snapshot, then appends
+        // ONE entry to creative-drift memory (its own dedicated FIFO).
+        // Strictly observational — never mutates any other memory,
+        // never affects the banner, the verdict, or critic behavior.
+        // Wrapped so that any failure swallows silently.
+        try {
+          const [
+            copywriterMem, copyQualityMem, identityMem, campaignMem,
+            outcomeMem, strategyMem, policyAuditMem,
+          ] = await Promise.all([
+            createCopywriterMemoryStore().read().catch(() => null),
+            createCopyQualityMemoryStore().read().catch(() => null),
+            createIdentityContinuityMemoryStore().read().catch(() => null),
+            createCampaignLifecycleMemoryStore().read().catch(() => null),
+            createStrategicOutcomeMemoryStore().read().catch(() => null),
+            createAdStrategyMemoryStore().read().catch(() => null),
+            createPolicyAuditStore().read().catch(() => null),
+          ]);
+          const driftSnapshot = computeCreativeDrift({
+            copywriter:  copywriterMem  as never,
+            copyQuality: copyQualityMem as never,
+            identity:    identityMem    as never,
+            campaign:    campaignMem    as never,
+            outcomes:    outcomeMem     as never,
+            strategy:    strategyMem    as never,
+            policy:      policyAuditMem as never,
+          });
+          write({
+            type: 'event',
+            event: {
+              ts: Date.now(),
+              stage: 'creative-drift',
+              message:
+                `health ${driftSnapshot.overallCreativeHealth}/10 · ` +
+                `drift ${driftSnapshot.driftSeverity}/10 · ` +
+                `entropy ${driftSnapshot.entropyLevel}/10` +
+                (driftSnapshot.dominantDriftPatterns.length > 0
+                  ? ` · ${driftSnapshot.dominantDriftPatterns.length} dominant pattern(s)`
+                  : ''),
+              data: {
+                overallCreativeHealth: driftSnapshot.overallCreativeHealth,
+                driftSeverity: driftSnapshot.driftSeverity,
+                entropyLevel: driftSnapshot.entropyLevel,
+                originalityPressure: driftSnapshot.originalityPressure,
+                dominantPatterns: driftSnapshot.dominantDriftPatterns.map((p) => p.pattern).slice(0, 4),
+              },
+            },
+          });
+          await recordCreativeDriftObservation(driftSnapshot, {
+            at: result.banner.createdAt,
+            bannerId: result.banner.id,
+            formula: result.banner.formula,
+            campaignMode: result.banner.campaignMode ?? null,
+          });
+        } catch {
+          // non-fatal — creative drift observation never blocks generation
         }
       } catch (e) {
         write({ type: 'error', error: (e as Error).message });

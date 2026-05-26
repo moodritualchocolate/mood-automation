@@ -52,6 +52,8 @@ import type { OperatorCalibrationReconciliationLongitudinalView } from '@lib/ope
 import type { SystemIntegrityReport } from '@lib/systemIntegrityReport';
 import type { ProductionConservativeMode } from '@lib/productionConservativeMode';
 import type { PreGenerationStabilizer } from '@lib/preGenerationStabilizer';
+import type { CreativeDrift } from '@lib/creativeDriftEngine';
+import type { CreativeDriftLongitudinalView } from '@lib/creativeDriftLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -130,6 +132,11 @@ function StudioInner() {
     productionConservativeMode: ProductionConservativeMode;
     preGenerationStabilizer: PreGenerationStabilizer;
     envelopePresent: boolean;
+  } | null>(null);
+  // Creative drift (observatory only — never modifies generation).
+  const [creativeDrift, setCreativeDrift] = useState<{
+    current: CreativeDrift;
+    longitudinal: CreativeDriftLongitudinalView;
   } | null>(null);
   const mountedRef = useRef(false);
 
@@ -260,6 +267,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setSystemIntegrity(v as SystemIntegrityReport); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/creative-drift', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setCreativeDrift(v as { current: CreativeDrift; longitudinal: CreativeDriftLongitudinalView }); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -330,6 +341,10 @@ function StudioInner() {
     fetch('/api/system-integrity', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setSystemIntegrity(v as SystemIntegrityReport); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/creative-drift', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCreativeDrift(v as { current: CreativeDrift; longitudinal: CreativeDriftLongitudinalView }); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -460,6 +475,12 @@ function StudioInner() {
               />
               <PreGenerationStabilizerPanel stab={preGenStability.preGenerationStabilizer} />
             </>
+          )}
+          {creativeDrift && (
+            <CreativeDriftPanel
+              current={creativeDrift.current}
+              longitudinal={creativeDrift.longitudinal}
+            />
           )}
 
           {banner && (
@@ -4988,6 +5009,144 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Creative Drift Panel ──────────────────────────────────────────
+// Long-term creative-DNA observatory. Surfaces drift severity,
+// entropy, emotional diversity, narrative stability, repetition,
+// formula convergence, persuasion variance, originality pressure,
+// collapse / recovery events, and direction over time.
+// OBSERVATORY ONLY — never modifies generation.
+function CreativeDriftPanel({
+  current, longitudinal,
+}: { current: CreativeDrift; longitudinal: CreativeDriftLongitudinalView }) {
+  const healthColor =
+    current.overallCreativeHealth >= 7 ? 'text-green-300' :
+    current.overallCreativeHealth >= 4 ? 'text-amber-300' :
+    'text-red-400';
+  const directionColor =
+    longitudinal.longTermDriftDirection === 'improving' ? 'text-green-300' :
+    longitudinal.longTermDriftDirection === 'stable' ? 'text-bone-200/80' :
+    longitudinal.longTermDriftDirection === 'volatile' ? 'text-amber-300' :
+    longitudinal.longTermDriftDirection === 'worsening' ? 'text-red-400' :
+    'text-bone-200/50';
+  return (
+    <div className="border hairline p-4 space-y-3">
+      <div className="eyebrow">creative drift observatory</div>
+      <div className="text-[10px] text-bone-200/50">{current.advisorySummary.includes('Observatory only')
+        ? 'Observatory only — drift detection never modifies generation.'
+        : current.advisorySummary}</div>
+      <div className="flex items-baseline gap-2">
+        <span className="eyebrow">health</span>
+        <span className={`text-base font-semibold tracking-widest ${healthColor}`}>
+          {current.overallCreativeHealth}/10
+        </span>
+      </div>
+      <div className="space-y-1 text-sm">
+        <Field label="DRIFT SEVERITY" value={`${current.driftSeverity}/10`} />
+        <Field label="ENTROPY" value={`${current.entropyLevel}/10`} />
+        <Field label="EMOTIONAL DIVERSITY" value={`${current.emotionalDiversity}/10`} />
+        <Field label="PERSUASION VARIANCE" value={`${current.persuasionVariance}/10`} />
+        <Field label="NARRATIVE STABILITY" value={`${current.narrativeStability}/10`} />
+        <Field label="FORMULA DISTINCTIVENESS" value={`${current.formulaDistinctiveness}/10`} />
+        <Field label="ORIGINALITY PRESSURE" value={`${current.originalityPressure}/10`} />
+        <Field
+          label="TRUST EROSION"
+          value={`historical ${current.trustErosionTrajectory.historical} → recent ${current.trustErosionTrajectory.recent} (Δ ${current.trustErosionTrajectory.drift >= 0 ? '+' : ''}${current.trustErosionTrajectory.drift})`}
+        />
+      </div>
+      {current.dominantDriftPatterns.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">dominant drift patterns</div>
+          <ul className="space-y-1 text-bone-200/70">
+            {current.dominantDriftPatterns.slice(0, 5).map((p, i) => (
+              <li key={i}>
+                <span className="text-bone-200/90">{p.pattern}</span> — severity {p.severity}/10
+                <div className="text-bone-200/50 text-[10px]">{p.explanation}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {current.repetitiveNarratives.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">repetitive narratives</div>
+          <ul className="space-y-0.5 text-bone-200/70">
+            {current.repetitiveNarratives.slice(0, 4).map((n, i) => (
+              <li key={i}>
+                <span className="font-mono text-[10px]">{n.narrativeFingerprint.slice(0, 40)}</span>
+                <span className="ml-2 text-bone-200/60">×{n.recurrence} · fatigueRisk {n.fatigueRisk}/10</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {current.formulaConvergence.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">formula convergence</div>
+          <ul className="space-y-0.5 text-bone-200/70">
+            {current.formulaConvergence.slice(0, 3).map((c, i) => (
+              <li key={i}>
+                {c.formulas.join(' ↔ ')} · {c.convergenceLevel}/10
+                <div className="text-bone-200/50 text-[10px]">{c.explanation}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {current.emergingCreativeRisks.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">emerging creative risks</div>
+          <ul className="space-y-0.5 text-bone-200/70">
+            {current.emergingCreativeRisks.slice(0, 4).map((r, i) => (
+              <li key={i}>
+                <span className="text-bone-200/90">{r.risk}</span> · acceleration {r.acceleration}
+                <div className="text-bone-200/50 text-[10px]">{r.explanation}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {longitudinal.present && (
+        <div className="border-t hairline pt-2 text-xs space-y-1">
+          <div className="eyebrow">long-term direction</div>
+          <div className={`text-base tracking-widest font-medium ${directionColor}`}>
+            {longitudinal.longTermDriftDirection.toUpperCase()}
+          </div>
+          <div className="text-bone-200/60">{longitudinal.statement}</div>
+          <div className="flex justify-between text-[11px] text-bone-200/70 pt-1">
+            <span>avg health {longitudinal.averageHealth}/10</span>
+            <span>avg drift {longitudinal.averageDrift}/10</span>
+            <span>entropy Δ {longitudinal.entropyAcceleration}/10</span>
+          </div>
+          <div className="flex justify-between text-[11px] text-bone-200/60">
+            <span>healthy eras {longitudinal.healthiestEras.length}</span>
+            <span>collapse periods {longitudinal.collapsePeriods.length}</span>
+            <span>recoveries {longitudinal.recoveryEvents.length}</span>
+          </div>
+          <div className="flex justify-between text-[11px] text-bone-200/60">
+            <span>repetition cycles {longitudinal.repetitionCycles.length}</span>
+            <span>convergence cycles {longitudinal.convergenceCycles.length}</span>
+            <span>originality cycles {longitudinal.originalityCycles.length}</span>
+          </div>
+          <div className="text-bone-200/50 text-[10px] pt-1">
+            originality collapse risk {longitudinal.originalityCollapseRisk}/10 · {longitudinal.totalObservations} observations
+          </div>
+        </div>
+      )}
+      {current.creativeInstabilityZones.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs text-amber-200/80">
+          <div className="eyebrow mb-1">creative instability zones</div>
+          {current.creativeInstabilityZones.slice(0, 3).map((z, i) => (
+            <div key={i}>
+              <span className="text-amber-300">{z.condition}</span> · {z.instability}/10
+              <div className="text-bone-200/60 text-[10px]">{z.explanation}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

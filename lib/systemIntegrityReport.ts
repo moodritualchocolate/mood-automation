@@ -86,6 +86,7 @@ const KNOWN_ROUTES: string[] = [
   '/api/operator-calibration-reconciliation',
   '/api/system-integrity',
   '/api/pre-generation-stability',
+  '/api/creative-drift',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.
