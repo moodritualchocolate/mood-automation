@@ -1,0 +1,170 @@
+{
+  "layer": "system-integrity",
+  "anchoredAt": 1779789351815,
+  "shapeFingerprint": "fnv1a-9f219983",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "baselineHealth": {
+        "kind": "array",
+        "element": null
+      },
+      "memoryHealth": {
+        "kind": "array",
+        "element": {
+          "kind": "object",
+          "properties": {
+            "capped": {
+              "kind": "primitive",
+              "types": [
+                "boolean"
+              ]
+            },
+            "exists": {
+              "kind": "primitive",
+              "types": [
+                "boolean"
+              ]
+            },
+            "file": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            },
+            "issue": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            },
+            "readable": {
+              "kind": "primitive",
+              "types": [
+                "boolean"
+              ]
+            }
+          }
+        }
+      },
+      "overallStatus": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "panelHealth": {
+        "kind": "array",
+        "element": {
+          "kind": "object",
+          "properties": {
+            "issue": {
+              "kind": "primitive",
+              "types": [
+                "null"
+              ]
+            },
+            "panel": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            },
+            "status": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            }
+          }
+        }
+      },
+      "reasonCodes": {
+        "kind": "array",
+        "element": {
+          "kind": "primitive",
+          "types": [
+            "string"
+          ]
+        }
+      },
+      "routeHealth": {
+        "kind": "array",
+        "element": {
+          "kind": "object",
+          "properties": {
+            "issue": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            },
+            "route": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            },
+            "status": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            }
+          }
+        }
+      },
+      "safetyHealth": {
+        "kind": "object",
+        "properties": {
+          "criticUntouched": {
+            "kind": "primitive",
+            "types": [
+              "boolean"
+            ]
+          },
+          "generationUntouched": {
+            "kind": "primitive",
+            "types": [
+              "boolean"
+            ]
+          },
+          "noAutonomousExecution": {
+            "kind": "primitive",
+            "types": [
+              "boolean"
+            ]
+          },
+          "noExternalApis": {
+            "kind": "primitive",
+            "types": [
+              "boolean"
+            ]
+          },
+          "noSelfModification": {
+            "kind": "primitive",
+            "types": [
+              "boolean"
+            ]
+          }
+        }
+      },
+      "typeScriptStatus": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "warnings": {
+        "kind": "array",
+        "element": {
+          "kind": "primitive",
+          "types": [
+            "string"
+          ]
+        }
+      }
+    }
+  }
+}

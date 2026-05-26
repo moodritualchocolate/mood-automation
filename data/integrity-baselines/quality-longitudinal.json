@@ -1,0 +1,127 @@
+{
+  "layer": "quality-longitudinal",
+  "anchoredAt": 1779789351801,
+  "shapeFingerprint": "fnv1a-e048ec49",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "audienceFatigueRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "axisAverages": {
+        "kind": "array",
+        "element": null
+      },
+      "brandDignityCurrent": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "brandRiskTrend": {
+        "kind": "array",
+        "element": null
+      },
+      "copyIntegrityTrend": {
+        "kind": "array",
+        "element": null
+      },
+      "dignityErosionCurrent": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "driftStatus": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "hebrewNaturalnessTrend": {
+        "kind": "array",
+        "element": null
+      },
+      "mirrorCount": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "mirrorSuccessRate": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "proofAdequacyTrend": {
+        "kind": "array",
+        "element": null
+      },
+      "repeatedStructuresCurrent": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "repetitionConcernTrend": {
+        "kind": "array",
+        "element": null
+      },
+      "repetitionRiskTrend": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "strategicCopyFitTrend": {
+        "kind": "array",
+        "element": null
+      },
+      "topForbiddenTriggers": {
+        "kind": "array",
+        "element": null
+      },
+      "totalCopiesProduced": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "totalCopyQualitySamples": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "totalStrategyAssessments": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trustDebtCurrent": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trustDebtTrend": {
+        "kind": "array",
+        "element": null
+      }
+    }
+  }
+}

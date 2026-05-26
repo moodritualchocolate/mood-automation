@@ -1,0 +1,99 @@
+{
+  "layer": "operator-confidence-preference",
+  "anchoredAt": 1779789351814,
+  "shapeFingerprint": "fnv1a-ef2284ad",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "operatorId": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "operatorSummaries": {
+        "kind": "array",
+        "element": null
+      },
+      "preferences": {
+        "kind": "array",
+        "element": {
+          "kind": "object",
+          "properties": {
+            "confidenceLabel": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            },
+            "confidenceWeight": {
+              "kind": "primitive",
+              "types": [
+                "number"
+              ]
+            },
+            "interpretation": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            },
+            "operatorId": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            },
+            "projectionType": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            },
+            "reasonNote": {
+              "kind": "primitive",
+              "types": [
+                "null"
+              ]
+            },
+            "updatedAt": {
+              "kind": "primitive",
+              "types": [
+                "number"
+              ]
+            }
+          }
+        }
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "recentHistory": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "totalUpdates": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "visualOnlyNotice": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      }
+    }
+  }
+}

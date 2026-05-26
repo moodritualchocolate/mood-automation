@@ -1,0 +1,95 @@
+{
+  "layer": "executive-governance",
+  "anchoredAt": 1779789351809,
+  "shapeFingerprint": "fnv1a-d3105686",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "authorityConcentrationRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "authorityTransitions": {
+        "kind": "array",
+        "element": null
+      },
+      "averageFragmentation": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageLegitimacy": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageStability": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "current": {
+        "kind": "primitive",
+        "types": [
+          "null"
+        ]
+      },
+      "executiveRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "governanceCollapsePatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "governanceTrend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "recentlyLosingAuthority": {
+        "kind": "array",
+        "element": null
+      },
+      "recurringGovernanceStructures": {
+        "kind": "array",
+        "element": null
+      },
+      "stabilityTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "stabilizerRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "suppressionCycles": {
+        "kind": "array",
+        "element": null
+      },
+      "totalObservations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      }
+    }
+  }
+}

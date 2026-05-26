@@ -1,0 +1,121 @@
+{
+  "layer": "projection-calibration",
+  "anchoredAt": 1779789351813,
+  "shapeFingerprint": "fnv1a-74b89153",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "current": {
+        "kind": "object",
+        "properties": {
+          "calibrations": {
+            "kind": "array",
+            "element": null
+          },
+          "leastReliableProjectionType": {
+            "kind": "primitive",
+            "types": [
+              "null"
+            ]
+          },
+          "mostReliableProjectionType": {
+            "kind": "primitive",
+            "types": [
+              "null"
+            ]
+          },
+          "overallAccuracy": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "overallConfidence": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "reasonCodes": {
+            "kind": "array",
+            "element": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            }
+          }
+        }
+      },
+      "environmentalReliabilityMap": {
+        "kind": "array",
+        "element": null
+      },
+      "leastReliable": {
+        "kind": "array",
+        "element": null
+      },
+      "mostAccurate": {
+        "kind": "array",
+        "element": null
+      },
+      "overallAccuracyDrift": {
+        "kind": "array",
+        "element": null
+      },
+      "overconfidencePatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "perTypeDrift": {
+        "kind": "array",
+        "element": null
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "projectionTrustRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "simulationVsRealityDivergence": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "strongestLongTermPredictors": {
+        "kind": "array",
+        "element": null
+      },
+      "strongestShortTermPredictors": {
+        "kind": "array",
+        "element": null
+      },
+      "totalSnapshots": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "underconfidencePatterns": {
+        "kind": "array",
+        "element": null
+      }
+    }
+  }
+}

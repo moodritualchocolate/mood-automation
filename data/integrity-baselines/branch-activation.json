@@ -1,0 +1,154 @@
+{
+  "layer": "branch-activation",
+  "anchoredAt": 1779789351812,
+  "shapeFingerprint": "fnv1a-592e5152",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "branchReliabilityTrajectory": {
+        "kind": "array",
+        "element": null
+      },
+      "current": {
+        "kind": "object",
+        "properties": {
+          "activationConfidence": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "activationTimeline": {
+            "kind": "array",
+            "element": null
+          },
+          "branchOutcomes": {
+            "kind": "array",
+            "element": null
+          },
+          "branchTrustworthiness": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "durableBranchPatterns": {
+            "kind": "array",
+            "element": null
+          },
+          "failedBranchPatterns": {
+            "kind": "array",
+            "element": null
+          },
+          "historicalReliability": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "operatorPatterns": {
+            "kind": "array",
+            "element": null
+          },
+          "predictionAccuracy": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "projectionAccuracy": {
+            "kind": "array",
+            "element": null
+          },
+          "reasonCodes": {
+            "kind": "array",
+            "element": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            }
+          },
+          "recommendedObservations": {
+            "kind": "array",
+            "element": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            }
+          }
+        }
+      },
+      "decayReductionRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "fatigueRecoveryRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "highestDurabilityBranches": {
+        "kind": "array",
+        "element": null
+      },
+      "mostTrustedBranches": {
+        "kind": "array",
+        "element": null
+      },
+      "operatorEvolution": {
+        "kind": "array",
+        "element": null
+      },
+      "pendingActivations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "recentResolutions": {
+        "kind": "array",
+        "element": null
+      },
+      "resolvedActivations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "simulationVsReality": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "totalActivations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "trustRecoveryRanking": {
+        "kind": "array",
+        "element": null
+      }
+    }
+  }
+}

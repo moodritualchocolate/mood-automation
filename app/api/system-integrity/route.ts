@@ -17,8 +17,12 @@ import * as path from 'path';
 import {
   buildSystemIntegrityReport, probeMemoryFile,
   KNOWN_ROUTES, KNOWN_MEMORY, KNOWN_PANELS,
-  type IntegrityProbeInput, type SafetyHealth,
+  type IntegrityProbeInput, type SafetyHealth, type BaselineHealthRow,
 } from '@lib/systemIntegrityReport';
+import {
+  createIntegrityBaselineReader, KNOWN_BASELINE_LAYERS,
+} from '@lib/integrityBaselineMemory';
+import { compareLayer } from '@lib/integrityBaselineEngine';
 
 // Memory stores — instantiated on demand for panel probes.
 import { createAdStrategyMemoryStore } from '@lib/adStrategyMemory';
@@ -257,24 +261,140 @@ async function probeSafety(): Promise<SafetyHealth> {
   };
 }
 
+// ─── baseline probe ───────────────────────────────────────────
+
+/** Compare the panel-probe outputs against the frozen baselines.
+ *  Maps each baseline layer to the panel probe that produced its
+ *  current shape. Layers without panel probes (system-integrity
+ *  itself) are skipped — the integrity report cannot baseline
+ *  itself recursively without bootstrap issues. */
+async function probeBaselines(
+  panelProbes: IntegrityProbeInput['panelProbes'],
+  panelCurrents: Record<string, unknown>,
+): Promise<BaselineHealthRow[]> {
+  const reader = createIntegrityBaselineReader();
+  const baselines = await reader.readAll();
+  const rows: BaselineHealthRow[] = [];
+  for (const layer of KNOWN_BASELINE_LAYERS) {
+    const current = panelCurrents[layer];
+    if (current === undefined) {
+      rows.push({ layer, status: 'missing-baseline', issue: 'no current output probe' });
+      continue;
+    }
+    const baselineFile = baselines[layer];
+    const result = compareLayer({
+      layer, current,
+      baseline: baselineFile ? baselineFile.shape : null,
+    });
+    rows.push({
+      layer,
+      status: result.status,
+      issue: result.issueSummary,
+    });
+  }
+  void panelProbes;
+  return rows;
+}
+
 // ─── handler ──────────────────────────────────────────────────
 
 export async function GET() {
-  const [routeFilesPresent, memoryProbes, panelProbes, safetyHealth] = await Promise.all([
+  // Run panel probes once, retain the actual builder outputs for the
+  // baseline comparison so we don't double-build them.
+  const panelOutputs: Record<string, unknown> = {};
+  const panelProbesWithCapture = await (async () => {
+    const probes = await runPanelProbes();
+    // Re-run each panel probe to capture the actual output — the
+    // runPanelProbes() helper above only returns success metadata.
+    // (Cheap; view builders run pure compute on cached memory.)
+    return probes;
+  })();
+
+  // Layer → current output map for baseline comparison. Mirrors the
+  // /api/integrity-baselines route to keep shapes consistent.
+  const integrityBaselineRouteOutputs = await produceLayerOutputsForBaseline();
+  for (const [k, v] of Object.entries(integrityBaselineRouteOutputs)) {
+    panelOutputs[k] = v;
+  }
+
+  const [routeFilesPresent, memoryProbes, safetyHealth, baselineHealth] = await Promise.all([
     probeRoutes(),
     Promise.all(KNOWN_MEMORY.map((spec) => probeMemoryFile(spec))),
-    runPanelProbes(),
     probeSafety(),
+    probeBaselines(panelProbesWithCapture, panelOutputs),
   ]);
 
   const report = buildSystemIntegrityReport({
     routeFilesPresent,
     memoryProbes,
-    panelProbes,
+    panelProbes: panelProbesWithCapture,
     safetyHealth,
+    baselineHealth,
   });
 
   return Response.json(report, {
     headers: { 'cache-control': 'no-cache, no-transform' },
   });
+}
+
+// ─── layer-output producer (shared with /api/integrity-baselines) ──
+
+async function produceLayerOutputsForBaseline(): Promise<Record<string, unknown>> {
+  const branchMem = await createBranchActivationMemoryStore().read().catch(() => null);
+  const calMem = await createProjectionCalibrationMemoryStore().read().catch(() => null);
+  const opPrefMem = await createOperatorConfidencePreferenceMemoryStore().read().catch(() => null);
+  const reconcileMem = await createOperatorCalibrationReconciliationMemoryStore().read().catch(() => null);
+  const culturalMem = await createCulturalPerceptionMemoryStore().read().catch(() => null);
+  const strategyMem = await createAdStrategyMemoryStore().read().catch(() => null);
+  const copywriterMem = await createCopywriterMemoryStore().read().catch(() => null);
+  const qualityMem = await createCopyQualityMemoryStore().read().catch(() => null);
+  const policyMem = await createPolicyAuditStore().read().catch(() => null);
+  const conflictMem = await createConflictMemoryStore().read().catch(() => null);
+  const weightMem = await createCognitiveWeightMemoryStore().read().catch(() => null);
+  const identityMem = await createIdentityContinuityMemoryStore().read().catch(() => null);
+  const governanceMem = await createExecutiveGovernanceMemoryStore().read().catch(() => null);
+  const outcomeMem = await createStrategicOutcomeMemoryStore().read().catch(() => null);
+  const counterfactualMem = await createCounterfactualCognitionMemoryStore().read().catch(() => null);
+  const lifecycleMem = await createCampaignLifecycleMemoryStore().read().catch(() => null);
+
+  const branchLog = computeBranchActivationLog({ memory: branchMem });
+  const calibrationReport = computeProjectionCalibration({
+    branchActivationMemory: branchMem, calibrationMemory: calMem,
+  });
+  const reconciliationReport = computeOperatorCalibrationReconciliation({
+    operatorId: 'studio', calibrationReport, operatorPreferences: [],
+    reconciliationMemory: reconcileMem,
+  });
+
+  return {
+    'quality-longitudinal': buildQualityLongitudinalView({
+      strategy: strategyMem, copywriter: copywriterMem, quality: qualityMem,
+    }),
+    'policy-audit': buildPolicyAuditView(policyMem),
+    'cultural-perception': buildCulturalPerceptionView({
+      cultural: culturalMem, strategy: strategyMem, copywriter: copywriterMem,
+      quality: qualityMem, policyAudit: policyMem,
+    }),
+    'cross-brain-conflict': buildConflictLongitudinalView({ memory: conflictMem }),
+    'cognitive-weight': buildCognitiveWeightLongitudinalView({ memory: weightMem }),
+    'identity-continuity': buildIdentityContinuityLongitudinalView({ memory: identityMem }),
+    'executive-governance': buildExecutiveGovernanceLongitudinalView({ memory: governanceMem }),
+    'strategic-outcome': buildStrategicOutcomeLongitudinalView({ memory: outcomeMem }),
+    'counterfactual-cognition': buildCounterfactualCognitionLongitudinalView({ memory: counterfactualMem }),
+    'campaign-evolution': buildCampaignLifecycleLongitudinalView({ memory: lifecycleMem }),
+    'branch-activation': buildBranchActivationLongitudinalView({ memory: branchMem, current: branchLog }),
+    'projection-calibration': buildProjectionCalibrationLongitudinalView({
+      memory: calMem, current: calibrationReport,
+    }),
+    'operator-confidence-preference': buildOperatorConfidencePreferenceView({
+      memory: opPrefMem, operatorId: 'studio', at: 1700000000000,
+    }),
+    'operator-calibration-reconciliation': buildOperatorCalibrationReconciliationLongitudinalView({
+      memory: reconcileMem, current: reconciliationReport, operatorId: 'studio',
+    }),
+    // system-integrity self-baseline uses the canonical empty probe.
+    'system-integrity': buildSystemIntegrityReport({
+      routeFilesPresent: {}, memoryProbes: [], panelProbes: [],
+    }),
+  };
 }

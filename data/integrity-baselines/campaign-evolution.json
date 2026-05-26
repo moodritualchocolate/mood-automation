@@ -1,0 +1,117 @@
+{
+  "layer": "campaign-evolution",
+  "anchoredAt": 1779789351811,
+  "shapeFingerprint": "fnv1a-12352ab4",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "audienceFatigueRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "audienceRotationTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "averageCampaignHealth": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageDecayRisk": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageFatiguePressure": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageTrustMomentum": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "branchReadinessTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "campaignHealthTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "compoundingSignals": {
+        "kind": "array",
+        "element": null
+      },
+      "creativeFreshnessTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "current": {
+        "kind": "primitive",
+        "types": [
+          "null"
+        ]
+      },
+      "durablePatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "fatiguePressureTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "fragilePatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "phaseDistribution": {
+        "kind": "array",
+        "element": null
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "recentPatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "restNeededSignals": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "totalObservations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "trustMomentumTrace": {
+        "kind": "array",
+        "element": null
+      }
+    }
+  }
+}

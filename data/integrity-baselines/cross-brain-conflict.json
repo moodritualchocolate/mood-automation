@@ -1,0 +1,105 @@
+{
+  "layer": "cross-brain-conflict",
+  "anchoredAt": 1779789351806,
+  "shapeFingerprint": "fnv1a-0fa930a7",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "averageAlignment": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageStability": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageTension": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "conflictHotspots": {
+        "kind": "array",
+        "element": null
+      },
+      "current": {
+        "kind": "primitive",
+        "types": [
+          "null"
+        ]
+      },
+      "emotionalFatigueDrift": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "instabilityTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "instabilityTrend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "longTermTrustConflicts": {
+        "kind": "array",
+        "element": null
+      },
+      "noveltyCollapseCycles": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "recurringConflicts": {
+        "kind": "array",
+        "element": null
+      },
+      "silentRiskRate": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "stableAgreementZones": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "strategicCertaintyAreas": {
+        "kind": "array",
+        "element": null
+      },
+      "strategicUncertaintyAreas": {
+        "kind": "array",
+        "element": null
+      },
+      "totalObservations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      }
+    }
+  }
+}

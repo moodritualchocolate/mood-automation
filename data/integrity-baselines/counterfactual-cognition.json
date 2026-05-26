@@ -1,0 +1,73 @@
+{
+  "layer": "counterfactual-cognition",
+  "anchoredAt": 1779789351811,
+  "shapeFingerprint": "fnv1a-87aa2296",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "actualLeaderShares": {
+        "kind": "array",
+        "element": null
+      },
+      "archetypeProjectionFrequency": {
+        "kind": "array",
+        "element": null
+      },
+      "current": {
+        "kind": "primitive",
+        "types": [
+          "null"
+        ]
+      },
+      "durabilityOptimizedFrequency": {
+        "kind": "array",
+        "element": null
+      },
+      "fatigueRelievingPathways": {
+        "kind": "array",
+        "element": null
+      },
+      "highDurabilityPathways": {
+        "kind": "array",
+        "element": null
+      },
+      "highTrustPathways": {
+        "kind": "array",
+        "element": null
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "recurringPathways": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "totalObservations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "trustOptimizedFrequency": {
+        "kind": "array",
+        "element": null
+      }
+    }
+  }
+}

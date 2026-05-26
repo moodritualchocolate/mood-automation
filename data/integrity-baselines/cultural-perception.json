@@ -1,0 +1,196 @@
+{
+  "layer": "cultural-perception",
+  "anchoredAt": 1779789351805,
+  "shapeFingerprint": "fnv1a-40f9f56f",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "aestheticCollapseZones": {
+        "kind": "array",
+        "element": null
+      },
+      "dyingCreativePatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "emergingEmotionalOpenings": {
+        "kind": "array",
+        "element": null
+      },
+      "oversaturatedHookCategories": {
+        "kind": "array",
+        "element": null
+      },
+      "perception": {
+        "kind": "object",
+        "properties": {
+          "aestheticFatigue": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "audienceNumbness": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "conformityRisk": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "culturalState": {
+            "kind": "primitive",
+            "types": [
+              "string"
+            ]
+          },
+          "culturalWarnings": {
+            "kind": "array",
+            "element": null
+          },
+          "dominantSignals": {
+            "kind": "array",
+            "element": null
+          },
+          "emotionalDrift": {
+            "kind": "object",
+            "properties": {
+              "movingAwayFrom": {
+                "kind": "array",
+                "element": null
+              },
+              "movingToward": {
+                "kind": "array",
+                "element": null
+              }
+            }
+          },
+          "emotionalFreshness": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "forbiddenDirections": {
+            "kind": "array",
+            "element": null
+          },
+          "hookSaturation": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "humanResonance": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "noveltyScore": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "pacingFatigue": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "perceivedAuthenticity": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "reasonCodes": {
+            "kind": "array",
+            "element": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            }
+          },
+          "strategicOpportunities": {
+            "kind": "array",
+            "element": null
+          },
+          "trustClimate": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "visualNoiseLevel": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          }
+        }
+      },
+      "platformFatigueRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "repetitiveEmotionalClusters": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "totalCopiesProduced": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "totalObservations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "totalPolicyAudits": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "totalQualitySamples": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "totalStrategyAssessments": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trustDecayTrend": {
+        "kind": "array",
+        "element": null
+      }
+    }
+  }
+}

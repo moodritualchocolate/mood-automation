@@ -1,0 +1,97 @@
+{
+  "layer": "identity-continuity",
+  "anchoredAt": 1779789351808,
+  "shapeFingerprint": "fnv1a-5b51954e",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "adaptationEras": {
+        "kind": "array",
+        "element": null
+      },
+      "audienceAgnosticVectors": {
+        "kind": "array",
+        "element": null
+      },
+      "averageConsistency": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageContinuityRisk": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageFragmentation": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageStability": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "collapsingOverTime": {
+        "kind": "array",
+        "element": null
+      },
+      "continuityTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "continuityTrend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "current": {
+        "kind": "primitive",
+        "types": [
+          "null"
+        ]
+      },
+      "dominantOverTime": {
+        "kind": "array",
+        "element": null
+      },
+      "identityTransitions": {
+        "kind": "array",
+        "element": null
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "pressureOnlyVectors": {
+        "kind": "array",
+        "element": null
+      },
+      "recurringBehavioralFingerprints": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "totalObservations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      }
+    }
+  }
+}

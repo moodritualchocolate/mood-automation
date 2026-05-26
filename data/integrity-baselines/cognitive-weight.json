@@ -1,0 +1,83 @@
+{
+  "layer": "cognitive-weight",
+  "anchoredAt": 1779789351807,
+  "shapeFingerprint": "fnv1a-02264c91",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "authorityTransitions": {
+        "kind": "array",
+        "element": null
+      },
+      "averageAdaptationPressure": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageFragmentation": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageStability": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "collapsingSystems": {
+        "kind": "array",
+        "element": null
+      },
+      "current": {
+        "kind": "primitive",
+        "types": [
+          "null"
+        ]
+      },
+      "fragmentationTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "fragmentationTrend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "losingAuthority": {
+        "kind": "array",
+        "element": null
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "systemDominanceRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "totalObservations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trustedRecently": {
+        "kind": "array",
+        "element": null
+      }
+    }
+  }
+}

@@ -47,6 +47,12 @@ export interface SafetyHealth {
   noSelfModification: boolean;
 }
 
+export interface BaselineHealthRow {
+  layer: string;
+  status: 'matched' | 'missing-baseline' | 'shape-drift';
+  issue: string | null;
+}
+
 export interface SystemIntegrityReport {
   overallStatus: 'stable' | 'warning' | 'critical';
   typeScriptStatus: boolean;
@@ -54,6 +60,7 @@ export interface SystemIntegrityReport {
   memoryHealth: MemoryHealthRow[];
   panelHealth: PanelHealthRow[];
   safetyHealth: SafetyHealth;
+  baselineHealth: BaselineHealthRow[];
   warnings: string[];
   reasonCodes: string[];
 }
@@ -157,6 +164,10 @@ export interface IntegrityProbeInput {
   /** Optional TypeScript-clean signal; the harness sets this from
    *  the result of `npx tsc --noEmit`. Defaults to true. */
   typeScriptStatus?: boolean;
+  /** Optional per-layer baseline comparison results. When omitted,
+   *  the report emits zero baseline rows — useful for harness
+   *  contexts that don't probe the baseline directory. */
+  baselineHealth?: BaselineHealthRow[];
 }
 
 // ─── helpers ───────────────────────────────────────────────────
@@ -240,12 +251,17 @@ export function buildSystemIntegrityReport(
     ...(input.safetyHealth ?? {}),
   };
 
+  // Baseline health.
+  const baselineHealth: BaselineHealthRow[] = input.baselineHealth ?? [];
+
   // Aggregate.
   const typeScriptStatus = input.typeScriptStatus ?? true;
   const failedRoutes = routeHealth.filter((r) => r.status !== 'ok');
   const failedMemory = memoryHealth.filter((m) => m.exists && (!m.readable || !m.capped));
   const failedPanels = panelHealth.filter((p) => p.status !== 'ok');
   const safetyAllOk = (Object.values(safetyHealth) as boolean[]).every((v) => v === true);
+  const baselineDrift = baselineHealth.filter((b) => b.status === 'shape-drift');
+  const baselineMissing = baselineHealth.filter((b) => b.status === 'missing-baseline');
 
   // Warnings — memory file not yet created is informational, not a
   // failure; it's normal on a fresh install.
@@ -257,11 +273,19 @@ export function buildSystemIntegrityReport(
       warnings.push(`${m.file}: ${m.issue}`);
     }
   }
+  for (const b of baselineMissing) {
+    warnings.push(`baseline not yet anchored: ${b.layer} (run scripts/anchor-integrity-baselines.ts)`);
+  }
+  for (const b of baselineDrift) {
+    warnings.push(`baseline shape drift: ${b.layer}${b.issue ? ` — ${b.issue}` : ''}`);
+  }
 
   let overallStatus: SystemIntegrityReport['overallStatus'] = 'stable';
   if (!typeScriptStatus || failedRoutes.length > 0 || failedPanels.length > 0 ||
-      failedMemory.length > 0 || !safetyAllOk) {
-    overallStatus = failedRoutes.length > 0 || !safetyAllOk ? 'critical' : 'warning';
+      failedMemory.length > 0 || !safetyAllOk || baselineDrift.length > 0) {
+    overallStatus = (failedRoutes.length > 0 || !safetyAllOk || baselineDrift.length > 0)
+      ? 'critical'
+      : 'warning';
   }
 
   reasonCodes.push(
@@ -270,6 +294,7 @@ export function buildSystemIntegrityReport(
     `memory-files-capped:${memoryHealth.filter((m) => m.capped).length}/${memoryHealth.length}`,
     `panels-ok:${panelHealth.filter((p) => p.status === 'ok').length}/${panelHealth.length}`,
     `safety:${(Object.values(safetyHealth) as boolean[]).filter((v) => v).length}/5`,
+    `baselines-matched:${baselineHealth.filter((b) => b.status === 'matched').length}/${baselineHealth.length}`,
     `typescript:${typeScriptStatus ? 'clean' : 'failing'}`,
     `overall:${overallStatus}`,
   );
@@ -281,6 +306,7 @@ export function buildSystemIntegrityReport(
     memoryHealth,
     panelHealth,
     safetyHealth,
+    baselineHealth,
     warnings,
     reasonCodes,
   };

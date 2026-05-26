@@ -1,0 +1,129 @@
+{
+  "layer": "operator-calibration-reconciliation",
+  "anchoredAt": 1779789351814,
+  "shapeFingerprint": "fnv1a-3cb2d2ca",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "chronicDisagreement": {
+        "kind": "array",
+        "element": null
+      },
+      "current": {
+        "kind": "object",
+        "properties": {
+          "operatorId": {
+            "kind": "primitive",
+            "types": [
+              "string"
+            ]
+          },
+          "overallAgreement": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "overallDivergence": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          },
+          "reasonCodes": {
+            "kind": "array",
+            "element": {
+              "kind": "primitive",
+              "types": [
+                "string"
+              ]
+            }
+          },
+          "reconciliations": {
+            "kind": "array",
+            "element": null
+          },
+          "totalReconciliations": {
+            "kind": "primitive",
+            "types": [
+              "number"
+            ]
+          }
+        }
+      },
+      "divergenceHeatmap": {
+        "kind": "array",
+        "element": null
+      },
+      "highestAgreement": {
+        "kind": "array",
+        "element": null
+      },
+      "improvingAlignmentTypes": {
+        "kind": "array",
+        "element": null
+      },
+      "observationOnlyNotice": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "operatorEvolution": {
+        "kind": "array",
+        "element": null
+      },
+      "operatorId": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "overtrustPatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "strongestIntuitionDomains": {
+        "kind": "array",
+        "element": null
+      },
+      "totalSnapshots": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "undertrustPatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "unstableIntuitionTypes": {
+        "kind": "array",
+        "element": null
+      },
+      "weakestIntuitionDomains": {
+        "kind": "array",
+        "element": null
+      }
+    }
+  }
+}

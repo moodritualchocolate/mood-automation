@@ -1,0 +1,95 @@
+{
+  "layer": "strategic-outcome",
+  "anchoredAt": 1779789351810,
+  "shapeFingerprint": "fnv1a-fb147421",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "audienceSynchronizationPatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "averageStability": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageStrategicRisk": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "averageTrustDurability": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "current": {
+        "kind": "primitive",
+        "types": [
+          "null"
+        ]
+      },
+      "fastestDecayingStructures": {
+        "kind": "array",
+        "element": null
+      },
+      "fatigueAccumulationTrajectory": {
+        "kind": "array",
+        "element": null
+      },
+      "longestSurvivingStructures": {
+        "kind": "array",
+        "element": null
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "resilientGovernanceStructures": {
+        "kind": "array",
+        "element": null
+      },
+      "resilientIdentitySignatures": {
+        "kind": "array",
+        "element": null
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "strategicDriftTrace": {
+        "kind": "array",
+        "element": null
+      },
+      "strategicErosionPatterns": {
+        "kind": "array",
+        "element": null
+      },
+      "strategicTrend": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "totalObservations": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "trustAccumulationTrajectory": {
+        "kind": "array",
+        "element": null
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "layer": "policy-audit",
+  "anchoredAt": 1779789351803,
+  "shapeFingerprint": "fnv1a-72ab259f",
+  "source": "scripts/anchor-integrity-baselines.ts · null-memory canonical run",
+  "shape": {
+    "kind": "object",
+    "properties": {
+      "autoAppliedCount": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "explicitOverrideCount": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "formulaIntegrityAverages": {
+        "kind": "array",
+        "element": null
+      },
+      "formulaPressureRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "modeRiskRanking": {
+        "kind": "array",
+        "element": null
+      },
+      "overrideTypeBreakdown": {
+        "kind": "array",
+        "element": null
+      },
+      "present": {
+        "kind": "primitive",
+        "types": [
+          "boolean"
+        ]
+      },
+      "recentEntries": {
+        "kind": "array",
+        "element": null
+      },
+      "refusalEnabledCount": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "refusalEnabledRate": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      },
+      "statement": {
+        "kind": "primitive",
+        "types": [
+          "string"
+        ]
+      },
+      "topReasonCodes": {
+        "kind": "array",
+        "element": null
+      },
+      "totalAudited": {
+        "kind": "primitive",
+        "types": [
+          "number"
+        ]
+      }
+    }
+  }
+}
