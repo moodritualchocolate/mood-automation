@@ -97,6 +97,7 @@ const KNOWN_ROUTES: string[] = [
   '/api/outcome',
   '/api/reality-intelligence',
   '/api/human-truth',
+  '/api/cultural-memory',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.

@@ -75,6 +75,11 @@ import type { AuthenticityContinuityReading } from '@lib/authenticityContinuity'
 import type { SoulPreservationReading } from '@lib/soulPreservationLayer';
 import type { AntiOptimizationReading } from '@lib/antiOptimizationDetector';
 import type { EmotionalDignityReading } from '@lib/emotionalDignityModel';
+import type { CulturalMemoryReading } from '@lib/culturalMemoryEngine';
+import type { SymbolicResonanceReading } from '@lib/symbolicResonanceEngine';
+import type { ArchetypeRecognitionReport } from '@lib/archetypeRecognition';
+import type { RitualBehaviorReport } from '@lib/ritualBehaviorEngine';
+import type { GenerationalEmotionMapReport } from '@lib/generationalEmotionMap';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -167,6 +172,15 @@ function StudioInner() {
   const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
   // Adaptation orchestrator — coordinated priority + energy + cadence.
   const [orchestration, setOrchestration] = useState<{ orchestration: AdaptationOrchestration; energy: SystemEnergyModel; cadence: AdaptiveCadence } | null>(null);
+  // Cultural memory — collective emotional cognition.
+  const [culturalMemory, setCulturalMemory] = useState<{
+    culturalPatterns: CulturalMemoryReading;
+    symbolicResonance: SymbolicResonanceReading;
+    archetypes: ArchetypeRecognitionReport;
+    rituals: RitualBehaviorReport;
+    generationalSignals: GenerationalEmotionMapReport;
+    emotionalPersistence: number;
+  } | null>(null);
   // Human truth — ethical observatory.
   const [humanTruth, setHumanTruth] = useState<{
     authenticity: HumanTruthReading;
@@ -369,6 +383,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setHumanTruth(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/cultural-memory', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setCulturalMemory(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -479,6 +497,10 @@ function StudioInner() {
     fetch('/api/human-truth', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setHumanTruth(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/cultural-memory', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCulturalMemory(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -611,6 +633,7 @@ function StudioInner() {
           {consequenceIntel && <ConsequenceIntelligencePanel c={consequenceIntel} />}
           {realityIntel && <RealityIntelligencePanel r={realityIntel} />}
           {humanTruth && <HumanTruthPanel h={humanTruth} />}
+          {culturalMemory && <CulturalMemoryPanel c={culturalMemory} />}
 
           {preGenStability && (
             <>
@@ -5159,6 +5182,112 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Cultural Memory Panel ─────────────────────────────────────────
+// Composite observatory for collective emotional cognition: cultural
+// signatures per segment, symbolic resonance, archetypes, rituals,
+// generational axes, collective memory, emotional persistence.
+interface CulturalMemoryProps {
+  culturalPatterns: CulturalMemoryReading;
+  symbolicResonance: SymbolicResonanceReading;
+  archetypes: ArchetypeRecognitionReport;
+  rituals: RitualBehaviorReport;
+  generationalSignals: GenerationalEmotionMapReport;
+  emotionalPersistence: number;
+}
+function CulturalMemoryPanel({ c }: { c: CulturalMemoryProps }) {
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">cultural memory</div>
+      <div className="text-[10px] text-bone-200/50">
+        Observatory only — never used for manipulation or tribal optimization.
+      </div>
+      <Field label="EMOTIONAL PERSISTENCE" value={`${c.emotionalPersistence}/10`} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>segments {c.culturalPatterns.segments.length}</span>
+        <span>themes {c.culturalPatterns.collectiveMemory.length}</span>
+        <span>archetypes {c.archetypes.recognized.length}</span>
+        <span>rituals {c.rituals.detected.length}</span>
+      </div>
+
+      {c.culturalPatterns.segments.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">cultural signatures</div>
+          {c.culturalPatterns.segments.slice(0, 4).map((s, i) => (
+            <div key={i} className="text-bone-200/70">
+              <div className="text-bone-200/90">{s.segment} · {s.outcomes} records · engagement {s.averageEngagement}/10</div>
+              <div className="text-bone-200/60 text-[10px]">dominant: {s.dominantDimensions.join(', ')}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.symbolicResonance.highResonanceSymbols.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">symbolic resonance (top)</div>
+          {c.symbolicResonance.highResonanceSymbols.slice(0, 5).map((s, i) => (
+            <div key={i} className="text-bone-200/70">· {s.description}</div>
+          ))}
+        </div>
+      )}
+
+      {c.archetypes.recognized.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">archetypes</div>
+          {c.archetypes.recognized.slice(0, 5).map((a, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              · {a.label} · {a.occurrences}× · engagement {a.averageEngagement}/10 · trust {a.effects.trust}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.rituals.detected.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">rituals (top by attachment)</div>
+          {c.rituals.detected.slice(0, 4).map((r, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              · {r.label} · attachment {r.emotionalAttachmentScore}/10
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.culturalPatterns.collectiveMemory.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">collective memory (top)</div>
+          {c.culturalPatterns.collectiveMemory.slice(0, 4).map((t, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              · {t.description}
+              {t.timeless && <span className="text-green-300/80"> · timeless</span>}
+              {t.collapsed && <span className="text-amber-300/80"> · collapsed</span>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.generationalSignals.segments.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">generational axes (most distinct per segment)</div>
+          {c.generationalSignals.segments.slice(0, 4).map((s, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              <span className="text-bone-200/90">{s.segment}:</span> {s.mostDistinctAxes.join(', ')}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.culturalPatterns.collapsedSymbols.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">collapsed themes</div>
+          {c.culturalPatterns.collapsedSymbols.slice(0, 3).map((t, i) => (
+            <div key={i} className="text-amber-300/80 text-[10px]">· {t.description}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
