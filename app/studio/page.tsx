@@ -49,6 +49,7 @@ import type { BranchActivationLongitudinalView } from '@lib/branchActivationLong
 import type { ProjectionCalibrationLongitudinalView } from '@lib/projectionCalibrationLongitudinalView';
 import type { OperatorConfidencePreferenceView } from '@lib/operatorConfidencePreferenceView';
 import type { OperatorCalibrationReconciliationLongitudinalView } from '@lib/operatorCalibrationReconciliationView';
+import type { SystemIntegrityReport } from '@lib/systemIntegrityReport';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -120,6 +121,8 @@ function StudioInner() {
   const [operatorConfidence, setOperatorConfidence] = useState<OperatorConfidencePreferenceView | null>(null);
   // Operator Calibration Reconciliation (intuition-vs-evidence observatory) — same lifecycle.
   const [operatorReconciliation, setOperatorReconciliation] = useState<OperatorCalibrationReconciliationLongitudinalView | null>(null);
+  // System Integrity (stability + safety probe) — same lifecycle.
+  const [systemIntegrity, setSystemIntegrity] = useState<SystemIntegrityReport | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -245,6 +248,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setOperatorReconciliation(v as OperatorCalibrationReconciliationLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/system-integrity', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setSystemIntegrity(v as SystemIntegrityReport); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -311,6 +318,10 @@ function StudioInner() {
     fetch('/api/operator-calibration-reconciliation?operatorId=studio', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setOperatorReconciliation(v as OperatorCalibrationReconciliationLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/system-integrity', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setSystemIntegrity(v as SystemIntegrityReport); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -591,12 +602,13 @@ function StudioInner() {
               {operatorReconciliation && (
                 <OperatorCalibrationReconciliationPanel view={operatorReconciliation} />
               )}
+              {systemIntegrity && <SystemIntegrityPanel report={systemIntegrity} />}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle || branchActivation || projectionCalibration || operatorConfidence || operatorReconciliation) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle || branchActivation || projectionCalibration || operatorConfidence || operatorReconciliation || systemIntegrity) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
@@ -625,6 +637,7 @@ function StudioInner() {
               {operatorReconciliation && (
                 <OperatorCalibrationReconciliationPanel view={operatorReconciliation} />
               )}
+              {systemIntegrity && <SystemIntegrityPanel report={systemIntegrity} />}
             </div>
           )}
 
@@ -4771,6 +4784,173 @@ function OperatorCalibrationReconciliationPanel({
 
       <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
         {v.operatorId} · {v.totalSnapshots} snapshot(s)
+      </div>
+    </div>
+  );
+}
+
+// ─── system integrity panel ──────────────────────────────────
+
+function SystemIntegrityPanel({ report }: { report: SystemIntegrityReport }) {
+  const statusTone =
+    report.overallStatus === 'stable'   ? 'text-bone-50/85' :
+    report.overallStatus === 'warning'  ? 'text-bone-200/85' :
+                                          'text-signal-warning';
+  const safetyOk = (Object.values(report.safetyHealth) as boolean[])
+    .every((v) => v === true);
+  const routeOk = report.routeHealth.filter((r) => r.status === 'ok').length;
+  const panelOk = report.panelHealth.filter((p) => p.status === 'ok').length;
+  const memoryReadable = report.memoryHealth.filter((m) => m.exists && m.readable).length;
+  const memoryCapped = report.memoryHealth.filter((m) => m.capped).length;
+  const memoryExisting = report.memoryHealth.filter((m) => m.exists).length;
+
+  const failedRoutes = report.routeHealth.filter((r) => r.status !== 'ok');
+  const failedPanels = report.panelHealth.filter((p) => p.status !== 'ok');
+  const cappedIssues = report.memoryHealth.filter((m) => m.exists && !m.capped);
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">system integrity · stability audit</div>
+      <div className={`text-xs uppercase tracking-widest ${statusTone}`}>
+        overall: {report.overallStatus}
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+        <div>
+          <div className="eyebrow">TYPESCRIPT</div>
+          <div className={`mt-0.5 ${report.typeScriptStatus ? 'text-bone-50/85' : 'text-signal-warning'}`}>
+            {report.typeScriptStatus ? 'clean' : 'failing'}
+          </div>
+        </div>
+        <div>
+          <div className="eyebrow">SAFETY</div>
+          <div className={`mt-0.5 ${safetyOk ? 'text-bone-50/85' : 'text-signal-warning'}`}>
+            {safetyOk ? '5/5 ok' : 'breach'}
+          </div>
+        </div>
+        <div>
+          <div className="eyebrow">ROUTES</div>
+          <div className={`mt-0.5 ${routeOk === report.routeHealth.length ? 'text-bone-50/85' : 'text-signal-warning'}`}>
+            {routeOk}/{report.routeHealth.length}
+          </div>
+        </div>
+        <div>
+          <div className="eyebrow">PANELS</div>
+          <div className={`mt-0.5 ${panelOk === report.panelHealth.length ? 'text-bone-50/85' : 'text-signal-warning'}`}>
+            {panelOk}/{report.panelHealth.length}
+          </div>
+        </div>
+        <div>
+          <div className="eyebrow">MEMORY READABLE</div>
+          <div className="mt-0.5 text-bone-50/75">
+            {memoryReadable}/{memoryExisting} existing
+          </div>
+        </div>
+        <div>
+          <div className="eyebrow">MEMORY CAPPED</div>
+          <div className={`mt-0.5 ${memoryCapped === report.memoryHealth.length ? 'text-bone-50/85' : 'text-signal-warning'}`}>
+            {memoryCapped}/{report.memoryHealth.length}
+          </div>
+        </div>
+      </div>
+
+      <div className="pt-2">
+        <div className="eyebrow mb-1">SAFETY GUARANTEES</div>
+        <ul className="space-y-0.5 text-[10px]">
+          {([
+            ['criticUntouched', 'critic untouched'],
+            ['generationUntouched', 'generation untouched'],
+            ['noAutonomousExecution', 'no autonomous execution'],
+            ['noExternalApis', 'no external APIs'],
+            ['noSelfModification', 'no self-modification'],
+          ] as Array<[keyof typeof report.safetyHealth, string]>).map(([key, label]) => {
+            const ok = report.safetyHealth[key];
+            return (
+              <li key={key} className="flex items-center gap-2 tabular-nums">
+                <span className="text-bone-200/65 flex-grow">{label}</span>
+                <span className={ok ? 'text-bone-50/85' : 'text-signal-warning'}>
+                  {ok ? 'verified' : 'breach'}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {failedRoutes.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">FAILED ROUTES</div>
+          <ul className="text-[10px] text-signal-warning/85 leading-snug space-y-0.5">
+            {failedRoutes.slice(0, 5).map((r) => (
+              <li key={r.route} className="break-words">
+                · <span className="uppercase tracking-wider">{r.route}</span> — {r.status}
+                {r.issue && <span className="text-bone-200/55"> ({r.issue})</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {failedPanels.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">FAILED PANELS</div>
+          <ul className="text-[10px] text-signal-warning/85 leading-snug space-y-0.5">
+            {failedPanels.slice(0, 5).map((p) => (
+              <li key={p.panel} className="break-words">
+                · <span className="uppercase tracking-wider">{p.panel}</span>
+                {p.issue && <span className="text-bone-200/55"> — {p.issue}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {cappedIssues.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">FIFO CAP BREACHES</div>
+          <ul className="text-[10px] text-signal-warning/85 leading-snug space-y-0.5">
+            {cappedIssues.slice(0, 5).map((m) => (
+              <li key={m.file} className="break-words">
+                · <span className="uppercase tracking-wider">{m.file}</span> — {m.issue ?? 'over cap'}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {report.warnings.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">WARNINGS</div>
+          <ul className="text-[10px] text-bone-200/55 leading-snug space-y-0.5">
+            {report.warnings.slice(0, 6).map((w, i) => (
+              <li key={i} className="break-words">· {w}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="pt-2">
+        <div className="eyebrow mb-1">MEMORY STATE</div>
+        <div className="flex flex-col gap-0.5">
+          {report.memoryHealth.slice(0, 8).map((m) => (
+            <div key={m.file} className="flex items-center gap-2 text-[10px] tabular-nums">
+              <span className="text-bone-200/65 flex-grow truncate">{m.file}</span>
+              <span className={`w-[60px] text-right ${m.exists ? 'text-bone-50/85' : 'text-bone-200/45'}`}>
+                {m.exists ? 'present' : 'not-yet'}
+              </span>
+              <span className={`w-[50px] text-right ${m.exists && !m.readable ? 'text-signal-warning' : 'text-bone-200/55'}`}>
+                {m.readable ? 'readable' : '—'}
+              </span>
+              <span className={`w-[50px] text-right ${!m.capped ? 'text-signal-warning' : 'text-bone-200/55'}`}>
+                {m.capped ? 'capped' : 'OVER'}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="pt-2 text-[10px] text-bone-200/55 italic">
+        Before intelligence expands, stability must be proven.
       </div>
     </div>
   );
