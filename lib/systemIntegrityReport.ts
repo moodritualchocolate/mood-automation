@@ -94,6 +94,8 @@ const KNOWN_ROUTES: string[] = [
   '/api/refusal-narrative',
   '/api/adaptation-orchestrator',
   '/api/consequence-intelligence',
+  '/api/outcome',
+  '/api/reality-intelligence',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.

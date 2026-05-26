@@ -64,6 +64,11 @@ import type {
   ConsequencePattern, HistoricalCorrelation, RiskEscalation, TimelineEvent,
 } from '@lib/consequenceAnalyzer';
 import type { RecoveryPattern, StabilizationSuccess } from '@lib/recoveryIntelligence';
+import type { PerformanceDNA } from '@lib/performanceDNA';
+import type { PatternLifecycle } from '@lib/decayIntelligence';
+import type { HookLifecycle } from '@lib/hookLifecycleEngine';
+import type { AudienceSegmentReport } from '@lib/audienceSegmentMemory';
+import type { EmotionalResponseMap } from '@lib/emotionalResponseMap';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -156,6 +161,17 @@ function StudioInner() {
   const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
   // Adaptation orchestrator — coordinated priority + energy + cadence.
   const [orchestration, setOrchestration] = useState<{ orchestration: AdaptationOrchestration; energy: SystemEnergyModel; cadence: AdaptiveCadence } | null>(null);
+  // Reality intelligence — real-world outcomes attached to fingerprints.
+  const [realityIntel, setRealityIntel] = useState<{
+    totalOutcomes: number;
+    performanceDNA: PerformanceDNA;
+    longTermPerformers: PatternLifecycle[];
+    fastBurnPatterns: PatternLifecycle[];
+    recoveryWindows: PatternLifecycle[];
+    hookLifecycle: HookLifecycle[];
+    audienceSegments: AudienceSegmentReport;
+    emotionalResponseMap: EmotionalResponseMap;
+  } | null>(null);
   // Consequence intelligence — historical causal patterns.
   const [consequenceIntel, setConsequenceIntel] = useState<{
     totalEpisodes: number;
@@ -329,6 +345,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setConsequenceIntel(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/reality-intelligence', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setRealityIntel(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -431,6 +451,10 @@ function StudioInner() {
     fetch('/api/consequence-intelligence', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setConsequenceIntel(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/reality-intelligence', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setRealityIntel(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -561,6 +585,7 @@ function StudioInner() {
             </>
           )}
           {consequenceIntel && <ConsequenceIntelligencePanel c={consequenceIntel} />}
+          {realityIntel && <RealityIntelligencePanel r={realityIntel} />}
 
           {preGenStability && (
             <>
@@ -5109,6 +5134,117 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Reality Intelligence Panel ────────────────────────────────────
+// Composite observatory for real-world outcomes attached to creative
+// fingerprints. Performance DNA, decay timeline, hook lifecycle,
+// audience segmentation, emotional response, long-term winners,
+// fast-burn patterns, recovery windows.
+interface RealityIntelProps {
+  totalOutcomes: number;
+  performanceDNA: PerformanceDNA;
+  longTermPerformers: PatternLifecycle[];
+  fastBurnPatterns: PatternLifecycle[];
+  recoveryWindows: PatternLifecycle[];
+  hookLifecycle: HookLifecycle[];
+  audienceSegments: AudienceSegmentReport;
+  emotionalResponseMap: EmotionalResponseMap;
+}
+function RealityIntelligencePanel({ r }: { r: RealityIntelProps }) {
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">reality intelligence</div>
+      <div className="text-[10px] text-bone-200/50">
+        Observatory only — operator-supplied outcomes. The system never auto-publishes.
+      </div>
+      <Field label="OUTCOMES" value={String(r.totalOutcomes)} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>performance correlations {r.performanceDNA.traitCorrelations.length}</span>
+        <span>hooks {r.hookLifecycle.length}</span>
+        <span>segments {r.audienceSegments.segments.length}</span>
+      </div>
+
+      {r.performanceDNA.traitCorrelations.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">performance DNA</div>
+          {r.performanceDNA.traitCorrelations.slice(0, 5).map((c, i) => (
+            <div key={i} className="text-bone-200/70">· {c.description}</div>
+          ))}
+        </div>
+      )}
+
+      {r.longTermPerformers.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">long-term performers</div>
+          {r.longTermPerformers.slice(0, 4).map((p, i) => (
+            <div key={i} className="text-bone-200/70 font-mono text-[10px]">
+              {p.fingerprint.slice(0, 50)} · {p.averageEngagement}/10 · ×{p.occurrences}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.fastBurnPatterns.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">fast-burn patterns</div>
+          {r.fastBurnPatterns.slice(0, 3).map((p, i) => (
+            <div key={i} className="text-amber-300/80 font-mono text-[10px]">
+              {p.fingerprint.slice(0, 50)} · early {p.earlyEngagement} → recent {p.recentEngagement}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.recoveryWindows.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">recovery windows</div>
+          {r.recoveryWindows.slice(0, 3).map((p, i) => (
+            <div key={i} className="text-green-300/80 font-mono text-[10px]">
+              {p.fingerprint.slice(0, 50)} · returned at {p.recentEngagement}/10
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.hookLifecycle.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">hook lifecycle</div>
+          {r.hookLifecycle.slice(0, 4).map((h, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              "{h.hook.slice(0, 50)}" · freshness {h.freshness}/10 · saturation v={h.saturationVelocity}/run
+              {h.recoveryWindow && <span className="text-green-300/80"> · recovery</span>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.audienceSegments.segments.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">audience segments</div>
+          {r.audienceSegments.segments.slice(0, 4).map((s, i) => (
+            <div key={i} className="text-bone-200/70">· {s.description}</div>
+          ))}
+        </div>
+      )}
+
+      {Object.values(r.emotionalResponseMap.globalResponseDistribution).some((v) => v > 0) && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">emotional response map</div>
+          <div className="grid grid-cols-3 gap-x-3 gap-y-0.5 text-bone-200/70 text-[10px]">
+            {Object.entries(r.emotionalResponseMap.globalResponseDistribution)
+              .filter(([, v]) => v > 0)
+              .sort((a, b) => b[1] - a[1])
+              .map(([k, v]) => (
+                <div key={k}>
+                  <span className="text-bone-200/50">{k}</span> · {v}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
