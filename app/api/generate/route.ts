@@ -67,7 +67,11 @@ import {
   buildCampaignLifecycleHistoryContext,
   createCampaignLifecycleMemoryStore,
 } from '@lib/campaignLifecycleMemory';
-import { recordPostActivationSample } from '@lib/branchActivationMemory';
+import { recordPostActivationSample, createBranchActivationMemoryStore } from '@lib/branchActivationMemory';
+import { computeProjectionCalibration } from '@lib/projectionCalibrationEngine';
+import {
+  recordCalibrationSnapshot, createProjectionCalibrationMemoryStore,
+} from '@lib/projectionCalibrationMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -654,6 +658,58 @@ export async function POST(req: NextRequest) {
                         strategicDurability: evolution.strategicDurability,
                         decayRisk: evolution.decayRisk,
                       });
+
+                      // ─── Projection Calibration Snapshot ────────────
+                      // After the post-activation sample updates
+                      // branch-activation memory (resolving any windows
+                      // that closed this run), capture a calibration
+                      // snapshot — pure annotations, never mutating
+                      // projections or scores. Failure swallowed.
+                      try {
+                        const branchMemAfter = await createBranchActivationMemoryStore()
+                          .read().catch(() => null);
+                        const calibrationMemBefore = await createProjectionCalibrationMemoryStore()
+                          .read().catch(() => null);
+                        const report = computeProjectionCalibration({
+                          branchActivationMemory: branchMemAfter,
+                          calibrationMemory: calibrationMemBefore,
+                        });
+                        if (report.calibrations.length > 0) {
+                          const perTypeAccuracy: Record<string, number> = {};
+                          for (const c of report.calibrations) {
+                            perTypeAccuracy[c.projectionType] = c.historicalAccuracy;
+                          }
+                          write({
+                            type: 'event',
+                            event: {
+                              ts: Date.now(),
+                              stage: 'projection-calibration',
+                              message:
+                                `overall accuracy ${report.overallAccuracy}/10 · ` +
+                                `confidence ${report.overallConfidence}/10 · ` +
+                                `types ${report.calibrations.length}` +
+                                (report.mostReliableProjectionType
+                                  ? ` · most-reliable ${report.mostReliableProjectionType}`
+                                  : ''),
+                              data: {
+                                overallAccuracy: report.overallAccuracy,
+                                overallConfidence: report.overallConfidence,
+                                mostReliableProjectionType: report.mostReliableProjectionType,
+                                leastReliableProjectionType: report.leastReliableProjectionType,
+                              },
+                            },
+                          });
+                          await recordCalibrationSnapshot({
+                            at: banner.createdAt,
+                            bannerId: banner.id,
+                            overallConfidence: report.overallConfidence,
+                            overallAccuracy: report.overallAccuracy,
+                            perTypeAccuracy,
+                          });
+                        }
+                      } catch {
+                        // non-fatal — calibration snapshot never blocks generation
+                      }
                     } catch {
                       // non-fatal — lifecycle observation never blocks generation
                     }

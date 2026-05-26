@@ -46,6 +46,7 @@ import type { StrategicOutcomeLongitudinalView } from '@lib/strategicOutcomeLong
 import type { CounterfactualCognitionLongitudinalView } from '@lib/counterfactualCognitionLongitudinalView';
 import type { CampaignLifecycleLongitudinalView } from '@lib/campaignLifecycleLongitudinalView';
 import type { BranchActivationLongitudinalView } from '@lib/branchActivationLongitudinalView';
+import type { ProjectionCalibrationLongitudinalView } from '@lib/projectionCalibrationLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -111,6 +112,8 @@ function StudioInner() {
   const [campaignLifecycle, setCampaignLifecycle] = useState<CampaignLifecycleLongitudinalView | null>(null);
   // Branch Activation Log (human-supervised reinforcement memory) — same lifecycle.
   const [branchActivation, setBranchActivation] = useState<BranchActivationLongitudinalView | null>(null);
+  // Projection Calibration (annotation-only observatory) — same lifecycle.
+  const [projectionCalibration, setProjectionCalibration] = useState<ProjectionCalibrationLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -224,6 +227,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setBranchActivation(v as BranchActivationLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/projection-calibration', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setProjectionCalibration(v as ProjectionCalibrationLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -278,6 +285,10 @@ function StudioInner() {
     fetch('/api/branch-activation', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setBranchActivation(v as BranchActivationLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/projection-calibration', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setProjectionCalibration(v as ProjectionCalibrationLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -547,12 +558,13 @@ function StudioInner() {
                 />
               )}
               {branchActivation && <BranchActivationPanel view={branchActivation} />}
+              {projectionCalibration && <ProjectionCalibrationPanel view={projectionCalibration} />}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle || branchActivation) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle || branchActivation || projectionCalibration) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
@@ -570,6 +582,7 @@ function StudioInner() {
                 />
               )}
               {branchActivation && <BranchActivationPanel view={branchActivation} />}
+              {projectionCalibration && <ProjectionCalibrationPanel view={projectionCalibration} />}
             </div>
           )}
 
@@ -3935,6 +3948,308 @@ function BranchActivationPanel({ view: v }: { view: BranchActivationLongitudinal
         total activations {v.totalActivations} ·
         resolved {v.resolvedActivations} ·
         pending {v.pendingActivations}
+      </div>
+    </div>
+  );
+}
+
+// ─── projection calibration panel ─────────────────────────────
+
+function ProjectionCalibrationPanel({
+  view: v,
+}: { view: ProjectionCalibrationLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && (!c || c.calibrations.length === 0)) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">projection calibration · annotations only</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.trend === 'calibration-improving' ? 'text-bone-50/85' :
+    v.trend === 'calibration-degrading' ? 'text-signal-warning/85' :
+    v.trend === 'calibration-stable'    ? 'text-bone-200/85' :
+                                          'text-bone-200/65';
+
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const Spark = ({ points, invert = false }: { points: { value: number }[]; invert?: boolean }) => {
+    if (points.length < 2) return <span className="text-[10px] text-bone-200/30">—</span>;
+    const w = 80, h = 14;
+    const xs = points.map((_, i) => (i / (points.length - 1)) * w);
+    const ys = points.map((p) => h - (p.value / 10) * h);
+    const d = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
+    const last = points[points.length - 1].value;
+    const first = points[0].value;
+    const delta = last - first;
+    const rising = delta > 0.3;
+    const falling = delta < -0.3;
+    const stroke = invert
+      ? rising ? '#C9A24B' : falling ? '#8AA98A' : 'rgba(247,245,242,0.55)'
+      : rising ? '#8AA98A' : falling ? '#C9A24B' : 'rgba(247,245,242,0.55)';
+    return <svg width={w} height={h}><path d={d} fill="none" stroke={stroke} strokeWidth="1" /></svg>;
+  };
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">projection calibration · annotations only</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+      <div className="text-[9px] text-bone-200/45 italic">
+        observatory only — never modifies projections, never rewrites scores, never reprioritizes branches
+      </div>
+
+      {c && (
+        <>
+          <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+            <div>
+              <div className="eyebrow">OVERALL ACCURACY</div>
+              <div className={`mt-0.5 ${heatTone(c.overallAccuracy)}`}>{c.overallAccuracy.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">OVERALL CONFIDENCE</div>
+              <div className={`mt-0.5 ${heatTone(c.overallConfidence)}`}>{c.overallConfidence.toFixed(1)}/10</div>
+            </div>
+            {c.mostReliableProjectionType && (
+              <div className="col-span-2">
+                <div className="eyebrow">MOST RELIABLE</div>
+                <div className="mt-0.5 text-bone-50/85 uppercase tracking-wider">{c.mostReliableProjectionType}</div>
+              </div>
+            )}
+            {c.leastReliableProjectionType && (
+              <div className="col-span-2">
+                <div className="eyebrow">LEAST RELIABLE</div>
+                <div className="mt-0.5 text-signal-warning/85 uppercase tracking-wider">{c.leastReliableProjectionType}</div>
+              </div>
+            )}
+          </div>
+
+          {c.calibrations.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">PER-PROJECTION CALIBRATION</div>
+              <ul className="space-y-2 text-[10px]">
+                {c.calibrations.slice(0, 5).map((cal) => (
+                  <li key={cal.projectionType} className="leading-snug border-l hairline pl-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">
+                        {cal.projectionType}
+                      </span>
+                      <span className={`w-[40px] text-right ${heatTone(cal.historicalAccuracy)}`}>
+                        acc {cal.historicalAccuracy.toFixed(1)}
+                      </span>
+                      <span className="w-[44px] text-right text-bone-200/55">conf {cal.confidenceLevel.toFixed(1)}</span>
+                      <span className="w-[36px] text-right text-bone-200/45">n={cal.sampleSize}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[9px] mt-0.5">
+                      <span className={heatTone(cal.trustCalibration)}>trust {cal.trustCalibration.toFixed(1)}</span>
+                      <span className={heatTone(cal.fatigueCalibration)}>fatigue {cal.fatigueCalibration.toFixed(1)}</span>
+                      <span className={heatTone(cal.durabilityCalibration)}>dur {cal.durabilityCalibration.toFixed(1)}</span>
+                      <span className="text-bone-200/55">short {cal.shortTermAccuracy.toFixed(1)}</span>
+                      <span className="text-bone-200/55">long {cal.longTermAccuracy.toFixed(1)}</span>
+                      {cal.overestimationBias >= 3 && (
+                        <span className="text-signal-warning/75">over+{cal.overestimationBias.toFixed(1)}</span>
+                      )}
+                      {cal.underestimationBias >= 3 && (
+                        <span className="text-signal-warning/75">under-{cal.underestimationBias.toFixed(1)}</span>
+                      )}
+                    </div>
+                    {cal.calibrationAnnotations.length > 0 && (
+                      <ul className="mt-0.5 text-bone-200/65 text-[9px] space-y-0.5">
+                        {cal.calibrationAnnotations.slice(0, 4).map((ann, i) => (
+                          <li key={i} className="break-words italic">· {ann}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
+      )}
+
+      {v.overallAccuracyDrift.length >= 2 && (
+        <div className="pt-2 flex items-center gap-2 text-[10px] tabular-nums">
+          <span className="text-bone-200/55 flex-grow">calibration drift</span>
+          <Spark points={v.overallAccuracyDrift.map((p) => ({ value: p.overallAccuracy }))} />
+        </div>
+      )}
+
+      {v.mostAccurate.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">MOST ACCURATE PROJECTIONS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.mostAccurate.slice(0, 4).map((r) => (
+              <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.historicalAccuracy)}`}>
+                  {r.historicalAccuracy.toFixed(1)}/10
+                </span>
+                <span className="w-[36px] text-right text-bone-200/45">n={r.sampleSize}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.leastReliable.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">LEAST RELIABLE PROJECTIONS</div>
+          <div className="flex flex-col gap-0.5">
+            {v.leastReliable.slice(0, 4).map((r) => (
+              <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.historicalAccuracy)}`}>
+                  {r.historicalAccuracy.toFixed(1)}/10
+                </span>
+                <span className="w-[36px] text-right text-bone-200/45">n={r.sampleSize}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(v.strongestShortTermPredictors.length > 0 || v.strongestLongTermPredictors.length > 0) && (
+        <div className="pt-2 grid grid-cols-2 gap-3">
+          {v.strongestShortTermPredictors.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">SHORT-TERM PREDICTORS</div>
+              <div className="flex flex-col gap-0.5">
+                {v.strongestShortTermPredictors.slice(0, 4).map((r) => (
+                  <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                    <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                    <span className="w-[44px] text-right text-bone-50/75">{r.shortTermAccuracy.toFixed(1)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {v.strongestLongTermPredictors.length > 0 && (
+            <div>
+              <div className="eyebrow mb-1">LONG-TERM PREDICTORS</div>
+              <div className="flex flex-col gap-0.5">
+                {v.strongestLongTermPredictors.slice(0, 4).map((r) => (
+                  <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                    <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                    <span className="w-[44px] text-right text-bone-50/75">{r.longTermAccuracy.toFixed(1)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {v.overconfidencePatterns.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">OVERCONFIDENCE WARNINGS</div>
+          <ul className="text-[10px] text-signal-warning/85 leading-snug space-y-0.5">
+            {v.overconfidencePatterns.slice(0, 3).map((p, i) => (
+              <li key={i} className="break-words">
+                · <span className="uppercase tracking-wider">{p.projectionType}</span> overestimates by +{p.bias.toFixed(1)}/10 ({p.axis})
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {v.underconfidencePatterns.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">UNDERCONFIDENCE WARNINGS</div>
+          <ul className="text-[10px] text-signal-warning/75 leading-snug space-y-0.5">
+            {v.underconfidencePatterns.slice(0, 3).map((p, i) => (
+              <li key={i} className="break-words">
+                · <span className="uppercase tracking-wider">{p.projectionType}</span> underestimates by -{p.bias.toFixed(1)}/10 ({p.axis})
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {v.perTypeDrift.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">PER-TYPE CALIBRATION DRIFT</div>
+          <div className="flex flex-col gap-0.5">
+            {v.perTypeDrift.slice(0, 5).map((d) => {
+              const driftTone = d.drift > 0 ? 'text-bone-50/85' : d.drift < 0 ? 'text-signal-warning/75' : 'text-bone-200/55';
+              return (
+                <div key={d.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                  <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{d.projectionType}</span>
+                  <span className="w-[40px] text-right text-bone-200/55">{d.earliest.toFixed(1)}</span>
+                  <span className="w-[10px] text-bone-200/45 text-center">→</span>
+                  <span className="w-[40px] text-right text-bone-50/75">{d.latest.toFixed(1)}</span>
+                  <span className={`w-[40px] text-right ${driftTone}`}>
+                    {d.drift > 0 ? '+' : ''}{d.drift.toFixed(1)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {v.environmentalReliabilityMap.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">ENVIRONMENTAL RELIABILITY MAP</div>
+          <div className="flex flex-col gap-0.5">
+            {v.environmentalReliabilityMap.slice(0, 6).map((r, i) => (
+              <div key={i} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 w-[100px] shrink-0 uppercase tracking-wider truncate">{r.projectionType}</span>
+                <span className="text-bone-200/55 flex-grow truncate">@ {r.environment}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.reliability)}`}>
+                  {r.reliability.toFixed(1)}/10
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.simulationVsRealityDivergence.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">SIMULATION-vs-REALITY DIVERGENCE</div>
+          <div className="flex flex-col gap-0.5">
+            {v.simulationVsRealityDivergence.slice(0, 4).map((r) => (
+              <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.divergence, true)}`}>
+                  div {r.divergence.toFixed(1)}
+                </span>
+                <span className="w-[36px] text-right text-bone-200/45">n={r.sampleSize}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.projectionTrustRanking.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">PROJECTION TRUST RANKING</div>
+          <div className="flex flex-col gap-0.5">
+            {v.projectionTrustRanking.slice(0, 4).map((r) => (
+              <div key={r.projectionType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-50/75 flex-grow uppercase tracking-wider truncate">{r.projectionType}</span>
+                <span className={`w-[50px] text-right ${heatTone(r.historicalAccuracy)}`}>
+                  {r.historicalAccuracy.toFixed(1)}/10
+                </span>
+                <span className="w-[36px] text-right text-bone-200/45">n={r.sampleSize}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        snapshots {v.totalSnapshots} · projection types tracked {c?.calibrations.length ?? 0}
       </div>
     </div>
   );
