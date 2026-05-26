@@ -67,6 +67,7 @@ import {
   buildCampaignLifecycleHistoryContext,
   createCampaignLifecycleMemoryStore,
 } from '@lib/campaignLifecycleMemory';
+import { recordPostActivationSample } from '@lib/branchActivationMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -636,6 +637,23 @@ export async function POST(req: NextRequest) {
                         campaignMode: banner.campaignMode,
                         evolution,
                       }));
+
+                      // ─── Branch Activation Outcome Observation ──────
+                      // Update any UNRESOLVED branch activations with
+                      // this run's campaign-evolution snapshot. Pure
+                      // observation — the activation event itself was
+                      // already recorded via the POST endpoint at
+                      // operator-decision time. STRICTLY read-only;
+                      // this writes only outcome-delta accumulators
+                      // on already-existing activation records.
+                      await recordPostActivationSample({
+                        at: banner.createdAt,
+                        campaignHealth: evolution.campaignHealth,
+                        trustMomentum: evolution.trustMomentum,
+                        fatiguePressure: evolution.fatiguePressure,
+                        strategicDurability: evolution.strategicDurability,
+                        decayRisk: evolution.decayRisk,
+                      });
                     } catch {
                       // non-fatal — lifecycle observation never blocks generation
                     }

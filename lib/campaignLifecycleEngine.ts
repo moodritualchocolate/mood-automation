@@ -57,6 +57,18 @@ export interface PossibleBranch {
   expectedStrategicPurpose: string;
   risk: number;
   durabilityPotential: number;
+  /** Per-axis predicted impacts from the source counterfactual projection.
+   *  These let the human-supervised activation endpoint persist the
+   *  expected outcome at activation time so reality can be measured
+   *  against it. -10..+10. */
+  trustImpact: number;
+  fatigueImpact: number;
+  durabilityImpact: number;
+  /** Which counterfactual-cognition slot surfaced this branch:
+   *  'trust-optimal' | 'durability-optimal' | 'fatigue-aware' |
+   *  'high-impact' — used to attribute prediction accuracy by
+   *  projection type. */
+  counterfactualType: string;
 }
 
 export interface AudienceEvolution {
@@ -329,7 +341,7 @@ function deriveBranchesFromCounterfactuals(
   const branches: PossibleBranch[] = [];
   const seen = new Set<CampaignArchetype>();
 
-  function addFrom(p: CounterfactualProjection, reason: string) {
+  function addFrom(p: CounterfactualProjection, reason: string, counterfactualType: string) {
     if (seen.has(p.counterfactualCampaignArchetype)) return;
     seen.add(p.counterfactualCampaignArchetype);
     const negImpacts = Math.abs(Math.min(0, p.trustImpact)) +
@@ -342,15 +354,19 @@ function deriveBranchesFromCounterfactuals(
       expectedStrategicPurpose: p.archetypeDescription,
       risk: round1(risk),
       durabilityPotential: round1(durabilityPotential),
+      trustImpact: p.trustImpact,
+      fatigueImpact: p.fatigueImpact,
+      durabilityImpact: p.durabilityImpact,
+      counterfactualType,
     });
   }
 
-  if (cf.trustOptimizedPath) addFrom(cf.trustOptimizedPath, 'trust-optimal alternate path');
-  if (cf.durabilityOptimizedPath) addFrom(cf.durabilityOptimizedPath, 'durability-optimal alternate path');
-  if (cf.fatigueAwarePath) addFrom(cf.fatigueAwarePath, 'fatigue-aware alternate path');
+  if (cf.trustOptimizedPath) addFrom(cf.trustOptimizedPath, 'trust-optimal alternate path', 'trust-optimal');
+  if (cf.durabilityOptimizedPath) addFrom(cf.durabilityOptimizedPath, 'durability-optimal alternate path', 'durability-optimal');
+  if (cf.fatigueAwarePath) addFrom(cf.fatigueAwarePath, 'fatigue-aware alternate path', 'fatigue-aware');
   for (const p of cf.highImpactPaths.slice(0, 3)) {
     if (seen.has(p.counterfactualCampaignArchetype)) continue;
-    addFrom(p, 'high-impact alternate path');
+    addFrom(p, 'high-impact alternate path', 'high-impact');
   }
   return branches.slice(0, 5);
 }

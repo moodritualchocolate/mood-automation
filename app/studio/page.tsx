@@ -45,6 +45,7 @@ import type { ExecutiveGovernanceLongitudinalView } from '@lib/executiveGovernan
 import type { StrategicOutcomeLongitudinalView } from '@lib/strategicOutcomeLongitudinalView';
 import type { CounterfactualCognitionLongitudinalView } from '@lib/counterfactualCognitionLongitudinalView';
 import type { CampaignLifecycleLongitudinalView } from '@lib/campaignLifecycleLongitudinalView';
+import type { BranchActivationLongitudinalView } from '@lib/branchActivationLongitudinalView';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -108,6 +109,8 @@ function StudioInner() {
   const [counterfactual, setCounterfactual] = useState<CounterfactualCognitionLongitudinalView | null>(null);
   // Campaign Lifecycle Evolution (read-only) — same lifecycle.
   const [campaignLifecycle, setCampaignLifecycle] = useState<CampaignLifecycleLongitudinalView | null>(null);
+  // Branch Activation Log (human-supervised reinforcement memory) — same lifecycle.
+  const [branchActivation, setBranchActivation] = useState<BranchActivationLongitudinalView | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -217,6 +220,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setCampaignLifecycle(v as CampaignLifecycleLongitudinalView); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/branch-activation', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setBranchActivation(v as BranchActivationLongitudinalView); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -267,6 +274,10 @@ function StudioInner() {
     fetch('/api/campaign-evolution', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setCampaignLifecycle(v as CampaignLifecycleLongitudinalView); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/branch-activation', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setBranchActivation(v as BranchActivationLongitudinalView); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -529,13 +540,19 @@ function StudioInner() {
               {governance && <ExecutiveGovernancePanel view={governance} />}
               {outcome && <StrategicOutcomeIntelligencePanel view={outcome} />}
               {counterfactual && <CounterfactualCognitionPanel view={counterfactual} />}
-              {campaignLifecycle && <CampaignEvolutionPanel view={campaignLifecycle} />}
+              {campaignLifecycle && (
+                <CampaignEvolutionPanel
+                  view={campaignLifecycle}
+                  onActivate={(req) => { void activateBranch(req, setBranchActivation); }}
+                />
+              )}
+              {branchActivation && <BranchActivationPanel view={branchActivation} />}
             </div>
           )}
 
           {/* Show all read-only longitudinal panels even without a
               banner — first load / after refusal still has data. */}
-          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle) && (
+          {!banner && (longitudinal || policyAudit || cultural || conflict || cogWeight || identity || governance || outcome || counterfactual || campaignLifecycle || branchActivation) && (
             <div className="space-y-4 text-sm">
               {longitudinal && <LongitudinalQualityPanel view={longitudinal} />}
               {policyAudit && <PolicyAuditPanel view={policyAudit} />}
@@ -546,7 +563,13 @@ function StudioInner() {
               {governance && <ExecutiveGovernancePanel view={governance} />}
               {outcome && <StrategicOutcomeIntelligencePanel view={outcome} />}
               {counterfactual && <CounterfactualCognitionPanel view={counterfactual} />}
-              {campaignLifecycle && <CampaignEvolutionPanel view={campaignLifecycle} />}
+              {campaignLifecycle && (
+                <CampaignEvolutionPanel
+                  view={campaignLifecycle}
+                  onActivate={(req) => { void activateBranch(req, setBranchActivation); }}
+                />
+              )}
+              {branchActivation && <BranchActivationPanel view={branchActivation} />}
             </div>
           )}
 
@@ -3296,7 +3319,54 @@ function CounterfactualCognitionPanel({
 
 // ─── campaign evolution panel ─────────────────────────────────
 
-function CampaignEvolutionPanel({ view: v }: { view: CampaignLifecycleLongitudinalView }) {
+interface ActivationRequest {
+  branchName: string;
+  counterfactualType: string;
+  fromPhase: string;
+  fromExecutive: string | null;
+  fromIdentityVector: string | null;
+  fromArchetype: string | null;
+  predictedTrustImpact: number;
+  predictedFatigueImpact: number;
+  predictedDurabilityImpact: number;
+  predictedRisk: number;
+  predictedDurabilityPotential: number;
+  baselineTrustMomentum: number;
+  baselineFatiguePressure: number;
+  baselineDurability: number;
+  baselineCampaignHealth: number;
+  operatorId: string;
+  reason?: string;
+}
+
+async function activateBranch(
+  req: ActivationRequest,
+  setBranchActivation: (v: BranchActivationLongitudinalView | null) => void,
+): Promise<void> {
+  try {
+    const res = await fetch('/api/branch-activation', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(req),
+    });
+    if (!res.ok) return;
+    // Refresh the activation view so the panel reflects the new record.
+    const refresh = await fetch('/api/branch-activation', { cache: 'no-store' });
+    if (refresh.ok) {
+      const v = await refresh.json();
+      if (v) setBranchActivation(v as BranchActivationLongitudinalView);
+    }
+  } catch {
+    /* non-fatal — activation never blocks UI */
+  }
+}
+
+function CampaignEvolutionPanel({
+  view: v, onActivate,
+}: {
+  view: CampaignLifecycleLongitudinalView;
+  onActivate?: (req: ActivationRequest) => void;
+}) {
   const c = v.current;
 
   if (!v.present && !c) {
@@ -3425,7 +3495,7 @@ function CampaignEvolutionPanel({ view: v }: { view: CampaignLifecycleLongitudin
 
           {c.possibleBranches.length > 0 && (
             <div className="pt-2">
-              <div className="eyebrow mb-1">POSSIBLE BRANCHES</div>
+              <div className="eyebrow mb-1">POSSIBLE BRANCHES · HUMAN-SUPERVISED</div>
               <ul className="space-y-1.5 text-[10px]">
                 {c.possibleBranches.slice(0, 4).map((b, i) => (
                   <li key={i} className="leading-snug">
@@ -3440,9 +3510,41 @@ function CampaignEvolutionPanel({ view: v }: { view: CampaignLifecycleLongitudin
                     </div>
                     <div className="text-bone-200/65 mt-0.5 break-words">{b.expectedStrategicPurpose}</div>
                     <div className="text-bone-200/45 text-[9px] italic break-words">→ {b.reason}</div>
+                    {onActivate && (
+                      <div className="mt-1">
+                        <button
+                          onClick={() => onActivate({
+                            branchName: b.branchName,
+                            counterfactualType: b.counterfactualType,
+                            fromPhase: c.currentPhase,
+                            fromExecutive: null,
+                            fromIdentityVector: null,
+                            fromArchetype: c.dominantCampaignPattern,
+                            predictedTrustImpact: b.trustImpact,
+                            predictedFatigueImpact: b.fatigueImpact,
+                            predictedDurabilityImpact: b.durabilityImpact,
+                            predictedRisk: b.risk,
+                            predictedDurabilityPotential: b.durabilityPotential,
+                            baselineTrustMomentum: c.trustMomentum,
+                            baselineFatiguePressure: c.fatiguePressure,
+                            baselineDurability: c.strategicDurability,
+                            baselineCampaignHealth: c.campaignHealth,
+                            operatorId: 'studio',
+                            reason: b.reason,
+                          })}
+                          className="px-2 py-0.5 text-[9px] tracking-widest uppercase border hairline text-bone-50/75 hover:bg-white/5"
+                          title="Records the activation as a reinforcement-memory event. Does NOT change the next run."
+                        >
+                          Activate Branch
+                        </button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
+              <div className="text-[9px] text-bone-200/45 italic mt-1">
+                activation records a reinforcement-memory event · does NOT mutate generation
+              </div>
             </div>
           )}
 
@@ -3594,6 +3696,245 @@ function CampaignEvolutionPanel({ view: v }: { view: CampaignLifecycleLongitudin
         avg health {v.averageCampaignHealth.toFixed(1)}/10 ·
         avg trust {v.averageTrustMomentum.toFixed(1)}/10 ·
         avg fatigue {v.averageFatiguePressure.toFixed(1)}/10
+      </div>
+    </div>
+  );
+}
+
+// ─── branch activation panel ─────────────────────────────────
+
+function BranchActivationPanel({ view: v }: { view: BranchActivationLongitudinalView }) {
+  const c = v.current;
+
+  if (!v.present && (!c || c.activationConfidence === 0)) {
+    return (
+      <div className="border-t hairline pt-3 space-y-2">
+        <div className="eyebrow">branch activation log · reinforcement memory</div>
+        <div className="text-xs text-bone-200/55 italic">{v.statement}</div>
+      </div>
+    );
+  }
+
+  const trendTone =
+    v.trend === 'reliability-rising'  ? 'text-bone-50/85' :
+    v.trend === 'reliability-falling' ? 'text-signal-warning/85' :
+    v.trend === 'reliability-stable'  ? 'text-bone-200/85' :
+                                        'text-bone-200/65';
+
+  const heatTone = (score: number, invert = false) => {
+    const positive = invert ? score <= 4 : score >= 7;
+    const negative = invert ? score >= 7 : score <= 4;
+    return positive ? 'text-bone-50/85'
+         : negative ? 'text-signal-warning/85'
+         : 'text-bone-200/65';
+  };
+
+  const resultTone = (result: string) =>
+    result === 'recovered' ? 'text-bone-50/85' :
+    result === 'failed'    ? 'text-signal-warning/85' :
+    result === 'mixed'     ? 'text-bone-200/65' :
+                             'text-bone-200/55';
+
+  return (
+    <div className="border-t hairline pt-3 space-y-2">
+      <div className="eyebrow">branch activation log · reinforcement memory</div>
+      <div className={`text-xs ${trendTone}`}>{v.statement}</div>
+
+      {c && (
+        <>
+          <div className="grid grid-cols-2 gap-2 text-xs tabular-nums pt-1">
+            <div>
+              <div className="eyebrow">ACTIVATION CONFIDENCE</div>
+              <div className={`mt-0.5 ${heatTone(c.activationConfidence)}`}>{c.activationConfidence.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">HISTORICAL RELIABILITY</div>
+              <div className={`mt-0.5 ${heatTone(c.historicalReliability)}`}>{c.historicalReliability.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">BRANCH TRUSTWORTHINESS</div>
+              <div className={`mt-0.5 ${heatTone(c.branchTrustworthiness)}`}>{c.branchTrustworthiness.toFixed(1)}/10</div>
+            </div>
+            <div>
+              <div className="eyebrow">PREDICTION ACCURACY</div>
+              <div className={`mt-0.5 ${heatTone(c.predictionAccuracy)}`}>{c.predictionAccuracy.toFixed(1)}/10</div>
+            </div>
+          </div>
+
+          {c.recommendedObservations.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">RECOMMENDED OBSERVATIONS</div>
+              <ul className="text-[10px] text-bone-200/65 leading-snug space-y-0.5">
+                {c.recommendedObservations.slice(0, 4).map((s, i) => (
+                  <li key={i} className="break-words">· {s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.branchOutcomes.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">BRANCH OUTCOMES</div>
+              <ul className="space-y-1.5 text-[10px]">
+                {c.branchOutcomes.slice(0, 5).map((row) => (
+                  <li key={row.branchName} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">{row.branchName}</span>
+                      <span className="w-[40px] text-right text-bone-50/75">×{row.timesActivated}</span>
+                      <span className="w-[60px] text-right text-bone-200/55">stab {row.longTermStability.toFixed(1)}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[9px] ml-2 mt-0.5">
+                      <span className={heatTone(row.trustRecoveryRate)}>trust {row.trustRecoveryRate.toFixed(1)}</span>
+                      <span className={heatTone(row.fatigueRecoveryRate)}>fatigue {row.fatigueRecoveryRate.toFixed(1)}</span>
+                      <span className={heatTone(row.durabilityGain)}>dur+ {row.durabilityGain.toFixed(1)}</span>
+                      <span className={heatTone(row.averageDecayReduction)}>decay− {row.averageDecayReduction.toFixed(1)}</span>
+                      <span className="text-bone-200/55">recovered {row.successfulRecoveries}/{row.timesActivated}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.failedBranchPatterns.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">FAILED BRANCH PATTERNS</div>
+              <ul className="text-[10px] text-signal-warning/85 leading-snug space-y-0.5">
+                {c.failedBranchPatterns.slice(0, 3).map((f, i) => (
+                  <li key={i} className="break-words">
+                    · <span className="uppercase tracking-wider">{f.branchName}</span>
+                    {' '}<span>(severity {f.severity.toFixed(1)}/10)</span> — {f.failurePattern}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.durableBranchPatterns.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">DURABLE BRANCH PATTERNS</div>
+              <ul className="text-[10px] text-bone-50/80 leading-snug space-y-0.5">
+                {c.durableBranchPatterns.slice(0, 3).map((d, i) => (
+                  <li key={i} className="break-words">
+                    · <span className="uppercase tracking-wider">{d.branchName}</span>
+                    {' '}<span>(durability {d.durabilityScore.toFixed(1)}/10)</span> — {d.reason}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.operatorPatterns.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">OPERATOR PATTERNS</div>
+              <ul className="space-y-1 text-[10px]">
+                {c.operatorPatterns.slice(0, 4).map((op) => (
+                  <li key={op.operatorType} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-50/85 uppercase tracking-wider flex-grow truncate">{op.operatorType}</span>
+                      <span className="w-[60px] text-right text-bone-200/55">risk {op.riskTolerance.toFixed(1)}</span>
+                      <span className="w-[60px] text-right text-bone-50/75">trust+ {op.trustBias.toFixed(1)}</span>
+                      <span className="w-[60px] text-right text-bone-200/55">novelty {op.noveltyBias.toFixed(1)}</span>
+                    </div>
+                    <div className="text-bone-200/55 text-[9px] break-words">
+                      prefers: {op.preferredBranches.slice(0, 3).join(', ') || 'none'}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {c.projectionAccuracy.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">SIMULATION vs REALITY ACCURACY</div>
+              <div className="flex flex-col gap-0.5">
+                {c.projectionAccuracy.slice(0, 5).map((p) => (
+                  <div key={p.counterfactualType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                    <span className="text-bone-200/65 flex-grow truncate">{p.counterfactualType}</span>
+                    <span className={`w-[50px] text-right ${heatTone(p.historicalAccuracy)}`}>
+                      {p.historicalAccuracy.toFixed(1)}/10
+                    </span>
+                    <span className="w-[40px] text-right text-bone-200/55">n={p.sampleSize}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {c.activationTimeline.length > 0 && (
+            <div className="pt-2">
+              <div className="eyebrow mb-1">RECENT ACTIVATIONS</div>
+              <ul className="space-y-1 text-[10px]">
+                {c.activationTimeline.slice(0, 6).map((t, i) => (
+                  <li key={i} className="leading-snug">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bone-200/55 uppercase tracking-wider w-[88px] shrink-0 truncate">{t.phase}</span>
+                      <span className="text-bone-50/85 break-words flex-grow truncate">{t.branch}</span>
+                      <span className={`w-[68px] text-right uppercase tracking-wider ${resultTone(t.result)}`}>
+                        {t.result}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[9px] ml-2">
+                      <span className={t.trustDelta > 0 ? 'text-bone-50/75' : t.trustDelta < 0 ? 'text-signal-warning/75' : 'text-bone-200/55'}>
+                        trust {t.trustDelta > 0 ? '+' : ''}{t.trustDelta.toFixed(1)}
+                      </span>
+                      <span className={t.fatigueDelta < 0 ? 'text-bone-50/75' : t.fatigueDelta > 0 ? 'text-signal-warning/75' : 'text-bone-200/55'}>
+                        fatigue {t.fatigueDelta > 0 ? '+' : ''}{t.fatigueDelta.toFixed(1)}
+                      </span>
+                      <span className={t.durabilityDelta > 0 ? 'text-bone-50/75' : t.durabilityDelta < 0 ? 'text-signal-warning/75' : 'text-bone-200/55'}>
+                        durability {t.durabilityDelta > 0 ? '+' : ''}{t.durabilityDelta.toFixed(1)}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
+      )}
+
+      {v.operatorEvolution.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">OPERATOR EVOLUTION</div>
+          <div className="flex flex-col gap-0.5">
+            {v.operatorEvolution.slice(0, 4).map((op) => (
+              <div key={op.operatorId} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{op.operatorId}</span>
+                <span className="w-[40px] text-right text-bone-50/75">×{op.totalActivations}</span>
+                <span className="w-[60px] text-right text-bone-50/75">top {op.topBranch ?? '—'}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {v.simulationVsReality.length > 0 && (
+        <div className="pt-2">
+          <div className="eyebrow mb-1">SIMULATION vs REALITY (per counterfactual type)</div>
+          <div className="flex flex-col gap-0.5">
+            {v.simulationVsReality.slice(0, 4).map((s) => (
+              <div key={s.counterfactualType} className="flex items-center gap-2 text-[10px] tabular-nums">
+                <span className="text-bone-200/65 flex-grow uppercase tracking-wider truncate">{s.counterfactualType}</span>
+                <span className="w-[60px] text-right text-bone-200/55">
+                  trust pred {s.predictedAvgTrust > 0 ? '+' : ''}{s.predictedAvgTrust.toFixed(1)}
+                </span>
+                <span className="w-[60px] text-right text-bone-50/75">
+                  real {s.measuredAvgTrust > 0 ? '+' : ''}{s.measuredAvgTrust.toFixed(1)}
+                </span>
+                <span className={`w-[40px] text-right ${heatTone(s.accuracyScore)}`}>
+                  {s.accuracyScore.toFixed(1)}/10
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 text-[10px] text-bone-200/55 tabular-nums">
+        total activations {v.totalActivations} ·
+        resolved {v.resolvedActivations} ·
+        pending {v.pendingActivations}
       </div>
     </div>
   );
