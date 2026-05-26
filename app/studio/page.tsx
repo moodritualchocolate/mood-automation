@@ -60,6 +60,10 @@ import type { RefusalNarrativeOutput } from '@lib/refusalNarrativeEngine';
 import type { AdaptationOrchestration } from '@lib/adaptationOrchestrator';
 import type { SystemEnergyModel } from '@lib/systemEnergyModel';
 import type { AdaptiveCadence } from '@lib/adaptiveCadenceEngine';
+import type {
+  ConsequencePattern, HistoricalCorrelation, RiskEscalation, TimelineEvent,
+} from '@lib/consequenceAnalyzer';
+import type { RecoveryPattern, StabilizationSuccess } from '@lib/recoveryIntelligence';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -152,6 +156,18 @@ function StudioInner() {
   const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
   // Adaptation orchestrator — coordinated priority + energy + cadence.
   const [orchestration, setOrchestration] = useState<{ orchestration: AdaptationOrchestration; energy: SystemEnergyModel; cadence: AdaptiveCadence } | null>(null);
+  // Consequence intelligence — historical causal patterns.
+  const [consequenceIntel, setConsequenceIntel] = useState<{
+    totalEpisodes: number;
+    consequencePatterns: ConsequencePattern[];
+    historicalCorrelations: HistoricalCorrelation[];
+    riskEscalations: RiskEscalation[];
+    strategicTimeline: TimelineEvent[];
+    recoveryPatterns: RecoveryPattern[];
+    stabilizationSuccesses: StabilizationSuccess[];
+    topRecoveryTakeaways: string[];
+    recoveryEpisodeCount: number;
+  } | null>(null);
   const mountedRef = useRef(false);
 
   // Auto-fire the first run when the page mounts from a URL with params.
@@ -309,6 +325,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setOrchestration(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/consequence-intelligence', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setConsequenceIntel(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -407,6 +427,10 @@ function StudioInner() {
     fetch('/api/adaptation-orchestrator', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setOrchestration(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/consequence-intelligence', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setConsequenceIntel(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -536,6 +560,7 @@ function StudioInner() {
               <AdaptiveCadencePanel c={orchestration.cadence} />
             </>
           )}
+          {consequenceIntel && <ConsequenceIntelligencePanel c={consequenceIntel} />}
 
           {preGenStability && (
             <>
@@ -5084,6 +5109,85 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Consequence Intelligence Panel ────────────────────────────────
+// Historical correlation observatory: patterns, correlations, risk
+// escalations, recovery wins, strategic timeline. NEVER predictive.
+interface ConsequenceIntelligenceProps {
+  totalEpisodes: number;
+  consequencePatterns: ConsequencePattern[];
+  historicalCorrelations: HistoricalCorrelation[];
+  riskEscalations: RiskEscalation[];
+  strategicTimeline: TimelineEvent[];
+  recoveryPatterns: RecoveryPattern[];
+  stabilizationSuccesses: StabilizationSuccess[];
+  topRecoveryTakeaways: string[];
+  recoveryEpisodeCount: number;
+}
+function ConsequenceIntelligencePanel({ c }: { c: ConsequenceIntelligenceProps }) {
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">consequence intelligence</div>
+      <div className="text-[10px] text-bone-200/50">Observatory only — historical correlation, never prediction.</div>
+      <Field label="EPISODES" value={String(c.totalEpisodes)} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>patterns {c.consequencePatterns.length}</span>
+        <span>correlations {c.historicalCorrelations.length}</span>
+        <span>recoveries {c.recoveryEpisodeCount}</span>
+      </div>
+      {c.consequencePatterns.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">recurring patterns</div>
+          {c.consequencePatterns.slice(0, 4).map((p, i) => (
+            <div key={i} className="text-bone-200/70 mb-1">
+              <div className="font-mono text-[10px] text-bone-200/50">{p.conditionFingerprint}</div>
+              <div className="text-bone-200/80">{p.description}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      {c.historicalCorrelations.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">historical correlations</div>
+          {c.historicalCorrelations.slice(0, 5).map((h, i) => (
+            <div key={i} className="text-bone-200/70">· {h.description}</div>
+          ))}
+        </div>
+      )}
+      {c.riskEscalations.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">risk escalations</div>
+          {c.riskEscalations.slice(0, 4).map((r, i) => (
+            <div key={i} className="text-bone-200/70">
+              <span className={r.averageSeverity === 'critical' ? 'text-red-400' : r.averageSeverity === 'severe' ? 'text-orange-400' : 'text-amber-300'}>
+                [{r.averageSeverity}]
+              </span> {r.description}
+            </div>
+          ))}
+        </div>
+      )}
+      {c.topRecoveryTakeaways.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">recovery wins</div>
+          {c.topRecoveryTakeaways.map((t, i) => (
+            <div key={i} className="text-bone-200/70">· {t}</div>
+          ))}
+        </div>
+      )}
+      {c.strategicTimeline.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">strategic timeline (last 6)</div>
+          {c.strategicTimeline.slice(-6).map((e, i) => (
+            <div key={i} className="text-bone-200/60 text-[10px]">
+              {new Date(e.at).toISOString().slice(11, 19)} · {e.type}
+              {'outcome' in e && ` · ${e.outcome}`}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

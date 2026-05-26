@@ -30,9 +30,18 @@ import {
   type CulturalObservation,
 } from '@lib/culturalPerceptionMemory';
 import { computeCreativeDrift } from '@lib/creativeDriftEngine';
-import { recordCreativeDriftObservation } from '@lib/creativeDriftMemory';
-import { recordVisualDNAFingerprint } from '@lib/visualDNAMemory';
-import { recordNarrativeDNAFingerprint } from '@lib/narrativeDNAMemory';
+import { recordCreativeDriftObservation, createCreativeDriftMemoryStore } from '@lib/creativeDriftMemory';
+import { recordVisualDNAFingerprint, createVisualDNAMemoryStore } from '@lib/visualDNAMemory';
+import { recordNarrativeDNAFingerprint, createNarrativeDNAMemoryStore } from '@lib/narrativeDNAMemory';
+import {
+  computeAdaptationOrchestration,
+} from '@lib/adaptationOrchestrator';
+import { computeAdaptiveCadence } from '@lib/adaptiveCadenceEngine';
+import { computeCreativeFatigue } from '@lib/creativeFatigueEngine';
+import {
+  recordConsequenceEpisode, buildConsequenceEpisode,
+  CONSEQUENCE_WINDOW,
+} from '@lib/consequenceIntelligenceMemory';
 import { createCopywriterMemoryStore } from '@lib/copywriterMemory';
 import { createCopyQualityMemoryStore } from '@lib/copyQualityMemory';
 import { createAdStrategyMemoryStore } from '@lib/adStrategyMemory';
@@ -873,6 +882,109 @@ export async function POST(req: NextRequest) {
           await recordNarrativeDNAFingerprint(result.banner as never);
         } catch {
           // non-fatal — narrative DNA fingerprint never blocks generation
+        }
+
+        // ─── Consequence Intelligence Episode ───────────────────
+        // Look back CONSEQUENCE_WINDOW observations in creative-drift
+        // memory and pair (condition, outcome) into a labeled
+        // consequence episode. Strictly observational; the episode is
+        // computed from already-written drift snapshots and never
+        // affects pipeline output. Wrapped so any failure swallows.
+        try {
+          const driftMemAfter = await createCreativeDriftMemoryStore().read().catch(() => null);
+          const driftObs = driftMemAfter?.observations ?? [];
+          if (driftObs.length >= CONSEQUENCE_WINDOW + 1) {
+            const condIdx = driftObs.length - 1 - CONSEQUENCE_WINDOW;
+            const condition = driftObs[condIdx];
+            const outcome   = driftObs[driftObs.length - 1];
+            // Pull fatigue + visual convergence at each end of the window.
+            const vmemFor = await createVisualDNAMemoryStore().read().catch(() => null);
+            const nmemFor = await createNarrativeDNAMemoryStore().read().catch(() => null);
+            // Approximate slices of DNA aligned with condition / outcome.
+            const vFingerprints = vmemFor?.fingerprints ?? [];
+            const nFingerprints = nmemFor?.fingerprints ?? [];
+            // Window-end indices for the condition snapshot in each
+            // DNA array. The fingerprints aren't perfectly aligned with
+            // drift observations 1:1, so this is a best-effort slice.
+            const vCondHi = Math.max(0, vFingerprints.length - 1 - CONSEQUENCE_WINDOW);
+            const nCondHi = Math.max(0, nFingerprints.length - 1 - CONSEQUENCE_WINDOW);
+            const condFatigueReading = vFingerprints.length > 0
+              ? computeCreativeFatigue({
+                  visualDNA: { fingerprints: vFingerprints.slice(0, vCondHi + 1) },
+                  narrativeDNA: { fingerprints: nFingerprints.slice(0, nCondHi + 1) },
+                })
+              : null;
+            const condFatigue = {
+              fatigue: condFatigueReading?.fatigueLevel ?? 0,
+              visualConvergence: condFatigueReading?.fatigueVectors.find((v) => v.vector === 'visual')?.fatigue ?? 0,
+            };
+            const outFatigueReading = computeCreativeFatigue({
+              visualDNA: { fingerprints: vFingerprints },
+              narrativeDNA: { fingerprints: nFingerprints },
+            });
+            const outFatigue = {
+              fatigue: outFatigueReading.fatigueLevel,
+              visualConvergence: outFatigueReading.fatigueVectors.find((v) => v.vector === 'visual')?.fatigue ?? 0,
+            };
+
+            const orchestration = computeAdaptationOrchestration({
+              trustDebt:           Math.max(0, Math.min(10, 5 + condition.trustErosionDrift)),
+              originalityPressure: condition.originalityPressure,
+              fatigueLevel:        condFatigue.fatigue,
+              visualConvergence:   condFatigue.visualConvergence,
+              emotionalFlattening: Math.max(0, 10 - condition.emotionalDiversity),
+              persuasionCollapse:  Math.max(0, 10 - condition.persuasionVariance),
+              narrativeInstability:Math.max(0, 10 - condition.narrativeStability),
+              campaignDrift:       condition.driftSeverity,
+              longitudinalHealth:  condition.overallCreativeHealth,
+              entropy:             condition.entropyLevel,
+            });
+            const cadence = computeAdaptiveCadence({
+              recentMutationCount: 0,
+              windowSize: 10,
+              visualFatigue: condFatigue.visualConvergence,
+              fatigueTrajectoryDelta: outFatigue.fatigue - condFatigue.fatigue,
+              collapseDetected: condition.overallCreativeHealth < 4,
+              trustDebt: Math.max(0, Math.min(10, 5 + condition.trustErosionDrift)),
+              identityErosion: Math.max(0, 10 - condition.narrativeStability),
+            });
+            const episode = buildConsequenceEpisode(
+              condition, outcome,
+              {
+                dominantRisk: orchestration.dominantRisk,
+                adaptationPriority: orchestration.adaptationPriority,
+                cadenceState: cadence.cadenceState,
+                mutationPressure: orchestration.mutationUrgency,
+                conditionFatigue: condFatigue.fatigue,
+                outcomeFatigue: outFatigue.fatigue,
+                conditionVisualConvergence: condFatigue.visualConvergence,
+                outcomeVisualConvergence: outFatigue.visualConvergence,
+                mutationCount: 0,            // no persisted operator-counter yet
+                stabilizationWindows: (driftMemAfter?.recoveryEvents.length ?? 0) > 0 ? 1 : 0,
+              },
+            );
+            await recordConsequenceEpisode(episode);
+            write({
+              type: 'event',
+              event: {
+                ts: Date.now(),
+                stage: 'consequence-intelligence',
+                message:
+                  `episode: ${episode.downstreamOutcome} (magnitude ${episode.outcomeMagnitude}/10) ` +
+                  `from condition ${orchestration.dominantRisk} / ${orchestration.adaptationPriority} / ` +
+                  `${cadence.cadenceState}`,
+                data: {
+                  outcome: episode.downstreamOutcome,
+                  magnitude: episode.outcomeMagnitude,
+                  secondaries: episode.secondaryOutcomes.slice(0, 3),
+                  dominantRisk: orchestration.dominantRisk,
+                  cadenceState: cadence.cadenceState,
+                },
+              },
+            });
+          }
+        } catch {
+          // non-fatal — consequence episode never blocks generation
         }
       } catch (e) {
         write({ type: 'error', error: (e as Error).message });

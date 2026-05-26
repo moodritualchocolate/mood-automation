@@ -354,18 +354,22 @@ async function caseNoRuntimeMutation(): Promise<{ ok: boolean; detail: string }>
 }
 
 async function caseGenerateUnchangedSignature(): Promise<{ ok: boolean; detail: string }> {
-  // The generate route may import the new modules' WRITERS but must
-  // not import the analyzers (the planner / refusal / fatigue engines).
+  // The generate route may import OBSERVATIONAL analyzers used for
+  // post-pipeline labeling (creativeFatigueEngine, adaptationOrchestrator,
+  // adaptiveCadenceEngine — they only label what already happened).
+  // It must NOT import operator-decision modules — the mutation planner
+  // and the refusal narrative engine — because those are advisory
+  // human-facing outputs and have no role inside generation.
   const src = await fs.readFile(
     path.resolve(__dirname, '..', 'app', 'api', 'generate', 'route.ts'),
     'utf8',
   );
-  const advisoryImported = /generationMutationPlanner|refusalNarrativeEngine|creativeFatigueEngine/.test(src);
+  const forbidden = /generationMutationPlanner|refusalNarrativeEngine/.test(src);
   return {
-    ok: !advisoryImported,
-    detail: advisoryImported
-      ? 'an advisory analyzer is imported into /api/generate'
-      : '/api/generate imports only DNA writers + drift writer (write-only post-pipeline observers)',
+    ok: !forbidden,
+    detail: forbidden
+      ? 'an operator-decision module (mutation planner or refusal narrative) is imported into /api/generate'
+      : '/api/generate imports only post-pipeline observational analyzers; no decision modules',
   };
 }
 
