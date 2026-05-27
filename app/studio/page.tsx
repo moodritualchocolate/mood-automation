@@ -91,6 +91,11 @@ import type { AssumptionAuditReading } from '@lib/assumptionAudit';
 import type { TensionReasoningReading } from '@lib/tensionReasoningEngine';
 import type { ExplanationVarianceReading } from '@lib/explanationVarianceEngine';
 import type { RecursiveLoopReading } from '@lib/recursiveObservationLoop';
+import type { EvolutionSandboxReading } from '@lib/evolutionSandboxEngine';
+import type { MutationTrajectoryReading } from '@lib/mutationTrajectoryEngine';
+import type { CreativeSurvivabilityReading } from '@lib/creativeSurvivabilityModel';
+import type { DivergencePressureReading } from '@lib/divergencePressureMap';
+import type { RealityAnchorReading } from '@lib/realityAnchorEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -183,6 +188,15 @@ function StudioInner() {
   const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
   // Adaptation orchestrator — coordinated priority + energy + cadence.
   const [orchestration, setOrchestration] = useState<{ orchestration: AdaptationOrchestration; energy: SystemEnergyModel; cadence: AdaptiveCadence } | null>(null);
+  // Evolution sandbox — simulated mutation futures.
+  const [evolutionSandbox, setEvolutionSandbox] = useState<{
+    sandbox: EvolutionSandboxReading;
+    trajectories: MutationTrajectoryReading;
+    survivability: CreativeSurvivabilityReading;
+    divergence: DivergencePressureReading;
+    realityAnchors: RealityAnchorReading;
+    history: { totalSimulations: number };
+  } | null>(null);
   // Reflective reasoning — recursive cognition observatory.
   const [reflectiveReasoning, setReflectiveReasoning] = useState<{
     reflections: ReflectionReading;
@@ -426,6 +440,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setReflectiveReasoning(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/evolution-sandbox', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setEvolutionSandbox(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -548,6 +566,10 @@ function StudioInner() {
     fetch('/api/reflective-reasoning', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setReflectiveReasoning(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/evolution-sandbox', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setEvolutionSandbox(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -683,6 +705,7 @@ function StudioInner() {
           {culturalMemory && <CulturalMemoryPanel c={culturalMemory} />}
           {metaCognition && <MetaCognitionPanel m={metaCognition} />}
           {reflectiveReasoning && <ReflectiveReasoningPanel r={reflectiveReasoning} />}
+          {evolutionSandbox && <EvolutionSandboxPanel e={evolutionSandbox} />}
 
           {preGenStability && (
             <>
@@ -5231,6 +5254,145 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Evolution Sandbox Panel ───────────────────────────────────────
+// Simulation observatory: candidate mutation clouds, trajectories,
+// survivability signals, divergence map, reality anchors. NEVER
+// executes, applies, or selects anything.
+interface EvolutionSandboxProps {
+  sandbox: EvolutionSandboxReading;
+  trajectories: MutationTrajectoryReading;
+  survivability: CreativeSurvivabilityReading;
+  divergence: DivergencePressureReading;
+  realityAnchors: RealityAnchorReading;
+  history: { totalSimulations: number };
+}
+function EvolutionSandboxPanel({ e }: { e: EvolutionSandboxProps }) {
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">evolution sandbox</div>
+      <div className="text-[10px] text-bone-200/50">
+        Simulation only — nothing executes, applies, or selects. The operator
+        is the only authority.
+      </div>
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>candidates {e.sandbox.totalCandidates}</span>
+        <span>simulations {e.history.totalSimulations}</span>
+        <span>entropy {e.sandbox.creativeEntropy}/10</span>
+        <span>convergence {e.sandbox.convergenceRisk}/10</span>
+      </div>
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>realism retention {e.sandbox.realismRetention}/10</span>
+        <span>symbolic continuity {e.sandbox.symbolicContinuity}/10</span>
+      </div>
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>trust stability {e.sandbox.trustStability}/10</span>
+        <span>replayability {e.sandbox.replayabilityEstimate}/10</span>
+        <span>fatigue avg {e.sandbox.fatigueForecast.averageProjection}/10</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">candidate mutations</div>
+        {e.sandbox.candidateMutations.map((c, i) => (
+          <div key={i} className="text-bone-200/70 mb-1">
+            <div className="text-bone-200/90">{c.mutationType}</div>
+            <div className="text-bone-200/60 text-[10px]">{c.fingerprintDelta}</div>
+            <div className="text-bone-200/50 text-[10px]">{c.historicalComparison}</div>
+            <div className="text-bone-200/50 text-[10px]">
+              trust {c.trustImpact}/10 · realism {c.realismImpact}/10 ·
+              fatigue {c.fatigueProjection}/10 · replay {c.replayabilityEstimate}/10 ·
+              survivability {c.survivabilitySignature}/10
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {e.divergence.clusters.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">divergence clusters</div>
+          {e.divergence.clusters.slice(0, 4).map((c, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              [{c.members.join(', ')}] · cohesion {c.cohesion}/10
+            </div>
+          ))}
+          <div className="text-bone-200/60 text-[10px] mt-1">
+            convergence pressure {e.divergence.convergencePressure}/10 ·
+            divergence spread {e.divergence.divergenceSpread}/10
+          </div>
+        </div>
+      )}
+
+      {e.survivability.signatures.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">survivability signals (top 4)</div>
+          {[...e.survivability.signatures]
+            .sort((a, b) => b.composite - a.composite)
+            .slice(0, 4)
+            .map((s, i) => (
+              <div key={i} className="text-bone-200/70 text-[10px]">
+                {s.mutationType} · composite {s.composite}/10 ·
+                burnout {s.emotionalBurnoutSignature}/10 ·
+                durability {s.symbolicDurabilitySignature}/10 ·
+                overexposure {s.overexposureSignature}/10
+              </div>
+            ))}
+          <div className="text-bone-200/60 text-[10px] mt-1">
+            overall survivability {e.survivability.overallSurvivability}/10
+          </div>
+        </div>
+      )}
+
+      {e.trajectories.trajectories.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">trajectory direction (top 4)</div>
+          {[...e.trajectories.trajectories]
+            .sort((a, b) => b.steps[2].trust - a.steps[2].trust)
+            .slice(0, 4)
+            .map((t, i) => (
+              <div key={i} className="text-bone-200/70 text-[10px]">
+                {t.mutationType} · {t.driftDirection} · final trust {t.steps[2].trust}/10 ·
+                final replay {t.steps[2].replay}/10 ·
+                final fatigue {t.steps[2].fatigue}/10
+              </div>
+            ))}
+          <div className="text-bone-200/60 text-[10px] mt-1">
+            trajectory divergence {e.trajectories.trajectoryDivergence}/10
+          </div>
+        </div>
+      )}
+
+      {e.realityAnchors.reports.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">reality anchors</div>
+          <div className="text-bone-200/60 text-[10px] mb-1">
+            anchor preservation {e.realityAnchors.overallAnchorPreservation}/10
+          </div>
+          {e.realityAnchors.candidatesDriftingFromAnchors.length > 0 && (
+            <div className="text-amber-300/80 text-[10px]">
+              drifting from anchors: {e.realityAnchors.candidatesDriftingFromAnchors.join(', ')}
+            </div>
+          )}
+          {e.realityAnchors.candidatesPreservingAllAnchors.length > 0 && (
+            <div className="text-green-300/80 text-[10px]">
+              preserving all anchors: {e.realityAnchors.candidatesPreservingAllAnchors.join(', ')}
+            </div>
+          )}
+        </div>
+      )}
+
+      {e.sandbox.instabilityZones.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">instability zones</div>
+          {e.sandbox.instabilityZones.slice(0, 5).map((z, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              · {z.zone} · {z.severity}/10 — {z.reason}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
