@@ -106,6 +106,10 @@ import type { AestheticMigrationReading } from '@lib/aestheticMigrationEngine';
 import type { CollectiveAttentionReading } from '@lib/collectiveAttentionEngine';
 import type { CivilizationalMoodReading } from '@lib/civilizationalMoodEngine';
 import type { MeaningPressureReading } from '@lib/meaningPressureEngine';
+import type { MetaCognitionReading } from '@lib/metaCognitionEngine';
+import type { IdentityDriftReading } from '@lib/identityDriftEngine';
+import type { AestheticCollapseReading } from '@lib/aestheticCollapseEngine';
+import type { HumanityRetentionReading } from '@lib/humanityRetentionEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -226,6 +230,19 @@ function StudioInner() {
     attention: CollectiveAttentionReading;
     mood: CivilizationalMoodReading;
     meaning: MeaningPressureReading;
+    totalSnapshots: number;
+  } | null>(null);
+  // Self-reflection / meta-cognition — observatory of the system observing itself.
+  const [selfReflection, setSelfReflection] = useState<{
+    selfReflection: MetaCognitionReading;
+    identityDrift: IdentityDriftReading;
+    aestheticCollapse: AestheticCollapseReading;
+    humanityRetention: HumanityRetentionReading;
+    syntheticPressure: number;
+    emotionalCompression: number;
+    trustIntegrity: number;
+    authenticityIntegrity: number;
+    symbolicIntegrity: number;
     totalSnapshots: number;
   } | null>(null);
   // Evolution sandbox — simulated mutation futures.
@@ -500,6 +517,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setWorldModel(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/self-reflection', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setSelfReflection(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -642,6 +663,10 @@ function StudioInner() {
     fetch('/api/world-model', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setWorldModel(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/self-reflection', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setSelfReflection(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -816,6 +841,7 @@ function StudioInner() {
           )}
           {supervisedLearning && <SupervisedLearningLoopPanel s={supervisedLearning} />}
           {worldModel && <WorldModelPanel w={worldModel} />}
+          {selfReflection && <SelfReflectionPanel sr={selfReflection} />}
 
           {preGenStability && (
             <>
@@ -5634,6 +5660,177 @@ function WorldModelPanel({ w }: WorldModelPanelProps) {
           {[
             ...w.world.notes, ...w.aesthetic.notes, ...w.attention.notes,
             ...w.mood.notes, ...w.meaning.notes,
+          ].slice(0, 8).map((n, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Self-Reflection / Meta-Cognition Panel ────────────────────────
+// The system observes itself. Composes 15 meta-cognition degradation
+// signals + 9 identity-drift signals + 8 aesthetic-collapse signals +
+// 9 humanity-retention signals. NEVER auto-corrects, NEVER self-rewrites.
+interface SelfReflectionPanelProps {
+  sr: {
+    selfReflection: MetaCognitionReading;
+    identityDrift: IdentityDriftReading;
+    aestheticCollapse: AestheticCollapseReading;
+    humanityRetention: HumanityRetentionReading;
+    syntheticPressure: number;
+    emotionalCompression: number;
+    trustIntegrity: number;
+    authenticityIntegrity: number;
+    symbolicIntegrity: number;
+    totalSnapshots: number;
+  };
+}
+function SelfReflectionPanel({ sr }: SelfReflectionPanelProps) {
+  const m = sr.selfReflection.signals;
+  const d = sr.identityDrift.signals;
+  const c = sr.aestheticCollapse.signals;
+  const h = sr.humanityRetention.signals;
+  const advisory = (
+    <div className="text-[10px] text-bone-200/50">
+      Observatory only — the system reflects on its own behavioral patterns.
+      It never autonomously modifies itself.
+    </div>
+  );
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">self-reflection · meta-cognition</div>
+      {advisory}
+
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>snapshots {sr.totalSnapshots}</span>
+        <span>obs {sr.selfReflection.totalObservations}</span>
+        <span>identity {sr.identityDrift.verdict.replace('identity-', '')}</span>
+        <span>aesthetic {sr.aestheticCollapse.verdict.replace('aesthetic-', '')}</span>
+        <span>humanity {sr.humanityRetention.verdict}</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">composed integrities</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          <div className="flex justify-between"><span>syntheticPressure</span><span>{sr.syntheticPressure}/10</span></div>
+          <div className="flex justify-between"><span>emotionalCompression</span><span>{sr.emotionalCompression}/10</span></div>
+          <div className="flex justify-between"><span>trustIntegrity</span><span>{sr.trustIntegrity}/10</span></div>
+          <div className="flex justify-between"><span>authenticityIntegrity</span><span>{sr.authenticityIntegrity}/10</span></div>
+          <div className="flex justify-between"><span>symbolicIntegrity</span><span>{sr.symbolicIntegrity}/10</span></div>
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">1 · self-reflection signals (15d)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(m).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v}/10</span>
+            </div>
+          ))}
+        </div>
+        {sr.selfReflection.dominantDegradations.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant degradations: {sr.selfReflection.dominantDegradations.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">2 · identity drift (verdict: {sr.identityDrift.verdict}, index {sr.identityDrift.overallDriftIndex}/10)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(d).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">3 · humanity retention (verdict: {sr.humanityRetention.verdict}, index {sr.humanityRetention.humanityIndex}/10)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(h).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">4 · synthetic drift</div>
+        <div className="text-[10px] text-bone-200/70">
+          syntheticDrift {m.syntheticDrift}/10 · realismIntegrity {m.realismIntegrity}/10 ·
+          aiFeelingSignature {c.aiFeelingSignature.level}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">5 · aesthetic exhaustion (verdict: {sr.aestheticCollapse.verdict}, index {sr.aestheticCollapse.overallCollapseIndex}/10)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(c).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v.level}/10 · decline {v.engagementDecline}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">6 · trust integrity</div>
+        <div className="text-[10px] text-bone-200/70">
+          trustIntegrity {sr.trustIntegrity}/10 · trustFragility {m.trustFragility}/10 ·
+          authenticityStability {m.authenticityStability}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">7 · symbolic integrity</div>
+        <div className="text-[10px] text-bone-200/70">
+          symbolismIntegrity {m.symbolismIntegrity}/10 · symbolicIncoherence {d.symbolicIncoherence}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">8 · emotional compression</div>
+        <div className="text-[10px] text-bone-200/70">
+          emotionalCompression {sr.emotionalCompression}/10 · emotionalDensity {m.emotionalDensity}/10 ·
+          emotionalBreathingRoom {m.emotionalBreathingRoom}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">9 · narrative repetition</div>
+        <div className="text-[10px] text-bone-200/70">
+          narrativeRedundancy {m.narrativeRedundancy}/10 · repeatedEmotionalCadence {c.repeatedEmotionalCadence.level}/10 ·
+          repeatedCinematicFraming {c.repeatedCinematicFraming.level}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">10 · restraint integrity</div>
+        <div className="text-[10px] text-bone-200/70">
+          restraintIntegrity {m.restraintIntegrity}/10 · manipulationCreep {m.manipulationCreep}/10 ·
+          overOptimizationPressure {m.overOptimizationPressure}/10
+        </div>
+      </div>
+
+      {(sr.selfReflection.notes.length + sr.identityDrift.notes.length +
+        sr.aestheticCollapse.notes.length + sr.humanityRetention.notes.length) > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">reflective observations</div>
+          {[
+            ...sr.selfReflection.notes,
+            ...sr.identityDrift.notes,
+            ...sr.aestheticCollapse.notes,
+            ...sr.humanityRetention.notes,
           ].slice(0, 8).map((n, i) => (
             <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
           ))}
