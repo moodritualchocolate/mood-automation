@@ -98,6 +98,8 @@ import type { DivergencePressureReading } from '@lib/divergencePressureMap';
 import type { RealityAnchorReading } from '@lib/realityAnchorEngine';
 import type { OperatorTrialAnalysis } from '@lib/operatorTrialAnalyzer';
 import type { OperatorCreativeTrial, TrialStatus } from '@lib/operatorCreativeTrialMemory';
+import type { TrialOutcomeAnalysis } from '@lib/trialOutcomeAnalyzer';
+import type { TrialOutcomeRecord } from '@lib/trialOutcomeMemory';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -195,6 +197,12 @@ function StudioInner() {
     totalTrials: number;
     pendingTrials: OperatorCreativeTrial[];
     analysis: OperatorTrialAnalysis;
+  } | null>(null);
+  // Trial outcomes — operator-supplied real-world results.
+  const [trialOutcomes, setTrialOutcomes] = useState<{
+    totalOutcomes: number;
+    recentOutcomes: TrialOutcomeRecord[];
+    analysis: TrialOutcomeAnalysis;
   } | null>(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
@@ -456,6 +464,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setOperatorTrials(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/trial-outcome', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setTrialOutcomes(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -586,6 +598,10 @@ function StudioInner() {
     fetch('/api/operator-creative-trial', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setOperatorTrials(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/trial-outcome', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setTrialOutcomes(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -727,6 +743,24 @@ function StudioInner() {
               trials={operatorTrials}
               sandbox={evolutionSandbox?.sandbox ?? null}
               onSubmitted={() => {
+                fetch('/api/operator-creative-trial', { cache: 'no-store' })
+                  .then((r) => r.ok ? r.json() : null)
+                  .then((v) => { if (v) setOperatorTrials(v); })
+                  .catch(() => { /* non-fatal */ });
+              }}
+            />
+          )}
+          {trialOutcomes && operatorTrials && (
+            <TrialOutcomePanel
+              outcomes={trialOutcomes}
+              trials={operatorTrials.pendingTrials}
+              onSubmitted={() => {
+                fetch('/api/trial-outcome', { cache: 'no-store' })
+                  .then((r) => r.ok ? r.json() : null)
+                  .then((v) => { if (v) setTrialOutcomes(v); })
+                  .catch(() => { /* non-fatal */ });
+                // Also refresh trial list so the status update from the
+                // outcome attachment is reflected immediately.
                 fetch('/api/operator-creative-trial', { cache: 'no-store' })
                   .then((r) => r.ok ? r.json() : null)
                   .then((v) => { if (v) setOperatorTrials(v); })
@@ -5282,6 +5316,209 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Trial Outcome Panel ───────────────────────────────────────────
+// Operator-supervised attachment of real-world outcomes to existing
+// creative trials. The panel POSTs to /api/trial-outcome and shows
+// trial → outcome chains + sandbox-vs-reality.
+interface TrialOutcomeProps {
+  totalOutcomes: number;
+  recentOutcomes: TrialOutcomeRecord[];
+  analysis: TrialOutcomeAnalysis;
+}
+function TrialOutcomePanel({
+  outcomes, trials, onSubmitted,
+}: {
+  outcomes: TrialOutcomeProps;
+  trials: OperatorCreativeTrial[];
+  onSubmitted: () => void;
+}) {
+  const eligibleTrials = trials.filter((t) =>
+    t.status === 'proposed' || t.status === 'approved' || t.status === 'tested',
+  );
+  const [selectedTrialId, setSelectedTrialId] = useState<string>(eligibleTrials[0]?.trialId ?? '');
+  const [operatorId, setOperatorId] = useState<string>('studio');
+  const [platform, setPlatform] = useState<string>('instagram');
+  const [audienceSegment, setAudienceSegment] = useState<string>('us-parents');
+  const [retention, setRetention] = useState<string>('');
+  const [saves, setSaves] = useState<string>('');
+  const [outcomeLabel, setOutcomeLabel] = useState<string>('');
+  const [qualitative, setQualitative] = useState<string>('');
+  const [notes, setNotes] = useState<string>('');
+  const [busy, setBusy] = useState<boolean>(false);
+  const [lastMsg, setLastMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (selectedTrialId === '' && eligibleTrials[0]) {
+      setSelectedTrialId(eligibleTrials[0].trialId);
+    }
+  }, [eligibleTrials, selectedTrialId]);
+
+  async function attachOutcome(): Promise<void> {
+    if (!selectedTrialId) { setLastMsg('select a trial first'); return; }
+    const metrics: Record<string, number> = {};
+    const retentionNum = parseFloat(retention);
+    const savesNum = parseInt(saves, 10);
+    if (Number.isFinite(retentionNum)) metrics.retention = retentionNum;
+    if (Number.isFinite(savesNum)) metrics.saves = savesNum;
+    const qualitativeArr = qualitative.split(',').map((s) => s.trim()).filter(Boolean);
+    const labelArr = outcomeLabel.split(',').map((s) => s.trim()).filter(Boolean);
+    if (Object.keys(metrics).length === 0 && qualitativeArr.length === 0) {
+      setLastMsg('attach at least one metric OR a qualitative signal');
+      return;
+    }
+    setBusy(true); setLastMsg(null);
+    try {
+      const res = await fetch('/api/trial-outcome', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          operatorId, trialId: selectedTrialId,
+          platform, audienceSegment,
+          metrics,
+          qualitativeSignals: qualitativeArr,
+          outcomeLabels: labelArr,
+          operatorNotes: notes || undefined,
+        }),
+      });
+      const json = await res.json() as { ok?: boolean; outcomeId?: string; error?: string };
+      if (res.ok && json.ok) {
+        setLastMsg(`outcome attached · ${json.outcomeId}`);
+        setRetention(''); setSaves(''); setOutcomeLabel(''); setQualitative(''); setNotes('');
+        onSubmitted();
+      } else {
+        setLastMsg(`error: ${json.error ?? res.status}`);
+      }
+    } catch (e) {
+      setLastMsg(`error: ${(e as Error).message}`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">trial outcome attachment</div>
+      <div className="text-[10px] text-bone-200/50">
+        Operator-supervised — the route stores outcome data linked to existing
+        trials. It never calls generation, publishes, or scrapes platforms.
+      </div>
+
+      <Field label="TOTAL OUTCOMES" value={String(outcomes.totalOutcomes)} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>linked trials {outcomes.analysis.trialOutcomeLinks.length}</span>
+        <span>orphan trials {outcomes.analysis.orphanTrialIds.length}</span>
+        <span>reporting rate {Math.round(outcomes.analysis.overallReportingRate * 100)}%</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs space-y-2">
+        <div className="eyebrow mb-1">attach outcome to a trial</div>
+        {eligibleTrials.length === 0 ? (
+          <div className="text-bone-200/60 text-[10px]">no eligible trials yet — mark a sandbox candidate first</div>
+        ) : (
+          <>
+            <select
+              value={selectedTrialId}
+              onChange={(ev) => setSelectedTrialId(ev.target.value)}
+              className="w-full bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+              disabled={busy}
+            >
+              {eligibleTrials.map((t) => (
+                <option key={t.trialId} value={t.trialId} className="bg-ink-900">
+                  {t.mutationType} · {t.formula} · {t.status} · {t.trialId.slice(-8)}
+                </option>
+              ))}
+            </select>
+            <div className="grid grid-cols-2 gap-1">
+              <input type="text" value={operatorId} onChange={(ev) => setOperatorId(ev.target.value)}
+                placeholder="operator id"
+                className="bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+                disabled={busy} />
+              <input type="text" value={platform} onChange={(ev) => setPlatform(ev.target.value)}
+                placeholder="platform"
+                className="bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+                disabled={busy} />
+              <input type="text" value={audienceSegment} onChange={(ev) => setAudienceSegment(ev.target.value)}
+                placeholder="audience segment"
+                className="bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+                disabled={busy} />
+              <input type="text" value={retention} onChange={(ev) => setRetention(ev.target.value)}
+                placeholder="retention (0..1)"
+                className="bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+                disabled={busy} />
+              <input type="text" value={saves} onChange={(ev) => setSaves(ev.target.value)}
+                placeholder="saves"
+                className="bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+                disabled={busy} />
+              <input type="text" value={outcomeLabel} onChange={(ev) => setOutcomeLabel(ev.target.value)}
+                placeholder="labels (comma-separated)"
+                className="bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+                disabled={busy} />
+            </div>
+            <textarea value={qualitative} onChange={(ev) => setQualitative(ev.target.value)}
+              placeholder="qualitative signals (comma-separated)"
+              rows={2}
+              className="w-full bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+              disabled={busy} />
+            <textarea value={notes} onChange={(ev) => setNotes(ev.target.value)}
+              placeholder="operator notes (optional)"
+              rows={2}
+              className="w-full bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+              disabled={busy} />
+            <button
+              onClick={attachOutcome}
+              disabled={busy || !selectedTrialId}
+              className="px-3 py-1 border hairline text-[11px] tracking-widest hover:bg-white/5 disabled:opacity-40"
+            >
+              ATTACH OUTCOME
+            </button>
+            {lastMsg && <div className="text-[10px] text-bone-200/60">{lastMsg}</div>}
+          </>
+        )}
+      </div>
+
+      {outcomes.analysis.trialOutcomeLinks.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">trial → outcome chain</div>
+          {outcomes.analysis.trialOutcomeLinks.slice(0, 5).map((l) => (
+            <div key={l.trialId} className="text-bone-200/70 text-[10px] mb-1">
+              <div className="text-bone-200/90">
+                {l.mutationType} · {l.formula} · {l.outcomeCount} outcome(s)
+              </div>
+              <div className="text-bone-200/60">
+                platforms: {l.platformsObserved.join(', ')} · labels: {l.observedLabels.join(', ')}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {outcomes.analysis.sandboxVsReality.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">sandbox estimate vs reality</div>
+          {outcomes.analysis.sandboxVsReality.slice(0, 5).map((row, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              {row.mutationType} · proposed {row.trialsProposed} · with outcomes {row.trialsWithOutcomes} ·
+              reporting {Math.round(row.reportingRate * 100)}% · observed labels {row.observedLabelCount}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {outcomes.analysis.perCampaignModeTendencies.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">campaign mode tendencies</div>
+          {outcomes.analysis.perCampaignModeTendencies.slice(0, 4).map((m, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              {m.campaignMode} · fatigue {Math.round(m.fatigueShare * 100)}% ·
+              resonance {Math.round(m.resonanceShare * 100)}%
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
