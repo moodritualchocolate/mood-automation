@@ -96,6 +96,8 @@ import type { MutationTrajectoryReading } from '@lib/mutationTrajectoryEngine';
 import type { CreativeSurvivabilityReading } from '@lib/creativeSurvivabilityModel';
 import type { DivergencePressureReading } from '@lib/divergencePressureMap';
 import type { RealityAnchorReading } from '@lib/realityAnchorEngine';
+import type { OperatorTrialAnalysis } from '@lib/operatorTrialAnalyzer';
+import type { OperatorCreativeTrial, TrialStatus } from '@lib/operatorCreativeTrialMemory';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -188,6 +190,12 @@ function StudioInner() {
   const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
   // Adaptation orchestrator — coordinated priority + energy + cadence.
   const [orchestration, setOrchestration] = useState<{ orchestration: AdaptationOrchestration; energy: SystemEnergyModel; cadence: AdaptiveCadence } | null>(null);
+  // Operator creative trials — operator-supervised trial decisions.
+  const [operatorTrials, setOperatorTrials] = useState<{
+    totalTrials: number;
+    pendingTrials: OperatorCreativeTrial[];
+    analysis: OperatorTrialAnalysis;
+  } | null>(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
     sandbox: EvolutionSandboxReading;
@@ -444,6 +452,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setEvolutionSandbox(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/operator-creative-trial', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setOperatorTrials(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -570,6 +582,10 @@ function StudioInner() {
     fetch('/api/evolution-sandbox', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setEvolutionSandbox(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/operator-creative-trial', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setOperatorTrials(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -706,6 +722,18 @@ function StudioInner() {
           {metaCognition && <MetaCognitionPanel m={metaCognition} />}
           {reflectiveReasoning && <ReflectiveReasoningPanel r={reflectiveReasoning} />}
           {evolutionSandbox && <EvolutionSandboxPanel e={evolutionSandbox} />}
+          {operatorTrials && (
+            <OperatorCreativeTrialPanel
+              trials={operatorTrials}
+              sandbox={evolutionSandbox?.sandbox ?? null}
+              onSubmitted={() => {
+                fetch('/api/operator-creative-trial', { cache: 'no-store' })
+                  .then((r) => r.ok ? r.json() : null)
+                  .then((v) => { if (v) setOperatorTrials(v); })
+                  .catch(() => { /* non-fatal */ });
+              }}
+            />
+          )}
 
           {preGenStability && (
             <>
@@ -5254,6 +5282,202 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Operator Creative Trial Panel ─────────────────────────────────
+// Bookkeeping for explicit operator decisions over sandbox candidates.
+// The panel POSTs to /api/operator-creative-trial and shows trial
+// history. NEVER triggers generation or publishing.
+interface OperatorTrialProps {
+  totalTrials: number;
+  pendingTrials: OperatorCreativeTrial[];
+  analysis: OperatorTrialAnalysis;
+}
+function OperatorCreativeTrialPanel({
+  trials, sandbox, onSubmitted,
+}: {
+  trials: OperatorTrialProps;
+  sandbox: EvolutionSandboxReading | null;
+  onSubmitted: () => void;
+}) {
+  const [selectedIdx, setSelectedIdx] = useState<number>(0);
+  const [operatorId, setOperatorId] = useState<string>('studio');
+  const [reason, setReason] = useState<string>('');
+  const [busy, setBusy] = useState<boolean>(false);
+  const [lastMsg, setLastMsg] = useState<string | null>(null);
+
+  const candidates = sandbox?.candidateMutations ?? [];
+  const selected = candidates[selectedIdx];
+
+  async function markAsTrial(): Promise<void> {
+    if (!selected) { setLastMsg('select a candidate first'); return; }
+    if (reason.trim().length === 0) { setLastMsg('operator reason required'); return; }
+    setBusy(true); setLastMsg(null);
+    try {
+      const res = await fetch('/api/operator-creative-trial', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create',
+          operatorId,
+          operatorReason: reason,
+          sourceCandidateId: selected.mutationType,
+          formula: 'ENERGY',
+          campaignMode: null,
+          mutationType: selected.mutationType,
+          fingerprintDelta: selected.fingerprintDelta,
+        }),
+      });
+      const json = await res.json() as { ok?: boolean; error?: string; trialId?: string };
+      if (res.ok && json.ok) {
+        setLastMsg(`trial recorded · ${json.trialId}`);
+        setReason('');
+        onSubmitted();
+      } else {
+        setLastMsg(`error: ${json.error ?? res.status}`);
+      }
+    } catch (e) {
+      setLastMsg(`error: ${(e as Error).message}`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function updateStatus(trialId: string, status: TrialStatus): Promise<void> {
+    setBusy(true); setLastMsg(null);
+    try {
+      const res = await fetch('/api/operator-creative-trial', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ action: 'update-status', operatorId, trialId, status }),
+      });
+      const json = await res.json() as { ok?: boolean; error?: string };
+      if (res.ok && json.ok) {
+        setLastMsg(`${trialId} → ${status}`);
+        onSubmitted();
+      } else {
+        setLastMsg(`error: ${json.error ?? res.status}`);
+      }
+    } catch (e) {
+      setLastMsg(`error: ${(e as Error).message}`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">operator creative trial</div>
+      <div className="text-[10px] text-bone-200/50">
+        Operator-supervised — the route stores decisions. It never executes
+        generation, publishes, or auto-selects a candidate.
+      </div>
+
+      <Field label="TOTAL TRIALS" value={String(trials.totalTrials)} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>proposed {trials.analysis.statusBreakdown.proposed}</span>
+        <span>approved {trials.analysis.statusBreakdown.approved}</span>
+        <span>tested {trials.analysis.statusBreakdown.tested}</span>
+        <span>outcome {trials.analysis.statusBreakdown.outcomeAttached}</span>
+        <span>rejected {trials.analysis.statusBreakdown.rejected}</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs space-y-2">
+        <div className="eyebrow mb-1">mark a sandbox candidate as trial</div>
+        {candidates.length === 0 ? (
+          <div className="text-bone-200/60 text-[10px]">no sandbox candidates available yet</div>
+        ) : (
+          <>
+            <select
+              value={selectedIdx}
+              onChange={(ev) => setSelectedIdx(Number(ev.target.value))}
+              className="w-full bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+              disabled={busy}
+            >
+              {candidates.map((c, i) => (
+                <option key={i} value={i} className="bg-ink-900">
+                  {c.mutationType} — {c.fingerprintDelta.slice(0, 60)}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text" value={operatorId}
+              onChange={(ev) => setOperatorId(ev.target.value)}
+              placeholder="operator id"
+              className="w-full bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+              disabled={busy}
+            />
+            <textarea
+              value={reason}
+              onChange={(ev) => setReason(ev.target.value)}
+              placeholder="operator reason (required)"
+              rows={2}
+              className="w-full bg-transparent border hairline px-2 py-1 text-bone-200 text-[11px]"
+              disabled={busy}
+            />
+            <button
+              onClick={markAsTrial}
+              disabled={busy || reason.trim().length === 0}
+              className="px-3 py-1 border hairline text-[11px] tracking-widest hover:bg-white/5 disabled:opacity-40"
+            >
+              MARK AS TRIAL
+            </button>
+            {lastMsg && <div className="text-[10px] text-bone-200/60">{lastMsg}</div>}
+          </>
+        )}
+      </div>
+
+      {trials.pendingTrials.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">pending trials</div>
+          {trials.pendingTrials.slice(0, 6).map((t) => (
+            <div key={t.trialId} className="text-bone-200/70 text-[10px] mb-1">
+              <div className="text-bone-200/90">
+                {t.mutationType} · {t.status} · {t.operatorId}
+              </div>
+              <div className="text-bone-200/50">{t.operatorReason.slice(0, 80)}</div>
+              <div className="flex gap-1 mt-0.5 flex-wrap">
+                {(['approved','tested','rejected','outcome-attached'] as TrialStatus[]).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => updateStatus(t.trialId, s)}
+                    disabled={busy || t.status === s}
+                    className="px-2 py-0.5 border hairline text-[9px] hover:bg-white/5 disabled:opacity-30"
+                  >
+                    → {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {trials.analysis.recentTrials.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">status timeline (recent)</div>
+          {trials.analysis.recentTrials.slice(0, 8).map((t) => (
+            <div key={t.trialId} className="text-bone-200/70 text-[10px]">
+              · {t.mutationType} · {t.status} · {t.statusHistory.length} step(s)
+            </div>
+          ))}
+        </div>
+      )}
+
+      {trials.analysis.perMutationChoices.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">per-mutation choice counts</div>
+          {trials.analysis.perMutationChoices.slice(0, 6).map((m, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              {m.mutationType} · proposed {m.proposed} · approved {m.approved} ·
+              tested {m.tested} · rejected {m.rejected} · outcome {m.outcomeAttached} ·
+              follow-through {Math.round(m.followThroughRate * 100)}%
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

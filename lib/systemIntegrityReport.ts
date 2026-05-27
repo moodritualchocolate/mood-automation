@@ -101,6 +101,7 @@ const KNOWN_ROUTES: string[] = [
   '/api/meta-cognition',
   '/api/reflective-reasoning',
   '/api/evolution-sandbox',
+  '/api/operator-creative-trial',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.
