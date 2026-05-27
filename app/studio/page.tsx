@@ -101,6 +101,11 @@ import type { OperatorCreativeTrial, TrialStatus } from '@lib/operatorCreativeTr
 import type { TrialOutcomeAnalysis } from '@lib/trialOutcomeAnalyzer';
 import type { TrialOutcomeRecord } from '@lib/trialOutcomeMemory';
 import type { SupervisedLearningReading } from '@lib/supervisedLearningLoop';
+import type { WorldModelReading } from '@lib/worldModelEngine';
+import type { AestheticMigrationReading } from '@lib/aestheticMigrationEngine';
+import type { CollectiveAttentionReading } from '@lib/collectiveAttentionEngine';
+import type { CivilizationalMoodReading } from '@lib/civilizationalMoodEngine';
+import type { MeaningPressureReading } from '@lib/meaningPressureEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -214,6 +219,15 @@ function StudioInner() {
       persistedPatternCount: number;
     }) | null
   >(null);
+  // World model intelligence — observatory of collective human movement.
+  const [worldModel, setWorldModel] = useState<{
+    world: WorldModelReading;
+    aesthetic: AestheticMigrationReading;
+    attention: CollectiveAttentionReading;
+    mood: CivilizationalMoodReading;
+    meaning: MeaningPressureReading;
+    totalSnapshots: number;
+  } | null>(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
     sandbox: EvolutionSandboxReading;
@@ -482,6 +496,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setSupervisedLearning(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/world-model', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setWorldModel(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -620,6 +638,10 @@ function StudioInner() {
     fetch('/api/supervised-learning-loop', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setSupervisedLearning(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/world-model', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setWorldModel(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -793,6 +815,7 @@ function StudioInner() {
             />
           )}
           {supervisedLearning && <SupervisedLearningLoopPanel s={supervisedLearning} />}
+          {worldModel && <WorldModelPanel w={worldModel} />}
 
           {preGenStability && (
             <>
@@ -5455,6 +5478,165 @@ function SupervisedLearningLoopPanel({ s }: { s: SupervisedLearningPanelProps['r
               </div>
             );
           })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── World Model Panel ─────────────────────────────────────────────
+// Observatory of collective human movement. Composes 16 world-state
+// signals + 9 aesthetic migrations + 8 attention movements + era
+// label + 8 meaning pressures. NEVER predicts, NEVER persuades,
+// NEVER auto-applies.
+interface WorldModelPanelProps {
+  w: {
+    world: WorldModelReading;
+    aesthetic: AestheticMigrationReading;
+    attention: CollectiveAttentionReading;
+    mood: CivilizationalMoodReading;
+    meaning: MeaningPressureReading;
+    totalSnapshots: number;
+  };
+}
+function WorldModelPanel({ w }: WorldModelPanelProps) {
+  const aestheticDims: Array<[string, { level: number; migrationDirection: number; note: string }]> = [
+    ['cinematicPolish', w.aesthetic.cinematicPolish],
+    ['documentaryRealism', w.aesthetic.documentaryRealism],
+    ['aiLookSaturation', w.aesthetic.aiLookSaturation],
+    ['minimalismFatigue', w.aesthetic.minimalismFatigue],
+    ['hyperEditingExhaustion', w.aesthetic.hyperEditingExhaustion],
+    ['stillnessResurgence', w.aesthetic.stillnessResurgence],
+    ['imperfectionPreference', w.aesthetic.imperfectionPreference],
+    ['retroNostalgiaMigration', w.aesthetic.retroNostalgiaMigration],
+    ['emotionalRawnessDemand', w.aesthetic.emotionalRawnessDemand],
+  ];
+  const attentionDims: Array<[string, { level: number; migrationDirection: number; note: string }]> = [
+    ['shortFormExhaustion', w.attention.shortFormExhaustion],
+    ['replayCulture', w.attention.replayCulture],
+    ['doomscrollFatigue', w.attention.doomscrollFatigue],
+    ['silenceTolerance', w.attention.silenceTolerance],
+    ['overstimulationRejection', w.attention.overstimulationRejection],
+    ['attentionFragmentation', w.attention.attentionFragmentation],
+    ['pacingRecovery', w.attention.pacingRecovery],
+    ['longFormTrustRestoration', w.attention.longFormTrustRestoration],
+  ];
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">world model intelligence</div>
+      <div className="text-[10px] text-bone-200/50">
+        Observatory only — the system observes collective human movement.
+        It never predicts, never persuades, never steers behaviorally,
+        never auto-applies a pattern.
+      </div>
+
+      <Field label="OBSERVATIONS" value={String(w.world.totalObservations)} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>snapshots {w.totalSnapshots}</span>
+        <span>era {w.mood.dominantEra}</span>
+        <span>confidence {w.mood.dominantEraConfidence}/10</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">world state signals (16d)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(w.world.signals).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span className={
+                k === 'optimismDrift' && v < 0 ? 'text-amber-300/70' : ''
+              }>{v}</span>
+            </div>
+          ))}
+        </div>
+        {w.world.dominantSignals.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant: {w.world.dominantSignals.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">aesthetic migration (cycles)</div>
+        {aestheticDims.map(([k, d]) => (
+          <div key={k} className="text-bone-200/70 text-[10px] flex justify-between">
+            <span>{k}</span>
+            <span>
+              level {d.level} ·
+              <span className={
+                d.migrationDirection >= 1.5 ? ' text-emerald-300/80' :
+                d.migrationDirection <= -1.5 ? ' text-amber-300/80' : ''
+              }> {d.migrationDirection >= 0 ? '+' : ''}{d.migrationDirection}</span>
+            </span>
+          </div>
+        ))}
+        {w.aesthetic.dominantMigrations.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant: {w.aesthetic.dominantMigrations.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">collective attention movement</div>
+        {attentionDims.map(([k, d]) => (
+          <div key={k} className="text-bone-200/70 text-[10px] flex justify-between">
+            <span>{k}</span>
+            <span>
+              level {d.level} ·
+              <span className={
+                d.migrationDirection >= 1.5 ? ' text-emerald-300/80' :
+                d.migrationDirection <= -1.5 ? ' text-amber-300/80' : ''
+              }> {d.migrationDirection >= 0 ? '+' : ''}{d.migrationDirection}</span>
+            </span>
+          </div>
+        ))}
+        {w.attention.dominantMovements.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant: {w.attention.dominantMovements.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">civilizational mood (era observation)</div>
+        <div className="text-bone-200/70 text-[10px]">
+          {w.mood.allEras.slice(0, 5).map((e) => (
+            <div key={e.era} className="flex justify-between">
+              <span>{e.era}</span>
+              <span>{e.score}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">meaning pressures (what humans appear to be seeking)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(w.meaning.signals).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v}/10</span>
+            </div>
+          ))}
+        </div>
+        {w.meaning.dominantPressures.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant: {w.meaning.dominantPressures.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      {(w.world.notes.length + w.aesthetic.notes.length + w.attention.notes.length +
+        w.mood.notes.length + w.meaning.notes.length) > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">observed notes</div>
+          {[
+            ...w.world.notes, ...w.aesthetic.notes, ...w.attention.notes,
+            ...w.mood.notes, ...w.meaning.notes,
+          ].slice(0, 8).map((n, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
+          ))}
         </div>
       )}
     </div>
