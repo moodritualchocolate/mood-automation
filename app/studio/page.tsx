@@ -85,6 +85,12 @@ import type { ContradictionReading } from '@lib/contradictionDetector';
 import type { AmbiguityReading } from '@lib/ambiguityLayer';
 import type { CognitiveBoundaryReading } from '@lib/cognitiveBoundaryEngine';
 import type { MultiPerspectiveReading } from '@lib/multiPerspectiveEngine';
+import type { ReflectionReading } from '@lib/reflectionEngine';
+import type { HypothesisReading } from '@lib/hypothesisEngine';
+import type { AssumptionAuditReading } from '@lib/assumptionAudit';
+import type { TensionReasoningReading } from '@lib/tensionReasoningEngine';
+import type { ExplanationVarianceReading } from '@lib/explanationVarianceEngine';
+import type { RecursiveLoopReading } from '@lib/recursiveObservationLoop';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -177,6 +183,17 @@ function StudioInner() {
   const [narrativeDNA, setNarrativeDNA] = useState<{ totalObservations: number; saturations: Record<string, { dominantToken: string | null; share: number; distinct: number }>; averageObservationalDensity: number; averageHumanRealism: number; averageCtaPressure: number } | null>(null);
   // Adaptation orchestrator — coordinated priority + energy + cadence.
   const [orchestration, setOrchestration] = useState<{ orchestration: AdaptationOrchestration; energy: SystemEnergyModel; cadence: AdaptiveCadence } | null>(null);
+  // Reflective reasoning — recursive cognition observatory.
+  const [reflectiveReasoning, setReflectiveReasoning] = useState<{
+    reflections: ReflectionReading;
+    hypotheses: HypothesisReading;
+    assumptions: AssumptionAuditReading;
+    tensions: TensionReasoningReading;
+    explanationVariance: ExplanationVarianceReading;
+    recursivePasses: RecursiveLoopReading;
+    confidenceAdjustments: { initial: number; final: number; netDelta: number };
+    ambiguityPersistence: number;
+  } | null>(null);
   // Meta-cognition — epistemic humility observatory.
   const [metaCognition, setMetaCognition] = useState<{
     confidence: ConfidenceReading;
@@ -405,6 +422,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setMetaCognition(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/reflective-reasoning', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setReflectiveReasoning(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -523,6 +544,10 @@ function StudioInner() {
     fetch('/api/meta-cognition', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setMetaCognition(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/reflective-reasoning', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setReflectiveReasoning(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -657,6 +682,7 @@ function StudioInner() {
           {humanTruth && <HumanTruthPanel h={humanTruth} />}
           {culturalMemory && <CulturalMemoryPanel c={culturalMemory} />}
           {metaCognition && <MetaCognitionPanel m={metaCognition} />}
+          {reflectiveReasoning && <ReflectiveReasoningPanel r={reflectiveReasoning} />}
 
           {preGenStability && (
             <>
@@ -5205,6 +5231,113 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Reflective Reasoning Panel ────────────────────────────────────
+// Recursive cognition observatory: reflections (questions, not answers),
+// hypotheses (possibilities), assumptions (named, not refuted), tensions
+// (preserved, not collapsed), competing explanations, recursive passes.
+interface ReflectiveReasoningProps {
+  reflections: ReflectionReading;
+  hypotheses: HypothesisReading;
+  assumptions: AssumptionAuditReading;
+  tensions: TensionReasoningReading;
+  explanationVariance: ExplanationVarianceReading;
+  recursivePasses: RecursiveLoopReading;
+  confidenceAdjustments: { initial: number; final: number; netDelta: number };
+  ambiguityPersistence: number;
+}
+function ReflectiveReasoningPanel({ r }: { r: ReflectiveReasoningProps }) {
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">reflective reasoning</div>
+      <div className="text-[10px] text-bone-200/50">
+        Observatory only — reflection expands uncertainty, never suppresses it.
+      </div>
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>reflections {r.reflections.reflections.length}</span>
+        <span>hypotheses {r.hypotheses.hypotheses.length}</span>
+        <span>assumptions {r.assumptions.findings.length}</span>
+        <span>tensions {r.tensions.tensions.length}</span>
+      </div>
+      <Field label="REFLECTIVE DEPTH" value={`${r.reflections.reflectiveDepth}/10`} />
+      <Field label="CONFIDENCE" value={`${r.confidenceAdjustments.initial} → ${r.confidenceAdjustments.final} (Δ ${r.confidenceAdjustments.netDelta >= 0 ? '+' : ''}${r.confidenceAdjustments.netDelta})`} />
+
+      {r.reflections.reflections.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">reflection cycles (top)</div>
+          {r.reflections.reflections.slice(0, 4).map((q, i) => (
+            <div key={i} className="text-bone-200/70">
+              <div className="text-bone-200/90">{q.question}</div>
+              <div className="text-bone-200/50 text-[10px]">[{q.category}] · {q.weight}/10</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.hypotheses.hypotheses.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">hypothesis field</div>
+          {r.hypotheses.hypotheses.slice(0, 4).map((h, i) => (
+            <div key={i} className="text-bone-200/70">
+              <div className="text-bone-200/90">{h.statement}</div>
+              <div className="text-bone-200/50 text-[10px]">{h.evidence}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.assumptions.findings.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">hidden assumptions (named, not refuted)</div>
+          {r.assumptions.findings.slice(0, 4).map((a, i) => (
+            <div key={i} className="text-bone-200/70">
+              <div className="text-bone-200/90">{a.assumption}</div>
+              <div className="text-bone-200/50 text-[10px]">{a.evidenceForDoubt}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.tensions.tensions.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">tensions (both sides preserved)</div>
+          {r.tensions.tensions.slice(0, 4).map((t, i) => (
+            <div key={i} className="text-bone-200/70">
+              <div className="text-bone-200/90">{t.key} · {t.tensionScore}/10</div>
+              <div className="text-bone-200/60 text-[10px]">{t.preservedStatement}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.explanationVariance.clusters.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">competing explanations</div>
+          {r.explanationVariance.clusters.slice(0, 3).map((c, i) => (
+            <div key={i} className="text-bone-200/70 mb-1">
+              <div className="text-bone-200/90">{c.observedPattern} · {c.occurrences} record(s)</div>
+              {c.explanations.filter((e) => e.support >= 4).slice(0, 4).map((e, j) => (
+                <div key={j} className="text-bone-200/70 text-[10px]">· {e.candidate} ({e.support}/10) — {e.reason}</div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {r.recursivePasses.passes.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">recursive passes</div>
+          {r.recursivePasses.passes.map((p, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">
+              [{p.index}] {p.pass} · Δ{p.confidenceDelta >= 0 ? '+' : ''}{p.confidenceDelta} ·
+              added {p.added.length} · unresolved {p.unresolved.length}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
