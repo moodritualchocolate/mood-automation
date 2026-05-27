@@ -100,6 +100,7 @@ import type { OperatorTrialAnalysis } from '@lib/operatorTrialAnalyzer';
 import type { OperatorCreativeTrial, TrialStatus } from '@lib/operatorCreativeTrialMemory';
 import type { TrialOutcomeAnalysis } from '@lib/trialOutcomeAnalyzer';
 import type { TrialOutcomeRecord } from '@lib/trialOutcomeMemory';
+import type { SupervisedLearningReading } from '@lib/supervisedLearningLoop';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -204,6 +205,15 @@ function StudioInner() {
     recentOutcomes: TrialOutcomeRecord[];
     analysis: TrialOutcomeAnalysis;
   } | null>(null);
+  // Supervised learning loop — sandbox expectation vs operator-attached outcome.
+  const [supervisedLearning, setSupervisedLearning] = useState<
+    (SupervisedLearningReading & {
+      sandboxSimulationCount: number;
+      operatorTrialCount: number;
+      trialOutcomeCount: number;
+      persistedPatternCount: number;
+    }) | null
+  >(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
     sandbox: EvolutionSandboxReading;
@@ -468,6 +478,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setTrialOutcomes(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/supervised-learning-loop', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setSupervisedLearning(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -602,6 +616,10 @@ function StudioInner() {
     fetch('/api/trial-outcome', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setTrialOutcomes(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/supervised-learning-loop', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setSupervisedLearning(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -765,9 +783,16 @@ function StudioInner() {
                   .then((r) => r.ok ? r.json() : null)
                   .then((v) => { if (v) setOperatorTrials(v); })
                   .catch(() => { /* non-fatal */ });
+                // Refresh supervised learning loop — new outcome may
+                // produce new aligned / contradicted events.
+                fetch('/api/supervised-learning-loop', { cache: 'no-store' })
+                  .then((r) => r.ok ? r.json() : null)
+                  .then((v) => { if (v) setSupervisedLearning(v); })
+                  .catch(() => { /* non-fatal */ });
               }}
             />
           )}
+          {supervisedLearning && <SupervisedLearningLoopPanel s={supervisedLearning} />}
 
           {preGenStability && (
             <>
@@ -5316,6 +5341,122 @@ function PreviewSkeleton({ running }: { running: boolean }) {
     <div className="w-full max-w-[540px] aspect-[4/5] border hairline flex flex-col items-center justify-center text-xs text-bone-200/50 text-center px-8">
       <div className={running ? 'pulse' : ''}>composing…</div>
       <div className="mt-2 text-[10px] tracking-widest">HUMAN STATE → TRUTH → DIRECTION → IMAGE → TASTE</div>
+    </div>
+  );
+}
+
+// ─── Supervised Learning Loop Panel ────────────────────────────────
+// Observatory for sandbox expectation vs operator-attached outcome.
+// Shows aligned / contradicted / unresolved patterns, per-axis
+// adjustments, per-mutation reliability, and the operator insight
+// summary. NEVER auto-applies a pattern.
+interface SupervisedLearningPanelProps {
+  reading: SupervisedLearningReading & {
+    sandboxSimulationCount: number;
+    operatorTrialCount: number;
+    trialOutcomeCount: number;
+    persistedPatternCount: number;
+  };
+}
+function SupervisedLearningLoopPanel({ s }: { s: SupervisedLearningPanelProps['reading'] }) {
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">supervised learning loop</div>
+      <div className="text-[10px] text-bone-200/50">
+        Observatory only — the loop describes operator-attached outcomes against
+        sandbox expectations. It never auto-applies, never selects a candidate.
+      </div>
+
+      <Field label="LEARNING EVENTS" value={String(s.totalLearningEvents)} />
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>aligned {s.confirmedPatterns.length}</span>
+        <span>contradicted {s.contradictedPatterns.length}</span>
+        <span>unresolved {s.unresolvedPatterns.length}</span>
+        <span>persisted {s.persistedPatternCount}</span>
+      </div>
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>simulations {s.sandboxSimulationCount}</span>
+        <span>trials {s.operatorTrialCount}</span>
+        <span>outcomes {s.trialOutcomeCount}</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs text-bone-200/80">
+        {s.operatorInsightSummary}
+      </div>
+
+      {s.confirmedPatterns.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">historically aligned patterns</div>
+          {s.confirmedPatterns.slice(0, 4).map((p) => (
+            <div key={p.patternId} className="text-bone-200/70 text-[10px]">
+              · {p.mutationType} · {p.expectedSignal} · evidence {p.evidenceCount} ·
+              aligned {p.alignmentCounts.aligned} · contradicted {p.alignmentCounts.contradicted}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {s.contradictedPatterns.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">historically contradicted patterns</div>
+          {s.contradictedPatterns.slice(0, 4).map((p) => (
+            <div key={p.patternId} className="text-amber-300/80 text-[10px]">
+              · {p.mutationType} · {p.expectedSignal} · evidence {p.evidenceCount} ·
+              contradicted {p.alignmentCounts.contradicted} · aligned {p.alignmentCounts.aligned}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {s.unresolvedPatterns.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">requires more evidence</div>
+          {s.unresolvedPatterns.slice(0, 4).map((p) => (
+            <div key={p.patternId} className="text-bone-200/70 text-[10px]">
+              · {p.mutationType} · {p.expectedSignal} · evidence {p.evidenceCount}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {s.mutationReliability.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">mutation reliability (descending evidence)</div>
+          {s.mutationReliability.slice(0, 6).map((m) => (
+            <div key={m.mutationType} className="text-bone-200/70 text-[10px]">
+              · {m.mutationType} · evidence {m.evidenceCount} ·
+              aligned {m.alignedCount} · contradicted {m.contradictedCount} ·
+              signature {m.reliabilitySignature}/10
+            </div>
+          ))}
+        </div>
+      )}
+
+      {(s.trustAdjustments.length + s.fatigueAdjustments.length +
+        s.realismAdjustments.length + s.symbolicAdjustments.length) > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">per-axis learning signatures</div>
+          {(['trust','fatigue','realism','symbolic'] as const).map((axis) => {
+            const rows =
+              axis === 'trust'    ? s.trustAdjustments :
+              axis === 'fatigue'  ? s.fatigueAdjustments :
+              axis === 'realism'  ? s.realismAdjustments :
+                                    s.symbolicAdjustments;
+            if (rows.length === 0) return null;
+            return (
+              <div key={axis} className="mb-1">
+                <div className="text-bone-200/60 text-[10px]">[{axis}]</div>
+                {rows.slice(0, 3).map((a, i) => (
+                  <div key={i} className="text-bone-200/70 text-[10px]">
+                    · {a.mutationType} · aligned {a.alignedCount} ·
+                    contradicted {a.contradictedCount} · signed {a.signedSignature}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
