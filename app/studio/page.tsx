@@ -110,6 +110,11 @@ import type { MetaCognitionReading } from '@lib/metaCognitionEngine';
 import type { IdentityDriftReading } from '@lib/identityDriftEngine';
 import type { AestheticCollapseReading } from '@lib/aestheticCollapseEngine';
 import type { HumanityRetentionReading } from '@lib/humanityRetentionEngine';
+import type { HumanMemoryImprintReading } from '@lib/humanMemoryImprintEngine';
+import type { EmotionalScarReading } from '@lib/emotionalScarEngine';
+import type { RitualPersistenceReading } from '@lib/ritualPersistenceEngine';
+import type { SilenceWeightReading } from '@lib/silenceWeightEngine';
+import type { MythicNarrativeReading } from '@lib/mythicNarrativeEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -243,6 +248,20 @@ function StudioInner() {
     trustIntegrity: number;
     authenticityIntegrity: number;
     symbolicIntegrity: number;
+    totalSnapshots: number;
+  } | null>(null);
+  // Human memory imprint — observatory of emotional permanence.
+  const [memoryImprint, setMemoryImprint] = useState<{
+    memoryImprint: HumanMemoryImprintReading;
+    emotionalScar: EmotionalScarReading;
+    ritualPersistence: RitualPersistenceReading;
+    silenceWeight: SilenceWeightReading;
+    mythicNarrative: MythicNarrativeReading;
+    quoteDurability: number;
+    scenePermanence: number;
+    emotionalAftertaste: number;
+    dignityProtection: number;
+    permanenceSignals: string[];
     totalSnapshots: number;
   } | null>(null);
   // Evolution sandbox — simulated mutation futures.
@@ -521,6 +540,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setSelfReflection(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/human-memory-imprint', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setMemoryImprint(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -667,6 +690,10 @@ function StudioInner() {
     fetch('/api/self-reflection', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setSelfReflection(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/human-memory-imprint', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setMemoryImprint(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -842,6 +869,7 @@ function StudioInner() {
           {supervisedLearning && <SupervisedLearningLoopPanel s={supervisedLearning} />}
           {worldModel && <WorldModelPanel w={worldModel} />}
           {selfReflection && <SelfReflectionPanel sr={selfReflection} />}
+          {memoryImprint && <HumanMemoryImprintPanel mi={memoryImprint} />}
 
           {preGenStability && (
             <>
@@ -5831,6 +5859,184 @@ function SelfReflectionPanel({ sr }: SelfReflectionPanelProps) {
             ...sr.identityDrift.notes,
             ...sr.aestheticCollapse.notes,
             ...sr.humanityRetention.notes,
+          ].slice(0, 8).map((n, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Human Memory Imprint Panel ────────────────────────────────────
+// Observatory of emotional permanence. Studies what creates remembered
+// moments — silence weight, ritual persistence, mythic resonance,
+// dignity preservation. NEVER optimizes for virality.
+interface HumanMemoryImprintPanelProps {
+  mi: {
+    memoryImprint: HumanMemoryImprintReading;
+    emotionalScar: EmotionalScarReading;
+    ritualPersistence: RitualPersistenceReading;
+    silenceWeight: SilenceWeightReading;
+    mythicNarrative: MythicNarrativeReading;
+    quoteDurability: number;
+    scenePermanence: number;
+    emotionalAftertaste: number;
+    dignityProtection: number;
+    permanenceSignals: string[];
+    totalSnapshots: number;
+  };
+}
+function HumanMemoryImprintPanel({ mi }: HumanMemoryImprintPanelProps) {
+  const imp = mi.memoryImprint;
+  const sig = imp.rememberedMomentSignals;
+  const scarSignals = mi.emotionalScar.signals;
+  const rituals = mi.ritualPersistence.rituals;
+  const silenceSig = mi.silenceWeight.signals;
+  const archetypes = mi.mythicNarrative.archetypes;
+
+  const advisory = (
+    <div className="text-[10px] text-bone-200/50">
+      Observatory only — the system studies emotional permanence.
+      It never optimizes for virality or exploits human pain.
+    </div>
+  );
+
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">human memory imprint</div>
+      {advisory}
+
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>snapshots {mi.totalSnapshots}</span>
+        <span>obs {imp.totalObservations}</span>
+        <span>imprint {imp.imprintStrength}/10</span>
+        <span>scar {mi.emotionalScar.verdict}</span>
+        <span>risk {imp.memoryRisk}/10</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">1 · memory imprint (16 remembrance signals)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(sig).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v}/10</span>
+            </div>
+          ))}
+        </div>
+        {imp.dominantImprintSignals.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant: {imp.dominantImprintSignals.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">2 · emotional aftertaste</div>
+        <div className="text-[10px] text-bone-200/70">
+          aftertaste {mi.emotionalAftertaste}/10 · quote durability {mi.quoteDurability}/10 ·
+          identity attachment {imp.identityAttachment}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">3 · silence weight (index {mi.silenceWeight.silenceWeightIndex}/10)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(silenceSig).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">4 · ritual persistence (12 rituals)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(rituals).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v.persistence}/10</span>
+            </div>
+          ))}
+        </div>
+        {mi.ritualPersistence.dominantRituals.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant: {mi.ritualPersistence.dominantRituals.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">5 · emotional scar safety (verdict: {mi.emotionalScar.verdict})</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(scarSignals).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span className={
+                k === 'exploitationRisk' && (v as number) >= 5 ? 'text-amber-300/80' : ''
+              }>{v}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">6 · mythic narrative (overall {mi.mythicNarrative.overallMythicWeight}/10)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(archetypes).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v.mythicWeight}/10</span>
+            </div>
+          ))}
+        </div>
+        {mi.mythicNarrative.dominantArchetypes.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant: {mi.mythicNarrative.dominantArchetypes.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">7 · quote durability</div>
+        <div className="text-[10px] text-bone-200/70">
+          quoteDurability {mi.quoteDurability}/10 · quotePotential {sig.quotePotential}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">8 · scene permanence</div>
+        <div className="text-[10px] text-bone-200/70">
+          scenePermanence {mi.scenePermanence}/10 · humanStillness {sig.humanStillness}/10 ·
+          visualTenderness {sig.visualTenderness}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">9 · identity attachment</div>
+        <div className="text-[10px] text-bone-200/70">
+          identityAttachment {imp.identityAttachment}/10 · identityReflection {sig.identityReflection}/10 ·
+          intergenerationalResonance {sig.intergenerationalResonance}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">10 · dignity protection</div>
+        <div className="text-[10px] text-bone-200/70">
+          dignityProtection {mi.dignityProtection}/10 · exploitationRisk {scarSignals.exploitationRisk}/10
+        </div>
+      </div>
+
+      {(imp.notes.length + mi.emotionalScar.notes.length + mi.silenceWeight.notes.length +
+        mi.mythicNarrative.notes.length) > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">remembrance-oriented observations</div>
+          {[
+            ...imp.notes, ...mi.emotionalScar.notes,
+            ...mi.silenceWeight.notes, ...mi.mythicNarrative.notes,
           ].slice(0, 8).map((n, i) => (
             <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
           ))}
