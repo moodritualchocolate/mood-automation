@@ -115,6 +115,9 @@ import type { EmotionalScarReading } from '@lib/emotionalScarEngine';
 import type { RitualPersistenceReading } from '@lib/ritualPersistenceEngine';
 import type { SilenceWeightReading } from '@lib/silenceWeightEngine';
 import type { MythicNarrativeReading } from '@lib/mythicNarrativeEngine';
+import type { HumanPresenceReading } from '@lib/humanPresenceEngine';
+import type { CreativeDirectorReading } from '@lib/creativeDirectorEngine';
+import type { StoryArchitectureReading } from '@lib/storyArchitectureEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -263,6 +266,26 @@ function StudioInner() {
     dignityProtection: number;
     permanenceSignals: string[];
     totalSnapshots: number;
+  } | null>(null);
+  // Human presence — observatory of felt-real presence.
+  const [humanPresence, setHumanPresence] = useState<{
+    presence: HumanPresenceReading;
+    authenticity: number;
+    stillness: number;
+    vulnerability: number;
+    listening: number;
+    dignity: number;
+    humanity: number;
+    totalSnapshots: number;
+  } | null>(null);
+  // Creative director — direction observatory composed of all prior layers.
+  const [creativeDirector, setCreativeDirector] = useState<{
+    worldSignals: Record<string, number>;
+    humanSignals: Record<string, number>;
+    presenceSignals: Record<string, number>;
+    memorySignals: Record<string, number>;
+    directions: CreativeDirectorReading;
+    storyArchitecture: StoryArchitectureReading;
   } | null>(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
@@ -544,6 +567,14 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setMemoryImprint(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/human-presence', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setHumanPresence(v); })
+            .catch(() => { /* non-fatal */ });
+          fetch('/api/creative-director', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setCreativeDirector(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -694,6 +725,14 @@ function StudioInner() {
     fetch('/api/human-memory-imprint', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setMemoryImprint(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/human-presence', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setHumanPresence(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/creative-director', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCreativeDirector(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -870,6 +909,8 @@ function StudioInner() {
           {worldModel && <WorldModelPanel w={worldModel} />}
           {selfReflection && <SelfReflectionPanel sr={selfReflection} />}
           {memoryImprint && <HumanMemoryImprintPanel mi={memoryImprint} />}
+          {humanPresence && <HumanPresencePanel hp={humanPresence} />}
+          {creativeDirector && <CreativeDirectorPanel cd={creativeDirector} />}
 
           {preGenStability && (
             <>
@@ -6038,6 +6079,277 @@ function HumanMemoryImprintPanel({ mi }: HumanMemoryImprintPanelProps) {
             ...imp.notes, ...mi.emotionalScar.notes,
             ...mi.silenceWeight.notes, ...mi.mythicNarrative.notes,
           ].slice(0, 8).map((n, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Human Presence Panel ──────────────────────────────────────────
+// The system studies human presence. It does not manufacture authenticity.
+interface HumanPresencePanelProps {
+  hp: {
+    presence: HumanPresenceReading;
+    authenticity: number;
+    stillness: number;
+    vulnerability: number;
+    listening: number;
+    dignity: number;
+    humanity: number;
+    totalSnapshots: number;
+  };
+}
+function HumanPresencePanel({ hp }: HumanPresencePanelProps) {
+  const p = hp.presence;
+  const sig = p.signals;
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">human presence</div>
+      <div className="text-[10px] text-bone-200/50">
+        The system studies human presence. It does not manufacture authenticity.
+      </div>
+
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>snapshots {hp.totalSnapshots}</span>
+        <span>obs {p.totalObservations}</span>
+        <span>presence {p.presenceScore}/10</span>
+        <span>synthetic {p.syntheticPressure}/10</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">1 · presence (16 dimensions)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(sig).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span>
+              <span>{v}/10</span>
+            </div>
+          ))}
+        </div>
+        {p.dominantPresenceSignals.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant: {p.dominantPresenceSignals.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">2 · authenticity</div>
+        <div className="text-[10px] text-bone-200/70">
+          authenticity {hp.authenticity}/10 · authenticityPressure {sig.authenticityPressure}/10 ·
+          nonPerformative {sig.nonPerformativeBehavior}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">3 · stillness</div>
+        <div className="text-[10px] text-bone-200/70">
+          stillness {hp.stillness}/10 · breathingSpace {sig.breathingSpace}/10 ·
+          emotionalRestraint {sig.emotionalRestraint}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">4 · vulnerability</div>
+        <div className="text-[10px] text-bone-200/70">
+          vulnerability {hp.vulnerability}/10 · humanFatigueVisibility {sig.humanFatigueVisibility}/10 ·
+          emotionalOpenness {sig.emotionalOpenness}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">5 · listening</div>
+        <div className="text-[10px] text-bone-200/70">
+          listening {hp.listening}/10 · listeningPresence {sig.listeningPresence}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">6 · humanity retention</div>
+        <div className="text-[10px] text-bone-200/70">
+          humanity {hp.humanity}/10 · humanityRetention {p.humanityRetention}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">7 · dignity</div>
+        <div className="text-[10px] text-bone-200/70">
+          dignity {hp.dignity}/10 · dignityPreservation {sig.dignityPreservation}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">8 · imperfection</div>
+        <div className="text-[10px] text-bone-200/70">
+          imperfectionSignature {p.imperfectionSignature}/10 · awkwardness {sig.awkwardness}/10 ·
+          selfConsciousnessTraces {sig.selfConsciousnessTraces}/10 · hesitation {sig.hesitation}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">9 · emotional timing</div>
+        <div className="text-[10px] text-bone-200/70">
+          emotionalTiming {sig.emotionalTiming}/10 · emotionalBreathing {p.emotionalBreathing}/10
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">10 · synthetic pressure</div>
+        <div className="text-[10px] text-bone-200/70">
+          syntheticPressure {p.syntheticPressure}/10
+        </div>
+      </div>
+
+      {p.notes.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">presence observations</div>
+          {p.notes.slice(0, 5).map((n, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Creative Director Panel ───────────────────────────────────────
+// Creative directions are observations.
+// The operator remains the only authority.
+interface CreativeDirectorPanelProps {
+  cd: {
+    worldSignals: Record<string, number>;
+    humanSignals: Record<string, number>;
+    presenceSignals: Record<string, number>;
+    memorySignals: Record<string, number>;
+    directions: CreativeDirectorReading;
+    storyArchitecture: StoryArchitectureReading;
+  };
+}
+function CreativeDirectorPanel({ cd }: CreativeDirectorPanelProps) {
+  const d = cd.directions;
+  const s = cd.storyArchitecture;
+  const dirGroup = (label: string, ds: { observation: string; alignment: number }[]) => {
+    if (ds.length === 0) return null;
+    return (
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">{label}</div>
+        {ds.slice(0, 4).map((dir, i) => (
+          <div key={i} className="text-bone-200/70 text-[10px]">
+            · {dir.observation} <span className="text-bone-200/50">[{dir.alignment}/10]</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">creative director</div>
+      <div className="text-[10px] text-bone-200/50">
+        Creative directions are observations. The operator remains the only authority.
+      </div>
+
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>dominant: {d.dominantDirections.join(' · ') || 'muted'}</span>
+        <span>arcs: {s.dominantArcs.join(' · ') || 'muted'}</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">1 · world signals</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(cd.worldSignals).slice(0, 12).map(([k, v]) => (
+            <div key={k} className="flex justify-between"><span>{k}</span><span>{v}/10</span></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">2 · human signals (human truth)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(cd.humanSignals).slice(0, 12).map(([k, v]) => (
+            <div key={k} className="flex justify-between"><span>{k}</span><span>{v}/10</span></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">3 · presence signals</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(cd.presenceSignals).slice(0, 12).map(([k, v]) => (
+            <div key={k} className="flex justify-between"><span>{k}</span><span>{v}/10</span></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">4 · memory signals</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(cd.memorySignals).slice(0, 12).map(([k, v]) => (
+            <div key={k} className="flex justify-between"><span>{k}</span><span>{v}/10</span></div>
+          ))}
+        </div>
+      </div>
+
+      {dirGroup('5 · story directions', d.narrativeDirections)}
+      {dirGroup('6 · emotional directions', d.emotionalDirections)}
+      {dirGroup('7 · silence directions', d.silenceDirections)}
+      {dirGroup('8 · realism directions', d.realismDirections)}
+      {dirGroup('9 · risk zones', d.riskZones)}
+      {dirGroup('10 · exploration zones', d.experimentationZones)}
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">story architecture · arcs</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {s.storyArcs.slice().sort((a, b) => b.alignment - a.alignment).map((a) => (
+            <div key={a.key} className="flex justify-between">
+              <span>{a.key}</span>
+              <span>{a.alignment}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">story architecture · emotional curves</div>
+        {s.emotionalCurves.slice().sort((a, b) => b.alignment - a.alignment).slice(0, 4).map((c, i) => (
+          <div key={i} className="text-bone-200/70 text-[10px]">
+            · {c.observation} <span className="text-bone-200/50">[{c.alignment}/10]</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">story architecture · silence moments</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {s.silenceMoments.map((m, i) => (
+            <div key={i} className="flex justify-between"><span>{m.moment}</span><span>{m.alignment}/10</span></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">story architecture · memory moments</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {s.memoryMoments.map((m, i) => (
+            <div key={i} className="flex justify-between"><span>{m.moment}</span><span>{m.alignment}/10</span></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">story architecture · realism anchors</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {s.realismAnchors.map((m, i) => (
+            <div key={i} className="flex justify-between"><span>{m.anchor}</span><span>{m.alignment}/10</span></div>
+          ))}
+        </div>
+      </div>
+
+      {(d.notes.length + s.notes.length) > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">director observations</div>
+          {[...d.notes, ...s.notes].slice(0, 6).map((n, i) => (
             <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
           ))}
         </div>
