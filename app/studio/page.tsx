@@ -122,6 +122,9 @@ import type { StoryArchitectReading } from '@lib/storyArchitectEngine';
 import type { EmotionalArcReading } from '@lib/emotionalArcEngine';
 import type { MemoryAnchorReading } from '@lib/memoryAnchorEngine';
 import type { PresenceAnchorReading } from '@lib/presenceAnchorEngine';
+import type { SceneArchitectReading } from '@lib/sceneArchitectEngine';
+import type { EmotionalRhythmReading } from '@lib/emotionalRhythmEngine';
+import type { AssetComposerReading } from '@lib/assetComposerEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -305,6 +308,13 @@ function StudioInner() {
     unresolvedQuestions: string[];
     notes: string[];
     totalSnapshots: number;
+  } | null>(null);
+  // Asset composer — scene + rhythm + asset packages.
+  const [assetComposer, setAssetComposer] = useState<{
+    packages: AssetComposerReading;
+    storyBlueprints: StoryArchitectReading['storyBlueprints'];
+    scenes: SceneArchitectReading['scenes'];
+    rhythm: EmotionalRhythmReading;
   } | null>(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
@@ -598,6 +608,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setStoryArchitect(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/asset-composer', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setAssetComposer(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -760,6 +774,10 @@ function StudioInner() {
     fetch('/api/story-architect', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setStoryArchitect(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/asset-composer', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setAssetComposer(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -939,6 +957,7 @@ function StudioInner() {
           {humanPresence && <HumanPresencePanel hp={humanPresence} />}
           {creativeDirector && <CreativeDirectorPanel cd={creativeDirector} />}
           {storyArchitect && <StoryArchitectPanel sa={storyArchitect} />}
+          {assetComposer && <AssetComposerPanel ac={assetComposer} />}
 
           {preGenStability && (
             <>
@@ -6550,6 +6569,186 @@ function StoryArchitectPanel({ sa }: StoryArchitectPanelProps) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Asset Composer Panel ──────────────────────────────────────────
+// Creative packages are specifications only. No asset generation
+// occurs here. The operator remains the only authority.
+interface AssetComposerPanelProps {
+  ac: {
+    packages: AssetComposerReading;
+    storyBlueprints: StoryArchitectReading['storyBlueprints'];
+    scenes: SceneArchitectReading['scenes'];
+    rhythm: EmotionalRhythmReading;
+  };
+}
+function AssetComposerPanel({ ac }: AssetComposerPanelProps) {
+  const pkgs = ac.packages;
+  const sceneById = new Map(ac.scenes.map((s) => [s.sourceBlueprintId, s] as const));
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">asset composer</div>
+      <div className="text-[10px] text-bone-200/50">
+        Creative packages are specifications only.
+        No asset generation occurs here.
+        The operator remains the only authority.
+      </div>
+
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>stories {ac.storyBlueprints.length}</span>
+        <span>scenes {ac.scenes.length}</span>
+        <span>rhythm {ac.rhythm.pacingProfile} · {ac.rhythm.restraintProfile}</span>
+        <span>image / video / banner / landing {pkgs.imagePackages.length}/{pkgs.videoPackages.length}/{pkgs.bannerPackages.length}/{pkgs.landingPackages.length}</span>
+      </div>
+
+      {/* 1 · Story Blueprint */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">1 · story blueprint (top 3)</div>
+        {ac.storyBlueprints.slice(0, 3).map((b) => (
+          <div key={b.blueprintId} className="text-bone-200/70 text-[10px]">
+            · <span className="text-bone-100">{b.storyName}</span> ·
+            arc {b.emotionalArc} · risk {b.riskLevel} · alignment {b.alignment}/10
+          </div>
+        ))}
+      </div>
+
+      {/* 2 · Scene Blueprint */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">2 · scene blueprint (top 3)</div>
+        {ac.scenes.slice(0, 3).map((s) => (
+          <div key={s.sceneId} className="text-bone-200/70 text-[10px] mb-1">
+            · <span className="text-bone-100">{s.sourceStoryName}</span> →
+            {s.sceneType} · {s.location} · {s.timeOfDay}
+            <div className="text-bone-200/50">
+              {s.cameraLanguage} · {s.framingStyle} · {s.lightingStyle} ·
+              silence: {s.silenceAllocation}
+            </div>
+            <div className="text-bone-200/50">
+              weight {s.emotionalWeight}/10 · realism {s.realismLevel}/10 ·
+              restraint {s.restraintLevel}/10
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 3 · Emotional Rhythm */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">3 · emotional rhythm</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {Object.entries(ac.rhythm.rhythmProfile).map(([k, v]) => (
+            <div key={k} className="flex justify-between">
+              <span>{k}</span><span>{v}/10</span>
+            </div>
+          ))}
+        </div>
+        <div className="text-[10px] text-bone-200/60 mt-1">
+          pacing: {ac.rhythm.pacingProfile} · restraint: {ac.rhythm.restraintProfile}
+        </div>
+      </div>
+
+      {/* 4 · Presence Signals */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">4 · presence signals (from top scenes)</div>
+        {ac.scenes.slice(0, 3).map((s) => (
+          <div key={s.sceneId} className="text-bone-200/70 text-[10px]">
+            · {s.sourceStoryName}: {s.presenceAnchors.join(' · ') || '—'}
+          </div>
+        ))}
+      </div>
+
+      {/* 5 · Memory Anchors */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">5 · memory anchors</div>
+        {ac.scenes.slice(0, 3).map((s) => (
+          <div key={s.sceneId} className="text-bone-200/70 text-[10px]">
+            · {s.sourceStoryName}: {s.memoryAnchors.join(' · ') || '—'}
+          </div>
+        ))}
+      </div>
+
+      {/* 6 · Visual Language */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">6 · visual language</div>
+        {ac.scenes.slice(0, 3).map((s) => (
+          <div key={s.sceneId} className="text-bone-200/70 text-[10px]">
+            · {s.sourceStoryName}: {s.cameraLanguage} · {s.framingStyle} · {s.lightingStyle}
+          </div>
+        ))}
+      </div>
+
+      {/* 7 · Banner Package */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">7 · banner package</div>
+        {pkgs.bannerPackages.slice(0, 3).map((p) => (
+          <div key={p.packageId} className="text-bone-200/70 text-[10px] mb-1">
+            · <span className="text-bone-100">{p.packageId}</span> · weight {p.emotionalWeight}/10
+            <div className="text-bone-200/50">emotional: {p.emotionalDirection}</div>
+            <div className="text-bone-200/50">visual: {p.visualDirection}</div>
+            <div className="text-bone-200/50">memory: {p.memoryDirection} · restraint: {p.restraintDirection}</div>
+            <div className="text-bone-200/50">composition: {p.compositionDirection}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* 8 · Video Package */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">8 · video package</div>
+        {pkgs.videoPackages.slice(0, 2).map((p) => (
+          <div key={p.packageId} className="text-bone-200/70 text-[10px] mb-1">
+            · <span className="text-bone-100">{p.packageId}</span> · weight {p.emotionalWeight}/10
+            <div className="text-bone-200/50">arc: {p.emotionalArc}</div>
+            <div className="text-bone-200/50">rhythm: {p.rhythm}</div>
+            {p.sceneSequence.map((s) => (
+              <div key={s.index} className="text-bone-200/50">
+                  beat {s.index}: {s.scene} — {s.emotionalBeat} · silence {s.silenceShare}/10
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {/* 9 · Image Package */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">9 · image package</div>
+        {pkgs.imagePackages.slice(0, 3).map((p) => (
+          <div key={p.packageId} className="text-bone-200/70 text-[10px] mb-1">
+            · <span className="text-bone-100">{p.packageId}</span> · weight {p.emotionalWeight}/10
+            <div className="text-bone-200/50">scene: {p.scene}</div>
+            <div className="text-bone-200/50">presence: {p.presence}</div>
+            <div className="text-bone-200/50">visual language: {p.visualLanguage}</div>
+            <div className="text-bone-200/50">realism: {p.realism}</div>
+            <div className="text-bone-200/50">memory: {p.memoryAnchors.join(' · ')}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* 10 · Landing Package */}
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">10 · landing section package</div>
+        {pkgs.landingPackages.slice(0, 3).map((p) => (
+          <div key={p.packageId} className="text-bone-200/70 text-[10px] mb-1">
+            · <span className="text-bone-100">{p.packageId}</span> · weight {p.emotionalWeight}/10
+            <div className="text-bone-200/50">section: {p.sectionPurpose}</div>
+            <div className="text-bone-200/50">emotional: {p.emotionalPurpose}</div>
+            <div className="text-bone-200/50">narrative: {p.narrativePurpose}</div>
+            <div className="text-bone-200/50">memory: {p.memoryAnchor} · visual: {p.visualAnchor}</div>
+          </div>
+        ))}
+      </div>
+
+      {pkgs.notes.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">composer observations</div>
+          {pkgs.notes.slice(0, 4).map((n, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
+          ))}
+        </div>
+      )}
+
+      {/* keep sceneById referenced so unused-warnings don't show */}
+      <div className="hidden">{sceneById.size}</div>
     </div>
   );
 }
