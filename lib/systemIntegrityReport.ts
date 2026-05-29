@@ -109,6 +109,7 @@ const KNOWN_ROUTES: string[] = [
   '/api/human-memory-imprint',
   '/api/human-presence',
   '/api/creative-director',
+  '/api/story-architect',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.

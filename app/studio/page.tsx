@@ -118,6 +118,10 @@ import type { MythicNarrativeReading } from '@lib/mythicNarrativeEngine';
 import type { HumanPresenceReading } from '@lib/humanPresenceEngine';
 import type { CreativeDirectorReading } from '@lib/creativeDirectorEngine';
 import type { StoryArchitectureReading } from '@lib/storyArchitectureEngine';
+import type { StoryArchitectReading } from '@lib/storyArchitectEngine';
+import type { EmotionalArcReading } from '@lib/emotionalArcEngine';
+import type { MemoryAnchorReading } from '@lib/memoryAnchorEngine';
+import type { PresenceAnchorReading } from '@lib/presenceAnchorEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -286,6 +290,21 @@ function StudioInner() {
     memorySignals: Record<string, number>;
     directions: CreativeDirectorReading;
     storyArchitecture: StoryArchitectureReading;
+  } | null>(null);
+  // Story architect — exploratory story blueprints.
+  const [storyArchitect, setStoryArchitect] = useState<{
+    storyBlueprints: StoryArchitectReading['storyBlueprints'];
+    dominantHumanTensions: string[];
+    emotionalArcs: EmotionalArcReading;
+    memoryAnchors: MemoryAnchorReading;
+    presenceAnchors: PresenceAnchorReading;
+    silenceMoments: StoryArchitectReading['silenceMoments'];
+    mythicFrames: StoryArchitectReading['mythicFrames'];
+    realismAnchors: StoryArchitectReading['realismAnchors'];
+    riskWarnings: string[];
+    unresolvedQuestions: string[];
+    notes: string[];
+    totalSnapshots: number;
   } | null>(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
@@ -575,6 +594,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setCreativeDirector(v); })
             .catch(() => { /* non-fatal */ });
+          fetch('/api/story-architect', { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setStoryArchitect(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -733,6 +756,10 @@ function StudioInner() {
     fetch('/api/creative-director', { cache: 'no-store' })
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setCreativeDirector(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/story-architect', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setStoryArchitect(v); })
       .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
   }, []);
@@ -911,6 +938,7 @@ function StudioInner() {
           {memoryImprint && <HumanMemoryImprintPanel mi={memoryImprint} />}
           {humanPresence && <HumanPresencePanel hp={humanPresence} />}
           {creativeDirector && <CreativeDirectorPanel cd={creativeDirector} />}
+          {storyArchitect && <StoryArchitectPanel sa={storyArchitect} />}
 
           {preGenStability && (
             <>
@@ -6351,6 +6379,174 @@ function CreativeDirectorPanel({ cd }: CreativeDirectorPanelProps) {
           <div className="eyebrow mb-1">director observations</div>
           {[...d.notes, ...s.notes].slice(0, 6).map((n, i) => (
             <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Story Architect Panel ─────────────────────────────────────────
+// Story blueprints are exploratory structures only.
+// The system does not generate, publish, or choose.
+// The operator remains the creative authority.
+interface StoryArchitectPanelProps {
+  sa: {
+    storyBlueprints: StoryArchitectReading['storyBlueprints'];
+    dominantHumanTensions: string[];
+    emotionalArcs: EmotionalArcReading;
+    memoryAnchors: MemoryAnchorReading;
+    presenceAnchors: PresenceAnchorReading;
+    silenceMoments: StoryArchitectReading['silenceMoments'];
+    mythicFrames: StoryArchitectReading['mythicFrames'];
+    realismAnchors: StoryArchitectReading['realismAnchors'];
+    riskWarnings: string[];
+    unresolvedQuestions: string[];
+    notes: string[];
+    totalSnapshots: number;
+  };
+}
+function StoryArchitectPanel({ sa }: StoryArchitectPanelProps) {
+  const top = sa.storyBlueprints[0];
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">story architect</div>
+      <div className="text-[10px] text-bone-200/50">
+        Story blueprints are exploratory structures only.
+        The system does not generate, publish, or choose.
+        The operator remains the creative authority.
+      </div>
+
+      <div className="flex justify-between text-[11px] text-bone-200/60">
+        <span>snapshots {sa.totalSnapshots}</span>
+        <span>blueprints {sa.storyBlueprints.length}</span>
+        <span>top {top ? `${top.storyName} ${top.alignment}/10` : '—'}</span>
+        <span>risk warnings {sa.riskWarnings.length}</span>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">1 · story blueprints</div>
+        {sa.storyBlueprints.slice(0, 8).map((b) => (
+          <div key={b.blueprintId} className="text-bone-200/70 text-[10px] mb-1">
+            <div className="flex justify-between">
+              <span><span className="text-bone-100">{b.storyName}</span> · {b.storyType}</span>
+              <span>
+                {b.alignment}/10 ·
+                <span className={
+                  b.riskLevel === 'do-not-use' ? ' text-red-400/80' :
+                  b.riskLevel === 'high' ? ' text-amber-300/80' : ''
+                }> {b.riskLevel}</span>
+              </span>
+            </div>
+            <div className="text-bone-200/50">
+              tension: {b.humanTension} · arc: {b.emotionalArc}
+            </div>
+            <div className="text-bone-200/50">
+              memory: {b.memoryAnchor} · presence: {b.presenceAnchor} · silence: {b.silencePlacement}
+            </div>
+            <div className="text-bone-200/50">
+              mythic: {b.mythicFrame} · realism: {b.realismStyle} ·
+              dignity {b.dignityProtection}/10 · risk {b.manipulationRisk}/10
+            </div>
+            <div className="text-bone-200/40 italic">{b.audienceFeeling}</div>
+            <div className="text-bone-200/40">{b.whyThisMayMatter}</div>
+            {b.unresolvedRisk !== 'no unresolved risk signal observed in this blueprint' && (
+              <div className="text-amber-300/60">⚠ {b.unresolvedRisk}</div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">2 · human tension</div>
+        {sa.dominantHumanTensions.slice(0, 5).map((t, i) => (
+          <div key={i} className="text-bone-200/70 text-[10px]">· {t}</div>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">3 · emotional arc options</div>
+        {sa.emotionalArcs.arcs.slice().sort((a, b) => b.alignment - a.alignment).slice(0, 5).map((a) => (
+          <div key={a.arcId} className="text-bone-200/70 text-[10px]">
+            · {a.shape} <span className="text-bone-200/50">[{a.alignment}/10]</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">4 · memory anchors</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {sa.memoryAnchors.anchors.slice().sort((a, b) => b.alignment - a.alignment).slice(0, 10).map((a) => (
+            <div key={a.anchorId} className="flex justify-between">
+              <span>{a.description}</span><span>{a.alignment}/10</span>
+            </div>
+          ))}
+        </div>
+        {sa.memoryAnchors.dominantAnchors.length > 0 && (
+          <div className="text-[10px] text-bone-200/60 mt-1">
+            dominant: {sa.memoryAnchors.dominantAnchors.join(' · ')}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">5 · presence anchors (posing risk {sa.presenceAnchors.influencerPosingRisk}/10)</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {sa.presenceAnchors.anchors.slice().sort((a, b) => b.alignment - a.alignment).slice(0, 8).map((a) => (
+            <div key={a.anchorId} className="flex justify-between">
+              <span>{a.description}</span><span>{a.alignment}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">6 · silence moments</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {sa.silenceMoments.map((m, i) => (
+            <div key={i} className="flex justify-between">
+              <span>{m.moment}</span><span>{m.alignment}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">7 · mythic frames</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {sa.mythicFrames.slice(0, 8).map((f, i) => (
+            <div key={i} className="flex justify-between">
+              <span>{f.frame}</span><span>{f.alignment}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t hairline pt-2 text-xs">
+        <div className="eyebrow mb-1">8 · realism style</div>
+        <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70">
+          {sa.realismAnchors.map((a, i) => (
+            <div key={i} className="flex justify-between">
+              <span>{a.anchor}</span><span>{a.alignment}/10</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {sa.riskWarnings.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">9 · risk warnings</div>
+          {sa.riskWarnings.slice(0, 6).map((w, i) => (
+            <div key={i} className="text-amber-300/70 text-[10px]">⚠ {w}</div>
+          ))}
+        </div>
+      )}
+
+      {sa.unresolvedQuestions.length > 0 && (
+        <div className="border-t hairline pt-2 text-xs">
+          <div className="eyebrow mb-1">10 · unresolved questions</div>
+          {sa.unresolvedQuestions.slice(0, 5).map((q, i) => (
+            <div key={i} className="text-bone-200/70 text-[10px]">? {q}</div>
           ))}
         </div>
       )}
