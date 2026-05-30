@@ -135,6 +135,10 @@ import type { VideoExecutionPackage } from '@lib/videoExecutionEngine';
 import type { CarouselExecutionPackage } from '@lib/carouselExecutionEngine';
 import type { LandingExecutionPackage } from '@lib/landingExecutionEngine';
 import type { AssetRecord, AssetApprovalStatus } from '@lib/assetRegistryMemory';
+import type { ProviderCapability } from '@lib/providerRegistry';
+import type { ProviderId } from '@lib/providers/types';
+import type { GenerationRequestRecord, GenerationRequestStatus } from '@lib/generationRequestQueue';
+import type { GenerationResultRecord } from '@lib/generationResultRegistry';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -349,6 +353,22 @@ function StudioInner() {
     assets: AssetRecord[];
   } | null>(null);
   const [registryRefresh, setRegistryRefresh] = useState(0);
+  // Generation connector layer.
+  const [providerRegistry, setProviderRegistry] = useState<{
+    providers: ProviderCapability[];
+    totalImageProviders: number;
+    totalVideoProviders: number;
+  } | null>(null);
+  const [generationQueue, setGenerationQueue] = useState<{
+    totalRequests: number;
+    counts: Record<GenerationRequestStatus, number>;
+    requests: GenerationRequestRecord[];
+    eligibleAssets: Array<{ assetId: string; formula: string; packageType: string; sourceStoryName: string }>;
+  } | null>(null);
+  const [generationResults, setGenerationResults] = useState<{
+    totalResults: number;
+    results: GenerationResultRecord[];
+  } | null>(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
     sandbox: EvolutionSandboxReading;
@@ -824,6 +844,18 @@ function StudioInner() {
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setAssetRegistry(v); })
       .catch(() => { /* non-fatal */ });
+    fetch('/api/provider-registry', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setProviderRegistry(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/generation-queue', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setGenerationQueue(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/generation-result', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setGenerationResults(v); })
+      .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productionFormula, registryRefresh]);
@@ -1011,6 +1043,9 @@ function StudioInner() {
               onFormulaChange={setProductionFormula}
               assetRegistry={assetRegistry}
               onRegistryRefresh={() => setRegistryRefresh((n) => n + 1)}
+              providerRegistry={providerRegistry}
+              generationQueue={generationQueue}
+              generationResults={generationResults}
             />
           )}
 
@@ -6836,14 +6871,31 @@ interface ProductionStudioPanelProps {
     assets: AssetRecord[];
   } | null;
   onRegistryRefresh: () => void;
+  providerRegistry: {
+    providers: ProviderCapability[];
+    totalImageProviders: number;
+    totalVideoProviders: number;
+  } | null;
+  generationQueue: {
+    totalRequests: number;
+    counts: Record<GenerationRequestStatus, number>;
+    requests: GenerationRequestRecord[];
+    eligibleAssets: Array<{ assetId: string; formula: string; packageType: string; sourceStoryName: string }>;
+  } | null;
+  generationResults: {
+    totalResults: number;
+    results: GenerationResultRecord[];
+  } | null;
 }
 type ProductionTab =
   | 'banner' | 'carousel' | 'image' | 'video' | 'landing'
   | 'prompt-preview' | 'brand-validation'
   | 'execution-image' | 'execution-video' | 'execution-carousel' | 'execution-landing'
-  | 'approval-queue';
+  | 'approval-queue'
+  | 'providers' | 'generation-queue' | 'generation-results';
 function ProductionStudioPanel({
   ps, activeFormula, onFormulaChange, assetRegistry, onRegistryRefresh,
+  providerRegistry, generationQueue, generationResults,
 }: ProductionStudioPanelProps) {
   const [tab, setTab] = useState<ProductionTab>('banner');
   const [activePromptId, setActivePromptId] = useState<string | null>(null);
@@ -6863,7 +6915,11 @@ function ProductionStudioPanel({
     { id: 'execution-carousel', label: 'Exec · Carousel' },
     { id: 'execution-landing', label: 'Exec · Landing' },
     { id: 'approval-queue', label: 'Approval Queue' },
+    { id: 'providers', label: 'Providers' },
+    { id: 'generation-queue', label: 'Gen Queue' },
+    { id: 'generation-results', label: 'Gen Results' },
   ];
+  const [providerChoice, setProviderChoice] = useState<ProviderId>('flux');
 
   async function registerToQueue(
     packageType: 'image' | 'video' | 'carousel' | 'landing',
@@ -6902,6 +6958,64 @@ function ProductionStudioPanel({
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setRegisterStatus(`${action} ${assetId}`);
+      onRegistryRefresh();
+    } catch (err) {
+      setRegisterStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  async function draftGenerationRequest(assetId: string, providerId: ProviderId) {
+    try {
+      const res = await fetch('/api/generation-queue', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'draft', operatorId, operatorReason,
+          sourceAssetId: assetId, providerId,
+        }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error ?? `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setRegisterStatus(`drafted ${data.request?.requestId ?? assetId} on ${providerId}`);
+      onRegistryRefresh();
+    } catch (err) {
+      setRegisterStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  async function genQueueTransition(requestId: string, action: 'approve' | 'submit' | 'complete' | 'fail' | 'archive') {
+    try {
+      const res = await fetch('/api/generation-queue', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, operatorId, operatorReason, requestId }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setRegisterStatus(`gen ${action} ${requestId}`);
+      onRegistryRefresh();
+    } catch (err) {
+      setRegisterStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  async function logGenerationResult(assetId: string, requestId: string, provider: ProviderId, preview: string) {
+    try {
+      const res = await fetch('/api/generation-result', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          operatorId, operatorReason, assetId, requestId, provider,
+          preview, metadata: { source: 'production-studio-panel' },
+        }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error ?? `HTTP ${res.status}`);
+      }
+      setRegisterStatus(`logged result for ${requestId}`);
       onRegistryRefresh();
     } catch (err) {
       setRegisterStatus(`error: ${(err as Error).message}`);
@@ -7220,6 +7334,152 @@ function ProductionStudioPanel({
       </div>
     );
   }
+  function renderProviders() {
+    if (!providerRegistry) return <div className="text-bone-200/50 text-[10px]">loading providers…</div>;
+    return (
+      <div>
+        <div className="flex justify-between text-[11px] text-bone-200/60 mb-2">
+          <span>image providers {providerRegistry.totalImageProviders}</span>
+          <span>video providers {providerRegistry.totalVideoProviders}</span>
+        </div>
+        {providerRegistry.providers.map((p) => (
+          <div key={p.providerId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+            <div className="text-bone-100">{p.providerName} · {p.packageType} · {p.availability}</div>
+            <div>capabilities: {p.capabilities.join(' · ')}</div>
+            <div>aspect ratios: {p.supportedAspectRatios.join(' · ')}</div>
+            <div>languages: {p.supportedLanguages.join(' · ')}</div>
+            <div>cost est: ${p.costEstimateUSDPerUnit.toFixed(2)}/unit</div>
+            <div>limits: {Object.entries(p.limits).map(([k, v]) => `${k}=${v}`).join(' · ')}</div>
+            {p.notes.length > 0 && <div className="text-bone-200/50">notes: {p.notes.join(' · ')}</div>}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  function renderGenerationQueue() {
+    if (!generationQueue) return <div className="text-bone-200/50 text-[10px]">loading generation queue…</div>;
+    return (
+      <div>
+        <div className="flex justify-between text-[11px] text-bone-200/60 mb-2">
+          <span>total {generationQueue.totalRequests}</span>
+          <span>draft {generationQueue.counts.draft}</span>
+          <span>approved {generationQueue.counts.approved}</span>
+          <span>submitted {generationQueue.counts.submitted}</span>
+          <span>completed {generationQueue.counts.completed}</span>
+          <span>failed {generationQueue.counts.failed}</span>
+        </div>
+        <div className="text-[10px] text-bone-200/50 mb-2">
+          Generation only after explicit operator approval. No autonomous posting.
+          The route never calls a provider — operator submits manually.
+        </div>
+        {generationQueue.eligibleAssets.length > 0 && (
+          <div className="border-t hairline pt-2 text-[10px] mb-2">
+            <div className="eyebrow mb-1">draft from approved asset</div>
+            <div className="flex gap-1 mb-1">
+              <select
+                value={providerChoice} onChange={(e) => setProviderChoice(e.target.value as ProviderId)}
+                className="border hairline px-2 py-1 bg-transparent text-bone-200/80"
+              >
+                {(providerRegistry?.providers ?? []).map((p) => (
+                  <option key={p.providerId} value={p.providerId}>
+                    {p.providerName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {generationQueue.eligibleAssets.map((a) => (
+              <div key={a.assetId} className="flex justify-between text-bone-200/70 mb-1">
+                <span>{a.sourceStoryName} · {a.packageType} · MOOD {a.formula} · {a.assetId}</span>
+                <button
+                  onClick={() => draftGenerationRequest(a.assetId, providerChoice)}
+                  className="px-2 border hairline text-bone-200/70"
+                >draft on {providerChoice}</button>
+              </div>
+            ))}
+          </div>
+        )}
+        {generationQueue.requests.slice().reverse().slice(0, 16).map((r) => (
+          <div key={r.requestId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+            <div className="flex justify-between">
+              <span>
+                <span className={
+                  r.status === 'approved' ? 'text-emerald-300/80' :
+                  r.status === 'submitted' ? 'text-blue-300/80' :
+                  r.status === 'completed' ? 'text-emerald-200/70' :
+                  r.status === 'failed' ? 'text-red-400/80' :
+                  r.status === 'archived' ? 'text-bone-200/50' :
+                  'text-amber-300/80'
+                }>[{r.status}]</span>
+                {' '}
+                <span className="text-bone-100">{r.requestId}</span>
+                {' · '}{r.providerName} · MOOD {r.formula} · ${r.estimatedCostUSD.toFixed(2)}
+              </span>
+              <span className="text-bone-200/40">
+                {new Date(r.createdAt).toISOString().slice(0, 19).replace('T', ' ')}
+              </span>
+            </div>
+            <div className="text-bone-200/50">
+              source asset: {r.sourceAssetId} · campaign: {r.campaign}
+            </div>
+            <div className="text-bone-200/50">{r.summary}</div>
+            <div className="text-bone-200/40">
+              endpoint: {r.endpointHint.method} {r.endpointHint.pathHint}
+            </div>
+            <div className="flex gap-1 mt-1">
+              <button onClick={() => genQueueTransition(r.requestId, 'approve')}
+                className="px-2 border hairline text-emerald-300/80" disabled={r.status === 'approved'}>approve</button>
+              <button onClick={() => genQueueTransition(r.requestId, 'submit')}
+                className="px-2 border hairline text-blue-300/80" disabled={r.status !== 'approved'}>mark submitted</button>
+              <button onClick={() => genQueueTransition(r.requestId, 'complete')}
+                className="px-2 border hairline text-emerald-200/70" disabled={r.status !== 'submitted'}>mark completed</button>
+              <button onClick={() => genQueueTransition(r.requestId, 'fail')}
+                className="px-2 border hairline text-red-400/80">mark failed</button>
+              <button onClick={() => genQueueTransition(r.requestId, 'archive')}
+                className="px-2 border hairline text-bone-200/60">archive</button>
+              <button
+                onClick={() => {
+                  const preview = prompt('preview URL or reference (operator-provided):') ?? '';
+                  if (preview.length > 0) logGenerationResult(r.sourceAssetId, r.requestId, r.providerId, preview);
+                }}
+                className="px-2 border hairline text-bone-200/80">log result</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  function renderGenerationResults() {
+    if (!generationResults) return <div className="text-bone-200/50 text-[10px]">loading results…</div>;
+    return (
+      <div>
+        <div className="flex justify-between text-[11px] text-bone-200/60 mb-2">
+          <span>total {generationResults.totalResults}</span>
+        </div>
+        <div className="text-[10px] text-bone-200/50 mb-2">
+          Operator-logged results from external provider generations.
+          The route never called the provider — operator submitted manually and logged the result here.
+        </div>
+        {generationResults.results.slice().reverse().slice(0, 24).map((r) => (
+          <div key={r.resultId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+            <div className="flex justify-between">
+              <span><span className="text-bone-100">{r.resultId}</span> · {r.provider} · op: {r.operator}</span>
+              <span className="text-bone-200/40">
+                {new Date(r.generatedAt).toISOString().slice(0, 19).replace('T', ' ')}
+              </span>
+            </div>
+            <div className="text-bone-200/50">asset: {r.assetId} · request: {r.requestId}</div>
+            {r.preview && <div className="text-bone-200/60">preview: {r.preview}</div>}
+            {Object.keys(r.metadata).length > 0 && (
+              <div className="text-bone-200/40">
+                metadata: {Object.entries(r.metadata).map(([k, v]) => `${k}=${String(v).slice(0, 32)}`).join(' · ')}
+              </div>
+            )}
+            {r.operatorNote && <div className="text-bone-200/50">note: {r.operatorNote}</div>}
+          </div>
+        ))}
+      </div>
+    );
+  }
   function renderBrandValidation() {
     const reports = [...ps.guardian.briefReports, ...ps.guardian.promptReports];
     return (
@@ -7360,6 +7620,24 @@ function ProductionStudioPanel({
           <>
             <div className="eyebrow mb-1 text-[10px]">operator approval queue · asset registry</div>
             {renderApprovalQueue()}
+          </>
+        )}
+        {tab === 'providers' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">provider registry · capabilities + limits</div>
+            {renderProviders()}
+          </>
+        )}
+        {tab === 'generation-queue' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">generation request queue · operator-supervised · no auto-publish</div>
+            {renderGenerationQueue()}
+          </>
+        )}
+        {tab === 'generation-results' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">generation result registry · operator-logged outcomes</div>
+            {renderGenerationResults()}
           </>
         )}
       </div>

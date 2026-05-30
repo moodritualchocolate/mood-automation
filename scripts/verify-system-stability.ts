@@ -478,6 +478,10 @@ async function main() {
       'app/api/pre-generation-stability/route.ts',
       'app/api/refusal-narrative/route.ts',
       'app/api/asset-registry/route.ts',
+      // ── generation connector layer (operator-supervised POSTs;
+      //    the routes NEVER call a provider, NEVER publish) ──
+      'app/api/generation-queue/route.ts',
+      'app/api/generation-result/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {

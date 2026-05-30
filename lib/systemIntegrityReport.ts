@@ -115,6 +115,9 @@ const KNOWN_ROUTES: string[] = [
   '/api/asset-composer',
   '/api/production-studio',
   '/api/asset-registry',
+  '/api/provider-registry',
+  '/api/generation-queue',
+  '/api/generation-result',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.
