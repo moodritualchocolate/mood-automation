@@ -139,6 +139,13 @@ import type { ProviderCapability } from '@lib/providerRegistry';
 import type { ProviderId } from '@lib/providers/types';
 import type { GenerationRequestRecord, GenerationRequestStatus } from '@lib/generationRequestQueue';
 import type { GenerationResultRecord } from '@lib/generationResultRegistry';
+import type {
+  PublicationRecord, PublicationChannel, PublicationStatus,
+} from '@lib/publicationRegistryMemory';
+import type { PerformanceRecord } from '@lib/performanceMemory';
+import type { PerformanceAnalyzerReading } from '@lib/performanceAnalyzer';
+import type { CreativeDNAMapReading } from '@lib/creativeDNAMap';
+import type { LearningSignalBridgeReading } from '@lib/learningSignalBridge';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -368,6 +375,23 @@ function StudioInner() {
   const [generationResults, setGenerationResults] = useState<{
     totalResults: number;
     results: GenerationResultRecord[];
+  } | null>(null);
+  // Creative performance layer.
+  const [publicationRegistry, setPublicationRegistry] = useState<{
+    totalPublications: number;
+    counts: Record<PublicationStatus, number>;
+    publications: PublicationRecord[];
+  } | null>(null);
+  const [performanceMemory, setPerformanceMemory] = useState<{
+    totalPerformances: number;
+    performances: PerformanceRecord[];
+  } | null>(null);
+  const [performanceAnalysis, setPerformanceAnalysis] = useState<PerformanceAnalyzerReading | null>(null);
+  const [creativeDNAMap, setCreativeDNAMap] = useState<CreativeDNAMapReading | null>(null);
+  const [learningBridge, setLearningBridge] = useState<{
+    bridge: LearningSignalBridgeReading;
+    performance: PerformanceAnalyzerReading;
+    creativeDNA: CreativeDNAMapReading;
   } | null>(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
@@ -856,6 +880,26 @@ function StudioInner() {
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setGenerationResults(v); })
       .catch(() => { /* non-fatal */ });
+    fetch('/api/publication-registry', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setPublicationRegistry(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/performance', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setPerformanceMemory(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/performance-analyzer', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setPerformanceAnalysis(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/creative-dna-map', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCreativeDNAMap(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/learning-bridge', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setLearningBridge(v); })
+      .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productionFormula, registryRefresh]);
@@ -1048,6 +1092,15 @@ function StudioInner() {
               generationResults={generationResults}
             />
           )}
+          <CreativePerformancePanel
+            publicationRegistry={publicationRegistry}
+            performanceMemory={performanceMemory}
+            performanceAnalysis={performanceAnalysis}
+            creativeDNAMap={creativeDNAMap}
+            learningBridge={learningBridge}
+            assetRegistry={assetRegistry}
+            onRefresh={() => setRegistryRefresh((n) => n + 1)}
+          />
 
           {preGenStability && (
             <>
@@ -7639,6 +7692,422 @@ function ProductionStudioPanel({
             <div className="eyebrow mb-1 text-[10px]">generation result registry · operator-logged outcomes</div>
             {renderGenerationResults()}
           </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Creative Performance Panel ────────────────────────────────────
+// Reality observation only. Operator manually registers external
+// publications and logs metrics. The system never publishes, never
+// fetches from platforms, never auto-modifies upstream systems.
+// Learning only. Human remains final authority.
+interface CreativePerformancePanelProps {
+  publicationRegistry: {
+    totalPublications: number;
+    counts: Record<PublicationStatus, number>;
+    publications: PublicationRecord[];
+  } | null;
+  performanceMemory: {
+    totalPerformances: number;
+    performances: PerformanceRecord[];
+  } | null;
+  performanceAnalysis: PerformanceAnalyzerReading | null;
+  creativeDNAMap: CreativeDNAMapReading | null;
+  learningBridge: {
+    bridge: LearningSignalBridgeReading;
+    performance: PerformanceAnalyzerReading;
+    creativeDNA: CreativeDNAMapReading;
+  } | null;
+  assetRegistry: {
+    totalAssets: number;
+    counts: Record<AssetApprovalStatus, number>;
+    assets: AssetRecord[];
+  } | null;
+  onRefresh: () => void;
+}
+type CreativePerformanceTab =
+  | 'register-publication' | 'log-performance' | 'publication-registry'
+  | 'performance-memory' | 'performance-analyzer' | 'creative-dna' | 'learning-bridge';
+
+function CreativePerformancePanel({
+  publicationRegistry, performanceMemory, performanceAnalysis,
+  creativeDNAMap, learningBridge, assetRegistry, onRefresh,
+}: CreativePerformancePanelProps) {
+  const [tab, setTab] = useState<CreativePerformanceTab>('register-publication');
+  const [operatorId, setOperatorId] = useState('op-derin');
+  const [operatorReason, setOperatorReason] = useState('manual registration of an externally-published asset');
+  const [status, setStatus] = useState<string | null>(null);
+  const [pubChannel, setPubChannel] = useState<PublicationChannel>('instagram-feed');
+  const [pubAudience, setPubAudience] = useState('il-women-25-44');
+  const [pubPlatformId, setPubPlatformId] = useState('');
+  const [pubExternalUrl, setPubExternalUrl] = useState('');
+  const [pubAssetChoice, setPubAssetChoice] = useState<string>('');
+  const [perfPublicationChoice, setPerfPublicationChoice] = useState<string>('');
+  const [perfMetrics, setPerfMetrics] = useState({
+    views: '', reach: '', watchTimeSeconds: '', completionRate: '',
+    shares: '', saves: '', comments: '', likes: '', engagementRate: '',
+    follows: '', profileVisits: '',
+  });
+
+  const tabs: Array<{ id: CreativePerformanceTab; label: string }> = [
+    { id: 'register-publication', label: 'Register Publication' },
+    { id: 'log-performance', label: 'Log Performance' },
+    { id: 'publication-registry', label: 'Publications' },
+    { id: 'performance-memory', label: 'Metrics' },
+    { id: 'performance-analyzer', label: 'Analyzer' },
+    { id: 'creative-dna', label: 'Creative DNA' },
+    { id: 'learning-bridge', label: 'Learning Bridge' },
+  ];
+
+  const approvedAssets = (assetRegistry?.assets ?? []).filter((a) => a.approvalStatus === 'approved');
+  const livePublications = (publicationRegistry?.publications ?? []).filter((p) => p.status === 'live');
+
+  async function registerPublication() {
+    if (!pubAssetChoice) { setStatus('select an approved asset'); return; }
+    const asset = approvedAssets.find((a) => a.assetId === pubAssetChoice);
+    if (!asset) { setStatus('asset not found'); return; }
+    try {
+      const res = await fetch('/api/publication-registry', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'register', operatorId, operatorReason,
+          assetId: asset.assetId, channel: pubChannel,
+          publishedAt: Date.now(), externalUrl: pubExternalUrl || undefined,
+          campaign: asset.campaign, formula: asset.formula,
+          audience: pubAudience, platform: pubPlatformId || 'manual',
+        }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error ?? `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setStatus(`registered ${data.publication?.publicationId}`);
+      onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  async function pubTransition(publicationId: string, action: 'pause' | 'unpublish' | 'archive' | 'relive') {
+    try {
+      const res = await fetch('/api/publication-registry', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, operatorId, operatorReason, publicationId }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setStatus(`${action} ${publicationId}`);
+      onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  async function logPerformance() {
+    if (!perfPublicationChoice) { setStatus('select a publication'); return; }
+    const pub = livePublications.find((p) => p.publicationId === perfPublicationChoice) ??
+                (publicationRegistry?.publications ?? []).find((p) => p.publicationId === perfPublicationChoice);
+    if (!pub) { setStatus('publication not found'); return; }
+    const toNum = (s: string): number | undefined => {
+      const n = parseFloat(s);
+      return Number.isFinite(n) ? n : undefined;
+    };
+    const metrics: Record<string, number | undefined> = {
+      views: toNum(perfMetrics.views), reach: toNum(perfMetrics.reach),
+      watchTimeSeconds: toNum(perfMetrics.watchTimeSeconds),
+      completionRate: toNum(perfMetrics.completionRate),
+      shares: toNum(perfMetrics.shares), saves: toNum(perfMetrics.saves),
+      comments: toNum(perfMetrics.comments), likes: toNum(perfMetrics.likes),
+      engagementRate: toNum(perfMetrics.engagementRate),
+      follows: toNum(perfMetrics.follows), profileVisits: toNum(perfMetrics.profileVisits),
+    };
+    try {
+      const now = Date.now();
+      const res = await fetch('/api/performance', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          operatorId, operatorReason,
+          assetId: pub.assetId, publicationId: pub.publicationId,
+          platform: pub.platform,
+          measuredAt: now,
+          measurementWindow: {
+            startedAt: pub.publishedAt, endedAt: now,
+            durationHours: Math.max(1, (now - pub.publishedAt) / 3600000),
+          },
+          metrics,
+        }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error ?? `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setStatus(`logged ${data.performance?.performanceId}`);
+      onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  const channels: PublicationChannel[] = [
+    'instagram-feed', 'instagram-story', 'instagram-reels',
+    'tiktok', 'facebook-feed', 'facebook-reels',
+    'youtube-shorts', 'pinterest', 'website-hero', 'newsletter', 'other',
+  ];
+
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">creative performance · reality measurement</div>
+      <div className="text-[10px] text-bone-200/50">
+        Reality observation only. Operator manually registers external publications and logs metrics.
+        The system never publishes, never fetches from platforms, never auto-modifies upstream systems.
+        Learning only. Human remains final authority.
+      </div>
+
+      <div className="flex gap-2 text-[10px]">
+        <input
+          value={operatorId} onChange={(e) => setOperatorId(e.target.value)}
+          className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-1"
+          placeholder="operator id"
+        />
+        <input
+          value={operatorReason} onChange={(e) => setOperatorReason(e.target.value)}
+          className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-[2]"
+          placeholder="operator reason"
+        />
+      </div>
+      {status && <div className="text-[10px] text-amber-300/70">{status}</div>}
+
+      <div className="flex flex-wrap gap-1 text-[11px] border-t hairline pt-2">
+        {tabs.map((t) => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`px-2 py-1 border hairline ${tab === t.id ? 'text-bone-100' : 'text-bone-200/60'}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2">
+        {tab === 'register-publication' && (
+          <div>
+            <div className="eyebrow mb-1 text-[10px]">register an external publication (operator manually)</div>
+            {approvedAssets.length === 0 ? (
+              <div className="text-bone-200/50 text-[10px]">no approved assets in the asset registry yet</div>
+            ) : (
+              <div className="text-[10px]">
+                <select value={pubAssetChoice} onChange={(e) => setPubAssetChoice(e.target.value)}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 mb-1 w-full">
+                  <option value="">-- select an approved asset --</option>
+                  {approvedAssets.map((a) => (
+                    <option key={a.assetId} value={a.assetId}>
+                      {a.assetId} · {a.packageType} · MOOD {a.formula} · {a.sourceStoryName}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex gap-1 mb-1">
+                  <select value={pubChannel} onChange={(e) => setPubChannel(e.target.value as PublicationChannel)}
+                    className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                    {channels.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <input value={pubAudience} onChange={(e) => setPubAudience(e.target.value)}
+                    placeholder="audience" className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-1" />
+                  <input value={pubPlatformId} onChange={(e) => setPubPlatformId(e.target.value)}
+                    placeholder="platform post id" className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-1" />
+                </div>
+                <input value={pubExternalUrl} onChange={(e) => setPubExternalUrl(e.target.value)}
+                  placeholder="external URL (optional)"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mb-1" />
+                <button onClick={registerPublication}
+                  className="px-2 py-1 border hairline text-bone-200/80">register publication</button>
+              </div>
+            )}
+          </div>
+        )}
+        {tab === 'log-performance' && (
+          <div>
+            <div className="eyebrow mb-1 text-[10px]">log performance metrics (operator pulls from analytics)</div>
+            {(publicationRegistry?.publications ?? []).length === 0 ? (
+              <div className="text-bone-200/50 text-[10px]">no publications registered yet</div>
+            ) : (
+              <div className="text-[10px]">
+                <select value={perfPublicationChoice} onChange={(e) => setPerfPublicationChoice(e.target.value)}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 mb-1 w-full">
+                  <option value="">-- select a publication --</option>
+                  {(publicationRegistry?.publications ?? []).map((p) => (
+                    <option key={p.publicationId} value={p.publicationId}>
+                      {p.publicationId} · {p.channel} · MOOD {p.formula} · {p.status}
+                    </option>
+                  ))}
+                </select>
+                <div className="grid grid-cols-3 gap-1 mb-1">
+                  {(Object.keys(perfMetrics) as Array<keyof typeof perfMetrics>).map((k) => (
+                    <input key={k} value={perfMetrics[k]}
+                      onChange={(e) => setPerfMetrics({ ...perfMetrics, [k]: e.target.value })}
+                      placeholder={k} className="border hairline px-2 py-1 bg-transparent text-bone-200/80 text-[10px]" />
+                  ))}
+                </div>
+                <button onClick={logPerformance}
+                  className="px-2 py-1 border hairline text-bone-200/80">log performance</button>
+              </div>
+            )}
+          </div>
+        )}
+        {tab === 'publication-registry' && (
+          <div>
+            <div className="flex justify-between text-[11px] text-bone-200/60 mb-2">
+              <span>total {publicationRegistry?.totalPublications ?? 0}</span>
+              <span>live {publicationRegistry?.counts.live ?? 0}</span>
+              <span>paused {publicationRegistry?.counts.paused ?? 0}</span>
+              <span>unpublished {publicationRegistry?.counts.unpublished ?? 0}</span>
+              <span>archived {publicationRegistry?.counts.archived ?? 0}</span>
+            </div>
+            {(publicationRegistry?.publications ?? []).slice().reverse().slice(0, 12).map((p) => (
+              <div key={p.publicationId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+                <div className="flex justify-between">
+                  <span>
+                    <span className={
+                      p.status === 'live' ? 'text-emerald-300/80' :
+                      p.status === 'paused' ? 'text-amber-300/80' :
+                      p.status === 'unpublished' ? 'text-red-400/80' : 'text-bone-200/50'
+                    }>[{p.status}]</span>
+                    {' '}<span className="text-bone-100">{p.publicationId}</span>
+                    {' · '}{p.channel} · MOOD {p.formula}
+                  </span>
+                  <span className="text-bone-200/40">
+                    {new Date(p.publishedAt).toISOString().slice(0, 19).replace('T', ' ')}
+                  </span>
+                </div>
+                <div className="text-bone-200/50">
+                  asset: {p.assetId} · campaign: {p.campaign} · audience: {p.audience} · platform: {p.platform}
+                </div>
+                {p.externalUrl && <div className="text-bone-200/60">url: {p.externalUrl}</div>}
+                <div className="flex gap-1 mt-1">
+                  <button onClick={() => pubTransition(p.publicationId, 'pause')}
+                    className="px-2 border hairline text-amber-300/80" disabled={p.status !== 'live'}>pause</button>
+                  <button onClick={() => pubTransition(p.publicationId, 'relive')}
+                    className="px-2 border hairline text-emerald-300/80" disabled={p.status === 'live'}>relive</button>
+                  <button onClick={() => pubTransition(p.publicationId, 'unpublish')}
+                    className="px-2 border hairline text-red-400/80">unpublish</button>
+                  <button onClick={() => pubTransition(p.publicationId, 'archive')}
+                    className="px-2 border hairline text-bone-200/60">archive</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {tab === 'performance-memory' && (
+          <div>
+            <div className="flex justify-between text-[11px] text-bone-200/60 mb-2">
+              <span>total {performanceMemory?.totalPerformances ?? 0}</span>
+            </div>
+            {(performanceMemory?.performances ?? []).slice().reverse().slice(0, 12).map((p) => (
+              <div key={p.performanceId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+                <div className="flex justify-between">
+                  <span><span className="text-bone-100">{p.performanceId}</span> · pub {p.publicationId} · asset {p.assetId}</span>
+                  <span className="text-bone-200/40">
+                    {new Date(p.measuredAt).toISOString().slice(0, 19).replace('T', ' ')}
+                  </span>
+                </div>
+                <div className="text-bone-200/50">platform: {p.platform} · window: {p.measurementWindow.durationHours.toFixed(1)}h</div>
+                <div className="grid grid-cols-3 gap-x-2 text-[10px] text-bone-200/70">
+                  {Object.entries(p.metrics).map(([k, v]) => (
+                    <div key={k} className="flex justify-between"><span>{k}</span><span>{String(v)}</span></div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {tab === 'performance-analyzer' && performanceAnalysis && (
+          <div>
+            <div className="text-bone-200/70 text-[10px] mb-2">
+              total observations: {performanceAnalysis.totalPerformances}
+            </div>
+            <div className="grid grid-cols-2 gap-x-2 text-[10px] text-bone-200/70 mb-2">
+              {Object.entries(performanceAnalysis.indicators).map(([k, v]) => (
+                <div key={k} className="flex justify-between">
+                  <span>{k}</span>
+                  <span>level {v.level}/10 · migration {v.migrationDirection >= 0 ? '+' : ''}{v.migrationDirection}</span>
+                </div>
+              ))}
+            </div>
+            {performanceAnalysis.historicallyAssociatedPatterns.length > 0 && (
+              <div className="border-t hairline pt-2 text-[10px]">
+                <div className="eyebrow mb-1">historically associated patterns</div>
+                {performanceAnalysis.historicallyAssociatedPatterns.map((p) => (
+                  <div key={p.patternId} className="text-bone-200/70">
+                    · {p.description} · strength {p.strength}/10 · evidence {p.evidenceCount}
+                  </div>
+                ))}
+              </div>
+            )}
+            {performanceAnalysis.perChannel.length > 0 && (
+              <div className="border-t hairline pt-2 text-[10px]">
+                <div className="eyebrow mb-1">per channel</div>
+                {performanceAnalysis.perChannel.map((c) => (
+                  <div key={c.channel} className="text-bone-200/70">
+                    · {c.channel}: {c.publicationCount} obs · completion {c.averageCompletionRate} · engagement {c.averageEngagementRate} · watch {c.averageWatchTimeSeconds}s
+                  </div>
+                ))}
+              </div>
+            )}
+            {performanceAnalysis.notes.length > 0 && (
+              <div className="border-t hairline pt-2 text-[10px]">
+                <div className="eyebrow mb-1">notes</div>
+                {performanceAnalysis.notes.map((n, i) => (
+                  <div key={i} className="text-bone-200/70">· {n}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {tab === 'creative-dna' && creativeDNAMap && (
+          <div>
+            <div className="text-bone-200/70 text-[10px] mb-2">
+              assets observed: {creativeDNAMap.totalAssetsObserved} · performances joined: {creativeDNAMap.totalPerformancesObserved}
+            </div>
+            {creativeDNAMap.axes.map((axis) => (
+              <div key={axis.axis} className="border-t hairline pt-2 text-[10px] mb-1">
+                <div className="eyebrow mb-1">{axis.axis} · {axis.tokens.length} token(s)</div>
+                {axis.tokens.slice(0, 5).map((t) => (
+                  <div key={t.token} className="text-bone-200/70 flex justify-between">
+                    <span>{t.token} · pubs {t.publicationCount}</span>
+                    <span>strength {t.observedStrength}/10 · completion {t.averageCompletionRate} · engagement {t.averageEngagementRate}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+        {tab === 'learning-bridge' && learningBridge && (
+          <div>
+            <div className="text-[10px] text-bone-200/50 mb-2">
+              Learning only. Never auto modify. Never auto apply. Operator review required.
+            </div>
+            <div className="text-[10px] text-bone-200/70 mb-2">
+              {learningBridge.bridge.bridgeSignals.length} learning signal(s) composed
+            </div>
+            {learningBridge.bridge.bridgeSignals.map((s) => (
+              <div key={s.signalId} className="text-bone-200/70 text-[10px] mb-1 border-l border-bone-200/20 pl-2">
+                <div><span className="text-bone-100">{s.signalId}</span> · strength {s.strength}/10</div>
+                <div className="text-bone-200/50">{s.observation}</div>
+                <div className="text-bone-200/40">considered by: {s.consideredBy.join(' · ')}</div>
+              </div>
+            ))}
+            {learningBridge.bridge.operatorExplorations.length > 0 && (
+              <div className="border-t hairline pt-2 text-[10px]">
+                <div className="eyebrow mb-1">operator explorations · never recommendations</div>
+                {learningBridge.bridge.operatorExplorations.map((e, i) => (
+                  <div key={i} className="text-bone-200/70">· {e}</div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

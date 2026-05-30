@@ -482,6 +482,12 @@ async function main() {
       //    the routes NEVER call a provider, NEVER publish) ──
       'app/api/generation-queue/route.ts',
       'app/api/generation-result/route.ts',
+      // ── creative performance layer (operator-supervised POSTs;
+      //    operator manually registers publications + manually
+      //    logs performance metrics; routes NEVER publish, NEVER
+      //    fetch from platforms) ──
+      'app/api/publication-registry/route.ts',
+      'app/api/performance/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {

@@ -118,6 +118,11 @@ const KNOWN_ROUTES: string[] = [
   '/api/provider-registry',
   '/api/generation-queue',
   '/api/generation-result',
+  '/api/publication-registry',
+  '/api/performance',
+  '/api/performance-analyzer',
+  '/api/creative-dna-map',
+  '/api/learning-bridge',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.
