@@ -130,6 +130,11 @@ import type {
 } from '@lib/creativeBriefGenerator';
 import type { PromptArchitectReading, PromptArtifact } from '@lib/promptArchitect';
 import type { BrandGuardianReading } from '@lib/brandGuardian';
+import type { ImageExecutionPackage } from '@lib/imageExecutionEngine';
+import type { VideoExecutionPackage } from '@lib/videoExecutionEngine';
+import type { CarouselExecutionPackage } from '@lib/carouselExecutionEngine';
+import type { LandingExecutionPackage } from '@lib/landingExecutionEngine';
+import type { AssetRecord, AssetApprovalStatus } from '@lib/assetRegistryMemory';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -330,7 +335,20 @@ function StudioInner() {
     briefs: CreativeBriefReading;
     prompts: PromptArchitectReading;
     guardian: BrandGuardianReading;
+    executionPackages: {
+      images: ImageExecutionPackage[];
+      videos: VideoExecutionPackage[];
+      carousels: CarouselExecutionPackage[];
+      landings: LandingExecutionPackage[];
+    };
   } | null>(null);
+  // Asset registry — operator-supervised approval queue.
+  const [assetRegistry, setAssetRegistry] = useState<{
+    totalAssets: number;
+    counts: Record<AssetApprovalStatus, number>;
+    assets: AssetRecord[];
+  } | null>(null);
+  const [registryRefresh, setRegistryRefresh] = useState(0);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
     sandbox: EvolutionSandboxReading;
@@ -802,9 +820,13 @@ function StudioInner() {
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setProductionStudio(v); })
       .catch(() => { /* non-fatal */ });
+    fetch('/api/asset-registry', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setAssetRegistry(v); })
+      .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productionFormula]);
+  }, [productionFormula, registryRefresh]);
 
   // Keep the URL in sync with current selection (shareable / bookmarkable)
   // WITHOUT triggering a new run.
@@ -987,6 +1009,8 @@ function StudioInner() {
               ps={productionStudio}
               activeFormula={productionFormula}
               onFormulaChange={setProductionFormula}
+              assetRegistry={assetRegistry}
+              onRegistryRefresh={() => setRegistryRefresh((n) => n + 1)}
             />
           )}
 
@@ -6797,16 +6821,35 @@ interface ProductionStudioPanelProps {
     briefs: CreativeBriefReading;
     prompts: PromptArchitectReading;
     guardian: BrandGuardianReading;
+    executionPackages: {
+      images: ImageExecutionPackage[];
+      videos: VideoExecutionPackage[];
+      carousels: CarouselExecutionPackage[];
+      landings: LandingExecutionPackage[];
+    };
   };
   activeFormula: ProductionFormula;
   onFormulaChange: (f: ProductionFormula) => void;
+  assetRegistry: {
+    totalAssets: number;
+    counts: Record<AssetApprovalStatus, number>;
+    assets: AssetRecord[];
+  } | null;
+  onRegistryRefresh: () => void;
 }
 type ProductionTab =
   | 'banner' | 'carousel' | 'image' | 'video' | 'landing'
-  | 'prompt-preview' | 'brand-validation';
-function ProductionStudioPanel({ ps, activeFormula, onFormulaChange }: ProductionStudioPanelProps) {
+  | 'prompt-preview' | 'brand-validation'
+  | 'execution-image' | 'execution-video' | 'execution-carousel' | 'execution-landing'
+  | 'approval-queue';
+function ProductionStudioPanel({
+  ps, activeFormula, onFormulaChange, assetRegistry, onRegistryRefresh,
+}: ProductionStudioPanelProps) {
   const [tab, setTab] = useState<ProductionTab>('banner');
   const [activePromptId, setActivePromptId] = useState<string | null>(null);
+  const [operatorId, setOperatorId] = useState('op-derin');
+  const [operatorReason, setOperatorReason] = useState('honest, restrained, dignity-preserved');
+  const [registerStatus, setRegisterStatus] = useState<string | null>(null);
   const tabs: Array<{ id: ProductionTab; label: string }> = [
     { id: 'banner', label: 'Banner' },
     { id: 'carousel', label: 'Carousel' },
@@ -6815,7 +6858,55 @@ function ProductionStudioPanel({ ps, activeFormula, onFormulaChange }: Productio
     { id: 'landing', label: 'Landing' },
     { id: 'prompt-preview', label: 'Prompt Preview' },
     { id: 'brand-validation', label: 'Brand Validation' },
+    { id: 'execution-image', label: 'Exec · Image' },
+    { id: 'execution-video', label: 'Exec · Video' },
+    { id: 'execution-carousel', label: 'Exec · Carousel' },
+    { id: 'execution-landing', label: 'Exec · Landing' },
+    { id: 'approval-queue', label: 'Approval Queue' },
   ];
+
+  async function registerToQueue(
+    packageType: 'image' | 'video' | 'carousel' | 'landing',
+    sourceStoryName: string,
+    sourceBriefId: string,
+    sourcePromptId: string,
+    prompt: string,
+    summary: string,
+  ) {
+    setRegisterStatus(`registering ${summary}…`);
+    try {
+      const res = await fetch('/api/asset-registry', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'register', operatorId, operatorReason,
+          formula: ps.formula, campaign: `production-studio-${ps.formula}`,
+          packageType, sourceStoryName, sourceBriefId, sourcePromptId, prompt, summary,
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setRegisterStatus(`registered ${data.asset?.assetId ?? summary}`);
+      onRegistryRefresh();
+    } catch (err) {
+      setRegisterStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  async function approvalAction(assetId: string, action: 'approve' | 'reject' | 'archive') {
+    try {
+      const res = await fetch('/api/asset-registry', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, operatorId, operatorReason, assetId }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setRegisterStatus(`${action} ${assetId}`);
+      onRegistryRefresh();
+    } catch (err) {
+      setRegisterStatus(`error: ${(err as Error).message}`);
+    }
+  }
   const formulas: ProductionFormula[] = ['ENERGY', 'FOCUS', 'RELAX', 'SLEEP'];
   const allPrompts: PromptArtifact[] = [
     ...ps.prompts.imagePrompts, ...ps.prompts.videoPrompts,
@@ -6933,6 +7024,202 @@ function ProductionStudioPanel({ ps, activeFormula, onFormulaChange }: Productio
       </div>
     );
   }
+  function renderExecutionImage() {
+    const list = ps.executionPackages.images;
+    if (list.length === 0) return <div className="text-bone-200/50 text-[10px]">no image execution packages</div>;
+    return (
+      <div>
+        {list.slice(0, 6).map((p) => (
+          <div key={p.packageId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+            <div className="flex justify-between">
+              <span className="text-bone-100">{p.sourceStoryName} · {p.packageId}</span>
+              <button
+                onClick={() => registerToQueue('image', p.sourceStoryName, p.sourceBriefId, p.sourcePromptId, p.prompt, `${p.aspectRatio} · ${p.platform}`)}
+                className="px-2 border hairline text-bone-200/70 text-[10px]"
+              >register to approval queue</button>
+            </div>
+            <div>platform: {p.platform} · aspect {p.aspectRatio} · {p.dimensions.width}×{p.dimensions.height}</div>
+            <div>style: {p.style}</div>
+            <div>target audience: {p.targetAudience}</div>
+            <div>copy overlay: {p.copyOverlayGuidance}</div>
+            <div>generation hints: {p.generationHints.sampler} · {p.generationHints.cfgGuidance} · {p.generationHints.steps}</div>
+            <div className="text-bone-200/50">negative prompt: {p.negativePrompt.slice(0, 200)}{p.negativePrompt.length > 200 ? '…' : ''}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  function renderExecutionVideo() {
+    const list = ps.executionPackages.videos;
+    if (list.length === 0) return <div className="text-bone-200/50 text-[10px]">no video execution packages</div>;
+    return (
+      <div>
+        {list.slice(0, 4).map((p) => (
+          <div key={p.packageId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+            <div className="flex justify-between">
+              <span className="text-bone-100">{p.sourceStoryName} · {p.packageId}</span>
+              <button
+                onClick={() => registerToQueue('video', p.sourceStoryName, p.sourceBriefId, p.sourcePromptId, p.prompt, `${p.totalDurationSeconds}s · ${p.platform}`)}
+                className="px-2 border hairline text-bone-200/70 text-[10px]"
+              >register to approval queue</button>
+            </div>
+            <div>platform: {p.platform} · aspect {p.aspectRatio} · {p.dimensions.width}×{p.dimensions.height} · {p.totalDurationSeconds}s</div>
+            <div>camera: {p.camera}</div>
+            <div>audio: {p.audio}</div>
+            <div>caption: {p.caption}</div>
+            <div>hashtags: {p.hashtags.join(' ')}</div>
+            <div>target audience: {p.targetAudience}</div>
+            {p.scenes.map((s) => (
+              <div key={s.index} className="text-bone-200/50 ml-2">
+                  beat {s.index} ({s.durationSeconds}s · silence {s.silenceShare}): {s.scene} — {s.beat} · {s.cameraDirection}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  function renderExecutionCarousel() {
+    const list = ps.executionPackages.carousels;
+    if (list.length === 0) return <div className="text-bone-200/50 text-[10px]">no carousel execution packages</div>;
+    return (
+      <div>
+        {list.slice(0, 4).map((p) => (
+          <div key={p.packageId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+            <div className="flex justify-between">
+              <span className="text-bone-100">{p.sourceStoryName} · {p.packageId} · {p.slideCount} slides</span>
+              <button
+                onClick={() => registerToQueue('carousel', p.sourceStoryName, p.sourceBriefId, p.sourcePromptId, p.prompt, `${p.slideCount} slides · ${p.platform}`)}
+                className="px-2 border hairline text-bone-200/70 text-[10px]"
+              >register to approval queue</button>
+            </div>
+            <div>platform: {p.platform} · aspect {p.aspectRatio} · {p.dimensions.width}×{p.dimensions.height}</div>
+            <div>arc: {p.emotionalArc}</div>
+            <div>rhythm: {p.rhythm}</div>
+            {p.slides.map((s) => (
+              <div key={s.slideId} className="text-bone-200/50 ml-2">
+                  slide {s.index} ({s.framePurpose}) · copy: {s.copy} · silence: {s.silenceAllocation}
+                <div className="text-bone-200/40 ml-4">visual: {s.visualInstructions}</div>
+                <div className="text-bone-200/40 ml-4">layout: {s.layout}</div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  function renderExecutionLanding() {
+    const list = ps.executionPackages.landings;
+    if (list.length === 0) return <div className="text-bone-200/50 text-[10px]">no landing execution packages</div>;
+    return (
+      <div>
+        {list.slice(0, 3).map((p) => (
+          <div key={p.packageId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+            <div className="flex justify-between">
+              <span className="text-bone-100">{p.sourceStoryName} · {p.packageId}</span>
+              <button
+                onClick={() => registerToQueue('landing', p.sourceStoryName, p.sourceBriefId, p.sourcePromptId, p.prompt, `landing · ${p.sections.length} sections`)}
+                className="px-2 border hairline text-bone-200/70 text-[10px]"
+              >register to approval queue</button>
+            </div>
+            <div className="text-bone-100 mt-1">hero</div>
+            <div className="ml-2">purpose: {p.hero.purpose}</div>
+            <div className="ml-2">visual anchor: {p.hero.visualAnchor}</div>
+            <div className="ml-2">copy: {p.hero.copyDirection}</div>
+            <div className="ml-2">layout: {p.hero.layout}</div>
+            <div className="text-bone-100 mt-1">sections</div>
+            {p.sections.map((s) => (
+              <div key={s.sectionId} className="ml-2">
+                · {s.purpose} · emotional: {s.emotionalPurpose} · visual: {s.visualAnchor}
+              </div>
+            ))}
+            <div className="text-bone-100 mt-1">cta</div>
+            <div className="ml-2">copy: {p.cta.copyDirection}</div>
+            <div className="ml-2">visual: {p.cta.visualDirection}</div>
+            <div className="ml-2">placement: {p.cta.placement}</div>
+            <div className="text-bone-100 mt-1">faq ({p.faq.length})</div>
+            {p.faq.slice(0, 3).map((f) => (
+              <div key={f.index} className="ml-2">· q: {f.questionDirection} | a: {f.answerDirection}</div>
+            ))}
+            <div className="text-bone-100 mt-1">social proof</div>
+            {p.socialProof.map((sp, i) => (
+              <div key={i} className="ml-2">· {sp.proofType}: {sp.directionNote}</div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  function renderApprovalQueue() {
+    if (!assetRegistry) return <div className="text-bone-200/50 text-[10px]">loading registry…</div>;
+    return (
+      <div>
+        <div className="flex justify-between text-[11px] text-bone-200/60 mb-2">
+          <span>total {assetRegistry.totalAssets}</span>
+          <span>pending {assetRegistry.counts.pending}</span>
+          <span>approved {assetRegistry.counts.approved}</span>
+          <span>rejected {assetRegistry.counts.rejected}</span>
+          <span>archived {assetRegistry.counts.archived}</span>
+        </div>
+        <div className="text-[10px] text-bone-200/50 mb-2">
+          Operator approval gate — nothing executes unless approved.
+          No auto-publish. No autonomous posting. Human remains final authority.
+        </div>
+        <div className="flex gap-2 text-[10px] mb-2">
+          <input
+            value={operatorId} onChange={(e) => setOperatorId(e.target.value)}
+            className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-1"
+            placeholder="operator id"
+          />
+          <input
+            value={operatorReason} onChange={(e) => setOperatorReason(e.target.value)}
+            className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-[2]"
+            placeholder="operator reason"
+          />
+        </div>
+        {registerStatus && <div className="text-[10px] text-amber-300/70 mb-2">{registerStatus}</div>}
+        {assetRegistry.assets.slice().reverse().slice(0, 24).map((a) => (
+          <div key={a.assetId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+            <div className="flex justify-between">
+              <span>
+                <span className={
+                  a.approvalStatus === 'approved' ? 'text-emerald-300/80' :
+                  a.approvalStatus === 'rejected' ? 'text-red-400/80' :
+                  a.approvalStatus === 'archived' ? 'text-bone-200/50' :
+                  'text-amber-300/80'
+                }>[{a.approvalStatus}]</span>
+                {' '}
+                <span className="text-bone-100">{a.assetId}</span>
+                {' · '}{a.packageType} · MOOD {a.formula} · {a.sourceStoryName}
+              </span>
+              <span className="text-bone-200/40">
+                {new Date(a.createdAt).toISOString().slice(0, 19).replace('T', ' ')}
+              </span>
+            </div>
+            <div className="text-bone-200/50">campaign: {a.campaign} · operator: {a.operatorId}</div>
+            <div className="text-bone-200/50">{a.summary}</div>
+            <div className="flex gap-1 mt-1">
+              <button
+                onClick={() => approvalAction(a.assetId, 'approve')}
+                className="px-2 border hairline text-emerald-300/80 text-[10px]"
+                disabled={a.approvalStatus === 'approved'}
+              >approve</button>
+              <button
+                onClick={() => approvalAction(a.assetId, 'reject')}
+                className="px-2 border hairline text-red-400/80 text-[10px]"
+                disabled={a.approvalStatus === 'rejected'}
+              >reject</button>
+              <button
+                onClick={() => approvalAction(a.assetId, 'archive')}
+                className="px-2 border hairline text-bone-200/60 text-[10px]"
+                disabled={a.approvalStatus === 'archived'}
+              >archive</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
   function renderBrandValidation() {
     const reports = [...ps.guardian.briefReports, ...ps.guardian.promptReports];
     return (
@@ -7043,6 +7330,36 @@ function ProductionStudioPanel({ ps, activeFormula, onFormulaChange }: Productio
           <>
             <div className="eyebrow mb-1 text-[10px]">brand guardian · observational findings</div>
             {renderBrandValidation()}
+          </>
+        )}
+        {tab === 'execution-image' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">image execution packages · ready for operator-driven generation</div>
+            {renderExecutionImage()}
+          </>
+        )}
+        {tab === 'execution-video' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">video execution packages · ready for operator-driven generation</div>
+            {renderExecutionVideo()}
+          </>
+        )}
+        {tab === 'execution-carousel' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">carousel execution packages · ready for operator-driven generation</div>
+            {renderExecutionCarousel()}
+          </>
+        )}
+        {tab === 'execution-landing' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">landing execution packages · ready for operator-driven implementation</div>
+            {renderExecutionLanding()}
+          </>
+        )}
+        {tab === 'approval-queue' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">operator approval queue · asset registry</div>
+            {renderApprovalQueue()}
           </>
         )}
       </div>

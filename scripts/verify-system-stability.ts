@@ -442,6 +442,14 @@ async function main() {
     //   - /api/banner/[id]/*       (POST = operator-triggered banner ops)
     //   - /api/cognition/*         (POST = operator-triggered cognition verbs)
     //   - /api/ingest              (POST = operator/external-signal ingestion)
+    //   - /api/operator-creative-trial, /api/trial-outcome, /api/outcome,
+    //     /api/pre-generation-stability, /api/refusal-narrative
+    //     (POSTs requiring operatorId + operatorReason — every write is
+    //      an explicit operator decision; the routes never auto-execute,
+    //      never publish, never run the pipeline)
+    //   - /api/asset-registry      (POST = operator approval gate for
+    //     execution-layer asset records; requires operatorId +
+    //     operatorReason; never publishes, never auto-approves)
     const ALLOWED_POST_ROUTES = new Set([
       'app/api/generate/route.ts',
       'app/api/branch-activation/route.ts',
@@ -463,6 +471,13 @@ async function main() {
       'app/api/cognition/review/route.ts',
       'app/api/cognition/revise/route.ts',
       'app/api/ingest/route.ts',
+      // ── operator-supervised POSTs (every write requires operatorId + operatorReason) ──
+      'app/api/operator-creative-trial/route.ts',
+      'app/api/trial-outcome/route.ts',
+      'app/api/outcome/route.ts',
+      'app/api/pre-generation-stability/route.ts',
+      'app/api/refusal-narrative/route.ts',
+      'app/api/asset-registry/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {

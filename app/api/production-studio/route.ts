@@ -20,6 +20,10 @@ import { NextResponse } from 'next/server';
 import { computeCreativeBriefs } from '@lib/creativeBriefGenerator';
 import { computeProductionPrompts } from '@lib/promptArchitect';
 import { computeBrandGuardian, briefToScanText } from '@lib/brandGuardian';
+import { composeImageExecutionPackage } from '@lib/imageExecutionEngine';
+import { composeVideoExecutionPackage } from '@lib/videoExecutionEngine';
+import { composeCarouselExecutionPackage } from '@lib/carouselExecutionEngine';
+import { composeLandingExecutionPackage } from '@lib/landingExecutionEngine';
 
 // Upstream observatory + creative layers.
 import { computeWorldModel } from '@lib/worldModelEngine';
@@ -349,13 +353,53 @@ export async function GET(req: Request): Promise<NextResponse> {
   };
   const guardian = computeBrandGuardian(guardianInput);
 
+  // ── Execution packages (image / video / carousel / landing) ──
+  const imagePromptById = new Map(prompts.imagePrompts.map((p) => [p.promptId, p] as const));
+  const videoPromptById = new Map(prompts.videoPrompts.map((p) => [p.promptId, p] as const));
+  const carouselPromptById = new Map(prompts.carouselPrompts.map((p) => [p.promptId, p] as const));
+  const landingPromptById = new Map(prompts.landingPrompts.map((p) => [p.promptId, p] as const));
+
+  const imagePackages = briefs.images
+    .map((b) => {
+      const p = imagePromptById.get(`prompt-image-${b.briefId.replace('brief-image-', '')}`);
+      return p ? composeImageExecutionPackage({ brief: b, prompt: p }) : null;
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+
+  const videoPackages = briefs.videos
+    .map((b) => {
+      const p = videoPromptById.get(`prompt-video-${b.briefId.replace('brief-video-', '')}`);
+      return p ? composeVideoExecutionPackage({ brief: b, prompt: p }) : null;
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+
+  const carouselPackages = briefs.carousels
+    .map((b) => {
+      const p = carouselPromptById.get(`prompt-carousel-${b.briefId.replace('brief-carousel-', '')}`);
+      return p ? composeCarouselExecutionPackage({ brief: b, prompt: p }) : null;
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+
+  const landingPackages = briefs.landings
+    .map((b) => {
+      const p = landingPromptById.get(`prompt-landing-${b.briefId.replace('brief-landing-', '')}`);
+      return p ? composeLandingExecutionPackage({ brief: b, prompt: p }) : null;
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+
   return NextResponse.json({
     formula, market, brandLanguage,
     briefs,
     prompts,
     guardian,
+    executionPackages: {
+      images: imagePackages,
+      videos: videoPackages,
+      carousels: carouselPackages,
+      landings: landingPackages,
+    },
     advisoryNotice:
-      'Production studio · briefs + prompts + brand guardian are specifications only. ' +
+      'Production studio · briefs + prompts + brand guardian + execution packages are specifications only. ' +
       'No publishing. No autonomous posting. No social execution. No auto-approval. ' +
       'Operator approval required. Human remains final authority.',
   });
