@@ -146,6 +146,13 @@ import type { PerformanceRecord } from '@lib/performanceMemory';
 import type { PerformanceAnalyzerReading } from '@lib/performanceAnalyzer';
 import type { CreativeDNAMapReading } from '@lib/creativeDNAMap';
 import type { LearningSignalBridgeReading } from '@lib/learningSignalBridge';
+import type {
+  CampaignGoal, CampaignMarket, CampaignPlannerInput, CampaignPlanReading,
+} from '@lib/campaignPlannerEngine';
+import type { TestingMatrixReading } from '@lib/testingMatrixEngine';
+import type { ContentCalendarReading } from '@lib/contentCalendarEngine';
+import type { PerformanceExpectationReading } from '@lib/performanceExpectationEngine';
+import type { CampaignPlanRecord, CampaignPlanStatus } from '@lib/campaignPlanMemory';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -393,6 +400,26 @@ function StudioInner() {
     performance: PerformanceAnalyzerReading;
     creativeDNA: CreativeDNAMapReading;
   } | null>(null);
+  // Campaign Operating System.
+  const [cosBudget, setCosBudget] = useState(10000);
+  const [cosGoal, setCosGoal] = useState<CampaignGoal>('product-trial');
+  const [cosFormula, setCosFormula] = useState<'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP'>('ENERGY');
+  const [cosMarket, setCosMarket] = useState<CampaignMarket>('israel');
+  const [cosAudience, setCosAudience] = useState('il-women-25-44');
+  const [cosCadence, setCosCadence] = useState(3);
+  const [cosRest, setCosRest] = useState(1);
+  const [campaignPlan, setCampaignPlan] = useState<{
+    plan: CampaignPlanReading;
+    testingMatrix: TestingMatrixReading;
+    contentCalendar: ContentCalendarReading;
+    performanceExpectation: PerformanceExpectationReading;
+    savedPlans: {
+      totalPlans: number;
+      counts: Record<CampaignPlanStatus, number>;
+      plans: CampaignPlanRecord[];
+    };
+  } | null>(null);
+  const [campaignRefresh, setCampaignRefresh] = useState(0);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
     sandbox: EvolutionSandboxReading;
@@ -900,9 +927,18 @@ function StudioInner() {
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setLearningBridge(v); })
       .catch(() => { /* non-fatal */ });
+    const cosQs = new URLSearchParams({
+      budgetUSD: String(cosBudget), goal: cosGoal, formula: cosFormula,
+      market: cosMarket, audience: cosAudience,
+      cadencePerWeek: String(cosCadence), restDaysPerWeek: String(cosRest),
+    });
+    fetch(`/api/campaign-planner?${cosQs.toString()}`, { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setCampaignPlan(v); })
+      .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productionFormula, registryRefresh]);
+  }, [productionFormula, registryRefresh, cosBudget, cosGoal, cosFormula, cosMarket, cosAudience, cosCadence, cosRest, campaignRefresh]);
 
   // Keep the URL in sync with current selection (shareable / bookmarkable)
   // WITHOUT triggering a new run.
@@ -1100,6 +1136,17 @@ function StudioInner() {
             learningBridge={learningBridge}
             assetRegistry={assetRegistry}
             onRefresh={() => setRegistryRefresh((n) => n + 1)}
+          />
+          <CampaignOperatingSystemPanel
+            cos={campaignPlan}
+            budget={cosBudget} onBudgetChange={setCosBudget}
+            goal={cosGoal} onGoalChange={setCosGoal}
+            formula={cosFormula} onFormulaChange={setCosFormula}
+            market={cosMarket} onMarketChange={setCosMarket}
+            audience={cosAudience} onAudienceChange={setCosAudience}
+            cadence={cosCadence} onCadenceChange={setCosCadence}
+            rest={cosRest} onRestChange={setCosRest}
+            onRefresh={() => setCampaignRefresh((n) => n + 1)}
           />
 
           {preGenStability && (
@@ -8107,6 +8154,354 @@ function CreativePerformancePanel({
                 ))}
               </div>
             )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Campaign Operating System Panel ───────────────────────────────
+// Business objective → campaign plan. The system never publishes,
+// never auto-spends, never auto-approves. Human remains final
+// authority.
+type CampaignFormulaUI = 'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP';
+interface CampaignOperatingSystemPanelProps {
+  cos: {
+    plan: CampaignPlanReading;
+    testingMatrix: TestingMatrixReading;
+    contentCalendar: ContentCalendarReading;
+    performanceExpectation: PerformanceExpectationReading;
+    savedPlans: {
+      totalPlans: number;
+      counts: Record<CampaignPlanStatus, number>;
+      plans: CampaignPlanRecord[];
+    };
+  } | null;
+  budget: number; onBudgetChange: (n: number) => void;
+  goal: CampaignGoal; onGoalChange: (g: CampaignGoal) => void;
+  formula: CampaignFormulaUI; onFormulaChange: (f: CampaignFormulaUI) => void;
+  market: CampaignMarket; onMarketChange: (m: CampaignMarket) => void;
+  audience: string; onAudienceChange: (a: string) => void;
+  cadence: number; onCadenceChange: (n: number) => void;
+  rest: number; onRestChange: (n: number) => void;
+  onRefresh: () => void;
+}
+type CampaignTab =
+  | 'inputs' | 'structure' | 'angles' | 'assets'
+  | 'matrix' | 'calendar' | 'bands' | 'saved-plans';
+function CampaignOperatingSystemPanel({
+  cos, budget, onBudgetChange, goal, onGoalChange,
+  formula, onFormulaChange, market, onMarketChange,
+  audience, onAudienceChange, cadence, onCadenceChange, rest, onRestChange,
+  onRefresh,
+}: CampaignOperatingSystemPanelProps) {
+  const [tab, setTab] = useState<CampaignTab>('inputs');
+  const [operatorId, setOperatorId] = useState('op-derin');
+  const [operatorReason, setOperatorReason] = useState('saved campaign plan for review');
+  const [label, setLabel] = useState('MOOD ENERGY · IL · Q1');
+  const [status, setStatus] = useState<string | null>(null);
+  const tabs: Array<{ id: CampaignTab; label: string }> = [
+    { id: 'inputs', label: 'Inputs' },
+    { id: 'structure', label: 'Structure' },
+    { id: 'angles', label: 'Angles' },
+    { id: 'assets', label: 'Asset Requirements' },
+    { id: 'matrix', label: 'Testing Matrix' },
+    { id: 'calendar', label: 'Calendar' },
+    { id: 'bands', label: 'Performance Bands' },
+    { id: 'saved-plans', label: 'Saved Plans' },
+  ];
+  const goals: CampaignGoal[] = ['brand-awareness', 'product-trial', 'audience-retention', 'reactivation', 'community-build'];
+  const formulas: CampaignFormulaUI[] = ['ENERGY', 'FOCUS', 'RELAX', 'SLEEP'];
+  const markets: CampaignMarket[] = ['israel', 'global'];
+
+  async function savePlan() {
+    if (!cos) return;
+    try {
+      const res = await fetch('/api/campaign-planner', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'save', operatorId, operatorReason, label,
+          input: { budgetUSD: budget, goal, formula, market, audience, brandLanguage: 'hebrew' },
+          calendarOverrides: { cadencePerWeek: cadence, restDaysPerWeek: rest },
+        }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error ?? `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setStatus(`saved ${data.plan?.planId}`);
+      onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+  async function planTransition(planId: string, action: 'approve' | 'start' | 'complete' | 'reject' | 'archive') {
+    try {
+      const res = await fetch('/api/campaign-planner', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, operatorId, operatorReason, planId }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setStatus(`${action} ${planId}`);
+      onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">campaign operating system</div>
+      <div className="text-[10px] text-bone-200/50">
+        Business objective → campaign plan. The system never publishes,
+        never auto-spends budget, never auto-approves. Operator approval required.
+        Human remains final authority.
+      </div>
+
+      <div className="flex flex-wrap gap-1 text-[11px] border-t hairline pt-2">
+        {tabs.map((t) => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`px-2 py-1 border hairline ${tab === t.id ? 'text-bone-100' : 'text-bone-200/60'}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {status && <div className="text-[10px] text-amber-300/70 mt-1">{status}</div>}
+
+      <div className="border-t hairline pt-2 text-[10px] text-bone-200/70">
+        {tab === 'inputs' && (
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <label>budget USD (operator-only)
+                <input type="number" min={0} value={budget}
+                  onChange={(e) => onBudgetChange(parseInt(e.target.value || '0', 10))}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mt-1" />
+              </label>
+              <label>goal
+                <select value={goal} onChange={(e) => onGoalChange(e.target.value as CampaignGoal)}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mt-1">
+                  {goals.map((g) => <option key={g} value={g}>{g}</option>)}
+                </select>
+              </label>
+              <label>formula
+                <select value={formula} onChange={(e) => onFormulaChange(e.target.value as CampaignFormulaUI)}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mt-1">
+                  {formulas.map((f) => <option key={f} value={f}>MOOD {f}</option>)}
+                </select>
+              </label>
+              <label>market
+                <select value={market} onChange={(e) => onMarketChange(e.target.value as CampaignMarket)}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mt-1">
+                  {markets.map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </label>
+              <label>audience
+                <input value={audience} onChange={(e) => onAudienceChange(e.target.value)}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mt-1" />
+              </label>
+              <label>publishing cadence / week
+                <input type="number" min={1} max={7} value={cadence}
+                  onChange={(e) => onCadenceChange(parseInt(e.target.value || '1', 10))}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mt-1" />
+              </label>
+              <label>rest days / week
+                <input type="number" min={0} max={7} value={rest}
+                  onChange={(e) => onRestChange(parseInt(e.target.value || '0', 10))}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mt-1" />
+              </label>
+            </div>
+            <div className="border-t hairline pt-2 text-[10px]">
+              <div className="eyebrow mb-1">save plan as operator-supervised draft</div>
+              <div className="grid grid-cols-3 gap-1 mb-1">
+                <input value={operatorId} onChange={(e) => setOperatorId(e.target.value)}
+                  placeholder="operator id" className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+                <input value={operatorReason} onChange={(e) => setOperatorReason(e.target.value)}
+                  placeholder="operator reason" className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+                <input value={label} onChange={(e) => setLabel(e.target.value)}
+                  placeholder="plan label" className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+              </div>
+              <button onClick={savePlan} className="px-2 py-1 border hairline text-bone-200/80">
+                save plan as draft
+              </button>
+            </div>
+          </div>
+        )}
+        {tab === 'structure' && cos && (
+          <div>
+            <div className="text-bone-200/60 mb-2">
+              {cos.plan.goal} · MOOD {cos.plan.formula} · {cos.plan.market} · {cos.plan.audience}
+              {' · '}duration {cos.plan.durationDays}d · budget ${cos.plan.budgetUSD.toLocaleString()}
+            </div>
+            <div className="eyebrow mb-1">budget allocation (operator-only — system never spends)</div>
+            <div className="grid grid-cols-2 gap-x-2 mb-2">
+              <div className="flex justify-between"><span>production</span><span>${cos.plan.budgetAllocation.productionUSD.toLocaleString()}</span></div>
+              <div className="flex justify-between"><span>paid media</span><span>${cos.plan.budgetAllocation.paidMediaUSD.toLocaleString()}</span></div>
+              <div className="flex justify-between"><span>testing reserve</span><span>${cos.plan.budgetAllocation.testingReserveUSD.toLocaleString()}</span></div>
+              <div className="flex justify-between"><span>contingency</span><span>${cos.plan.budgetAllocation.contingencyUSD.toLocaleString()}</span></div>
+            </div>
+            <div className="text-bone-200/50 mb-2">{cos.plan.budgetAllocation.spendDisclaimer}</div>
+            <div className="eyebrow mb-1">phases</div>
+            {cos.plan.phases.map((p) => (
+              <div key={p.phaseId} className="border-l border-bone-200/20 pl-2 mb-2">
+                <div className="text-bone-100">phase {p.index} · {p.phaseId} · {p.durationDays}d · ${p.budgetUSD.toLocaleString()} ({Math.round(p.budgetShare * 100)}%)</div>
+                <div>purpose: {p.purpose}</div>
+                <div>tone: {p.toneNote}</div>
+                <div className="text-bone-200/50">story options: {p.storyFamilyOptions.join(' · ')}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {tab === 'angles' && cos && (
+          <div>
+            <div className="eyebrow mb-1">creative angles (observation only, never recommendations)</div>
+            {cos.plan.creativeAngles.map((a) => (
+              <div key={a.angleId} className="border-l border-bone-200/20 pl-2 mb-2">
+                <div className="text-bone-100">{a.angleId} · observed strength {a.observedStrength}/10</div>
+                <div>{a.description}</div>
+                <div className="text-bone-200/50">arc: {a.emotionalArc}</div>
+                <div className="text-bone-200/50">memory: {a.memoryAnchor} · presence: {a.presenceAnchor}</div>
+                <div className="text-bone-200/50">realism: {a.realismStyle}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {tab === 'assets' && cos && (
+          <div>
+            <div className="eyebrow mb-1">asset requirements</div>
+            {cos.plan.assetRequirements.map((a) => (
+              <div key={a.packageType} className="border-l border-bone-200/20 pl-2 mb-2">
+                <div className="text-bone-100">{a.packageType} · min {a.minimumCount} · explored {a.exploredCount}</div>
+                <div>phases: {a.phases.join(' · ')}</div>
+                <div className="text-bone-200/50">{a.note}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {tab === 'matrix' && cos && (
+          <div>
+            <div className="eyebrow mb-1">testing matrix · {cos.testingMatrix.totalCells} exploratory cells</div>
+            <div className="text-bone-200/50 mb-2">{cos.testingMatrix.notes[0]}</div>
+            {cos.testingMatrix.cells.slice(0, 12).map((c) => (
+              <div key={c.cellId} className="border-l border-bone-200/20 pl-2 mb-1">
+                <div className="text-bone-100">{c.cellId} · {c.channel} · {c.audienceSegment}</div>
+                <div className="text-bone-200/50">{c.exploration}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {tab === 'calendar' && cos && (
+          <div>
+            <div className="eyebrow mb-1">content calendar · {cos.contentCalendar.totalWeeks} week(s) · {cos.contentCalendar.publishingCadencePerWeek}/wk publishing · {cos.contentCalendar.restDaysPerWeek}/wk rest</div>
+            <div className="text-bone-200/50 mb-2">starts: {cos.contentCalendar.startISODate} · operator slots only · the system never publishes</div>
+            {cos.contentCalendar.weeks.slice(0, 6).map((w) => (
+              <div key={w.weekIndex} className="border-l border-bone-200/20 pl-2 mb-2">
+                <div className="text-bone-100">week {w.weekIndex} · {w.phaseId} phase</div>
+                <div className="grid grid-cols-7 gap-1 text-[9px]">
+                  {w.slots.map((s) => (
+                    <div key={s.slotId} className={
+                      s.packageType === 'rest' ? 'text-bone-200/40' : 'text-bone-200/70'
+                    }>
+                      <div>{s.approxISODate.slice(5)} · {s.packageType}</div>
+                      {s.angleSuggestion && <div className="text-bone-200/50">{s.angleSuggestion}</div>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {tab === 'bands' && cos && (
+          <div>
+            <div className="text-bone-200/50 mb-2 italic">
+              Bands are DESCRIPTIVE ONLY. The engine never predicts, never guarantees, never names an
+              optimal target. The operator validates every band against their own market reality.
+            </div>
+            <div className="eyebrow mb-1">aggregate bands</div>
+            <div className="grid grid-cols-2 gap-x-2 mb-2">
+              <div className="flex justify-between">
+                <span>impressions</span>
+                <span>{cos.performanceExpectation.aggregate.impressionsBand.low.toLocaleString()} – {cos.performanceExpectation.aggregate.impressionsBand.high.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>engagement rate</span>
+                <span>{cos.performanceExpectation.aggregate.engagementRateBand.low} – {cos.performanceExpectation.aggregate.engagementRateBand.high}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>completion rate</span>
+                <span>{cos.performanceExpectation.aggregate.completionRateBand.low} – {cos.performanceExpectation.aggregate.completionRateBand.high}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>save rate</span>
+                <span>{cos.performanceExpectation.aggregate.saveRateBand.low} – {cos.performanceExpectation.aggregate.saveRateBand.high}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>estimated assets explored</span>
+                <span>{cos.performanceExpectation.aggregate.estimatedAssetsExplored.low} – {cos.performanceExpectation.aggregate.estimatedAssetsExplored.high}</span>
+              </div>
+            </div>
+            <div className="eyebrow mb-1">per-phase bands</div>
+            {cos.performanceExpectation.perPhaseBands.map((b) => (
+              <div key={b.phaseId} className="border-l border-bone-200/20 pl-2 mb-2">
+                <div className="text-bone-100">{b.phaseId}</div>
+                <div>impressions: {b.impressionsBand.low.toLocaleString()} – {b.impressionsBand.high.toLocaleString()} ({b.impressionsBand.source})</div>
+                <div>engagement: {b.engagementRateBand.low} – {b.engagementRateBand.high} ({b.engagementRateBand.source})</div>
+                <div>completion: {b.completionRateBand.low} – {b.completionRateBand.high} ({b.completionRateBand.source})</div>
+                <div>save: {b.saveRateBand.low} – {b.saveRateBand.high} ({b.saveRateBand.source})</div>
+              </div>
+            ))}
+            <div className="border-t hairline pt-2 text-bone-200/50">
+              {cos.performanceExpectation.disclaimers.map((d, i) => <div key={i}>· {d}</div>)}
+            </div>
+          </div>
+        )}
+        {tab === 'saved-plans' && cos && (
+          <div>
+            <div className="flex justify-between text-[11px] text-bone-200/60 mb-2">
+              <span>total {cos.savedPlans.totalPlans}</span>
+              <span>draft {cos.savedPlans.counts.draft}</span>
+              <span>approved {cos.savedPlans.counts.approved}</span>
+              <span>in-flight {cos.savedPlans.counts['in-flight']}</span>
+              <span>completed {cos.savedPlans.counts.completed}</span>
+              <span>rejected {cos.savedPlans.counts.rejected}</span>
+              <span>archived {cos.savedPlans.counts.archived}</span>
+            </div>
+            {cos.savedPlans.plans.slice().reverse().slice(0, 16).map((p) => (
+              <div key={p.planId} className="border-l border-bone-200/20 pl-2 mb-2">
+                <div className="flex justify-between">
+                  <span>
+                    <span className={
+                      p.status === 'approved' ? 'text-emerald-300/80' :
+                      p.status === 'in-flight' ? 'text-blue-300/80' :
+                      p.status === 'completed' ? 'text-emerald-200/70' :
+                      p.status === 'rejected' ? 'text-red-400/80' :
+                      p.status === 'archived' ? 'text-bone-200/50' : 'text-amber-300/80'
+                    }>[{p.status}]</span>{' '}
+                    <span className="text-bone-100">{p.planId}</span>{' · '}{p.label}
+                  </span>
+                  <span className="text-bone-200/40">{new Date(p.createdAt).toISOString().slice(0, 19).replace('T', ' ')}</span>
+                </div>
+                <div className="text-bone-200/50">
+                  {p.input.goal} · MOOD {p.input.formula} · {p.input.market} · ${p.input.budgetUSD.toLocaleString()} · {p.plan.durationDays}d
+                </div>
+                <div className="flex gap-1 mt-1">
+                  <button onClick={() => planTransition(p.planId, 'approve')}
+                    className="px-2 border hairline text-emerald-300/80" disabled={p.status === 'approved' || p.status === 'in-flight' || p.status === 'completed'}>approve</button>
+                  <button onClick={() => planTransition(p.planId, 'start')}
+                    className="px-2 border hairline text-blue-300/80" disabled={p.status !== 'approved'}>start</button>
+                  <button onClick={() => planTransition(p.planId, 'complete')}
+                    className="px-2 border hairline text-emerald-200/70" disabled={p.status !== 'in-flight'}>complete</button>
+                  <button onClick={() => planTransition(p.planId, 'reject')}
+                    className="px-2 border hairline text-red-400/80">reject</button>
+                  <button onClick={() => planTransition(p.planId, 'archive')}
+                    className="px-2 border hairline text-bone-200/60">archive</button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

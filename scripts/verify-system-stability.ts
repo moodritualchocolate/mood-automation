@@ -488,6 +488,10 @@ async function main() {
       //    fetch from platforms) ──
       'app/api/publication-registry/route.ts',
       'app/api/performance/route.ts',
+      // ── campaign operating system (operator-supervised POSTs;
+      //    operator saves + transitions plan status; the route
+      //    NEVER publishes, NEVER auto-spends, NEVER auto-approves) ──
+      'app/api/campaign-planner/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {
