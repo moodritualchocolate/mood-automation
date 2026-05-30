@@ -497,6 +497,13 @@ async function main() {
       //    fetches from analytics / CRM / payments / ad APIs, NEVER
       //    triggers outbound actions) ──
       'app/api/customer-journey/route.ts',
+      // ── operations layer (operator-supervised POSTs; the routes
+      //    NEVER publish, NEVER spend, NEVER auto-create entities,
+      //    NEVER call external APIs) ──
+      'app/api/workspace/route.ts',
+      'app/api/team/route.ts',
+      'app/api/task/route.ts',
+      'app/api/knowledge/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {

@@ -161,6 +161,17 @@ import type { AttributionEngineReading } from '@lib/attributionEngine';
 import type { ProductIntelligenceReading } from '@lib/productIntelligenceEngine';
 import type { BusinessDashboardReading } from '@lib/businessDashboardEngine';
 import type { RevenueLearningBridgeReading } from '@lib/revenueLearningBridge';
+import type { WorkspaceEngineReading } from '@lib/workspaceEngine';
+import type { TeamEngineReading } from '@lib/teamEngine';
+import type { TaskEngineReading } from '@lib/taskEngine';
+import type {
+  ProjectRecord, BrandRecord, ProductRecord, CampaignRecord,
+} from '@lib/workspaceMemory';
+import type { TeamMemberRecord, TeamRole } from '@lib/teamMemory';
+import type { TaskRecord, TaskPriority, TaskStatus } from '@lib/taskMemory';
+import type { KnowledgeEntry, KnowledgeCategory } from '@lib/knowledgeMemory';
+import type { KnowledgeEngineReading } from '@lib/knowledgeEngine';
+import type { ExecutiveDashboardReading } from '@lib/executiveDashboardEngine';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -441,6 +452,25 @@ function StudioInner() {
     attribution: AttributionEngineReading;
   } | null>(null);
   const [biRefresh, setBiRefresh] = useState(0);
+  // Operations layer.
+  const [workspaceData, setWorkspaceData] = useState<{
+    reading: WorkspaceEngineReading;
+    raw: { projects: ProjectRecord[]; brands: BrandRecord[]; products: ProductRecord[]; campaigns: CampaignRecord[] };
+  } | null>(null);
+  const [teamData, setTeamData] = useState<{
+    reading: TeamEngineReading; members: TeamMemberRecord[];
+  } | null>(null);
+  const [taskData, setTaskData] = useState<{
+    reading: TaskEngineReading; tasks: TaskRecord[];
+  } | null>(null);
+  const [knowledgeData, setKnowledgeData] = useState<{
+    reading: KnowledgeEngineReading; entries: KnowledgeEntry[];
+  } | null>(null);
+  const [executiveData, setExecutiveData] = useState<{
+    reading: ExecutiveDashboardReading;
+  } | null>(null);
+  const [opsRefresh, setOpsRefresh] = useState(0);
+  const [knowledgeQuery, setKnowledgeQuery] = useState('');
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
     sandbox: EvolutionSandboxReading;
@@ -977,9 +1007,29 @@ function StudioInner() {
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setRevenueBridge(v); })
       .catch(() => { /* non-fatal */ });
+    fetch('/api/workspace', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setWorkspaceData(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/team', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setTeamData(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/task', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setTaskData(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch(`/api/knowledge${knowledgeQuery ? `?q=${encodeURIComponent(knowledgeQuery)}` : ''}`, { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setKnowledgeData(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/executive-dashboard', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setExecutiveData(v); })
+      .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productionFormula, registryRefresh, cosBudget, cosGoal, cosFormula, cosMarket, cosAudience, cosCadence, cosRest, campaignRefresh, biRefresh]);
+  }, [productionFormula, registryRefresh, cosBudget, cosGoal, cosFormula, cosMarket, cosAudience, cosCadence, cosRest, campaignRefresh, biRefresh, opsRefresh, knowledgeQuery]);
 
   // Keep the URL in sync with current selection (shareable / bookmarkable)
   // WITHOUT triggering a new run.
@@ -1198,6 +1248,16 @@ function StudioInner() {
             assetRegistry={assetRegistry}
             publicationRegistry={publicationRegistry}
             onRefresh={() => setBiRefresh((n) => n + 1)}
+          />
+          <OperationsLayerPanel
+            workspaceData={workspaceData}
+            teamData={teamData}
+            taskData={taskData}
+            knowledgeData={knowledgeData}
+            executiveData={executiveData}
+            knowledgeQuery={knowledgeQuery}
+            onKnowledgeQueryChange={setKnowledgeQuery}
+            onRefresh={() => setOpsRefresh((n) => n + 1)}
           />
 
           {preGenStability && (
@@ -8854,6 +8914,407 @@ function BusinessIntelligencePanel({
                 ))}
               </div>
             )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Operations Layer Panel ────────────────────────────────────────
+// Workspace (projects → brands → products → campaigns) + team + tasks
+// + knowledge + executive dashboard. Operator-supervised. The system
+// never publishes, never spends, never auto-executes anything. Human
+// remains final authority.
+interface OperationsLayerPanelProps {
+  workspaceData: {
+    reading: WorkspaceEngineReading;
+    raw: { projects: ProjectRecord[]; brands: BrandRecord[]; products: ProductRecord[]; campaigns: CampaignRecord[] };
+  } | null;
+  teamData: { reading: TeamEngineReading; members: TeamMemberRecord[] } | null;
+  taskData: { reading: TaskEngineReading; tasks: TaskRecord[] } | null;
+  knowledgeData: { reading: KnowledgeEngineReading; entries: KnowledgeEntry[] } | null;
+  executiveData: { reading: ExecutiveDashboardReading } | null;
+  knowledgeQuery: string;
+  onKnowledgeQueryChange: (q: string) => void;
+  onRefresh: () => void;
+}
+type OperationsTab =
+  | 'executive' | 'workspace' | 'team' | 'tasks' | 'knowledge';
+function OperationsLayerPanel({
+  workspaceData, teamData, taskData, knowledgeData, executiveData,
+  knowledgeQuery, onKnowledgeQueryChange, onRefresh,
+}: OperationsLayerPanelProps) {
+  const [tab, setTab] = useState<OperationsTab>('executive');
+  const [operatorId, setOperatorId] = useState('op-derin');
+  const [operatorReason, setOperatorReason] = useState('operator-supervised entity create');
+  const [status, setStatus] = useState<string | null>(null);
+  // Workspace controls.
+  const [wsType, setWsType] = useState<'project' | 'brand' | 'product' | 'campaign'>('project');
+  const [wsName, setWsName] = useState('');
+  const [wsParentId, setWsParentId] = useState('');
+  // Team controls.
+  const [teamName, setTeamName] = useState('');
+  const [teamRoles, setTeamRoles] = useState<TeamRole[]>(['operator']);
+  // Task controls.
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskPriority, setTaskPriority] = useState<TaskPriority>('medium');
+  const [taskDeadlineDays, setTaskDeadlineDays] = useState('7');
+  // Knowledge controls.
+  const [kCategory, setKCategory] = useState<KnowledgeCategory>('brand-rule');
+  const [kTitle, setKTitle] = useState('');
+  const [kBody, setKBody] = useState('');
+
+  const tabs: Array<{ id: OperationsTab; label: string }> = [
+    { id: 'executive', label: 'Executive Dashboard' },
+    { id: 'workspace', label: 'Workspace' },
+    { id: 'team', label: 'Team' },
+    { id: 'tasks', label: 'Tasks' },
+    { id: 'knowledge', label: 'Knowledge' },
+  ];
+
+  async function postJSON(url: string, body: unknown): Promise<unknown> {
+    const res = await fetch(url, {
+      method: 'POST', cache: 'no-store',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      throw new Error((j as { error?: string }).error ?? `HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
+  async function createWorkspaceEntity() {
+    if (!wsName) { setStatus('name is required'); return; }
+    try {
+      const body: Record<string, unknown> = {
+        action: `create-${wsType}`, operatorId, operatorReason, name: wsName,
+      };
+      if (wsType === 'brand') body.projectId = wsParentId;
+      if (wsType === 'product') body.brandId = wsParentId;
+      if (wsType === 'campaign') body.productId = wsParentId;
+      await postJSON('/api/workspace', body);
+      setStatus(`created ${wsType} ${wsName}`);
+      setWsName(''); onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  async function addTeamMember() {
+    if (!teamName) { setStatus('member name required'); return; }
+    if (teamRoles.length === 0) { setStatus('at least one role required'); return; }
+    try {
+      await postJSON('/api/team', {
+        action: 'add-member', operatorId, operatorReason, name: teamName, roles: teamRoles,
+      });
+      setStatus(`added ${teamName}`);
+      setTeamName(''); onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  async function createTask() {
+    if (!taskTitle) { setStatus('task title required'); return; }
+    try {
+      const deadlineAt = parseInt(taskDeadlineDays || '0', 10) > 0
+        ? Date.now() + parseInt(taskDeadlineDays, 10) * 24 * 60 * 60 * 1000
+        : undefined;
+      await postJSON('/api/task', {
+        action: 'create', operatorId, operatorReason,
+        title: taskTitle, priority: taskPriority, deadlineAt,
+      });
+      setStatus(`created task ${taskTitle}`);
+      setTaskTitle(''); onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+  async function transitionTask(taskId: string, targetStatus: TaskStatus) {
+    try {
+      await postJSON('/api/task', {
+        action: 'transition', operatorId, operatorReason, taskId, status: targetStatus,
+      });
+      setStatus(`transitioned ${taskId} → ${targetStatus}`);
+      onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  async function createKnowledge() {
+    if (!kTitle || !kBody) { setStatus('title and body required'); return; }
+    try {
+      await postJSON('/api/knowledge', {
+        action: 'create', operatorId, operatorReason,
+        category: kCategory, title: kTitle, body: kBody, tags: [],
+      });
+      setStatus(`created knowledge entry`);
+      setKTitle(''); setKBody(''); onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  const allRoles: TeamRole[] = ['owner', 'creative-director', 'designer', 'editor', 'media-buyer', 'operator', 'reviewer'];
+  const allCategories: KnowledgeCategory[] = ['brand-rule', 'product-rule', 'visual-rule', 'audience-rule', 'formula-rule', 'campaign-history'];
+  const allPriorities: TaskPriority[] = ['low', 'medium', 'high', 'urgent'];
+  const taskTransitions: TaskStatus[] = ['backlog', 'in-progress', 'blocked', 'review', 'done', 'archived'];
+
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">operations · workspace · team · tasks · knowledge · executive dashboard</div>
+      <div className="text-[10px] text-bone-200/50">
+        Operator-supervised entity management. The system never publishes,
+        never spends, never auto-executes anything. Human remains final authority.
+      </div>
+
+      <div className="flex gap-2 text-[10px]">
+        <input value={operatorId} onChange={(e) => setOperatorId(e.target.value)}
+          placeholder="operator id" className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-1" />
+        <input value={operatorReason} onChange={(e) => setOperatorReason(e.target.value)}
+          placeholder="operator reason" className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-[2]" />
+      </div>
+      {status && <div className="text-[10px] text-amber-300/70">{status}</div>}
+
+      <div className="flex flex-wrap gap-1 text-[11px] border-t hairline pt-2">
+        {tabs.map((t) => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`px-2 py-1 border hairline ${tab === t.id ? 'text-bone-100' : 'text-bone-200/60'}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-[10px] text-bone-200/70">
+        {tab === 'executive' && executiveData && (
+          <div>
+            <div className="text-bone-200/50 italic mb-2">
+              all sections descriptive only · never predictive · operator review required
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {Object.entries(executiveData.reading.sections).map(([key, section]) => (
+                <div key={key} className="border-l border-bone-200/20 pl-2">
+                  <div className="text-bone-100">{section.title}</div>
+                  <div className="text-bone-200/40 mb-1">{section.observation}</div>
+                  <div className="grid grid-cols-2 gap-x-1 text-[9px]">
+                    {Object.entries(section.counters).map(([k, v]) => (
+                      <div key={k} className="flex justify-between text-bone-200/70">
+                        <span>{k}</span><span>{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {executiveData.reading.notes.length > 0 && (
+              <div className="border-t hairline pt-2 mt-2">
+                {executiveData.reading.notes.map((n, i) => (
+                  <div key={i} className="text-bone-200/60">· {n}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {tab === 'workspace' && workspaceData && (
+          <div>
+            <div className="border-t hairline pt-2 mb-2">
+              <div className="eyebrow mb-1">create entity</div>
+              <div className="grid grid-cols-3 gap-1 mb-1">
+                <select value={wsType} onChange={(e) => setWsType(e.target.value as 'project' | 'brand' | 'product' | 'campaign')}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                  {(['project', 'brand', 'product', 'campaign'] as const).map((t) => <option key={t} value={t}>{t}</option>)}
+                </select>
+                <input value={wsName} onChange={(e) => setWsName(e.target.value)} placeholder="name"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+                {wsType !== 'project' ? (
+                  <select value={wsParentId} onChange={(e) => setWsParentId(e.target.value)}
+                    className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                    <option value="">parent…</option>
+                    {wsType === 'brand' && workspaceData.raw.projects.map((p) => <option key={p.projectId} value={p.projectId}>project · {p.name}</option>)}
+                    {wsType === 'product' && workspaceData.raw.brands.map((b) => <option key={b.brandId} value={b.brandId}>brand · {b.name}</option>)}
+                    {wsType === 'campaign' && workspaceData.raw.products.map((p) => <option key={p.productId} value={p.productId}>product · {p.name}</option>)}
+                  </select>
+                ) : <div />}
+              </div>
+              <button onClick={createWorkspaceEntity} className="px-2 py-1 border hairline text-bone-200/80">
+                create {wsType}
+              </button>
+            </div>
+            <div className="border-t hairline pt-2">
+              <div className="eyebrow mb-1">workspace tree</div>
+              {workspaceData.reading.projectTree.length === 0
+                ? <div className="text-bone-200/50">no projects yet</div>
+                : workspaceData.reading.projectTree.map((proj) => (
+                  <div key={proj.projectId} className="mb-2">
+                    <div className="text-bone-100">project · {proj.name}</div>
+                    <div className="text-bone-200/50 ml-2">
+                      {proj.totals.productCount} products · {proj.totals.campaignCount} campaigns · {proj.totals.assetCount} assets · {proj.totals.publicationCount} publications · ${proj.totals.observedRevenueUSD.toLocaleString()} observed revenue
+                    </div>
+                    {proj.brands.map((brand) => (
+                      <div key={brand.brandId} className="ml-2">
+                        <div className="text-bone-200/80">brand · {brand.name}</div>
+                        {brand.products.map((prod) => (
+                          <div key={prod.productId} className="ml-3">
+                            <div className="text-bone-200/70">product · {prod.name}{prod.formula ? ` · MOOD ${prod.formula}` : ''}</div>
+                            {prod.campaigns.map((c) => (
+                              <div key={c.campaignId} className="ml-3 text-bone-200/60">
+                                campaign · {c.name} · {c.status} · {c.assetIds.length} assets · {c.publicationIds.length} pubs · ${c.observedRevenueUSD.toLocaleString()}
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              {workspaceData.reading.orphans.brands.length + workspaceData.reading.orphans.products.length + workspaceData.reading.orphans.campaigns.length > 0 && (
+                <div className="border-t hairline pt-2 mt-2">
+                  <div className="eyebrow mb-1">orphans</div>
+                  {workspaceData.reading.orphans.brands.map((b) => (
+                    <div key={b.brandId} className="text-bone-200/70">orphan brand · {b.name}</div>
+                  ))}
+                  {workspaceData.reading.orphans.products.map((p) => (
+                    <div key={p.productId} className="text-bone-200/70">orphan product · {p.name}</div>
+                  ))}
+                  {workspaceData.reading.orphans.campaigns.map((c) => (
+                    <div key={c.campaignId} className="text-bone-200/70">orphan campaign · {c.name}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {tab === 'team' && teamData && (
+          <div>
+            <div className="border-t hairline pt-2 mb-2">
+              <div className="eyebrow mb-1">add member</div>
+              <div className="grid grid-cols-2 gap-1 mb-1">
+                <input value={teamName} onChange={(e) => setTeamName(e.target.value)} placeholder="display name"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+                <div className="grid grid-cols-2 gap-1">
+                  {allRoles.map((r) => (
+                    <label key={r} className="text-bone-200/70 flex gap-1">
+                      <input type="checkbox" checked={teamRoles.includes(r)}
+                        onChange={(e) => setTeamRoles(e.target.checked
+                          ? [...teamRoles, r]
+                          : teamRoles.filter((x) => x !== r))} />
+                      {r}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <button onClick={addTeamMember} className="px-2 py-1 border hairline text-bone-200/80">add member</button>
+            </div>
+            <div className="border-t hairline pt-2">
+              <div className="eyebrow mb-1">role coverage</div>
+              <div className="grid grid-cols-4 gap-x-2 mb-2">
+                {Object.entries(teamData.reading.roleCoverage).map(([r, count]) => (
+                  <div key={r} className="text-bone-200/70 flex justify-between">
+                    <span>{r}</span><span className={count === 0 ? 'text-amber-300/80' : ''}>{count}</span>
+                  </div>
+                ))}
+              </div>
+              {teamData.reading.uncoveredRoles.length > 0 && (
+                <div className="text-amber-300/70 mb-2">
+                  uncovered: {teamData.reading.uncoveredRoles.join(' · ')} · operator review required
+                </div>
+              )}
+              <div className="eyebrow mb-1">members</div>
+              {teamData.members.map((m) => (
+                <div key={m.memberId} className="border-l border-bone-200/20 pl-2 mb-1">
+                  <div className="text-bone-100">{m.name}</div>
+                  <div className="text-bone-200/50">roles: {m.roles.join(' · ')}</div>
+                </div>
+              ))}
+              <div className="border-t hairline pt-2 mt-2">
+                <div className="eyebrow mb-1">approval availability (top 6)</div>
+                {teamData.reading.approvalAvailability.slice(0, 6).map((av) => (
+                  <div key={av.member.memberId} className="text-bone-200/70">
+                    {av.member.name} · MAY perform {av.mayPerform.length} action(s)
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        {tab === 'tasks' && taskData && (
+          <div>
+            <div className="border-t hairline pt-2 mb-2">
+              <div className="eyebrow mb-1">create task</div>
+              <div className="grid grid-cols-3 gap-1 mb-1">
+                <input value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} placeholder="title"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 col-span-2" />
+                <select value={taskPriority} onChange={(e) => setTaskPriority(e.target.value as TaskPriority)}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                  {allPriorities.map((p) => <option key={p} value={p}>{p}</option>)}
+                </select>
+                <input value={taskDeadlineDays} onChange={(e) => setTaskDeadlineDays(e.target.value)} placeholder="deadline (days)"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+              </div>
+              <button onClick={createTask} className="px-2 py-1 border hairline text-bone-200/80">create</button>
+            </div>
+            <div className="border-t hairline pt-2">
+              <div className="flex justify-between mb-2">
+                <span>total {taskData.reading.totalTasks}</span>
+                <span>ready {taskData.reading.readyToStart.length}</span>
+                <span>blocked {taskData.reading.blockedTasks.length}</span>
+                <span>overdue {taskData.reading.overdueTasks.length}</span>
+                <span>at-risk {taskData.reading.atRiskTasks.length}</span>
+              </div>
+              {taskData.tasks.slice().reverse().slice(0, 12).map((t) => (
+                <div key={t.taskId} className="border-l border-bone-200/20 pl-2 mb-1">
+                  <div className="flex justify-between">
+                    <span><span className="text-bone-100">{t.title}</span> · {t.priority} · {t.status}</span>
+                    <span className="text-bone-200/40">{t.deadlineAt ? new Date(t.deadlineAt).toISOString().slice(0, 10) : 'no deadline'}</span>
+                  </div>
+                  <div className="flex gap-1 mt-1 text-[9px]">
+                    {taskTransitions.filter((s) => s !== t.status).map((s) => (
+                      <button key={s} onClick={() => transitionTask(t.taskId, s)}
+                        className="px-1 border hairline text-bone-200/60">{s}</button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {tab === 'knowledge' && knowledgeData && (
+          <div>
+            <div className="border-t hairline pt-2 mb-2">
+              <div className="eyebrow mb-1">create entry</div>
+              <div className="grid grid-cols-3 gap-1 mb-1">
+                <select value={kCategory} onChange={(e) => setKCategory(e.target.value as KnowledgeCategory)}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                  {allCategories.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+                <input value={kTitle} onChange={(e) => setKTitle(e.target.value)} placeholder="title"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 col-span-2" />
+              </div>
+              <textarea value={kBody} onChange={(e) => setKBody(e.target.value)} placeholder="body" rows={3}
+                className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mb-1" />
+              <button onClick={createKnowledge} className="px-2 py-1 border hairline text-bone-200/80">create entry</button>
+            </div>
+            <div className="border-t hairline pt-2">
+              <input value={knowledgeQuery} onChange={(e) => onKnowledgeQueryChange(e.target.value)}
+                placeholder="search knowledge…" className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full mb-2" />
+              <div className="flex justify-between mb-2 text-bone-200/50">
+                <span>total {knowledgeData.reading.totalEntries}</span>
+                {Object.entries(knowledgeData.reading.categoryCounts).map(([c, n]) => (
+                  <span key={c}>{c} {n}</span>
+                ))}
+              </div>
+              {knowledgeData.reading.matches.map((m) => (
+                <div key={m.entry.entryId} className="border-l border-bone-200/20 pl-2 mb-2">
+                  <div className="text-bone-100">{m.entry.title} · {m.entry.category}</div>
+                  <div className="text-bone-200/40">{m.observation} · score {m.matchScore}/10</div>
+                  <div className="text-bone-200/70">{m.entry.body}</div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
