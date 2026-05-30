@@ -172,6 +172,8 @@ import type { TaskRecord, TaskPriority, TaskStatus } from '@lib/taskMemory';
 import type { KnowledgeEntry, KnowledgeCategory } from '@lib/knowledgeMemory';
 import type { KnowledgeEngineReading } from '@lib/knowledgeEngine';
 import type { ExecutiveDashboardReading } from '@lib/executiveDashboardEngine';
+import type { AgentId, AgentDescriptor } from '@lib/agents';
+import type { AgentRunRecord, AgentRunStatus } from '@lib/agentRunMemory';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -471,6 +473,14 @@ function StudioInner() {
   } | null>(null);
   const [opsRefresh, setOpsRefresh] = useState(0);
   const [knowledgeQuery, setKnowledgeQuery] = useState('');
+  // Execution agent layer.
+  const [agentData, setAgentData] = useState<{
+    catalog: Record<AgentId, AgentDescriptor>;
+    totalRuns: number;
+    counts: Record<AgentRunStatus, number>;
+    runs: AgentRunRecord[];
+  } | null>(null);
+  const [agentRefresh, setAgentRefresh] = useState(0);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
     sandbox: EvolutionSandboxReading;
@@ -1027,9 +1037,13 @@ function StudioInner() {
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setExecutiveData(v); })
       .catch(() => { /* non-fatal */ });
+    fetch('/api/agent', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setAgentData(v); })
+      .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productionFormula, registryRefresh, cosBudget, cosGoal, cosFormula, cosMarket, cosAudience, cosCadence, cosRest, campaignRefresh, biRefresh, opsRefresh, knowledgeQuery]);
+  }, [productionFormula, registryRefresh, cosBudget, cosGoal, cosFormula, cosMarket, cosAudience, cosCadence, cosRest, campaignRefresh, biRefresh, opsRefresh, knowledgeQuery, agentRefresh]);
 
   // Keep the URL in sync with current selection (shareable / bookmarkable)
   // WITHOUT triggering a new run.
@@ -1258,6 +1272,10 @@ function StudioInner() {
             knowledgeQuery={knowledgeQuery}
             onKnowledgeQueryChange={setKnowledgeQuery}
             onRefresh={() => setOpsRefresh((n) => n + 1)}
+          />
+          <ExecutionAgentPanel
+            agentData={agentData}
+            onRefresh={() => setAgentRefresh((n) => n + 1)}
           />
 
           {preGenStability && (
@@ -9315,6 +9333,243 @@ function OperationsLayerPanel({
                 </div>
               ))}
             </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Execution Agent Panel ─────────────────────────────────────────
+// Five specialized operator-supervised workers (creative director ·
+// content producer · quality reviewer · campaign manager · performance
+// analyst). Each run is created `pending`; the operator approves /
+// rejects / archives. Agents never publish, never spend, never call
+// external APIs, never approve themselves. Human remains final
+// authority.
+interface ExecutionAgentPanelProps {
+  agentData: {
+    catalog: Record<AgentId, AgentDescriptor>;
+    totalRuns: number;
+    counts: Record<AgentRunStatus, number>;
+    runs: AgentRunRecord[];
+  } | null;
+  onRefresh: () => void;
+}
+function ExecutionAgentPanel({ agentData, onRefresh }: ExecutionAgentPanelProps) {
+  const [tab, setTab] = useState<'catalog' | 'runs' | 'execute'>('catalog');
+  const [operatorId, setOperatorId] = useState('op-derin');
+  const [operatorReason, setOperatorReason] = useState('execute agent for operator review');
+  const [activeAgent, setActiveAgent] = useState<AgentId>('performance-analyst');
+  const [status, setStatus] = useState<string | null>(null);
+  // Creative director inputs.
+  const [cdGoal, setCdGoal] = useState('product-trial');
+  const [cdFormula, setCdFormula] = useState<'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP'>('ENERGY');
+  const [cdMarket, setCdMarket] = useState<'israel' | 'global'>('israel');
+  const [cdAudience, setCdAudience] = useState('il-women-25-44');
+  const [cdBudget, setCdBudget] = useState('10000');
+  // Content producer inputs (minimal brief ref).
+  const [cpBlueprintId, setCpBlueprintId] = useState('quiet-return-home');
+  const [cpStoryName, setCpStoryName] = useState('Quiet Return Home');
+  const [cpFormula, setCpFormula] = useState<'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP'>('ENERGY');
+  // Quality reviewer inputs.
+  const [qrAssetIdsText, setQrAssetIdsText] = useState('');
+
+  async function executeAgent() {
+    let input: unknown;
+    if (activeAgent === 'creative-director') {
+      input = {
+        goal: cdGoal, formula: cdFormula, market: cdMarket,
+        audience: cdAudience, budgetUSD: parseInt(cdBudget || '0', 10),
+        brandLanguage: 'hebrew',
+      };
+    } else if (activeAgent === 'content-producer') {
+      input = {
+        briefRef: { blueprintId: cpBlueprintId, storyName: cpStoryName },
+        formula: cpFormula, brandLanguage: 'hebrew', audienceMarket: 'israel',
+      };
+    } else if (activeAgent === 'quality-reviewer') {
+      const ids = qrAssetIdsText.split(/[\s,]+/).map((s) => s.trim()).filter((s) => s.length > 0);
+      input = { assets: [], assetIds: ids, audienceMarket: 'israel' };
+    } else if (activeAgent === 'campaign-manager') {
+      input = { campaignPlans: [], assets: [], tasks: [] };
+    } else {
+      input = {};
+    }
+    try {
+      const res = await fetch('/api/agent', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'execute', operatorId, operatorReason,
+          agentId: activeAgent, input,
+        }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error((j as { error?: string }).error ?? `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setStatus(`run created · ${(data as { run?: { runId?: string } }).run?.runId ?? 'unknown'}`);
+      onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+  async function transitionRun(runId: string, action: 'approve' | 'reject' | 'archive') {
+    try {
+      const res = await fetch('/api/agent', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, operatorId, operatorReason, runId }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setStatus(`${action} ${runId}`);
+      onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  const agentIds: AgentId[] = [
+    'creative-director', 'content-producer', 'quality-reviewer',
+    'campaign-manager', 'performance-analyst',
+  ];
+  const formulas: Array<'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP'> = ['ENERGY', 'FOCUS', 'RELAX', 'SLEEP'];
+  const goals = ['brand-awareness', 'product-trial', 'audience-retention', 'reactivation', 'community-build'];
+
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">execution agents · operator-supervised workers</div>
+      <div className="text-[10px] text-bone-200/50">
+        Five specialized agents. Each run is created `pending`. Agents never publish,
+        never spend, never call external APIs, never approve themselves. Operator
+        approval required. Human remains final authority.
+      </div>
+
+      <div className="flex gap-2 text-[10px]">
+        <input value={operatorId} onChange={(e) => setOperatorId(e.target.value)}
+          placeholder="operator id" className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-1" />
+        <input value={operatorReason} onChange={(e) => setOperatorReason(e.target.value)}
+          placeholder="operator reason" className="border hairline px-2 py-1 bg-transparent text-bone-200/80 flex-[2]" />
+      </div>
+      {status && <div className="text-[10px] text-amber-300/70">{status}</div>}
+
+      <div className="flex flex-wrap gap-1 text-[11px] border-t hairline pt-2">
+        {(['catalog', 'execute', 'runs'] as const).map((t) => (
+          <button key={t} onClick={() => setTab(t)}
+            className={`px-2 py-1 border hairline ${tab === t ? 'text-bone-100' : 'text-bone-200/60'}`}>
+            {t}
+          </button>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2 text-[10px] text-bone-200/70">
+        {tab === 'catalog' && agentData && (
+          <div className="grid grid-cols-1 gap-2">
+            {agentIds.map((id) => {
+              const a = agentData.catalog[id];
+              return (
+                <div key={id} className="border-l border-bone-200/20 pl-2">
+                  <div className="text-bone-100">{a.name}</div>
+                  <div className="text-bone-200/50">{a.purpose}</div>
+                  <div className="text-bone-200/40">consumes: {a.consumes.join(' · ')}</div>
+                  <div className="text-bone-200/40">produces: {a.produces.join(' · ')}</div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {tab === 'execute' && (
+          <div className="space-y-2">
+            <div className="flex gap-1">
+              {agentIds.map((id) => (
+                <button key={id} onClick={() => setActiveAgent(id)}
+                  className={`px-2 py-1 border hairline ${activeAgent === id ? 'text-bone-100' : 'text-bone-200/60'}`}>
+                  {id}
+                </button>
+              ))}
+            </div>
+            {activeAgent === 'creative-director' && (
+              <div className="grid grid-cols-3 gap-1">
+                <select value={cdGoal} onChange={(e) => setCdGoal(e.target.value)}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                  {goals.map((g) => <option key={g} value={g}>{g}</option>)}
+                </select>
+                <select value={cdFormula} onChange={(e) => setCdFormula(e.target.value as 'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP')}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                  {formulas.map((f) => <option key={f} value={f}>MOOD {f}</option>)}
+                </select>
+                <select value={cdMarket} onChange={(e) => setCdMarket(e.target.value as 'israel' | 'global')}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                  <option value="israel">israel</option><option value="global">global</option>
+                </select>
+                <input value={cdAudience} onChange={(e) => setCdAudience(e.target.value)} placeholder="audience"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 col-span-2" />
+                <input type="number" min={0} value={cdBudget} onChange={(e) => setCdBudget(e.target.value)} placeholder="budget USD"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+              </div>
+            )}
+            {activeAgent === 'content-producer' && (
+              <div className="grid grid-cols-3 gap-1">
+                <input value={cpBlueprintId} onChange={(e) => setCpBlueprintId(e.target.value)} placeholder="blueprint id"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+                <input value={cpStoryName} onChange={(e) => setCpStoryName(e.target.value)} placeholder="story name"
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80 col-span-2" />
+                <select value={cpFormula} onChange={(e) => setCpFormula(e.target.value as 'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP')}
+                  className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                  {formulas.map((f) => <option key={f} value={f}>MOOD {f}</option>)}
+                </select>
+              </div>
+            )}
+            {activeAgent === 'quality-reviewer' && (
+              <input value={qrAssetIdsText} onChange={(e) => setQrAssetIdsText(e.target.value)}
+                placeholder="comma-separated asset ids (or leave blank for ALL)"
+                className="border hairline px-2 py-1 bg-transparent text-bone-200/80 w-full" />
+            )}
+            {(activeAgent === 'campaign-manager' || activeAgent === 'performance-analyst') && (
+              <div className="text-bone-200/50">
+                {activeAgent} runs on currently-logged registries · no extra inputs needed
+              </div>
+            )}
+            <button onClick={executeAgent} className="px-2 py-1 border hairline text-bone-200/80">
+              execute · creates pending run
+            </button>
+          </div>
+        )}
+        {tab === 'runs' && agentData && (
+          <div>
+            <div className="flex justify-between text-[11px] text-bone-200/60 mb-2">
+              <span>total {agentData.totalRuns}</span>
+              <span>pending {agentData.counts.pending}</span>
+              <span>approved {agentData.counts.approved}</span>
+              <span>rejected {agentData.counts.rejected}</span>
+              <span>archived {agentData.counts.archived}</span>
+            </div>
+            {agentData.runs.slice().reverse().slice(0, 16).map((r) => (
+              <div key={r.runId} className="border-l border-bone-200/20 pl-2 mb-2">
+                <div className="flex justify-between">
+                  <span>
+                    <span className={
+                      r.status === 'approved' ? 'text-emerald-300/80' :
+                      r.status === 'rejected' ? 'text-red-400/80' :
+                      r.status === 'archived' ? 'text-bone-200/50' :
+                      'text-amber-300/80'
+                    }>[{r.status}]</span>{' '}
+                    <span className="text-bone-100">{r.runId}</span>{' · '}{r.agentId}{' · '}{r.label}
+                  </span>
+                  <span className="text-bone-200/40">{new Date(r.createdAt).toISOString().slice(0, 19).replace('T', ' ')}</span>
+                </div>
+                <div className="flex gap-1 mt-1">
+                  <button onClick={() => transitionRun(r.runId, 'approve')}
+                    className="px-2 border hairline text-emerald-300/80" disabled={r.status === 'approved'}>approve</button>
+                  <button onClick={() => transitionRun(r.runId, 'reject')}
+                    className="px-2 border hairline text-red-400/80" disabled={r.status === 'rejected'}>reject</button>
+                  <button onClick={() => transitionRun(r.runId, 'archive')}
+                    className="px-2 border hairline text-bone-200/60" disabled={r.status === 'archived'}>archive</button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

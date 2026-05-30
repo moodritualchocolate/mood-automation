@@ -504,6 +504,10 @@ async function main() {
       'app/api/team/route.ts',
       'app/api/task/route.ts',
       'app/api/knowledge/route.ts',
+      // ── execution agent layer (operator-supervised POST; the
+      //    agents NEVER publish, NEVER spend, NEVER call external
+      //    APIs, NEVER approve their own runs) ──
+      'app/api/agent/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {
