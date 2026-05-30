@@ -125,6 +125,11 @@ import type { PresenceAnchorReading } from '@lib/presenceAnchorEngine';
 import type { SceneArchitectReading } from '@lib/sceneArchitectEngine';
 import type { EmotionalRhythmReading } from '@lib/emotionalRhythmEngine';
 import type { AssetComposerReading } from '@lib/assetComposerEngine';
+import type {
+  CreativeBriefReading, BannerBrief, CarouselBrief, ImageBrief, VideoBrief, LandingSectionBrief,
+} from '@lib/creativeBriefGenerator';
+import type { PromptArchitectReading, PromptArtifact } from '@lib/promptArchitect';
+import type { BrandGuardianReading } from '@lib/brandGuardian';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -315,6 +320,16 @@ function StudioInner() {
     storyBlueprints: StoryArchitectReading['storyBlueprints'];
     scenes: SceneArchitectReading['scenes'];
     rhythm: EmotionalRhythmReading;
+  } | null>(null);
+  // Production studio — briefs + prompts + brand guardian.
+  const [productionFormula, setProductionFormula] = useState<'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP'>('ENERGY');
+  const [productionStudio, setProductionStudio] = useState<{
+    formula: 'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP';
+    market: 'israel' | 'global';
+    brandLanguage: 'hebrew' | 'mixed' | 'english';
+    briefs: CreativeBriefReading;
+    prompts: PromptArchitectReading;
+    guardian: BrandGuardianReading;
   } | null>(null);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
@@ -612,6 +627,10 @@ function StudioInner() {
             .then((r) => r.ok ? r.json() : null)
             .then((v) => { if (!cancelled && v) setAssetComposer(v); })
             .catch(() => { /* non-fatal */ });
+          fetch(`/api/production-studio?formula=${productionFormula}&market=israel&lang=hebrew`, { cache: 'no-store' })
+            .then((r) => r.ok ? r.json() : null)
+            .then((v) => { if (!cancelled && v) setProductionStudio(v); })
+            .catch(() => { /* non-fatal */ });
         }
       }
     }
@@ -779,8 +798,13 @@ function StudioInner() {
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setAssetComposer(v); })
       .catch(() => { /* non-fatal */ });
+    fetch(`/api/production-studio?formula=${productionFormula}&market=israel&lang=hebrew`, { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setProductionStudio(v); })
+      .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productionFormula]);
 
   // Keep the URL in sync with current selection (shareable / bookmarkable)
   // WITHOUT triggering a new run.
@@ -958,6 +982,13 @@ function StudioInner() {
           {creativeDirector && <CreativeDirectorPanel cd={creativeDirector} />}
           {storyArchitect && <StoryArchitectPanel sa={storyArchitect} />}
           {assetComposer && <AssetComposerPanel ac={assetComposer} />}
+          {productionStudio && (
+            <ProductionStudioPanel
+              ps={productionStudio}
+              activeFormula={productionFormula}
+              onFormulaChange={setProductionFormula}
+            />
+          )}
 
           {preGenStability && (
             <>
@@ -6749,6 +6780,272 @@ function AssetComposerPanel({ ac }: AssetComposerPanelProps) {
 
       {/* keep sceneById referenced so unused-warnings don't show */}
       <div className="hidden">{sceneById.size}</div>
+    </div>
+  );
+}
+
+// ─── Production Studio Panel ───────────────────────────────────────
+// Briefs + prompts + brand guardian — production specifications only.
+// No publishing. No autonomous posting. No social execution.
+// No auto-approval. Human remains final authority.
+type ProductionFormula = 'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP';
+interface ProductionStudioPanelProps {
+  ps: {
+    formula: ProductionFormula;
+    market: 'israel' | 'global';
+    brandLanguage: 'hebrew' | 'mixed' | 'english';
+    briefs: CreativeBriefReading;
+    prompts: PromptArchitectReading;
+    guardian: BrandGuardianReading;
+  };
+  activeFormula: ProductionFormula;
+  onFormulaChange: (f: ProductionFormula) => void;
+}
+type ProductionTab =
+  | 'banner' | 'carousel' | 'image' | 'video' | 'landing'
+  | 'prompt-preview' | 'brand-validation';
+function ProductionStudioPanel({ ps, activeFormula, onFormulaChange }: ProductionStudioPanelProps) {
+  const [tab, setTab] = useState<ProductionTab>('banner');
+  const [activePromptId, setActivePromptId] = useState<string | null>(null);
+  const tabs: Array<{ id: ProductionTab; label: string }> = [
+    { id: 'banner', label: 'Banner' },
+    { id: 'carousel', label: 'Carousel' },
+    { id: 'image', label: 'Image' },
+    { id: 'video', label: 'Video' },
+    { id: 'landing', label: 'Landing' },
+    { id: 'prompt-preview', label: 'Prompt Preview' },
+    { id: 'brand-validation', label: 'Brand Validation' },
+  ];
+  const formulas: ProductionFormula[] = ['ENERGY', 'FOCUS', 'RELAX', 'SLEEP'];
+  const allPrompts: PromptArtifact[] = [
+    ...ps.prompts.imagePrompts, ...ps.prompts.videoPrompts,
+    ...ps.prompts.bannerPrompts, ...ps.prompts.landingPrompts,
+    ...ps.prompts.carouselPrompts,
+  ];
+  const activePrompt = activePromptId
+    ? allPrompts.find((p) => p.promptId === activePromptId) ?? allPrompts[0]
+    : allPrompts[0];
+
+  function renderBanner(b: BannerBrief) {
+    return (
+      <div key={b.briefId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+        <div className="text-bone-100">{b.sourceStoryName} · {b.briefId}</div>
+        <div>composition: {b.composition}</div>
+        <div>emotional: {b.emotionalDirection}</div>
+        <div>visual: {b.visualDirection}</div>
+        <div>memory: {b.memoryDirection}</div>
+        <div>restraint: {b.restraintDirection}</div>
+        <div>copy: {b.copyDirection}</div>
+        <div>product: {b.productDirection}</div>
+        <div>dimensions: {b.dimensionsGuidance}</div>
+      </div>
+    );
+  }
+  function renderCarousel(c: CarouselBrief) {
+    return (
+      <div key={c.briefId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+        <div className="text-bone-100">{c.sourceStoryName} · {c.briefId} · {c.frameCount} frames</div>
+        <div>arc: {c.emotionalArc}</div>
+        <div>rhythm: {c.rhythm}</div>
+        <div>copy: {c.copyDirection}</div>
+        <div>product: {c.productDirection}</div>
+        <div>dimensions: {c.dimensionsGuidance}</div>
+        {c.frames.map((f) => (
+          <div key={f.index} className="text-bone-200/50 ml-2">
+            · frame {f.index} — {f.framePurpose} · scene: {f.scene} · presence: {f.presence} · silence: {f.silenceAllocation}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  function renderImage(im: ImageBrief) {
+    return (
+      <div key={im.briefId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+        <div className="text-bone-100">{im.sourceStoryName} · {im.briefId}</div>
+        <div>scene: {im.scene}</div>
+        <div>presence: {im.presence}</div>
+        <div>rhythm: {im.rhythm}</div>
+        <div>realism: {im.realism}</div>
+        <div>visual language: {im.visualLanguage}</div>
+        <div>memory: {im.memoryAnchors.join(' · ')}</div>
+        <div>product: {im.productDirection}</div>
+        <div>dimensions: {im.dimensionsGuidance}</div>
+        <div>copy: {im.copyDirection}</div>
+      </div>
+    );
+  }
+  function renderVideo(v: VideoBrief) {
+    return (
+      <div key={v.briefId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+        <div className="text-bone-100">{v.sourceStoryName} · {v.briefId} · {v.durationSeconds}s</div>
+        <div>arc: {v.emotionalArc}</div>
+        <div>rhythm: {v.rhythm}</div>
+        {v.beats.map((b) => (
+          <div key={b.index} className="text-bone-200/50 ml-2">
+            · beat {b.index} (silence {b.silenceShare}) · {b.scene} — {b.beat}
+          </div>
+        ))}
+        <div>silence: {v.silenceMoments.join(' · ')}</div>
+        <div>presence: {v.presenceMoments.join(' · ')}</div>
+        <div>realism: {v.realismAnchors.join(' · ')}</div>
+        <div>product: {v.productDirection}</div>
+        <div>dimensions: {v.dimensionsGuidance}</div>
+        <div>copy: {v.copyDirection}</div>
+      </div>
+    );
+  }
+  function renderLanding(l: LandingSectionBrief) {
+    return (
+      <div key={l.briefId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+        <div className="text-bone-100">{l.sourceStoryName} · {l.briefId}</div>
+        <div>section purpose: {l.sectionPurpose}</div>
+        <div>emotional purpose: {l.emotionalPurpose}</div>
+        <div>narrative purpose: {l.narrativePurpose}</div>
+        <div>memory: {l.memoryAnchor}</div>
+        <div>visual: {l.visualAnchor}</div>
+        <div>product: {l.productDirection}</div>
+        <div>layout: {l.layoutGuidance}</div>
+        <div>copy: {l.copyDirection}</div>
+      </div>
+    );
+  }
+  function renderPromptPreview() {
+    if (!activePrompt) return <div className="text-bone-200/50 text-[10px]">no prompts available</div>;
+    return (
+      <div>
+        <div className="flex flex-wrap gap-1 mb-2 text-[10px]">
+          {allPrompts.slice(0, 12).map((p) => (
+            <button
+              key={p.promptId}
+              onClick={() => setActivePromptId(p.promptId)}
+              className={`px-2 py-1 border hairline ${activePrompt.promptId === p.promptId ? 'text-bone-100' : 'text-bone-200/60'}`}
+            >
+              {p.promptType} · {p.sourceStoryName}
+            </button>
+          ))}
+        </div>
+        <div className="text-bone-200/60 text-[10px] mb-1">
+          {activePrompt.summary} · token budget ≈ {activePrompt.tokenBudget}
+        </div>
+        <pre className="text-bone-200/80 text-[10px] whitespace-pre-wrap border hairline p-2">
+{activePrompt.promptText}
+        </pre>
+      </div>
+    );
+  }
+  function renderBrandValidation() {
+    const reports = [...ps.guardian.briefReports, ...ps.guardian.promptReports];
+    return (
+      <div>
+        <div className="flex justify-between text-[11px] text-bone-200/60 mb-1">
+          <span>violations {ps.guardian.totalViolations}</span>
+          <span>evidence gaps {ps.guardian.totalEvidenceGaps}</span>
+          <span>reports {reports.length}</span>
+        </div>
+        {ps.guardian.notes.slice(0, 4).map((n, i) => (
+          <div key={i} className="text-bone-200/70 text-[10px]">· {n}</div>
+        ))}
+        {reports.slice(0, 12).map((r) => (
+          <div key={r.targetId} className="text-bone-200/70 text-[10px] mb-2 border-l border-bone-200/20 pl-2">
+            <div className="text-bone-100">
+              {r.targetType} · {r.targetId} · alignment {r.brandAlignment}/10 ·
+              violations {r.violationCount} · gaps {r.evidenceGapCount}
+            </div>
+            {r.findings.map((f, i) => (
+              <div key={i} className={
+                f.status === 'violated' ? 'text-red-400/80' :
+                f.status === 'requires-more-evidence' ? 'text-amber-300/70' :
+                'text-bone-200/60'
+              }>
+                · [{f.status}] {f.ruleName} — {f.detail}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">production studio</div>
+      <div className="text-[10px] text-bone-200/50">
+        Briefs + prompts + brand guardian — production specifications only.
+        No publishing. No autonomous posting. No social execution.
+        No auto-approval. Human remains final authority.
+      </div>
+
+      <div className="flex flex-wrap gap-1 text-[11px]">
+        {formulas.map((f) => (
+          <button
+            key={f}
+            onClick={() => onFormulaChange(f)}
+            className={`px-2 py-1 border hairline ${activeFormula === f ? 'text-bone-100' : 'text-bone-200/60'}`}
+          >
+            MOOD {f}
+          </button>
+        ))}
+        <span className="text-bone-200/40 text-[10px] ml-2 self-center">
+          market {ps.market} · {ps.brandLanguage}
+        </span>
+      </div>
+
+      <div className="flex flex-wrap gap-1 text-[11px] border-t hairline pt-2">
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`px-2 py-1 border hairline ${tab === t.id ? 'text-bone-100' : 'text-bone-200/60'}`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="border-t hairline pt-2">
+        {tab === 'banner' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">banner briefs</div>
+            {ps.briefs.banners.map(renderBanner)}
+          </>
+        )}
+        {tab === 'carousel' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">carousel briefs</div>
+            {ps.briefs.carousels.map(renderCarousel)}
+          </>
+        )}
+        {tab === 'image' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">image briefs</div>
+            {ps.briefs.images.map(renderImage)}
+          </>
+        )}
+        {tab === 'video' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">video briefs</div>
+            {ps.briefs.videos.map(renderVideo)}
+          </>
+        )}
+        {tab === 'landing' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">landing section briefs</div>
+            {ps.briefs.landings.map(renderLanding)}
+          </>
+        )}
+        {tab === 'prompt-preview' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">prompt preview · operator approval required</div>
+            {renderPromptPreview()}
+          </>
+        )}
+        {tab === 'brand-validation' && (
+          <>
+            <div className="eyebrow mb-1 text-[10px]">brand guardian · observational findings</div>
+            {renderBrandValidation()}
+          </>
+        )}
+      </div>
     </div>
   );
 }

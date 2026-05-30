@@ -113,6 +113,7 @@ const KNOWN_ROUTES: string[] = [
   '/api/scene-architect',
   '/api/emotional-rhythm',
   '/api/asset-composer',
+  '/api/production-studio',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.
