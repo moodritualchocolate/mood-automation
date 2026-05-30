@@ -492,6 +492,11 @@ async function main() {
       //    operator saves + transitions plan status; the route
       //    NEVER publishes, NEVER auto-spends, NEVER auto-approves) ──
       'app/api/campaign-planner/route.ts',
+      // ── business intelligence layer (operator-supervised POST;
+      //    operator manually logs journey events; the route NEVER
+      //    fetches from analytics / CRM / payments / ad APIs, NEVER
+      //    triggers outbound actions) ──
+      'app/api/customer-journey/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {

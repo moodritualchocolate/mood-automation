@@ -124,6 +124,11 @@ const KNOWN_ROUTES: string[] = [
   '/api/creative-dna-map',
   '/api/learning-bridge',
   '/api/campaign-planner',
+  '/api/customer-journey',
+  '/api/attribution',
+  '/api/product-intelligence',
+  '/api/business-dashboard',
+  '/api/revenue-bridge',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.

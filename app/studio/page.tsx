@@ -153,6 +153,14 @@ import type { TestingMatrixReading } from '@lib/testingMatrixEngine';
 import type { ContentCalendarReading } from '@lib/contentCalendarEngine';
 import type { PerformanceExpectationReading } from '@lib/performanceExpectationEngine';
 import type { CampaignPlanRecord, CampaignPlanStatus } from '@lib/campaignPlanMemory';
+import type {
+  JourneyEvent, JourneyEventType,
+} from '@lib/customerJourneyMemory';
+import type { CustomerJourneyReading } from '@lib/customerJourneyEngine';
+import type { AttributionEngineReading } from '@lib/attributionEngine';
+import type { ProductIntelligenceReading } from '@lib/productIntelligenceEngine';
+import type { BusinessDashboardReading } from '@lib/businessDashboardEngine';
+import type { RevenueLearningBridgeReading } from '@lib/revenueLearningBridge';
 
 type BrutalityLabel = 'lenient' | 'default' | 'brutal';
 
@@ -420,6 +428,19 @@ function StudioInner() {
     };
   } | null>(null);
   const [campaignRefresh, setCampaignRefresh] = useState(0);
+  // Business intelligence layer.
+  const [journeyEvents, setJourneyEvents] = useState<{
+    totalEvents: number; events: JourneyEvent[]; reading: CustomerJourneyReading;
+  } | null>(null);
+  const [attributionReading, setAttributionReading] = useState<AttributionEngineReading | null>(null);
+  const [productIntelligence, setProductIntelligence] = useState<ProductIntelligenceReading | null>(null);
+  const [businessDashboard, setBusinessDashboard] = useState<BusinessDashboardReading | null>(null);
+  const [revenueBridge, setRevenueBridge] = useState<{
+    revenueBridge: RevenueLearningBridgeReading;
+    journey: CustomerJourneyReading;
+    attribution: AttributionEngineReading;
+  } | null>(null);
+  const [biRefresh, setBiRefresh] = useState(0);
   // Evolution sandbox — simulated mutation futures.
   const [evolutionSandbox, setEvolutionSandbox] = useState<{
     sandbox: EvolutionSandboxReading;
@@ -936,9 +957,29 @@ function StudioInner() {
       .then((r) => r.ok ? r.json() : null)
       .then((v) => { if (!cancelled && v) setCampaignPlan(v); })
       .catch(() => { /* non-fatal */ });
+    fetch('/api/customer-journey', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setJourneyEvents(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/attribution', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setAttributionReading(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/product-intelligence', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setProductIntelligence(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/business-dashboard', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setBusinessDashboard(v); })
+      .catch(() => { /* non-fatal */ });
+    fetch('/api/revenue-bridge', { cache: 'no-store' })
+      .then((r) => r.ok ? r.json() : null)
+      .then((v) => { if (!cancelled && v) setRevenueBridge(v); })
+      .catch(() => { /* non-fatal */ });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productionFormula, registryRefresh, cosBudget, cosGoal, cosFormula, cosMarket, cosAudience, cosCadence, cosRest, campaignRefresh]);
+  }, [productionFormula, registryRefresh, cosBudget, cosGoal, cosFormula, cosMarket, cosAudience, cosCadence, cosRest, campaignRefresh, biRefresh]);
 
   // Keep the URL in sync with current selection (shareable / bookmarkable)
   // WITHOUT triggering a new run.
@@ -1147,6 +1188,16 @@ function StudioInner() {
             cadence={cosCadence} onCadenceChange={setCosCadence}
             rest={cosRest} onRestChange={setCosRest}
             onRefresh={() => setCampaignRefresh((n) => n + 1)}
+          />
+          <BusinessIntelligencePanel
+            journeyEvents={journeyEvents}
+            attributionReading={attributionReading}
+            productIntelligence={productIntelligence}
+            businessDashboard={businessDashboard}
+            revenueBridge={revenueBridge}
+            assetRegistry={assetRegistry}
+            publicationRegistry={publicationRegistry}
+            onRefresh={() => setBiRefresh((n) => n + 1)}
           />
 
           {preGenStability && (
@@ -8502,6 +8553,307 @@ function CampaignOperatingSystemPanel({
                 </div>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Business Intelligence Panel ───────────────────────────────────
+// Connects creative activity to business outcomes — observation and
+// attribution only. The system never publishes, never spends, never
+// modifies a CRM, never takes autonomous action. Human remains final
+// authority.
+interface BusinessIntelligencePanelProps {
+  journeyEvents: {
+    totalEvents: number;
+    events: JourneyEvent[];
+    reading: CustomerJourneyReading;
+  } | null;
+  attributionReading: AttributionEngineReading | null;
+  productIntelligence: ProductIntelligenceReading | null;
+  businessDashboard: BusinessDashboardReading | null;
+  revenueBridge: {
+    revenueBridge: RevenueLearningBridgeReading;
+    journey: CustomerJourneyReading;
+    attribution: AttributionEngineReading;
+  } | null;
+  assetRegistry: {
+    totalAssets: number;
+    counts: Record<AssetApprovalStatus, number>;
+    assets: AssetRecord[];
+  } | null;
+  publicationRegistry: {
+    totalPublications: number;
+    counts: Record<PublicationStatus, number>;
+    publications: PublicationRecord[];
+  } | null;
+  onRefresh: () => void;
+}
+type BusinessTab =
+  | 'log-event' | 'dashboard' | 'journeys' | 'attribution'
+  | 'product-intel' | 'revenue-bridge';
+function BusinessIntelligencePanel({
+  journeyEvents, attributionReading, productIntelligence, businessDashboard,
+  revenueBridge, assetRegistry, publicationRegistry, onRefresh,
+}: BusinessIntelligencePanelProps) {
+  const [tab, setTab] = useState<BusinessTab>('dashboard');
+  const [operatorId, setOperatorId] = useState('op-derin');
+  const [operatorReason, setOperatorReason] = useState('manual journey event from external analytics');
+  const [eventType, setEventType] = useState<JourneyEventType>('view');
+  const [journeyId, setJourneyId] = useState('');
+  const [publicationChoice, setPublicationChoice] = useState('');
+  const [assetChoice, setAssetChoice] = useState('');
+  const [revenueUSD, setRevenueUSD] = useState('');
+  const [audienceText, setAudienceText] = useState('');
+  const [channelText, setChannelText] = useState('');
+  const [status, setStatus] = useState<string | null>(null);
+
+  const tabs: Array<{ id: BusinessTab; label: string }> = [
+    { id: 'log-event', label: 'Log Event' },
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'journeys', label: 'Journeys' },
+    { id: 'attribution', label: 'Attribution' },
+    { id: 'product-intel', label: 'Product Intel' },
+    { id: 'revenue-bridge', label: 'Revenue Bridge' },
+  ];
+  const eventTypes: JourneyEventType[] = [
+    'impression', 'view', 'click', 'landing-visit', 'lead', 'call', 'purchase', 'repeat-purchase',
+  ];
+
+  async function logEvent() {
+    if (!journeyId) { setStatus('journeyId is required'); return; }
+    try {
+      const res = await fetch('/api/customer-journey', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          operatorId, operatorReason, eventType, journeyId,
+          publicationId: publicationChoice || undefined,
+          assetId: assetChoice || undefined,
+          revenueUSD: revenueUSD ? parseFloat(revenueUSD) : undefined,
+          channel: channelText || undefined,
+          audience: audienceText || undefined,
+          occurredAt: Date.now(),
+        }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error ?? `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setStatus(`logged ${data.event?.eventId}`);
+      onRefresh();
+    } catch (err) {
+      setStatus(`error: ${(err as Error).message}`);
+    }
+  }
+
+  return (
+    <div className="border hairline p-4 space-y-2">
+      <div className="eyebrow">business intelligence · observation + attribution only</div>
+      <div className="text-[10px] text-bone-200/50">
+        The system never publishes, never spends, never modifies a CRM, never takes
+        autonomous action. Operator manually logs journey events from external analytics /
+        CRM / payments. Human remains final authority.
+      </div>
+
+      <div className="flex flex-wrap gap-1 text-[11px] border-t hairline pt-2">
+        {tabs.map((t) => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`px-2 py-1 border hairline ${tab === t.id ? 'text-bone-100' : 'text-bone-200/60'}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {status && <div className="text-[10px] text-amber-300/70 mt-1">{status}</div>}
+
+      <div className="border-t hairline pt-2 text-[10px] text-bone-200/70">
+        {tab === 'log-event' && (
+          <div className="space-y-2">
+            <div className="grid grid-cols-3 gap-1">
+              <input value={operatorId} onChange={(e) => setOperatorId(e.target.value)}
+                placeholder="operator id" className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+              <input value={operatorReason} onChange={(e) => setOperatorReason(e.target.value)}
+                placeholder="operator reason" className="border hairline px-2 py-1 bg-transparent text-bone-200/80 col-span-2" />
+              <select value={eventType} onChange={(e) => setEventType(e.target.value as JourneyEventType)}
+                className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                {eventTypes.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+              <input value={journeyId} onChange={(e) => setJourneyId(e.target.value)}
+                placeholder="anonymized journey id" className="border hairline px-2 py-1 bg-transparent text-bone-200/80 col-span-2" />
+              <select value={publicationChoice} onChange={(e) => setPublicationChoice(e.target.value)}
+                className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                <option value="">-- publication (optional) --</option>
+                {(publicationRegistry?.publications ?? []).map((p) => (
+                  <option key={p.publicationId} value={p.publicationId}>
+                    {p.publicationId} · {p.channel} · MOOD {p.formula}
+                  </option>
+                ))}
+              </select>
+              <select value={assetChoice} onChange={(e) => setAssetChoice(e.target.value)}
+                className="border hairline px-2 py-1 bg-transparent text-bone-200/80">
+                <option value="">-- asset (optional) --</option>
+                {(assetRegistry?.assets ?? []).map((a) => (
+                  <option key={a.assetId} value={a.assetId}>
+                    {a.assetId} · {a.packageType} · MOOD {a.formula}
+                  </option>
+                ))}
+              </select>
+              <input value={revenueUSD} onChange={(e) => setRevenueUSD(e.target.value)}
+                placeholder="revenue USD (purchase only)" className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+              <input value={audienceText} onChange={(e) => setAudienceText(e.target.value)}
+                placeholder="audience (optional)" className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+              <input value={channelText} onChange={(e) => setChannelText(e.target.value)}
+                placeholder="channel (optional)" className="border hairline px-2 py-1 bg-transparent text-bone-200/80" />
+            </div>
+            <button onClick={logEvent} className="px-2 py-1 border hairline text-bone-200/80">
+              log journey event
+            </button>
+          </div>
+        )}
+        {tab === 'dashboard' && businessDashboard && (
+          <div>
+            <div className="text-bone-200/50 italic mb-2">
+              all metrics descriptive only · never predictive · operator validates against external analytics
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[businessDashboard.leads, businessDashboard.customers, businessDashboard.revenue,
+                businessDashboard.repeatPurchases, businessDashboard.contentVolume,
+                businessDashboard.assetVolume, businessDashboard.campaignVolume,
+                businessDashboard.attributionCoverage].map((m) => (
+                <div key={m.label} className="border-l border-bone-200/20 pl-2">
+                  <div className="text-bone-200/50">{m.label}</div>
+                  <div className="text-bone-100 text-sm">
+                    {m.unit === 'USD' ? '$' : ''}{typeof m.value === 'number' ? m.value.toLocaleString() : m.value}
+                    {m.unit === 'rate (0..1)' ? '' : ` ${m.unit}`}
+                  </div>
+                  <div className="text-bone-200/40">{m.observation}</div>
+                </div>
+              ))}
+            </div>
+            {businessDashboard.formulaActivity.length > 0 && (
+              <div className="border-t hairline pt-2 mt-2">
+                <div className="eyebrow mb-1">formula activity</div>
+                <div className="grid grid-cols-2 gap-x-2">
+                  {businessDashboard.formulaActivity.map((f) => (
+                    <div key={f.formula} className="text-bone-200/70">
+                      MOOD {f.formula} · pubs {f.publicationCount} · assets {f.assetCount} · ${f.observedRevenueUSD.toLocaleString()}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {businessDashboard.audienceActivity.length > 0 && (
+              <div className="border-t hairline pt-2 mt-2">
+                <div className="eyebrow mb-1">audience activity</div>
+                {businessDashboard.audienceActivity.slice(0, 8).map((a) => (
+                  <div key={a.audience} className="text-bone-200/70">
+                    {a.audience} · pubs {a.publicationCount} · journeys {a.observedJourneys} · ${a.observedRevenueUSD.toLocaleString()}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {tab === 'journeys' && journeyEvents && (
+          <div>
+            <div className="text-bone-200/60 mb-2">
+              {journeyEvents.totalEvents} event(s) · {journeyEvents.reading.totalJourneys} journey(s)
+            </div>
+            <div className="grid grid-cols-4 gap-x-2 mb-2">
+              {Object.entries(journeyEvents.reading.stageCounts).map(([k, v]) => (
+                <div key={k} className="text-bone-200/70 flex justify-between">
+                  <span>{k}</span><span>{v}</span>
+                </div>
+              ))}
+            </div>
+            <div className="border-t hairline pt-2 mt-2">
+              <div className="eyebrow mb-1">drop-off locations</div>
+              {journeyEvents.reading.dropOffLocations.map((d, i) => (
+                <div key={i} className="text-bone-200/70">
+                  {d.fromStage} → {d.toStage} · dropoff {Math.round(d.dropoffShare * 100)}% ({d.dropoffCount} / {d.dropoffCount + d.progressedCount})
+                </div>
+              ))}
+            </div>
+            <div className="border-t hairline pt-2 mt-2">
+              <div className="eyebrow mb-1">conversion paths (top 6)</div>
+              {journeyEvents.reading.conversionPaths.slice(0, 6).map((p) => (
+                <div key={p.pathId} className="text-bone-200/70">
+                  · {p.stageSequence.join(' → ')} · count {p.observedCount} · ${p.observedRevenueUSD.toLocaleString()}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {tab === 'attribution' && attributionReading && (
+          <div>
+            <div className="text-bone-200/60 mb-2">
+              {attributionReading.totalJourneys} journey(s) · ${attributionReading.totalRevenueUSD.toLocaleString()} revenue · coverage {Math.round((attributionReading.attributionCoverage ?? 0) * 100)}%
+            </div>
+            <div className="text-bone-200/50 italic mb-2">historical associations only · operator review required</div>
+            {attributionReading.dimensions.map((dim) => (
+              <div key={dim.dimension} className="border-t hairline pt-2 mb-2">
+                <div className="eyebrow mb-1">{dim.dimension}</div>
+                {dim.rows.slice(0, 6).map((r) => (
+                  <div key={r.entityKey} className="text-bone-200/70">
+                    · {r.entityLabel} · journeys {r.observedJourneys} · purchases {r.observedPurchases} · ${r.observedRevenueUSD.toLocaleString()}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+        {tab === 'product-intel' && productIntelligence && (
+          <div>
+            <div className="text-bone-200/50 italic mb-2">cross-formula / cross-audience observations · never recommendations</div>
+            {[productIntelligence.crossFormula, productIntelligence.crossAudience,
+              productIntelligence.crossCreativeAngle, productIntelligence.crossAssetType,
+              productIntelligence.crossCampaignMode].map((dim) => (
+              <div key={dim.dimension} className="border-t hairline pt-2 mb-2">
+                <div className="eyebrow mb-1">{dim.dimension}</div>
+                {dim.rows.slice(0, 6).map((r) => (
+                  <div key={r.label} className="text-bone-200/70">
+                    · {r.label} · journeys {r.observedJourneys} · completion {Math.round(r.journeyCompletionRate * 100)}% · ${r.observedRevenueUSD.toLocaleString()}
+                  </div>
+                ))}
+              </div>
+            ))}
+            {productIntelligence.crossCuts.length > 0 && (
+              <div className="border-t hairline pt-2">
+                <div className="eyebrow mb-1">cross-cuts</div>
+                {productIntelligence.crossCuts.slice(0, 8).map((c) => (
+                  <div key={c.observationId} className="text-bone-200/70">
+                    · {c.observation}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {tab === 'revenue-bridge' && revenueBridge && (
+          <div>
+            <div className="text-bone-200/50 italic mb-2">
+              Observation only. Never auto-modification. Never auto-optimization.
+              Never auto-selection. Operator review required.
+            </div>
+            {revenueBridge.revenueBridge.revenueSignals.map((sig) => (
+              <div key={sig.signalId} className="border-l border-bone-200/20 pl-2 mb-2">
+                <div><span className="text-bone-100">{sig.signalId}</span> · strength {sig.strength}/10</div>
+                <div className="text-bone-200/50">{sig.observation}</div>
+                <div className="text-bone-200/40">considered by: {sig.consideredBy.join(' · ')}</div>
+              </div>
+            ))}
+            {revenueBridge.revenueBridge.operatorExplorations.length > 0 && (
+              <div className="border-t hairline pt-2 mt-2">
+                <div className="eyebrow mb-1">operator explorations · never recommendations</div>
+                {revenueBridge.revenueBridge.operatorExplorations.map((e, i) => (
+                  <div key={i} className="text-bone-200/70">· {e}</div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
