@@ -518,6 +518,10 @@ async function main() {
       //    downstream entities, NEVER auto-completes the session,
       //    NEVER calls external APIs) ──
       'app/api/onboarding/route.ts',
+      // ── growth operating system (operator-supervised POST; the
+      //    activation NEVER publishes, NEVER launches a campaign,
+      //    NEVER spends money, NEVER calls external APIs) ──
+      'app/api/workspace-activation/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {
