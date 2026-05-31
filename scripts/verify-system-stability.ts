@@ -522,6 +522,11 @@ async function main() {
       //    activation NEVER publishes, NEVER launches a campaign,
       //    NEVER spends money, NEVER calls external APIs) ──
       'app/api/workspace-activation/route.ts',
+      // ── workflow orchestration layer (operator-supervised POST;
+      //    the orchestrator NEVER auto-advances, NEVER auto-publishes,
+      //    NEVER spends money, NEVER calls external APIs) ──
+      'app/api/workflows/route.ts',
+      'app/api/workspace-quick-start/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {
