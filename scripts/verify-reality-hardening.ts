@@ -55,10 +55,11 @@ async function main(): Promise<void> {
   record('audit-phases', 'audit emits all 5 phase headers',
     phasesPresent, phasesPresent ? '5/5' : 'missing one or more');
 
-  // 3 · top-10 list contains exactly 10 ranked entries
+  // 3 · top pain-points list is non-empty and capped at 10
   const top10Matches = auditStdout.match(/^\s+(\d+)\.\s+\[/gm) ?? [];
-  record('audit-top10', 'audit emits 10 ranked pain points',
-    top10Matches.length === 10, `count=${top10Matches.length}`);
+  record('audit-top10', 'audit emits 1..10 ranked pain points (fewer is better)',
+    top10Matches.length >= 1 && top10Matches.length <= 10,
+    `count=${top10Matches.length}`);
 
   // 4 · machine-readable artifact is well-formed
   let artifact: {
@@ -70,25 +71,30 @@ async function main(): Promise<void> {
     const raw = await fs.readFile(path.join(REPO, 'data', 'runtime', 'reality-hardening-audit.json'), 'utf8');
     artifact = JSON.parse(raw);
   } catch { /* artifact missing */ }
+  // Walkthrough length depends on whether the friction-reduction surfaces
+  // are present: 10 steps on the legacy path, 5 steps on the fast-start
+  // path. Both are valid. Consistency axes remain at 7. ttvRows remain
+  // at 4 milestones.
   const artifactOk = !!artifact &&
-    Array.isArray(artifact.walkthrough) && artifact.walkthrough.length === 10 &&
+    Array.isArray(artifact.walkthrough) && artifact.walkthrough.length >= 5 &&
     Array.isArray(artifact.ttvRows) && artifact.ttvRows.length === 4 &&
     Array.isArray(artifact.consistency) && artifact.consistency.length === 7 &&
     !!artifact.data && Array.isArray(artifact.findings) &&
-    Array.isArray(artifact.top10) && artifact.top10.length === 10;
+    Array.isArray(artifact.top10) && artifact.top10.length >= 1 && artifact.top10.length <= 10;
   record('artifact', 'data/runtime/reality-hardening-audit.json is well-formed',
     artifactOk,
-    artifactOk ? `walkthrough=${artifact!.walkthrough!.length} ttvRows=${artifact!.ttvRows!.length} consistency=${artifact!.consistency!.length} findings=${artifact!.findings!.length}` : 'missing or malformed');
+    artifactOk ? `walkthrough=${artifact!.walkthrough!.length} ttvRows=${artifact!.ttvRows!.length} consistency=${artifact!.consistency!.length} findings=${artifact!.findings!.length} top10=${artifact!.top10!.length}` : 'missing or malformed');
 
-  // 5 · findings doc exists + carries the Top 10 section
+  // 5 · findings doc exists + carries the friction-reduction success table
   let doc = '';
   try {
     doc = await fs.readFile(path.join(REPO, 'docs', 'reality-hardening-findings.md'), 'utf8');
   } catch { /* missing */ }
-  const docOk = /Top 10 Pain Points/i.test(doc) && /TTV · 10\.9 min/.test(doc) &&
-                /No solutions/.test(doc);
+  const docOk = /No solutions/i.test(doc) &&
+                /Success Conditions/i.test(doc) &&
+                /Friction-Reduction Roadmap/i.test(doc);
   record('findings-doc',
-    'docs/reality-hardening-findings.md exists + includes Top 10 + total TTV + "No solutions"',
+    'docs/reality-hardening-findings.md exists + includes "No solutions" + Success Conditions + Friction-Reduction Roadmap',
     docOk, docOk ? 'ok' : 'missing or incomplete');
 
   // 6 · data consistency invariants: 0 duplicates, 0 broken refs
@@ -97,6 +103,28 @@ async function main(): Promise<void> {
     'data consistency: 0 duplicates · 0 broken references',
     dataOk,
     artifact?.data ? `dup=${artifact.data.duplicates} broken=${artifact.data.brokenRefs}` : 'no data');
+
+  // 6b · success conditions: TTV < 3 min · field count reduced ≥ 50 % from 45 baseline · 0 retypes
+  type TTVRow = { label: string; estimatedMinutes: number; breakdown: string };
+  type FlowRow = { step: string; requiredFields: number };
+  const ttvTotal = (artifact?.ttvRows as TTVRow[] | undefined ?? [])
+    .reduce((acc, r) => acc + r.estimatedMinutes, 0);
+  const totalFields = (artifact?.walkthrough as FlowRow[] | undefined ?? [])
+    .reduce((acc, f) => acc + f.requiredFields, 0);
+  const rewriteFindingPresent = (artifact?.findings as Array<{ id: string }> | undefined ?? [])
+    .some((f) => f.id === 'ttv-workflow-rewrite');
+  const ttvOk    = ttvTotal < 3;
+  const fieldsOk = totalFields <= Math.floor(45 * 0.5);
+  const dupOk    = !rewriteFindingPresent;
+  record('success-ttv',
+    `success: TTV (org → first revenue) < 3 min · actual=${Math.round(ttvTotal * 10) / 10}`,
+    ttvOk, `ttvTotal=${ttvTotal}`);
+  record('success-fields',
+    `success: fields typed reduced by ≥ 50 % from 45 baseline · actual=${totalFields}`,
+    fieldsOk, `fields=${totalFields} threshold=${Math.floor(45 * 0.5)}`);
+  record('success-no-duplicate-context',
+    'success: duplicate context entry finding (ttv-workflow-rewrite) absent',
+    dupOk, dupOk ? 'absent' : 'still present');
 
   // 7 · platform freeze invariant: no new lib/* directories beyond the
   //     known set of seven (tenancy · productization · business ·

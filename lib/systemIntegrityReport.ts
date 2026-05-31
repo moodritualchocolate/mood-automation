@@ -151,6 +151,12 @@ const KNOWN_ROUTES: string[] = [
   '/api/workflow-templates',
   '/api/workflows',
   '/api/workspace-quick-start',
+  '/api/brand',
+  '/api/product',
+  '/api/workspace-context',
+  '/api/fast-start',
+  '/api/simple-performance',
+  '/api/channel-unified',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.

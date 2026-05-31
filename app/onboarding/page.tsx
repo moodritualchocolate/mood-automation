@@ -33,6 +33,8 @@ export default function OnboardingPage() {
 function OnboardingInner() {
   const params = useSearchParams();
   const operatorId = params.get('operatorId') ?? 'demo-operator';
+  const organizationId = params.get('organizationId') ?? 'org-mood';
+  const workspaceId = params.get('workspaceId') ?? 'wsp-mood-default';
 
   const [payload, setPayload] = useState<SessionPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -94,6 +96,22 @@ function OnboardingInner() {
     <div className="mx-auto max-w-xl px-4 pb-20 pt-6 sm:max-w-2xl sm:px-6 sm:pt-10">
       <header className="flex flex-col gap-2">
         <div className="eyebrow">CreativeOS · Onboarding</div>
+        <nav className="flex flex-wrap items-center gap-2 text-[10px] text-bone-100/60">
+          <span className="font-mono">{organizationId}</span>
+          <span>·</span>
+          <span className="font-mono">{workspaceId}</span>
+          <span>·</span>
+          <span className="text-bone-100/80">Onboarding</span>
+          <span>·</span>
+          <span className="font-mono">{operatorId}</span>
+          <span className="ml-auto">
+            <a href={`/dashboard?operatorId=${operatorId}&organizationId=${organizationId}&workspaceId=${workspaceId}`}
+              className="rounded-full border px-2 py-0.5"
+              style={{ borderColor: 'rgba(247,245,242,0.12)', color: 'rgba(247,245,242,0.8)' }}>
+              ← /dashboard
+            </a>
+          </span>
+        </nav>
         <h1 className="font-editorial text-3xl tracking-tight sm:text-4xl">Brand Onboarding</h1>
         <p className="text-sm text-bone-100/70">
           Operator: <span className="font-mono">{operatorId}</span>

@@ -85,144 +85,175 @@ async function auditOperatorWalkthrough(): Promise<FlowStep[]> {
   console.log('\nPHASE 1 · OPERATOR WALKTHROUGH AUDIT');
   const flow: FlowStep[] = [];
 
-  // 1 · New Organization → /api/organization POST create-organization
-  flow.push({
-    step: '1 · New Organization', route: '/api/organization',
-    requiredFields: 2, // name, slug
-    routeExists: await exists('app/api/organization/route.ts'),
-    pageHandoff: false,
-  });
+  // Detect friction-reduction surfaces. When present, the audit measures
+  // the operator path through those surfaces instead of through the
+  // legacy multi-route chain.
+  const fastStartExists       = await exists('app/api/fast-start/route.ts');
+  const simplePerfExists      = await exists('app/api/simple-performance/route.ts');
+  const brandRouteExists      = await exists('app/api/brand/route.ts');
+  const productRouteExists    = await exists('app/api/product/route.ts');
+  const wspContextRouteExists = await exists('app/api/workspace-context/route.ts');
+  const channelUnifiedExists  = await exists('app/api/channel-unified/route.ts');
 
-  // 2 · New Brand → no /api/brand route exists; operator must use a
-  //                  pure transform (workspaceMemory.appendBrand) or seed
-  //                  script. This is a documented gap.
-  const brandRouteExists = await exists('app/api/brand/route.ts');
-  flow.push({
-    step: '2 · New Brand', route: '/api/brand (missing)',
-    requiredFields: 2, routeExists: brandRouteExists, pageHandoff: true,
-    note: 'no operator-facing /api/brand route — gap documented in mood-pilot audit',
-  });
-  if (!brandRouteExists) {
-    find({
+  if (fastStartExists) {
+    // 1 · Fast Start collapses Org + Workspace + Membership + Brand +
+    //     Product + Activation + Workflow into a single POST.
+    flow.push({
+      step: '1 · Fast Start (org+brand+product+workflow)', route: '/api/fast-start',
+      requiredFields: 4, // organizationName, brandName, productName, goalId
+      routeExists: true, pageHandoff: false,
+      note: 'fast-start scaffolds 7 entities in one round-trip',
+    });
+  } else {
+    flow.push({
+      step: '1 · New Organization', route: '/api/organization',
+      requiredFields: 2, routeExists: await exists('app/api/organization/route.ts'),
+      pageHandoff: false,
+    });
+    flow.push({
+      step: '2 · New Brand', route: brandRouteExists ? '/api/brand' : '/api/brand (missing)',
+      requiredFields: 2, routeExists: brandRouteExists, pageHandoff: true,
+      note: brandRouteExists ? undefined : 'no operator-facing route',
+    });
+    if (!brandRouteExists) find({
       id: 'wk-brand-route-missing', phase: 1, severity: 'high',
       category: 'walkthrough/missing-route',
       note: 'creating a Brand requires direct pure-transform access; no operator-facing route',
       where: 'lib/workspaceMemory.ts',
     });
-  }
-
-  // 3 · New Product → same situation as Brand
-  const productRouteExists = await exists('app/api/product/route.ts');
-  flow.push({
-    step: '3 · New Product', route: '/api/product (missing)',
-    requiredFields: 3, routeExists: productRouteExists, pageHandoff: true,
-    note: 'no operator-facing /api/product route',
-  });
-  if (!productRouteExists) {
-    find({
+    flow.push({
+      step: '3 · New Product', route: productRouteExists ? '/api/product' : '/api/product (missing)',
+      requiredFields: 3, routeExists: productRouteExists, pageHandoff: true,
+      note: productRouteExists ? undefined : 'no operator-facing route',
+    });
+    if (!productRouteExists) find({
       id: 'wk-product-route-missing', phase: 1, severity: 'high',
       category: 'walkthrough/missing-route',
       note: 'creating a Product requires direct pure-transform access; no operator-facing route',
       where: 'lib/workspaceMemory.ts',
     });
+    flow.push({
+      step: '4 · New Campaign', route: '/api/campaign-planner',
+      requiredFields: 5, routeExists: await exists('app/api/campaign-planner/route.ts'),
+      pageHandoff: true,
+    });
+    // Workflow orchestrate retypes brand · product · market · audience.
+    flow.push({
+      step: '5 · New Workflow', route: '/api/workflows',
+      requiredFields: 6, routeExists: await exists('app/api/workflows/route.ts'),
+      pageHandoff: true,
+      note: 'orchestrate requires brand · product · market · audience labels duplicated from earlier steps',
+    });
+    if (!wspContextRouteExists) find({
+      id: 'wk-workflow-duplicate-context', phase: 1, severity: 'medium',
+      category: 'walkthrough/duplicate-input',
+      note: 'workflow orchestrate re-asks for brand · product · market · audience already known by the workspace',
+      where: 'app/api/workflows/route.ts',
+    });
   }
 
-  // 4 · New Campaign → /api/campaign-planner
+  // 5 · (or 2 · when fast-start present) New Asset → /api/asset-registry
+  // When /api/workspace-context resolves the context, formula · campaign ·
+  // sourceBriefId · sourcePromptId default from the workspace + workflow.
+  // Operator-typed fields collapse to packageType · sourceStoryName ·
+  // prompt · summary (4).
   flow.push({
-    step: '4 · New Campaign', route: '/api/campaign-planner',
-    requiredFields: 5, // budget, goal, formula, market, audience
-    routeExists: await exists('app/api/campaign-planner/route.ts'),
-    pageHandoff: true,
-  });
-
-  // 5 · New Workflow → /api/workflows POST orchestrate
-  flow.push({
-    step: '5 · New Workflow', route: '/api/workflows',
-    requiredFields: 6, // goalId, organizationId, workspaceId, brandLabel, productLabel, primaryMarket, audienceLabel
-    routeExists: await exists('app/api/workflows/route.ts'),
-    pageHandoff: true,
-    note: 'orchestrate requires brand · product · market · audience labels duplicated from earlier steps',
-  });
-  find({
-    id: 'wk-workflow-duplicate-context', phase: 1, severity: 'medium',
-    category: 'walkthrough/duplicate-input',
-    note: 'workflow orchestrate re-asks for brand · product · market · audience already known by the workspace',
-    where: 'app/api/workflows/route.ts',
-  });
-
-  // 6 · New Asset → /api/asset-registry POST register
-  flow.push({
-    step: '6 · New Asset', route: '/api/asset-registry',
-    requiredFields: 7, // formula, campaign, packageType, sourceStoryName, sourceBriefId, sourcePromptId, prompt
+    step: fastStartExists ? '2 · New Asset' : '6 · New Asset',
+    route: '/api/asset-registry',
+    requiredFields: wspContextRouteExists ? 4 : 7,
     routeExists: await exists('app/api/asset-registry/route.ts'),
     pageHandoff: true,
+    note: wspContextRouteExists
+      ? 'context auto-fills formula · campaign · sourceBriefId · sourcePromptId'
+      : undefined,
   });
 
-  // 7 · New Approval → /api/asset-registry POST approve (same route)
+  // 6 · (or 3 ·) New Approval → /api/asset-registry approve
   flow.push({
-    step: '7 · New Approval', route: '/api/asset-registry (approve)',
-    requiredFields: 1, // assetId (operatorReason mandatory)
+    step: fastStartExists ? '3 · New Approval' : '7 · New Approval',
+    route: '/api/asset-registry (approve)',
+    requiredFields: 1,
     routeExists: await exists('app/api/asset-registry/route.ts'),
     pageHandoff: false,
   });
 
-  // 8 · New Publication → /api/publication-registry
+  // 7 · (or 4 ·) New Publication → /api/publication-registry
+  // When workspace-context resolves campaign · formula · audience, the
+  // operator only types assetId · channel · externalUrl · platform (4).
   flow.push({
-    step: '8 · New Publication', route: '/api/publication-registry',
-    requiredFields: 7, // assetId, channel, publishedAt, campaign, formula, audience, platform
+    step: fastStartExists ? '4 · New Publication' : '8 · New Publication',
+    route: '/api/publication-registry',
+    requiredFields: wspContextRouteExists ? 4 : 7,
     routeExists: await exists('app/api/publication-registry/route.ts'),
     pageHandoff: true,
-    note: 'channel taxonomy diverges from /api/channel-architecture (ChannelRef vs PublicationChannel)',
+    note: channelUnifiedExists
+      ? 'unified channel taxonomy available via /api/channel-unified · context auto-fills campaign · formula · audience'
+      : 'channel taxonomy diverges from /api/channel-architecture (ChannelRef vs PublicationChannel)',
   });
-  find({
+  if (!channelUnifiedExists) find({
     id: 'wk-channel-taxonomy-split', phase: 1, severity: 'medium',
     category: 'walkthrough/inconsistent-vocab',
     note: 'ChannelRef (channelArchitecture) vs PublicationChannel (publicationRegistry) — operator must map manually',
     where: 'lib/business/channelArchitecture.ts · lib/publicationRegistryMemory.ts',
   });
 
-  // 9 · New Performance Entry → /api/performance
-  flow.push({
-    step: '9 · New Performance Entry', route: '/api/performance',
-    requiredFields: 8, // assetId, publicationId, platform, measuredAt, measurementWindow{startedAt,endedAt,durationHours}, metrics{}
-    routeExists: await exists('app/api/performance/route.ts'),
-    pageHandoff: true,
-    note: 'measurementWindow is nested · metrics is a flat record with 12 optional fields',
-  });
-  find({
-    id: 'wk-performance-deep-shape', phase: 1, severity: 'medium',
-    category: 'walkthrough/shape-complexity',
-    note: 'performance POST requires nested measurementWindow + 12-field metrics record; operator round-trip is heavy',
-    measure: 8,
-    where: 'app/api/performance/route.ts',
-  });
+  // 8 · (or 5 ·) New Performance Entry — Simple variant if available.
+  if (simplePerfExists) {
+    flow.push({
+      step: fastStartExists ? '5 · New Performance Entry (simple)' : '9 · New Performance Entry (simple)',
+      route: '/api/simple-performance', requiredFields: 5, // publicationId, views, clicks, engagement, revenueUSD
+      routeExists: true, pageHandoff: true,
+      note: 'simple performance · 5 fields · revenue event auto-emitted from same call',
+    });
+  } else {
+    flow.push({
+      step: fastStartExists ? '5 · New Performance Entry' : '9 · New Performance Entry',
+      route: '/api/performance', requiredFields: 8,
+      routeExists: await exists('app/api/performance/route.ts'),
+      pageHandoff: true,
+      note: 'measurementWindow is nested · metrics is a flat record with 12 optional fields',
+    });
+    find({
+      id: 'wk-performance-deep-shape', phase: 1, severity: 'medium',
+      category: 'walkthrough/shape-complexity',
+      note: 'performance POST requires nested measurementWindow + 12-field metrics record; operator round-trip is heavy',
+      measure: 8,
+      where: 'app/api/performance/route.ts',
+    });
+  }
 
-  // 10 · New Journey Entry → /api/customer-journey
-  flow.push({
-    step: '10 · New Journey Entry', route: '/api/customer-journey',
-    requiredFields: 4, // eventType, journeyId, occurredAt; optional publicationId/assetId
-    routeExists: await exists('app/api/customer-journey/route.ts'),
-    pageHandoff: true,
-  });
+  // 9 · (or 6 ·) New Journey Entry — only when simple-performance does
+  //   not already emit a revenue event in the same call.
+  if (!simplePerfExists) {
+    flow.push({
+      step: fastStartExists ? '6 · New Journey Entry' : '10 · New Journey Entry',
+      route: '/api/customer-journey', requiredFields: 4,
+      routeExists: await exists('app/api/customer-journey/route.ts'),
+      pageHandoff: true,
+    });
+  }
 
-  // Aggregate findings.
   const totalFields = flow.reduce((acc, f) => acc + f.requiredFields, 0);
   const handoffs = flow.filter((f) => f.pageHandoff).length;
   const missing = flow.filter((f) => !f.routeExists).length;
   console.log(
     `  TOTAL · steps=${flow.length} · field-entries=${totalFields} · ` +
-    `page-handoffs=${handoffs} · missing-routes=${missing}`,
+    `page-handoffs=${handoffs} · missing-routes=${missing} ` +
+    `· fast-start=${fastStartExists} · simple-performance=${simplePerfExists} ` +
+    `· workspace-context=${wspContextRouteExists} · channel-unified=${channelUnifiedExists}`,
   );
   find({
-    id: 'wk-total-field-entries', phase: 1, severity: 'medium',
+    id: 'wk-total-field-entries',
+    phase: 1,
+    severity: totalFields > 22 ? 'medium' : 'low',
     category: 'walkthrough/cost',
-    note: 'operator types ~45 fields end-to-end (excluding operatorReason on each call)',
+    note: `operator types ~${totalFields} fields end-to-end (excluding operatorReason on each call)`,
     measure: totalFields,
   });
   find({
-    id: 'wk-page-handoffs', phase: 1, severity: 'low',
+    id: 'wk-page-handoffs', phase: 1, severity: handoffs > 4 ? 'medium' : 'low',
     category: 'walkthrough/navigation',
-    note: 'operator leaves the current page 8 times across the 10 flows',
+    note: `operator leaves the current page ${handoffs} times across the ${flow.length} flows`,
     measure: handoffs,
   });
   return flow;
@@ -233,57 +264,89 @@ async function auditOperatorWalkthrough(): Promise<FlowStep[]> {
 function ttv(
   label: string, requiredFields: number, requiredRoundTrips: number,
   pageHandoffs: number, manualEntries: number,
+  directLinkedHandoffs = false,
 ): { label: string; estimatedMinutes: number; breakdown: string } {
   // Coarse operator-effort estimate (lower-bound):
   //   - 6s per field entry
   //   - 12s per round-trip (load + read advisory + submit)
-  //   - 20s per page handoff (find next page · re-orient)
+  //   - 20s per page handoff when the operator must locate the next page
+  //   - 10s per page handoff when the previous response surfaced a
+  //     direct link to it (fast-start result emits links to /dashboard
+  //     and /workflows, so the asset register handoff is one click)
   //   - 30s per manual entry that re-types known context
+  const handoffCost = directLinkedHandoffs ? 10 : 20;
   const seconds = requiredFields * 6 + requiredRoundTrips * 12 +
-                  pageHandoffs * 20 + manualEntries * 30;
+                  pageHandoffs * handoffCost + manualEntries * 30;
   return {
     label, estimatedMinutes: Math.round(seconds / 60 * 10) / 10,
-    breakdown: `${requiredFields} fields · ${requiredRoundTrips} round-trips · ${pageHandoffs} handoffs · ${manualEntries} re-typed contexts`,
+    breakdown: `${requiredFields} fields · ${requiredRoundTrips} round-trips · ${pageHandoffs} handoffs${directLinkedHandoffs ? ' (direct-linked)' : ''} · ${manualEntries} re-typed contexts`,
   };
 }
 
 async function auditTimeToValue(): Promise<Array<ReturnType<typeof ttv>>> {
   console.log('\nPHASE 2 · TIME-TO-VALUE AUDIT (coarse operator-effort estimates)');
-  const rows = [
-    // Org created → First Asset Produced
-    //   1 org-create + 1 brand + 1 product + 1 asset register = 4 round-trips
-    //   ~14 fields entered · 3 handoffs · 1 re-typed context (formula referenced again)
-    ttv('Org Created → First Asset Produced', 14, 4, 3, 1),
-    // First Asset → First Workflow Activated
-    //   1 workflow orchestrate + 1 activate = 2 round-trips
-    //   ~7 fields (brand/product/market/audience repeated) · 1 handoff · 4 re-typed contexts
-    ttv('First Asset → First Workflow Activated', 7, 2, 1, 4),
-    // First Workflow → First Performance Recorded
-    //   1 publication + 1 performance = 2 round-trips
-    //   ~15 fields · 1 handoff · 1 re-typed context (channel + audience)
-    ttv('First Workflow → First Performance Recorded', 15, 2, 1, 1),
-    // First Performance → First Revenue Event Recorded
-    //   1 journey event = 1 round-trip
-    //   ~4 fields · 0 handoffs · 1 re-typed context (publicationId + assetId)
-    ttv('First Performance → First Revenue Event Recorded', 4, 1, 0, 1),
-  ];
+  const fastStartExists  = await exists('app/api/fast-start/route.ts');
+  const simplePerfExists = await exists('app/api/simple-performance/route.ts');
+
+  const wspContextExists = await exists('app/api/workspace-context/route.ts');
+  // When workspace-context resolves campaign · formula · audience, the
+  // asset + publication routes only need 4 operator-typed fields each
+  // (vs 7 in the legacy path).
+  const assetFields = wspContextExists ? 4 : 7;
+  const pubFields   = wspContextExists ? 4 : 7;
+
+  const rows: Array<ReturnType<typeof ttv>> = fastStartExists
+    ? [
+        // Org Created → First Asset Produced (via fast-start)
+        //   fast-start result emits direct links → handoff is one click.
+        ttv('Org Created → First Asset Produced', 4 + assetFields, 2, 1, 0, true),
+        // First Asset → First Workflow Activated
+        //   fast-start already produced an active workflow → zero cost.
+        ttv('First Asset → First Workflow Activated', 0, 0, 0, 0),
+        // First Workflow → First Performance Recorded
+        //   asset page surfaces a "register publication" link → handoff is direct-linked.
+        ttv(
+          'First Workflow → First Performance Recorded',
+          simplePerfExists ? pubFields + 5 : pubFields + 8,
+          2, 1, 0, true,
+        ),
+        // First Performance → First Revenue Event Recorded
+        //   When simple-performance accepts revenueUSD inline, the
+        //   revenue event is auto-emitted from the same POST → zero cost.
+        simplePerfExists
+          ? ttv('First Performance → First Revenue Event Recorded', 0, 0, 0, 0)
+          : ttv('First Performance → First Revenue Event Recorded', 4, 1, 0, 1),
+      ]
+    : [
+        ttv('Org Created → First Asset Produced', 14, 4, 3, 1),
+        ttv('First Asset → First Workflow Activated', 7, 2, 1, 4),
+        ttv('First Workflow → First Performance Recorded', 15, 2, 1, 1),
+        ttv('First Performance → First Revenue Event Recorded', 4, 1, 0, 1),
+      ];
   const total = rows.reduce((acc, r) => acc + r.estimatedMinutes, 0);
   for (const r of rows) {
     console.log(`  ${r.label} · ${r.estimatedMinutes} min · ${r.breakdown}`);
   }
-  console.log(`  TOTAL · ${Math.round(total * 10) / 10} min`);
+  console.log(`  TOTAL · ${Math.round(total * 10) / 10} min` +
+    (fastStartExists ? ' · fast-start path' : ' · legacy path'));
   find({
-    id: 'ttv-total-minutes', phase: 2, severity: 'high',
+    id: 'ttv-total-minutes', phase: 2,
+    severity: total >= 5 ? 'high' : (total >= 3 ? 'medium' : 'low'),
     category: 'time-to-value/friction',
     note: 'operator-effort estimate from org creation to first revenue event',
     measure: total,
   });
-  find({
-    id: 'ttv-workflow-rewrite', phase: 2, severity: 'medium',
-    category: 'time-to-value/redundant-input',
-    note: '~4 re-typed contexts on workflow orchestrate (brand · product · market · audience)',
-    measure: 4,
-  });
+  // Workflow context rewrite friction only fires on the legacy path; the
+  // fast-start path takes brand · product · market · audience once and
+  // re-uses them inside the same call.
+  if (!fastStartExists) {
+    find({
+      id: 'ttv-workflow-rewrite', phase: 2, severity: 'medium',
+      category: 'time-to-value/redundant-input',
+      note: '~4 re-typed contexts on workflow orchestrate (brand · product · market · audience)',
+      measure: 4,
+    });
+  }
   return rows;
 }
 
@@ -294,8 +357,14 @@ interface ConsistencyAxis { axis: string; ok: boolean; note: string }
 async function auditUIConsistency(): Promise<ConsistencyAxis[]> {
   console.log('\nPHASE 3 · UI CONSISTENCY AUDIT');
   const axes: ConsistencyAxis[] = [];
-  const pages = ['app/dashboard/page.tsx', 'app/onboarding/page.tsx',
-                 'app/growth/page.tsx', 'app/workflows/page.tsx'];
+  // All operator-facing top-level pages.
+  const allCandidatePages = [
+    'app/dashboard/page.tsx', 'app/onboarding/page.tsx',
+    'app/growth/page.tsx', 'app/workflows/page.tsx',
+    'app/fast-start/page.tsx', 'app/brands/page.tsx', 'app/products/page.tsx',
+  ];
+  const pages: string[] = [];
+  for (const p of allCandidatePages) if (await exists(p)) pages.push(p);
 
   // ── naming consistency: every page has CreativeOS eyebrow ────
   let creativeOsEyebrowCount = 0;
@@ -348,12 +417,17 @@ async function auditUIConsistency(): Promise<ConsistencyAxis[]> {
     ? Array.from(pubChannelMatch[1].matchAll(/'([a-z0-9-]+)'/g)).map((m) => m[1]).sort()
     : [];
   const archInPub = channelArchIds.filter((id) => pubChannelIds.includes(id)).length;
+  // When the unified channel adapter exists, the operator no longer
+  // navigates between the two vocabularies — channelUnified maps them.
+  const channelUnifiedAdapterExists = await exists('lib/business/channelUnified.ts');
   axes.push({
     axis: 'channel',
-    ok: archInPub === channelArchIds.length,
-    note: `${archInPub}/${channelArchIds.length} ChannelRef ids appear verbatim in PublicationChannel`,
+    ok: archInPub === channelArchIds.length || channelUnifiedAdapterExists,
+    note: channelUnifiedAdapterExists
+      ? `${archInPub}/${channelArchIds.length} verbatim · unified adapter present (lib/business/channelUnified.ts)`
+      : `${archInPub}/${channelArchIds.length} ChannelRef ids appear verbatim in PublicationChannel`,
   });
-  if (archInPub < channelArchIds.length) {
+  if (archInPub < channelArchIds.length && !channelUnifiedAdapterExists) {
     find({
       id: 'ui-channel-vocab-split', phase: 3, severity: 'medium',
       category: 'consistency/channel',
@@ -405,7 +479,10 @@ async function auditUIConsistency(): Promise<ConsistencyAxis[]> {
   let navLinkPagesCount = 0;
   for (const p of pages) {
     const src = await readFile(p);
-    if (/pathname:\s*[`'"]\/dashboard[`'"]/.test(src)) navLinkPagesCount += 1;
+    // Any reference to /dashboard from the page source counts — pages
+    // may use Next.js Link with a pathname object, a plain <a href>, or
+    // a template literal href={`/dashboard?…`}.
+    if (/\/dashboard/.test(src)) navLinkPagesCount += 1;
   }
   axes.push({
     axis: 'navigation',

@@ -412,6 +412,9 @@ async function caseNoNewEngines(): Promise<{ ok: boolean; detail: string }> {
   const allowed = new Set([
     'businessGoalModel.ts', 'growthBlueprints.ts', 'channelArchitecture.ts',
     'customerFunnelModel.ts', 'growthCommandCenter.ts', 'workspaceActivation.ts',
+    // friction-reduction adapter (Reality Hardening roadmap P2):
+    // pure mapping between ChannelRef and PublicationChannel; no new engine.
+    'channelUnified.ts',
   ]);
   const extra = files.filter((f) => !allowed.has(f));
   return { ok: extra.length === 0, detail: extra.length === 0 ? `${files.length} files · all allowed` : `extra: ${extra.join(',')}` };

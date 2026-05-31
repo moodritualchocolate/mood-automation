@@ -527,6 +527,13 @@ async function main() {
       //    NEVER spends money, NEVER calls external APIs) ──
       'app/api/workflows/route.ts',
       'app/api/workspace-quick-start/route.ts',
+      // ── friction-reduction surfaces (operator-supervised POSTs;
+      //    pure adapters above existing memory stores; NEVER publish,
+      //    NEVER spend money, NEVER call external APIs) ──
+      'app/api/brand/route.ts',
+      'app/api/product/route.ts',
+      'app/api/fast-start/route.ts',
+      'app/api/simple-performance/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {
