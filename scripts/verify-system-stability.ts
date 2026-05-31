@@ -513,6 +513,11 @@ async function main() {
       //    auto-grants memberships, NEVER charges, NEVER calls a
       //    billing provider, NEVER calls external APIs) ──
       'app/api/organization/route.ts',
+      // ── productization layer (operator-supervised POST; the
+      //    wizard NEVER auto-advances steps, NEVER auto-creates
+      //    downstream entities, NEVER auto-completes the session,
+      //    NEVER calls external APIs) ──
+      'app/api/onboarding/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {
