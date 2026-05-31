@@ -508,6 +508,11 @@ async function main() {
       //    agents NEVER publish, NEVER spend, NEVER call external
       //    APIs, NEVER approve their own runs) ──
       'app/api/agent/route.ts',
+      // ── multi-tenant SaaS substrate (operator-supervised POST;
+      //    the route NEVER auto-creates organizations, NEVER
+      //    auto-grants memberships, NEVER charges, NEVER calls a
+      //    billing provider, NEVER calls external APIs) ──
+      'app/api/organization/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {
