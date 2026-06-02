@@ -151,11 +151,17 @@ async function seedBrandAndProducts(): Promise<{
   const store = createWorkspaceMemoryStore();
   let state = await store.read();
 
-  let brand = state.brands.find((b) => b.name === 'mood');
+  let brand = state.brands.find(
+    (b) => b.name === 'mood' &&
+           b.organizationId === PLATFORM_TENANT_ID_MOOD &&
+           b.workspaceId === PLATFORM_WORKSPACE_ID_MOOD);
   if (!brand) {
     const brandId = newBrandId();
     const record: BrandRecord = {
-      brandId, projectId: 'project-mood-pilot', name: 'mood',
+      brandId,
+      organizationId: PLATFORM_TENANT_ID_MOOD,
+      workspaceId: PLATFORM_WORKSPACE_ID_MOOD,
+      projectId: 'project-mood-pilot', name: 'mood',
       description: 'MOOD · functional chocolate · ENERGY · FOCUS · RELAX · SLEEP',
       createdAt: day(-29), operatorId: OP_OWNER,
       operatorNote: 'pilot brand',
@@ -178,7 +184,10 @@ async function seedBrandAndProducts(): Promise<{
     if (existing) { productIds[formula] = existing.productId; note(`product already present: ${formula}`); continue; }
     const productId = newProductId();
     const record: ProductRecord = {
-      productId, brandId: brand!.brandId,
+      productId,
+      organizationId: PLATFORM_TENANT_ID_MOOD,
+      workspaceId: PLATFORM_WORKSPACE_ID_MOOD,
+      brandId: brand!.brandId,
       name: `mood ${formula.toLowerCase()}`, formula,
       description: descriptions[formula],
       createdAt: day(-29), operatorId: OP_OWNER,

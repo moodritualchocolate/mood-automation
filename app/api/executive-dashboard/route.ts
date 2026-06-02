@@ -12,9 +12,13 @@
  *   - all metrics are descriptive only
  */
 
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { composeExecutiveDashboard } from '@lib/executiveDashboardEngine';
 import { composeWorkspace } from '@lib/workspaceEngine';
+import {
+  brandsForTenant, campaignsForTenant, productsForTenant, projectsForTenant,
+} from '@lib/workspaceMemory';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import { buildTeamEngine } from '@lib/teamEngine';
 import { analyzeTasks } from '@lib/taskEngine';
 import { analyzeCustomerJourneys } from '@lib/customerJourneyEngine';
@@ -41,7 +45,11 @@ import { createPatternReliabilityMemoryStore } from '@lib/patternReliabilityMemo
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  const url = new URL(req.url);
+  const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantScope = { organizationId, workspaceId };
   const [
     wsMem, teamMem, taskMem, assetMem, pubMem, planMem,
     genMem, journeyMem, perfMem, trialMem, outcomeMem, patternMem,
@@ -60,8 +68,10 @@ export async function GET(): Promise<NextResponse> {
     createPatternReliabilityMemoryStore().read().catch(() => null),
   ]);
   const workspace = composeWorkspace({
-    projects: wsMem?.projects ?? [], brands: wsMem?.brands ?? [],
-    products: wsMem?.products ?? [], campaigns: wsMem?.campaigns ?? [],
+    projects:  wsMem ? projectsForTenant(wsMem,  tenantScope) : [],
+    brands:    wsMem ? brandsForTenant(wsMem,    tenantScope) : [],
+    products:  wsMem ? productsForTenant(wsMem,  tenantScope) : [],
+    campaigns: wsMem ? campaignsForTenant(wsMem, tenantScope) : [],
     assets: assetMem?.assets ?? [], publications: pubMem?.publications ?? [],
     events: journeyMem?.events ?? [],
   });

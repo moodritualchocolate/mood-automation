@@ -2,46 +2,59 @@
  * /api/brand · operator-supervised brand CRUD.
  *
  * GET  ?organizationId=…&workspaceId=…[&brandId=…]
- *      Returns brands. With brandId, returns that single record.
+ *      Returns brands scoped to (organizationId, workspaceId). When
+ *      brandId is provided, the route returns that record only if it
+ *      is scoped to the same (organizationId, workspaceId).
  * POST · operator-supervised.
  *        Actions:
- *          create  · operator creates a brand record
+ *          create  · operator creates a brand record scoped to
+ *                    (organizationId, workspaceId).
  *        Every write requires operatorId + operatorReason. The route
  *        NEVER auto-creates, NEVER calls external APIs.
  *
- * Wraps existing pure transforms in lib/workspaceMemory.ts. No new
- * architecture introduced — this route closes the gap surfaced by
- * `wk-brand-route-missing` in the Reality Hardening audit.
+ * Wraps existing pure transforms in lib/workspaceMemory.ts.
+ *
+ * Tenant Isolation Hardening (this directive):
+ *   - GET requires organizationId + workspaceId; falls back to MOOD
+ *     defaults when absent so existing seeds continue to work.
+ *   - POST requires organizationId + workspaceId in the body; stamps
+ *     them on the new BrandRecord and uses them inside the
+ *     duplicate-name check (idempotency is scoped per-tenant).
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
 import {
-  appendBrand, createWorkspaceMemoryStore, newBrandId, newProjectId,
-  appendProject, type BrandRecord, type ProjectRecord,
+  appendBrand, brandsForTenant, createWorkspaceMemoryStore,
+  newBrandId, newProjectId, appendProject,
+  type BrandRecord, type ProjectRecord,
 } from '@lib/workspaceMemory';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const url = new URL(req.url);
-  const brandId = url.searchParams.get('brandId');
+  const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const brandId        = url.searchParams.get('brandId');
   const store = createWorkspaceMemoryStore();
   const state = await store.read();
+  const scopedBrands = brandsForTenant(state, { organizationId, workspaceId });
   if (brandId) {
-    const brand = state.brands.find((b) => b.brandId === brandId);
+    const brand = scopedBrands.find((b) => b.brandId === brandId);
     if (!brand) return NextResponse.json({ error: 'brand not found' }, { status: 404 });
     return NextResponse.json({
-      brand,
+      brand, scope: { organizationId, workspaceId },
       advisoryNotice:
-        'Brand record · read-only. The route NEVER auto-creates. ' +
+        'Brand record · read-only · tenant-scoped. The route NEVER auto-creates. ' +
         'Human remains final authority.',
     });
   }
   return NextResponse.json({
-    brands: state.brands,
+    brands: scopedBrands, scope: { organizationId, workspaceId },
     advisoryNotice:
-      'Brand list · read-only. The route NEVER auto-creates. ' +
+      'Brand list · read-only · tenant-scoped. The route NEVER auto-creates. ' +
       'Human remains final authority.',
   });
 }
@@ -50,6 +63,8 @@ interface CreateBody {
   action: 'create';
   operatorId: string;
   operatorReason: string;
+  organizationId?: string;
+  workspaceId?: string;
   name: string;
   /** Optional project id; when absent the route creates a default project record. */
   projectId?: string;
@@ -75,45 +90,53 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'name is required' }, { status: 400 });
   }
 
+  const organizationId = body.organizationId ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = body.workspaceId    ?? PLATFORM_WORKSPACE_ID_MOOD;
+
   const store = createWorkspaceMemoryStore();
   let state = await store.read();
-  const at = Date.now();
+  const tenantScope = { organizationId, workspaceId };
 
-  // Idempotency: if a brand with the same name already exists, return it
-  // without creating a duplicate.
-  const existing = state.brands.find((b) => b.name === body.name);
+  // Idempotency is scoped per-tenant. A brand with the same name in a
+  // different tenant is NOT a duplicate.
+  const existing = brandsForTenant(state, tenantScope).find((b) => b.name === body.name);
   if (existing) {
     return NextResponse.json({
-      ok: true, brand: existing,
+      ok: true, brand: existing, scope: tenantScope,
       advisoryNotice:
-        'Operator-supervised — brand already present, returned existing record. ' +
+        'Operator-supervised — brand already present (tenant-scoped), returned existing record. ' +
         'Human remains final authority.',
     });
   }
 
   // Ensure a project record exists (BrandRecord requires projectId).
+  // The project is also tenant-scoped.
   let projectId = body.projectId;
   if (!projectId) {
     projectId = newProjectId();
     const project: ProjectRecord = {
-      projectId, name: `${body.name} · default project`,
-      createdAt: at, operatorId: body.operatorId,
+      projectId,
+      organizationId, workspaceId,
+      name: `${body.name} · default project`,
+      createdAt: Date.now(), operatorId: body.operatorId,
       operatorNote: 'auto-created default project for brand registration',
     };
     state = appendProject(state, project);
   }
 
   const record: BrandRecord = {
-    brandId: newBrandId(), projectId, name: body.name,
-    description: body.description, createdAt: at,
+    brandId: newBrandId(),
+    organizationId, workspaceId,
+    projectId, name: body.name,
+    description: body.description, createdAt: Date.now(),
     operatorId: body.operatorId, operatorNote: body.operatorNote,
   };
   state = appendBrand(state, record);
   await store.save(state);
   return NextResponse.json({
-    ok: true, brand: record,
+    ok: true, brand: record, scope: tenantScope,
     advisoryNotice:
-      'Operator-supervised — brand created. The route NEVER auto-acts. ' +
+      'Operator-supervised — brand created (tenant-scoped). The route NEVER auto-acts. ' +
       'Human remains final authority.',
   });
 }

@@ -16,14 +16,17 @@
 
 import { NextResponse, type NextRequest } from 'next/server';
 import {
-  createWorkspaceMemoryStore, newProjectId, newBrandId, newProductId, newCampaignId,
-  appendProject, appendBrand, appendProduct, appendCampaign, updateCampaignStatus,
+  brandsForTenant, campaignsForTenant, createWorkspaceMemoryStore,
+  newProjectId, newBrandId, newProductId, newCampaignId,
+  appendProject, appendBrand, appendProduct, appendCampaign,
+  productsForTenant, projectsForTenant, updateCampaignStatus,
   type ProjectRecord, type BrandRecord, type ProductRecord, type CampaignRecord,
 } from '@lib/workspaceMemory';
 import { composeWorkspace } from '@lib/workspaceEngine';
 import { createAssetRegistryMemoryStore } from '@lib/assetRegistryMemory';
 import { createPublicationRegistryStore } from '@lib/publicationRegistryMemory';
 import { createCustomerJourneyMemoryStore } from '@lib/customerJourneyMemory';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import type { Formula } from '@/core/types';
 
 export const runtime = 'nodejs';
@@ -35,18 +38,26 @@ const VALID_CAMPAIGN_STATUSES: ReadonlySet<CampaignRecord['status']> =
 
 // ─── GET ─────────────────────────────────────────────────────
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  const url = new URL(req.url);
+  const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantScope = { organizationId, workspaceId };
   const [wsMem, assetMem, pubMem, journeyMem] = await Promise.all([
     createWorkspaceMemoryStore().read().catch(() => null),
     createAssetRegistryMemoryStore().read().catch(() => null),
     createPublicationRegistryStore().read().catch(() => null),
     createCustomerJourneyMemoryStore().read().catch(() => null),
   ]);
+  const tenantProjects  = wsMem ? projectsForTenant(wsMem, tenantScope)  : [];
+  const tenantBrands    = wsMem ? brandsForTenant(wsMem, tenantScope)    : [];
+  const tenantProducts  = wsMem ? productsForTenant(wsMem, tenantScope)  : [];
+  const tenantCampaigns = wsMem ? campaignsForTenant(wsMem, tenantScope) : [];
   const reading = composeWorkspace({
-    projects: wsMem?.projects ?? [],
-    brands: wsMem?.brands ?? [],
-    products: wsMem?.products ?? [],
-    campaigns: wsMem?.campaigns ?? [],
+    projects:  tenantProjects,
+    brands:    tenantBrands,
+    products:  tenantProducts,
+    campaigns: tenantCampaigns,
     assets: assetMem?.assets ?? [],
     publications: pubMem?.publications ?? [],
     events: journeyMem?.events ?? [],
@@ -54,20 +65,29 @@ export async function GET(): Promise<NextResponse> {
   return NextResponse.json({
     reading,
     raw: {
-      projects: wsMem?.projects ?? [],
-      brands: wsMem?.brands ?? [],
-      products: wsMem?.products ?? [],
-      campaigns: wsMem?.campaigns ?? [],
+      projects:  tenantProjects,
+      brands:    tenantBrands,
+      products:  tenantProducts,
+      campaigns: tenantCampaigns,
     },
+    scope: tenantScope,
     advisoryNotice:
-      'Workspace · operator-supervised. The route never publishes, never fetches ' +
-      'from external APIs, never auto-creates entities. Human remains final authority.',
+      'Workspace · operator-supervised · tenant-scoped. The route never publishes, ' +
+      'never fetches from external APIs, never auto-creates entities. ' +
+      'Human remains final authority.',
   });
 }
 
 // ─── POST ────────────────────────────────────────────────────
 
-interface CreateProjectBody {
+interface TenantScopedBody {
+  /** Tenancy stamp. Required for new records. Defaults to MOOD when
+   *  the operator does not provide them so legacy callers continue
+   *  to work; the stamp is recorded on the new entity. */
+  organizationId?: string;
+  workspaceId?: string;
+}
+interface CreateProjectBody extends TenantScopedBody {
   action: 'create-project';
   operatorId: string;
   operatorReason: string;
@@ -75,7 +95,7 @@ interface CreateProjectBody {
   description?: string;
   operatorNote?: string;
 }
-interface CreateBrandBody {
+interface CreateBrandBody extends TenantScopedBody {
   action: 'create-brand';
   operatorId: string;
   operatorReason: string;
@@ -84,7 +104,7 @@ interface CreateBrandBody {
   description?: string;
   operatorNote?: string;
 }
-interface CreateProductBody {
+interface CreateProductBody extends TenantScopedBody {
   action: 'create-product';
   operatorId: string;
   operatorReason: string;
@@ -94,7 +114,7 @@ interface CreateProductBody {
   description?: string;
   operatorNote?: string;
 }
-interface CreateCampaignBody {
+interface CreateCampaignBody extends TenantScopedBody {
   action: 'create-campaign';
   operatorId: string;
   operatorReason: string;
@@ -129,26 +149,37 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   if (body.action === 'create-project') {
     if (!body.name) return NextResponse.json({ error: 'name is required' }, { status: 400 });
+    const organizationId = body.organizationId ?? PLATFORM_TENANT_ID_MOOD;
+    const workspaceId    = body.workspaceId    ?? PLATFORM_WORKSPACE_ID_MOOD;
     const record: ProjectRecord = {
-      projectId: newProjectId(), name: body.name, description: body.description,
+      projectId: newProjectId(),
+      organizationId, workspaceId,
+      name: body.name, description: body.description,
       createdAt: Date.now(), operatorId: body.operatorId, operatorNote: body.operatorNote,
     };
     await store.save(appendProject(state, record));
-    return NextResponse.json({ ok: true, project: record });
+    return NextResponse.json({ ok: true, project: record, scope: { organizationId, workspaceId } });
   }
   if (body.action === 'create-brand') {
     if (!body.name) return NextResponse.json({ error: 'name is required' }, { status: 400 });
     if (!body.projectId) return NextResponse.json({ error: 'projectId is required' }, { status: 400 });
-    if (!state.projects.some((p) => p.projectId === body.projectId)) {
-      return NextResponse.json({ error: 'project not found' }, { status: 404 });
+    const organizationId = body.organizationId ?? PLATFORM_TENANT_ID_MOOD;
+    const workspaceId    = body.workspaceId    ?? PLATFORM_WORKSPACE_ID_MOOD;
+    // Project must exist AND be in the same tenant (cross-tenant attach rejected).
+    const project = projectsForTenant(state, { organizationId, workspaceId })
+      .find((p) => p.projectId === body.projectId);
+    if (!project) {
+      return NextResponse.json({ error: 'project not found in this tenant' }, { status: 404 });
     }
     const record: BrandRecord = {
-      brandId: newBrandId(), projectId: body.projectId, name: body.name,
+      brandId: newBrandId(),
+      organizationId, workspaceId,
+      projectId: body.projectId, name: body.name,
       description: body.description, createdAt: Date.now(),
       operatorId: body.operatorId, operatorNote: body.operatorNote,
     };
     await store.save(appendBrand(state, record));
-    return NextResponse.json({ ok: true, brand: record });
+    return NextResponse.json({ ok: true, brand: record, scope: { organizationId, workspaceId } });
   }
   if (body.action === 'create-product') {
     if (!body.name) return NextResponse.json({ error: 'name is required' }, { status: 400 });
@@ -156,30 +187,44 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (body.formula && !VALID_FORMULAS.has(body.formula)) {
       return NextResponse.json({ error: 'invalid formula' }, { status: 400 });
     }
-    if (!state.brands.some((b) => b.brandId === body.brandId)) {
-      return NextResponse.json({ error: 'brand not found' }, { status: 404 });
+    const organizationId = body.organizationId ?? PLATFORM_TENANT_ID_MOOD;
+    const workspaceId    = body.workspaceId    ?? PLATFORM_WORKSPACE_ID_MOOD;
+    // Brand must exist AND be in the same tenant.
+    const brand = brandsForTenant(state, { organizationId, workspaceId })
+      .find((b) => b.brandId === body.brandId);
+    if (!brand) {
+      return NextResponse.json({ error: 'brand not found in this tenant' }, { status: 404 });
     }
     const record: ProductRecord = {
-      productId: newProductId(), brandId: body.brandId, name: body.name,
+      productId: newProductId(),
+      organizationId, workspaceId,
+      brandId: body.brandId, name: body.name,
       formula: body.formula, description: body.description,
       createdAt: Date.now(), operatorId: body.operatorId, operatorNote: body.operatorNote,
     };
     await store.save(appendProduct(state, record));
-    return NextResponse.json({ ok: true, product: record });
+    return NextResponse.json({ ok: true, product: record, scope: { organizationId, workspaceId } });
   }
   if (body.action === 'create-campaign') {
     if (!body.name) return NextResponse.json({ error: 'name is required' }, { status: 400 });
     if (!body.productId) return NextResponse.json({ error: 'productId is required' }, { status: 400 });
-    if (!state.products.some((p) => p.productId === body.productId)) {
-      return NextResponse.json({ error: 'product not found' }, { status: 404 });
+    const organizationId = body.organizationId ?? PLATFORM_TENANT_ID_MOOD;
+    const workspaceId    = body.workspaceId    ?? PLATFORM_WORKSPACE_ID_MOOD;
+    // Product must exist AND be in the same tenant.
+    const product = productsForTenant(state, { organizationId, workspaceId })
+      .find((p) => p.productId === body.productId);
+    if (!product) {
+      return NextResponse.json({ error: 'product not found in this tenant' }, { status: 404 });
     }
     const record: CampaignRecord = {
-      campaignId: newCampaignId(), productId: body.productId, name: body.name,
+      campaignId: newCampaignId(),
+      organizationId, workspaceId,
+      productId: body.productId, name: body.name,
       campaignPlanId: body.campaignPlanId, status: 'planning',
       createdAt: Date.now(), operatorId: body.operatorId, operatorNote: body.operatorNote,
     };
     await store.save(appendCampaign(state, record));
-    return NextResponse.json({ ok: true, campaign: record });
+    return NextResponse.json({ ok: true, campaign: record, scope: { organizationId, workspaceId } });
   }
   if (body.action === 'update-campaign-status') {
     if (!body.campaignId) return NextResponse.json({ error: 'campaignId is required' }, { status: 400 });

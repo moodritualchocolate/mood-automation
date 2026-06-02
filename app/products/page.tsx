@@ -34,16 +34,17 @@ function ProductsInner() {
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
+    const q = new URLSearchParams({ organizationId, workspaceId });
     const [b, p] = await Promise.all([
-      fetch('/api/brand',   { cache: 'no-store' }),
-      fetch('/api/product', { cache: 'no-store' }),
+      fetch(`/api/brand?${q.toString()}`,   { cache: 'no-store' }),
+      fetch(`/api/product?${q.toString()}`, { cache: 'no-store' }),
     ]);
     if (!b.ok || !p.ok) { setError(`load ${b.status}/${p.status}`); return; }
     const bj = await b.json() as { brands: BrandRow[] };
     const pj = await p.json() as { products: ProductRow[] };
     setBrands(bj.brands); setProducts(pj.products);
     if (!brandId && bj.brands.length > 0) setBrandId(bj.brands[0].brandId);
-  }, [brandId]);
+  }, [brandId, organizationId, workspaceId]);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -53,6 +54,7 @@ function ProductsInner() {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'create', operatorId, operatorReason: reason || 'create product',
+        organizationId, workspaceId,
         brandId, name, formula: formula || undefined,
         description: description || undefined,
       }),

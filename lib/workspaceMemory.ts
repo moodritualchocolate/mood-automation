@@ -11,12 +11,20 @@
  * action. Entities reference each other by id only — the store does
  * not enforce referential integrity, the operator does.
  *
+ * TENANT ISOLATION (added by tenant-isolation-hardening directive):
+ * every record carries `organizationId` + `workspaceId`. Legacy
+ * records without these fields are migrated to the MOOD defaults
+ * on read so existing seed data continues to function. The store
+ * itself does not filter — the route layer does, with the stamps
+ * the operator passes in the request.
+ *
  * Lives at data/memory/workspace-memory.json.
  */
 
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import type { Formula } from '@/core/types';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from './tenancy/types';
 
 const DEFAULT_DIR = path.resolve(process.cwd(), 'data', 'memory');
 const FILE = 'workspace-memory.json';
@@ -30,6 +38,11 @@ export const WORKSPACE_LIMIT_CAMPAIGNS = 256;
 
 export interface ProjectRecord {
   projectId: string;
+  /** Tenancy stamp. Required for new records. Legacy records are
+   *  migrated to PLATFORM_TENANT_ID_MOOD / PLATFORM_WORKSPACE_ID_MOOD
+   *  on read. */
+  organizationId: string;
+  workspaceId: string;
   name: string;
   description?: string;
   createdAt: number;
@@ -39,6 +52,9 @@ export interface ProjectRecord {
 
 export interface BrandRecord {
   brandId: string;
+  /** Tenancy stamp. Required for new records. */
+  organizationId: string;
+  workspaceId: string;
   projectId: string;
   name: string;
   description?: string;
@@ -49,6 +65,9 @@ export interface BrandRecord {
 
 export interface ProductRecord {
   productId: string;
+  /** Tenancy stamp. Required for new records. */
+  organizationId: string;
+  workspaceId: string;
   brandId: string;
   name: string;
   formula?: Formula;
@@ -60,6 +79,9 @@ export interface ProductRecord {
 
 export interface CampaignRecord {
   campaignId: string;
+  /** Tenancy stamp. Required for new records. */
+  organizationId: string;
+  workspaceId: string;
   productId: string;
   name: string;
   /** Optional link to a saved campaign plan. */
@@ -153,6 +175,55 @@ export function updateCampaignStatus(
   return { ...state, campaigns, updatedAt: nowMs() };
 }
 
+// ─── tenant-scoping helpers (read-side) ──────────────────────
+
+export interface TenantScope { organizationId: string; workspaceId: string; }
+
+export function brandsForTenant(state: WorkspaceMemoryState, scope: TenantScope): BrandRecord[] {
+  return state.brands.filter(
+    (b) => b.organizationId === scope.organizationId && b.workspaceId === scope.workspaceId,
+  );
+}
+export function productsForTenant(state: WorkspaceMemoryState, scope: TenantScope): ProductRecord[] {
+  return state.products.filter(
+    (p) => p.organizationId === scope.organizationId && p.workspaceId === scope.workspaceId,
+  );
+}
+export function projectsForTenant(state: WorkspaceMemoryState, scope: TenantScope): ProjectRecord[] {
+  return state.projects.filter(
+    (p) => p.organizationId === scope.organizationId && p.workspaceId === scope.workspaceId,
+  );
+}
+export function campaignsForTenant(state: WorkspaceMemoryState, scope: TenantScope): CampaignRecord[] {
+  return state.campaigns.filter(
+    (c) => c.organizationId === scope.organizationId && c.workspaceId === scope.workspaceId,
+  );
+}
+
+// ─── legacy migration on read ────────────────────────────────
+
+/** Migrate a legacy record (no organizationId/workspaceId) to MOOD
+ *  defaults. The migration is idempotent — records that already carry
+ *  a tenancy stamp are returned unchanged. */
+function migrateLegacyTenancy<T extends { organizationId?: string; workspaceId?: string }>(rec: T): T & TenantScope {
+  return {
+    ...rec,
+    organizationId: rec.organizationId ?? PLATFORM_TENANT_ID_MOOD,
+    workspaceId: rec.workspaceId ?? PLATFORM_WORKSPACE_ID_MOOD,
+  };
+}
+
+function migrateState(parsed: Partial<WorkspaceMemoryState>): WorkspaceMemoryState {
+  const base = { ...createInitialWorkspaceMemory(), ...parsed };
+  return {
+    ...base,
+    projects:  (base.projects  ?? []).map(migrateLegacyTenancy) as ProjectRecord[],
+    brands:    (base.brands    ?? []).map(migrateLegacyTenancy) as BrandRecord[],
+    products:  (base.products  ?? []).map(migrateLegacyTenancy) as ProductRecord[],
+    campaigns: (base.campaigns ?? []).map(migrateLegacyTenancy) as CampaignRecord[],
+  };
+}
+
 // ─── store ───────────────────────────────────────────────────
 
 const g = globalThis as unknown as { __moodWorkspace?: WorkspaceMemoryState };
@@ -173,7 +244,7 @@ export function createWorkspaceMemoryStore(
       try {
         const txt = await fs.readFile(filePath, 'utf8');
         const parsed = JSON.parse(txt) as Partial<WorkspaceMemoryState>;
-        g.__moodWorkspace = { ...createInitialWorkspaceMemory(), ...parsed };
+        g.__moodWorkspace = migrateState(parsed);
       } catch {
         g.__moodWorkspace = createInitialWorkspaceMemory();
       }

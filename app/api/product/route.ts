@@ -2,23 +2,32 @@
  * /api/product · operator-supervised product CRUD.
  *
  * GET  ?organizationId=…&workspaceId=…[&brandId=…][&productId=…]
- *      Returns products, optionally scoped to a brand. With productId,
- *      returns that single record.
+ *      Returns products scoped to (organizationId, workspaceId).
+ *      When productId is provided, returns the record only if it is
+ *      scoped to the requested tenant.
  * POST · operator-supervised.
  *        Actions:
- *          create · operator creates a product record
+ *          create · operator creates a product scoped to a brand that
+ *                   belongs to the same (organizationId, workspaceId).
  *        Every write requires operatorId + operatorReason.
  *
- * Wraps existing pure transforms in lib/workspaceMemory.ts. No new
- * architecture introduced — closes the gap surfaced by
- * `wk-product-route-missing` in the Reality Hardening audit.
+ * Wraps existing pure transforms in lib/workspaceMemory.ts.
+ *
+ * Tenant Isolation Hardening (this directive):
+ *   - GET requires organizationId + workspaceId; falls back to MOOD
+ *     defaults when absent so existing seeds continue to work.
+ *   - POST stamps organizationId + workspaceId on the new
+ *     ProductRecord and refuses to attach a product to a brand that
+ *     does not live in the same tenant.
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
 import {
-  appendProduct, createWorkspaceMemoryStore, newProductId,
+  appendProduct, brandsForTenant, createWorkspaceMemoryStore,
+  newProductId, productsForTenant,
   type ProductRecord,
 } from '@lib/workspaceMemory';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import type { Formula } from '@/core/types';
 import { FORMULAS } from '@/core/types';
 
@@ -27,27 +36,30 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const url = new URL(req.url);
-  const productId = url.searchParams.get('productId');
-  const brandId = url.searchParams.get('brandId');
+  const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const productId      = url.searchParams.get('productId');
+  const brandId        = url.searchParams.get('brandId');
   const store = createWorkspaceMemoryStore();
   const state = await store.read();
+  const scopedProducts = productsForTenant(state, { organizationId, workspaceId });
   if (productId) {
-    const product = state.products.find((p) => p.productId === productId);
+    const product = scopedProducts.find((p) => p.productId === productId);
     if (!product) return NextResponse.json({ error: 'product not found' }, { status: 404 });
     return NextResponse.json({
-      product,
+      product, scope: { organizationId, workspaceId },
       advisoryNotice:
-        'Product record · read-only. The route NEVER auto-creates. ' +
+        'Product record · read-only · tenant-scoped. The route NEVER auto-creates. ' +
         'Human remains final authority.',
     });
   }
   const products = brandId
-    ? state.products.filter((p) => p.brandId === brandId)
-    : state.products;
+    ? scopedProducts.filter((p) => p.brandId === brandId)
+    : scopedProducts;
   return NextResponse.json({
-    products,
+    products, scope: { organizationId, workspaceId },
     advisoryNotice:
-      'Product list · read-only. The route NEVER auto-creates. ' +
+      'Product list · read-only · tenant-scoped. The route NEVER auto-creates. ' +
       'Human remains final authority.',
   });
 }
@@ -56,6 +68,8 @@ interface CreateBody {
   action: 'create';
   operatorId: string;
   operatorReason: string;
+  organizationId?: string;
+  workspaceId?: string;
   brandId: string;
   name: string;
   formula?: Formula;
@@ -87,37 +101,51 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'unknown formula' }, { status: 400 });
   }
 
+  const organizationId = body.organizationId ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = body.workspaceId    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantScope = { organizationId, workspaceId };
+
   const store = createWorkspaceMemoryStore();
   let state = await store.read();
-  if (!state.brands.some((b) => b.brandId === body.brandId)) {
-    return NextResponse.json({ error: 'brand not found' }, { status: 404 });
+
+  // Brand must exist AND be in the same tenant. The route refuses to
+  // attach a product to a brand owned by another tenant — this is the
+  // tenant-boundary check.
+  const tenantBrands = brandsForTenant(state, tenantScope);
+  const brand = tenantBrands.find((b) => b.brandId === body.brandId);
+  if (!brand) {
+    return NextResponse.json({
+      error: 'brand not found in this tenant',
+    }, { status: 404 });
   }
 
-  // Idempotency: if a product with the same brandId + name already exists,
-  // return it without creating a duplicate.
-  const existing = state.products.find(
+  // Idempotency is scoped per-tenant + per-brand.
+  const tenantProducts = productsForTenant(state, tenantScope);
+  const existing = tenantProducts.find(
     (p) => p.brandId === body.brandId && p.name === body.name);
   if (existing) {
     return NextResponse.json({
-      ok: true, product: existing,
+      ok: true, product: existing, scope: tenantScope,
       advisoryNotice:
-        'Operator-supervised — product already present, returned existing record. ' +
+        'Operator-supervised — product already present (tenant-scoped), returned existing record. ' +
         'Human remains final authority.',
     });
   }
 
   const at = Date.now();
   const record: ProductRecord = {
-    productId: newProductId(), brandId: body.brandId, name: body.name,
+    productId: newProductId(),
+    organizationId, workspaceId,
+    brandId: body.brandId, name: body.name,
     formula: body.formula, description: body.description,
     createdAt: at, operatorId: body.operatorId, operatorNote: body.operatorNote,
   };
   state = appendProduct(state, record);
   await store.save(state);
   return NextResponse.json({
-    ok: true, product: record,
+    ok: true, product: record, scope: tenantScope,
     advisoryNotice:
-      'Operator-supervised — product created. The route NEVER auto-acts. ' +
+      'Operator-supervised — product created (tenant-scoped). The route NEVER auto-acts. ' +
       'Human remains final authority.',
   });
 }

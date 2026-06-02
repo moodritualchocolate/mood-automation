@@ -28,11 +28,12 @@ function BrandsInner() {
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    const r = await fetch(`/api/brand`, { cache: 'no-store' });
+    const q = new URLSearchParams({ organizationId, workspaceId });
+    const r = await fetch(`/api/brand?${q.toString()}`, { cache: 'no-store' });
     if (!r.ok) { setError(`load ${r.status}`); return; }
     const j = await r.json() as { brands: BrandRow[] };
     setBrands(j.brands);
-  }, []);
+  }, [organizationId, workspaceId]);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -42,6 +43,7 @@ function BrandsInner() {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'create', operatorId, operatorReason: reason || 'create brand',
+        organizationId, workspaceId,
         name, description: description || undefined,
       }),
     });

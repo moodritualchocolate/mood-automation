@@ -42,18 +42,22 @@ function record(id: string, label: string, passed: boolean, detail: string): voi
 
 // ─── fixtures ────────────────────────────────────────────────
 
+const TEST_ORG = 'org-mood';
+const TEST_WSP = 'wsp-mood-default';
+
 function mkProject(over: Partial<ProjectRecord> = {}): ProjectRecord {
-  return { projectId: newProjectId(), name: 'MOOD Brand', createdAt: 1000, operatorId: 'op-a', ...over };
+  return { projectId: newProjectId(), organizationId: TEST_ORG, workspaceId: TEST_WSP, name: 'MOOD Brand', createdAt: 1000, operatorId: 'op-a', ...over };
 }
 function mkBrand(projectId: string, over: Partial<BrandRecord> = {}): BrandRecord {
-  return { brandId: newBrandId(), projectId, name: 'MOOD', createdAt: 1100, operatorId: 'op-a', ...over };
+  return { brandId: newBrandId(), organizationId: TEST_ORG, workspaceId: TEST_WSP, projectId, name: 'MOOD', createdAt: 1100, operatorId: 'op-a', ...over };
 }
 function mkProduct(brandId: string, over: Partial<ProductRecord> = {}): ProductRecord {
-  return { productId: newProductId(), brandId, name: 'MOOD ENERGY chocolate', formula: 'ENERGY', createdAt: 1200, operatorId: 'op-a', ...over };
+  return { productId: newProductId(), organizationId: TEST_ORG, workspaceId: TEST_WSP, brandId, name: 'MOOD ENERGY chocolate', formula: 'ENERGY', createdAt: 1200, operatorId: 'op-a', ...over };
 }
 function mkCampaign(productId: string, over: Partial<CampaignRecord> = {}): CampaignRecord {
   return {
-    campaignId: newCampaignId(), productId, name: 'Q1 launch',
+    campaignId: newCampaignId(), organizationId: TEST_ORG, workspaceId: TEST_WSP,
+    productId, name: 'Q1 launch',
     status: 'planning', createdAt: 1300, operatorId: 'op-a', ...over,
   };
 }

@@ -14,7 +14,9 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
-import { createWorkspaceMemoryStore } from '@lib/workspaceMemory';
+import {
+  brandsForTenant, createWorkspaceMemoryStore, productsForTenant,
+} from '@lib/workspaceMemory';
 import { createWorkspaceActivationStore } from '@lib/business/workspaceActivation';
 import { createKnowledgeMemoryStore } from '@lib/knowledgeMemory';
 import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
@@ -79,14 +81,18 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     createKnowledgeMemoryStore().read().catch(() => null),
   ]);
 
-  // Most recently created brand wins. The brand is workspace-scoped only
-  // by convention today (workspaceMemory is global; the operator tags
-  // brand intent via the projectId).
-  const brands = (ws?.brands ?? []).slice().sort((a, b) => b.createdAt - a.createdAt);
-  const brand = brands[0] ?? null;
+  // Tenant-scoped read. The workspace store is global on disk, but the
+  // resolver filters to the requested (organizationId, workspaceId)
+  // pair — RoyalLoot can never see MOOD's brands.
+  const tenantScope = { organizationId, workspaceId };
+  const scopedBrands = ws
+    ? brandsForTenant(ws, tenantScope).slice().sort((a, b) => b.createdAt - a.createdAt)
+    : [];
+  const scopedProducts = ws ? productsForTenant(ws, tenantScope) : [];
+  const brand = scopedBrands[0] ?? null;
   // First product on the active brand wins.
   const product = brand
-    ? (ws?.products ?? []).find((p) => p.brandId === brand.brandId) ?? null
+    ? scopedProducts.find((p) => p.brandId === brand.brandId) ?? null
     : null;
   // Latest activated activation for this (org, workspace, brand) wins.
   const activation = (act?.activations ?? [])
@@ -117,11 +123,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     context,
     /** Reconstructed labels so the UI can render them without an extra lookup. */
     labels: { goalLabel },
-    /** Counts the operator may inspect when context is incomplete. */
+    /** Counts the operator may inspect when context is incomplete.
+     *  Counts are tenant-scoped — they reflect what the operator may
+     *  actually see, not platform-wide totals. */
     counts: {
-      brands: (ws?.brands ?? []).length,
-      products: (ws?.products ?? []).length,
-      activations: (act?.activations ?? []).length,
+      brands: scopedBrands.length,
+      products: scopedProducts.length,
+      activations: (act?.activations ?? []).filter(
+        (a) => a.organizationId === organizationId && a.workspaceId === workspaceId).length,
       knowledgeEntries: knowledgeEntries.length,
     },
     advisoryNotice:

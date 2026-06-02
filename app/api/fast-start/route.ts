@@ -166,25 +166,36 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const wsStore = createWorkspaceMemoryStore();
   let wsState = await wsStore.read();
 
-  let brand = wsState.brands.find((b) => b.name === body.brandName);
+  // Brand + product idempotency is scoped per-tenant. A brand with the
+  // same name in a different tenant is NOT a duplicate.
+  let brand = wsState.brands.find(
+    (b) => b.name === body.brandName &&
+           b.organizationId === organizationId && b.workspaceId === workspaceId);
   if (!brand) {
     const projectId = newProjectId();
     wsState = appendProject(wsState, {
-      projectId, name: `${body.brandName} · default project`,
+      projectId,
+      organizationId, workspaceId,
+      name: `${body.brandName} · default project`,
       createdAt: at, operatorId: body.operatorId,
     });
     brand = {
-      brandId: newBrandId(), projectId, name: body.brandName,
+      brandId: newBrandId(),
+      organizationId, workspaceId,
+      projectId, name: body.brandName,
       description: `${body.brandName} brand · seeded by fast-start`,
       createdAt: at, operatorId: body.operatorId,
     };
     wsState = appendBrand(wsState, brand);
   }
   let product = wsState.products.find(
-    (p) => p.brandId === brand!.brandId && p.name === body.productName);
+    (p) => p.brandId === brand!.brandId && p.name === body.productName &&
+           p.organizationId === organizationId && p.workspaceId === workspaceId);
   if (!product) {
     product = {
-      productId: newProductId(), brandId: brand.brandId, name: body.productName,
+      productId: newProductId(),
+      organizationId, workspaceId,
+      brandId: brand.brandId, name: body.productName,
       formula, description: `${body.productName} · seeded by fast-start`,
       createdAt: at, operatorId: body.operatorId,
     };
