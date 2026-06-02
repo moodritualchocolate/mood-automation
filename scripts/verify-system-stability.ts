@@ -534,6 +534,13 @@ async function main() {
       'app/api/product/route.ts',
       'app/api/fast-start/route.ts',
       'app/api/simple-performance/route.ts',
+      // ── authentication layer (operator-supervised POSTs; NEVER
+      //    sends email, NEVER calls external APIs; bootstrap is
+      //    env-var-seeded and idempotent) ──
+      'app/api/auth/register/route.ts',
+      'app/api/auth/login/route.ts',
+      'app/api/auth/logout/route.ts',
+      'app/api/auth/bootstrap/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {

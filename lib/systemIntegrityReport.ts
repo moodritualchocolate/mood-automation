@@ -157,6 +157,11 @@ const KNOWN_ROUTES: string[] = [
   '/api/fast-start',
   '/api/simple-performance',
   '/api/channel-unified',
+  '/api/auth/register',
+  '/api/auth/login',
+  '/api/auth/logout',
+  '/api/auth/me',
+  '/api/auth/bootstrap',
 ];
 
 /** All known memory files + their FIFO observation-array key + cap.
