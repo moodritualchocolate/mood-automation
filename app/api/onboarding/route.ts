@@ -14,6 +14,7 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import {
   appendOnboardingSession, createOnboardingMemoryStore,
   newOnboardingSessionId, replaceOnboardingSession,
@@ -65,15 +66,15 @@ interface AbandonBody extends BaseBody { action: 'abandon'; sessionId: string; }
 type Body = StartBody | AdvanceBody | ReviseBody | AbandonBody;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const auth = await requireSession(req);
+  if (!auth.ok) return auth.response;
   let body: Body;
   try { body = await req.json() as Body; }
   catch { return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 }); }
-  if (!body || typeof body.operatorId !== 'string' || body.operatorId.length === 0) {
-    return NextResponse.json({ error: 'operatorId is required' }, { status: 400 });
-  }
   if (typeof body.operatorReason !== 'string' || body.operatorReason.length === 0) {
     return NextResponse.json({ error: 'operatorReason is required' }, { status: 400 });
   }
+  body.operatorId = auth.ctx.user.userId;
 
   const store = createOnboardingMemoryStore();
   const state = await store.read();

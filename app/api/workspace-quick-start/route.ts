@@ -12,6 +12,7 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import {
   appendWorkflow, createWorkflowMemoryStore, newWorkflowId,
   type WorkflowRecord,
@@ -51,15 +52,15 @@ interface SelectBody {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const auth = await requireSession(req);
+  if (!auth.ok) return auth.response;
   let body: SelectBody;
   try { body = await req.json() as SelectBody; }
   catch { return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 }); }
-  if (!body || typeof body.operatorId !== 'string' || body.operatorId.length === 0) {
-    return NextResponse.json({ error: 'operatorId is required' }, { status: 400 });
-  }
   if (typeof body.operatorReason !== 'string' || body.operatorReason.length === 0) {
     return NextResponse.json({ error: 'operatorReason is required' }, { status: 400 });
   }
+  body.operatorId = auth.ctx.user.userId;
   if (body.action !== 'select') {
     return NextResponse.json({ error: 'unknown action' }, { status: 400 });
   }

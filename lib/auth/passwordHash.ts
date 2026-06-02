@@ -14,6 +14,9 @@ const SCRYPT_R = 8;
 const SCRYPT_P = 1;
 const SCRYPT_KEYLEN = 64;
 const SALT_BYTES = 16;
+/** OpenSSL's default scrypt maxmem is 32 MB; our N·r combination needs
+ *  exactly 32 MB. Bump the cap so scrypt does not refuse to run. */
+const SCRYPT_MAXMEM = 64 * 1024 * 1024;
 
 export interface PasswordHashResult {
   passwordHash: string;   // hex
@@ -26,7 +29,7 @@ export function hashPassword(password: string): PasswordHashResult {
   }
   const salt = randomBytes(SALT_BYTES);
   const hash = scryptSync(password, salt, SCRYPT_KEYLEN, {
-    N: SCRYPT_N, r: SCRYPT_R, p: SCRYPT_P,
+    N: SCRYPT_N, r: SCRYPT_R, p: SCRYPT_P, maxmem: SCRYPT_MAXMEM,
   });
   return {
     passwordHash: hash.toString('hex'),
@@ -43,7 +46,7 @@ export function verifyPassword(
   const salt = Buffer.from(passwordSalt, 'hex');
   const expected = Buffer.from(passwordHash, 'hex');
   const candidate = scryptSync(password, salt, SCRYPT_KEYLEN, {
-    N: SCRYPT_N, r: SCRYPT_R, p: SCRYPT_P,
+    N: SCRYPT_N, r: SCRYPT_R, p: SCRYPT_P, maxmem: SCRYPT_MAXMEM,
   });
   if (candidate.length !== expected.length) return false;
   return timingSafeEqual(candidate, expected);

@@ -32,8 +32,24 @@ export function buildSessionCookieValue(sessionId: string, rawToken: string): st
   return `${sessionId}.${rawToken}`;
 }
 
+/** Read the session cookie from either NextRequest.cookies (runtime)
+ *  or the raw Cookie header (tests using `new Request()`). */
+function readSessionCookie(req: NextRequest): string | undefined {
+  const fromNext = req.cookies?.get?.(SESSION_COOKIE_NAME)?.value;
+  if (fromNext) return fromNext;
+  const header = req.headers.get('cookie');
+  if (!header) return undefined;
+  for (const part of header.split(';')) {
+    const eq = part.indexOf('=');
+    if (eq <= 0) continue;
+    const name = part.slice(0, eq).trim();
+    if (name === SESSION_COOKIE_NAME) return decodeURIComponent(part.slice(eq + 1).trim());
+  }
+  return undefined;
+}
+
 export async function resolveSession(req: NextRequest): Promise<AuthContext | null> {
-  const raw = req.cookies.get(SESSION_COOKIE_NAME)?.value;
+  const raw = readSessionCookie(req);
   const parsed = parseSessionCookie(raw);
   if (!parsed) return null;
 

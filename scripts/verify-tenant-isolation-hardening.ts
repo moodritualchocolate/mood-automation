@@ -217,16 +217,51 @@ function caseLegacyRecordsMigrateToMOOD(): { ok: boolean; detail: string } {
 async function callJsonRoute<T = unknown>(
   handler: (req: Request) => Promise<Response>,
   url: string, method: 'GET' | 'POST', payload?: unknown,
+  extraHeaders?: Record<string, string>,
 ): Promise<{ status: number; body: T }> {
   const init: RequestInit = { method };
+  const headers: Record<string, string> = { ...(extraHeaders ?? {}) };
   if (payload !== undefined) {
-    init.headers = { 'Content-Type': 'application/json' };
+    headers['Content-Type'] = 'application/json';
     init.body = JSON.stringify(payload);
   }
+  if (Object.keys(headers).length > 0) init.headers = headers;
   const res = await handler(new Request(url, init));
   const status = res.status;
   const body = await res.json() as T;
   return { status, body };
+}
+
+/** Mint a session for tests that drive protected POSTs.
+ *  Creates a user via the userMemory transforms + a session via
+ *  the sessionMemory transforms · returns a Cookie header value. */
+async function mintTestSession(email: string): Promise<string> {
+  const { hashPassword } = await import('../lib/auth/passwordHash');
+  const { createUserMemoryStore, appendUser, newUserId } = await import('../lib/auth/userMemory');
+  const { createSessionMemoryStore, appendSession, newSessionId, newSessionToken } = await import('../lib/auth/sessionMemory');
+  const { SESSION_COOKIE_NAME } = await import('../lib/auth/cookie');
+  const { buildSessionCookieValue } = await import('../lib/auth/resolveSession');
+
+  const userStore = createUserMemoryStore();
+  let userState = await userStore.read();
+  const { passwordHash, passwordSalt } = hashPassword('test-password-12345');
+  const userId = newUserId();
+  userState = appendUser(userState, {
+    userId, email, displayName: 'test', passwordHash, passwordSalt,
+    createdBy: userId, createdAt: Date.now(),
+    failedLoginCount: 0, lockedUntil: 0,
+  });
+  await userStore.save(userState);
+
+  const sessionStore = createSessionMemoryStore();
+  let sessionState = await sessionStore.read();
+  const sessionId = newSessionId();
+  const rawToken = newSessionToken();
+  sessionState = appendSession(sessionState, {
+    sessionId, userId, rawToken, at: Date.now(),
+  });
+  await sessionStore.save(sessionState);
+  return `${SESSION_COOKIE_NAME}=${buildSessionCookieValue(sessionId, rawToken)}`;
 }
 
 function resetGlobals(): void {
@@ -270,6 +305,10 @@ async function caseFastStartScopesPerTenant(): Promise<{ ok: boolean; detail: st
 
     const fastStart = await import('../app/api/fast-start/route');
 
+    // Each tenant operator mints its own session before driving fast-start.
+    const moodCookie      = await mintTestSession('op-mood@test.local');
+    const royallootCookie = await mintTestSession('op-royalloot@test.local');
+
     // Drive MOOD.
     const moodReply = (await callJsonRoute<{ ok: boolean; result: { brandId: string; productId: string; organizationId: string } }>(
       fastStart.POST as never, 'http://localhost/api/fast-start', 'POST',
@@ -278,6 +317,7 @@ async function caseFastStartScopesPerTenant(): Promise<{ ok: boolean; detail: st
         organizationName: 'MOOD', organizationSlug: 'mood',
         brandName: 'mood-fast', productName: 'mood energy', goalId: 'product-launch',
       },
+      { Cookie: moodCookie },
     )).body;
 
     // Drive RoyalLoot.
@@ -288,6 +328,7 @@ async function caseFastStartScopesPerTenant(): Promise<{ ok: boolean; detail: st
         organizationName: 'RoyalLoot', organizationSlug: 'royalloot',
         brandName: 'RoyalLoot-fast', productName: 'RoyalLoot core sku', goalId: 'lead-generation',
       },
+      { Cookie: royallootCookie },
     )).body;
 
     if (!moodReply.ok || !royallootReply.ok) {
@@ -413,6 +454,7 @@ async function caseProductGETScopedToRoyalLoot(): Promise<{ ok: boolean; detail:
 async function caseSameBrandNameBlockedInSameTenant(): Promise<{ ok: boolean; detail: string }> {
   return withSeededTwoTenants(async () => {
     const brandRoute = await import('../app/api/brand/route');
+    const cookie = await mintTestSession('brand-dup@test.local');
     // First create succeeds.
     const r1 = (await callJsonRoute<BrandRoutePostBody>(
       brandRoute.POST as never, 'http://localhost/api/brand', 'POST',
@@ -420,6 +462,7 @@ async function caseSameBrandNameBlockedInSameTenant(): Promise<{ ok: boolean; de
         action: 'create', operatorId: 'op', operatorReason: 'first',
         organizationId: MOOD_ORG, workspaceId: MOOD_WSP, name: 'duplicate-target',
       },
+      { Cookie: cookie },
     )).body;
     const id1 = r1.brand?.brandId;
     // Second create in same tenant returns the SAME record (idempotency
@@ -430,6 +473,7 @@ async function caseSameBrandNameBlockedInSameTenant(): Promise<{ ok: boolean; de
         action: 'create', operatorId: 'op', operatorReason: 'second',
         organizationId: MOOD_ORG, workspaceId: MOOD_WSP, name: 'duplicate-target',
       },
+      { Cookie: cookie },
     )).body;
     const id2 = r2.brand?.brandId;
     // Confirm only one brand with that name exists in MOOD.
@@ -459,8 +503,9 @@ async function caseProductCannotAttachCrossTenantBrand(): Promise<{ ok: boolean;
     )).body.brands;
     if (royallootBrands.length === 0) return { ok: false, detail: 'no RoyalLoot brand in seed' };
     const targetBrandId = royallootBrands[0].brandId;
+    const attackerCookie = await mintTestSession('attacker@test.local');
     const res = await productRoute.POST(new Request('http://localhost/api/product', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', Cookie: attackerCookie },
       body: JSON.stringify({
         action: 'create', operatorId: 'op-mood-attacker', operatorReason: 'cross-tenant attack',
         organizationId: MOOD_ORG, workspaceId: MOOD_WSP,

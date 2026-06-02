@@ -12,6 +12,7 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import {
   createTeamMemoryStore, newTeamMemberId,
   appendTeamMember, updateTeamMemberRoles,
@@ -55,16 +56,16 @@ interface UpdateRolesBody {
 type Body = AddMemberBody | UpdateRolesBody;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const auth = await requireSession(req);
+  if (!auth.ok) return auth.response;
   let body: Body;
   try { body = await req.json() as Body; }
   catch { return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 }); }
 
-  if (!body || typeof body.operatorId !== 'string' || body.operatorId.length === 0) {
-    return NextResponse.json({ error: 'operatorId is required' }, { status: 400 });
-  }
   if (typeof body.operatorReason !== 'string' || body.operatorReason.length === 0) {
     return NextResponse.json({ error: 'operatorReason is required' }, { status: 400 });
   }
+  body.operatorId = auth.ctx.user.userId;
   if (!Array.isArray(body.roles) || body.roles.some((r) => !VALID_ROLES.has(r))) {
     return NextResponse.json({ error: 'roles must be a non-empty array of valid TeamRole values' }, { status: 400 });
   }
