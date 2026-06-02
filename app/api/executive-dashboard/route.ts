@@ -19,6 +19,7 @@ import {
   brandsForTenant, campaignsForTenant, productsForTenant, projectsForTenant,
 } from '@lib/workspaceMemory';
 import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
 import { buildTeamEngine } from '@lib/teamEngine';
 import { analyzeTasks } from '@lib/taskEngine';
 import { analyzeCustomerJourneys } from '@lib/customerJourneyEngine';
@@ -49,6 +50,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const url = new URL(req.url);
   const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
   const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, organizationId, workspaceId);
+  if (!tenantAuth.ok) return tenantAuth.response;
   const tenantScope = { organizationId, workspaceId };
   const [
     wsMem, teamMem, taskMem, assetMem, pubMem, planMem,

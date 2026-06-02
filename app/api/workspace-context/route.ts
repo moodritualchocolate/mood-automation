@@ -20,6 +20,7 @@ import {
 import { createWorkspaceActivationStore } from '@lib/business/workspaceActivation';
 import { createKnowledgeMemoryStore } from '@lib/knowledgeMemory';
 import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
 import { getBusinessGoal } from '@lib/business/businessGoalModel';
 
 export const runtime = 'nodejs';
@@ -74,6 +75,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const url = new URL(req.url);
   const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
   const workspaceId = url.searchParams.get('workspaceId') ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, organizationId, workspaceId);
+  if (!tenantAuth.ok) return tenantAuth.response;
 
   const [ws, act, kn] = await Promise.all([
     createWorkspaceMemoryStore().read().catch(() => null),

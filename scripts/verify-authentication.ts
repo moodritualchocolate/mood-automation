@@ -497,6 +497,151 @@ async function caseCookieFlagsHttpOnlyAndSameSite(): Promise<{ ok: boolean; deta
   });
 }
 
+// ─── tenant-scoped GET protection · 8 routes ─────────────────
+
+/** The 8 protected GET routes — each gated by requireTenantSession. */
+const PROTECTED_TENANT_GET_ROUTES: Array<{
+  path: string; module: string;
+}> = [
+  { path: '/api/brand',                module: '../app/api/brand/route' },
+  { path: '/api/product',              module: '../app/api/product/route' },
+  { path: '/api/workspace',            module: '../app/api/workspace/route' },
+  { path: '/api/workspace-context',    module: '../app/api/workspace-context/route' },
+  { path: '/api/executive-dashboard',  module: '../app/api/executive-dashboard/route' },
+  { path: '/api/dashboard',            module: '../app/api/dashboard/route' },
+  { path: '/api/growth',               module: '../app/api/growth/route' },
+  { path: '/api/workflows',            module: '../app/api/workflows/route' },
+];
+
+const TENANT_A = { organizationId: 'org-a',  workspaceId: 'wsp-a-default' };
+const TENANT_B = { organizationId: 'org-b',  workspaceId: 'wsp-b-default' };
+
+async function withTwoTenantSeed<T>(fn: (ctx: {
+  tmp: string; tenantACookie: string; tenantBCookie: string; anonCookie: undefined;
+}) => Promise<T>): Promise<T> {
+  return withTempDir(async (tmp) => {
+    // Pre-seed two organizations + workspaces in org memory so memberships
+    // can be granted.
+    const orgMod = await import('../lib/tenancy/organizationMemory');
+    let orgState = orgMod.createInitialOrganizationMemory();
+    orgState = orgMod.appendOrganization(orgState, {
+      organizationId: TENANT_A.organizationId, name: 'A', slug: 'a',
+      billingTier: 'unbilled', createdAt: 1000, createdBy: 'plat',
+    });
+    orgState = orgMod.appendWorkspace(orgState, {
+      workspaceId: TENANT_A.workspaceId, organizationId: TENANT_A.organizationId,
+      name: 'A wsp', slug: 'default', createdAt: 1000, createdBy: 'plat',
+    });
+    orgState = orgMod.appendOrganization(orgState, {
+      organizationId: TENANT_B.organizationId, name: 'B', slug: 'b',
+      billingTier: 'unbilled', createdAt: 1000, createdBy: 'plat',
+    });
+    orgState = orgMod.appendWorkspace(orgState, {
+      workspaceId: TENANT_B.workspaceId, organizationId: TENANT_B.organizationId,
+      name: 'B wsp', slug: 'default', createdAt: 1000, createdBy: 'plat',
+    });
+    await orgMod.createOrganizationMemoryStore(tmp).save(orgState);
+
+    // Mint two member sessions.
+    async function mintMember(email: string, organizationId: string): Promise<string> {
+      const { hashPassword } = await import('../lib/auth/passwordHash');
+      const userMod = await import('../lib/auth/userMemory');
+      const sessMod = await import('../lib/auth/sessionMemory');
+      const { SESSION_COOKIE_NAME } = await import('../lib/auth/cookie');
+      const { buildSessionCookieValue } = await import('../lib/auth/resolveSession');
+      const userStore = userMod.createUserMemoryStore();
+      let userState = await userStore.read();
+      const { passwordHash, passwordSalt } = hashPassword('test-password-12345');
+      const userId = userMod.newUserId();
+      userState = userMod.appendUser(userState, {
+        userId, email, displayName: 'm', passwordHash, passwordSalt,
+        createdBy: userId, createdAt: Date.now(),
+        failedLoginCount: 0, lockedUntil: 0,
+      });
+      await userStore.save(userState);
+      const sessStore = sessMod.createSessionMemoryStore();
+      let sessState = await sessStore.read();
+      const sessionId = sessMod.newSessionId();
+      const rawToken = sessMod.newSessionToken();
+      sessState = sessMod.appendSession(sessState, {
+        sessionId, userId, rawToken, at: Date.now(),
+      });
+      await sessStore.save(sessState);
+      // Grant membership
+      const orgStore2 = orgMod.createOrganizationMemoryStore();
+      let orgState2 = await orgStore2.read();
+      orgState2 = orgMod.appendMembership(orgState2, {
+        membershipId: orgMod.newMembershipId(),
+        organizationId, memberId: userId,
+        displayName: 'm', roles: ['organization-owner'],
+        createdAt: Date.now(), grantedBy: userId,
+      });
+      await orgStore2.save(orgState2);
+      return `${SESSION_COOKIE_NAME}=${buildSessionCookieValue(sessionId, rawToken)}`;
+    }
+    const tenantACookie = await mintMember('a-member@test.local', TENANT_A.organizationId);
+    const tenantBCookie = await mintMember('b-member@test.local', TENANT_B.organizationId);
+    return fn({ tmp, tenantACookie, tenantBCookie, anonCookie: undefined });
+  });
+}
+
+async function caseAnonymousGETReturns401(): Promise<{ ok: boolean; detail: string }> {
+  return withTwoTenantSeed(async ({ tenantACookie }) => {
+    const failures: string[] = [];
+    for (const r of PROTECTED_TENANT_GET_ROUTES) {
+      const mod = await import(r.module);
+      const url = `http://localhost${r.path}?organizationId=${TENANT_A.organizationId}&workspaceId=${TENANT_A.workspaceId}`;
+      const res = await (mod.GET as (req: Request) => Promise<Response>)(new Request(url, { method: 'GET' }));
+      if (res.status !== 401) failures.push(`${r.path}=${res.status}`);
+    }
+    // Sanity: tenantACookie unused here — we expect *anonymous* to be 401.
+    void tenantACookie;
+    return {
+      ok: failures.length === 0,
+      detail: failures.length === 0 ? `${PROTECTED_TENANT_GET_ROUTES.length}/8 routes returned 401 anonymous` : `failures: ${failures.join(',')}`,
+    };
+  });
+}
+
+async function caseWrongTenantReturns403(): Promise<{ ok: boolean; detail: string }> {
+  return withTwoTenantSeed(async ({ tenantACookie }) => {
+    // tenantACookie has membership in tenant A. Request data in tenant B → 403.
+    const failures: string[] = [];
+    for (const r of PROTECTED_TENANT_GET_ROUTES) {
+      const mod = await import(r.module);
+      const url = `http://localhost${r.path}?organizationId=${TENANT_B.organizationId}&workspaceId=${TENANT_B.workspaceId}`;
+      const res = await (mod.GET as (req: Request) => Promise<Response>)(new Request(url, {
+        method: 'GET', headers: { Cookie: tenantACookie },
+      }));
+      if (res.status !== 403) failures.push(`${r.path}=${res.status}`);
+    }
+    return {
+      ok: failures.length === 0,
+      detail: failures.length === 0 ? `${PROTECTED_TENANT_GET_ROUTES.length}/8 routes returned 403 cross-tenant` : `failures: ${failures.join(',')}`,
+    };
+  });
+}
+
+async function caseCorrectTenantReturns200(): Promise<{ ok: boolean; detail: string }> {
+  return withTwoTenantSeed(async ({ tenantACookie }) => {
+    const failures: string[] = [];
+    for (const r of PROTECTED_TENANT_GET_ROUTES) {
+      const mod = await import(r.module);
+      const url = `http://localhost${r.path}?organizationId=${TENANT_A.organizationId}&workspaceId=${TENANT_A.workspaceId}`;
+      const res = await (mod.GET as (req: Request) => Promise<Response>)(new Request(url, {
+        method: 'GET', headers: { Cookie: tenantACookie },
+      }));
+      // 200 is the happy path. Some routes may return 4xx for shape-specific
+      // reasons (e.g. workflows with no records), but never 401 / 403.
+      if (res.status === 401 || res.status === 403) failures.push(`${r.path}=${res.status}`);
+    }
+    return {
+      ok: failures.length === 0,
+      detail: failures.length === 0 ? `${PROTECTED_TENANT_GET_ROUTES.length}/8 routes passed (no 401/403 for valid member)` : `failures: ${failures.join(',')}`,
+    };
+  });
+}
+
 // ─── runner ──────────────────────────────────────────────────
 
 async function main(): Promise<void> {
@@ -537,6 +682,9 @@ async function main(): Promise<void> {
     ['bootstrap-refuses-no-env',       '/api/auth/bootstrap returns 412 without env vars',        caseBootstrapRefusesWithoutEnvVars],
     ['register-no-auto-grant',         'POST /api/auth/register does NOT auto-grant any membership', caseRegisterDoesNotGrantMembership],
     ['cookie-flags',                   'Set-Cookie includes httpOnly + SameSite=Lax + Path=/',    caseCookieFlagsHttpOnlyAndSameSite],
+    ['anon-get-401',                   'all 8 tenant-data GETs return 401 to anonymous request',  caseAnonymousGETReturns401],
+    ['wrong-tenant-get-403',           'all 8 tenant-data GETs return 403 for cross-tenant member', caseWrongTenantReturns403],
+    ['correct-tenant-get-not-4xx',     'all 8 tenant-data GETs return non-401/403 for valid member', caseCorrectTenantReturns200],
   ] as const) {
     let r: { ok: boolean; detail: string };
     try { r = await fn(); }

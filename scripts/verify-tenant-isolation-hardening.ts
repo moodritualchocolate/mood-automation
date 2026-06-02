@@ -234,8 +234,8 @@ async function callJsonRoute<T = unknown>(
 
 /** Mint a session for tests that drive protected POSTs.
  *  Creates a user via the userMemory transforms + a session via
- *  the sessionMemory transforms · returns a Cookie header value. */
-async function mintTestSession(email: string): Promise<string> {
+ *  the sessionMemory transforms · returns { cookie, userId }. */
+async function mintTestSession(email: string): Promise<{ cookie: string; userId: string }> {
   const { hashPassword } = await import('../lib/auth/passwordHash');
   const { createUserMemoryStore, appendUser, newUserId } = await import('../lib/auth/userMemory');
   const { createSessionMemoryStore, appendSession, newSessionId, newSessionToken } = await import('../lib/auth/sessionMemory');
@@ -261,7 +261,36 @@ async function mintTestSession(email: string): Promise<string> {
     sessionId, userId, rawToken, at: Date.now(),
   });
   await sessionStore.save(sessionState);
-  return `${SESSION_COOKIE_NAME}=${buildSessionCookieValue(sessionId, rawToken)}`;
+  return {
+    cookie: `${SESSION_COOKIE_NAME}=${buildSessionCookieValue(sessionId, rawToken)}`,
+    userId,
+  };
+}
+
+/** Mint a user + session + grant an organization membership in
+ *  the requested (organizationId, workspaceId). Used by GET-driven
+ *  tests so the tenant-scoped read-gate passes. */
+async function mintTestSessionWithMembership(
+  email: string, organizationId: string, workspaceIds?: string[],
+): Promise<string> {
+  const { cookie, userId } = await mintTestSession(email);
+  const {
+    appendMembership, createOrganizationMemoryStore, newMembershipId,
+  } = await import('../lib/tenancy/organizationMemory');
+  const orgStore = createOrganizationMemoryStore();
+  let orgState = await orgStore.read();
+  orgState = appendMembership(orgState, {
+    membershipId: newMembershipId(),
+    organizationId,
+    memberId: userId,
+    displayName: 'test',
+    roles: ['organization-owner'],
+    workspaceIds,
+    createdAt: Date.now(),
+    grantedBy: userId,
+  });
+  await orgStore.save(orgState);
+  return cookie;
 }
 
 function resetGlobals(): void {
@@ -269,6 +298,7 @@ function resetGlobals(): void {
   for (const k of [
     '__moodWorkspace', '__moodOrganizationMemory',
     '__moodWorkspaceActivation', '__moodWorkflowMemory',
+    '__moodUserMemory', '__moodSessionMemory',
   ]) g[k] = undefined;
 }
 
@@ -306,8 +336,10 @@ async function caseFastStartScopesPerTenant(): Promise<{ ok: boolean; detail: st
     const fastStart = await import('../app/api/fast-start/route');
 
     // Each tenant operator mints its own session before driving fast-start.
-    const moodCookie      = await mintTestSession('op-mood@test.local');
-    const royallootCookie = await mintTestSession('op-royalloot@test.local');
+    // Fast-start POST uses requireSession (not requireTenantSession), so
+    // memberships are not required here.
+    const { cookie: moodCookie }      = await mintTestSession('op-mood@test.local');
+    const { cookie: royallootCookie } = await mintTestSession('op-royalloot@test.local');
 
     // Drive MOOD.
     const moodReply = (await callJsonRoute<{ ok: boolean; result: { brandId: string; productId: string; organizationId: string } }>(
@@ -386,6 +418,27 @@ async function withSeededTwoTenants<T>(
     resetGlobals();
     const { createWorkspaceMemoryStore } = await import('../lib/workspaceMemory');
     await createWorkspaceMemoryStore(tmp).save(seedTwoTenants());
+    // Seed organization memory so memberships can be granted by the test
+    // helper. Both organizations + their workspaces are pre-registered.
+    const orgStoreMod = await import('../lib/tenancy/organizationMemory');
+    let orgState = createInitialOrganizationMemory();
+    orgState = appendOrganization(orgState, {
+      organizationId: MOOD_ORG, name: 'MOOD', slug: 'mood',
+      billingTier: 'unbilled', createdAt: 1000, createdBy: 'plat',
+    });
+    orgState = appendWorkspace(orgState, {
+      workspaceId: MOOD_WSP, organizationId: MOOD_ORG, name: 'MOOD wsp',
+      slug: 'default', createdAt: 1000, createdBy: 'plat',
+    });
+    orgState = appendOrganization(orgState, {
+      organizationId: ROYALLOOT_ORG, name: 'RoyalLoot', slug: 'royalloot',
+      billingTier: 'unbilled', createdAt: 2000, createdBy: 'plat',
+    });
+    orgState = appendWorkspace(orgState, {
+      workspaceId: ROYALLOOT_WSP, organizationId: ROYALLOOT_ORG, name: 'RoyalLoot wsp',
+      slug: 'default', createdAt: 2000, createdBy: 'plat',
+    });
+    await orgStoreMod.createOrganizationMemoryStore(tmp).save(orgState);
     resetGlobals();
     return await fn(tmp, { mood: MOOD_SCOPE, royalloot: ROYALLOOT_SCOPE });
   } finally {
@@ -398,10 +451,12 @@ async function withSeededTwoTenants<T>(
 async function caseBrandGETScopedToMOOD(): Promise<{ ok: boolean; detail: string }> {
   return withSeededTwoTenants(async () => {
     const brandRoute = await import('../app/api/brand/route');
+    const cookie = await mintTestSessionWithMembership('mood-member@test.local', MOOD_ORG);
     const { body } = await callJsonRoute<BrandRouteListBody>(
       brandRoute.GET as never,
       `http://localhost/api/brand?organizationId=${MOOD_ORG}&workspaceId=${MOOD_WSP}`,
-      'GET',
+      'GET', undefined,
+      { Cookie: cookie },
     );
     const ok = body.brands.length === 1 && body.brands[0].name === 'mood' &&
                body.brands.every((b) => b.organizationId === MOOD_ORG);
@@ -412,10 +467,12 @@ async function caseBrandGETScopedToMOOD(): Promise<{ ok: boolean; detail: string
 async function caseBrandGETScopedToRoyalLoot(): Promise<{ ok: boolean; detail: string }> {
   return withSeededTwoTenants(async () => {
     const brandRoute = await import('../app/api/brand/route');
+    const cookie = await mintTestSessionWithMembership('royalloot-member@test.local', ROYALLOOT_ORG);
     const { body } = await callJsonRoute<BrandRouteListBody>(
       brandRoute.GET as never,
       `http://localhost/api/brand?organizationId=${ROYALLOOT_ORG}&workspaceId=${ROYALLOOT_WSP}`,
-      'GET',
+      'GET', undefined,
+      { Cookie: cookie },
     );
     const ok = body.brands.length === 1 && body.brands[0].name === 'RoyalLoot' &&
                body.brands.every((b) => b.organizationId === ROYALLOOT_ORG);
@@ -426,10 +483,12 @@ async function caseBrandGETScopedToRoyalLoot(): Promise<{ ok: boolean; detail: s
 async function caseProductGETScopedToMOOD(): Promise<{ ok: boolean; detail: string }> {
   return withSeededTwoTenants(async () => {
     const productRoute = await import('../app/api/product/route');
+    const cookie = await mintTestSessionWithMembership('mood-pmember@test.local', MOOD_ORG);
     const { body } = await callJsonRoute<ProductRouteListBody>(
       productRoute.GET as never,
       `http://localhost/api/product?organizationId=${MOOD_ORG}&workspaceId=${MOOD_WSP}`,
-      'GET',
+      'GET', undefined,
+      { Cookie: cookie },
     );
     const ok = body.products.length === 1 && body.products[0].name === 'mood energy' &&
                body.products.every((p) => p.organizationId === MOOD_ORG);
@@ -440,10 +499,12 @@ async function caseProductGETScopedToMOOD(): Promise<{ ok: boolean; detail: stri
 async function caseProductGETScopedToRoyalLoot(): Promise<{ ok: boolean; detail: string }> {
   return withSeededTwoTenants(async () => {
     const productRoute = await import('../app/api/product/route');
+    const cookie = await mintTestSessionWithMembership('royalloot-pmember@test.local', ROYALLOOT_ORG);
     const { body } = await callJsonRoute<ProductRouteListBody>(
       productRoute.GET as never,
       `http://localhost/api/product?organizationId=${ROYALLOOT_ORG}&workspaceId=${ROYALLOOT_WSP}`,
-      'GET',
+      'GET', undefined,
+      { Cookie: cookie },
     );
     const ok = body.products.length === 1 && body.products[0].name === 'RoyalLoot · core sku' &&
                body.products.every((p) => p.organizationId === ROYALLOOT_ORG);
@@ -454,7 +515,8 @@ async function caseProductGETScopedToRoyalLoot(): Promise<{ ok: boolean; detail:
 async function caseSameBrandNameBlockedInSameTenant(): Promise<{ ok: boolean; detail: string }> {
   return withSeededTwoTenants(async () => {
     const brandRoute = await import('../app/api/brand/route');
-    const cookie = await mintTestSession('brand-dup@test.local');
+    // POST uses requireSession; the final GET needs membership. One cookie with membership covers both.
+    const cookie = await mintTestSessionWithMembership('brand-dup@test.local', MOOD_ORG);
     // First create succeeds.
     const r1 = (await callJsonRoute<BrandRoutePostBody>(
       brandRoute.POST as never, 'http://localhost/api/brand', 'POST',
@@ -480,7 +542,8 @@ async function caseSameBrandNameBlockedInSameTenant(): Promise<{ ok: boolean; de
     const list = (await callJsonRoute<BrandRouteListBody>(
       brandRoute.GET as never,
       `http://localhost/api/brand?organizationId=${MOOD_ORG}&workspaceId=${MOOD_WSP}`,
-      'GET',
+      'GET', undefined,
+      { Cookie: cookie },
     )).body;
     const matches = list.brands.filter((b) => b.name === 'duplicate-target');
     return {
@@ -491,19 +554,18 @@ async function caseSameBrandNameBlockedInSameTenant(): Promise<{ ok: boolean; de
 }
 
 async function caseProductCannotAttachCrossTenantBrand(): Promise<{ ok: boolean; detail: string }> {
-  return withSeededTwoTenants(async () => {
-    // Find RoyalLoot's brand id, then try to create a product against it
-    // from the MOOD scope. The route must reject with 404.
-    const brandRoute   = await import('../app/api/brand/route');
+  return withSeededTwoTenants(async (tmp) => {
+    // Find RoyalLoot's brand id by reading the seeded state directly —
+    // the attacker (MOOD-only member) can't read RoyalLoot brands via
+    // the GET route now, but we need the id for the test setup.
     const productRoute = await import('../app/api/product/route');
-    const royallootBrands = (await callJsonRoute<BrandRouteListBody>(
-      brandRoute.GET as never,
-      `http://localhost/api/brand?organizationId=${ROYALLOOT_ORG}&workspaceId=${ROYALLOOT_WSP}`,
-      'GET',
-    )).body.brands;
+    const { createWorkspaceMemoryStore, brandsForTenant } = await import('../lib/workspaceMemory');
+    const ws = await createWorkspaceMemoryStore(tmp).read();
+    const royallootBrands = brandsForTenant(ws, ROYALLOOT_SCOPE);
     if (royallootBrands.length === 0) return { ok: false, detail: 'no RoyalLoot brand in seed' };
     const targetBrandId = royallootBrands[0].brandId;
-    const attackerCookie = await mintTestSession('attacker@test.local');
+    // Attacker session has membership in MOOD only (POST uses requireSession not requireTenantSession).
+    const { cookie: attackerCookie } = await mintTestSession('attacker@test.local');
     const res = await productRoute.POST(new Request('http://localhost/api/product', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Cookie: attackerCookie },
       body: JSON.stringify({
@@ -523,13 +585,16 @@ async function caseProductCannotAttachCrossTenantBrand(): Promise<{ ok: boolean;
 async function caseWorkspaceContextNoLeakage(): Promise<{ ok: boolean; detail: string }> {
   return withSeededTwoTenants(async () => {
     const route = await import('../app/api/workspace-context/route');
+    const moodCookie      = await mintTestSessionWithMembership('wc-mood@test.local',      MOOD_ORG);
+    const royallootCookie = await mintTestSessionWithMembership('wc-royalloot@test.local', ROYALLOOT_ORG);
     const moodRes = (await callJsonRoute<{
       context: { brandLabel: string | null; productLabel: string | null };
       counts: { brands: number; products: number };
     }>(
       route.GET as never,
       `http://localhost/api/workspace-context?organizationId=${MOOD_ORG}&workspaceId=${MOOD_WSP}`,
-      'GET',
+      'GET', undefined,
+      { Cookie: moodCookie },
     )).body;
     const royallootRes = (await callJsonRoute<{
       context: { brandLabel: string | null; productLabel: string | null };
@@ -537,7 +602,8 @@ async function caseWorkspaceContextNoLeakage(): Promise<{ ok: boolean; detail: s
     }>(
       route.GET as never,
       `http://localhost/api/workspace-context?organizationId=${ROYALLOOT_ORG}&workspaceId=${ROYALLOOT_WSP}`,
-      'GET',
+      'GET', undefined,
+      { Cookie: royallootCookie },
     )).body;
     const ok =
       moodRes.context.brandLabel === 'mood' &&
@@ -558,13 +624,16 @@ async function caseWorkspaceContextNoLeakage(): Promise<{ ok: boolean; detail: s
 async function caseExecutiveDashboardNoLeakage(): Promise<{ ok: boolean; detail: string }> {
   return withSeededTwoTenants(async () => {
     const route = await import('../app/api/executive-dashboard/route');
+    const moodCookie      = await mintTestSessionWithMembership('ed-mood@test.local',      MOOD_ORG);
+    const royallootCookie = await mintTestSessionWithMembership('ed-royalloot@test.local', ROYALLOOT_ORG);
     const moodRes = (await callJsonRoute<{
       workspace: { snapshot?: { totals?: { brands: number; products: number; campaigns: number; projects: number } } };
       raw?: { brands: BrandRecord[]; products: ProductRecord[] };
     }>(
       route.GET as never,
       `http://localhost/api/executive-dashboard?organizationId=${MOOD_ORG}&workspaceId=${MOOD_WSP}`,
-      'GET',
+      'GET', undefined,
+      { Cookie: moodCookie },
     )).body;
     const royallootRes = (await callJsonRoute<{
       workspace: { snapshot?: { totals?: { brands: number; products: number; campaigns: number; projects: number } } };
@@ -572,7 +641,8 @@ async function caseExecutiveDashboardNoLeakage(): Promise<{ ok: boolean; detail:
     }>(
       route.GET as never,
       `http://localhost/api/executive-dashboard?organizationId=${ROYALLOOT_ORG}&workspaceId=${ROYALLOOT_WSP}`,
-      'GET',
+      'GET', undefined,
+      { Cookie: royallootCookie },
     )).body;
     // The composed workspace count must be tenant-scoped. We can't depend
     // on the snapshot.totals shape (downstream engine), so we fall back to

@@ -19,6 +19,7 @@ import { createAgentRunMemoryStore } from '@lib/agentRunMemory';
 import { PLATFORM_TENANT_ID_MOOD } from '@lib/tenancy/types';
 import { resolveTenantContext } from '@lib/tenancy/tenantContext';
 import { composeExecutiveDashboard } from '@lib/productization/dashboardComposition';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -35,10 +36,11 @@ function platformOwners(): string[] {
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const url = new URL(req.url);
-  const operatorId = url.searchParams.get('operatorId') ?? '';
   const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
-  const workspaceId = url.searchParams.get('workspaceId');
-  if (!operatorId) return NextResponse.json({ error: 'operatorId is required' }, { status: 400 });
+  const workspaceId = url.searchParams.get('workspaceId') ?? 'wsp-mood-default';
+  const tenantAuth = await requireTenantSession(req, organizationId, workspaceId);
+  if (!tenantAuth.ok) return tenantAuth.response;
+  const operatorId = tenantAuth.ctx.user.userId;
 
   const orgMem = await createOrganizationMemoryStore().read().catch(() => null);
   const context = resolveTenantContext({

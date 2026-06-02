@@ -31,6 +31,7 @@ import {
 import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import type { Formula } from '@/core/types';
 import { FORMULAS } from '@/core/types';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -39,6 +40,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const url = new URL(req.url);
   const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
   const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, organizationId, workspaceId);
+  if (!tenantAuth.ok) return tenantAuth.response;
   const productId      = url.searchParams.get('productId');
   const brandId        = url.searchParams.get('brandId');
   const store = createWorkspaceMemoryStore();
