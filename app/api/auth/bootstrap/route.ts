@@ -21,9 +21,10 @@ import {
 } from '@lib/auth/userMemory';
 import { hashPassword } from '@lib/auth/passwordHash';
 import {
-  appendMembership, createOrganizationMemoryStore, newMembershipId,
+  appendMembership, appendOrganization, appendWorkspace,
+  createOrganizationMemoryStore, newMembershipId,
 } from '@lib/tenancy/organizationMemory';
-import { PLATFORM_TENANT_ID_MOOD } from '@lib/tenancy/types';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import { toSafeUser, type UserRecord } from '@lib/auth/types';
 
 export const runtime = 'nodejs';
@@ -74,9 +75,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     userCreated = true;
   }
 
-  // Idempotent membership in org-mood as organization-owner.
+  // Idempotent org-mood + wsp-mood-default + organization-owner membership.
   const orgStore = createOrganizationMemoryStore();
   let orgState = await orgStore.read();
+  if (!orgState.organizations.some((o) => o.organizationId === PLATFORM_TENANT_ID_MOOD)) {
+    orgState = appendOrganization(orgState, {
+      organizationId: PLATFORM_TENANT_ID_MOOD, name: 'MOOD', slug: 'mood',
+      billingTier: 'unbilled', createdAt: at, createdBy: user.userId,
+      operatorNote: 'bootstrap · auto-created MOOD organization',
+    });
+  }
+  if (!orgState.workspaces.some((w) => w.workspaceId === PLATFORM_WORKSPACE_ID_MOOD)) {
+    orgState = appendWorkspace(orgState, {
+      workspaceId: PLATFORM_WORKSPACE_ID_MOOD,
+      organizationId: PLATFORM_TENANT_ID_MOOD,
+      name: 'MOOD · Default Workspace', slug: 'default',
+      createdAt: at, createdBy: user.userId,
+      operatorNote: 'bootstrap · auto-created default workspace',
+    });
+  }
   const existingMembership = orgState.memberships.find(
     (m) =>
       m.organizationId === PLATFORM_TENANT_ID_MOOD &&

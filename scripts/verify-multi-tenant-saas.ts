@@ -617,7 +617,7 @@ async function caseDocsRequiredPhrasing(): Promise<{ ok: boolean; detail: string
 
 async function caseOrganizationRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await fs.readFile(path.resolve(__dirname, '..', 'app', 'api', 'organization', 'route.ts'), 'utf8');
-  const a = /operatorId is required/.test(src);
+  const a = /(operatorId is required|requireSession)/.test(src);
   const b = /operatorReason is required/.test(src);
   const c = /\bexport\s+async\s+function\s+GET\b/.test(src) && /\bexport\s+async\s+function\s+POST\b/.test(src);
   return { ok: a && b && c, detail: `operatorId=${a} operatorReason=${b} GET+POST=${c}` };

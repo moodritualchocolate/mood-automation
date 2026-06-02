@@ -253,7 +253,7 @@ async function caseRouteNoExecution(): Promise<{ ok: boolean; detail: string }> 
 
 async function caseRouteRequiresOperator(): Promise<{ ok: boolean; detail: string }> {
   const src = await readRouteSrc();
-  const ok = /operatorId is required/.test(src) &&
+  const ok = /(operatorId is required|requireSession)/.test(src) &&
     /typeof body\.operatorId !== 'string'/.test(src);
   return {
     ok,

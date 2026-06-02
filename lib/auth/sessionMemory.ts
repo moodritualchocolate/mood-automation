@@ -96,18 +96,22 @@ function updateSession(
 }
 
 /** Sliding-expiry refresh. Extends `expiresAt` only after the
- *  sliding half-life has elapsed since the last update. */
+ *  sliding half-life has elapsed since the last extension. The
+ *  function only mutates `lastSeenAt` (and `expiresAt`) when an
+ *  extension actually fires — otherwise it is a no-op and avoids
+ *  resetting the halflife clock. */
 export function touchSession(
   state: SessionMemoryState, sessionId: SessionId, at: number,
 ): SessionMemoryState {
   return updateSession(state, sessionId, (s) => {
-    const next: SessionRecord = { ...s, lastSeenAt: at };
     const elapsed = at - s.lastSeenAt;
-    if (elapsed >= SESSION_SLIDING_HALFLIFE_MS) {
-      const absoluteCap = s.createdAt + SESSION_ABSOLUTE_TTL_MS;
-      next.expiresAt = Math.min(absoluteCap, at + SESSION_COOKIE_MAX_AGE_S * 1000);
-    }
-    return next;
+    if (elapsed < SESSION_SLIDING_HALFLIFE_MS) return s;
+    const absoluteCap = s.createdAt + SESSION_ABSOLUTE_TTL_MS;
+    return {
+      ...s,
+      lastSeenAt: at,
+      expiresAt: Math.min(absoluteCap, at + SESSION_COOKIE_MAX_AGE_S * 1000),
+    };
   });
 }
 

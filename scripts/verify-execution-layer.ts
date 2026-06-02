@@ -322,7 +322,7 @@ async function caseRouteNoPipeline(): Promise<{ ok: boolean; detail: string }> {
 async function caseRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await readRegistryRouteSrc();
   // Must require operatorId AND operatorReason.
-  const reqsId = /operatorId is required/.test(src);
+  const reqsId = /(operatorId is required|requireSession)/.test(src);
   const reqsReason = /operatorReason is required/.test(src);
   return {
     ok: reqsId && reqsReason,

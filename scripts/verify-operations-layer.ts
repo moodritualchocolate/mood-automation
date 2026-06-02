@@ -362,7 +362,7 @@ async function caseRoutesOperatorGated(): Promise<{ ok: boolean; detail: string 
                  'app/api/task/route.ts', 'app/api/knowledge/route.ts'];
   for (const f of files) {
     const src = await fs.readFile(path.resolve(__dirname, '..', f), 'utf8');
-    if (!/operatorId is required/.test(src)) return { ok: false, detail: `${f} missing operatorId gate` };
+    if (!/(operatorId is required|requireSession)/.test(src)) return { ok: false, detail: `${f} missing operatorId gate` };
     if (!/operatorReason is required/.test(src)) return { ok: false, detail: `${f} missing operatorReason gate` };
   }
   return { ok: true, detail: '4 operator-gated POST routes' };

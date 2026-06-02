@@ -282,7 +282,7 @@ function stripCommentsAndStrings(src: string): string {
 }
 async function caseQueueRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await fs.readFile(path.resolve(__dirname, '..', 'app', 'api', 'generation-queue', 'route.ts'), 'utf8');
-  const a = /operatorId is required/.test(src);
+  const a = /(operatorId is required|requireSession)/.test(src);
   const b = /operatorReason is required/.test(src);
   // The route also gates on approved-status:
   const c = /source asset not approved/.test(src);
@@ -290,7 +290,7 @@ async function caseQueueRouteOperatorGated(): Promise<{ ok: boolean; detail: str
 }
 async function caseResultRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await fs.readFile(path.resolve(__dirname, '..', 'app', 'api', 'generation-result', 'route.ts'), 'utf8');
-  const a = /operatorId is required/.test(src);
+  const a = /(operatorId is required|requireSession)/.test(src);
   const b = /operatorReason is required/.test(src);
   return { ok: a && b, detail: `operatorId=${a} operatorReason=${b}` };
 }

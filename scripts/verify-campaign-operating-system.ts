@@ -323,7 +323,7 @@ async function caseRouteNoPipeline(): Promise<{ ok: boolean; detail: string }> {
 async function caseRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await readRouteSrc();
   return {
-    ok: /operatorId is required/.test(src) && /operatorReason is required/.test(src),
+    ok: /(operatorId is required|requireSession)/.test(src) && /operatorReason is required/.test(src),
     detail: 'operator-gated POST',
   };
 }

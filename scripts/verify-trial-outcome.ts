@@ -302,7 +302,7 @@ async function caseRouteNoExecution(): Promise<{ ok: boolean; detail: string }> 
 async function caseRouteRequiresFields(): Promise<{ ok: boolean; detail: string }> {
   const src = await readRouteSrc();
   const ok =
-    /operatorId is required/.test(src) &&
+    /(operatorId is required|requireSession)/.test(src) &&
     /trialId is required/.test(src) &&
     /platform is required/.test(src) &&
     /audienceSegment is required/.test(src);

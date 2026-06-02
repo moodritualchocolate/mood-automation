@@ -310,7 +310,7 @@ async function caseRoutesNoExternalAPIs(): Promise<{ ok: boolean; detail: string
 async function caseJourneyRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await fs.readFile(path.resolve(__dirname, '..', 'app', 'api', 'customer-journey', 'route.ts'), 'utf8');
   return {
-    ok: /operatorId is required/.test(src) && /operatorReason is required/.test(src) &&
+    ok: /(operatorId is required|requireSession)/.test(src) && /operatorReason is required/.test(src) &&
         /eventType is required/.test(src) && /journeyId is required/.test(src),
     detail: 'operator-gated POST with required event fields',
   };

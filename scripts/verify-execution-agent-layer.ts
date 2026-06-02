@@ -243,7 +243,7 @@ async function caseRouteNoExternalAPIs(): Promise<{ ok: boolean; detail: string 
 }
 async function caseRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await fs.readFile(path.resolve(__dirname, '..', 'app', 'api', 'agent', 'route.ts'), 'utf8');
-  const a = /operatorId is required/.test(src);
+  const a = /(operatorId is required|requireSession)/.test(src);
   const b = /operatorReason is required/.test(src);
   return { ok: a && b, detail: `operatorId=${a} operatorReason=${b}` };
 }

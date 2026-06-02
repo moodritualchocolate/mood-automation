@@ -132,7 +132,7 @@ async function main(): Promise<void> {
   const libEnts = await fs.readdir(path.join(REPO, 'lib'), { withFileTypes: true });
   const knownLibDirs = new Set([
     'tenancy', 'productization', 'business', 'workflows',
-    'adapters', 'agents', 'banner', 'providers',
+    'adapters', 'agents', 'banner', 'providers', 'auth',
   ]);
   const extras = libEnts
     .filter((e) => e.isDirectory())

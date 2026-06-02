@@ -366,7 +366,7 @@ async function caseGetOnlyRoutes(): Promise<{ ok: boolean; detail: string }> {
 }
 async function caseActivationRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await fs.readFile(path.resolve(__dirname, '..', 'app', 'api', 'workspace-activation', 'route.ts'), 'utf8');
-  const a = /operatorId is required/.test(src);
+  const a = /(operatorId is required|requireSession)/.test(src);
   const b = /operatorReason is required/.test(src);
   return { ok: a && b, detail: `operatorId=${a} operatorReason=${b}` };
 }

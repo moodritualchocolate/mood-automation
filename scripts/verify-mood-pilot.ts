@@ -178,7 +178,7 @@ async function main(): Promise<void> {
   const libDirs = await fs.readdir(path.resolve(__dirname, '..', 'lib'), { withFileTypes: true });
   const knownLibDirs = new Set([
     'tenancy', 'productization', 'business', 'workflows',
-    'adapters', 'agents', 'banner', 'providers',
+    'adapters', 'agents', 'banner', 'providers', 'auth',
   ]);
   const newLibDirs: string[] = [];
   for (const ent of libDirs) {

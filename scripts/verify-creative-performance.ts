@@ -315,13 +315,13 @@ async function caseRoutesNoPipeline(): Promise<{ ok: boolean; detail: string }> 
 }
 async function casePublicationRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await fs.readFile(path.resolve(__dirname, '..', 'app', 'api', 'publication-registry', 'route.ts'), 'utf8');
-  const ok = /operatorId is required/.test(src) && /operatorReason is required/.test(src) &&
+  const ok = /(operatorId is required|requireSession)/.test(src) && /operatorReason is required/.test(src) &&
              /asset is not approved/.test(src);
   return { ok, detail: ok ? 'operator-gated · approved-status gated' : 'gate missing' };
 }
 async function casePerformanceRouteOperatorGated(): Promise<{ ok: boolean; detail: string }> {
   const src = await fs.readFile(path.resolve(__dirname, '..', 'app', 'api', 'performance', 'route.ts'), 'utf8');
-  const ok = /operatorId is required/.test(src) && /operatorReason is required/.test(src) &&
+  const ok = /(operatorId is required|requireSession)/.test(src) && /operatorReason is required/.test(src) &&
              /publicationId not found/.test(src);
   return { ok, detail: ok ? 'operator-gated · publication-existence gated' : 'gate missing' };
 }
