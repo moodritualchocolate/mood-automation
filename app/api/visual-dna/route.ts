@@ -3,13 +3,21 @@
  *
  * Read-only. Returns visual DNA memory + per-token saturation.
  */
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import { createVisualDNAMemoryStore } from '@lib/visualDNAMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  const url = new URL(req.url);
+  const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, organizationId, workspaceId);
+  if (!tenantAuth.ok) return tenantAuth.response;
+
   const mem = await createVisualDNAMemoryStore().read().catch(() => null);
   if (!mem) {
     return NextResponse.json({

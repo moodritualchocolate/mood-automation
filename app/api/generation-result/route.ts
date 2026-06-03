@@ -17,6 +17,9 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import {
   createGenerationResultRegistryStore, newGenerationResultId,
   type GenerationResultRecord,
@@ -31,6 +34,12 @@ export const dynamic = 'force-dynamic';
 // ─── GET ─────────────────────────────────────────────────────
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
+  const _url0 = new URL(req.url);
+  const _orgId0 = _url0.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const _wspId0 = _url0.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, _orgId0, _wspId0);
+  if (!tenantAuth.ok) return tenantAuth.response;
+
   const url = new URL(req.url);
   const assetFilter = url.searchParams.get('assetId');
   const requestFilter = url.searchParams.get('requestId');
@@ -67,6 +76,9 @@ interface LogResultBody {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   let body: LogResultBody;
   try { body = await req.json() as LogResultBody; }
   catch { return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 }); }

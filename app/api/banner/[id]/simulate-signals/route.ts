@@ -11,6 +11,7 @@
  */
 
 import { NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import {
   createEngagementStore,
   createAftertasteStore,
@@ -22,6 +23,8 @@ import { recallBanner } from '@/core/banner-cache';
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
   const banner = recallBanner(params.id);
   if (!banner) {
     return Response.json({ error: 'banner not in cache — generate it first' }, { status: 404 });

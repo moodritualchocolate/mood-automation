@@ -9,10 +9,9 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import { createOrganizationMemoryStore } from '@lib/tenancy/organizationMemory';
-import {
-  PLATFORM_TENANT_ID_MOOD,
-} from '@lib/tenancy/types';
 import {
   listOperatorOrganizations, resolveTenantContext,
 } from '@lib/tenancy/tenantContext';
@@ -32,6 +31,12 @@ function platformOwners(): string[] {
 }
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
+  const _url0 = new URL(req.url);
+  const _orgId0 = _url0.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const _wspId0 = _url0.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, _orgId0, _wspId0);
+  if (!tenantAuth.ok) return tenantAuth.response;
+
   const url = new URL(req.url);
   const operatorId = url.searchParams.get('operatorId') ?? '';
   const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;

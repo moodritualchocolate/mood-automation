@@ -14,6 +14,7 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import {
   createOutcomeMemoryStore, recordOutcome, deriveOutcomeLabel,
   type OutcomeRecord, type OutcomeMetrics, type OutcomeLabel,
@@ -57,6 +58,9 @@ interface OutcomeBody {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   let body: OutcomeBody;
   try { body = await req.json() as OutcomeBody; }
   catch { return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 }); }

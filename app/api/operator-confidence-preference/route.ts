@@ -15,6 +15,9 @@
  */
 
 import { NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import {
   createOperatorConfidencePreferenceMemoryStore,
 } from '@lib/operatorConfidencePreferenceMemory';
@@ -31,6 +34,12 @@ export const dynamic = 'force-dynamic';
 const DEFAULT_OPERATOR_ID = 'studio';
 
 export async function GET(req: NextRequest) {
+  const _url0 = new URL(req.url);
+  const _orgId0 = _url0.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const _wspId0 = _url0.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, _orgId0, _wspId0);
+  if (!tenantAuth.ok) return tenantAuth.response;
+
   const url = new URL(req.url);
   const operatorId = url.searchParams.get('operatorId') || DEFAULT_OPERATOR_ID;
   const memory = await createOperatorConfidencePreferenceMemoryStore().read().catch(() => null);
@@ -50,6 +59,9 @@ interface PreferencePostBody {
 }
 
 export async function POST(req: NextRequest) {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   let body: PreferencePostBody;
   try {
     body = (await req.json()) as PreferencePostBody;

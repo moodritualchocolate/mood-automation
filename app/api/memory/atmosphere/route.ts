@@ -6,6 +6,9 @@
  * success metric" surface — not CTR, not approvals.
  */
 
+import { NextResponse, type NextRequest } from 'next/server';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import { createAftertasteStore, createHumanMemoryStore, analyzeAtmosphere, summariseResidue } from '@lib/index';
 import type { BannerFootprint } from '@lib/atmosphereConsistency';
 import type { ReferenceDNA } from '@lib/referenceDNA';
@@ -21,7 +24,13 @@ const NEUTRAL_DNA: ReferenceDNA = {
   documentary_weight: 0.5, luxury_restraint: 0.5, anti_commercial_feel: 0.5,
 };
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, organizationId, workspaceId);
+  if (!tenantAuth.ok) return tenantAuth.response;
+
   const trail = await createHumanMemoryStore().read();
   const aftertasteRecords = await createAftertasteStore().read();
 
@@ -36,5 +45,5 @@ export async function GET() {
   const atmosphere = analyzeAtmosphere(footprints);
   const residue = summariseResidue(aftertasteRecords);
 
-  return Response.json({ atmosphere, residue, bannerCount: trail.length });
+  return NextResponse.json({ atmosphere, residue, bannerCount: trail.length });
 }

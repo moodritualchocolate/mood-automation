@@ -18,6 +18,7 @@
  */
 
 import { NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import { createRealityIngestionStore } from '@lib/realityIngestion';
 import type { IngestionSource } from '@lib/realityIngestion';
 import { SEED_INGESTED_SIGNALS } from '@data/seed-ingested-signals';
@@ -35,6 +36,9 @@ interface IngestBody {
 }
 
 export async function POST(req: NextRequest) {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   const body = (await req.json().catch(() => null)) as IngestBody | null;
   if (!body || !Array.isArray(body.signals) || body.signals.length === 0) {
     return Response.json({ error: 'expected { signals: [...] }' }, { status: 400 });

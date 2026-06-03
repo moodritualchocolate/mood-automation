@@ -16,6 +16,7 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
@@ -151,6 +152,9 @@ export async function GET(): Promise<NextResponse> {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   let body: Partial<RequestedCombination>;
   try {
     body = await req.json() as Partial<RequestedCombination>;

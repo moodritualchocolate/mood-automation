@@ -25,13 +25,18 @@
  * No action runs from this endpoint. The window is internal only.
  */
 
+import { type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import { runPermit } from '@lib/cognitionEngine';
 import { REQUIRED_DISCIPLINE } from '@lib/operatingSystemCore';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   const result = await runPermit();
   const directive_name = result.directive.directive;
   const outcome: 'permitted' | 'refused' =

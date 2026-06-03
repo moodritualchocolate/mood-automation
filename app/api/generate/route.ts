@@ -17,6 +17,7 @@
  */
 
 import { NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import { runPipeline } from '@/core/pipeline';
 import type { GenerateRequest } from '@/core/types';
 import { composeBannerSvg } from '@/components/banner-svg';
@@ -107,6 +108,9 @@ interface GenerateBody extends GenerateRequest {
 }
 
 export async function POST(req: NextRequest) {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   const body = (await req.json()) as GenerateBody;
 
   // Capture the ORIGINAL request flag before the preflight may

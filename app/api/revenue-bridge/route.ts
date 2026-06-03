@@ -12,7 +12,9 @@
  *   - the route never fetches from analytics / ad-platform APIs
  */
 
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import { composeRevenueLearningBridge } from '@lib/revenueLearningBridge';
 import { analyzeCustomerJourneys } from '@lib/customerJourneyEngine';
 import { analyzeAttribution } from '@lib/attributionEngine';
@@ -33,7 +35,13 @@ import { createPatternReliabilityMemoryStore } from '@lib/patternReliabilityMemo
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  const url = new URL(req.url);
+  const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, organizationId, workspaceId);
+  if (!tenantAuth.ok) return tenantAuth.response;
+
   const [journeyMem, pubMem, assetMem, planMem, perfMem,
          trialMem, outcomeMem, patternMem] = await Promise.all([
     createCustomerJourneyMemoryStore().read().catch(() => null),

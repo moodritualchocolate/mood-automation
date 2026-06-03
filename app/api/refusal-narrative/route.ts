@@ -7,6 +7,7 @@
  * endpoint does NOT refuse anything; it just describes.
  */
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import { computeRefusalNarrative } from '@lib/refusalNarrativeEngine';
 import { createCreativeDriftMemoryStore } from '@lib/creativeDriftMemory';
 
@@ -56,6 +57,9 @@ export async function GET(): Promise<NextResponse> {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   let body: Body;
   try { body = await req.json() as Body; }
   catch { return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 }); }

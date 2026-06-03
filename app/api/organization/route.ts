@@ -20,6 +20,7 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
 import { requireSession } from '@lib/auth/requireSession';
 import {
   appendMembership, appendOrganization, appendWorkspace,
@@ -63,7 +64,13 @@ function isPlatformOwner(operatorId: string): boolean {
 
 // ─── GET ─────────────────────────────────────────────────────
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  const _url0 = new URL(req.url);
+  const _orgId0 = _url0.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const _wspId0 = _url0.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, _orgId0, _wspId0);
+  if (!tenantAuth.ok) return tenantAuth.response;
+
   const mem = await createOrganizationMemoryStore().read().catch(() => null);
   const matrix = buildPermissionMatrix();
   const billing = describeBillingHooks();

@@ -12,12 +12,17 @@
  * No generation, no publishing — by definition.
  */
 
+import { type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import { runRestrain } from '@lib/cognitionEngine';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   const result = await runRestrain();
   return Response.json({ ok: true, ...result });
 }

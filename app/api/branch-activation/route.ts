@@ -13,6 +13,7 @@
  */
 
 import { NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import {
   createBranchActivationMemoryStore, buildActivationId,
   type BranchActivationRecord,
@@ -53,6 +54,9 @@ interface ActivationPostBody {
 }
 
 export async function POST(req: NextRequest) {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   let body: ActivationPostBody;
   try {
     body = (await req.json()) as ActivationPostBody;

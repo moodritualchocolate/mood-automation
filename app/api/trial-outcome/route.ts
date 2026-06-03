@@ -17,6 +17,9 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import {
   createTrialOutcomeMemoryStore, newOutcomeId,
   type TrialOutcomeMetrics, type TrialOutcomeRecord,
@@ -29,7 +32,13 @@ export const dynamic = 'force-dynamic';
 
 // ─── GET — history + analysis ────────────────────────────────
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  const url = new URL(req.url);
+  const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, organizationId, workspaceId);
+  if (!tenantAuth.ok) return tenantAuth.response;
+
   const [outcomeMem, trialMem] = await Promise.all([
     createTrialOutcomeMemoryStore().read().catch(() => null),
     createOperatorTrialMemoryStore().read().catch(() => null),
@@ -67,6 +76,9 @@ function hasMetrics(m?: TrialOutcomeMetrics): boolean {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   let body: OutcomeBody;
   try { body = await req.json() as OutcomeBody; }
   catch { return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 }); }

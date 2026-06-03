@@ -19,12 +19,17 @@
  *   - no sandbox mutation
  */
 
+import { type NextRequest } from 'next/server';
+import { requireSession } from '@lib/auth/requireSession';
 import { runDefer } from '@lib/cognitionEngine';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const _authGate = await requireSession(req);
+  if (!_authGate.ok) return _authGate.response;
+
   const result = await runDefer();
   return Response.json({ ok: true, outcome: 'deferred', ...result });
 }

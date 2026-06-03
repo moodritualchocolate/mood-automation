@@ -9,6 +9,9 @@
  * No generation, no critic, no external execution.
  */
 
+import { NextResponse, type NextRequest } from 'next/server';
+import { requireTenantSession } from '@lib/auth/requireTenantSession';
+import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import {
   createCampaignLifecycleMemoryStore, buildCampaignLifecycleHistoryContext,
 } from '@lib/campaignLifecycleMemory';
@@ -39,7 +42,13 @@ import { buildCampaignLifecycleLongitudinalView } from '@lib/campaignLifecycleLo
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const organizationId = url.searchParams.get('organizationId') ?? PLATFORM_TENANT_ID_MOOD;
+  const workspaceId    = url.searchParams.get('workspaceId')    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  const tenantAuth = await requireTenantSession(req, organizationId, workspaceId);
+  if (!tenantAuth.ok) return tenantAuth.response;
+
   const [
     lifecycleMem, counterfactualMem, outcomeMem, governanceMem, identityMem, weightMem,
     conflictMem, culturalMem, strategyMem, copywriterMem, qualityMem, policyAudit,
@@ -144,7 +153,7 @@ export async function GET() {
     current,
   });
 
-  return Response.json(view, {
+  return NextResponse.json(view, {
     headers: { 'cache-control': 'no-cache, no-transform' },
   });
 }

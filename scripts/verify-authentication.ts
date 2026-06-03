@@ -497,12 +497,13 @@ async function caseCookieFlagsHttpOnlyAndSameSite(): Promise<{ ok: boolean; deta
   });
 }
 
-// ─── tenant-scoped GET protection · 8 routes ─────────────────
+// ─── tenant-scoped GET protection · 48 routes ────────────────
 
-/** The 8 protected GET routes — each gated by requireTenantSession. */
+/** All protected GET routes — each gated by requireTenantSession. */
 const PROTECTED_TENANT_GET_ROUTES: Array<{
   path: string; module: string;
 }> = [
+  // Originally protected in the prior P0 commit (8):
   { path: '/api/brand',                module: '../app/api/brand/route' },
   { path: '/api/product',              module: '../app/api/product/route' },
   { path: '/api/workspace',            module: '../app/api/workspace/route' },
@@ -511,6 +512,79 @@ const PROTECTED_TENANT_GET_ROUTES: Array<{
   { path: '/api/dashboard',            module: '../app/api/dashboard/route' },
   { path: '/api/growth',               module: '../app/api/growth/route' },
   { path: '/api/workflows',            module: '../app/api/workflows/route' },
+  // Added in this Phase-1 sweep (40):
+  { path: '/api/agent',                              module: '../app/api/agent/route' },
+  { path: '/api/asset-composer',                     module: '../app/api/asset-composer/route' },
+  { path: '/api/asset-registry',                     module: '../app/api/asset-registry/route' },
+  { path: '/api/attribution',                        module: '../app/api/attribution/route' },
+  { path: '/api/business-dashboard',                 module: '../app/api/business-dashboard/route' },
+  { path: '/api/campaign-evolution',                 module: '../app/api/campaign-evolution/route' },
+  { path: '/api/campaign-planner',                   module: '../app/api/campaign-planner/route' },
+  { path: '/api/creative-director',                  module: '../app/api/creative-director/route' },
+  { path: '/api/creative-dna-map',                   module: '../app/api/creative-dna-map/route' },
+  { path: '/api/creative-drift',                     module: '../app/api/creative-drift/route' },
+  { path: '/api/creative-fatigue',                   module: '../app/api/creative-fatigue/route' },
+  { path: '/api/customer-journey',                   module: '../app/api/customer-journey/route' },
+  { path: '/api/executive-governance',               module: '../app/api/executive-governance/route' },
+  { path: '/api/generation-queue',                   module: '../app/api/generation-queue/route' },
+  { path: '/api/generation-result',                  module: '../app/api/generation-result/route' },
+  { path: '/api/knowledge',                          module: '../app/api/knowledge/route' },
+  { path: '/api/learning-bridge',                    module: '../app/api/learning-bridge/route' },
+  { path: '/api/memory',                             module: '../app/api/memory/route' },
+  { path: '/api/memory/atmosphere',                  module: '../app/api/memory/atmosphere/route' },
+  { path: '/api/narrative-dna',                      module: '../app/api/narrative-dna/route' },
+  { path: '/api/onboarding',                         module: '../app/api/onboarding/route' },
+  { path: '/api/operator-calibration-reconciliation',module: '../app/api/operator-calibration-reconciliation/route' },
+  { path: '/api/operator-confidence-preference',     module: '../app/api/operator-confidence-preference/route' },
+  { path: '/api/operator-creative-trial',            module: '../app/api/operator-creative-trial/route' },
+  { path: '/api/organization',                       module: '../app/api/organization/route' },
+  { path: '/api/performance',                        module: '../app/api/performance/route' },
+  { path: '/api/performance-analyzer',               module: '../app/api/performance-analyzer/route' },
+  { path: '/api/publication-registry',               module: '../app/api/publication-registry/route' },
+  { path: '/api/revenue-bridge',                     module: '../app/api/revenue-bridge/route' },
+  { path: '/api/scene-architect',                    module: '../app/api/scene-architect/route' },
+  { path: '/api/story-architect',                    module: '../app/api/story-architect/route' },
+  { path: '/api/strategic-outcome',                  module: '../app/api/strategic-outcome/route' },
+  { path: '/api/supervised-learning-loop',           module: '../app/api/supervised-learning-loop/route' },
+  { path: '/api/task',                               module: '../app/api/task/route' },
+  { path: '/api/team',                               module: '../app/api/team/route' },
+  { path: '/api/tenant-context',                     module: '../app/api/tenant-context/route' },
+  { path: '/api/trial-outcome',                      module: '../app/api/trial-outcome/route' },
+  { path: '/api/visual-dna',                         module: '../app/api/visual-dna/route' },
+  { path: '/api/workspace-activation',               module: '../app/api/workspace-activation/route' },
+  { path: '/api/workspace-quick-start',              module: '../app/api/workspace-quick-start/route' },
+];
+
+/** All protected POST routes — each gated by requireSession (and some by
+ *  requireTenantSession). Phase-1 sweep added the 27 long-tail POSTs. */
+const PROTECTED_POST_ROUTES: Array<{ path: string; module: string }> = [
+  { path: '/api/banner/[id]/export',           module: '../app/api/banner/[id]/export/route' },
+  { path: '/api/banner/[id]/signal',           module: '../app/api/banner/[id]/signal/route' },
+  { path: '/api/banner/[id]/simulate-signals', module: '../app/api/banner/[id]/simulate-signals/route' },
+  { path: '/api/branch-activation',            module: '../app/api/branch-activation/route' },
+  { path: '/api/cognition/approve',            module: '../app/api/cognition/approve/route' },
+  { path: '/api/cognition/consider',           module: '../app/api/cognition/consider/route' },
+  { path: '/api/cognition/defer',              module: '../app/api/cognition/defer/route' },
+  { path: '/api/cognition/draft',              module: '../app/api/cognition/draft/route' },
+  { path: '/api/cognition/notice',             module: '../app/api/cognition/notice/route' },
+  { path: '/api/cognition/observe',            module: '../app/api/cognition/observe/route' },
+  { path: '/api/cognition/permit',             module: '../app/api/cognition/permit/route' },
+  { path: '/api/cognition/prepare',            module: '../app/api/cognition/prepare/route' },
+  { path: '/api/cognition/propose',            module: '../app/api/cognition/propose/route' },
+  { path: '/api/cognition/rest',               module: '../app/api/cognition/rest/route' },
+  { path: '/api/cognition/restrain',           module: '../app/api/cognition/restrain/route' },
+  { path: '/api/cognition/review',             module: '../app/api/cognition/review/route' },
+  { path: '/api/cognition/revise',             module: '../app/api/cognition/revise/route' },
+  { path: '/api/generate',                     module: '../app/api/generate/route' },
+  { path: '/api/generation-queue',             module: '../app/api/generation-queue/route' },
+  { path: '/api/generation-result',            module: '../app/api/generation-result/route' },
+  { path: '/api/ingest',                       module: '../app/api/ingest/route' },
+  { path: '/api/operator-confidence-preference', module: '../app/api/operator-confidence-preference/route' },
+  { path: '/api/operator-creative-trial',      module: '../app/api/operator-creative-trial/route' },
+  { path: '/api/outcome',                      module: '../app/api/outcome/route' },
+  { path: '/api/pre-generation-stability',     module: '../app/api/pre-generation-stability/route' },
+  { path: '/api/refusal-narrative',            module: '../app/api/refusal-narrative/route' },
+  { path: '/api/trial-outcome',                module: '../app/api/trial-outcome/route' },
 ];
 
 const TENANT_A = { organizationId: 'org-a',  workspaceId: 'wsp-a-default' };
@@ -642,6 +716,39 @@ async function caseCorrectTenantReturns200(): Promise<{ ok: boolean; detail: str
   });
 }
 
+async function caseAnonymousPOSTReturns401(): Promise<{ ok: boolean; detail: string }> {
+  return withTwoTenantSeed(async () => {
+    const failures: string[] = [];
+    for (const r of PROTECTED_POST_ROUTES) {
+      const mod = await import(r.module);
+      const url = `http://localhost${r.path.replace('[id]', 'test-banner')}`;
+      let res: Response;
+      try {
+        // Some banner POSTs require a (req, { params }) signature; we pass
+        // params via a stub.
+        if (r.path.includes('[id]')) {
+          res = await (mod.POST as (req: Request, ctx: { params: { id: string } }) => Promise<Response>)(
+            new Request(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }),
+            { params: { id: 'test-banner' } },
+          );
+        } else {
+          res = await (mod.POST as (req: Request) => Promise<Response>)(
+            new Request(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }),
+          );
+        }
+      } catch (e) {
+        failures.push(`${r.path}=threw(${(e as Error).message.slice(0, 40)})`);
+        continue;
+      }
+      if (res.status !== 401) failures.push(`${r.path}=${res.status}`);
+    }
+    return {
+      ok: failures.length === 0,
+      detail: failures.length === 0 ? `${PROTECTED_POST_ROUTES.length}/${PROTECTED_POST_ROUTES.length} POSTs returned 401 anonymous` : `failures: ${failures.slice(0, 5).join(' · ')}…`,
+    };
+  });
+}
+
 // ─── runner ──────────────────────────────────────────────────
 
 async function main(): Promise<void> {
@@ -682,9 +789,10 @@ async function main(): Promise<void> {
     ['bootstrap-refuses-no-env',       '/api/auth/bootstrap returns 412 without env vars',        caseBootstrapRefusesWithoutEnvVars],
     ['register-no-auto-grant',         'POST /api/auth/register does NOT auto-grant any membership', caseRegisterDoesNotGrantMembership],
     ['cookie-flags',                   'Set-Cookie includes httpOnly + SameSite=Lax + Path=/',    caseCookieFlagsHttpOnlyAndSameSite],
-    ['anon-get-401',                   'all 8 tenant-data GETs return 401 to anonymous request',  caseAnonymousGETReturns401],
-    ['wrong-tenant-get-403',           'all 8 tenant-data GETs return 403 for cross-tenant member', caseWrongTenantReturns403],
-    ['correct-tenant-get-not-4xx',     'all 8 tenant-data GETs return non-401/403 for valid member', caseCorrectTenantReturns200],
+    ['anon-get-401',                   'all 48 tenant-data GETs return 401 to anonymous request',  caseAnonymousGETReturns401],
+    ['wrong-tenant-get-403',           'all 48 tenant-data GETs return 403 for cross-tenant member', caseWrongTenantReturns403],
+    ['correct-tenant-get-not-4xx',     'all 48 tenant-data GETs return non-401/403 for valid member', caseCorrectTenantReturns200],
+    ['anon-post-401',                  'all 27 long-tail POSTs return 401 to anonymous request',   caseAnonymousPOSTReturns401],
   ] as const) {
     let r: { ok: boolean; detail: string };
     try { r = await fn(); }
