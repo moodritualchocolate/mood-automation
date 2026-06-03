@@ -85,6 +85,13 @@ export interface AssetRecord {
     body?: string;
     cta?: string;
     paletteKey?: string;
+    subline?: string;
+    audience?: string;
+    emotion?: string;
+    visualMode?: string;
+    productPresence?: string;
+    platformSize?: string;
+    negativePrompt?: string;
   };
 }
 
