@@ -50,6 +50,35 @@ export interface ProjectRecord {
   operatorNote?: string;
 }
 
+/** Optional brand identity profile. Captured by /brand-setup and
+ *  consumed by the Asset Generator as a default palette / signature.
+ *  All fields optional — operators can fill them in over time. */
+export interface BrandIdentity {
+  /** One-sentence positioning. Operator-written. */
+  positioning?: string;
+  /** Hebrew slogan, RTL. */
+  slogan?: string;
+  /** Brand voice — short adjectives ("quiet · editorial · honest"). */
+  voice?: string;
+  /** Audience description ("31-49, urban, Hebrew-first"). */
+  audience?: string;
+  /** Default palette key for the Asset Generator
+   *  ('cocoa' | 'amber' | 'ember' | 'ivory' | 'ink'). */
+  paletteKey?: string;
+  /** Brand language — 'hebrew' | 'english' | 'mixed'. */
+  language?: string;
+  /** Comma-separated values the brand stands for. */
+  values?: string;
+  /** Comma-separated channels the brand publishes on. */
+  channels?: string;
+  /** Signature mark displayed in renders (defaults to brand name uppercase). */
+  signature?: string;
+  /** Timestamp of last identity update. */
+  updatedAt?: number;
+  /** Last operator to update identity. */
+  updatedBy?: string;
+}
+
 export interface BrandRecord {
   brandId: string;
   /** Tenancy stamp. Required for new records. */
@@ -61,6 +90,8 @@ export interface BrandRecord {
   createdAt: number;
   operatorId: string;
   operatorNote?: string;
+  /** Optional brand identity profile (see BrandIdentity). */
+  identity?: BrandIdentity;
 }
 
 export interface ProductRecord {
@@ -148,6 +179,28 @@ export function appendBrand(state: WorkspaceMemoryState, record: BrandRecord): W
     firstUpdatedAt: state.firstUpdatedAt ?? record.createdAt,
     updatedAt: record.createdAt,
   };
+}
+
+/** Replace a brand's identity profile. Pure. Throws on unknown
+ *  brandId / tenant mismatch so the route can return a clear error. */
+export function updateBrandIdentity(
+  state: WorkspaceMemoryState,
+  args: { brandId: string; organizationId: string; workspaceId: string; identity: BrandIdentity; operatorId: string },
+): WorkspaceMemoryState {
+  const idx = state.brands.findIndex((b) => b.brandId === args.brandId);
+  if (idx === -1) throw new Error(`brand not found: ${args.brandId}`);
+  const prev = state.brands[idx];
+  if (prev.organizationId !== args.organizationId || prev.workspaceId !== args.workspaceId) {
+    throw new Error('tenant scope mismatch');
+  }
+  const at = Date.now();
+  const next: BrandRecord = {
+    ...prev,
+    identity: { ...(prev.identity ?? {}), ...args.identity, updatedAt: at, updatedBy: args.operatorId },
+  };
+  const brands = [...state.brands];
+  brands[idx] = next;
+  return { ...state, brands, updatedAt: at };
 }
 export function appendProduct(state: WorkspaceMemoryState, record: ProductRecord): WorkspaceMemoryState {
   return {

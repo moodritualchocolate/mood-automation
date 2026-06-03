@@ -69,6 +69,23 @@ export interface AssetRecord {
   approvalHistory: AssetApprovalStep[];
   /** Optional operator note attached at registration. */
   operatorNote?: string;
+  /** Optional tenancy stamp — newer records carry it; legacy ones don't. */
+  organizationId?: string;
+  workspaceId?: string;
+  /** Optional brand attachment so the library can group by brand. */
+  brandId?: string;
+  /** Optional rendered preview (post / banner — first slide for carousel).
+   *  Stored as a data URL so the library can show thumbnails without
+   *  re-rendering. Truncated FIFO can drop these without losing the
+   *  prompt / spec — they're regenerable. */
+  previewDataUrl?: string;
+  /** Optional Hebrew copy snapshot for the library card. */
+  copy?: {
+    headline?: string;
+    body?: string;
+    cta?: string;
+    paletteKey?: string;
+  };
 }
 
 // ─── state ────────────────────────────────────────────────────

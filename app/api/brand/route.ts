@@ -25,8 +25,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import {
   appendBrand, brandsForTenant, createWorkspaceMemoryStore,
-  newBrandId, newProjectId, appendProject,
-  type BrandRecord, type ProjectRecord,
+  newBrandId, newProjectId, appendProject, updateBrandIdentity,
+  type BrandRecord, type ProjectRecord, type BrandIdentity,
 } from '@lib/workspaceMemory';
 import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import { requireSession } from '@lib/auth/requireSession';
@@ -75,7 +75,16 @@ interface CreateBody {
   description?: string;
   operatorNote?: string;
 }
-type Body = CreateBody;
+interface UpdateIdentityBody {
+  action: 'update-identity';
+  operatorId: string;
+  operatorReason: string;
+  organizationId?: string;
+  workspaceId?: string;
+  brandId: string;
+  identity: BrandIdentity;
+}
+type Body = CreateBody | UpdateIdentityBody;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const auth = await requireSession(req);
@@ -87,6 +96,36 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'operatorReason is required' }, { status: 400 });
   }
   body.operatorId = auth.ctx.user.userId;
+  if (body.action === 'update-identity') {
+    if (typeof body.brandId !== 'string' || body.brandId.length === 0) {
+      return NextResponse.json({ error: 'brandId is required' }, { status: 400 });
+    }
+    if (!body.identity || typeof body.identity !== 'object') {
+      return NextResponse.json({ error: 'identity is required' }, { status: 400 });
+    }
+    const orgId = body.organizationId ?? PLATFORM_TENANT_ID_MOOD;
+    const wspId = body.workspaceId    ?? PLATFORM_WORKSPACE_ID_MOOD;
+    const store = createWorkspaceMemoryStore();
+    const state = await store.read();
+    try {
+      const next = updateBrandIdentity(state, {
+        brandId: body.brandId,
+        organizationId: orgId, workspaceId: wspId,
+        identity: body.identity,
+        operatorId: body.operatorId,
+      });
+      await store.save(next);
+      const updated = next.brands.find((b) => b.brandId === body.brandId);
+      return NextResponse.json({
+        ok: true, brand: updated, scope: { organizationId: orgId, workspaceId: wspId },
+        advisoryNotice:
+          'Operator-supervised — brand identity updated (tenant-scoped). The route NEVER auto-acts. ' +
+          'Human remains final authority.',
+      });
+    } catch (err) {
+      return NextResponse.json({ error: (err as Error).message }, { status: 404 });
+    }
+  }
   if (body.action !== 'create') {
     return NextResponse.json({ error: 'unknown action' }, { status: 400 });
   }

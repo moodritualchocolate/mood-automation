@@ -84,6 +84,11 @@ interface RegisterBody {
   prompt: string;
   summary?: string;
   operatorNote?: string;
+  organizationId?: string;
+  workspaceId?: string;
+  brandId?: string;
+  previewDataUrl?: string;
+  copy?: { headline?: string; body?: string; cta?: string; paletteKey?: string };
 }
 interface ApprovalBody {
   action: 'approve' | 'reject' | 'archive';
@@ -143,6 +148,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         at, status: 'pending', operatorId: body.operatorId, reason: body.operatorReason,
       }],
       operatorNote: body.operatorNote,
+      organizationId: body.organizationId,
+      workspaceId: body.workspaceId,
+      brandId: body.brandId,
+      previewDataUrl: body.previewDataUrl,
+      copy: body.copy,
     };
     const next = await store.append(record);
     return NextResponse.json({
