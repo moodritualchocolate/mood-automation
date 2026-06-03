@@ -1,17 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { AuthProvider } from './components/auth/AuthProvider';
 
 export const metadata: Metadata = {
-  title: 'MOOD CREATIVE OS — ENERGY',
-  description: 'An autonomous creative operating system. V1: ENERGY static banner engine.',
+  title: 'MOOD Creative OS',
+  description: 'A creative operating system for chocolate brands. Compose, review, approve.',
 };
 
-// Mobile coherence: device-width viewport so the runtime renders at
-// real scale on phones. Without this, mobile browsers render at 980px
-// then shrink — atmospheric breathing still happens but at thumbnail
-// scale, useless. Theme colour matches the page background so the iOS
-// status bar and Android system UI participate in the atmosphere
-// instead of cutting a hard edge across it.
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -23,8 +18,8 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen scanline">
-        {children}
+      <body className="min-h-screen bg-[#050505] text-[#F7F5F2]">
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

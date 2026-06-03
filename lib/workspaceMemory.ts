@@ -73,6 +73,25 @@ export interface BrandIdentity {
   channels?: string;
   /** Signature mark displayed in renders (defaults to brand name uppercase). */
   signature?: string;
+  /** Default CTA snippet (Hebrew). Surfaced in the Asset Generator. */
+  defaultCta?: string;
+  /** Default visual mode for new briefs. */
+  defaultVisualMode?: string;
+  /** Brand-asset references. Each entry is operator-supplied
+   *  metadata about a real asset (pouch photo, chocolate-square
+   *  photo, logo). The `dataUrl` field is OPTIONAL — without an
+   *  upload pipeline yet, operators may register the metadata
+   *  alone, and the generator will surface "upload integration
+   *  coming next" instead of pretending a photo exists. */
+  brandAssets?: Array<{
+    kind: 'pouch' | 'chocolate-square' | 'logo' | 'reference';
+    label: string;
+    description?: string;
+    /** Optional base64 data URL — present only if the operator
+     *  actually uploaded an image. */
+    dataUrl?: string;
+    createdAt: number;
+  }>;
   /** Timestamp of last identity update. */
   updatedAt?: number;
   /** Last operator to update identity. */

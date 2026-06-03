@@ -104,8 +104,6 @@ function isApproval(b: Body): b is ApprovalBody {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const auth = await requireSession(req);
-  if (!auth.ok) return auth.response;
   let body: Body;
   try { body = await req.json() as Body; }
   catch { return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 }); }
@@ -113,7 +111,32 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (typeof body.operatorReason !== 'string' || body.operatorReason.length === 0) {
     return NextResponse.json({ error: 'operatorReason is required' }, { status: 400 });
   }
-  body.operatorId = auth.ctx.user.userId;
+
+  // Determine the target tenant for the action. `register` uses the
+  // explicit organizationId / workspaceId on the body. `approve` /
+  // `reject` / `archive` infer from the asset record (looked up below).
+  let targetOrg: string;
+  let targetWsp: string;
+  if (isRegister(body)) {
+    targetOrg = body.organizationId ?? PLATFORM_TENANT_ID_MOOD;
+    targetWsp = body.workspaceId    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  } else if (isApproval(body)) {
+    const cur = await createAssetRegistryMemoryStore().read().catch(() => null);
+    const existing = cur?.assets.find((a) => a.assetId === body.assetId);
+    if (!existing) {
+      return NextResponse.json({ error: `asset not found: ${body.assetId}` }, { status: 404 });
+    }
+    targetOrg = existing.organizationId ?? PLATFORM_TENANT_ID_MOOD;
+    targetWsp = existing.workspaceId    ?? PLATFORM_WORKSPACE_ID_MOOD;
+  } else {
+    return NextResponse.json({ error: 'unknown action' }, { status: 400 });
+  }
+
+  // Tenant-session enforcement: the caller must be a member of the
+  // target organization+workspace. Cross-tenant writes are refused.
+  const tenantAuth = await requireTenantSession(req, targetOrg, targetWsp);
+  if (!tenantAuth.ok) return tenantAuth.response;
+  body.operatorId = tenantAuth.ctx.user.userId;
 
   const store = createAssetRegistryMemoryStore();
 

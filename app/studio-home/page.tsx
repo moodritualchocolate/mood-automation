@@ -1,11 +1,14 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import * as React from 'react';
 import Link from 'next/link';
 import { AppShell, PageHead } from '@app/components/ui/AppShell';
 import { Card, CardEyebrow, CardHeadline, CardMeta } from '@app/components/ui/Card';
 import { Button } from '@app/components/ui/Button';
 import { Tag } from '@app/components/ui/Tag';
+import { useRequireTenant } from '@app/components/auth/AuthProvider';
 
 interface AssetRow {
   assetId: string;
@@ -26,6 +29,7 @@ interface BrandRow {
 }
 
 export default function StudioHomePage() {
+  const tenant = useRequireTenant();
   const [assets, setAssets] = React.useState<AssetRow[]>([]);
   const [brands, setBrands] = React.useState<BrandRow[]>([]);
   const [counts, setCounts] = React.useState<Record<string, number>>({});
@@ -33,10 +37,11 @@ export default function StudioHomePage() {
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
+    if (!tenant) return;
     (async () => {
       setLoading(true); setError(null);
       try {
-        const params = new URLSearchParams({ organizationId: 'org-mood', workspaceId: 'wsp-mood-default' });
+        const params = new URLSearchParams({ organizationId: tenant.organizationId, workspaceId: tenant.workspaceId });
         const [assetsRes, brandsRes] = await Promise.all([
           fetch(`/api/asset-registry?${params.toString()}`, { credentials: 'include' }),
           fetch(`/api/brand?${params.toString()}`,          { credentials: 'include' }),
@@ -60,7 +65,7 @@ export default function StudioHomePage() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [tenant]);
 
   const recent = assets.slice().reverse().slice(0, 6);
   const totalAssets = (counts.pending ?? 0) + (counts.approved ?? 0) + (counts.rejected ?? 0) + (counts.archived ?? 0);

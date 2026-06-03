@@ -541,6 +541,14 @@ async function main() {
       'app/api/auth/login/route.ts',
       'app/api/auth/logout/route.ts',
       'app/api/auth/bootstrap/route.ts',
+      // ── post-register tenant onboarding (operator-supervised
+      //    POST; single-shot; NEVER auto-creates a second
+      //    organization for the same user; NEVER charges) ──
+      'app/api/auth/create-first-workspace/route.ts',
+      // ── creative renderer (operator-supervised POST; pure
+      //    SVG composition + Resvg rasterizer; NEVER publishes,
+      //    NEVER auto-saves, NEVER calls external APIs) ──
+      'app/api/render/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {

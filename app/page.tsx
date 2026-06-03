@@ -1,134 +1,129 @@
-/**
- * Landing — the single entry point of MOOD CREATIVE OS V1.
- *
- * The user does NOT write a prompt. They choose:
- *   1. Formula (V1 ships ENERGY only — but the picker shows the full shape)
- *   2. Campaign mode (optional)
- *
- * Then they press a single button and the system thinks for them.
- */
-
 'use client';
 
-import { useState } from 'react';
+export const dynamic = 'force-dynamic';
+
+import * as React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { CAMPAIGN_MODES, FORMULAS, type CampaignMode, type Formula } from '@/core/types';
+import { useAuth } from './components/auth/AuthProvider';
 
-export default function Landing() {
+export default function LandingPage() {
+  const { state } = useAuth();
   const router = useRouter();
-  const [formula] = useState<Formula>('ENERGY');
-  const [mode, setMode] = useState<CampaignMode | null>(null);
-  const [brutality, setBrutality] = useState<'lenient' | 'default' | 'brutal'>('default');
-  const [busy, setBusy] = useState(false);
 
-  async function generate() {
-    setBusy(true);
-    const params = new URLSearchParams({ formula, brutality });
-    if (mode) params.set('mode', mode);
-    router.push(`/studio?${params.toString()}`);
+  // Authenticated members land on the Studio; no-org users finish onboarding.
+  React.useEffect(() => {
+    if (state.status === 'member') router.replace('/studio-home');
+    if (state.status === 'no-org') router.replace('/account?onboard=1');
+  }, [state.status, router]);
+
+  if (state.status === 'loading' || state.status === 'member' || state.status === 'no-org') {
+    return <main className="min-h-[100dvh] bg-[#050505]" />;
   }
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <header className="px-8 md:px-16 pt-8 flex items-center justify-between">
-        <div>
-          <div className="eyebrow">MOOD CREATIVE OS</div>
-          <div className="mt-1 text-xs text-bone-200/60">v0.1 · ENERGY engine</div>
+    <main className="min-h-[100dvh] bg-[#050505] text-[#F7F5F2]">
+      <header className="border-b border-[rgba(247,245,242,0.06)]">
+        <div className="mx-auto max-w-[1240px] px-4 md:px-6 h-14 flex items-center justify-between">
+          <div className="font-['EditorialNew','Times_New_Roman',serif] text-[18px] tracking-tight">
+            MOOD
+            <span className="ml-2 text-[10px] uppercase tracking-[0.32em] text-[rgba(247,245,242,0.40)] align-middle">
+              Creative OS
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-[13px]">
+            <Link href="/login" className="text-[rgba(247,245,242,0.65)] hover:text-[#F7F5F2]">Sign in</Link>
+            <Link href="/register" className="bg-[#F7F5F2] text-[#0A0A0A] rounded-lg px-3 py-1.5">Get started</Link>
+          </div>
         </div>
-        <div className="text-xs text-bone-200/60 tabular-nums">{new Date().toISOString().slice(0, 10)}</div>
       </header>
 
-      <section className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-        <div className="eyebrow mb-6">choose a formula</div>
-
-        <div className="flex gap-3">
-          {FORMULAS.map((f) => (
-            <button
-              key={f}
-              className={`px-6 py-3 border hairline text-sm tracking-widest font-medium transition-colors ${
-                formula === f ? 'bg-bone-50 text-ink-900' : 'text-bone-50 hover:bg-white/5'
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-          {['CALM', 'FOCUS', 'SLEEP'].map((dim) => (
-            <button
-              key={dim}
-              disabled
-              className="px-6 py-3 border hairline text-sm tracking-widest font-medium opacity-25 cursor-not-allowed"
-              title="reserved — not in V1"
-            >
-              {dim}
-            </button>
-          ))}
+      {/* HERO */}
+      <section className="mx-auto max-w-[1240px] px-4 md:px-6 pt-16 md:pt-28 pb-16 md:pb-24">
+        <div className="max-w-3xl">
+          <div className="text-[10px] uppercase tracking-[0.32em] text-[rgba(247,245,242,0.55)] mb-4">
+            Operator-supervised · brand-safe · Hebrew-first
+          </div>
+          <h1 className="font-['EditorialNew','Times_New_Roman',serif] text-[44px] md:text-[72px] leading-[1.04] tracking-tight">
+            A quiet creative OS<br />
+            for serious chocolate brands.
+          </h1>
+          <p className="mt-6 max-w-2xl text-[16px] md:text-[18px] leading-relaxed text-[rgba(247,245,242,0.70)]">
+            Compose banners, posts, and carousels from a Hebrew brief. The system enforces brand discipline —
+            formula-correct color, approved product references, no invented packaging — and registers every
+            asset in a library with full prompt and approval history. Operator approval required. Human remains
+            final authority.
+          </p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Link href="/register" className="inline-flex items-center justify-center bg-[#F7F5F2] text-[#0A0A0A] rounded-lg px-6 py-3 text-[15px] font-medium hover:bg-[#EFEBE5]">
+              Create your workspace →
+            </Link>
+            <Link href="/login" className="inline-flex items-center justify-center border border-[rgba(247,245,242,0.18)] text-[#F7F5F2] rounded-lg px-6 py-3 text-[15px] font-medium hover:border-[#F7F5F2]">
+              Sign in
+            </Link>
+          </div>
         </div>
-
-        <div className="mt-16 eyebrow mb-4">campaign mode <span className="opacity-60">— optional</span></div>
-        <div className="flex flex-wrap gap-2 justify-center max-w-xl">
-          <button
-            className={`px-4 py-2 text-xs tracking-wider border hairline transition-colors ${
-              mode === null ? 'bg-white/10 text-bone-50' : 'text-bone-50/70 hover:bg-white/5'
-            }`}
-            onClick={() => setMode(null)}
-          >
-            AUTO
-          </button>
-          {CAMPAIGN_MODES.map((m) => (
-            <button
-              key={m}
-              className={`px-4 py-2 text-xs tracking-wider border hairline transition-colors ${
-                mode === m ? 'bg-bone-50 text-ink-900' : 'text-bone-50/70 hover:bg-white/5'
-              }`}
-              onClick={() => setMode(m)}
-            >
-              {m.toUpperCase()}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-16 eyebrow mb-4">critic brutality</div>
-        <div className="flex gap-2 justify-center">
-          {(['lenient', 'default', 'brutal'] as const).map((b) => (
-            <button
-              key={b}
-              className={`px-4 py-2 text-xs tracking-wider border hairline transition-colors ${
-                brutality === b ? 'bg-bone-50 text-ink-900' : 'text-bone-50/70 hover:bg-white/5'
-              }`}
-              onClick={() => setBrutality(b)}
-              title={
-                b === 'lenient'
-                  ? 'fewer rejections — useful for first runs without API keys'
-                  : b === 'brutal'
-                  ? 'creative-director-level rejection — most banners will fail'
-                  : 'balanced — rejects safe and generic, accepts observed'
-              }
-            >
-              {b.toUpperCase()}
-            </button>
-          ))}
-        </div>
-
-        <button
-          disabled={busy}
-          onClick={generate}
-          className="mt-12 px-10 py-4 bg-bone-50 text-ink-900 text-sm tracking-[0.3em] font-semibold disabled:opacity-50"
-        >
-          {busy ? 'COMPOSING…' : 'GENERATE'}
-        </button>
-
-        <p className="mt-6 text-xs text-bone-200/45 max-w-md">
-          The system will choose the human moment, the truth beneath it, the composition, and the typography.
-          You do not write a prompt. You did your job by choosing.
-        </p>
       </section>
 
-      <footer className="px-8 md:px-16 pb-8 flex justify-between items-end">
-        <div className="text-xs text-bone-200/40 max-w-xs leading-relaxed">
-          Not a banner generator. Not a prompt wrapper. An autonomous creative operating system.
+      {/* HIGHLIGHTS */}
+      <section className="border-t border-[rgba(247,245,242,0.06)]">
+        <div className="mx-auto max-w-[1240px] px-4 md:px-6 py-12 md:py-16 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+          <Highlight eyebrow="01"
+            title="Compose"
+            body="Pick a visual mode — text editorial, product hero, human moment, or product + human. Brief in Hebrew. Preview in seconds." />
+          <Highlight eyebrow="02"
+            title="Review"
+            body="Asset Quality Guard rejects renders that don't meet the brand contract. Operator approves or archives. Every decision is logged." />
+          <Highlight eyebrow="03"
+            title="Ship"
+            body="Download PNG. Copy prompt + production spec. Hand off to a designer or external image provider with a complete brief." />
         </div>
-        <div className="eyebrow">v0.1 · build {process.env.NODE_ENV === 'production' ? 'prod' : 'dev'}</div>
+      </section>
+
+      {/* WHAT YOU GET */}
+      <section className="border-t border-[rgba(247,245,242,0.06)]">
+        <div className="mx-auto max-w-[1240px] px-4 md:px-6 py-12 md:py-16">
+          <div className="text-[10px] uppercase tracking-[0.32em] text-[rgba(247,245,242,0.55)] mb-3">What's inside</div>
+          <h2 className="font-['EditorialNew','Times_New_Roman',serif] text-[32px] md:text-[44px] leading-tight tracking-tight max-w-2xl">
+            Built for brands that take their voice seriously.
+          </h2>
+          <ul className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl text-[14px] text-[rgba(247,245,242,0.70)] leading-relaxed">
+            <li>· Formula-correct palettes — ENERGY, FOCUS, RELAX, SLEEP</li>
+            <li>· Vector pouch + chocolate-square illustration</li>
+            <li>· 5 visual modes, including carousel-story with per-slide control</li>
+            <li>· Asset Quality Guard with Hebrew-only enforcement</li>
+            <li>· Prompt + negative prompt + production spec on every render</li>
+            <li>· Multi-tenant — your workspace is yours</li>
+            <li>· Operator-driven approve / reject / archive</li>
+            <li>· No publishing. No auto-approval. Ever.</li>
+          </ul>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Link href="/register" className="inline-flex items-center justify-center bg-[#F7F5F2] text-[#0A0A0A] rounded-lg px-6 py-3 text-[15px] font-medium hover:bg-[#EFEBE5]">
+              Start free →
+            </Link>
+            <Link href="/login" className="inline-flex items-center justify-center border border-[rgba(247,245,242,0.18)] text-[#F7F5F2] rounded-lg px-6 py-3 text-[15px] font-medium hover:border-[#F7F5F2]">
+              I already have an account
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-[rgba(247,245,242,0.06)]">
+        <div className="mx-auto max-w-[1240px] px-4 md:px-6 py-6 flex flex-wrap items-center justify-between gap-4 text-[12px] text-[rgba(247,245,242,0.45)]">
+          <span>MOOD Creative OS · alpha</span>
+          <span>Operator approval required · Human remains final authority</span>
+        </div>
       </footer>
     </main>
+  );
+}
+
+function Highlight({ eyebrow, title, body }: { eyebrow: string; title: string; body: string }) {
+  return (
+    <div>
+      <div className="text-[10px] uppercase tracking-[0.32em] text-[rgba(247,245,242,0.55)] mb-3">{eyebrow}</div>
+      <h3 className="font-['EditorialNew','Times_New_Roman',serif] text-[24px] tracking-tight">{title}</h3>
+      <p className="mt-3 text-[14px] leading-relaxed text-[rgba(247,245,242,0.65)]">{body}</p>
+    </div>
   );
 }

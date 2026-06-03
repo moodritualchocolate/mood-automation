@@ -1,168 +1,162 @@
-/**
- * /products · product CRUD page (operator-supervised).
- */
-
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { COLORS, SPACING } from '@lib/productization/designSystem';
+export const dynamic = 'force-dynamic';
 
-interface BrandRow { brandId: string; name: string; }
-interface ProductRow { productId: string; brandId: string; name: string; formula?: string; description?: string; }
+import * as React from 'react';
+import { AppShell, PageHead } from '@app/components/ui/AppShell';
+import { Card, CardEyebrow, CardHeadline, CardMeta } from '@app/components/ui/Card';
+import { Button } from '@app/components/ui/Button';
+import { Field, Input, Textarea, Select } from '@app/components/ui/Field';
+import { Tag } from '@app/components/ui/Tag';
+import { Empty } from '@app/components/ui/Empty';
+import { useRequireTenant } from '@app/components/auth/AuthProvider';
+
+interface BrandRow { brandId: string; name: string }
+interface ProductRow {
+  productId: string;
+  brandId: string;
+  name: string;
+  formula?: string;
+  description?: string;
+}
 
 const FORMULAS = ['', 'ENERGY', 'FOCUS', 'RELAX', 'SLEEP'] as const;
 
 export default function ProductsPage() {
-  return <main className="min-h-screen scanline"><ProductsInner /></main>;
-}
+  const tenant = useRequireTenant();
+  const [brands, setBrands] = React.useState<BrandRow[]>([]);
+  const [products, setProducts] = React.useState<ProductRow[]>([]);
+  const [brandId, setBrandId] = React.useState('');
+  const [name, setName] = React.useState('');
+  const [formula, setFormula] = React.useState<typeof FORMULAS[number]>('');
+  const [description, setDescription] = React.useState('');
+  const [reason, setReason] = React.useState('create product');
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [showCreate, setShowCreate] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
-function ProductsInner() {
-  const params = useSearchParams();
-  const operatorId = params.get('operatorId') ?? 'demo-operator';
-  const organizationId = params.get('organizationId') ?? 'org-mood';
-  const workspaceId = params.get('workspaceId') ?? 'wsp-mood-default';
+  const load = React.useCallback(async () => {
+    if (!tenant) return;
+    setLoading(true); setError(null);
+    try {
+      const q = new URLSearchParams({ organizationId: tenant.organizationId, workspaceId: tenant.workspaceId });
+      const [b, p] = await Promise.all([
+        fetch(`/api/brand?${q.toString()}`, { credentials: 'include', cache: 'no-store' }),
+        fetch(`/api/product?${q.toString()}`, { credentials: 'include', cache: 'no-store' }),
+      ]);
+      if (!b.ok || !p.ok) { setError(`Could not load (${b.status}/${p.status}).`); return; }
+      const bj = await b.json() as { brands: BrandRow[] };
+      const pj = await p.json() as { products: ProductRow[] };
+      setBrands(bj.brands); setProducts(pj.products);
+      if (!brandId && bj.brands.length > 0) setBrandId(bj.brands[0].brandId);
+    } finally { setLoading(false); }
+  }, [tenant, brandId]);
 
-  const [brands, setBrands] = useState<BrandRow[]>([]);
-  const [products, setProducts] = useState<ProductRow[]>([]);
-  const [brandId, setBrandId] = useState('');
-  const [name, setName] = useState('');
-  const [formula, setFormula] = useState<typeof FORMULAS[number]>('');
-  const [description, setDescription] = useState('');
-  const [reason, setReason] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  React.useEffect(() => { void load(); }, [load]);
 
-  const load = useCallback(async () => {
-    const q = new URLSearchParams({ organizationId, workspaceId });
-    const [b, p] = await Promise.all([
-      fetch(`/api/brand?${q.toString()}`,   { cache: 'no-store' }),
-      fetch(`/api/product?${q.toString()}`, { cache: 'no-store' }),
-    ]);
-    if (!b.ok || !p.ok) { setError(`load ${b.status}/${p.status}`); return; }
-    const bj = await b.json() as { brands: BrandRow[] };
-    const pj = await p.json() as { products: ProductRow[] };
-    setBrands(bj.brands); setProducts(pj.products);
-    if (!brandId && bj.brands.length > 0) setBrandId(bj.brands[0].brandId);
-  }, [brandId, organizationId, workspaceId]);
-
-  useEffect(() => { void load(); }, [load]);
-
-  const submit = async () => {
-    setError(null); setBusy(true);
-    const r = await fetch('/api/product', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'create', operatorId, operatorReason: reason || 'create product',
-        organizationId, workspaceId,
-        brandId, name, formula: formula || undefined,
-        description: description || undefined,
-      }),
-    });
-    if (!r.ok) {
-      const j = await r.json().catch(() => ({})) as { error?: string };
-      setError(j.error ?? `error ${r.status}`);
-    } else {
-      setName(''); setDescription(''); setReason(''); setFormula('');
+  async function submit() {
+    if (!tenant) return;
+    setBusy(true); setError(null);
+    try {
+      const r = await fetch('/api/product', {
+        method: 'POST', credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create',
+          operatorReason: reason || 'create product',
+          organizationId: tenant.organizationId,
+          workspaceId: tenant.workspaceId,
+          brandId, name,
+          formula: formula || undefined,
+          description: description || undefined,
+        }),
+      });
+      if (!r.ok) {
+        const j = await r.json().catch(() => ({})) as { error?: string };
+        setError(j.error ?? `Error ${r.status}`); return;
+      }
+      setName(''); setDescription(''); setShowCreate(false);
       await load();
-    }
-    setBusy(false);
-  };
+    } finally { setBusy(false); }
+  }
+
+  const brandLookup = new Map(brands.map((b) => [b.brandId, b.name]));
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-20 pt-6 sm:max-w-3xl sm:px-6 sm:pt-10">
-      <header className="flex flex-col gap-2">
-        <Breadcrumb operatorId={operatorId} organizationId={organizationId} workspaceId={workspaceId} entity="Products" />
-        <h1 className="font-editorial text-3xl tracking-tight sm:text-4xl">Products</h1>
-        {error ? (
-          <div className="mt-3 rounded-lg border px-4 py-3 text-sm"
-               style={{ color: COLORS.signal.warning, borderColor: COLORS.signal.warning }}>
-            Operator review required · {error}
+    <AppShell section="Products">
+      <PageHead
+        eyebrow="Operator-supervised"
+        title="Products"
+        subtitle="Each product attaches to a brand and a formula (ENERGY · FOCUS · RELAX · SLEEP). The formula drives palette + label conventions in the renderer."
+        actions={<Button variant="primary" size="md" onClick={() => setShowCreate((v) => !v)} disabled={brands.length === 0}>{showCreate ? 'Cancel' : '+ New product'}</Button>}
+      />
+
+      {error ? (
+        <Card className="mb-6 border-[#FF4D2D]/40">
+          <CardEyebrow>Operator review required</CardEyebrow>
+          <CardHeadline>{error}</CardHeadline>
+        </Card>
+      ) : null}
+
+      {brands.length === 0 && !loading ? (
+        <Empty
+          eyebrow="No brand yet"
+          headline="Create a brand first."
+          description="Every product attaches to a brand."
+          action={<Button variant="primary" size="md" onClick={() => { window.location.href = '/brands'; }}>Open /brands</Button>}
+        />
+      ) : null}
+
+      {showCreate && brands.length > 0 ? (
+        <Card className="mb-6">
+          <CardEyebrow>Create product</CardEyebrow>
+          <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Field label="Brand" required>
+              <Select value={brandId} onChange={(e) => setBrandId(e.target.value)}>
+                {brands.map((b) => <option key={b.brandId} value={b.brandId}>{b.name}</option>)}
+              </Select>
+            </Field>
+            <Field label="Product name" required><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="ENERGY 30g pouch" /></Field>
+            <Field label="Formula">
+              <Select value={formula} onChange={(e) => setFormula(e.target.value as typeof FORMULAS[number])}>
+                <option value="">—</option>
+                {FORMULAS.filter((f) => f).map((f) => <option key={f} value={f}>{f}</option>)}
+              </Select>
+            </Field>
+            <Field label="Operator reason" required><Input value={reason} onChange={(e) => setReason(e.target.value)} /></Field>
+            <div className="md:col-span-2"><Field label="Description"><Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} /></Field></div>
           </div>
-        ) : null}
-      </header>
+          <div className="mt-4 flex gap-2">
+            <Button variant="primary" size="md" onClick={() => void submit()} disabled={busy || !name || !brandId}>{busy ? 'Creating…' : 'Create product'}</Button>
+            <Button variant="ghost" size="md" onClick={() => setShowCreate(false)}>Cancel</Button>
+          </div>
+        </Card>
+      ) : null}
 
-      <section className="mt-6 rounded-xl border p-5 sm:p-6" style={{ borderColor: COLORS.hairline }}>
-        <div className="eyebrow">Create product</div>
-        <div className="mt-4 flex flex-col gap-3">
-          <label className="flex flex-col gap-1">
-            <span className="eyebrow">brand *</span>
-            <select value={brandId} onChange={(e) => setBrandId(e.target.value)}
-              className="h-11 rounded-lg border bg-transparent px-3 text-sm text-bone-50 outline-none focus:border-bone-200"
-              style={{ borderColor: COLORS.hairline, paddingInline: SPACING.scale[3] }}>
-              {brands.map((b) => <option key={b.brandId} value={b.brandId}>{b.name}</option>)}
-            </select>
-          </label>
-          <Field label="name *" value={name} onChange={setName} />
-          <label className="flex flex-col gap-1">
-            <span className="eyebrow">formula</span>
-            <select value={formula} onChange={(e) => setFormula(e.target.value as typeof FORMULAS[number])}
-              className="h-11 rounded-lg border bg-transparent px-3 text-sm text-bone-50 outline-none focus:border-bone-200"
-              style={{ borderColor: COLORS.hairline, paddingInline: SPACING.scale[3] }}>
-              {FORMULAS.map((f) => <option key={f} value={f}>{f || '—'}</option>)}
-            </select>
-          </label>
-          <Field label="description" value={description} onChange={setDescription} />
-          <Field label="operatorReason *" value={reason} onChange={setReason} />
-          <button type="button" onClick={() => { void submit(); }}
-            disabled={busy || !brandId || !name || !reason}
-            className="mt-2 inline-flex h-11 items-center justify-center rounded-lg px-6 text-sm font-medium disabled:opacity-50"
-            style={{ background: COLORS.bone[50], color: COLORS.ink[900] }}>
-            {busy ? 'Creating…' : 'Create product'}
-          </button>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[0, 1].map((i) => <div key={i} className="h-24 rounded-xl bg-[#0A0A0A] pulse" />)}
         </div>
-      </section>
-
-      <section className="mt-8">
-        <div className="eyebrow">{products.length} product{products.length === 1 ? '' : 's'}</div>
-        <ul className="mt-3 flex flex-col gap-2">
+      ) : products.length === 0 && brands.length > 0 ? (
+        <Empty
+          eyebrow="No products yet"
+          headline="Add the first product."
+          description="Pick a brand + formula, give it a name."
+          action={<Button variant="primary" size="md" onClick={() => setShowCreate(true)}>+ New product</Button>}
+        />
+      ) : products.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {products.map((p) => (
-            <li key={p.productId} className="rounded-lg border p-3 text-xs text-bone-100/80"
-                style={{ borderColor: COLORS.hairline }}>
-              <div className="font-medium">{p.name}{p.formula ? <span className="ml-2 text-bone-100/60">· {p.formula}</span> : null}</div>
-              <div className="mt-1 font-mono text-[10px] text-bone-100/50">{p.productId}</div>
-              {p.description ? <div className="mt-1 text-bone-100/60">{p.description}</div> : null}
-            </li>
+            <Card key={p.productId}>
+              <CardEyebrow>{brandLookup.get(p.brandId) ?? p.brandId}</CardEyebrow>
+              <CardHeadline>{p.name}</CardHeadline>
+              {p.formula ? <div className="mt-2"><Tag>{p.formula}</Tag></div> : null}
+              {p.description ? <CardMeta>{p.description}</CardMeta> : null}
+            </Card>
           ))}
-        </ul>
-      </section>
-    </div>
-  );
-}
-
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
-  return (
-    <label className="flex flex-col gap-1">
-      <span className="eyebrow">{label}</span>
-      <input type="text" value={value} onChange={(e) => onChange(e.target.value)}
-        className="h-11 rounded-lg border bg-transparent px-3 text-sm text-bone-50 outline-none focus:border-bone-200"
-        style={{ borderColor: COLORS.hairline, paddingInline: SPACING.scale[3] }} />
-    </label>
-  );
-}
-
-function Breadcrumb({ operatorId, organizationId, workspaceId, entity }: {
-  operatorId: string; organizationId: string; workspaceId: string; entity: string;
-}) {
-  return (
-    <>
-      <div className="eyebrow">CreativeOS · {entity}</div>
-      <nav className="flex flex-wrap items-center gap-2 text-[10px] text-bone-100/60">
-        <span className="font-mono">{organizationId}</span>
-        <span>·</span>
-        <span className="font-mono">{workspaceId}</span>
-        <span>·</span>
-        <span className="text-bone-100/80">{entity}</span>
-        <span>·</span>
-        <span className="font-mono">{operatorId}</span>
-        <span className="ml-auto">
-          <a href={`/dashboard?operatorId=${operatorId}&organizationId=${organizationId}&workspaceId=${workspaceId}`}
-            className="rounded-full border px-2 py-0.5"
-            style={{ borderColor: 'rgba(247,245,242,0.12)', color: 'rgba(247,245,242,0.8)' }}>
-            ← /dashboard
-          </a>
-        </span>
-      </nav>
-    </>
+        </div>
+      ) : null}
+    </AppShell>
   );
 }

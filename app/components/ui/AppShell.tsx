@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@app/components/auth/AuthProvider';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -15,11 +16,13 @@ const NAV: Array<{ href: string; label: string; key: string }> = [
   { href: '/asset-generator', label: 'Generator',     key: 'asset-generator' },
   { href: '/asset-library',   label: 'Library',       key: 'asset-library' },
   { href: '/brands',          label: 'Brands',        key: 'brands' },
+  { href: '/products',        label: 'Products',      key: 'products' },
   { href: '/dashboard',       label: 'Dashboard',     key: 'dashboard' },
 ];
 
 export function AppShell({ children, section }: AppShellProps) {
   const pathname = usePathname() ?? '';
+  const { state } = useAuth();
   return (
     <main className="min-h-[100dvh] bg-[#050505] text-[#F7F5F2]">
       <header className="sticky top-0 z-30 border-b border-[rgba(247,245,242,0.08)] bg-[#050505]/85 backdrop-blur-md">
@@ -51,6 +54,17 @@ export function AppShell({ children, section }: AppShellProps) {
                 </Link>
               );
             })}
+            <Link
+              href="/account"
+              className={[
+                'ml-2 px-3 py-1.5 rounded-md text-[13px] tracking-tight transition-colors duration-150',
+                pathname.startsWith('/account')
+                  ? 'bg-[#111111] text-[#F7F5F2] border border-[rgba(247,245,242,0.18)]'
+                  : 'text-[rgba(247,245,242,0.65)] border border-transparent hover:text-[#F7F5F2]',
+              ].join(' ')}
+            >
+              {state.status === 'member' ? (state.user.displayName.split(' ')[0] ?? 'Account') : 'Account'}
+            </Link>
           </nav>
         </div>
         <nav className="md:hidden flex overflow-x-auto border-t border-[rgba(247,245,242,0.06)]">

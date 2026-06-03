@@ -26,21 +26,26 @@ import {
 } from '@lib/tenancy/organizationMemory';
 import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenancy/types';
 import { toSafeUser, type UserRecord } from '@lib/auth/types';
+import {
+  appendSession, createSessionMemoryStore, newSessionId, newSessionToken,
+} from '@lib/auth/sessionMemory';
+import { SESSION_COOKIE_NAME, sessionCookieFlags } from '@lib/auth/cookie';
+import { buildSessionCookieValue } from '@lib/auth/resolveSession';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 interface BootstrapBody {
-  /** Operator audit string · always required. */
-  operatorReason: string;
+  /** Operator audit string · optional (defaults to "bootstrap"). */
+  operatorReason?: string;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   let body: BootstrapBody;
   try { body = await req.json() as BootstrapBody; }
-  catch { return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 }); }
-  if (typeof body.operatorReason !== 'string' || body.operatorReason.length === 0) {
-    return NextResponse.json({ error: 'operatorReason is required' }, { status: 400 });
+  catch { body = {}; }
+  if (body.operatorReason !== undefined && typeof body.operatorReason !== 'string') {
+    return NextResponse.json({ error: 'operatorReason, when present, must be a string' }, { status: 400 });
   }
 
   const email = process.env.MOOD_BOOTSTRAP_EMAIL;
@@ -117,15 +122,29 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     membershipCreated = true;
   }
 
-  return NextResponse.json({
+  // Issue a session so the bootstrap caller (typically the operator
+  // running this once) is logged in immediately.
+  const sessionStore = createSessionMemoryStore();
+  const sessionState = await sessionStore.read();
+  const sessionId = newSessionId();
+  const rawToken = newSessionToken();
+  await sessionStore.save(appendSession(sessionState, {
+    sessionId, userId: user.userId, rawToken, at,
+    contextHint: req.headers.get('x-mood-context-hint') ?? 'bootstrap',
+  }));
+
+  const res = NextResponse.json({
     ok: true,
     user: toSafeUser(user),
     userCreated, membershipCreated,
     organizationId: PLATFORM_TENANT_ID_MOOD,
+    sessionId,
     advisoryNotice:
       `Operator-supervised — bootstrap ` +
       `${userCreated ? 'created user' : 'reused existing user'}` +
       `${membershipCreated ? ' + granted organization-owner membership' : ' (membership already present)'}. ` +
       'Idempotent. Human remains final authority.',
   });
+  res.cookies.set(SESSION_COOKIE_NAME, buildSessionCookieValue(sessionId, rawToken), sessionCookieFlags());
+  return res;
 }

@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import * as React from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -7,6 +9,15 @@ import { AppShell, PageHead } from '@app/components/ui/AppShell';
 import { Card, CardEyebrow, CardHeadline, CardMeta } from '@app/components/ui/Card';
 import { Button } from '@app/components/ui/Button';
 import { Field, Input, Textarea, Select } from '@app/components/ui/Field';
+import { useRequireTenant } from '@app/components/auth/AuthProvider';
+
+interface BrandAssetRef {
+  kind: 'pouch' | 'chocolate-square' | 'logo' | 'reference';
+  label: string;
+  description?: string;
+  dataUrl?: string;
+  createdAt: number;
+}
 
 interface BrandIdentity {
   positioning?: string;
@@ -18,6 +29,9 @@ interface BrandIdentity {
   values?: string;
   channels?: string;
   signature?: string;
+  defaultCta?: string;
+  defaultVisualMode?: string;
+  brandAssets?: BrandAssetRef[];
   updatedAt?: number;
   updatedBy?: string;
 }
@@ -41,7 +55,8 @@ const STEPS = [
   { key: 'voice',   label: 'Voice',     eyebrow: '01' },
   { key: 'audience',label: 'Audience',  eyebrow: '02' },
   { key: 'visual',  label: 'Visual',    eyebrow: '03' },
-  { key: 'channel', label: 'Channels',  eyebrow: '04' },
+  { key: 'assets',  label: 'Assets',    eyebrow: '04' },
+  { key: 'channel', label: 'Channels',  eyebrow: '05' },
 ] as const;
 type StepKey = typeof STEPS[number]['key'];
 
@@ -49,6 +64,7 @@ export default function BrandSetupPage() {
   const params = useParams<{ brandId: string }>();
   const brandId = params.brandId;
   const router = useRouter();
+  const tenant = useRequireTenant();
 
   const [brand, setBrand] = React.useState<BrandRow | null>(null);
   const [identity, setIdentity] = React.useState<BrandIdentity>({});
@@ -60,11 +76,12 @@ export default function BrandSetupPage() {
   const [reason, setReason] = React.useState('Brand identity update.');
 
   React.useEffect(() => {
+    if (!tenant) return;
     (async () => {
       setLoading(true);
       try {
         const params = new URLSearchParams({
-          organizationId: 'org-mood', workspaceId: 'wsp-mood-default', brandId,
+          organizationId: tenant.organizationId, workspaceId: tenant.workspaceId, brandId,
         });
         const res = await fetch(`/api/brand?${params.toString()}`, { credentials: 'include' });
         if (!res.ok) throw new Error(await res.text());
@@ -77,7 +94,7 @@ export default function BrandSetupPage() {
         setLoading(false);
       }
     })();
-  }, [brandId]);
+  }, [tenant, brandId]);
 
   function update<K extends keyof BrandIdentity>(key: K, value: BrandIdentity[K]) {
     setIdentity((cur) => ({ ...cur, [key]: value }));
@@ -85,6 +102,7 @@ export default function BrandSetupPage() {
   }
 
   async function save() {
+    if (!tenant) return;
     setBusy(true); setError(null); setSavedAt(null);
     try {
       const res = await fetch('/api/brand', {
@@ -94,8 +112,8 @@ export default function BrandSetupPage() {
         body: JSON.stringify({
           action: 'update-identity',
           operatorReason: reason || 'Brand identity update',
-          organizationId: 'org-mood',
-          workspaceId: 'wsp-mood-default',
+          organizationId: tenant.organizationId,
+          workspaceId: tenant.workspaceId,
           brandId,
           identity,
         }),
@@ -253,6 +271,41 @@ export default function BrandSetupPage() {
             </Card>
           ) : null}
 
+          {step === 'assets' ? (
+            <Card>
+              <CardEyebrow>Brand assets</CardEyebrow>
+              <CardHeadline>Product photos · logo · reference moodboard.</CardHeadline>
+              <CardMeta>
+                Upload integration coming next — until then you can register metadata so the Asset
+                Generator surfaces a placeholder for each canonical asset. Anything you list here is
+                stored as text, NOT as a stored image. No URLs are inferred or invented.
+              </CardMeta>
+              <div className="mt-4 rounded-lg border border-dashed border-[rgba(247,245,242,0.18)] p-4 text-[12px] text-[rgba(247,245,242,0.55)]">
+                <strong className="block text-[rgba(247,245,242,0.85)] mb-1">Upload integration: coming next.</strong>
+                Today: register a brand-asset reference (kind + label). When the upload pipeline lands, the same record will accept a data URL and the generator will surface the photograph instead of the vector pouch.
+              </div>
+              <div className="mt-4 space-y-3">
+                {(identity.brandAssets ?? []).map((a, i) => (
+                  <div key={i} className="rounded-lg border border-[rgba(247,245,242,0.10)] p-3 text-[13px]">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] uppercase tracking-[0.28em] text-[rgba(247,245,242,0.45)]">{a.kind}</span>
+                      <button
+                        className="text-[11px] text-[rgba(247,245,242,0.55)] hover:text-[#FF4D2D]"
+                        onClick={() => update('brandAssets', (identity.brandAssets ?? []).filter((_, idx) => idx !== i))}
+                      >
+                        remove
+                      </button>
+                    </div>
+                    <div>{a.label}</div>
+                    {a.description ? <div className="text-[12px] text-[rgba(247,245,242,0.55)] mt-1">{a.description}</div> : null}
+                    {a.dataUrl ? <div className="text-[11px] text-[#8AA98A] mt-1">stored ({Math.round(a.dataUrl.length / 1024)}KB)</div> : <div className="text-[11px] text-[rgba(247,245,242,0.40)] mt-1">metadata only · upload not yet wired</div>}
+                  </div>
+                ))}
+                <AddBrandAssetRow onAdd={(row) => update('brandAssets', [...(identity.brandAssets ?? []), row])} />
+              </div>
+            </Card>
+          ) : null}
+
           {step === 'channel' ? (
             <Card>
               <CardEyebrow>Channels</CardEyebrow>
@@ -260,6 +313,17 @@ export default function BrandSetupPage() {
               <div className="mt-4 space-y-4">
                 <Field label="Channels" helper="Comma-separated">
                   <Input value={identity.channels ?? ''} onChange={(e) => update('channels', e.target.value)} placeholder="instagram, web, packaging" />
+                </Field>
+                <Field label="Default CTA (Hebrew)" helper="Suggested as a starting point in the Asset Generator">
+                  <Input dir="rtl" value={identity.defaultCta ?? ''} onChange={(e) => update('defaultCta', e.target.value)} placeholder="גלו את MOOD" />
+                </Field>
+                <Field label="Default visual mode">
+                  <Select value={identity.defaultVisualMode ?? 'product-hero'} onChange={(e) => update('defaultVisualMode', e.target.value)}>
+                    <option value="text-only-editorial">text · editorial</option>
+                    <option value="product-hero">product · hero</option>
+                    <option value="human-moment">human · moment</option>
+                    <option value="product-and-human">product + human</option>
+                  </Select>
                 </Field>
                 <Field label="Operator reason" required helper="Required to save identity">
                   <Input value={reason} onChange={(e) => setReason(e.target.value)} />
@@ -327,6 +391,40 @@ function Row({ label, value }: { label: string; value: string }) {
     <div className="flex items-start gap-3">
       <span className="text-[10px] uppercase tracking-[0.28em] text-[rgba(247,245,242,0.40)] w-20 shrink-0 mt-0.5">{label}</span>
       <span className="text-[rgba(247,245,242,0.85)]">{value}</span>
+    </div>
+  );
+}
+
+function AddBrandAssetRow({ onAdd }: { onAdd: (row: BrandAssetRef) => void }) {
+  const [kind, setKind] = React.useState<BrandAssetRef['kind']>('pouch');
+  const [label, setLabel] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  return (
+    <div className="rounded-lg border border-[rgba(247,245,242,0.10)] p-3">
+      <div className="text-[10px] uppercase tracking-[0.28em] text-[rgba(247,245,242,0.45)] mb-2">Register a brand asset</div>
+      <div className="space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <Select value={kind} onChange={(e) => setKind(e.target.value as BrandAssetRef['kind'])}>
+            <option value="pouch">pouch (photo)</option>
+            <option value="chocolate-square">chocolate square (photo)</option>
+            <option value="logo">logo</option>
+            <option value="reference">reference moodboard</option>
+          </Select>
+          <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="label (e.g., ENERGY pouch 30g)" />
+        </div>
+        <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="description (optional)" />
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => {
+            if (!label.trim()) return;
+            onAdd({ kind, label: label.trim(), description: description.trim() || undefined, createdAt: Date.now() });
+            setLabel(''); setDescription('');
+          }}
+        >
+          + register reference
+        </Button>
+      </div>
     </div>
   );
 }

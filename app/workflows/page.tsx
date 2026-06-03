@@ -9,7 +9,9 @@
 
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+export const dynamic = 'force-dynamic';
+
+import { useCallback, useEffect, useMemo, useState, Suspense} from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import type { WorkflowDashboardDescriptor } from '@lib/workflows/workflowDashboard';
@@ -22,11 +24,11 @@ interface Payload {
 }
 
 export default function WorkflowsPage() {
-  return (
+  return (<Suspense fallback={null}>(
     <main className="min-h-screen scanline">
       <WorkflowsInner />
     </main>
-  );
+  )</Suspense>);
 }
 
 function WorkflowsInner() {

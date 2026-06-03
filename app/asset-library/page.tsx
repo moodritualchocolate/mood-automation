@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import * as React from 'react';
 import Link from 'next/link';
 import { AppShell, PageHead } from '@app/components/ui/AppShell';
@@ -9,6 +11,7 @@ import { Tag } from '@app/components/ui/Tag';
 import { Empty } from '@app/components/ui/Empty';
 import { Modal } from '@app/components/ui/Modal';
 import { Field, Input, Textarea } from '@app/components/ui/Field';
+import { useRequireTenant } from '@app/components/auth/AuthProvider';
 
 interface AssetRow {
   assetId: string;
@@ -41,22 +44,35 @@ const STATUS_FILTERS: Array<{ key: 'all' | 'pending' | 'approved' | 'rejected' |
   { key: 'archived', label: 'Archived' },
 ];
 
+const FORMULA_FILTERS: Array<{ key: 'all' | 'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP'; label: string }> = [
+  { key: 'all',    label: 'All formulas' },
+  { key: 'ENERGY', label: 'ENERGY' },
+  { key: 'FOCUS',  label: 'FOCUS' },
+  { key: 'RELAX',  label: 'RELAX' },
+  { key: 'SLEEP',  label: 'SLEEP' },
+];
+
 export default function AssetLibraryPage() {
+  const tenant = useRequireTenant();
   const [data, setData] = React.useState<ListResponse | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [status, setStatus] = React.useState<'all' | 'pending' | 'approved' | 'rejected' | 'archived'>('all');
+  const [formula, setFormula] = React.useState<'all' | 'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP'>('all');
+  const [search, setSearch] = React.useState('');
   const [selected, setSelected] = React.useState<AssetRow | null>(null);
 
   const load = React.useCallback(async () => {
+    if (!tenant) return;
     setLoading(true);
     setError(null);
     try {
-      const params = new URLSearchParams({ organizationId: 'org-mood', workspaceId: 'wsp-mood-default' });
+      const params = new URLSearchParams({ organizationId: tenant.organizationId, workspaceId: tenant.workspaceId });
       if (status !== 'all') params.set('status', status);
+      if (formula !== 'all') params.set('formula', formula);
       const res = await fetch(`/api/asset-registry?${params.toString()}`, { credentials: 'include' });
       if (res.status === 401) { setError('Operator session required. Please sign in.'); setData(null); return; }
-      if (res.status === 403) { setError('Operator MAY NOT view this workspace.'); setData(null); return; }
+      if (res.status === 403) { setError(`You do not have access to ${tenant.organizationId}.`); setData(null); return; }
       if (!res.ok) throw new Error(await res.text());
       const json = (await res.json()) as ListResponse;
       setData(json);
@@ -65,11 +81,20 @@ export default function AssetLibraryPage() {
     } finally {
       setLoading(false);
     }
-  }, [status]);
+  }, [tenant, status, formula]);
 
   React.useEffect(() => { void load(); }, [load]);
 
-  const assets = data?.assets ?? [];
+  const searchLower = search.trim().toLowerCase();
+  const assets = (data?.assets ?? []).filter((a) => {
+    if (searchLower.length === 0) return true;
+    return (
+      a.summary.toLowerCase().includes(searchLower) ||
+      a.campaign.toLowerCase().includes(searchLower) ||
+      (a.copy?.headline ?? '').toLowerCase().includes(searchLower) ||
+      (a.copy?.cta ?? '').toLowerCase().includes(searchLower)
+    );
+  });
 
   return (
     <AppShell section="Asset Library">
@@ -85,27 +110,54 @@ export default function AssetLibraryPage() {
         }
       />
 
-      {/* Status filter row */}
-      <div className="flex flex-wrap items-center gap-2 mb-6">
-        {STATUS_FILTERS.map((f) => (
-          <button
-            key={f.key}
-            onClick={() => setStatus(f.key)}
-            className={[
-              'rounded-full border px-3 py-1.5 text-[12px] tracking-tight transition-colors duration-150',
-              status === f.key
-                ? 'bg-[#F7F5F2] text-[#0A0A0A] border-[#F7F5F2]'
-                : 'bg-transparent text-[rgba(247,245,242,0.65)] border-[rgba(247,245,242,0.18)] hover:text-[#F7F5F2]',
-            ].join(' ')}
-          >
-            {f.label}
-            {data?.counts && f.key !== 'all' && typeof data.counts[f.key] === 'number'
-              ? <span className="ml-2 opacity-60">{data.counts[f.key]}</span>
-              : null}
-          </button>
-        ))}
-        <div className="ml-auto text-[12px] text-[rgba(247,245,242,0.45)]">
-          {data ? `${data.totalAssets} total · ${assets.length} shown` : ''}
+      {/* Filter row */}
+      <div className="flex flex-col gap-3 mb-6">
+        <div className="flex flex-wrap items-center gap-2">
+          {STATUS_FILTERS.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setStatus(f.key)}
+              className={[
+                'rounded-full border px-3 py-1.5 text-[12px] tracking-tight transition-colors duration-150',
+                status === f.key
+                  ? 'bg-[#F7F5F2] text-[#0A0A0A] border-[#F7F5F2]'
+                  : 'bg-transparent text-[rgba(247,245,242,0.65)] border-[rgba(247,245,242,0.18)] hover:text-[#F7F5F2]',
+              ].join(' ')}
+            >
+              {f.label}
+              {data?.counts && f.key !== 'all' && typeof data.counts[f.key] === 'number'
+                ? <span className="ml-2 opacity-60">{data.counts[f.key]}</span>
+                : null}
+            </button>
+          ))}
+          <div className="ml-auto text-[12px] text-[rgba(247,245,242,0.45)]">
+            {data ? `${data.totalAssets} total · ${assets.length} shown` : ''}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {FORMULA_FILTERS.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setFormula(f.key)}
+              className={[
+                'rounded-full border px-3 py-1 text-[11px] tracking-tight transition-colors duration-150',
+                formula === f.key
+                  ? 'bg-[#111111] text-[#F7F5F2] border-[#F7F5F2]'
+                  : 'bg-transparent text-[rgba(247,245,242,0.55)] border-[rgba(247,245,242,0.12)] hover:text-[#F7F5F2]',
+              ].join(' ')}
+            >
+              {f.label}
+            </button>
+          ))}
+          <div className="ml-auto">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search headline · campaign · cta…"
+              className="w-full md:w-72 bg-transparent border border-[rgba(247,245,242,0.18)] rounded-lg px-3 py-1.5 text-[12px] outline-none focus:border-[#F7F5F2]"
+            />
+          </div>
         </div>
       </div>
 

@@ -27,7 +27,10 @@ export const dynamic = 'force-dynamic';
 interface LoginBody {
   email: string;
   password: string;
-  operatorReason: string;
+  /** Operator audit string. Optional from the UI — defaults to
+   *  "operator login" when absent. The login form does NOT surface
+   *  this field to the end user. */
+  operatorReason?: string;
 }
 
 const LOCKOUT_BASE_MS = 60 * 1000;       // 1 min after 5 failures
@@ -51,8 +54,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (typeof body.password !== 'string' || body.password.length === 0) {
     return NextResponse.json({ error: 'password is required' }, { status: 400 });
   }
-  if (typeof body.operatorReason !== 'string' || body.operatorReason.length === 0) {
-    return NextResponse.json({ error: 'operatorReason is required' }, { status: 400 });
+  // operatorReason is optional from the UI. Default to a stable label
+  // so the audit trail is still populated.
+  if (body.operatorReason !== undefined && typeof body.operatorReason !== 'string') {
+    return NextResponse.json({ error: 'operatorReason, when present, must be a string' }, { status: 400 });
   }
 
   const at = Date.now();

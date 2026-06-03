@@ -9,7 +9,9 @@
 
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+export const dynamic = 'force-dynamic';
+
+import { useCallback, useEffect, useMemo, useState, Suspense} from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import type { GrowthCommandCenterDescriptor } from '@lib/business/growthCommandCenter';
@@ -23,11 +25,11 @@ interface GrowthPayload {
 }
 
 export default function GrowthPage() {
-  return (
+  return (<Suspense fallback={null}>(
     <main className="min-h-screen scanline">
       <GrowthInner />
     </main>
-  );
+  )</Suspense>);
 }
 
 function GrowthInner() {

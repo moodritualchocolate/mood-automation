@@ -8,7 +8,9 @@
 
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+export const dynamic = 'force-dynamic';
+
+import { useCallback, useEffect, useState, Suspense} from 'react';
 import { useSearchParams } from 'next/navigation';
 import type {
   OnboardingDescriptor, OnboardingSessionState, OnboardingStep,
@@ -23,11 +25,11 @@ interface SessionPayload {
 }
 
 export default function OnboardingPage() {
-  return (
+  return (<Suspense fallback={null}>(
     <main className="min-h-screen scanline">
       <OnboardingInner />
     </main>
-  );
+  )</Suspense>);
 }
 
 function OnboardingInner() {

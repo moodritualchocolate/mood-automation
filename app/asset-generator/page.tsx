@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import * as React from 'react';
 import Link from 'next/link';
 import { AppShell, PageHead } from '@app/components/ui/AppShell';
@@ -7,6 +9,7 @@ import { Card, CardEyebrow, CardHeadline, CardMeta } from '@app/components/ui/Ca
 import { Button } from '@app/components/ui/Button';
 import { Field, Input, Textarea, Select } from '@app/components/ui/Field';
 import { Tag } from '@app/components/ui/Tag';
+import { useRequireTenant } from '@app/components/auth/AuthProvider';
 
 type Formula = 'ENERGY' | 'FOCUS' | 'RELAX' | 'SLEEP';
 type PackageType = 'banner' | 'post' | 'carousel';
@@ -48,11 +51,26 @@ interface RenderResult {
 interface GuardFinding { code: string; level: 'rejection' | 'warning'; field: string; detail: string }
 interface QualityGuard { ok: boolean; rejections: GuardFinding[]; warnings: GuardFinding[]; advisoryNotice: string }
 
+interface BrandIdentity {
+  positioning?: string;
+  slogan?: string;
+  voice?: string;
+  audience?: string;
+  paletteKey?: Palette;
+  language?: string;
+  values?: string;
+  channels?: string;
+  signature?: string;
+  defaultCta?: string;
+  defaultVisualMode?: VisualMode;
+  brandAssets?: Array<{ kind: string; label: string; description?: string; dataUrl?: string; createdAt: number }>;
+}
+
 interface BrandRow {
   brandId: string;
   name: string;
   description?: string;
-  identity?: { palette?: Palette };
+  identity?: BrandIdentity;
 }
 
 const FORMULAS: Formula[] = ['ENERGY', 'FOCUS', 'RELAX', 'SLEEP'];
@@ -84,6 +102,7 @@ const PLATFORM_SIZE_OPTIONS: Array<{ key: PlatformSize; label: string }> = [
 ];
 
 export default function AssetGeneratorPage() {
+  const tenant = useRequireTenant();
   const [brands, setBrands] = React.useState<BrandRow[]>([]);
   const [brandId, setBrandId] = React.useState<string>('');
   const [brief, setBrief] = React.useState<Brief>({
@@ -121,16 +140,39 @@ export default function AssetGeneratorPage() {
   const [copied, setCopied] = React.useState<'prompt' | 'negative' | 'spec' | null>(null);
 
   React.useEffect(() => {
+    if (!tenant) return;
     (async () => {
       try {
-        const params = new URLSearchParams({ organizationId: 'org-mood', workspaceId: 'wsp-mood-default' });
+        const params = new URLSearchParams({ organizationId: tenant.organizationId, workspaceId: tenant.workspaceId });
         const res = await fetch(`/api/brand?${params.toString()}`, { credentials: 'include' });
         if (!res.ok) return;
         const json = await res.json() as { brands?: BrandRow[] };
         setBrands(json.brands ?? []);
       } catch {/* silent */}
     })();
-  }, []);
+  }, [tenant]);
+
+  // Apply brand identity defaults when the operator picks a brand.
+  // Only "untouched" fields are overridden so the operator doesn't
+  // lose their in-progress edits.
+  React.useEffect(() => {
+    if (!brandId) return;
+    const brand = brands.find((b) => b.brandId === brandId);
+    const ident = brand?.identity;
+    if (!ident) return;
+    setBrief((b) => ({
+      ...b,
+      paletteKey: (ident.paletteKey as Palette) ?? b.paletteKey,
+      signature: ident.signature ?? b.signature,
+      visualMode: (ident.defaultVisualMode as VisualMode) ?? b.visualMode,
+      cta: b.cta && b.cta.trim().length > 0 ? b.cta : (ident.defaultCta ?? b.cta),
+      audience: b.audience ?? ident.audience,
+    }));
+  }, [brandId, brands]);
+
+  const selectedBrand = brands.find((b) => b.brandId === brandId) ?? null;
+  const brandAssetRefs = selectedBrand?.identity?.brandAssets ?? [];
+  const brandAssetUploaded = brandAssetRefs.filter((a) => !!a.dataUrl).length;
 
   function update<K extends keyof Brief>(key: K, value: Brief[K]) {
     setBrief((b) => ({ ...b, [key]: value }));
@@ -208,8 +250,8 @@ export default function AssetGeneratorPage() {
           sourcePromptId: `prompt-${Date.now().toString(36)}`,
           prompt,
           summary,
-          organizationId: 'org-mood',
-          workspaceId: 'wsp-mood-default',
+          organizationId: tenant?.organizationId,
+          workspaceId: tenant?.workspaceId,
           brandId: brandId || undefined,
           previewDataUrl,
           copy: {
@@ -305,6 +347,30 @@ export default function AssetGeneratorPage() {
               ))}
             </div>
           </Card>
+
+          {selectedBrand && selectedBrand.identity ? (
+            <Card raised>
+              <CardEyebrow>Brand context · applied</CardEyebrow>
+              <CardHeadline>{selectedBrand.name}</CardHeadline>
+              <CardMeta>
+                Identity defaults from Brand Setup are pre-filled below. Edit any field to override per-brief.
+              </CardMeta>
+              <ul className="mt-4 text-[12px] space-y-1 text-[rgba(247,245,242,0.65)]">
+                {selectedBrand.identity.paletteKey ? <li>· palette: <span className="text-[#F7F5F2]">{selectedBrand.identity.paletteKey}</span></li> : null}
+                {selectedBrand.identity.signature ? <li>· signature: <span className="text-[#F7F5F2]">{selectedBrand.identity.signature}</span></li> : null}
+                {selectedBrand.identity.defaultVisualMode ? <li>· default mode: <span className="text-[#F7F5F2]">{selectedBrand.identity.defaultVisualMode}</span></li> : null}
+                {selectedBrand.identity.voice ? <li>· voice: <span className="text-[#F7F5F2]">{selectedBrand.identity.voice}</span></li> : null}
+                {brandAssetRefs.length > 0 ? (
+                  <li>· brand assets: <span className="text-[#F7F5F2]">{brandAssetRefs.length}</span> registered · {brandAssetUploaded} uploaded {brandAssetUploaded < brandAssetRefs.length ? <span className="text-[#C9A24B]">· upload integration coming next</span> : null}</li>
+                ) : null}
+              </ul>
+              <div className="mt-3">
+                <Link href={`/brand-setup/${selectedBrand.brandId}`} className="text-[12px] underline text-[rgba(247,245,242,0.65)] hover:text-[#F7F5F2]">
+                  Edit brand identity →
+                </Link>
+              </div>
+            </Card>
+          ) : null}
 
           <Card>
             <CardEyebrow>3 · Formula · product · palette</CardEyebrow>
