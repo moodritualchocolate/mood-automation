@@ -13,6 +13,7 @@ interface AppShellProps {
 
 const NAV: Array<{ href: string; label: string; key: string }> = [
   { href: '/studio-home',     label: 'Studio',        key: 'studio-home' },
+  { href: '/strategy',        label: 'Strategy',      key: 'strategy' },
   { href: '/asset-generator', label: 'Generator',     key: 'asset-generator' },
   { href: '/asset-library',   label: 'Library',       key: 'asset-library' },
   { href: '/brands',          label: 'Brands',        key: 'brands' },

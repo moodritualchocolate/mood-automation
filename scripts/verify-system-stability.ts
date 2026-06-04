@@ -549,6 +549,15 @@ async function main() {
       //    SVG composition + Resvg rasterizer; NEVER publishes,
       //    NEVER auto-saves, NEVER calls external APIs) ──
       'app/api/render/route.ts',
+      // ── creative strategy engine (operator-supervised POST;
+      //    pure-function deterministic strategy generator;
+      //    NEVER publishes, NEVER auto-saves; optional save
+      //    to FIFO memory) ──
+      'app/api/creative-strategy/route.ts',
+      // ── image generation provider boundary (operator-supervised
+      //    POST; degrades to "no provider" when no env var is set;
+      //    NEVER auto-saves the rendered image to the library) ──
+      'app/api/image-gen/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {

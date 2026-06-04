@@ -73,12 +73,12 @@ export default function StudioHomePage() {
   return (
     <AppShell section="Studio">
       <PageHead
-        eyebrow="MOOD Creative OS"
+        eyebrow="MOOD Creative OS · Creative Intelligence"
         title="Studio"
-        subtitle="A quiet room for serious work. Compose, review, approve, and ship. The system observes. The operator decides. Human remains final authority."
+        subtitle="Pick a product. The system maps your audiences, pain points, hooks, ad concepts, UGC scripts, image prompts, founder stories. The default output is a human-centered advertisement brief — not a vector template. Operator decides what ships. Human remains final authority."
         actions={
           <>
-            <Link href="/asset-generator"><Button variant="primary" size="md">New asset</Button></Link>
+            <Link href="/strategy"><Button variant="primary" size="md">Open Strategy →</Button></Link>
             <Link href="/asset-library"><Button variant="secondary" size="md">Open Library</Button></Link>
           </>
         }
@@ -103,10 +103,10 @@ export default function StudioHomePage() {
       {/* Quick actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 mb-10">
         <ActionCard
-          href="/asset-generator"
+          href="/strategy"
           eyebrow="01"
-          title="Compose"
-          subtitle="Brief in Hebrew. Render to PNG. Save to library. Banner, post, or carousel."
+          title="Strategy"
+          subtitle="Pick a product (BOOST · CHILLAX · BUNDLE). Generate audiences, pain points, hooks, ad concepts, UGC scripts, image prompts, founder stories — then render with a real image provider."
         />
         <ActionCard
           href="/asset-library"
@@ -118,8 +118,15 @@ export default function StudioHomePage() {
           href="/brands"
           eyebrow="03"
           title="Brand setup"
-          subtitle="Capture voice, audience, palette so every render speaks in one consistent language."
+          subtitle="Capture voice, audience, palette so every strategy speaks in one consistent language."
         />
+      </div>
+
+      {/* Advanced (legacy templates) note */}
+      <div className="mb-10 text-[12px] text-[rgba(247,245,242,0.45)]">
+        Looking for the SVG template generator? It is still available at{' '}
+        <Link href="/asset-generator" className="underline hover:text-[#F7F5F2]">/asset-generator</Link>{' '}
+        — kept for layout previews. The default creative path is now <strong className="text-[rgba(247,245,242,0.65)]">/strategy</strong>.
       </div>
 
       {/* Recent assets */}
