@@ -558,6 +558,13 @@ async function main() {
       //    POST; degrades to "no provider" when no env var is set;
       //    NEVER auto-saves the rendered image to the library) ──
       'app/api/image-gen/route.ts',
+      // ── MVP product surface (operator-supervised POSTs;
+      //    onboarding inputs · generation trigger · selection
+      //    save; NEVER publishes, NEVER auto-charges; the LLM
+      //    provider defaults to a stub when no API key set) ──
+      'app/api/mvp/onboard/route.ts',
+      'app/api/mvp/generate/route.ts',
+      'app/api/mvp/selection/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {

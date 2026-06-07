@@ -11,9 +11,9 @@ export default function LandingPage() {
   const { state } = useAuth();
   const router = useRouter();
 
-  // Authenticated members land on the Studio; no-org users finish onboarding.
+  // Authenticated members land in their library; no-org users finish onboarding.
   React.useEffect(() => {
-    if (state.status === 'member') router.replace('/studio-home');
+    if (state.status === 'member') router.replace('/library');
     if (state.status === 'no-org') router.replace('/account?onboard=1');
   }, [state.status, router]);
 
