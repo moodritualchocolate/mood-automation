@@ -1,18 +1,13 @@
 /**
  * MVP LLM PROVIDER (boundary · vertical-intelligence-driven)
  *
- * V2 of the generator. Replaces the prior chocolate-template stub
- * with a vertical-aware selector: every output is drawn from the
- * resolved vertical's pre-written, locale-pure corpus.
- *
- * The operator's 4 inputs are SIGNALS (used to detect the vertical
- * and rank candidate templates) — they are NEVER substituted into
- * pre-written sentences. This is what eliminates code-switching and
- * cross-vertical template repetition.
- *
- * Real-LLM adapters (OpenAI / Anthropic) remain a future plug-in:
- * when they ship, they'll consume the same GenerationContext that
- * `selectFromVerticalCorpus` consumes today.
+ * V3 of the generator. Dispatches to:
+ *   - `openai` adapter when OPENAI_API_KEY is present (calls a real
+ *     LLM, validates output against the vertical contract, retries
+ *     once on validation failure, falls back to corpus on second
+ *     failure or any error)
+ *   - corpus selector otherwise (the V2 fallback that lifts the
+ *     baseline from 17.7 → 32.4 / 60 without any LLM call)
  *
  * STRICT CONTRACT:
  *   - the route NEVER hard-codes a vendor URL outside this module
@@ -20,6 +15,8 @@
  *   - failures degrade to vertical corpus — never throw to the UI
  *   - locale purity is validated before any output is returned
  *   - cross-vertical leakage is blocked at selection time
+ *   - operator inputs are SIGNALS (used to rank / instruct the LLM) —
+ *     they are NEVER substituted into pre-written sentences
  */
 
 import type {
@@ -35,6 +32,11 @@ import {
   type HookFamily,
   type HookTemplate,
 } from './verticalIntelligence';
+import {
+  openaiGenerate,
+  type LlmGenerationPayload,
+  type OpenaiGenerateOutcome,
+} from './mvpOpenaiAdapter';
 
 export interface MvpGenerateInput {
   artifact: string;
@@ -55,6 +57,17 @@ export interface MvpGenerateOutput {
   verticalId: string;
   resolvedLocale: 'he' | 'en';
   detectionConfidence: number;
+  /** Diagnostics from the LLM path — undefined when corpus was used. */
+  llmDiagnostics?: {
+    attempts: number;
+    latencyMs: number;
+    tokensIn?: number;
+    tokensOut?: number;
+    model: string;
+    fellBack: boolean;
+    fallbackReason?: string;
+    validationFailuresPerAttempt: string[][];
+  };
 }
 
 // ─── provider discovery ────────────────────────────────────────
@@ -277,6 +290,78 @@ function pickImageConcepts(ctx: GenerationContext, signals: SignalBundle): Image
   return out.slice(0, 10);
 }
 
+// ─── LLM-output → MvpGenerateOutput adapter ────────────────────
+
+function llmPayloadToOutput(
+  payload: LlmGenerationPayload,
+  ctx: GenerationContext,
+  signals: SignalBundle,
+): {
+  oneLinerCandidates: OneLinerCandidate[];
+  hooks: HookItem[];
+  ugcScripts: UgcScriptItem[];
+  imageConcepts: ImageConceptItem[];
+} {
+  const oneLinerCandidates: OneLinerCandidate[] = payload.positioningOneLiners
+    .slice(0, 2)
+    .map((o) => ({ id: newId('ol'), text: o.text }));
+
+  // Apply the existing deterministic commercial scoring to the LLM hooks
+  // and sort so the top-ranked hook surfaces first in the UI.
+  const scored = payload.hooks.map((h) => ({
+    id: newId('hook'),
+    text: h.text,
+    audience: h.audience || `${ctx.resolvedAudience.label} · ${ctx.resolvedAudience.demographic}`,
+    situation: h.situation || (ctx.purchaseMoments[0] ?? ''),
+    visualDirection: h.visualDirection || (ctx.vertical.bestPerformingAdFormats[0] ?? ''),
+    commercialScore: commercialScoreFor(h.text, signals.combined),
+  }));
+  scored.sort((a, b) => b.commercialScore - a.commercialScore);
+  const hooks: HookItem[] = scored.slice(0, 10);
+
+  const ugcScripts: UgcScriptItem[] = payload.ugcScripts.slice(0, 5).map((u) => ({
+    id: newId('ugc'),
+    title: u.title,
+    durationSec: u.durationSec,
+    scriptHebrew: u.script, // schema-name retained for backwards-compat with memory
+    shotList: u.shotList,
+    callToActionHebrew: u.callToAction,
+  }));
+
+  const imageConcepts: ImageConceptItem[] = payload.imageConcepts.slice(0, 10).map((c) => ({
+    id: newId('img'),
+    title: c.title,
+    visualDescription: c.visualDescription,
+    forUseWith: c.forUseWith,
+    renderingNote: c.renderingNote,
+  }));
+
+  return { oneLinerCandidates, hooks, ugcScripts, imageConcepts };
+}
+
+function buildFromCorpus(ctx: GenerationContext, signals: SignalBundle) {
+  return {
+    oneLinerCandidates: pickOneLiners(ctx, signals),
+    hooks: pickHooks(ctx, signals),
+    ugcScripts: pickUgcScripts(ctx, signals),
+    imageConcepts: pickImageConcepts(ctx, signals),
+  };
+}
+
+function summarizeOutcome(outcome: OpenaiGenerateOutcome): MvpGenerateOutput['llmDiagnostics'] {
+  const last = outcome.attempts[outcome.attempts.length - 1];
+  return {
+    attempts: outcome.attempts.length,
+    latencyMs: outcome.attempts.reduce((s, a) => s + a.latencyMs, 0),
+    tokensIn: last?.tokensIn,
+    tokensOut: last?.tokensOut,
+    model: process.env.OPENAI_MODEL || 'gpt-4.1-mini',
+    fellBack: outcome.fellBackToCorpus,
+    fallbackReason: outcome.fallbackReason,
+    validationFailuresPerAttempt: outcome.attempts.map((a) => a.failures),
+  };
+}
+
 // ─── public entrypoint ─────────────────────────────────────────
 
 export async function mvpGenerate(input: MvpGenerateInput): Promise<MvpGenerateOutput> {
@@ -295,24 +380,47 @@ export async function mvpGenerate(input: MvpGenerateInput): Promise<MvpGenerateO
   const ctx = assembleGenerationContext(verticalContext);
   const signals = makeSignalBundle(input);
 
-  // 3 · select from the vertical's corpus
-  const oneLinerCandidates = pickOneLiners(ctx, signals);
-  const hooks = pickHooks(ctx, signals);
-  const ugcScripts = pickUgcScripts(ctx, signals);
-  const imageConcepts = pickImageConcepts(ctx, signals);
+  const provider = activeProvider();
 
-  // 4 · provider id reflects how the output was actually built. The
-  // OpenAI/Anthropic branches will be wired separately when API keys
-  // are configured; until then every output is "stub" (now meaning
-  // vertical-corpus, not chocolate-template).
-  const providerId = activeProvider();
+  // 3 · LLM path · only when OPENAI_API_KEY is set
+  if (provider === 'openai') {
+    const outcome = await openaiGenerate(ctx, {
+      artifact: input.artifact,
+      audience: input.audience,
+      emotional: input.emotional,
+      locale: input.locale,
+    });
 
+    if (outcome.result) {
+      const built = llmPayloadToOutput(outcome.result.payload, ctx, signals);
+      return {
+        ...built,
+        providerId: 'openai',
+        verticalId: verticalContext.verticalId,
+        resolvedLocale: verticalContext.locale,
+        detectionConfidence: verticalContext.detectionConfidence,
+        llmDiagnostics: summarizeOutcome(outcome),
+      };
+    }
+
+    // LLM path failed after retry · degrade to corpus selection so the
+    // user still gets a valid kit instead of an empty response.
+    const built = buildFromCorpus(ctx, signals);
+    return {
+      ...built,
+      providerId: 'stub', // record what was actually used
+      verticalId: verticalContext.verticalId,
+      resolvedLocale: verticalContext.locale,
+      detectionConfidence: verticalContext.detectionConfidence,
+      llmDiagnostics: summarizeOutcome(outcome),
+    };
+  }
+
+  // 4 · Corpus path (stub provider) · no API key, no LLM call
+  const built = buildFromCorpus(ctx, signals);
   return {
-    oneLinerCandidates,
-    hooks,
-    ugcScripts,
-    imageConcepts,
-    providerId,
+    ...built,
+    providerId: 'stub',
     verticalId: verticalContext.verticalId,
     resolvedLocale: verticalContext.locale,
     detectionConfidence: verticalContext.detectionConfidence,
