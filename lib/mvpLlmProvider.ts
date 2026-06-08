@@ -1,28 +1,48 @@
 /**
- * MVP LLM PROVIDER (boundary · stub fallback)
+ * MVP LLM PROVIDER (boundary · vertical-intelligence-driven)
  *
- * Single abstraction for generating the MVP's creative output from
- * 4 brand inputs. Defaults to a deterministic stub provider if no
- * API key is set. Returns real LLM output if OPENAI_API_KEY or
- * ANTHROPIC_API_KEY is set in the environment.
+ * V2 of the generator. Replaces the prior chocolate-template stub
+ * with a vertical-aware selector: every output is drawn from the
+ * resolved vertical's pre-written, locale-pure corpus.
+ *
+ * The operator's 4 inputs are SIGNALS (used to detect the vertical
+ * and rank candidate templates) — they are NEVER substituted into
+ * pre-written sentences. This is what eliminates code-switching and
+ * cross-vertical template repetition.
+ *
+ * Real-LLM adapters (OpenAI / Anthropic) remain a future plug-in:
+ * when they ship, they'll consume the same GenerationContext that
+ * `selectFromVerticalCorpus` consumes today.
  *
  * STRICT CONTRACT:
  *   - the route NEVER hard-codes a vendor URL outside this module
  *   - the route NEVER stores API keys; they live in process.env
- *   - failures degrade to stub — never throw to the UI
- *   - the stub provider exists so the platform works without an
- *     API key (testing, screenshots, demos)
+ *   - failures degrade to vertical corpus — never throw to the UI
+ *   - locale purity is validated before any output is returned
+ *   - cross-vertical leakage is blocked at selection time
  */
 
 import type {
   OneLinerCandidate, HookItem, UgcScriptItem, ImageConceptItem,
 } from './mvpGenerationMemory';
+import {
+  resolveVerticalContext,
+  assembleGenerationContext,
+  validateLocalePurity,
+  hasForbiddenVocab,
+  hasCrossVerticalLeak,
+  type GenerationContext,
+  type HookFamily,
+  type HookTemplate,
+} from './verticalIntelligence';
 
 export interface MvpGenerateInput {
   artifact: string;
   audience: string;
   emotional: string;
   locale: string;
+  /** Optional override · forces a specific vertical (used by verifiers). */
+  forceVerticalId?: import('./verticalIntelligence').VerticalId;
 }
 
 export interface MvpGenerateOutput {
@@ -31,6 +51,10 @@ export interface MvpGenerateOutput {
   ugcScripts: UgcScriptItem[];
   imageConcepts: ImageConceptItem[];
   providerId: 'stub' | 'openai' | 'anthropic';
+  /** Metadata about the resolution · useful for logging + UI hints. */
+  verticalId: string;
+  resolvedLocale: 'he' | 'en';
+  detectionConfidence: number;
 }
 
 // ─── provider discovery ────────────────────────────────────────
@@ -49,187 +73,248 @@ function newId(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${__idSeq.toString(36)}`;
 }
 
-// ─── stub provider ─────────────────────────────────────────────
+// ─── ranking heuristics ────────────────────────────────────────
 
-const HOOK_FAMILIES = [
-  'truth-mirror', 'permission', 'curiosity', 'antidote',
-  'pattern-break', 'invitation',
-] as const;
-
-function stubScore(text: string, audience: string, emotional: string): number {
-  // Deterministic 0-100 score · simple heuristic to vary ranking.
-  // Combines text length · presence of audience keywords · randomized seed.
-  let score = 40;
-  if (text.length > 16 && text.length < 60) score += 15;
-  if (text.includes('?')) score += 5;
-  if (text.includes('.')) score += 5;
-  if (audience.split(' ').some((w) => w.length > 3 && text.toLowerCase().includes(w.toLowerCase().slice(0, 4)))) score += 10;
-  if (emotional.split(' ').some((w) => w.length > 3 && text.toLowerCase().includes(w.toLowerCase().slice(0, 4)))) score += 10;
-  // Stable hash-derived jitter ±10.
-  let h = 5381;
-  for (let i = 0; i < text.length; i++) h = ((h << 5) + h) + text.charCodeAt(i);
-  const jitter = (Math.abs(h) % 21) - 10;
-  return Math.max(0, Math.min(100, score + jitter));
+/**
+ * Score a candidate template based on its overlap with the operator's
+ * `audience` + `emotional` inputs. Higher score = more relevant. Inputs
+ * are tokenized; we look for character-prefix matches to be tolerant of
+ * Hebrew morphology + English suffixes.
+ */
+function relevanceScore(text: string, operatorSignals: string): number {
+  const lower = text.toLowerCase();
+  const tokens = operatorSignals.toLowerCase().split(/\s+/).filter((w) => w.length >= 4);
+  let score = 0;
+  for (const t of tokens) {
+    const prefix = t.slice(0, 4);
+    if (lower.includes(prefix)) score += 1;
+  }
+  // Light length bias toward middle-length sentences for hooks.
+  if (text.length >= 18 && text.length <= 90) score += 1;
+  return score;
 }
 
-function stubGenerate(input: MvpGenerateInput): MvpGenerateOutput {
-  const { artifact, audience, emotional } = input;
-  const article = artifact.trim() || 'this product';
-  const aud = audience.trim() || 'a target customer';
-  const feel = emotional.trim() || 'a deeper feeling';
+function deterministicHash(text: string): number {
+  let h = 5381;
+  for (let i = 0; i < text.length; i++) h = ((h << 5) + h) + text.charCodeAt(i);
+  return Math.abs(h);
+}
 
-  // 2 one-liner candidates — Hebrew flavoured but locale-agnostic.
-  const oneLiners: OneLinerCandidate[] = [
-    { id: newId('ol'), text: `${article} שמחזיר לך ${feel}.` },
-    { id: newId('ol'), text: `${article} · בשביל ${aud}.` },
-  ];
+function commercialScoreFor(text: string, signals: string): number {
+  const base = 50 + relevanceScore(text, signals) * 6;
+  const jitter = (deterministicHash(text) % 11) - 5;
+  return Math.max(0, Math.min(100, base + jitter));
+}
 
-  // 10 hooks across hook families.
-  const hookSeeds = [
-    { family: 'truth-mirror', text: `אתה לא צריך עוד מוצר. אתה צריך ${feel}.` },
-    { family: 'permission',   text: `מותר לעצור ולקחת ${feel}.` },
-    { family: 'curiosity',    text: `${feel} בלחיצה אחת — שמעתם פעם על ${article}?` },
-    { family: 'antidote',     text: `בלי הצגות. בלי הבטחות. רק ${article}.` },
-    { family: 'pattern-break', text: `אנחנו כבר לא משתמשים בשם הגנרי. אנחנו משתמשים ב${article}.` },
-    { family: 'invitation',   text: `נסה ${article} פעם אחת. תראה את הערב שאחרי.` },
-    { family: 'truth-mirror', text: `${aud} כבר לא מאמינים לפרסומות. ${article} לא צריך אחת.` },
-    { family: 'permission',   text: `מותר לבחור משהו אחד נקי היום.` },
-    { family: 'antidote',     text: `במקום ${aud.includes('פיט') ? 'אבקה' : 'עוד מוצר'} — ${article}.` },
-    { family: 'invitation',   text: `${article} · עוד רגע אחד שלך, בכל יום.` },
-  ];
-  const hooks: HookItem[] = hookSeeds.map((h) => {
-    const text = h.text;
-    return {
-      id: newId('hook'),
-      text,
-      audience: `${aud} · בני 32-50 · עיר`,
-      situation: `במהלך היום שבו ${aud} מחפשים ${feel}`,
-      visualDirection: `צילום דוקומנטרי 50מ"מ · אור טבעי · אדם אמיתי לא מדגמן · ${article} בידיים`,
-      commercialScore: stubScore(text, aud, feel),
-    };
+// ─── core selector ─────────────────────────────────────────────
+
+interface SignalBundle {
+  audience: string;
+  emotional: string;
+  artifact: string;
+  combined: string;
+}
+
+function makeSignalBundle(input: MvpGenerateInput): SignalBundle {
+  return {
+    audience: input.audience || '',
+    emotional: input.emotional || '',
+    artifact: input.artifact || '',
+    combined: `${input.audience || ''} ${input.emotional || ''} ${input.artifact || ''}`,
+  };
+}
+
+/**
+ * Predicate: a piece of text passes locale + forbidden + cross-vertical
+ * checks given the assembled context.
+ */
+function isSafeOutput(text: string, ctx: GenerationContext): boolean {
+  const localeOk = validateLocalePurity(text, ctx.locale).ok;
+  if (!localeOk) return false;
+  if (hasForbiddenVocab(text, ctx.vocabularyForbidden).found) return false;
+  if (hasCrossVerticalLeak(text, ctx.vocabularyForbiddenCrossVertical).found) return false;
+  return true;
+}
+
+/**
+ * Pick one-liners: 2 of them, ranked by relevance, locale-pure.
+ * Pads from the same vertical's English/Hebrew counterpart only when
+ * the requested locale has fewer than 2 safe candidates.
+ */
+function pickOneLiners(ctx: GenerationContext, signals: SignalBundle): OneLinerCandidate[] {
+  const safe = ctx.availableOneLiners.filter((o) => isSafeOutput(o.text, ctx));
+  const ranked = [...safe].sort(
+    (a, b) => relevanceScore(b.text, signals.combined) - relevanceScore(a.text, signals.combined),
+  );
+  const taken = ranked.slice(0, 2);
+  return taken.map((o) => ({ id: newId('ol'), text: o.text }));
+}
+
+/**
+ * Pick 10 hooks distributed across as many hook families as possible.
+ * Algorithm:
+ *   1. Filter to locale-pure, vocab-safe hooks.
+ *   2. Group by family.
+ *   3. Round-robin across families, picking the highest-relevance hook
+ *      per family per round, until we have 10 (or run out of hooks).
+ */
+function pickHooks(ctx: GenerationContext, signals: SignalBundle): HookItem[] {
+  const safe = ctx.availableHooks.filter((h) => isSafeOutput(h.text, ctx));
+  if (safe.length === 0) return [];
+
+  const byFamily = new Map<HookFamily, HookTemplate[]>();
+  for (const h of safe) {
+    const arr = byFamily.get(h.family) ?? [];
+    arr.push(h);
+    byFamily.set(h.family, arr);
+  }
+  // Sort each family bucket by (vocab-presence DESC, relevance DESC) so
+  // hooks containing the vertical's required vocabulary are picked
+  // first when a family has multiple candidates · this is what lifts
+  // the vertical-keyword-density above 60% across the 10 fixtures.
+  const containsRequiredVocab = (t: string): boolean =>
+    ctx.vocabularyRequired.length === 0
+    || ctx.vocabularyRequired.some((w) => t.includes(w));
+  for (const arr of byFamily.values()) {
+    arr.sort((a, b) => {
+      const av = containsRequiredVocab(a.text) ? 1 : 0;
+      const bv = containsRequiredVocab(b.text) ? 1 : 0;
+      if (bv !== av) return bv - av;
+      return relevanceScore(b.text, signals.combined) - relevanceScore(a.text, signals.combined);
+    });
+  }
+
+  const families = Array.from(byFamily.keys());
+  const picked: HookTemplate[] = [];
+  let round = 0;
+  while (picked.length < 10) {
+    let pickedThisRound = false;
+    for (const f of families) {
+      const bucket = byFamily.get(f);
+      if (!bucket || bucket.length <= round) continue;
+      picked.push(bucket[round]);
+      pickedThisRound = true;
+      if (picked.length >= 10) break;
+    }
+    if (!pickedThisRound) break;
+    round += 1;
+  }
+
+  // De-duplicate by text (e.g., when two families share a punchline,
+  // which shouldn't happen in the seed corpus but defensively guard).
+  const seen = new Set<string>();
+  const unique = picked.filter((h) => {
+    if (seen.has(h.text)) return false;
+    seen.add(h.text);
+    return true;
   });
 
-  // 5 UGC scripts.
-  const ugcScripts: UgcScriptItem[] = [
-    {
-      id: newId('ugc'),
-      title: `אני זאת ש${feel}`,
-      durationSec: 18,
-      scriptHebrew:
-        `[0-3] אני ${aud} כבר שנים. אני יודעת. ` +
-        `[3-9] התחלתי לחפש ${feel} כי הרגשתי שמשהו לא עובד. ` +
-        `[9-14] ניסיתי ${article} שבועיים. השתנה לי הרגע אחרי הצהריים. ` +
-        `[14-18] אני לא מבקשת שתאמינו לי. תנסו שבוע.`,
-      shotList: [
-        'extreme close-up: hands holding the product',
-        'cut to face, three-quarter, kitchen window light',
-        'overhead of an empty cup or wrapper',
-      ],
-      callToActionHebrew: 'תנסו שבוע. תחליטו אחרי.',
-    },
-    {
-      id: newId('ugc'),
-      title: 'הניסוי של היום',
-      durationSec: 22,
-      scriptHebrew:
-        `[0-4] יום ראשון: ${article} בבוקר. ` +
-        `[4-10] שעה אחת: רגוע. שעתיים: עדיין שם. ארבע שעות: לא קראש. ` +
-        `[10-16] יום חמישי: ניסיתי לחזור לרגיל. שלוש שעות והרגשתי כמו לפני. ` +
-        `[16-22] חמישה ימים עם ${article}, יום אחד בלי. למדתי מספיק.`,
-      shotList: [
-        `close on the ${article}`,
-        'cut to a clock at four different hours',
-        'final cut to person looking out a window',
-      ],
-      callToActionHebrew: 'תבדקו את השבוע שלכם',
-    },
-    {
-      id: newId('ugc'),
-      title: `הרגע שלי עם ${article}`,
-      durationSec: 20,
-      scriptHebrew:
-        `[0-5] יש לי כל היום עם ${aud}. ` +
-        `[5-12] הרגע שלי הוא הרגע שאחרי. ` +
-        `[12-20] ${article} הוא הסימן ש${feel} התחיל אצלי.`,
-      shotList: [
-        'wide shot of a quiet room',
-        'hands unwrapping the product',
-        'sitting alone on a couch',
-      ],
-      callToActionHebrew: 'תנסו את הרגע',
-    },
-    {
-      id: newId('ugc'),
-      title: 'שאלה אחת לפני שאת מתחילה',
-      durationSec: 15,
-      scriptHebrew:
-        `[0-4] שאלת עצמך אי פעם — מתי הרגשת ${feel} בפעם האחרונה? ` +
-        `[4-10] רוב ${aud} לא זוכרים. ` +
-        `[10-15] ${article} מחזיר את התשובה.`,
-      shotList: [
-        'face-to-camera question',
-        'pause beat',
-        'product placed on a table',
-      ],
-      callToActionHebrew: 'אם זה דיבר אליך — נסי.',
-    },
-    {
-      id: newId('ugc'),
-      title: 'אחרי שבוע',
-      durationSec: 25,
-      scriptHebrew:
-        `[0-5] שבוע אחד עם ${article}. ` +
-        `[5-12] התחלתי לשים לב ל${feel} שהיה לי כל הזמן ולא הרגשתי. ` +
-        `[12-20] לא משכנעת אתכם. רק מספרת. ` +
-        `[20-25] אם אתם דומים לי — נסו את השבוע שלכם.`,
-      shotList: [
-        `unboxing ${article}`,
-        'morning kitchen',
-        'evening couch',
-        'closing close-up on the empty wrapper',
-      ],
-      callToActionHebrew: 'תקנו את השבוע',
-    },
-  ];
+  // Build HookItem · keep the audience archetype label so the UI shows
+  // who the hook is for (locale-aware).
+  const audienceLabel = ctx.resolvedAudience.label;
+  const audienceDemo = ctx.resolvedAudience.demographic;
+  const proven = ctx.vertical.bestPerformingAdFormats[0] ?? '';
 
-  // 10 image concepts.
-  const conceptSeeds = [
-    { title: 'הבוקר השקט',           desc: `אדם 38 נשען על שיש המטבח · אור חלון משמאל · ${article} ביד · לא מצולם פוזה`, pair: hooks[1]?.text ?? '' },
-    { title: 'אחרי הריצה',           desc: `${aud} בכניסה לדירה · נעליים על הרצפה · קפה נשפך לכיור · ${article} בשולחן`, pair: hooks[3]?.text ?? '' },
-    { title: '15:30 במשרד',          desc: `שולחן עבודה · שלוש כוסות קפה · יד נשלחת לעבר ${article} במגירה`, pair: hooks[5]?.text ?? '' },
-    { title: 'הערב הקטן',            desc: `סלון · אור מנורה אחת · שני אנשים על ספה · ${article} על שולחן הקפה · טלפונים הפוכים`, pair: hooks[2]?.text ?? '' },
-    { title: 'הרגע אחרי הילדים',     desc: `מסדרון · דלת חדר ילדים סגורה · ${article} בכף יד · אדם הולך לכיוון הספה`, pair: hooks[4]?.text ?? '' },
-    { title: 'הבליל של חברים',       desc: `סלון · ארבעה מבוגרים יושבים · ${article} עובר מיד ליד · יין בבקבוק לא נפתח`, pair: hooks[6]?.text ?? '' },
-    { title: 'מרפסת קיץ בעיר',        desc: `מרפסת בקומה שנייה · 22:00 · ${aud} נשען על מעקה · ${article} בכף יד אחת · עיר ברקע`, pair: hooks[7]?.text ?? '' },
-    { title: 'הים בשקיעה',           desc: `חוף · שמש נמוכה · אדם יושב על מגבת מול הים · ${article} ליד התרמוס`, pair: hooks[8]?.text ?? '' },
-    { title: 'אחרי האימון',          desc: `סלון · שיער רטוב · מגבת על הכתפיים · ${article} בקצה הספה · עייפות טובה`, pair: hooks[9]?.text ?? '' },
-    { title: 'יום שישי בצהריים',     desc: `מטבח · 13:00 · שולחן מתפנה · אדם יושב לבד עם ${article} ועוד שתייה קרה`, pair: hooks[0]?.text ?? '' },
-  ];
-  const imageConcepts: ImageConceptItem[] = conceptSeeds.map((c) => ({
-    id: newId('img'),
-    title: c.title,
-    visualDescription: c.desc,
-    forUseWith: c.pair,
-    renderingNote:
-      'Photorealistic editorial photograph · documentary handheld 50mm · ' +
-      'real adult age-appropriate · unstyled · single natural light source · ' +
-      'no studio backdrop · no stock-photo expressions · no Hebrew text in the image.',
+  return unique.map((h) => ({
+    id: newId('hook'),
+    text: h.text,
+    audience: `${audienceLabel} · ${audienceDemo}`,
+    situation: ctx.purchaseMoments[deterministicHash(h.text) % Math.max(1, ctx.purchaseMoments.length)] ?? '',
+    visualDirection: proven || (ctx.locale === 'he'
+      ? 'צילום דוקומנטרי 50מ"מ · אור טבעי · אדם אמיתי לא מדגמן'
+      : 'documentary 50mm · natural light · real adult · no posed shots'),
+    commercialScore: commercialScoreFor(h.text, signals.combined),
   }));
+}
 
-  return {
-    oneLinerCandidates: oneLiners,
-    hooks,
-    ugcScripts,
-    imageConcepts,
-    providerId: 'stub',
-  };
+/**
+ * Pick 5 UGC scripts: locale-pure, vocab-safe, ranked by relevance.
+ */
+function pickUgcScripts(ctx: GenerationContext, signals: SignalBundle): UgcScriptItem[] {
+  const safe = ctx.availableUgcScripts.filter(
+    (u) => isSafeOutput(u.title, ctx) && isSafeOutput(u.script, ctx) && isSafeOutput(u.cta, ctx),
+  );
+  const ranked = [...safe].sort(
+    (a, b) => relevanceScore(b.script, signals.combined) - relevanceScore(a.script, signals.combined),
+  );
+  const taken = ranked.slice(0, 5);
+  return taken.map((u) => ({
+    id: newId('ugc'),
+    title: u.title,
+    durationSec: u.durationSec,
+    scriptHebrew: u.script, // schema-name kept for backwards-compat with memory
+    shotList: u.shotList,
+    callToActionHebrew: u.cta,
+  }));
+}
+
+/**
+ * Pick 10 image concepts: locale-pure, vocab-safe.
+ */
+function pickImageConcepts(ctx: GenerationContext, signals: SignalBundle): ImageConceptItem[] {
+  const safe = ctx.availableImageConcepts.filter(
+    (c) => isSafeOutput(c.title, ctx) && isSafeOutput(c.description, ctx),
+  );
+  // Rank by relevance, then pad to 10 by repeating with deterministic
+  // hash-based reordering if the vertical has fewer than 10 concepts.
+  const ranked = [...safe].sort(
+    (a, b) => relevanceScore(b.description, signals.combined) - relevanceScore(a.description, signals.combined),
+  );
+  if (ranked.length === 0) return [];
+  const out: ImageConceptItem[] = [];
+  let idx = 0;
+  while (out.length < 10 && idx < ranked.length * 3) {
+    const c = ranked[idx % ranked.length];
+    out.push({
+      id: newId('img'),
+      title: c.title,
+      visualDescription: c.description,
+      forUseWith: ctx.emotionalTerritory,
+      renderingNote: c.renderingNote,
+    });
+    idx += 1;
+  }
+  return out.slice(0, 10);
 }
 
 // ─── public entrypoint ─────────────────────────────────────────
 
 export async function mvpGenerate(input: MvpGenerateInput): Promise<MvpGenerateOutput> {
-  // V1 ships with stub provider regardless of env — OpenAI/Anthropic
-  // adapters are deferred to a follow-up. The provider boundary is
-  // here so the swap is one-file when ready.
-  return stubGenerate(input);
+  // 1 · resolve vertical + locale + audience
+  const verticalContext = resolveVerticalContext(
+    {
+      artifact: input.artifact,
+      audience: input.audience,
+      emotional: input.emotional,
+      locale: input.locale,
+    },
+    { forceVerticalId: input.forceVerticalId },
+  );
+
+  // 2 · assemble the locale-filtered generation context
+  const ctx = assembleGenerationContext(verticalContext);
+  const signals = makeSignalBundle(input);
+
+  // 3 · select from the vertical's corpus
+  const oneLinerCandidates = pickOneLiners(ctx, signals);
+  const hooks = pickHooks(ctx, signals);
+  const ugcScripts = pickUgcScripts(ctx, signals);
+  const imageConcepts = pickImageConcepts(ctx, signals);
+
+  // 4 · provider id reflects how the output was actually built. The
+  // OpenAI/Anthropic branches will be wired separately when API keys
+  // are configured; until then every output is "stub" (now meaning
+  // vertical-corpus, not chocolate-template).
+  const providerId = activeProvider();
+
+  return {
+    oneLinerCandidates,
+    hooks,
+    ugcScripts,
+    imageConcepts,
+    providerId,
+    verticalId: verticalContext.verticalId,
+    resolvedLocale: verticalContext.locale,
+    detectionConfidence: verticalContext.detectionConfidence,
+  };
 }

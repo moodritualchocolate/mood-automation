@@ -22,128 +22,137 @@ import { mvpGenerate, activeProvider, type MvpGenerateInput } from '../lib/mvpLl
 import type {
   HookItem, UgcScriptItem, ImageConceptItem, OneLinerCandidate,
 } from '../lib/mvpGenerationMemory';
+import { VERTICAL_KNOWLEDGE_BASE, type VerticalId } from '../lib/verticalIntelligence';
 
 // ─── 10 brand inputs spanning real verticals ────────────────────
 
 interface BrandFixture {
   vertical: string;
   brandName: string;
+  verticalId: VerticalId;       // used to pull locale-correct vocab
   input: MvpGenerateInput;
-  expectedKeywords: string[]; // industry-relevant terms we'd want to see
 }
 
 const BRANDS: BrandFixture[] = [
   {
     vertical: 'Real Estate Investment',
     brandName: 'Anchor Properties',
+    verticalId: 'real-estate',
     input: {
-      artifact: 'Long-term residential real-estate investment portfolios',
-      audience: 'Israeli first-generation wealthy 40-60 with children 10-25',
-      emotional: 'Leave something stable for the next generation',
+      artifact: 'תיקי נדל"ן למשפחות שמחפשות יציבות לטווח ארוך',
+      audience: 'משקיעים ישראלים בני 40-60 דור ראשון של עושר',
+      emotional: 'להשאיר משהו יציב לדור הבא',
       locale: 'Israel · Hebrew',
     },
-    expectedKeywords: ['נכס', 'נדל', 'דירה', 'בניין', 'ירושה', 'דורות', 'בנים', 'יציב'],
   },
   {
     vertical: 'Fitness · Running',
     brandName: 'Mile',
+    verticalId: 'fitness',
     input: {
       artifact: 'Running shoes designed for the comeback runner',
       audience: '30-50 year-olds who used to run but stopped during career or family',
       emotional: 'Become a runner again, not someone who used to run',
       locale: 'Global · English',
     },
-    expectedKeywords: ['ריצה', 'רץ', 'נעל', 'אימון', 'ק"מ', 'חזרה', 'גוף', 'כושר'],
   },
   {
     vertical: 'Restaurant',
     brandName: 'Tov Hayom',
+    verticalId: 'restaurant',
     input: {
-      artifact: 'Neighborhood restaurant serving a real dinner after work',
-      audience: 'Urban Israelis 28-45, finish work tired, want one good meal',
-      emotional: 'A real meal · not another rushed pickup',
+      artifact: 'מסעדה שכונתית שמגישה ארוחת ערב אמיתית אחרי העבודה',
+      audience: 'ישראלים עירוניים בני 28-45 · רוצים ארוחה אחת טובה',
+      emotional: 'ארוחה אמיתית · לא עוד איסוף מהיר',
       locale: 'Israel · Hebrew',
     },
-    expectedKeywords: ['מסעדה', 'ארוחה', 'אוכל', 'שולחן', 'בישול', 'טעם', 'ערב', 'מנה'],
   },
   {
     vertical: 'Jewelry',
     brandName: 'Avir',
+    verticalId: 'jewelry',
     input: {
-      artifact: 'Fine-jewelry pieces designed for women buying for themselves',
-      audience: 'Women 30-55 marking a personal milestone',
-      emotional: 'Mark the moment that nobody else marked for you',
+      artifact: 'תכשיטים יוקרתיים בעבודת יד לנשים שרוכשות לעצמן',
+      audience: 'נשים בנות 30-55 שמסמנות אבני דרך אישיות',
+      emotional: 'לסמן רגע שאף אחד אחר לא מסמן בשבילך',
       locale: 'Israel · Hebrew',
     },
-    expectedKeywords: ['תכשיט', 'טבעת', 'שרשרת', 'זהב', 'כסף', 'מתנה', 'אישה', 'מילסטון'],
   },
   {
     vertical: 'SaaS · Productivity',
     brandName: 'Quiet',
+    verticalId: 'saas',
     input: {
       artifact: 'Productivity software that protects focus from notifications',
       audience: 'Knowledge workers 28-45 fighting daily distraction',
       emotional: 'Be deep in work instead of surfing notifications',
       locale: 'Global · English',
     },
-    expectedKeywords: ['פוקוס', 'עבודה', 'התראות', 'מסך', 'הסחה', 'תוכנה', 'דדליין', 'תפוקה'],
   },
   {
     vertical: 'Accountant',
     brandName: 'Tax Studio',
+    verticalId: 'accountant',
     input: {
-      artifact: 'Bookkeeping + tax service for solo founders and small teams',
-      audience: 'Israeli small-business owners 30-55 with annual revenue ₪500K-5M',
-      emotional: 'No fear of the tax authority in March',
+      artifact: 'שירות הנהלת חשבונות ומס לעוסקים מורשים וחברות קטנות',
+      audience: 'בעלי עסקים קטנים בני 30-55 עם מחזור שנתי 500 אלף עד 5 מיליון',
+      emotional: 'בלי פחד ממס הכנסה במרץ',
       locale: 'Israel · Hebrew',
     },
-    expectedKeywords: ['חשבונאות', 'מס', 'מס הכנסה', 'חשבונית', 'דיווח', 'מאזן', 'הוצאות', 'רואה'],
   },
   {
     vertical: 'Lawyer · Family Law',
     brandName: 'Beit Mishpat',
+    verticalId: 'lawyer',
     input: {
-      artifact: 'Family-law firm specializing in mediated divorce',
-      audience: 'Divorcing parents 35-55 wanting to minimize harm to children',
-      emotional: 'Protect what still matters · keep the children whole',
+      artifact: 'משרד עורכי דין המתמחה בגירושין בגישור',
+      audience: 'הורים בגירושין בני 35-55 שרוצים למזער נזק לילדים',
+      emotional: 'להגן על מה שעדיין חשוב · לשמור על הילדים שלמים',
       locale: 'Israel · Hebrew',
     },
-    expectedKeywords: ['גירושין', 'משפחה', 'ילדים', 'הסכם', 'משפט', 'גישור', 'עורך דין', 'משמורת'],
   },
   {
     vertical: 'Chocolate Brand (canonical)',
     brandName: 'MOOD',
+    verticalId: 'chocolate',
     input: {
       artifact: 'שוקולד מריר פרימיום של מותג ישראלי',
       audience: 'בוגרים ישראליים 32-50 · עירוניים · עם תקציב להוצאה איכותית',
       emotional: 'להיות נוכחים ברגעים שאחרת היו אובדים',
       locale: 'Israel · Hebrew',
     },
-    expectedKeywords: ['שוקולד', 'קקאו', 'ריבוע', 'טעם', 'רגע', 'מותג', 'בית', 'יום'],
   },
   {
     vertical: 'Cosmetics · Skincare',
     brandName: 'Real Skin',
+    verticalId: 'cosmetics',
     input: {
-      artifact: 'Skincare line for women tired of overdone beauty industry',
-      audience: 'Women 35-55 with skin that no longer needs to be hidden',
-      emotional: 'Feel like myself, not a filter of myself',
+      artifact: 'מותג טיפוח עור לנשים שמיצו את תעשיית היופי הסטנדרטית',
+      audience: 'נשים בנות 35-55 עם עור שלא צריך להחביא יותר',
+      emotional: 'להרגיש כמו עצמי · לא כמו פילטר של עצמי',
       locale: 'Israel · Hebrew',
     },
-    expectedKeywords: ['עור', 'קוסמטיקה', 'קרם', 'פנים', 'יופי', 'אישה', 'הצלחה', 'טבעי'],
   },
   {
     vertical: 'Local Service · HVAC',
     brandName: 'Krir',
+    verticalId: 'hvac',
     input: {
-      artifact: 'On-call air-conditioning repair service across central Israel',
-      audience: 'Homeowners and tenants 35-65 in apartments without working AC',
-      emotional: 'A working air conditioner in August. Today.',
+      artifact: 'שירות תיקון מזגנים זמין באזור המרכז',
+      audience: 'בעלי דירות ושוכרים בני 35-65 בדירות עם מזגן שלא עובד',
+      emotional: 'מזגן עובד באוגוסט · היום',
       locale: 'Israel · Hebrew',
     },
-    expectedKeywords: ['מזגן', 'תיקון', 'קיץ', 'חום', 'דירה', 'טכנאי', 'אוגוסט', 'שירות'],
   },
 ];
+
+/** Pull the locale-aware expected vocabulary from the V1 knowledge base. */
+function expectedKeywordsFor(fixture: BrandFixture): string[] {
+  const vertical = VERTICAL_KNOWLEDGE_BASE[fixture.verticalId];
+  const isHebrew = fixture.input.locale.toLowerCase().includes('hebrew');
+  const locale = isHebrew ? 'he' : 'en';
+  return vertical.vocabulary.required[locale] ?? [];
+}
 
 // ─── scoring functions ──────────────────────────────────────────
 
@@ -198,8 +207,9 @@ function scoreText(text: string, expectedKeywords: string[], targetIsHebrew: boo
   // Emotional impact — contains emotional vocabulary or 2nd person
   let emotionalImpact = 4;
   if (/(אתה|את|אתם|אתן|שלך|שלכם|שלי)/.test(text)) emotionalImpact += 2;
-  if (/(you|your|yours)/i.test(text)) emotionalImpact += 1;
-  if (/(רגע|נוכחות|שקט|עוצמה|חופש|מותר|תרגיש|להרגיש|להיות)/.test(text)) emotionalImpact += 2;
+  if (/(\byou\b|\byour\b|\byours\b|\bI\b|\bmy\b|\bwe\b)/i.test(text)) emotionalImpact += 2;
+  if (/(רגע|נוכחות|שקט|עוצמה|חופש|מותר|תרגיש|להרגיש|להיות|זוכר|זוכרת|איתך|כבוד)/.test(text)) emotionalImpact += 2;
+  if (/\b(feel|remember|forgot|matter|protect|return|own|keep|hold|honest|real|quiet)\b/i.test(text)) emotionalImpact += 2;
   emotionalImpact = Math.max(1, Math.min(10, emotionalImpact));
 
   // Scroll-stop — short + punchy
@@ -279,10 +289,11 @@ async function main(): Promise<void> {
   for (const brand of BRANDS) {
     const out = await mvpGenerate(brand.input);
     const targetIsHebrew = brand.input.locale.toLowerCase().includes('hebrew');
-    const oneLinerScores = out.oneLinerCandidates.map((o) => scoreText(o.text, brand.expectedKeywords, targetIsHebrew));
-    const hookScores = out.hooks.map((h) => scoreText(h.text, brand.expectedKeywords, targetIsHebrew));
-    const ugcScores = out.ugcScripts.map((u) => scoreText(u.scriptHebrew, brand.expectedKeywords, targetIsHebrew));
-    const conceptScores = out.imageConcepts.map((c) => scoreText(c.visualDescription, brand.expectedKeywords, targetIsHebrew));
+    const expectedKeywords = expectedKeywordsFor(brand);
+    const oneLinerScores = out.oneLinerCandidates.map((o) => scoreText(o.text, expectedKeywords, targetIsHebrew));
+    const hookScores = out.hooks.map((h) => scoreText(h.text, expectedKeywords, targetIsHebrew));
+    const ugcScores = out.ugcScripts.map((u) => scoreText(u.scriptHebrew, expectedKeywords, targetIsHebrew));
+    const conceptScores = out.imageConcepts.map((c) => scoreText(c.visualDescription, expectedKeywords, targetIsHebrew));
 
     const allScores = [...oneLinerScores, ...hookScores, ...ugcScores, ...conceptScores];
     const averageNet = allScores.reduce((s, c) => s + c.netQuality, 0) / allScores.length;

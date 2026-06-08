@@ -9,13 +9,13 @@
 
 ## 1 · Executive verdict
 
-**Overall average net-quality across 10 verticals: 17.7 / 60.**
+**Overall average net-quality across 10 verticals: 32.4 / 60.**
 
 A real customer would NOT pay ₪299 for this output. The stub provider produces structurally identical templates filled with operator inputs as variables. When inputs are Hebrew (chocolate, jewelry, restaurant, accountant, lawyer, cosmetics, HVAC), the output is awkward but legible. When inputs are English (real-estate seed, SaaS, fitness), the templates concatenate Hebrew templates with English operator strings, producing incoherent code-switched text that no marketer would publish.
 
 **The engine architecture is sound. The current provider is not.** A real LLM (OpenAI / Anthropic) must be swapped in before the product can be sold. The stub is fit only for local testing, demos with operator-supplied content, and architectural validation — none of which are revenue-generating.
 
-**Code-switch incidents (Hebrew+English in a Hebrew-target locale): 182** across all 10 verticals.
+**Code-switch incidents (Hebrew+English in a Hebrew-target locale): 0** across all 10 verticals.
 
 ---
 
@@ -23,18 +23,18 @@ A real customer would NOT pay ₪299 for this output. The stub provider produces
 
 | Vertical | Brand | Locale | Net-quality avg | Code-switch hits | One-liner top score | Hook top score |
 |---|---|---|---|---|---|---|
-| Real Estate Investment | Anchor Properties | Israel · Hebrew | 13.1 | 26 | 12 | 30 |
-| Fitness · Running | Mile | Global · English | 23.8 | 0 | 23 | 31 |
-| Restaurant | Tov Hayom | Israel · Hebrew | 13.7 | 26 | 12 | 30 |
-| Jewelry | Avir | Israel · Hebrew | 13.3 | 26 | 13 | 30 |
-| SaaS · Productivity | Quiet | Global · English | 23.6 | 0 | 23 | 30 |
-| Accountant | Tax Studio | Israel · Hebrew | 13.3 | 26 | 12 | 30 |
-| Lawyer · Family Law | Beit Mishpat | Israel · Hebrew | 13.2 | 26 | 12 | 30 |
-| Chocolate Brand (canonical) | MOOD | Israel · Hebrew | 36.6 | 0 | 43 | 46 |
-| Cosmetics · Skincare | Real Skin | Israel · Hebrew | 13.0 | 26 | 12 | 30 |
-| Local Service · HVAC | Krir | Israel · Hebrew | 13.1 | 26 | 12 | 30 |
+| Real Estate Investment | Anchor Properties | Israel · Hebrew | 30.9 | 0 | 38 | 35 |
+| Fitness · Running | Mile | Global · English | 33.1 | 0 | 42 | 42 |
+| Restaurant | Tov Hayom | Israel · Hebrew | 33.6 | 0 | 38 | 40 |
+| Jewelry | Avir | Israel · Hebrew | 33.4 | 0 | 39 | 40 |
+| SaaS · Productivity | Quiet | Global · English | 30.4 | 0 | 38 | 40 |
+| Accountant | Tax Studio | Israel · Hebrew | 32.6 | 0 | 38 | 37 |
+| Lawyer · Family Law | Beit Mishpat | Israel · Hebrew | 31.3 | 0 | 36 | 42 |
+| Chocolate Brand (canonical) | MOOD | Israel · Hebrew | 34.8 | 0 | 44 | 41 |
+| Cosmetics · Skincare | Real Skin | Israel · Hebrew | 32.0 | 0 | 42 | 41 |
+| Local Service · HVAC | Krir | Israel · Hebrew | 32.1 | 0 | 37 | 38 |
 
-Sorted descending. Best vertical: **Chocolate Brand (canonical)** (36.6). Worst vertical: **Cosmetics · Skincare** (13.0).
+Sorted descending. Best vertical: **Chocolate Brand (canonical)** (34.8). Worst vertical: **SaaS · Productivity** (30.4).
 
 ---
 
@@ -42,7 +42,14 @@ Sorted descending. Best vertical: **Chocolate Brand (canonical)** (36.6). Worst 
 
 Hebrew-input verticals where the templates fill cleanly with Hebrew operator text:
 
-- **Chocolate Brand (canonical)** · net 36.6 · 0 code-switch incidents
+- **Chocolate Brand (canonical)** · net 34.8 · 0 code-switch incidents
+- **Restaurant** · net 33.6 · 0 code-switch incidents
+- **Jewelry** · net 33.4 · 0 code-switch incidents
+- **Accountant** · net 32.6 · 0 code-switch incidents
+- **Local Service · HVAC** · net 32.1 · 0 code-switch incidents
+- **Cosmetics · Skincare** · net 32.0 · 0 code-switch incidents
+- **Lawyer · Family Law** · net 31.3 · 0 code-switch incidents
+- **Real Estate Investment** · net 30.9 · 0 code-switch incidents
 
 When the operator types Hebrew into all 4 questions, the templated Hebrew construction is coherent (e.g., *"שוקולד שמחזיר לך נוכחות ברגעים שאחרת היו אובדים."*). The grammar holds. The product reference is correct. The output is plausibly Hebrew advertising copy — though still generic and template-driven.
 
@@ -52,19 +59,12 @@ When the operator types Hebrew into all 4 questions, the templated Hebrew constr
 
 English-input verticals expose the engine's core defect:
 
-- **Cosmetics · Skincare** · net 13.0 · 26 code-switch incidents
-- **Local Service · HVAC** · net 13.1 · 26 code-switch incidents
-- **Real Estate Investment** · net 13.1 · 26 code-switch incidents
-- **Lawyer · Family Law** · net 13.2 · 26 code-switch incidents
-- **Jewelry** · net 13.3 · 26 code-switch incidents
-- **Accountant** · net 13.3 · 26 code-switch incidents
-- **Restaurant** · net 13.7 · 26 code-switch incidents
-- **SaaS · Productivity** · net 23.6 · 0 code-switch incidents
-- **Fitness · Running** · net 23.8 · 0 code-switch incidents
+- **SaaS · Productivity** · net 30.4 · 0 code-switch incidents
+- **Fitness · Running** · net 33.1 · 0 code-switch incidents
 
 Sample broken output (Real-Estate one-liner):
-> *"Long-term residential real-estate investment portfolios שמחזיר לך Leave something stable for the next generation."*
-> *"Long-term residential real-estate investment portfolios · בשביל Israeli first-generation wealthy 40-60 with children 10-25."*
+> *"נדל"ן שמדבר בשפה של דורות, לא של רבעונים."*
+> *"בניין אחד עומד יותר מתיק מניות אחד."*
 
 The template *"${article} שמחזיר לך ${feel}."* concatenates English fragments inside Hebrew syntax. The result is incomprehensible to either audience: Hebrew readers see English mid-sentence, English readers see Hebrew connective tissue. **A real customer in real estate or SaaS would refund inside 60 seconds.**
 
@@ -74,13 +74,13 @@ The template *"${article} שמחזיר לך ${feel}."* concatenates English frag
 
 For each output position (e.g., "hook #1 of brand N"), we computed how many distinct sentence skeletons exist across the 10 brands. A skeleton is the sentence with all Hebrew + Latin + digit spans replaced by a single placeholder. Identical skeletons = the engine produces the same structural template, only the operator-supplied variables change.
 
-**One-liner positions · skeleton diversity** (max possible: 10 = every brand unique · 1 = all 10 brands identical): 10, 10
+**One-liner positions · skeleton diversity** (max possible: 10 = every brand unique · 1 = all 10 brands identical): 9, 9
 
-**Hook positions · skeleton diversity** (10 positions, max 10 each): 9, 9, 10, 9, 9, 9, 10, 1, 9, 9
+**Hook positions · skeleton diversity** (10 positions, max 10 each): 10, 9, 9, 9, 10, 10, 10, 10, 6, 6
 
-**UGC positions · skeleton diversity** (5 positions, max 10 each): 10, 9, 10, 10, 10
+**UGC positions · skeleton diversity** (5 positions, max 10 each): 10, 10, 10
 
-**1 of 10 hook positions have diversity = 1** · meaning all 10 verticals received the SAME skeleton sentence in that slot, with only the keyword variables changed. This is the textbook signature of templated AI generation.
+**0 of 10 hook positions have diversity = 1** · meaning all 10 verticals received the SAME skeleton sentence in that slot, with only the keyword variables changed. This is the textbook signature of templated AI generation.
 
 ---
 
@@ -88,16 +88,16 @@ For each output position (e.g., "hook #1 of brand N"), we computed how many dist
 
 | Vertical | Hook (Hebrew) | Net score |
 |---|---|---|
-| Chocolate Brand (canonical) | שוקולד מריר פרימיום של מותג ישראלי · עוד רגע אחד שלך, בכל יום. | 46 |
-| Chocolate Brand (canonical) | נסה שוקולד מריר פרימיום של מותג ישראלי פעם אחת. תראה את הערב שאחרי. | 41 |
-| Chocolate Brand (canonical) | להיות נוכחים ברגעים שאחרת היו אובדים בלחיצה אחת — שמעתם פעם על שוקולד מריר פרימיום של מותג ישראלי? | 39 |
-| Chocolate Brand (canonical) | במקום עוד מוצר — שוקולד מריר פרימיום של מותג ישראלי. | 39 |
-| Chocolate Brand (canonical) | בלי הצגות. בלי הבטחות. רק שוקולד מריר פרימיום של מותג ישראלי. | 38 |
-| Chocolate Brand (canonical) | אנחנו כבר לא משתמשים בשם הגנרי. אנחנו משתמשים בשוקולד מריר פרימיום של מותג ישראלי. | 38 |
-| Chocolate Brand (canonical) | אתה לא צריך עוד מוצר. אתה צריך להיות נוכחים ברגעים שאחרת היו אובדים. | 35 |
-| Chocolate Brand (canonical) | בוגרים ישראליים 32-50 · עירוניים · עם תקציב להוצאה איכותית כבר לא מאמינים לפרסומות. שוקולד מריר פרימיום של מותג ישראלי לא צריך אחת. | 35 |
-| Chocolate Brand (canonical) | מותר לבחור משהו אחד נקי היום. | 34 |
-| Chocolate Brand (canonical) | מותר לעצור ולקחת להיות נוכחים ברגעים שאחרת היו אובדים. | 32 |
+| Fitness · Running | You're a runner. You just forgot for a minute. | 42 |
+| Fitness · Running | Saturday long run at 06:30. Slow pace welcome. | 42 |
+| Lawyer · Family Law | הסכם משמורת שמגן על הילדים מהריב, לא רק מהפרידה. | 42 |
+| Chocolate Brand (canonical) | קקאו 70% · ריבוע אחד · על השפתיים · ארבע שניות של נוכחות. | 41 |
+| Cosmetics · Skincare | מה באמת בקרם הלחות שלך? בואי תקראי איתי. | 41 |
+| Restaurant | התפריט מתחלף עם העונה. ככה השף שלי גדל. | 40 |
+| Jewelry | 12 שעות עבודת יד. כל תכשיט. עם החתימה שלי. | 40 |
+| SaaS · Productivity | The 2-hour daily focus block you've been missing. | 40 |
+| Lawyer · Family Law | הילדים זוכרים איך הגירושין טופלו. זה כל מה שחשוב. | 40 |
+| Lawyer · Family Law | מותר לך להחליט שהמשפחה הזו צריכה הסכם חדש. גירושין בכבוד אפשרי. | 40 |
 
 Even the top 10 hooks rarely exceed net-quality 30 / 60. None of these hooks would survive a creative-director's review.
 
@@ -107,16 +107,16 @@ Even the top 10 hooks rarely exceed net-quality 30 / 60. None of these hooks wou
 
 | Vertical | Hook | Net score |
 |---|---|---|
-| Cosmetics · Skincare | Feel like myself, not a filter of myself בלחיצה אחת — שמעתם פעם על Skincare line for women tired of overdone beauty industry? | 11 |
-| Lawyer · Family Law | Protect what still matters · keep the children whole בלחיצה אחת — שמעתם פעם על Family-law firm specializing in mediated divorce? | 11 |
-| Accountant | No fear of the tax authority in March בלחיצה אחת — שמעתם פעם על Bookkeeping + tax service for solo founders and small teams? | 11 |
-| Restaurant | A real meal · not another rushed pickup בלחיצה אחת — שמעתם פעם על Neighborhood restaurant serving a real dinner after work? | 11 |
-| Real Estate Investment | Leave something stable for the next generation בלחיצה אחת — שמעתם פעם על Long-term residential real-estate investment portfolios? | 11 |
-| Local Service · HVAC | Homeowners and tenants 35-65 in apartments without working AC כבר לא מאמינים לפרסומות. On-call air-conditioning repair service across central Israel לא צריך אחת. | 12 |
-| Local Service · HVAC | אנחנו כבר לא משתמשים בשם הגנרי. אנחנו משתמשים בOn-call air-conditioning repair service across central Israel. | 12 |
-| Local Service · HVAC | A working air conditioner in August. Today. בלחיצה אחת — שמעתם פעם על On-call air-conditioning repair service across central Israel? | 12 |
-| Cosmetics · Skincare | Women 35-55 with skin that no longer needs to be hidden כבר לא מאמינים לפרסומות. Skincare line for women tired of overdone beauty industry לא צריך אחת. | 12 |
-| Cosmetics · Skincare | אנחנו כבר לא משתמשים בשם הגנרי. אנחנו משתמשים בSkincare line for women tired of overdone beauty industry. | 12 |
+| Cosmetics · Skincare | תמונת שלוש שבועות. אותה תאורה. אותו זווית. בלי עריכה. | 27 |
+| Cosmetics · Skincare | ויטמין C 15%. אצידי הילורוני 2%. בלי ניסיון להסתיר. | 27 |
+| Restaurant | יום שישי בצהריים · ארבעה שולחנות · מי שמזמין ראשון יושב ראשון. | 27 |
+| Fitness · Running | The first 200 meters are the hardest. Then it gets easier. | 27 |
+| Local Service · HVAC | 38° מחר. אל תחכי. | 29 |
+| Accountant | בכל מרץ אתה אומר "הפעם אטפל בזה מוקדם". בכל מרץ אתה לא. | 29 |
+| SaaS · Productivity | I built this because I shipped 2× more after I made it. | 29 |
+| Fitness · Running | After 14 marathons and one stress fracture, here's what I do differently. | 29 |
+| Real Estate Investment | דאגת לכסף שלך כל החיים. עכשיו אתה דואג שהוא לא יתאדה אחריך. | 29 |
+| Accountant | 5 דברים שצריך לסיים עד 31 בדצמבר. כל שנה. | 30 |
 
 Most of the bottom-10 are code-switched Hebrew/English fragments. They are not just "weak ads" — they are **structurally broken text** that cannot ship.
 
@@ -152,7 +152,7 @@ Ranked by severity:
 A customer who shows their kit to a fellow founder in a different vertical will instantly notice the same skeleton sentences. The product's perceived value collapses the moment two customers compare notes.
 
 ### 2 · Code-switched Hebrew/English in non-Hebrew inputs
-182 artifacts across the 10 verticals contain English fragments embedded in Hebrew sentence structure. The output is not just generic — it is **unusable text**. A real-estate or SaaS customer would refund in under a minute.
+0 artifacts across the 10 verticals contain English fragments embedded in Hebrew sentence structure. The output is not just generic — it is **unusable text**. A real-estate or SaaS customer would refund in under a minute.
 
 ### 3 · Industry-keyword absence
 For the accountant brand, the words *"מס"*, *"חשבונאות"*, *"דיווח"* appear zero times in hooks. For the lawyer brand, *"גירושין"*, *"משפט"*, *"גישור"* appear zero times in hooks. The hooks are generic Hebrew filler, not industry-specific advertising.
