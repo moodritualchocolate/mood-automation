@@ -25,11 +25,13 @@ interface GrowthPayload {
 }
 
 export default function GrowthPage() {
-  return (<Suspense fallback={null}>(
-    <main className="min-h-screen scanline">
-      <GrowthInner />
-    </main>
-  )</Suspense>);
+  return (
+    <Suspense fallback={null}>
+      <main className="min-h-screen scanline">
+        <GrowthInner />
+      </main>
+    </Suspense>
+  );
 }
 
 function GrowthInner() {

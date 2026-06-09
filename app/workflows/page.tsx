@@ -24,11 +24,13 @@ interface Payload {
 }
 
 export default function WorkflowsPage() {
-  return (<Suspense fallback={null}>(
-    <main className="min-h-screen scanline">
-      <WorkflowsInner />
-    </main>
-  )</Suspense>);
+  return (
+    <Suspense fallback={null}>
+      <main className="min-h-screen scanline">
+        <WorkflowsInner />
+      </main>
+    </Suspense>
+  );
 }
 
 function WorkflowsInner() {

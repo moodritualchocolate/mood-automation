@@ -25,11 +25,13 @@ interface SessionPayload {
 }
 
 export default function OnboardingPage() {
-  return (<Suspense fallback={null}>(
-    <main className="min-h-screen scanline">
-      <OnboardingInner />
-    </main>
-  )</Suspense>);
+  return (
+    <Suspense fallback={null}>
+      <main className="min-h-screen scanline">
+        <OnboardingInner />
+      </main>
+    </Suspense>
+  );
 }
 
 function OnboardingInner() {
