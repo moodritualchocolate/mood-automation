@@ -438,6 +438,8 @@ async function main() {
     console.log('\n─── 7 · LLM cost-shape (per generation) ────────────');
     let totalIn = 0, totalOut = 0, totalAttempts = 0, totalLatency = 0, totalFallbacks = 0;
     let observedRuns = 0;
+    const fallbackReasons: Record<string, number> = {};
+    const perVerticalFailures: Array<{ vertical: string; reason: string }> = [];
     for (const r of results) {
       const d = r.output.llmDiagnostics;
       if (!d) continue;
@@ -446,23 +448,53 @@ async function main() {
       totalOut += d.tokensOut ?? 0;
       totalAttempts += d.attempts;
       totalLatency += d.latencyMs;
-      if (d.fellBack) totalFallbacks += 1;
+      if (d.fellBack) {
+        totalFallbacks += 1;
+        const reason = d.fallbackReason ?? '(unknown)';
+        // Bucket by reason prefix (first 80 chars) for grouping.
+        const key = reason.slice(0, 120);
+        fallbackReasons[key] = (fallbackReasons[key] ?? 0) + 1;
+        perVerticalFailures.push({ vertical: r.fixture.verticalId, reason });
+      }
     }
-    if (observedRuns > 0) {
-      const avgIn = Math.round(totalIn / observedRuns);
-      const avgOut = Math.round(totalOut / observedRuns);
-      const avgLatency = Math.round(totalLatency / observedRuns);
-      const avgAttempts = (totalAttempts / observedRuns).toFixed(2);
-      // gpt-4.1-mini pricing as of model release: $0.40 / 1M input, $1.60 / 1M output
+
+    // Surface fallback reasons FIRST · so they're impossible to miss.
+    if (totalFallbacks > 0) {
+      console.log('');
+      console.log('  ⚠  LLM FALLBACKS DETECTED · the OpenAI path failed and corpus was used.');
+      console.log(`  ⚠  ${totalFallbacks} of ${observedRuns} verticals fell back.`);
+      console.log('');
+      console.log('  Fallback reasons (bucketed by first 120 chars):');
+      for (const [reason, count] of Object.entries(fallbackReasons)) {
+        console.log(`    [${count}×] ${reason}`);
+      }
+      console.log('');
+      console.log('  Per-vertical detail (first 5):');
+      for (const pv of perVerticalFailures.slice(0, 5)) {
+        console.log(`    ${pv.vertical.padEnd(14)} · ${pv.reason}`);
+      }
+      console.log('');
+      console.log('  → Run `npx tsx scripts/diagnose-openai.ts` for the exact OpenAI failure reason + suggested fix.');
+      console.log('');
+    }
+
+    if (observedRuns > 0 && totalFallbacks < observedRuns) {
+      const successRuns = observedRuns - totalFallbacks;
+      const avgIn = Math.round(totalIn / Math.max(1, successRuns));
+      const avgOut = Math.round(totalOut / Math.max(1, successRuns));
+      const avgLatency = Math.round(totalLatency / Math.max(1, successRuns));
+      const avgAttempts = (totalAttempts / Math.max(1, observedRuns)).toFixed(2);
       const costUsd = (avgIn * 0.40 + avgOut * 1.60) / 1_000_000;
-      console.log(`  avg tokens in   : ${avgIn}`);
+      console.log(`  avg tokens in   : ${avgIn} (across ${successRuns} successful run(s))`);
       console.log(`  avg tokens out  : ${avgOut}`);
       console.log(`  avg latency     : ${avgLatency}ms`);
       console.log(`  avg attempts    : ${avgAttempts}`);
       console.log(`  fallbacks       : ${totalFallbacks} / ${observedRuns}`);
       console.log(`  est. cost/gen   : $${costUsd.toFixed(4)} (gpt-4.1-mini list pricing · adjust per actual model)`);
+    } else if (observedRuns === 0) {
+      console.log('  no LLM diagnostics observed · all paths fell through to corpus without invoking the adapter');
     } else {
-      console.log('  no LLM diagnostics observed · all paths fell through to corpus');
+      console.log('  no successful LLM runs · 0/0/0/0 stats are vacuous · diagnose the fallback reasons above');
     }
   }
 

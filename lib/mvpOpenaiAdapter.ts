@@ -545,9 +545,29 @@ export async function openaiGenerate(
       }
       lastFailureSummary = v.failures.join(' · ');
     } catch (e) {
-      const msg = (e as Error).message;
-      attempts.push({ attemptNumber, ok: false, failures: [`call-error · ${msg}`], latencyMs: 0 });
-      lastFailureSummary = `call-error · ${msg}`;
+      // Capture HTTP status + OpenAI error code when available so the
+      // failure message identifies the root cause (401 / 404 / 429 /
+      // network / timeout) without needing to run the diagnose script.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = e as any;
+      const msg = typeof err?.message === 'string' ? err.message : String(e);
+      const status = typeof err?.status === 'number' ? err.status : undefined;
+      const code = typeof err?.code === 'string' ? err.code : undefined;
+      const reqId = err?.headers?.['x-request-id'] || err?.requestID || err?.requestId;
+      const parts = ['call-error'];
+      if (status !== undefined) parts.push(`status=${status}`);
+      if (code) parts.push(`code=${code}`);
+      if (reqId) parts.push(`req=${reqId}`);
+      parts.push(msg);
+      const fullMsg = parts.join(' · ');
+      // When OPENAI_DEBUG=1, also emit to stderr so it's visible even when
+      // the caller swallows the diagnostics object.
+      if (process.env.OPENAI_DEBUG === '1') {
+        console.error(`[openai · attempt ${attemptNumber}] ${fullMsg}`);
+        if (err?.stack) console.error(String(err.stack).split('\n').slice(0, 6).join('\n'));
+      }
+      attempts.push({ attemptNumber, ok: false, failures: [fullMsg], latencyMs: 0 });
+      lastFailureSummary = fullMsg;
     }
   }
 
