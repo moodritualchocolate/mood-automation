@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Local data store (generated at runtime)
+data/store.json
+
+# Watched video files — never commit raw media
+content/social-videos-to-review/*
+!content/social-videos-to-review/.gitkeep
+
+# Generated thumbnails
+data/thumbnails/
+
+# Environment / secrets
+.env
+.env.local
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>חיבורי פלטפורמות — MOOD</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="icon" href="/icons/favicon.svg" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div>
+        <h1>חיבורי פלטפורמות</h1>
+        <small>MOOD · בדיקת חיבור ומוכנות</small>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="/">סקירת סרטונים</a>
+      <a href="/connections.html" class="active">חיבורי פלטפורמות</a>
+    </nav>
+  </header>
+
+  <div class="banner">⚠️ פרסום מושבת בגרסה זו. עמוד זה בודק רק האם החיבור קיים ומוכן.</div>
+
+  <main class="container">
+    <div class="toolbar">
+      <button class="btn primary" id="checkBtn">🔌 בדוק חיבורים עכשיו</button>
+      <div class="spacer"></div>
+      <span id="lastCheck" class="meta"></span>
+    </div>
+    <div id="connGrid" class="conn-grid"></div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/connections.js"></script>
+</body>
+</html>

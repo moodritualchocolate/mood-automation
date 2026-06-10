@@ -1,0 +1,14 @@
+{
+  "name": "mood-automation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MOOD AI automation — Social Video Review system (v1, review only)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
+  }
+}
