@@ -36,6 +36,21 @@ export const config = {
     name: env.BRAND_NAME || 'MOOD',
     handle: env.BRAND_HANDLE || '@moodritualchocolate',
     cta: env.BRAND_CTA || 'הזמינו עכשיו דרך הקישור בביו 🍫',
+    // Short brand context fed to Claude so recommendations stay on-brand.
+    description:
+      env.BRAND_DESCRIPTION ||
+      'MOOD Ritual Chocolate — שוקולד וקקאו טקסי, נקי ואמיתי, לרגע של איזון ושלווה ביום. קהל ישראלי, מותג פרימיום עם נגיעה חמה ואותנטית.',
+  },
+
+  // Claude API integration for content-based recommendations. When no API key
+  // is present the system falls back to the offline heuristic engine.
+  claude: {
+    apiKey: env.ANTHROPIC_API_KEY || '',
+    // Default to the most capable model; override with CLAUDE_MODEL if desired.
+    model: env.CLAUDE_MODEL || 'claude-opus-4-8',
+    // Number of key frames to extract and send to the model per video.
+    frameCount: Number(env.CLAUDE_FRAME_COUNT) || 6,
+    maxTokens: Number(env.CLAUDE_MAX_TOKENS) || 16000,
   },
 };
 

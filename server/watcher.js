@@ -10,7 +10,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { config } from './config.js';
 import { analyzeVideo } from './analyzer.js';
-import { generate } from './recommend.js';
+import { generateRecommendations } from './recommend.js';
 import {
   listVideos,
   getVideoByPath,
@@ -23,8 +23,34 @@ import {
 // Tracks files we're already processing so concurrent events don't double-add.
 const inFlight = new Set();
 
+// Maps a suggested platform label (from recommendations) to the checkbox keys
+// used by the manual-edit "Platforms" field.
+const PLATFORM_LABEL_TO_KEY = {
+  'Instagram Reels': 'instagram',
+  TikTok: 'tiktok',
+  'Facebook Reels': 'facebook',
+  'YouTube Shorts': 'youtube',
+};
+
 function isVideo(file) {
   return config.videoExtensions.includes(path.extname(file).toLowerCase());
+}
+
+// Builds the initial manual-edit draft from the MOOD Brand style.
+function defaultEdits(recommendations) {
+  const s = recommendations?.styles?.moodBrand || {};
+  const hashtags = [
+    ...(s.hashtags?.hebrew || []),
+    ...(s.hashtags?.english || []),
+  ].join(' ');
+  const key = PLATFORM_LABEL_TO_KEY[s.suggestedPlatform];
+  return {
+    caption: s.caption || '',
+    hashtags,
+    cta: s.cta || '',
+    platforms: key ? [key] : [],
+    publishTime: '',
+  };
 }
 
 function makeId(absPath) {
@@ -66,7 +92,11 @@ async function processFile(absPath) {
     console.log(`[watcher] New video detected: ${filename}`);
 
     const analysis = await analyzeVideo(absPath);
-    const recommendations = generate({ filename, analysis });
+    const recommendations = await generateRecommendations({
+      filePath: absPath,
+      filename,
+      analysis,
+    });
 
     const now = new Date().toISOString();
     const video = {
@@ -81,18 +111,9 @@ async function processFile(absPath) {
       status: 'New',
       analysis,
       recommendations,
-      // Manual, operator-editable fields. Pre-filled from recommendations so
-      // the operator starts from a sensible draft.
-      edits: {
-        caption: recommendations.captions.brand,
-        hashtags: [
-          ...recommendations.hashtags.hebrew,
-          ...recommendations.hashtags.english,
-        ].join(' '),
-        cta: recommendations.cta,
-        platforms: recommendations.suggestedPlatforms,
-        publishTime: '',
-      },
+      // Manual, operator-editable fields, pre-filled from the MOOD Brand style
+      // so the operator starts from a sensible on-brand draft.
+      edits: defaultEdits(recommendations),
       createdAt: now,
       updatedAt: now,
     };
@@ -183,7 +204,12 @@ export async function reanalyze(id) {
     return updateVideo(id, { missing: true });
   }
   const analysis = await analyzeVideo(video.path);
-  const recommendations = generate({ filename: video.filename, analysis });
+  const recommendations = await generateRecommendations({
+    filePath: video.path,
+    filename: video.filename,
+    analysis,
+  });
+  // Refresh analysis + recommendations but preserve the operator's manual edits.
   return updateVideo(id, { analysis, recommendations, missing: false });
 }
 

@@ -123,38 +123,59 @@ function renderGrid() {
 
 // ---- Detail modal ----------------------------------------------------------
 
-function capOption(label, text, key) {
-  return `
-    <div class="cap-option">
-      <div class="cap-label">${label}</div>
-      <div class="cap-text">${escapeHtml(text)}</div>
-      <button class="btn use-btn" data-use-caption="${key}">השתמש בגרסה זו ←</button>
-    </div>`;
-}
+const STYLE_ORDER = ['moodBrand', 'emotional', 'funny', 'directResponse'];
+const STYLE_NAMES = {
+  moodBrand: 'מותג MOOD',
+  emotional: 'רגשי',
+  funny: 'הומור ישראלי',
+  directResponse: 'מכירה ישירה',
+};
+const PLATFORM_LABEL_TO_KEY = {
+  'Instagram Reels': 'instagram',
+  TikTok: 'tiktok',
+  'Facebook Reels': 'facebook',
+  'YouTube Shorts': 'youtube',
+};
 
-function platformBlock(key, p, suggested) {
-  const sug = suggested.includes(key) ? '<span class="pill-ok">מומלץ</span>' : '';
+const SOURCE_LABELS = {
+  'claude-vision': '🟢 ניתוח חזותי באמצעות Claude',
+  'claude-text': '🟡 ניתוח Claude (ללא פריימים)',
+  'heuristic-fallback': '⚪ תבנית מותג (ללא ניתוח חזותי)',
+};
+
+// Renders one style card with hook / caption / CTA / hashtags / platform / time
+// plus a button that copies the whole style into the manual-edit fields.
+function styleCard(style) {
+  const tags = [...(style.hashtags?.hebrew || []), ...(style.hashtags?.english || [])];
   return `
     <div class="platform-block">
-      <h4>${escapeHtml(p.label)} ${sug}</h4>
-      <div class="cap-text" style="white-space:pre-wrap;font-size:.84rem">${escapeHtml(p.caption)}</div>
-      <div class="kv"><span>האשטגים:</span> ${p.hashtags.map((h) => escapeHtml(h)).join(' ')}</div>
-      <div class="kv"><b>זמן מוצע:</b> ${escapeHtml(p.suggestedTime)} · <b>אורך מרבי:</b> ${p.maxDurationSec}s</div>
-      <div class="kv">${escapeHtml(p.notes)}</div>
+      <h4>🎨 ${escapeHtml(style.name)}
+        <span class="pill-ok" style="font-weight:400">${escapeHtml(style.suggestedPlatform || '')} · ${escapeHtml(style.suggestedTime || '')}</span>
+      </h4>
+      <div class="kv"><b>הוק:</b> ${escapeHtml(style.hook || '')}</div>
+      <div class="cap-text" style="white-space:pre-wrap;font-size:.85rem;margin-top:6px">${escapeHtml(style.caption || '')}</div>
+      <div class="kv" style="margin-top:6px"><b>CTA:</b> ${escapeHtml(style.cta || '')}</div>
+      <div style="margin-top:6px">${tags.map((h) => `<span class="tag">${escapeHtml(h)}</span>`).join('')}</div>
+      <button class="btn use-btn" data-use-style="${style.key}">השתמש בסגנון זה ←</button>
     </div>`;
 }
 
 function renderDetail(v) {
   const a = v.analysis || {};
   const r = v.recommendations || {};
-  const caps = r.captions || {};
-  const tags = r.hashtags || { hebrew: [], english: [] };
+  const styles = r.styles || {};
   const edits = v.edits || {};
-  const platforms = ['instagram', 'tiktok', 'facebook', 'youtube'];
 
   const notesHtml = (a.readiness?.notes || []).length
     ? `<ul class="notes">${a.readiness.notes.map((n) => `<li>${escapeHtml(n)}</li>`).join('')}</ul>`
     : `<ul class="notes"><li class="ok">✓ לא נמצאו בעיות מהותיות. הסרטון נראה מוכן.</li></ul>`;
+
+  const elementsHtml = (r.detectedElements || []).length
+    ? `<div style="margin-top:6px">${r.detectedElements.map((e) => `<span class="tag">${escapeHtml(e)}</span>`).join('')}</div>`
+    : '';
+
+  const sourceLabel = SOURCE_LABELS[r.source] || r.source || '';
+  const framesNote = r.framesAnalyzed ? ` · ${r.framesAnalyzed} פריימים` : '';
 
   $('#modalTitle').textContent = v.filename;
   $('#modalBody').innerHTML = `
@@ -187,23 +208,16 @@ function renderDetail(v) {
           ${STATUSES.map((s) => `<option value="${s}" ${s === v.status ? 'selected' : ''}>${STATUS_HE[s]}</option>`).join('')}
         </select>
 
-        <div class="section-title">הוק לשורה הראשונה</div>
-        <div class="cap-text" style="background:var(--surface-2);padding:10px;border-radius:10px">${escapeHtml(r.hook || '')}</div>
-
-        <div class="section-title">הצעות לכותרת (קלִיקֶר בעברית)</div>
-        ${capOption('גרסה רגשית', caps.emotional || '', 'emotional')}
-        ${capOption('גרסה ישראלית מצחיקה', caps.funny || '', 'funny')}
-        ${capOption('גרסת מותג נקייה', caps.brand || '', 'brand')}
-        ${capOption('גרסת מכירה ישירה', caps.sales || '', 'sales')}
-
-        <div class="section-title">האשטגים מוצעים</div>
-        <div><b style="font-size:.8rem;color:var(--muted)">עברית:</b><br>${tags.hebrew.map((h) => `<span class="tag">${escapeHtml(h)}</span>`).join('')}</div>
-        <div style="margin-top:8px"><b style="font-size:.8rem;color:var(--muted)">English:</b><br>${tags.english.map((h) => `<span class="tag">${escapeHtml(h)}</span>`).join('')}</div>
+        <div class="section-title">ניתוח תוכן הסרטון</div>
+        <div class="meta" style="margin-bottom:6px">${escapeHtml(sourceLabel)}${framesNote}</div>
+        <div class="cap-text" style="background:var(--surface-2);padding:10px;border-radius:10px;white-space:pre-wrap">${escapeHtml(r.contentAnalysis || '—')}</div>
+        ${elementsHtml}
+        ${r.fallbackReason ? `<div class="meta pill-warn" style="margin-top:6px">סיבת מעבר לתבנית: ${escapeHtml(r.fallbackReason)}</div>` : ''}
       </div>
     </div>
 
-    <div class="section-title">גרסאות לפי פלטפורמה</div>
-    ${platforms.map((k) => (r.platforms?.[k] ? platformBlock(k, r.platforms[k], r.suggestedPlatforms || []) : '')).join('')}
+    <div class="section-title">המלצות לפי סגנון (לחצו "השתמש" כדי למלא את שדות העריכה)</div>
+    ${STYLE_ORDER.map((k) => (styles[k] ? styleCard(styles[k]) : '')).join('')}
 
     <div class="section-title">עריכה ידנית (זה מה שיישמר)</div>
     <label>כותרת (Caption)</label>
@@ -232,11 +246,26 @@ function renderDetail(v) {
     </div>
   `;
 
-  // Wire up actions.
-  $('#modalBody').querySelectorAll('[data-use-caption]').forEach((btn) => {
+  // "Use this style" — copy the whole style into the manual-edit fields.
+  $('#modalBody').querySelectorAll('[data-use-style]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      $('#editCaption').value = caps[btn.dataset.useCaption] || '';
-      toast('הכותרת הוחלפה');
+      const style = styles[btn.dataset.useStyle];
+      if (!style) return;
+      $('#editCaption').value = style.caption || '';
+      $('#editHashtags').value = [
+        ...(style.hashtags?.hebrew || []),
+        ...(style.hashtags?.english || []),
+      ].join(' ');
+      $('#editCta').value = style.cta || '';
+      const key = PLATFORM_LABEL_TO_KEY[style.suggestedPlatform];
+      if (key) {
+        $('#platformChecks')
+          .querySelectorAll('input[type=checkbox]')
+          .forEach((c) => {
+            c.checked = c.value === key;
+          });
+      }
+      toast(`הוחל סגנון: ${style.name}`);
     });
   });
   $('#reanalyzeBtn').addEventListener('click', () => reanalyze(v.id));
