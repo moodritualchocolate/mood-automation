@@ -16,6 +16,11 @@ export const config = {
   port: PORT,
   host: env.HOST || '0.0.0.0',
 
+  // Live demo mode. Seeds sample videos and a simulated YouTube connection so
+  // the full flow can be shown end-to-end. Demo mode NEVER publishes for real —
+  // "Test Upload" is always simulated.
+  demoMode: env.DEMO_MODE === 'true',
+
   // The folder the system watches for new videos. Defaults to the in-repo
   // content folder; point WATCH_DIR at an absolute path (e.g. an external
   // "/content/social-videos-to-review/") in production.

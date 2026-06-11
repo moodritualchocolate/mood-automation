@@ -151,11 +151,41 @@ function missingPermissions() {
   return config.youtube.scopes.filter((s) => !granted.has(s));
 }
 
+// A synthetic "connected" card used in demo mode so the publish flow is fully
+// visible. Demo never publishes for real — uploads are simulated.
+function demoCard() {
+  return {
+    key: 'youtube',
+    name: 'YouTube',
+    nameHe: 'יוטיוב',
+    connected: true,
+    demo: true,
+    status: 'Connected (Demo)',
+    statusHe: 'מחובר (הדגמה)',
+    accountName: 'ערוץ הדגמה — MOOD',
+    channelId: 'DEMO_CHANNEL',
+    requiredPermissions: config.youtube.scopes,
+    missingPermissions: [],
+    missingCredentials: [],
+    configured: true,
+    canUpload: true,
+    canPublish: true,
+    publishDisabledReason: null,
+    privacyStatus: 'unlisted',
+    connectedAt: new Date().toISOString(),
+    checkedAt: new Date().toISOString(),
+    authUrlPath: '/api/youtube/oauth/start',
+  };
+}
+
 // Builds the connection card from STORED data only (no network). This is what
 // the Connections page renders.
 export function getCardSync() {
   const stored = getYouTube();
   const connected = !!(stored && stored.tokens && stored.tokens.refreshToken);
+
+  // In demo mode, if there's no real connection, present a simulated one.
+  if (config.demoMode && !connected) return demoCard();
   const missing = missingPermissions();
   const hasUploadScope = grantedScopes().includes(
     'https://www.googleapis.com/auth/youtube.upload',

@@ -49,6 +49,30 @@ Drop a video (`.mp4`, `.mov`, `.m4v`, `.webm`, `.mkv`, `.avi`) into
 `content/social-videos-to-review/` and it appears in the dashboard within a few
 seconds (or click **🔄 סרוק את התיקייה**).
 
+## Live demo mode
+
+Want to see the whole pipeline before wiring up real credentials? Start with
+`DEMO_MODE=true`:
+
+```bash
+DEMO_MODE=true npm start
+```
+
+This seeds sample videos at different stages (New / Ready to publish /
+Published) and a **simulated YouTube connection**, so every part of the flow is
+visible: detection → frames → transcript → Claude-style recommendations →
+edit caption/hashtags/CTA → approval checklist → Ready to publish → YouTube
+card → **Test Upload** → publish history.
+
+The homepage shows a **System Health** panel (watch folder, ffmpeg, Claude key,
+transcription, YouTube credentials, YouTube connected — each Yes/No) and a
+**guided 7-step checklist** that ticks off as you progress. A **"Run Full Demo"**
+button walks one video through the entire flow automatically.
+
+> 🧪 **Demo mode never publishes.** Every "Test Upload" is simulated (no network,
+> nothing posted), even if real credentials are present. Real publishing is only
+> available with `DEMO_MODE` off, and is always manual + approval-gated.
+
 ## Content-based recommendations (Claude)
 
 When `ANTHROPIC_API_KEY` is set, each new video is analyzed by its **actual
@@ -148,6 +172,7 @@ Copy `.env.example` and set values, or export them in your shell. Key options:
 | Variable | Purpose |
 | --- | --- |
 | `PORT` | HTTP port (default `4310`). |
+| `DEMO_MODE` | `true` seeds sample data + a simulated YouTube connection. Never publishes for real. |
 | `WATCH_DIR` | Absolute path to the watched folder. Point at your real `/content/social-videos-to-review/` in production. |
 | `BRAND_NAME` / `BRAND_HANDLE` / `BRAND_CTA` / `BRAND_DESCRIPTION` | Brand defaults; `BRAND_DESCRIPTION` is the brand context fed to Claude. |
 | `ANTHROPIC_API_KEY` | Enables content-based Claude analysis. Unset → offline heuristic. |
@@ -180,6 +205,7 @@ server/
   claude.js      # Claude API client: vision + transcript + structured output
   recommend.js   # orchestrates frames+transcript → Claude → 4 styles; fallback
   youtube.js     # YouTube OAuth + resumable Shorts upload (Phase 1)
+  demo.js        # demo-mode sample data (no files, no network, never posts)
   platforms.js   # connection cards (YouTube live; others are stubs)
   watcher.js     # folder watching + per-video processing
   server.js      # HTTP server: UI, JSON API, range-based video streaming
@@ -204,6 +230,8 @@ content/social-videos-to-review/   # watched folder (videos are git-ignored)
 | `GET` | `/api/youtube/oauth/start` | Begin YouTube OAuth (redirects to Google). |
 | `GET` | `/api/youtube/oauth/callback` | OAuth redirect handler (stores tokens). |
 | `POST` | `/api/youtube/disconnect` | Disconnect the YouTube account. |
+| `GET` | `/api/health` | System Health (watch dir, ffmpeg, Claude, transcription, YouTube). |
+| `POST` | `/api/demo/seed` · `/api/demo/reset` | Demo-mode only: seed/reset sample videos. |
 
 ## Roadmap (next phases)
 

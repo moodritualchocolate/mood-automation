@@ -34,6 +34,9 @@ let videos = [];
 let filterStatus = '';
 let currentId = null;
 let ytCard = null; // cached YouTube connection card
+let health = null; // cached system health
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function approvalComplete(approval) {
   return APPROVAL_ITEMS.every((i) => (approval || {})[i.key]);
@@ -130,14 +133,17 @@ function renderGrid() {
         : ready
         ? '<span class="pill-ok">✓ מוכן</span>'
         : '<span class="pill-warn">● דורש בדיקה</span>';
+      const thumb = v.demo
+        ? `<div class="thumb demo-thumb" data-action="open">🎬</div>`
+        : `<div class="thumb" data-action="open">
+             <video preload="metadata" muted src="/api/videos/${v.id}/file#t=0.1"></video>
+             <div class="play-hint">▶</div>
+           </div>`;
       return `
       <div class="card" data-id="${v.id}">
-        <div class="thumb" data-action="open">
-          <video preload="metadata" muted src="/api/videos/${v.id}/file#t=0.1"></video>
-          <div class="play-hint">▶</div>
-        </div>
+        ${thumb}
         <div class="body">
-          <div class="fname">${escapeHtml(v.filename)}</div>
+          <div class="fname">${escapeHtml(v.filename)} ${v.demo ? '<span class="badge-demo">הדגמה</span>' : ''}</div>
           <div class="meta">
             <span>${fmtDuration(a.durationSec)}</span>
             <span>${a.aspectRatio || '—'}</span>
@@ -235,12 +241,14 @@ function publishSectionHtml(v) {
          .join('')}</ul>`
     : '';
 
+  const demo = !!(v.demo || health?.demoMode);
+  const label = demo ? '🧪 העלאת בדיקה (Unlisted, הדגמה)' : '▶️ פרסם ל-YouTube Shorts';
   const btn = eligible
-    ? `<button class="btn primary" id="publishYtBtn">▶️ פרסם ל-YouTube Shorts</button>`
-    : `<button class="btn" id="publishYtBtn" disabled title="לא ניתן לפרסם עדיין">▶️ פרסם ל-YouTube Shorts</button>`;
+    ? `<button class="btn primary" id="publishYtBtn">${label}</button>`
+    : `<button class="btn" id="publishYtBtn" disabled title="לא ניתן לפרסם עדיין">${label}</button>`;
 
   const reasonsHtml = eligible
-    ? `<div class="meta pill-ok" style="margin-top:6px">מוכן לפרסום ידני${ytCard?.privacyStatus ? ` · פרטיות: ${escapeHtml(ytCard.privacyStatus)}` : ''}</div>`
+    ? `<div class="meta pill-ok" style="margin-top:6px">${demo ? 'מוכן להעלאת בדיקה (לא יפורסם דבר באמת)' : 'מוכן לפרסום ידני'}${ytCard?.privacyStatus ? ` · פרטיות: ${escapeHtml(ytCard.privacyStatus)}` : ''}</div>`
     : `<ul class="notes" style="margin-top:6px">${reasons.map((x) => `<li>${escapeHtml(x)}</li>`).join('')}</ul>`;
 
   return `${statusHtml}<div style="margin-top:8px">${btn}</div>${reasonsHtml}${historyHtml}`;
@@ -279,11 +287,20 @@ function renderDetail(v) {
   $('#modalBody').innerHTML = `
     <div class="detail-grid">
       <div>
-        <div class="section-title">תצוגה מקדימה</div>
+        <div class="section-title">תצוגה מקדימה ${v.demo ? '<span class="badge-demo">הדגמה</span>' : ''}</div>
         ${
-          v.missing
+          v.demo
+            ? '<div class="demo-poster"><div><div class="big">🎬</div>סרטון הדגמה<br><span class="step-hint">(אין קובץ אמיתי — תצוגה מדומה)</span></div></div>'
+            : v.missing
             ? '<div class="empty">⚠ קובץ הווידאו לא נמצא בתיקייה.</div>'
             : `<video class="preview-video" controls preload="metadata" src="/api/videos/${v.id}/file"></video>`
+        }
+
+        <div class="section-title">פריימים שחולצו (${r.framesAnalyzed || 0})</div>
+        ${
+          r.framesAnalyzed
+            ? `<div class="frame-strip">${Array.from({ length: Math.min(r.framesAnalyzed, 8) }, () => '<div class="frame"></div>').join('')}</div>`
+            : '<div class="meta">לא חולצו פריימים (אין ffmpeg / אין קובץ).</div>'
         }
 
         <div class="section-title">ניתוח הסרטון</div>
@@ -500,10 +517,13 @@ async function updateApproval(id, key, checked) {
 }
 
 async function publishYouTube(id) {
+  const v = videos.find((x) => x.id === id);
+  const demo = !!(v?.demo || health?.demoMode);
   const privacy = ytCard?.privacyStatus || 'public';
-  if (!confirm(`לפרסם את הסרטון ל-YouTube Shorts?\nפרטיות: ${privacy}\nפעולה זו מעלה את הווידאו לערוץ שלך.`)) {
-    return;
-  }
+  const msg = demo
+    ? 'העלאת בדיקה (הדגמה) — שום דבר לא יפורסם באמת. להמשיך?'
+    : `לפרסם את הסרטון ל-YouTube Shorts?\nפרטיות: ${privacy}\nפעולה זו מעלה את הווידאו לערוץ שלך.`;
+  if (!confirm(msg)) return;
   const btn = $('#publishYtBtn');
   if (btn) {
     btn.disabled = true;
@@ -515,7 +535,8 @@ async function publishYouTube(id) {
     mergeVideo(body);
     renderDetail(body);
     renderGrid();
-    toast('פורסם ל-YouTube ✓');
+    loadHealth();
+    toast(demo ? 'העלאת בדיקה הושלמה (לא פורסם דבר) ✓' : 'פורסם ל-YouTube ✓');
   } else {
     // On failure the server returns the updated video so history/error show.
     if (body.video) {
@@ -623,6 +644,7 @@ async function loadVideos() {
     }
     if (Array.isArray(data.gatedStatuses)) GATED_STATUSES = data.gatedStatuses;
     renderGrid();
+    renderSystemPanel(); // keep the guided checklist live
   } catch (e) {
     toast('שגיאה בטעינה: ' + e.message);
   }
@@ -630,9 +652,166 @@ async function loadVideos() {
 
 async function loadHealth() {
   try {
-    const h = await api('/api/health');
-    $('#watchPath').textContent = 'תיקייה במעקב: ' + h.watchDir;
+    health = await api('/api/health');
+    const wp = $('#watchPath');
+    if (wp) wp.textContent = 'תיקייה במעקב: ' + health.watchDir;
+    renderSystemPanel();
   } catch {}
+}
+
+function flag(v) {
+  return v ? '<span class="flag-yes">כן</span>' : '<span class="flag-no">לא</span>';
+}
+
+// Best-effort live completion of the guided checklist from aggregate state.
+function stepStates() {
+  const any = (fn) => videos.some(fn);
+  return [
+    { t: 'שלב 1: הוספת סרטון', done: videos.length > 0, hint: 'שמרו קובץ וידאו בתיקייה הנצפית (או הריצו הדגמה).' },
+    { t: 'שלב 2: סקירת ההמלצות', done: any((v) => v.recommendations?.styles), hint: 'ניתוח Claude + 4 סגנונות בעברית.' },
+    { t: 'שלב 3: עריכת כותרת/האשטגים/CTA', done: any((v) => v.approval?.captionReviewed), hint: 'בחרו סגנון או ערכו ידנית, ואז סמנו "הכותרת נבדקה".' },
+    { t: 'שלב 4: השלמת רשימת האישור', done: any((v) => approvalComplete(v.approval)), hint: 'שישה סעיפים — נאכפים בשרת.' },
+    { t: 'שלב 5: חיבור YouTube', done: !!health?.youtubeConnected, hint: 'עמוד חיבורי הפלטפורמות → התחבר ל-YouTube.' },
+    { t: 'שלב 6: העלאת בדיקה כ-Unlisted', done: any((v) => (v.publishHistory || []).length > 0), hint: 'בדמו: "העלאת בדיקה" מדמה העלאה ללא פרסום אמיתי.' },
+    { t: 'שלב 7: פרסום ידני', done: any((v) => v.status === 'Published'), hint: 'לחיצה ידנית בלבד, לאחר שכל הגייטים עברו.' },
+  ];
+}
+
+function renderSystemPanel() {
+  if (!health) return;
+  const chip = $('#modeChip');
+  if (chip) {
+    chip.textContent = health.demoMode ? '🧪 Demo Mode' : '🔧 Real Mode';
+    chip.className = 'mode-chip ' + (health.demoMode ? 'demo' : 'real');
+  }
+
+  const ytLine = health.youtubeConnected
+    ? `<span class="flag-yes">מחובר${health.youtubeConnectionIsDemo ? ' (הדגמה)' : ''}</span>`
+    : '<span class="flag-no">לא מחובר</span>';
+
+  const steps = stepStates()
+    .map(
+      (s, i) => `<li class="${s.done ? 'done' : ''}">
+        <span class="num">${s.done ? '✓' : i + 1}</span>
+        <span><span class="step-text">${escapeHtml(s.t)}</span><br><span class="step-hint">${escapeHtml(s.hint)}</span></span>
+      </li>`,
+    )
+    .join('');
+
+  const demoActions = health.demoMode
+    ? `<div class="demo-actions">
+        <button class="btn primary" id="runDemoBtn">▶️ הרץ הדגמה מלאה</button>
+        <button class="btn" id="resetDemoBtn">↺ אפס הדגמה</button>
+        <span class="meta" style="align-self:center">ההדגמה אינה מפרסמת דבר.</span>
+      </div>`
+    : '';
+
+  $('#systemPanel').innerHTML = `
+    <div class="panel">
+      <h3>בריאות המערכת ${health.demoMode ? '<span class="badge-demo">Demo Mode</span>' : ''}</h3>
+      <div class="panel-grid">
+        <div>
+          <div class="health-row"><span class="label">תיקיית מעקב</span><span style="direction:ltr;font-size:.78rem">${escapeHtml(health.watchDir)}</span></div>
+          <div class="health-row"><span class="label">ffmpeg זמין</span>${flag(health.ffmpegAvailable)}</div>
+          <div class="health-row"><span class="label">מפתח Claude מוגדר</span>${flag(health.claudeConfigured)}</div>
+          <div class="health-row"><span class="label">תמלול מוגדר</span>${flag(health.transcriptionConfigured)}</div>
+          <div class="health-row"><span class="label">פרטי YouTube מוגדרים</span>${flag(health.youtubeConfigured)}</div>
+          <div class="health-row"><span class="label">YouTube מחובר</span>${ytLine}</div>
+          ${
+            !health.demoMode && !health.ffmpegAvailable
+              ? '<div class="meta flag-warn" style="margin-top:6px">⚠ חסר ffmpeg — ניתוח חזותי/אודיו מוגבל (Missing setup).</div>'
+              : ''
+          }
+        </div>
+        <div>
+          <h3 style="font-size:.9rem">מדריך מודרך</h3>
+          <ul class="steps">${steps}</ul>
+        </div>
+      </div>
+      ${demoActions}
+    </div>`;
+
+  const runBtn = $('#runDemoBtn');
+  if (runBtn) runBtn.addEventListener('click', runFullDemo);
+  const resetBtn = $('#resetDemoBtn');
+  if (resetBtn) resetBtn.addEventListener('click', resetDemo);
+}
+
+async function resetDemo() {
+  try {
+    await api('/api/demo/reset', { method: 'POST' });
+    await loadVideos();
+    await loadHealth();
+    toast('ההדגמה אופסה');
+  } catch (e) {
+    toast('שגיאה: ' + e.message);
+  }
+}
+
+// Drives a demo video through the entire flow using the REAL gated endpoints.
+// The publish step is simulated server-side (demo mode) — nothing is posted.
+async function runFullDemo() {
+  if (!health?.demoMode) return toast('הדגמה זמינה רק במצב Demo');
+  const btn = $('#runDemoBtn');
+  if (btn) btn.disabled = true;
+  try {
+    const reset = await api('/api/demo/reset', { method: 'POST' });
+    const id = reset.runTargetId || 'demo-new';
+    await loadConnections();
+    await loadVideos();
+
+    toast('שלב 1: זוהה סרטון חדש 🎬');
+    openDetail(id);
+    await sleep(1100);
+
+    toast('שלב 2: המלצות Claude מוכנות (ניתוח + 4 סגנונות) ✓');
+    await sleep(1100);
+
+    const v = videos.find((x) => x.id === id);
+    const s = v?.recommendations?.styles?.moodBrand || {};
+    await api(`/api/videos/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        edits: {
+          caption: s.caption || '',
+          hashtags: [...(s.hashtags?.hebrew || []), ...(s.hashtags?.english || [])].join(' '),
+          cta: s.cta || '',
+          platforms: ['youtube'],
+        },
+      }),
+    });
+    toast('שלב 3: כותרת/האשטגים/CTA נערכו ✓');
+    await sleep(1100);
+
+    const approval = {};
+    APPROVAL_ITEMS.forEach((i) => (approval[i.key] = true));
+    await api(`/api/videos/${id}`, { method: 'PATCH', body: JSON.stringify({ approval }) });
+    toast('שלב 4: רשימת האישור הושלמה ✓');
+    await sleep(1100);
+
+    await api(`/api/videos/${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'Ready to publish' }) });
+    toast('שלב 5: מוכן לפרסום · YouTube מחובר (הדגמה) ✓');
+    await sleep(1100);
+
+    toast('שלב 6: מבצע העלאת בדיקה (Unlisted)…');
+    const res = await fetch(`/api/videos/${id}/publish/youtube`, { method: 'POST' });
+    const body = await res.json().catch(() => ({}));
+    await sleep(900);
+
+    if (res.ok) {
+      toast('שלב 7: פורסם בהדגמה — לא פורסם דבר באמת ✅');
+      mergeVideo(body);
+      if (currentId === id) renderDetail(body);
+    } else {
+      toast('ההדגמה נעצרה: ' + (body.message || body.error || ''));
+    }
+    await loadVideos();
+    await loadHealth();
+  } catch (e) {
+    toast('שגיאה בהדגמה: ' + e.message);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
 }
 
 // ---- Init ------------------------------------------------------------------

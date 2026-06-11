@@ -15,6 +15,10 @@ import * as store from './store.js';
 import * as watcher from './watcher.js';
 import { runChecks, getConnections } from './platforms.js';
 import * as youtube from './youtube.js';
+import * as demo from './demo.js';
+import { hasFfmpeg } from './frames.js';
+import { isAvailable as transcriptionAvailable } from './transcribe.js';
+import { isConfigured as claudeConfigured } from './claude.js';
 import crypto from 'node:crypto';
 
 store.load();
@@ -149,13 +153,25 @@ function streamVideo(req, res, id) {
 // ---- API -------------------------------------------------------------------
 
 async function handleApi(req, res, pathname, url) {
-  // GET /api/health
+  // GET /api/health  — System Health panel data
   if (req.method === 'GET' && pathname === '/api/health') {
+    const ytCard = youtube.getCardSync();
+    const transcription = await transcriptionAvailable();
     return sendJson(res, 200, {
       ok: true,
-      watchDir: config.watchDir,
       version: '0.1.0',
-      publishingEnabled: false,
+      demoMode: config.demoMode,
+      watchDir: config.watchDir,
+      ffmpegAvailable: await hasFfmpeg(),
+      claudeConfigured: claudeConfigured(),
+      transcriptionConfigured: transcription.configured,
+      transcriptionMethod: transcription.method,
+      youtubeConfigured: youtube.isConfigured(),
+      youtubeConnected: !!ytCard.connected,
+      youtubeConnectionIsDemo: !!ytCard.demo,
+      // Publishing is enabled (YouTube only) but always manual + gated; in demo
+      // mode every publish is simulated.
+      publishablePlatforms: ['youtube'],
     });
   }
 
@@ -320,6 +336,23 @@ async function handleApi(req, res, pathname, url) {
     return sendJson(res, 200, { platform: youtube.disconnect() });
   }
 
+  // --- Demo mode (guarded) ---
+  if (pathname.startsWith('/api/demo/')) {
+    if (!config.demoMode) {
+      return sendJson(res, 403, { error: 'Demo mode is off (set DEMO_MODE=true)' });
+    }
+    // POST /api/demo/seed — create sample videos if absent
+    if (req.method === 'POST' && pathname === '/api/demo/seed') {
+      return sendJson(res, 200, { videos: demo.seedDemoVideos() });
+    }
+    // POST /api/demo/reset — re-seed sample videos to their initial state
+    if (req.method === 'POST' && pathname === '/api/demo/reset') {
+      demo.clearDemoVideos();
+      return sendJson(res, 200, { videos: demo.seedDemoVideos(), runTargetId: demo.RUN_TARGET_ID });
+    }
+    return notFound(res, 'Unknown demo route');
+  }
+
   return notFound(res, 'Unknown API route');
 }
 
@@ -358,8 +391,11 @@ async function publishYouTube(res, id) {
       message: 'יש להתחבר ל-YouTube בעמוד חיבורי הפלטפורמות.',
     });
   }
-  // Gate 5: file exists.
-  if (!fs.existsSync(v.path)) {
+  // Demo mode (or a demo video) NEVER publishes for real — it simulates.
+  const isDemo = config.demoMode || v.demo;
+
+  // Gate 5: file exists (skipped for demo, which has no real file).
+  if (!isDemo && !fs.existsSync(v.path)) {
     return sendJson(res, 409, { error: 'File missing', message: 'קובץ הווידאו לא נמצא.' });
   }
 
@@ -382,7 +418,20 @@ async function publishYouTube(res, id) {
   });
 
   try {
-    const result = await youtube.publishShort({ filePath: v.path, title, description, tags });
+    let result;
+    if (isDemo) {
+      // Simulated upload — no network, nothing posted.
+      const vid = 'DEMO_' + crypto.randomBytes(4).toString('hex');
+      result = {
+        videoId: vid,
+        url: `https://www.youtube.com/shorts/${vid}`,
+        publishedAt: new Date().toISOString(),
+        privacyStatus: 'unlisted',
+        demo: true,
+      };
+    } else {
+      result = await youtube.publishShort({ filePath: v.path, title, description, tags });
+    }
     const yt = {
       status: 'published',
       videoId: result.videoId,
@@ -390,11 +439,12 @@ async function publishYouTube(res, id) {
       publishedAt: result.publishedAt,
       privacyStatus: result.privacyStatus,
       title,
+      demo: !!isDemo,
       error: null,
     };
     const history = [
       ...(v.publishHistory || []),
-      { platform: 'youtube', status: 'published', at: result.publishedAt, videoId: result.videoId, url: result.url, privacyStatus: result.privacyStatus },
+      { platform: 'youtube', status: 'published', at: result.publishedAt, videoId: result.videoId, url: result.url, privacyStatus: result.privacyStatus, demo: !!isDemo },
     ];
     const updated = store.updateVideo(id, {
       status: 'Published',

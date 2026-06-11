@@ -12,6 +12,7 @@ import { config, APPROVAL_ITEMS } from './config.js';
 import { analyzeVideo } from './analyzer.js';
 import { generateRecommendations } from './recommend.js';
 import { transcribe } from './transcribe.js';
+import { seedDemoVideos, hasDemoVideos } from './demo.js';
 import {
   listVideos,
   getVideoByPath,
@@ -177,6 +178,7 @@ export async function scan() {
 
   // Mark missing files so the dashboard can flag them, without losing data.
   for (const v of listVideos()) {
+    if (v.demo) continue; // demo videos have no real file
     if (!present.has(v.path) && !v.missing && v.status !== 'Published') {
       updateVideo(v.id, { missing: true });
     } else if (present.has(v.path) && v.missing) {
@@ -198,6 +200,12 @@ let intervalTimer = null;
 export function start() {
   ensureWatchDir();
   console.log(`[watcher] Watching: ${config.watchDir}`);
+
+  // Seed demo videos so the dashboard shows the full flow immediately.
+  if (config.demoMode && !hasDemoVideos()) {
+    seedDemoVideos();
+    console.log('[watcher] Demo mode — seeded sample videos.');
+  }
 
   // Instant detection.
   try {

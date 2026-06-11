@@ -94,10 +94,19 @@ async function transcribeViaWhisperCli(audioPath, tmpDir) {
   return { text, language: language || null, source: 'whisper-cli' };
 }
 
-// Whether transcription could even be attempted given current configuration.
+// Quick sync check: is an HTTP transcription endpoint configured?
 export function isConfigured() {
   const t = config.transcription;
-  return t.enabled && (!!t.httpUrl || true); // CLI availability checked lazily
+  return t.enabled && !!t.httpUrl;
+}
+
+// Fuller async check (also detects a local whisper CLI). Used by System Health.
+export async function isAvailable() {
+  const t = config.transcription;
+  if (!t.enabled) return { configured: false, method: 'disabled' };
+  if (t.httpUrl) return { configured: true, method: 'http' };
+  if (await hasWhisperCli()) return { configured: true, method: 'whisper-cli' };
+  return { configured: false, method: 'none' };
 }
 
 // Main entry point. Returns { text, language, source } or null.
