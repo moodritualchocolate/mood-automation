@@ -8,6 +8,7 @@ import { config } from './config.js';
 let state = {
   videos: {}, // id -> video record
   platformChecks: {}, // platformKey -> { checkedAt, ...result }
+  youtube: null, // OAuth connection: { tokens, channel, scope, checkedAt }
   meta: { version: 1 },
 };
 
@@ -25,7 +26,7 @@ export function load() {
     if (fs.existsSync(config.storeFile)) {
       const raw = fs.readFileSync(config.storeFile, 'utf8');
       const parsed = JSON.parse(raw);
-      state = { videos: {}, platformChecks: {}, meta: { version: 1 }, ...parsed };
+      state = { videos: {}, platformChecks: {}, youtube: null, meta: { version: 1 }, ...parsed };
     }
   } catch (err) {
     console.error('[store] Failed to read store, starting fresh:', err.message);
@@ -107,4 +108,21 @@ export function setPlatformCheck(key, result) {
 
 export function getPlatformChecks() {
   return state.platformChecks;
+}
+
+// ---- YouTube OAuth connection ----------------------------------------------
+
+export function getYouTube() {
+  return state.youtube;
+}
+
+export function setYouTube(data) {
+  state.youtube = data;
+  saveNow(); // tokens are important — persist immediately
+  return state.youtube;
+}
+
+export function clearYouTube() {
+  state.youtube = null;
+  saveNow();
 }

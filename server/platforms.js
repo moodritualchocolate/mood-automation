@@ -1,16 +1,17 @@
-// Platform connection checks. This v1 NEVER publishes. It only inspects local
-// configuration (environment variables) to report whether each platform is
-// wired up and *could* upload/publish once automation is enabled later.
+// Platform connection checks.
 //
-// When credentials are present, the structure is ready for a future version
-// to perform a real API token-validation call. For now, presence of all
-// required credential env vars => "connected"; otherwise "not connected" with
-// the missing pieces and permissions listed.
+// YouTube is real (Phase 1): its card reflects the OAuth connection and can
+// publish. Instagram / Facebook / TikTok remain env-based stubs that cannot
+// publish yet — their cards report whether credentials *exist*, nothing more.
 
 import { PLATFORMS } from './config.js';
 import { setPlatformCheck, getPlatformChecks } from './store.js';
+import { getCardSync as youtubeCard } from './youtube.js';
 
 function checkOne(platform) {
+  // YouTube uses the live OAuth card, not the env-stub path.
+  if (platform.key === 'youtube') return youtubeCard();
+
   const missingCredentials = platform.credentialEnv.filter(
     (name) => !process.env[name],
   );
@@ -62,6 +63,9 @@ export function getConnections() {
   if (!stored || Object.keys(stored).length === 0) {
     return runChecks();
   }
-  // Keep order consistent with PLATFORMS definition.
-  return PLATFORMS.map((p) => stored[p.key] || checkOne(p));
+  // Keep order consistent with PLATFORMS definition. YouTube is always live
+  // (never served from the persisted stub) so its OAuth state is current.
+  return PLATFORMS.map((p) =>
+    p.key === 'youtube' ? youtubeCard() : stored[p.key] || checkOne(p),
+  );
 }

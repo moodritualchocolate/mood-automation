@@ -48,13 +48,31 @@ function connCard(p) {
     ? `<div class="conn-row"><span class="label">חסר להגדרה</span><span class="pill-warn">${p.missingCredentials.map(escapeHtml).join(', ')}</span></div>`
     : '';
 
+  // YouTube (Phase 1) gets real connect/disconnect controls.
+  let actions = '';
+  if (p.key === 'youtube') {
+    if (!p.configured) {
+      actions = `<div class="conn-row"><span class="pill-warn" style="font-size:.78rem">הגדירו YT_CLIENT_ID ו-YT_CLIENT_SECRET כדי לאפשר חיבור.</span></div>`;
+    } else if (p.connected) {
+      actions = `<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn" data-yt-disconnect>נתק</button>
+        <span class="meta" style="align-self:center">פרטיות פרסום: <b>${escapeHtml(p.privacyStatus || 'public')}</b></span>
+      </div>`;
+    } else {
+      actions = `<div style="margin-top:10px"><a class="btn primary" href="${p.authUrlPath}">🔗 התחבר ל-YouTube</a></div>`;
+    }
+  } else {
+    // Other platforms are not built yet in this phase.
+    actions = `<div class="conn-row"><span class="meta" style="font-size:.78rem">פרסום לפלטפורמה זו טרם נבנה (Phase 1 = YouTube בלבד).</span></div>`;
+  }
+
   return `
     <div class="conn-card">
       <div class="conn-head">
         <h3>${escapeHtml(p.nameHe)} · ${escapeHtml(p.name)}</h3>
         ${statusPill}
       </div>
-      <div class="conn-row"><span class="label">חשבון</span><span>${p.accountName ? escapeHtml(p.accountName) : '—'}</span></div>
+      <div class="conn-row"><span class="label">${p.key === 'youtube' ? 'ערוץ' : 'חשבון'}</span><span>${p.accountName ? escapeHtml(p.accountName) : '—'}</span></div>
       <div class="conn-row"><span class="label">בדיקת חיבור אחרונה</span><span>${fmtTime(p.checkedAt)}</span></div>
       <div class="conn-row"><span class="label">יכול להעלות וידאו</span><span>${yesNo(p.canUpload)}</span></div>
       <div class="conn-row"><span class="label">יכול לפרסם</span><span>${yesNo(p.canPublish)}</span></div>
@@ -64,15 +82,31 @@ function connCard(p) {
         <ul class="perm-list">${perms}</ul>
       </div>
       ${
-        !p.canPublish
-          ? `<div class="conn-row"><span class="pill-warn" style="font-size:.78rem">${escapeHtml(p.publishDisabledReason || '')}</span></div>`
+        !p.canPublish && p.publishDisabledReason
+          ? `<div class="conn-row"><span class="pill-warn" style="font-size:.78rem">${escapeHtml(p.publishDisabledReason)}</span></div>`
           : ''
       }
+      ${actions}
     </div>`;
 }
 
 function render(platforms) {
   $('#connGrid').innerHTML = platforms.map(connCard).join('');
+
+  // Wire YouTube disconnect (re-rendered each time).
+  const disc = $('#connGrid').querySelector('[data-yt-disconnect]');
+  if (disc) {
+    disc.addEventListener('click', async () => {
+      if (!confirm('לנתק את חשבון ה-YouTube?')) return;
+      try {
+        await api('/api/youtube/disconnect', { method: 'POST' });
+        toast('נותק מ-YouTube');
+        load();
+      } catch (e) {
+        toast('שגיאה: ' + e.message);
+      }
+    });
+  }
   const latest = platforms
     .map((p) => p.checkedAt)
     .filter(Boolean)
@@ -108,6 +142,15 @@ async function check() {
     $('#checkBtn').disabled = false;
   }
 }
+
+// Surface the result of the OAuth redirect.
+(function handleOAuthReturn() {
+  const params = new URLSearchParams(location.search);
+  const yt = params.get('yt');
+  if (yt === 'connected') toast('YouTube חובר בהצלחה ✓');
+  else if (yt === 'error') toast('שגיאת חיבור YouTube: ' + (params.get('msg') || ''));
+  if (yt) history.replaceState({}, '', location.pathname);
+})();
 
 $('#checkBtn').addEventListener('click', check);
 load();

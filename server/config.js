@@ -10,8 +10,10 @@ export const ROOT = path.resolve(__dirname, '..');
 
 const env = process.env;
 
+const PORT = Number(env.PORT) || 4310;
+
 export const config = {
-  port: Number(env.PORT) || 4310,
+  port: PORT,
   host: env.HOST || '0.0.0.0',
 
   // The folder the system watches for new videos. Defaults to the in-repo
@@ -69,6 +71,26 @@ export const config = {
     // Local OpenAI-Whisper CLI binary, used if no HTTP endpoint is configured.
     whisperBin: env.WHISPER_BIN || 'whisper',
     whisperModel: env.WHISPER_MODEL || 'base',
+  },
+
+  // YouTube Shorts publishing (Phase 1 — the only platform that can publish).
+  // OAuth 2.0 authorization-code flow with offline access (refresh token).
+  // Publishing is manual-only and server-gated by the approval checklist.
+  youtube: {
+    clientId: env.YT_CLIENT_ID || '',
+    clientSecret: env.YT_CLIENT_SECRET || '',
+    redirectUri:
+      env.YT_REDIRECT_URI || `http://localhost:${PORT}/api/youtube/oauth/callback`,
+    // public | unlisted | private. Default 'public' = a real Short; set to
+    // 'unlisted'/'private' for safe end-to-end testing without a public post.
+    privacyStatus: env.YT_PRIVACY_STATUS || 'public',
+    categoryId: env.YT_CATEGORY_ID || '22', // People & Blogs
+    scopes: [
+      'https://www.googleapis.com/auth/youtube.upload',
+      'https://www.googleapis.com/auth/youtube.readonly',
+    ],
+    // Safety cap for the in-memory upload buffer (Shorts are small).
+    maxUploadBytes: Number(env.YT_MAX_UPLOAD_BYTES) || 300 * 1024 * 1024,
   },
 };
 

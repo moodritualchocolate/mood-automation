@@ -14,8 +14,32 @@ import {
 import * as store from './store.js';
 import * as watcher from './watcher.js';
 import { runChecks, getConnections } from './platforms.js';
+import * as youtube from './youtube.js';
+import crypto from 'node:crypto';
 
 store.load();
+
+// Short-lived OAuth state tokens (CSRF protection for the YouTube flow).
+const oauthStates = new Map(); // state -> expiry(ms)
+function newOAuthState() {
+  const s = crypto.randomBytes(16).toString('hex');
+  oauthStates.set(s, Date.now() + 10 * 60 * 1000);
+  return s;
+}
+function consumeOAuthState(s) {
+  const exp = oauthStates.get(s);
+  oauthStates.delete(s);
+  return !!exp && exp > Date.now();
+}
+
+function approvalComplete(approval) {
+  return APPROVAL_ITEMS.every((i) => approval && approval[i.key]);
+}
+
+function redirect(res, location) {
+  res.writeHead(302, { Location: location });
+  res.end();
+}
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -234,17 +258,163 @@ async function handleApi(req, res, pathname, url) {
     return sendJson(res, 200, { ok: true, videos: store.listVideos() });
   }
 
-  // GET /api/connections
-  if (req.method === 'GET' && pathname === '/api/connections') {
-    return sendJson(res, 200, { platforms: getConnections(), publishingEnabled: false });
+  // POST /api/videos/:id/publish/youtube  — manual, gated YouTube Shorts publish
+  m = pathname.match(/^\/api\/videos\/([^/]+)\/publish\/youtube$/);
+  if (m && req.method === 'POST') {
+    return publishYouTube(res, m[1]);
   }
 
-  // POST /api/connections/check  — re-run connection checks
+  // GET /api/connections
+  if (req.method === 'GET' && pathname === '/api/connections') {
+    return sendJson(res, 200, {
+      platforms: getConnections(),
+      // Phase 1: only YouTube can publish.
+      publishablePlatforms: ['youtube'],
+    });
+  }
+
+  // POST /api/connections/check  — re-run checks (refreshes YouTube live)
   if (req.method === 'POST' && pathname === '/api/connections/check') {
-    return sendJson(res, 200, { platforms: runChecks(), publishingEnabled: false });
+    runChecks();
+    try {
+      await youtube.recheck();
+    } catch (err) {
+      console.error('[connections] YouTube recheck failed:', err.message);
+    }
+    return sendJson(res, 200, {
+      platforms: getConnections(),
+      publishablePlatforms: ['youtube'],
+    });
+  }
+
+  // --- YouTube OAuth ---
+  // GET /api/youtube/oauth/start  — redirect to Google consent
+  if (req.method === 'GET' && pathname === '/api/youtube/oauth/start') {
+    if (!youtube.isConfigured()) {
+      return sendJson(res, 400, {
+        error: 'YouTube OAuth not configured (set YT_CLIENT_ID and YT_CLIENT_SECRET)',
+      });
+    }
+    return redirect(res, youtube.buildAuthUrl(newOAuthState()));
+  }
+
+  // GET /api/youtube/oauth/callback  — exchange code, then back to UI
+  if (req.method === 'GET' && pathname === '/api/youtube/oauth/callback') {
+    const code = url.searchParams.get('code');
+    const state = url.searchParams.get('state');
+    const error = url.searchParams.get('error');
+    if (error) return redirect(res, `/connections.html?yt=error&msg=${encodeURIComponent(error)}`);
+    if (!code || !state || !consumeOAuthState(state)) {
+      return redirect(res, '/connections.html?yt=error&msg=invalid_state');
+    }
+    try {
+      await youtube.exchangeCode(code);
+      return redirect(res, '/connections.html?yt=connected');
+    } catch (err) {
+      return redirect(res, `/connections.html?yt=error&msg=${encodeURIComponent(err.message)}`);
+    }
+  }
+
+  // POST /api/youtube/disconnect
+  if (req.method === 'POST' && pathname === '/api/youtube/disconnect') {
+    return sendJson(res, 200, { platform: youtube.disconnect() });
   }
 
   return notFound(res, 'Unknown API route');
+}
+
+// Manual, server-gated YouTube Shorts publish. Re-checks every condition
+// server-side regardless of what the client believes.
+async function publishYouTube(res, id) {
+  const v = store.getVideo(id);
+  if (!v) return notFound(res, 'Video not found');
+
+  // Gate 1: status must be Ready to publish.
+  if (v.status !== 'Ready to publish') {
+    return sendJson(res, 409, {
+      error: 'Not ready',
+      message: 'יש להעביר את הסטטוס ל"מוכן לפרסום" לפני פרסום.',
+    });
+  }
+  // Gate 2: approval checklist complete.
+  if (!approvalComplete(v.approval)) {
+    return sendJson(res, 422, {
+      error: 'Approval incomplete',
+      message: 'יש להשלים את כל סעיפי רשימת האישור לפני פרסום.',
+    });
+  }
+  // Gate 3: YouTube selected as a target platform.
+  if (!(v.edits?.platforms || []).includes('youtube')) {
+    return sendJson(res, 409, {
+      error: 'YouTube not selected',
+      message: 'יש לבחור "YouTube Shorts" ברשימת הפלטפורמות.',
+    });
+  }
+  // Gate 4: YouTube connected and able to upload.
+  const card = youtube.getCardSync();
+  if (!card.canPublish) {
+    return sendJson(res, 409, {
+      error: 'YouTube not connected',
+      message: 'יש להתחבר ל-YouTube בעמוד חיבורי הפלטפורמות.',
+    });
+  }
+  // Gate 5: file exists.
+  if (!fs.existsSync(v.path)) {
+    return sendJson(res, 409, { error: 'File missing', message: 'קובץ הווידאו לא נמצא.' });
+  }
+
+  // Build title/description/tags from the APPROVED edits.
+  const caption = (v.edits.caption || '').trim();
+  const title = (caption.split('\n')[0] || v.filename).trim().slice(0, 100);
+  const hashtags = (v.edits.hashtags || '').trim();
+  const tags = hashtags
+    .split(/\s+/)
+    .map((t) => t.replace(/^#/, ''))
+    .filter(Boolean);
+  let description = caption;
+  if (hashtags) description += `\n\n${hashtags}`;
+  if (!/#shorts/i.test(description)) description += `\n#Shorts`;
+
+  // Mark uploading.
+  const prevPublish = v.publish || {};
+  store.updateVideo(id, {
+    publish: { ...prevPublish, youtube: { status: 'uploading', startedAt: new Date().toISOString() } },
+  });
+
+  try {
+    const result = await youtube.publishShort({ filePath: v.path, title, description, tags });
+    const yt = {
+      status: 'published',
+      videoId: result.videoId,
+      url: result.url,
+      publishedAt: result.publishedAt,
+      privacyStatus: result.privacyStatus,
+      title,
+      error: null,
+    };
+    const history = [
+      ...(v.publishHistory || []),
+      { platform: 'youtube', status: 'published', at: result.publishedAt, videoId: result.videoId, url: result.url, privacyStatus: result.privacyStatus },
+    ];
+    const updated = store.updateVideo(id, {
+      status: 'Published',
+      publish: { ...prevPublish, youtube: yt },
+      publishHistory: history,
+    });
+    return sendJson(res, 200, updated);
+  } catch (err) {
+    // Failure: keep status as "Ready to publish" and record the error.
+    const yt = { status: 'failed', error: err.message, failedAt: new Date().toISOString() };
+    const history = [
+      ...(v.publishHistory || []),
+      { platform: 'youtube', status: 'failed', at: new Date().toISOString(), error: err.message },
+    ];
+    const updated = store.updateVideo(id, {
+      publish: { ...prevPublish, youtube: yt },
+      publishHistory: history,
+    });
+    return sendJson(res, 502, { error: 'Publish failed', message: err.message, video: updated });
+  }
 }
 
 // ---- Server ----------------------------------------------------------------
@@ -267,12 +437,16 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(config.port, config.host, () => {
   console.log('────────────────────────────────────────────');
-  console.log('  MOOD — Social Video Review (v1, review only)');
+  console.log('  MOOD — Social Video Review');
   console.log('────────────────────────────────────────────');
   console.log(`  Dashboard:   http://localhost:${config.port}/`);
   console.log(`  Connections: http://localhost:${config.port}/connections.html`);
   console.log(`  Watch dir:   ${config.watchDir}`);
-  console.log('  Publishing:  DISABLED (review & recommendations only)');
+  console.log(
+    `  Publishing:  YouTube Shorts only — manual + approval-gated${
+      youtube.isConfigured() ? '' : ' (set YT_CLIENT_ID/SECRET to enable)'
+    }`,
+  );
   console.log('────────────────────────────────────────────');
   watcher.start();
 });

@@ -33,9 +33,28 @@ let GATED_STATUSES = ['Ready to publish', 'Published'];
 let videos = [];
 let filterStatus = '';
 let currentId = null;
+let ytCard = null; // cached YouTube connection card
 
 function approvalComplete(approval) {
   return APPROVAL_ITEMS.every((i) => (approval || {})[i.key]);
+}
+
+function fmtDateTime(iso) {
+  if (!iso) return '—';
+  try {
+    return new Date(iso).toLocaleString('he-IL');
+  } catch {
+    return iso;
+  }
+}
+
+async function loadConnections() {
+  try {
+    const data = await fetch('/api/connections').then((r) => r.json());
+    ytCard = (data.platforms || []).find((p) => p.key === 'youtube') || null;
+  } catch {
+    ytCard = null;
+  }
 }
 
 const $ = (sel) => document.querySelector(sel);
@@ -179,6 +198,54 @@ function styleCard(style) {
     </div>`;
 }
 
+// Builds the YouTube publish section: current publish status, history, and the
+// gated publish button (with reasons when it is not yet possible).
+function publishSectionHtml(v) {
+  const yt = v.publish?.youtube || {};
+  const ready = v.status === 'Ready to publish';
+  const appr = approvalComplete(v.approval);
+  const connected = !!(ytCard && ytCard.canPublish);
+  const selected = (v.edits?.platforms || []).includes('youtube');
+  const eligible = ready && appr && connected && selected;
+
+  const reasons = [];
+  if (!ready) reasons.push('הסטטוס אינו "מוכן לפרסום"');
+  if (!appr) reasons.push('רשימת האישור לא הושלמה');
+  if (!connected) reasons.push('YouTube לא מחובר (עמוד חיבורי הפלטפורמות)');
+  if (!selected) reasons.push('"YouTube Shorts" לא נבחר ברשימת הפלטפורמות (שמרו לאחר הבחירה)');
+
+  let statusHtml = '';
+  if (yt.status === 'published') {
+    statusHtml = `<div class="notes"><li class="ok" style="list-style:none">✓ פורסם · <a href="${escapeHtml(yt.url)}" target="_blank" rel="noopener">${escapeHtml(yt.url)}</a><br>
+      מזהה וידאו: ${escapeHtml(yt.videoId || '')} · פרטיות: ${escapeHtml(yt.privacyStatus || '')} · ${fmtDateTime(yt.publishedAt)}</li></div>`;
+  } else if (yt.status === 'failed') {
+    statusHtml = `<div class="notes"><li style="list-style:none">⚠ פרסום נכשל: ${escapeHtml(yt.error || '')}</li></div>`;
+  } else if (yt.status === 'uploading') {
+    statusHtml = `<div class="meta">⏳ מעלה…</div>`;
+  }
+
+  const history = (v.publishHistory || []).slice().reverse();
+  const historyHtml = history.length
+    ? `<div class="meta" style="margin-top:8px">היסטוריית פרסום:</div>
+       <ul class="perm-list">${history
+         .map(
+           (h) =>
+             `<li>${h.status === 'published' ? '✓' : '⚠'} ${fmtDateTime(h.at)} — ${escapeHtml(h.status)}${h.url ? ` · <a href="${escapeHtml(h.url)}" target="_blank" rel="noopener">קישור</a>` : ''}${h.error ? ` · ${escapeHtml(h.error)}` : ''}</li>`,
+         )
+         .join('')}</ul>`
+    : '';
+
+  const btn = eligible
+    ? `<button class="btn primary" id="publishYtBtn">▶️ פרסם ל-YouTube Shorts</button>`
+    : `<button class="btn" id="publishYtBtn" disabled title="לא ניתן לפרסם עדיין">▶️ פרסם ל-YouTube Shorts</button>`;
+
+  const reasonsHtml = eligible
+    ? `<div class="meta pill-ok" style="margin-top:6px">מוכן לפרסום ידני${ytCard?.privacyStatus ? ` · פרטיות: ${escapeHtml(ytCard.privacyStatus)}` : ''}</div>`
+    : `<ul class="notes" style="margin-top:6px">${reasons.map((x) => `<li>${escapeHtml(x)}</li>`).join('')}</ul>`;
+
+  return `${statusHtml}<div style="margin-top:8px">${btn}</div>${reasonsHtml}${historyHtml}`;
+}
+
 function renderDetail(v) {
   const a = v.analysis || {};
   const r = v.recommendations || {};
@@ -297,8 +364,11 @@ function renderDetail(v) {
 
     <div style="display:flex;gap:10px;margin-top:18px">
       <button class="btn primary" id="saveBtn">💾 שמור שינויים</button>
-      <span class="meta" style="align-self:center">לא מתבצע פרסום — שמירה בלבד.</span>
+      <span class="meta" style="align-self:center">שמירה אינה מפרסמת. פרסום מתבצע רק בלחיצה ידנית למטה.</span>
     </div>
+
+    <div class="section-title">פרסום ל-YouTube Shorts</div>
+    ${publishSectionHtml(v)}
   `;
 
   // "Use this style" — copy the whole style into the manual-edit fields.
@@ -342,6 +412,12 @@ function renderDetail(v) {
   $('#regenBtn').addEventListener('click', () =>
     regenerateFromTranscript(v.id, $('#transcriptText').value),
   );
+
+  // Manual publish (confirm before the outward-facing action).
+  const pubBtn = $('#publishYtBtn');
+  if (pubBtn && !pubBtn.disabled) {
+    pubBtn.addEventListener('click', () => publishYouTube(v.id));
+  }
 }
 
 // Reflects approval state onto the status dropdown + hint without a full
@@ -372,6 +448,13 @@ function openDetail(id) {
   renderDetail(v);
   $('#modalBackdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
+  // Refresh YouTube connection state, then re-render so publish gating is live.
+  loadConnections().then(() => {
+    if (currentId === id) {
+      const cur = videos.find((x) => x.id === id);
+      if (cur) renderDetail(cur);
+    }
+  });
 }
 function closeDetail() {
   $('#modalBackdrop').classList.remove('open');
@@ -413,6 +496,34 @@ async function updateApproval(id, key, checked) {
     refreshStatusGating(updated.approval, updated.status);
   } catch (e) {
     toast('שגיאה: ' + e.message);
+  }
+}
+
+async function publishYouTube(id) {
+  const privacy = ytCard?.privacyStatus || 'public';
+  if (!confirm(`לפרסם את הסרטון ל-YouTube Shorts?\nפרטיות: ${privacy}\nפעולה זו מעלה את הווידאו לערוץ שלך.`)) {
+    return;
+  }
+  const btn = $('#publishYtBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = '⏳ מפרסם…';
+  }
+  const res = await fetch(`/api/videos/${id}/publish/youtube`, { method: 'POST' });
+  const body = await res.json().catch(() => ({}));
+  if (res.ok) {
+    mergeVideo(body);
+    renderDetail(body);
+    renderGrid();
+    toast('פורסם ל-YouTube ✓');
+  } else {
+    // On failure the server returns the updated video so history/error show.
+    if (body.video) {
+      mergeVideo(body.video);
+      renderDetail(body.video);
+      renderGrid();
+    }
+    toast(body.message || body.error || 'הפרסום נכשל');
   }
 }
 
@@ -542,6 +653,7 @@ function init() {
   });
 
   loadHealth();
+  loadConnections();
   loadVideos();
   // Auto-refresh the grid so newly-dropped videos appear without a manual scan.
   setInterval(() => {
