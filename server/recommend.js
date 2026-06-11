@@ -44,7 +44,7 @@ function normalizeStyle(key, s) {
   };
 }
 
-function fromClaude({ parsed, model, framesAnalyzed }) {
+function fromClaude({ parsed, model, framesAnalyzed, usedTranscript }) {
   const styles = {};
   for (const key of STYLE_ORDER) {
     const s = parsed.styles?.[key] || {};
@@ -55,6 +55,7 @@ function fromClaude({ parsed, model, framesAnalyzed }) {
     source: framesAnalyzed > 0 ? 'claude-vision' : 'claude-text',
     model,
     framesAnalyzed,
+    usedTranscript: !!usedTranscript,
     contentAnalysis: parsed.contentAnalysis || '',
     detectedElements: Array.isArray(parsed.detectedElements) ? parsed.detectedElements : [],
     styles,
@@ -105,6 +106,7 @@ function heuristicRecommendations({ filename }) {
     source: 'heuristic-fallback',
     model: null,
     framesAnalyzed: 0,
+    usedTranscript: false,
     contentAnalysis:
       'נוצר ללא ניתוח חזותי (אין חיבור ל-Claude או שלא ניתן לחלץ פריימים). ההמלצות מבוססות על תבניות מותג בלבד — מומלץ לבדוק ולערוך ידנית.',
     detectedElements: [],
@@ -143,10 +145,11 @@ function heuristicRecommendations({ filename }) {
 
 // ---- Public API ------------------------------------------------------------
 
-// Generates recommendations for a video. Tries the Claude vision path first and
-// falls back to heuristics on any error. Never throws — always returns a usable
-// recommendations object.
-export async function generateRecommendations({ filePath, filename, analysis }) {
+// Generates recommendations for a video, based on key frames + technical
+// metadata + the speech transcript (when available). Tries the Claude vision
+// path first and falls back to heuristics on any error. Never throws — always
+// returns a usable recommendations object.
+export async function generateRecommendations({ filePath, filename, analysis, transcript }) {
   if (!isConfigured()) {
     return heuristicRecommendations({ filename });
   }
@@ -157,8 +160,13 @@ export async function generateRecommendations({ filePath, filename, analysis }) 
       durationSec: analysis?.durationSec ?? null,
     });
 
-    const result = await analyzeWithClaude({ frames, meta: analysis, filename });
-    return fromClaude(result);
+    const result = await analyzeWithClaude({
+      frames,
+      meta: analysis,
+      filename,
+      transcript,
+    });
+    return fromClaude({ ...result, usedTranscript: !!(transcript && transcript.trim()) });
   } catch (err) {
     console.error('[recommend] Claude path failed, using heuristic fallback:', err.message);
     const fallback = heuristicRecommendations({ filename });

@@ -90,17 +90,17 @@ function buildSystemPrompt() {
   return [
     `אתה אסטרטג תוכן וקופירייטר מומחה לרשתות חברתיות עבור המותג "${brand.name}".`,
     `הקשר המותג: ${brand.description}`,
-    'תפקידך: לצפות בפריימים מתוך סרטון קצר, להבין מה קורה בו בפועל, ולכתוב המלצות תוכן.',
+    'תפקידך: לצפות בפריימים מתוך סרטון קצר, לקרוא את התמלול של הדיבור (אם קיים), להבין מה קורה בו בפועל, ולכתוב המלצות תוכן.',
     'חוקים חשובים:',
     '- כל הטקסט חייב להיות בעברית תקנית וזורמת. האשטגים יכולים להיות בעברית ובאנגלית.',
-    '- ההמלצות חייבות להתבסס על התוכן האמיתי שרואים בפריימים — לא טקסטים גנריים.',
+    '- ההמלצות חייבות להתבסס גם על מה שרואים בפריימים וגם על מה שנאמר בתמלול — לא טקסטים גנריים.',
     '- כל סגנון צריך להרגיש שונה ואותנטי: מותג נקי, רגשי, הומור ישראלי, ומכירה ישירה.',
     '- הוקים קצרים וקולעים (שורה אחת), כיתובים באורך מתאים לרשת, וקריאה לפעולה ברורה.',
     '- בחר לכל סגנון את הפלטפורמה ושעת הפרסום שמתאימות לו ביותר עבור קהל ישראלי.',
   ].join('\n');
 }
 
-function buildUserContent(frames, meta, filename) {
+function buildUserContent(frames, meta, filename, transcript) {
   const content = [];
 
   // Lead with the frames so the model anchors on the actual content.
@@ -125,16 +125,23 @@ function buildUserContent(frames, meta, filename) {
 
   const intro = frames.length
     ? `להלן ${frames.length} פריימים מתוך הסרטון (לפי סדר הזמן). נתח אותם וצור המלצות.`
-    : 'לא ניתן היה לחלץ פריימים מהסרטון. בסס את ההמלצות על המטא-דאטה בלבד וציין זאת בניתוח.';
+    : 'לא ניתן היה לחלץ פריימים מהסרטון. בסס את ההמלצות על המטא-דאטה והתמלול וציין זאת בניתוח.';
+
+  const transcriptText = (transcript || '').trim();
+  const transcriptSection = transcriptText
+    ? ['', 'תמלול הדיבור בסרטון:', '"""', transcriptText, '"""']
+    : ['', 'אין תמלול דיבור זמין (אין אודיו או לא בוצע תמלול). התבסס על מה שרואים בלבד.'];
 
   content.push({
     type: 'text',
     text: [
       intro,
+      ...transcriptSection,
       '',
       'מטא-דאטה טכנית:',
       ...metaLines.map((l) => `- ${l}`),
       '',
+      'בסס את הכיתובים גם על מה שרואים בפריימים וגם על מה שנאמר בתמלול.',
       'החזר את ההמלצות במבנה המבוקש: ניתוח תוכן, אלמנטים שזוהו, וארבעה סגנונות (מותג MOOD, רגשי, הומור ישראלי, מכירה ישירה), כל אחד עם הוק, כיתוב, קריאה לפעולה, האשטגים, פלטפורמה מומלצת ושעת פרסום.',
     ].join('\n'),
   });
@@ -155,7 +162,7 @@ export function isConfigured() {
 // Calls Claude with the frames + metadata and returns the parsed structured
 // recommendations object (matching OUTPUT_SCHEMA). Throws on failure so the
 // caller can fall back to heuristics.
-export async function analyzeWithClaude({ frames, meta, filename }) {
+export async function analyzeWithClaude({ frames, meta, filename, transcript }) {
   if (!isConfigured()) {
     throw new Error('ANTHROPIC_API_KEY not configured');
   }
@@ -167,7 +174,7 @@ export async function analyzeWithClaude({ frames, meta, filename }) {
     max_tokens: config.claude.maxTokens,
     thinking: { type: 'adaptive' },
     system: buildSystemPrompt(),
-    messages: [{ role: 'user', content: buildUserContent(frames, meta, filename) }],
+    messages: [{ role: 'user', content: buildUserContent(frames, meta, filename, transcript) }],
     output_config: { format: { type: 'json_schema', schema: OUTPUT_SCHEMA } },
   });
 

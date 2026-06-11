@@ -52,7 +52,40 @@ export const config = {
     frameCount: Number(env.CLAUDE_FRAME_COUNT) || 6,
     maxTokens: Number(env.CLAUDE_MAX_TOKENS) || 16000,
   },
+
+  // Audio speech-to-text. Anthropic's API has no STT, so transcription is
+  // pluggable: a Whisper-compatible HTTP endpoint (preferred) or a local
+  // `whisper` CLI. When neither is available — or the video has no audio — the
+  // system continues without a transcript.
+  transcription: {
+    enabled: env.TRANSCRIBE_ENABLED !== 'false',
+    // OpenAI-compatible /audio/transcriptions endpoint (self-hosted Whisper,
+    // Groq, etc.). Generic multipart upload — provider-neutral.
+    httpUrl: env.TRANSCRIBE_API_URL || '',
+    httpKey: env.TRANSCRIBE_API_KEY || '',
+    model: env.TRANSCRIBE_MODEL || 'whisper-1',
+    // '' = auto-detect (handles Hebrew/English). Set 'he' or 'en' to force.
+    language: env.TRANSCRIBE_LANGUAGE || '',
+    // Local OpenAI-Whisper CLI binary, used if no HTTP endpoint is configured.
+    whisperBin: env.WHISPER_BIN || 'whisper',
+    whisperModel: env.WHISPER_MODEL || 'base',
+  },
 };
+
+// The pre-publish approval checklist. Every item must be confirmed before a
+// video may move to a publish-gated status. (Publishing itself is still
+// disabled — this only gates the status transition.)
+export const APPROVAL_ITEMS = [
+  { key: 'captionReviewed', labelHe: 'הכותרת נבדקה' },
+  { key: 'hashtagsReviewed', labelHe: 'ההאשטגים נבדקו' },
+  { key: 'platformSelected', labelHe: 'נבחרה פלטפורמה' },
+  { key: 'previewChecked', labelHe: 'התצוגה המקדימה נבדקה' },
+  { key: 'rightsConfirmed', labelHe: 'אושרו זכויות/הרשאות' },
+  { key: 'publishTimeSelected', labelHe: 'נבחר זמן פרסום' },
+];
+
+// Statuses that require the full approval checklist before they can be set.
+export const PUBLISH_GATED_STATUSES = ['Ready to publish', 'Published'];
 
 export const VIDEO_STATUSES = [
   'New',

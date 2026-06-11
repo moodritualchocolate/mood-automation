@@ -5,7 +5,12 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { URL } from 'node:url';
-import { config, VIDEO_STATUSES } from './config.js';
+import {
+  config,
+  VIDEO_STATUSES,
+  APPROVAL_ITEMS,
+  PUBLISH_GATED_STATUSES,
+} from './config.js';
 import * as store from './store.js';
 import * as watcher from './watcher.js';
 import { runChecks, getConnections } from './platforms.js';
@@ -132,7 +137,12 @@ async function handleApi(req, res, pathname, url) {
 
   // GET /api/videos
   if (req.method === 'GET' && pathname === '/api/videos') {
-    return sendJson(res, 200, { videos: store.listVideos(), statuses: VIDEO_STATUSES });
+    return sendJson(res, 200, {
+      videos: store.listVideos(),
+      statuses: VIDEO_STATUSES,
+      approvalItems: APPROVAL_ITEMS,
+      gatedStatuses: PUBLISH_GATED_STATUSES,
+    });
   }
 
   // GET /api/videos/:id
@@ -142,23 +152,67 @@ async function handleApi(req, res, pathname, url) {
     return v ? sendJson(res, 200, v) : notFound(res, 'Video not found');
   }
 
-  // PATCH /api/videos/:id  — update status and/or manual edit fields
+  // PATCH /api/videos/:id  — update status, edits, transcript and/or approval
   if (m && req.method === 'PATCH') {
     const v = store.getVideo(m[1]);
     if (!v) return notFound(res, 'Video not found');
     const body = await readBody(req);
     const patch = {};
+
+    if (body.edits && typeof body.edits === 'object') {
+      patch.edits = { ...v.edits, ...body.edits };
+    }
+
+    // Manual transcript editing.
+    if (typeof body.transcript === 'string') {
+      patch.transcript = {
+        ...(v.transcript || {}),
+        text: body.transcript,
+        available: body.transcript.trim().length > 0,
+        editedManually: true,
+        source: 'manual',
+      };
+    }
+
+    // Approval checklist — merge only known boolean items.
+    if (body.approval && typeof body.approval === 'object') {
+      const merged = { ...(v.approval || {}) };
+      for (const item of APPROVAL_ITEMS) {
+        if (typeof body.approval[item.key] === 'boolean') {
+          merged[item.key] = body.approval[item.key];
+        }
+      }
+      patch.approval = merged;
+    }
+
+    // Status change — gate publish-related statuses behind the full checklist.
     if (body.status) {
       if (!VIDEO_STATUSES.includes(body.status)) {
         return sendJson(res, 400, { error: 'Invalid status' });
       }
+      if (PUBLISH_GATED_STATUSES.includes(body.status)) {
+        const approval = patch.approval || v.approval || {};
+        const missing = APPROVAL_ITEMS.filter((i) => !approval[i.key]);
+        if (missing.length) {
+          return sendJson(res, 422, {
+            error: 'Approval checklist incomplete',
+            missing: missing.map((i) => i.key),
+            message: 'יש להשלים את כל סעיפי רשימת האישור לפני מעבר לסטטוס זה.',
+          });
+        }
+      }
       patch.status = body.status;
     }
-    if (body.edits && typeof body.edits === 'object') {
-      patch.edits = { ...v.edits, ...body.edits };
-    }
+
     const updated = store.updateVideo(m[1], patch);
     return sendJson(res, 200, updated);
+  }
+
+  // POST /api/videos/:id/regenerate-from-transcript
+  m = pathname.match(/^\/api\/videos\/([^/]+)\/regenerate-from-transcript$/);
+  if (m && req.method === 'POST') {
+    const updated = await watcher.regenerateFromTranscript(m[1]);
+    return updated ? sendJson(res, 200, updated) : notFound(res, 'Video not found');
   }
 
   // POST /api/videos/:id/reanalyze

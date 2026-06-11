@@ -8,9 +8,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { config } from './config.js';
+import { config, APPROVAL_ITEMS } from './config.js';
 import { analyzeVideo } from './analyzer.js';
 import { generateRecommendations } from './recommend.js';
+import { transcribe } from './transcribe.js';
 import {
   listVideos,
   getVideoByPath,
@@ -34,6 +35,23 @@ const PLATFORM_LABEL_TO_KEY = {
 
 function isVideo(file) {
   return config.videoExtensions.includes(path.extname(file).toLowerCase());
+}
+
+// Fresh, all-unchecked approval checklist.
+function defaultApproval() {
+  return Object.fromEntries(APPROVAL_ITEMS.map((i) => [i.key, false]));
+}
+
+// Normalizes a transcribe() result into the stored transcript record.
+function transcriptRecord(result) {
+  return {
+    available: !!(result && result.text),
+    text: result?.text || '',
+    language: result?.language || null,
+    source: result?.source || 'none',
+    transcribedAt: new Date().toISOString(),
+    editedManually: false,
+  };
 }
 
 // Builds the initial manual-edit draft from the MOOD Brand style.
@@ -92,10 +110,16 @@ async function processFile(absPath) {
     console.log(`[watcher] New video detected: ${filename}`);
 
     const analysis = await analyzeVideo(absPath);
+
+    // Transcribe speech (best-effort; null when no audio / no transcriber).
+    const transcriptResult = await transcribe({ filePath: absPath, meta: analysis });
+    const transcript = transcriptRecord(transcriptResult);
+
     const recommendations = await generateRecommendations({
       filePath: absPath,
       filename,
       analysis,
+      transcript: transcript.text,
     });
 
     const now = new Date().toISOString();
@@ -110,10 +134,13 @@ async function processFile(absPath) {
       modifiedAt: stat.mtime.toISOString(),
       status: 'New',
       analysis,
+      transcript,
       recommendations,
       // Manual, operator-editable fields, pre-filled from the MOOD Brand style
       // so the operator starts from a sensible on-brand draft.
       edits: defaultEdits(recommendations),
+      // Pre-publish approval checklist (all unchecked initially).
+      approval: defaultApproval(),
       createdAt: now,
       updatedAt: now,
     };
@@ -196,7 +223,9 @@ export function stop() {
   if (intervalTimer) clearInterval(intervalTimer);
 }
 
-// Re-analyze a single video (used by the "re-analyze" API action).
+// Full re-analyze (used by the "re-analyze" action): re-runs metadata analysis,
+// re-transcribes the audio, and regenerates recommendations. Preserves the
+// operator's manual edits and approval checklist.
 export async function reanalyze(id) {
   const video = getVideo(id);
   if (!video) return null;
@@ -204,13 +233,33 @@ export async function reanalyze(id) {
     return updateVideo(id, { missing: true });
   }
   const analysis = await analyzeVideo(video.path);
+  const transcriptResult = await transcribe({ filePath: video.path, meta: analysis });
+  const transcript = transcriptRecord(transcriptResult);
   const recommendations = await generateRecommendations({
     filePath: video.path,
     filename: video.filename,
     analysis,
+    transcript: transcript.text,
   });
-  // Refresh analysis + recommendations but preserve the operator's manual edits.
-  return updateVideo(id, { analysis, recommendations, missing: false });
+  return updateVideo(id, { analysis, transcript, recommendations, missing: false });
+}
+
+// Regenerates recommendations from the CURRENT (possibly hand-edited) transcript
+// without re-transcribing. Re-extracts frames so the visual context is fresh.
+// Preserves manual edits and the approval checklist.
+export async function regenerateFromTranscript(id) {
+  const video = getVideo(id);
+  if (!video) return null;
+  if (!fs.existsSync(video.path)) {
+    return updateVideo(id, { missing: true });
+  }
+  const recommendations = await generateRecommendations({
+    filePath: video.path,
+    filename: video.filename,
+    analysis: video.analysis,
+    transcript: video.transcript?.text || '',
+  });
+  return updateVideo(id, { recommendations });
 }
 
 export { removeVideo };

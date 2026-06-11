@@ -18,9 +18,25 @@ const STATUS_HE = {
   'Failed': 'נכשל',
 };
 
+// Approval checklist items and publish-gated statuses come from the server so
+// labels stay in sync; these are sensible fallbacks.
+let APPROVAL_ITEMS = [
+  { key: 'captionReviewed', labelHe: 'הכותרת נבדקה' },
+  { key: 'hashtagsReviewed', labelHe: 'ההאשטגים נבדקו' },
+  { key: 'platformSelected', labelHe: 'נבחרה פלטפורמה' },
+  { key: 'previewChecked', labelHe: 'התצוגה המקדימה נבדקה' },
+  { key: 'rightsConfirmed', labelHe: 'אושרו זכויות/הרשאות' },
+  { key: 'publishTimeSelected', labelHe: 'נבחר זמן פרסום' },
+];
+let GATED_STATUSES = ['Ready to publish', 'Published'];
+
 let videos = [];
 let filterStatus = '';
 let currentId = null;
+
+function approvalComplete(approval) {
+  return APPROVAL_ITEMS.every((i) => (approval || {})[i.key]);
+}
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -107,8 +123,11 @@ function renderGrid() {
             <span>${fmtDuration(a.durationSec)}</span>
             <span>${a.aspectRatio || '—'}</span>
             <span>${fmtSize(v.sizeBytes)}</span>
+            ${v.transcript?.available ? '<span title="תמלול זמין">🎙</span>' : ''}
           </div>
-          <div>${statusBadge(v.status)} ${readyPill}</div>
+          <div>${statusBadge(v.status)} ${readyPill}
+            ${approvalComplete(v.approval) ? '<span class="pill-ok" title="רשימת אישור הושלמה">✓ אושר</span>' : ''}
+          </div>
         </div>
       </div>`;
     })
@@ -165,6 +184,18 @@ function renderDetail(v) {
   const r = v.recommendations || {};
   const styles = r.styles || {};
   const edits = v.edits || {};
+  const approval = v.approval || {};
+  const complete = approvalComplete(approval);
+  const t = v.transcript || {};
+
+  const transcriptMeta = t.available
+    ? `מקור: ${escapeHtml(t.source || '—')} · שפה: ${escapeHtml(t.language || 'לא ידוע')}${t.editedManually ? ' · נערך ידנית' : ''}`
+    : 'לא זוהה אודיו / אין תמלול זמין. ניתן להקליד תמלול ידנית למטה.';
+  const transcriptBadge = t.available
+    ? ' · 🎙 תמלול זמין'
+    : r.usedTranscript
+    ? ' · 🎙 כלל תמלול'
+    : '';
 
   const notesHtml = (a.readiness?.notes || []).length
     ? `<ul class="notes">${a.readiness.notes.map((n) => `<li>${escapeHtml(n)}</li>`).join('')}</ul>`
@@ -205,15 +236,39 @@ function renderDetail(v) {
       <div>
         <div class="section-title">סטטוס</div>
         <select id="statusSelect">
-          ${STATUSES.map((s) => `<option value="${s}" ${s === v.status ? 'selected' : ''}>${STATUS_HE[s]}</option>`).join('')}
+          ${STATUSES.map((s) => {
+            const gated = GATED_STATUSES.includes(s);
+            const lock = gated && !complete && s !== v.status;
+            return `<option value="${s}" ${s === v.status ? 'selected' : ''} ${lock ? 'disabled' : ''}>${STATUS_HE[s]}${gated ? ' 🔒' : ''}</option>`;
+          }).join('')}
         </select>
+        <div id="approvalHint" class="meta ${complete ? 'pill-ok' : 'pill-warn'}" style="margin-top:6px">
+          ${complete ? '✓ רשימת האישור הושלמה — ניתן לעבור ל"מוכן לפרסום"' : 'השלימו את רשימת האישור למטה כדי לאפשר "מוכן לפרסום"'}
+        </div>
+
+        <div class="section-title">רשימת אישור לפני פרסום</div>
+        <div id="approvalChecks">
+          ${APPROVAL_ITEMS.map(
+            (it) => `<label style="display:flex;gap:8px;align-items:center;margin:5px 0;color:var(--text);font-size:.88rem">
+              <input type="checkbox" data-approval="${it.key}" ${approval[it.key] ? 'checked' : ''}/> ${escapeHtml(it.labelHe)}
+            </label>`,
+          ).join('')}
+        </div>
 
         <div class="section-title">ניתוח תוכן הסרטון</div>
-        <div class="meta" style="margin-bottom:6px">${escapeHtml(sourceLabel)}${framesNote}</div>
+        <div class="meta" style="margin-bottom:6px">${escapeHtml(sourceLabel)}${framesNote}${transcriptBadge}</div>
         <div class="cap-text" style="background:var(--surface-2);padding:10px;border-radius:10px;white-space:pre-wrap">${escapeHtml(r.contentAnalysis || '—')}</div>
         ${elementsHtml}
         ${r.fallbackReason ? `<div class="meta pill-warn" style="margin-top:6px">סיבת מעבר לתבנית: ${escapeHtml(r.fallbackReason)}</div>` : ''}
       </div>
+    </div>
+
+    <div class="section-title">תמלול דיבור (Transcript)</div>
+    <div class="meta" style="margin-bottom:6px">${transcriptMeta}</div>
+    <textarea id="transcriptText" placeholder="אין תמלול. ניתן להקליד ידנית ואז ללחוץ \"צור המלצות מחדש מהתמלול\".">${escapeHtml(t.text || '')}</textarea>
+    <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+      <button class="btn" id="saveTranscriptBtn">💾 שמור תמלול</button>
+      <button class="btn primary" id="regenBtn">🔄 צור המלצות מחדש מהתמלול</button>
     </div>
 
     <div class="section-title">המלצות לפי סגנון (לחצו "השתמש" כדי למלא את שדות העריכה)</div>
@@ -271,6 +326,43 @@ function renderDetail(v) {
   $('#reanalyzeBtn').addEventListener('click', () => reanalyze(v.id));
   $('#saveBtn').addEventListener('click', () => saveEdits(v.id));
   $('#statusSelect').addEventListener('change', (e) => updateStatus(v.id, e.target.value));
+
+  // Approval checklist — persist each toggle and refresh the status gating
+  // in place (without re-rendering, so unsaved edits aren't lost).
+  $('#approvalChecks')
+    .querySelectorAll('input[data-approval]')
+    .forEach((box) => {
+      box.addEventListener('change', () => updateApproval(v.id, box.dataset.approval, box.checked));
+    });
+
+  // Transcript actions.
+  $('#saveTranscriptBtn').addEventListener('click', () =>
+    saveTranscript(v.id, $('#transcriptText').value),
+  );
+  $('#regenBtn').addEventListener('click', () =>
+    regenerateFromTranscript(v.id, $('#transcriptText').value),
+  );
+}
+
+// Reflects approval state onto the status dropdown + hint without a full
+// re-render (so unsaved manual edits aren't lost).
+function refreshStatusGating(approval, currentStatus) {
+  const done = approvalComplete(approval);
+  const sel = $('#statusSelect');
+  if (sel) {
+    sel.querySelectorAll('option').forEach((opt) => {
+      if (GATED_STATUSES.includes(opt.value) && opt.value !== currentStatus) {
+        opt.disabled = !done;
+      }
+    });
+  }
+  const hint = $('#approvalHint');
+  if (hint) {
+    hint.className = `meta ${done ? 'pill-ok' : 'pill-warn'}`;
+    hint.textContent = done
+      ? '✓ רשימת האישור הושלמה — ניתן לעבור ל"מוכן לפרסום"'
+      : 'השלימו את רשימת האישור למטה כדי לאפשר "מוכן לפרסום"';
+  }
 }
 
 function openDetail(id) {
@@ -290,14 +382,68 @@ function closeDetail() {
 // ---- Actions ---------------------------------------------------------------
 
 async function updateStatus(id, status) {
-  try {
-    const updated = await api(`/api/videos/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status }),
-    });
+  // Manual fetch so we can read the 422 body (incomplete checklist) and revert.
+  const res = await fetch(`/api/videos/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  if (res.ok) {
+    const updated = await res.json();
     mergeVideo(updated);
     renderGrid();
     toast('הסטטוס עודכן');
+    return;
+  }
+  const body = await res.json().catch(() => ({}));
+  // Revert the dropdown to the current (unchanged) status.
+  const v = videos.find((x) => x.id === id);
+  const sel = $('#statusSelect');
+  if (sel && v) sel.value = v.status;
+  toast(body.message || body.error || 'שגיאה בעדכון הסטטוס');
+}
+
+async function updateApproval(id, key, checked) {
+  try {
+    const updated = await api(`/api/videos/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ approval: { [key]: checked } }),
+    });
+    mergeVideo(updated);
+    refreshStatusGating(updated.approval, updated.status);
+  } catch (e) {
+    toast('שגיאה: ' + e.message);
+  }
+}
+
+async function saveTranscript(id, text) {
+  try {
+    const updated = await api(`/api/videos/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ transcript: text }),
+    });
+    mergeVideo(updated);
+    toast('התמלול נשמר ✓');
+  } catch (e) {
+    toast('שגיאה: ' + e.message);
+  }
+}
+
+async function regenerateFromTranscript(id, text) {
+  // Persist any manual transcript edits first, then regenerate.
+  toast('מייצר המלצות מהתמלול…');
+  try {
+    await api(`/api/videos/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ transcript: text }),
+    });
+    const updated = await api(`/api/videos/${id}/regenerate-from-transcript`, {
+      method: 'POST',
+    });
+    mergeVideo(updated);
+    renderDetail(updated);
+    renderGrid();
+    toast('ההמלצות עודכנו מהתמלול ✓');
   } catch (e) {
     toast('שגיאה: ' + e.message);
   }
@@ -361,6 +507,10 @@ async function loadVideos() {
   try {
     const data = await api('/api/videos');
     videos = data.videos || [];
+    if (Array.isArray(data.approvalItems) && data.approvalItems.length) {
+      APPROVAL_ITEMS = data.approvalItems;
+    }
+    if (Array.isArray(data.gatedStatuses)) GATED_STATUSES = data.gatedStatuses;
     renderGrid();
   } catch (e) {
     toast('שגיאה בטעינה: ' + e.message);
