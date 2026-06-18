@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────
+   MOOD Procurement Hub — design tokens
+   Light + dark, warm cacao brand over a Linear-grade neutral base.
+   ───────────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    --bg: 248 247 245;
+    --surface: 255 255 255;
+    --surface-2: 250 249 247;
+    --elevated: 255 255 255;
+    --border: 233 230 226;
+    --border-strong: 215 211 205;
+    --fg: 28 25 23;
+    --muted: 110 104 98;
+    --faint: 150 144 137;
+
+    --brand: 124 72 46; /* roasted cacao */
+    --brand-fg: 255 252 250;
+    --brand-soft: 244 235 229;
+
+    --accent: 201 124 44; /* amber / caramel */
+    --success: 34 139 88;
+    --warning: 196 138 24;
+    --danger: 197 58 50;
+    --info: 49 110 196;
+  }
+
+  .dark {
+    --bg: 17 16 15;
+    --surface: 24 22 21;
+    --surface-2: 30 28 26;
+    --elevated: 34 31 29;
+    --border: 44 40 37;
+    --border-strong: 60 55 50;
+    --fg: 240 237 233;
+    --muted: 165 158 150;
+    --faint: 120 114 107;
+
+    --brand: 196 142 110;
+    --brand-fg: 26 18 13;
+    --brand-soft: 48 38 32;
+
+    --accent: 222 158 88;
+    --success: 74 188 134;
+    --warning: 224 176 72;
+    --danger: 235 110 102;
+    --info: 110 162 240;
+  }
+
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--fg));
+    font-family: var(--font-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior-y: none;
+  }
+
+  /* RTL/LTR logical helpers handled by Tailwind's [dir] + logical props */
+  ::selection {
+    background: rgb(var(--brand) / 0.22);
+  }
+
+  /* Thin, unobtrusive scrollbars (Linear-style) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--border-strong));
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--faint));
+    background-clip: content-box;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-border bg-surface shadow-card;
+  }
+
+  .input-base {
+    @apply w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-fg
+      placeholder:text-faint outline-none transition
+      focus:border-brand focus:shadow-focus;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium
+      transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50
+      whitespace-nowrap select-none;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-brand-fg hover:opacity-90 shadow-card;
+  }
+  .btn-secondary {
+    @apply btn border border-border bg-surface text-fg hover:bg-surface-2;
+  }
+  .btn-ghost {
+    @apply btn text-muted hover:bg-surface-2 hover:text-fg;
+  }
+  .btn-danger {
+    @apply btn bg-danger text-white hover:opacity-90;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium;
+  }
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgb(var(--surface-2));
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--border) / 0.6),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Safe-area padding for iPhone (notch / home indicator) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
