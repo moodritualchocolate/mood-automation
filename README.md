@@ -23,6 +23,11 @@ npm run dev      # http://localhost:3000
 npm run build && npm run start
 ```
 
+### 📱 קישור חי שנשמר מכל הטלפונים
+
+כדי לעבוד מכמה טלפונים בו-זמנית בזמן אמת — ראו מדריך ההקמה המלא
+ב-[`SETUP.md`](./SETUP.md) (Supabase + Vercel, חינם, ~10 דקות).
+
 ---
 
 ## יכולות עיקריות

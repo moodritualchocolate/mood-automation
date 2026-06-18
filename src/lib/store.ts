@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { seedData } from "./seed";
+import * as cloud from "./supabase/sync";
 import { nowISO, uid } from "./utils";
 import type {
   DataState,
@@ -21,17 +22,22 @@ const ROLE_KEY = "mood.role";
 const CHANNEL = "mood-realtime";
 
 // ──────────────────────────────────────────────────────────────
-// Persistence + cross-device-on-same-machine realtime.
+// Data layer with two interchangeable modes:
 //
-// In local mode the entire dataset lives in localStorage and is mirrored
-// to every open tab/window via BroadcastChannel + the `storage` event,
-// which gives the app its realtime, multi-user "feel" with zero backend.
-// The Supabase data layer (see lib/supabase) is a drop-in replacement that
-// swaps localStorage for Postgres + Realtime channels.
+//  • CLOUD  (Supabase configured) — the source of truth is Postgres. Writes
+//    are optimistic locally and pushed to Supabase; Realtime keeps every
+//    phone/device in sync live. This is what enables multi-device saving.
+//
+//  • LOCAL  (no backend) — data lives in localStorage and is mirrored across
+//    tabs/windows on the same machine via BroadcastChannel.
+//
+// The UI is identical in both; only persistence differs.
 // ──────────────────────────────────────────────────────────────
 
 let channel: BroadcastChannel | null = null;
 let applyingRemote = false;
+let cloudUnsub: (() => void) | null = null;
+let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
 function emptyData(): DataState {
   return {
@@ -45,7 +51,7 @@ function emptyData(): DataState {
   };
 }
 
-function loadData(): DataState {
+function loadLocal(): DataState {
   if (typeof window === "undefined") return emptyData();
   try {
     const raw = window.localStorage.getItem(DATA_KEY);
@@ -67,6 +73,7 @@ function loadRole(): Role {
 
 interface StoreState extends DataState {
   hydrated: boolean;
+  cloud: boolean;
   role: Role;
   saving: boolean;
   lastSavedAt: string | null;
@@ -76,37 +83,30 @@ interface StoreState extends DataState {
   reseed: () => void;
   clearAll: () => void;
 
-  // suppliers
   addSupplier: (s: Partial<Supplier> & { company: string }) => Supplier;
   updateSupplier: (id: string, patch: Partial<Supplier>) => void;
   setStatus: (id: string, status: SupplierStatus) => void;
   deleteSupplier: (id: string) => void;
 
-  // timeline
   addEvent: (e: Omit<TimelineEvent, "id" | "createdAt">) => TimelineEvent;
   deleteEvent: (id: string) => void;
 
-  // materials
   addMaterial: (m: Omit<RawMaterial, "id" | "createdAt" | "updatedAt">) => RawMaterial;
   updateMaterial: (id: string, patch: Partial<RawMaterial>) => void;
   deleteMaterial: (id: string) => void;
 
-  // samples
   addSample: (s: Omit<Sample, "id" | "createdAt">) => Sample;
   updateSample: (id: string, patch: Partial<Sample>) => void;
   deleteSample: (id: string) => void;
 
-  // quotes
   addQuote: (q: Omit<Quote, "id" | "createdAt">) => Quote;
   updateQuote: (id: string, patch: Partial<Quote>) => void;
   deleteQuote: (id: string) => void;
 
-  // tasks
   addTask: (t: Omit<Task, "id" | "createdAt" | "done"> & { done?: boolean }) => Task;
   toggleTask: (id: string) => void;
   deleteTask: (id: string) => void;
 
-  // files
   addFile: (f: Omit<FileAsset, "id" | "createdAt">) => FileAsset;
   deleteFile: (id: string) => void;
 }
@@ -124,8 +124,18 @@ function snapshot(s: StoreState): DataState {
 }
 
 export const useStore = create<StoreState>((set, get) => {
-  // Persist current data to localStorage + broadcast to other tabs.
-  const persist = () => {
+  // Transient "Saving… / Saved" indicator.
+  const touchSaving = () => {
+    if (typeof window === "undefined") return;
+    set({ saving: true });
+    window.clearTimeout((touchSaving as any)._t);
+    (touchSaving as any)._t = window.setTimeout(
+      () => set({ saving: false, lastSavedAt: nowISO() }),
+      450,
+    );
+  };
+
+  const persistLocal = () => {
     if (typeof window === "undefined") return;
     const data = snapshot(get());
     try {
@@ -134,32 +144,55 @@ export const useStore = create<StoreState>((set, get) => {
     } catch {
       /* ignore quota errors */
     }
-    set({ saving: true });
-    window.clearTimeout((persist as any)._t);
-    (persist as any)._t = window.setTimeout(
-      () => set({ saving: false, lastSavedAt: nowISO() }),
-      450,
-    );
   };
 
-  // commit applies a state patch and then persists.
+  // Apply a local state patch and persist (cloud writes are issued per-action).
   const commit = (patch: Partial<StoreState>) => {
     set(patch);
-    persist();
+    if (!get().cloud) persistLocal();
+    touchSaving();
+  };
+
+  // Fire-and-forget cloud write (no-op in local mode).
+  const c = <T,>(p: Promise<T> | void) => {
+    if (p && typeof (p as Promise<T>).catch === "function") {
+      (p as Promise<T>).catch(() => {});
+    }
   };
 
   return {
     ...emptyData(),
     hydrated: false,
+    cloud: false,
     role: "admin",
     saving: false,
     lastSavedAt: null,
 
     hydrate: () => {
       if (get().hydrated) return;
-      const data = loadData();
-      set({ ...data, role: loadRole(), hydrated: true });
+      const isCloud = cloud.isCloud();
+      set({ role: loadRole(), cloud: isCloud });
 
+      if (isCloud) {
+        // Cloud mode — load from Supabase, then subscribe to realtime.
+        cloud
+          .loadAll()
+          .then((data) => set({ ...(data ?? emptyData()), hydrated: true }))
+          .catch(() => set({ hydrated: true }));
+
+        cloudUnsub?.();
+        cloudUnsub = cloud.subscribe(() => {
+          if (refreshTimer) clearTimeout(refreshTimer);
+          refreshTimer = setTimeout(() => {
+            cloud.loadAll().then((data) => data && set({ ...data }));
+          }, 150);
+        });
+        return;
+      }
+
+      // Local mode — localStorage + cross-tab BroadcastChannel.
+      const data = loadLocal();
+      set({ ...data, hydrated: true });
       if (typeof window !== "undefined" && "BroadcastChannel" in window) {
         channel = new BroadcastChannel(CHANNEL);
         channel.onmessage = (ev: MessageEvent<DataState>) => {
@@ -190,8 +223,15 @@ export const useStore = create<StoreState>((set, get) => {
       }
     },
 
-    reseed: () => commit({ ...seedData() }),
-    clearAll: () => commit({ ...emptyData() }),
+    reseed: () => {
+      const data = seedData();
+      commit({ ...data });
+      if (get().cloud) c(cloud.replaceAll(data));
+    },
+    clearAll: () => {
+      commit({ ...emptyData() });
+      if (get().cloud) c(cloud.clearAll());
+    },
 
     addSupplier: (s) => {
       const sup: Supplier = {
@@ -208,16 +248,18 @@ export const useStore = create<StoreState>((set, get) => {
         updatedAt: nowISO(),
       };
       commit({ suppliers: [sup, ...get().suppliers] });
+      c(cloud.upsert("supplier", sup));
       return sup;
     },
-    updateSupplier: (id, patch) =>
-      commit({
-        suppliers: get().suppliers.map((s) =>
-          s.id === id ? { ...s, ...patch, updatedAt: nowISO() } : s,
-        ),
-      }),
+    updateSupplier: (id, patch) => {
+      const existing = get().suppliers.find((s) => s.id === id);
+      if (!existing) return;
+      const updated = { ...existing, ...patch, updatedAt: nowISO() };
+      commit({ suppliers: get().suppliers.map((s) => (s.id === id ? updated : s)) });
+      c(cloud.upsert("supplier", updated));
+    },
     setStatus: (id, status) => get().updateSupplier(id, { status }),
-    deleteSupplier: (id) =>
+    deleteSupplier: (id) => {
       commit({
         suppliers: get().suppliers.filter((s) => s.id !== id),
         events: get().events.filter((e) => e.supplierId !== id),
@@ -226,15 +268,20 @@ export const useStore = create<StoreState>((set, get) => {
         quotes: get().quotes.filter((q) => q.supplierId !== id),
         tasks: get().tasks.filter((t) => t.supplierId !== id),
         files: get().files.filter((f) => f.supplierId !== id),
-      }),
+      });
+      c(cloud.removeSupplierCascade(id));
+    },
 
     addEvent: (e) => {
       const ev: TimelineEvent = { ...e, id: uid("ev"), createdAt: nowISO() };
       commit({ events: [ev, ...get().events] });
+      c(cloud.upsert("event", ev));
       return ev;
     },
-    deleteEvent: (id) =>
-      commit({ events: get().events.filter((e) => e.id !== id) }),
+    deleteEvent: (id) => {
+      commit({ events: get().events.filter((e) => e.id !== id) });
+      c(cloud.remove(id));
+    },
 
     addMaterial: (m) => {
       const mat: RawMaterial = {
@@ -244,42 +291,56 @@ export const useStore = create<StoreState>((set, get) => {
         updatedAt: nowISO(),
       };
       commit({ materials: [mat, ...get().materials] });
+      c(cloud.upsert("material", mat));
       return mat;
     },
-    updateMaterial: (id, patch) =>
-      commit({
-        materials: get().materials.map((m) =>
-          m.id === id ? { ...m, ...patch, updatedAt: nowISO() } : m,
-        ),
-      }),
-    deleteMaterial: (id) =>
-      commit({ materials: get().materials.filter((m) => m.id !== id) }),
+    updateMaterial: (id, patch) => {
+      const existing = get().materials.find((m) => m.id === id);
+      if (!existing) return;
+      const updated = { ...existing, ...patch, updatedAt: nowISO() };
+      commit({ materials: get().materials.map((m) => (m.id === id ? updated : m)) });
+      c(cloud.upsert("material", updated));
+    },
+    deleteMaterial: (id) => {
+      commit({ materials: get().materials.filter((m) => m.id !== id) });
+      c(cloud.remove(id));
+    },
 
     addSample: (s) => {
       const smp: Sample = { ...s, id: uid("smp"), createdAt: nowISO() };
       commit({ samples: [smp, ...get().samples] });
+      c(cloud.upsert("sample", smp));
       return smp;
     },
-    updateSample: (id, patch) =>
-      commit({
-        samples: get().samples.map((s) =>
-          s.id === id ? { ...s, ...patch } : s,
-        ),
-      }),
-    deleteSample: (id) =>
-      commit({ samples: get().samples.filter((s) => s.id !== id) }),
+    updateSample: (id, patch) => {
+      const existing = get().samples.find((s) => s.id === id);
+      if (!existing) return;
+      const updated = { ...existing, ...patch };
+      commit({ samples: get().samples.map((s) => (s.id === id ? updated : s)) });
+      c(cloud.upsert("sample", updated));
+    },
+    deleteSample: (id) => {
+      commit({ samples: get().samples.filter((s) => s.id !== id) });
+      c(cloud.remove(id));
+    },
 
     addQuote: (q) => {
       const quote: Quote = { ...q, id: uid("q"), createdAt: nowISO() };
       commit({ quotes: [quote, ...get().quotes] });
+      c(cloud.upsert("quote", quote));
       return quote;
     },
-    updateQuote: (id, patch) =>
-      commit({
-        quotes: get().quotes.map((q) => (q.id === id ? { ...q, ...patch } : q)),
-      }),
-    deleteQuote: (id) =>
-      commit({ quotes: get().quotes.filter((q) => q.id !== id) }),
+    updateQuote: (id, patch) => {
+      const existing = get().quotes.find((q) => q.id === id);
+      if (!existing) return;
+      const updated = { ...existing, ...patch };
+      commit({ quotes: get().quotes.map((q) => (q.id === id ? updated : q)) });
+      c(cloud.upsert("quote", updated));
+    },
+    deleteQuote: (id) => {
+      commit({ quotes: get().quotes.filter((q) => q.id !== id) });
+      c(cloud.remove(id));
+    },
 
     addTask: (t) => {
       const task: Task = {
@@ -289,24 +350,31 @@ export const useStore = create<StoreState>((set, get) => {
         createdAt: nowISO(),
       };
       commit({ tasks: [task, ...get().tasks] });
+      c(cloud.upsert("task", task));
       return task;
     },
-    toggleTask: (id) =>
-      commit({
-        tasks: get().tasks.map((t) =>
-          t.id === id ? { ...t, done: !t.done } : t,
-        ),
-      }),
-    deleteTask: (id) =>
-      commit({ tasks: get().tasks.filter((t) => t.id !== id) }),
+    toggleTask: (id) => {
+      const existing = get().tasks.find((t) => t.id === id);
+      if (!existing) return;
+      const updated = { ...existing, done: !existing.done };
+      commit({ tasks: get().tasks.map((t) => (t.id === id ? updated : t)) });
+      c(cloud.upsert("task", updated));
+    },
+    deleteTask: (id) => {
+      commit({ tasks: get().tasks.filter((t) => t.id !== id) });
+      c(cloud.remove(id));
+    },
 
     addFile: (f) => {
       const file: FileAsset = { ...f, id: uid("f"), createdAt: nowISO() };
       commit({ files: [file, ...get().files] });
+      c(cloud.upsert("file", file));
       return file;
     },
-    deleteFile: (id) =>
-      commit({ files: get().files.filter((f) => f.id !== id) }),
+    deleteFile: (id) => {
+      commit({ files: get().files.filter((f) => f.id !== id) });
+      c(cloud.remove(id));
+    },
   };
 });
 
