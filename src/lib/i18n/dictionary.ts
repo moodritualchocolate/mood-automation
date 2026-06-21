@@ -76,6 +76,15 @@ export const he = {
   "suppliers.empty": "אין ספקים עדיין. הוסף את הספק הראשון.",
   "suppliers.count": "ספקים",
   "suppliers.filterAll": "כל הסטטוסים",
+  "suppliers.category": "קטגוריה",
+
+  "category.all": "כל הקטגוריות",
+  "category.chocolate": "מוצרי שוקולד",
+  "category.supplements": "תוספות תזונה",
+  "category.molds": "מולדים",
+  "category.melanger": "מכונות מלנגר",
+  "category.packaging": "מכונות אריזה",
+  "category.other": "אחר",
 
   "status.new": "חדש",
   "status.contacted": "נוצר קשר",
@@ -320,6 +329,15 @@ export const en: Record<keyof typeof he, string> = {
   "suppliers.empty": "No suppliers yet. Add your first one.",
   "suppliers.count": "suppliers",
   "suppliers.filterAll": "All statuses",
+  "suppliers.category": "Category",
+
+  "category.all": "All categories",
+  "category.chocolate": "Chocolate products",
+  "category.supplements": "Nutritional supplements",
+  "category.molds": "Molds",
+  "category.melanger": "Melanger machines",
+  "category.packaging": "Packaging machines",
+  "category.other": "Other",
 
   "status.new": "New",
   "status.contacted": "Contacted",

@@ -4,7 +4,12 @@ import { Modal } from "@/components/ui/modal";
 import { Button, Field, Input, Select, Textarea } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n/provider";
 import { useStore } from "@/lib/store";
-import { SUPPLIER_STATUSES, type Supplier } from "@/lib/types";
+import {
+  SUPPLIER_CATEGORIES,
+  SUPPLIER_STATUSES,
+  type Supplier,
+  type SupplierCategory,
+} from "@/lib/types";
 import { useState } from "react";
 
 export function SupplierForm({
@@ -24,6 +29,7 @@ export function SupplierForm({
 
   const [form, setForm] = useState({
     company: existing?.company ?? "",
+    category: existing?.category ?? "chocolate",
     contact: existing?.contact ?? "",
     phone: existing?.phone ?? "",
     email: existing?.email ?? "",
@@ -38,10 +44,15 @@ export function SupplierForm({
 
   const submit = () => {
     if (!form.company.trim()) return;
+    const payload = {
+      ...form,
+      status: form.status as Supplier["status"],
+      category: form.category as SupplierCategory,
+    };
     if (existing) {
-      updateSupplier(existing.id, { ...form, status: form.status as Supplier["status"] });
+      updateSupplier(existing.id, payload);
     } else {
-      const s = addSupplier({ ...form, status: form.status as Supplier["status"] });
+      const s = addSupplier(payload);
       onCreated?.(s.id);
     }
     onClose();
@@ -69,6 +80,15 @@ export function SupplierForm({
             autoFocus
             placeholder="Barry Callebaut"
           />
+        </Field>
+        <Field label={t("suppliers.category")} className="sm:col-span-2">
+          <Select value={form.category} onChange={(e) => set("category", e.target.value)}>
+            {SUPPLIER_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {t(`category.${cat}` as const)}
+              </option>
+            ))}
+          </Select>
         </Field>
         <Field label={t("suppliers.contact")}>
           <Input value={form.contact} onChange={(e) => set("contact", e.target.value)} />

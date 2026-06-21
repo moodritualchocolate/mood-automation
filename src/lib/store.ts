@@ -237,6 +237,7 @@ export const useStore = create<StoreState>((set, get) => {
       const sup: Supplier = {
         id: uid("sup"),
         company: s.company,
+        category: s.category ?? "chocolate",
         contact: s.contact,
         phone: s.phone,
         email: s.email,

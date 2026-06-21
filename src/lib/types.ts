@@ -23,6 +23,24 @@ export const SUPPLIER_STATUSES: SupplierStatus[] = [
   "rejected",
 ];
 
+// Supplier category — lets suppliers be grouped into separate lists.
+export type SupplierCategory =
+  | "chocolate"
+  | "supplements"
+  | "molds"
+  | "melanger"
+  | "packaging"
+  | "other";
+
+export const SUPPLIER_CATEGORIES: SupplierCategory[] = [
+  "chocolate",
+  "supplements",
+  "molds",
+  "melanger",
+  "packaging",
+  "other",
+];
+
 export type MaterialKind =
   | "cocoa_mass"
   | "cocoa_butter"
@@ -59,6 +77,7 @@ export type Role = "admin" | "manager" | "viewer";
 export interface Supplier {
   id: string;
   company: string;
+  category?: SupplierCategory;
   contact?: string;
   phone?: string;
   email?: string;

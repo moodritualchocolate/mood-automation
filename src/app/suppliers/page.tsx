@@ -6,8 +6,16 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Button, EmptyState, Input, Select, Skeleton } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n/provider";
 import { canEdit, useStore } from "@/lib/store";
-import { SUPPLIER_STATUSES, type SupplierStatus } from "@/lib/types";
-import { relativeTime } from "@/lib/utils";
+import {
+  SUPPLIER_CATEGORIES,
+  SUPPLIER_STATUSES,
+  type Supplier,
+  type SupplierCategory,
+  type SupplierStatus,
+} from "@/lib/types";
+import { cn, relativeTime } from "@/lib/utils";
+
+const catOf = (s: Supplier): SupplierCategory => s.category ?? "other";
 import {
   Building2,
   Globe,
@@ -29,18 +37,30 @@ export default function SuppliersPage() {
   const materials = useStore((s) => s.materials);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<SupplierStatus | "all">("all");
+  const [cat, setCat] = useState<SupplierCategory | "all">("all");
   const [formOpen, setFormOpen] = useState(false);
+
+  // Count suppliers per category for the tab badges.
+  const catCounts = useMemo(() => {
+    const m: Record<string, number> = { all: suppliers.length };
+    for (const s of suppliers) {
+      const c = catOf(s);
+      m[c] = (m[c] ?? 0) + 1;
+    }
+    return m;
+  }, [suppliers]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return suppliers.filter((s) => {
+      if (cat !== "all" && catOf(s) !== cat) return false;
       if (filter !== "all" && s.status !== filter) return false;
       if (!needle) return true;
       return [s.company, s.contact, s.country, s.email, s.phone, s.notes]
         .filter(Boolean)
         .some((v) => v!.toLowerCase().includes(needle));
     });
-  }, [suppliers, q, filter]);
+  }, [suppliers, q, filter, cat]);
 
   const materialCount = (sid: string) =>
     materials.filter((m) => m.supplierId === sid).length;
@@ -59,6 +79,31 @@ export default function SuppliersPage() {
           )
         }
       />
+
+      {/* Category lists */}
+      <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
+        {(["all", ...SUPPLIER_CATEGORIES] as const).map((c) => {
+          const active = cat === c;
+          const count = catCounts[c] ?? 0;
+          return (
+            <button
+              key={c}
+              onClick={() => setCat(c)}
+              className={cn(
+                "chip shrink-0 transition",
+                active
+                  ? "border-brand bg-brand text-brand-fg"
+                  : "border-border text-muted hover:border-border-strong hover:text-fg",
+              )}
+            >
+              {c === "all" ? t("category.all") : t(`category.${c}` as const)}
+              <span className={cn("tabular-nums", active ? "opacity-80" : "text-faint")}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
       <div className="mb-4 flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
@@ -121,8 +166,11 @@ export default function SuppliersPage() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <h3 className="truncate font-semibold">{s.company}</h3>
+                    <span className="mt-1 inline-flex chip border-transparent bg-brand-soft px-2 py-0.5 text-[10px] text-brand">
+                      {t(`category.${catOf(s)}` as const)}
+                    </span>
                     {s.contact && (
-                      <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted">
+                      <p className="mt-1 flex items-center gap-1.5 text-xs text-muted">
                         <User size={12} /> {s.contact}
                       </p>
                     )}
