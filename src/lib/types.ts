@@ -23,6 +23,29 @@ export const SUPPLIER_STATUSES: SupplierStatus[] = [
   "rejected",
 ];
 
+export type SupplierCategory =
+  | "chocolate"
+  | "formulas"
+  | "packaging"
+  | "melanger"
+  | "molds";
+
+export const SUPPLIER_CATEGORIES: SupplierCategory[] = [
+  "chocolate",
+  "formulas",
+  "packaging",
+  "melanger",
+  "molds",
+];
+
+export const CATEGORY_LABELS: Record<SupplierCategory, string> = {
+  chocolate: "שוקולד / חומרי גלם",
+  formulas: "פורמולות",
+  packaging: "מכונות אריזה",
+  melanger: "מלנגר",
+  molds: "מולדים",
+};
+
 // Supplier category — lets suppliers be grouped into separate lists.
 export type SupplierCategory =
   | "chocolate"
@@ -85,6 +108,7 @@ export interface Supplier {
   country?: string;
   notes?: string;
   status: SupplierStatus;
+  category?: SupplierCategory;
   createdAt: string;
   updatedAt: string;
 }
