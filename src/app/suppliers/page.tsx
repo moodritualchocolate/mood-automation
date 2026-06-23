@@ -52,6 +52,8 @@ export default function SuppliersPage() {
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
+    const rank = (st: string) =>
+      st === "awaiting_response" ? 0 : st === "rejected" ? 2 : 1;
     return suppliers.filter((s) => {
       if (cat !== "all" && catOf(s) !== cat) return false;
       if (filter !== "all" && s.status !== filter) return false;
@@ -59,7 +61,7 @@ export default function SuppliersPage() {
       return [s.company, s.contact, s.country, s.email, s.phone, s.notes]
         .filter(Boolean)
         .some((v) => v!.toLowerCase().includes(needle));
-    });
+    }).sort((a, b) => rank(a.status) - rank(b.status));
   }, [suppliers, q, filter, cat]);
 
   const materialCount = (sid: string) =>
