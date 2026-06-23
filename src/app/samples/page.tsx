@@ -8,13 +8,15 @@ import { canEdit, useStore } from "@/lib/store";
 import { formatDate } from "@/lib/utils";
 import { CheckCircle2, FlaskConical, Plus, XCircle } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function SamplesPage() {
   const { t, lang } = useI18n();
   const role = useStore((s) => s.role);
-  const samples = useStore((s) =>
-    [...s.samples].sort((a, b) => b.date.localeCompare(a.date)),
+  const allSamples = useStore((s) => s.samples);
+  const samples = useMemo(
+    () => [...allSamples].sort((a, b) => b.date.localeCompare(a.date)),
+    [allSamples],
   );
   const suppliers = useStore((s) => s.suppliers);
   const [open, setOpen] = useState(false);
