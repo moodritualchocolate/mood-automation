@@ -13,8 +13,10 @@ import { useMemo, useState } from "react";
 export default function QuotesPage() {
   const { t, lang } = useI18n();
   const role = useStore((s) => s.role);
-  const quotes = useStore((s) =>
-    [...s.quotes].sort((a, b) => b.date.localeCompare(a.date)),
+  const allQuotes = useStore((s) => s.quotes);
+  const quotes = useMemo(
+    () => [...allQuotes].sort((a, b) => b.date.localeCompare(a.date)),
+    [allQuotes],
   );
   const suppliers = useStore((s) => s.suppliers);
   const [open, setOpen] = useState(false);
