@@ -6,6 +6,7 @@ import { useStore } from "@/lib/store";
 import type { FileCategory } from "@/lib/types";
 import { cn, formatDate, humanFileSize } from "@/lib/utils";
 import { FileText, Plus, Trash2 } from "lucide-react";
+import { useMemo } from "react";
 
 function categorize(name: string, type: string): FileCategory {
   const n = name.toLowerCase();
@@ -27,8 +28,10 @@ export function FileList({
   editable: boolean;
 }) {
   const { t, lang } = useI18n();
-  const files = useStore((s) =>
-    s.files.filter((f) => (supplierId ? f.supplierId === supplierId : true)),
+  const allFiles = useStore((s) => s.files);
+  const files = useMemo(
+    () => allFiles.filter((f) => (supplierId ? f.supplierId === supplierId : true)),
+    [allFiles, supplierId],
   );
   const addFile = useStore((s) => s.addFile);
   const deleteFile = useStore((s) => s.deleteFile);
