@@ -245,10 +245,13 @@ const EVENT_ICON: Record<EventType, string> = {
 
 function TimelineTab({ supplierId, editable }: { supplierId: string; editable: boolean }) {
   const { t, lang } = useI18n();
-  const events = useStore((s) =>
-    s.events
-      .filter((e) => e.supplierId === supplierId)
-      .sort((a, b) => b.date.localeCompare(a.date)),
+  const allEvents = useStore((s) => s.events);
+  const events = useMemo(
+    () =>
+      allEvents
+        .filter((e) => e.supplierId === supplierId)
+        .sort((a, b) => b.date.localeCompare(a.date)),
+    [allEvents, supplierId],
   );
   const deleteEvent = useStore((s) => s.deleteEvent);
   const [open, setOpen] = useState(false);
@@ -297,7 +300,11 @@ function TimelineTab({ supplierId, editable }: { supplierId: string; editable: b
 
 function MaterialsTab({ supplierId, editable }: { supplierId: string; editable: boolean }) {
   const { t } = useI18n();
-  const materials = useStore((s) => s.materials.filter((m) => m.supplierId === supplierId));
+  const allMaterials = useStore((s) => s.materials);
+  const materials = useMemo(
+    () => allMaterials.filter((m) => m.supplierId === supplierId),
+    [allMaterials, supplierId],
+  );
   const deleteMaterial = useStore((s) => s.deleteMaterial);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<RawMaterial | undefined>();
@@ -380,8 +387,13 @@ function MaterialsTab({ supplierId, editable }: { supplierId: string; editable: 
 
 function SamplesTab({ supplierId, editable }: { supplierId: string; editable: boolean }) {
   const { t, lang } = useI18n();
-  const samples = useStore((s) =>
-    s.samples.filter((x) => x.supplierId === supplierId).sort((a, b) => b.date.localeCompare(a.date)),
+  const allSamples = useStore((s) => s.samples);
+  const samples = useMemo(
+    () =>
+      allSamples
+        .filter((x) => x.supplierId === supplierId)
+        .sort((a, b) => b.date.localeCompare(a.date)),
+    [allSamples, supplierId],
   );
   const deleteSample = useStore((s) => s.deleteSample);
   const [open, setOpen] = useState(false);
@@ -455,8 +467,13 @@ function Metric({ label, value }: { label: string; value?: number }) {
 
 function QuotesTab({ supplierId, editable }: { supplierId: string; editable: boolean }) {
   const { t, lang } = useI18n();
-  const quotes = useStore((s) =>
-    s.quotes.filter((q) => q.supplierId === supplierId).sort((a, b) => b.date.localeCompare(a.date)),
+  const allQuotes = useStore((s) => s.quotes);
+  const quotes = useMemo(
+    () =>
+      allQuotes
+        .filter((q) => q.supplierId === supplierId)
+        .sort((a, b) => b.date.localeCompare(a.date)),
+    [allQuotes, supplierId],
   );
   const deleteQuote = useStore((s) => s.deleteQuote);
   const [open, setOpen] = useState(false);
@@ -512,7 +529,11 @@ function FilesTab({ supplierId, editable }: { supplierId: string; editable: bool
 
 function TasksTab({ supplierId, editable }: { supplierId: string; editable: boolean }) {
   const { t } = useI18n();
-  const tasks = useStore((s) => s.tasks.filter((x) => x.supplierId === supplierId));
+  const allTasks = useStore((s) => s.tasks);
+  const tasks = useMemo(
+    () => allTasks.filter((x) => x.supplierId === supplierId),
+    [allTasks, supplierId],
+  );
   const toggleTask = useStore((s) => s.toggleTask);
   const deleteTask = useStore((s) => s.deleteTask);
   const addTask = useStore((s) => s.addTask);
