@@ -15,6 +15,8 @@ export const he = {
   "nav.files": "קבצים",
   "nav.settings": "הגדרות",
   "nav.search": "חיפוש",
+  "nav.section.sourcing": "איתור",
+  "nav.section.decide": "החלטה",
 
   "action.add": "הוסף",
   "action.save": "שמור",
@@ -51,6 +53,11 @@ export const he = {
 
   "dashboard.title": "לוח בקרה",
   "dashboard.subtitle": "מבט כללי על תהליך הרכש",
+  "dashboard.eyebrow": "הסקירה היומית",
+  "dashboard.greeting.morning": "בוקר טוב",
+  "dashboard.greeting.afternoon": "צהריים טובים",
+  "dashboard.greeting.evening": "ערב טוב",
+  "dashboard.greeting.suffix": "הנה איפה הדברים עומדים",
   "dashboard.activeSuppliers": "ספקים פעילים",
   "dashboard.awaiting": "ממתינים למענה",
   "dashboard.samplesInTransit": "דוגמאות בדרך",
@@ -268,6 +275,8 @@ export const en: Record<keyof typeof he, string> = {
   "nav.files": "Files",
   "nav.settings": "Settings",
   "nav.search": "Search",
+  "nav.section.sourcing": "Sourcing",
+  "nav.section.decide": "Decide",
 
   "action.add": "Add",
   "action.save": "Save",
@@ -304,6 +313,11 @@ export const en: Record<keyof typeof he, string> = {
 
   "dashboard.title": "Dashboard",
   "dashboard.subtitle": "An overview of your procurement process",
+  "dashboard.eyebrow": "Daily overview",
+  "dashboard.greeting.morning": "Good morning",
+  "dashboard.greeting.afternoon": "Good afternoon",
+  "dashboard.greeting.evening": "Good evening",
+  "dashboard.greeting.suffix": "here's where things stand",
   "dashboard.activeSuppliers": "Active suppliers",
   "dashboard.awaiting": "Awaiting response",
   "dashboard.samplesInTransit": "Samples in transit",

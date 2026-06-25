@@ -45,7 +45,11 @@ export default function TasksPage() {
 
   return (
     <>
-      <PageHeader title={t("tasks.title")} subtitle={t("tasks.subtitle")} />
+      <PageHeader
+        eyebrow={t("nav.section.decide")}
+        title={t("tasks.title")}
+        subtitle={t("tasks.subtitle")}
+      />
 
       {editable && (
         <form

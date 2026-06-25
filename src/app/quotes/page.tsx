@@ -32,12 +32,12 @@ export default function QuotesPage() {
   return (
     <>
       <PageHeader
+        eyebrow={t("nav.section.sourcing")}
         title={t("quotes.title")}
         subtitle={t("quotes.subtitle")}
         action={
           canEdit(role) && (
-            <Button variant="primary" onClick={() => setOpen(true)}>
-              <Plus size={16} />
+            <Button variant="primary" leadingIcon={Plus} onClick={() => setOpen(true)}>
               {t("quotes.add")}
             </Button>
           )

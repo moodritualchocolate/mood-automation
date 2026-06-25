@@ -2,31 +2,65 @@
 
 import { cn } from "@/lib/utils";
 import { forwardRef } from "react";
+import type { LucideIcon } from "lucide-react";
 
-/* ── Buttons ── */
+/* ────────────────────────────────────────────────────────────
+   BUTTONS
+   ──────────────────────────────────────────────────────────── */
+
 type BtnVariant = "primary" | "secondary" | "ghost" | "danger";
+type BtnSize = "sm" | "md" | "lg";
+
 export const Button = forwardRef<
   HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: BtnVariant }
->(({ className, variant = "secondary", ...props }, ref) => {
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    variant?: BtnVariant;
+    size?: BtnSize;
+    leadingIcon?: LucideIcon;
+    trailingIcon?: LucideIcon;
+    loading?: boolean;
+  }
+>(({ className, variant = "secondary", size = "md", leadingIcon: L, trailingIcon: T, loading, children, disabled, ...props }, ref) => {
   const v = {
     primary: "btn-primary",
     secondary: "btn-secondary",
     ghost: "btn-ghost",
     danger: "btn-danger",
   }[variant];
-  return <button ref={ref} className={cn(v, className)} {...props} />;
+  const s = { sm: "btn-sm", md: "", lg: "btn-lg" }[size];
+  const iconSize = size === "lg" ? 16 : size === "sm" ? 13 : 14;
+  return (
+    <button
+      ref={ref}
+      disabled={disabled || loading}
+      className={cn(v, s, className)}
+      {...props}
+    >
+      {loading ? (
+        <Spinner size={iconSize} />
+      ) : (
+        L && <L size={iconSize} strokeWidth={2.2} />
+      )}
+      {children}
+      {T && !loading && <T size={iconSize} strokeWidth={2.2} />}
+    </button>
+  );
 });
 Button.displayName = "Button";
 
 export function IconButton({
   className,
+  size = "md",
   ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { size?: "sm" | "md" }) {
+  const dims = size === "sm" ? "h-8 w-8" : "h-9 w-9";
   return (
     <button
       className={cn(
-        "inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted transition hover:bg-surface-2 hover:text-fg active:scale-95",
+        dims,
+        "inline-flex items-center justify-center rounded-lg text-muted",
+        "transition-all duration-150 active:scale-95",
+        "hover:bg-surface-2 hover:text-fg",
         className,
       )}
       {...props}
@@ -34,15 +68,47 @@ export function IconButton({
   );
 }
 
-/* ── Card ── */
-export function Card({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("card p-4", className)} {...props} />;
+function Spinner({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className="animate-spin">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.4" strokeOpacity="0.25" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  );
 }
 
-/* ── Inputs ── */
+/* ────────────────────────────────────────────────────────────
+   CARDS
+   ──────────────────────────────────────────────────────────── */
+
+export function Card({
+  className,
+  interactive,
+  elevated,
+  floating,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & {
+  interactive?: boolean;
+  elevated?: boolean;
+  floating?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        floating ? "card-floating" : elevated ? "card-elevated" : "card",
+        interactive && "card-interactive",
+        "p-4 sm:p-5",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   INPUTS
+   ──────────────────────────────────────────────────────────── */
+
 export const Input = forwardRef<
   HTMLInputElement,
   React.InputHTMLAttributes<HTMLInputElement>
@@ -57,7 +123,7 @@ export const Textarea = forwardRef<
 >(({ className, ...props }, ref) => (
   <textarea
     ref={ref}
-    className={cn("input-base min-h-[88px] resize-y leading-relaxed", className)}
+    className={cn("input-base min-h-[96px] resize-y leading-relaxed", className)}
     {...props}
   />
 ));
@@ -67,24 +133,34 @@ export const Select = forwardRef<
   HTMLSelectElement,
   React.SelectHTMLAttributes<HTMLSelectElement>
 >(({ className, children, ...props }, ref) => (
-  <select
-    ref={ref}
-    className={cn("input-base cursor-pointer appearance-none pe-8", className)}
-    {...props}
-  >
-    {children}
-  </select>
+  <div className="relative">
+    <select
+      ref={ref}
+      className={cn("input-base cursor-pointer appearance-none pe-9", className)}
+      {...props}
+    >
+      {children}
+    </select>
+    <svg
+      className="pointer-events-none absolute inset-y-0 end-3 my-auto text-faint"
+      width="14" height="14" viewBox="0 0 24 24" fill="none"
+    >
+      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  </div>
 ));
 Select.displayName = "Select";
 
 export function Field({
   label,
   hint,
+  required,
   children,
   className,
 }: {
   label?: string;
   hint?: string;
+  required?: boolean;
   children: React.ReactNode;
   className?: string;
 }) {
@@ -93,6 +169,7 @@ export function Field({
       {label && (
         <span className="flex items-center gap-2 text-xs font-medium text-muted">
           {label}
+          {required && <span className="text-danger" aria-hidden>•</span>}
           {hint && <span className="text-faint">· {hint}</span>}
         </span>
       )}
@@ -101,47 +178,214 @@ export function Field({
   );
 }
 
-/* ── Empty state ── */
+/* ────────────────────────────────────────────────────────────
+   CHIPS · STAT · METRIC · BADGE
+   ──────────────────────────────────────────────────────────── */
+
+type ChipTone = "default" | "brand" | "success" | "warning" | "danger" | "info" | "accent" | "neutral";
+const CHIP_TONE: Record<ChipTone, string> = {
+  default: "border-border bg-surface-2 text-muted",
+  neutral: "border-border bg-surface-2 text-fg-2",
+  brand:   "border-brand/25 bg-brand-soft text-brand",
+  success: "border-success/25 bg-success-soft text-success",
+  warning: "border-warning/30 bg-warning-soft text-warning",
+  danger:  "border-danger/25 bg-danger-soft text-danger",
+  info:    "border-info/25 bg-info-soft text-info",
+  accent:  "border-accent/25 bg-accent/10 text-accent",
+};
+
+export function Chip({
+  tone = "default",
+  size = "md",
+  icon: Icon,
+  className,
+  children,
+}: {
+  tone?: ChipTone;
+  size?: "sm" | "md";
+  icon?: LucideIcon;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <span className={cn("chip", size === "sm" && "chip-sm", CHIP_TONE[tone], className)}>
+      {Icon && <Icon size={size === "sm" ? 10 : 12} strokeWidth={2.2} />}
+      {children}
+    </span>
+  );
+}
+
+/* ─── Stat · big number with label · for dashboards ─── */
+export function Stat({
+  label,
+  value,
+  hint,
+  trend,
+  icon: Icon,
+  tone = "default",
+  className,
+}: {
+  label: string;
+  value: React.ReactNode;
+  hint?: string;
+  trend?: { value: number; direction: "up" | "down" | "flat" };
+  icon?: LucideIcon;
+  tone?: "default" | "brand" | "success" | "warning" | "danger";
+  className?: string;
+}) {
+  const iconTone = {
+    default: "text-muted bg-surface-2",
+    brand: "text-brand bg-brand-soft",
+    success: "text-success bg-success-soft",
+    warning: "text-warning bg-warning-soft",
+    danger: "text-danger bg-danger-soft",
+  }[tone];
+
+  const trendTone = trend && (trend.direction === "up"
+    ? "text-success"
+    : trend.direction === "down"
+    ? "text-danger"
+    : "text-muted");
+
+  return (
+    <div className={cn("card-interactive p-4 sm:p-5 group", className)}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1.5 min-w-0">
+          <div className="text-xs font-medium uppercase tracking-wider text-muted">
+            {label}
+          </div>
+          <div className="text-3xl font-semibold tabular text-fg leading-none tracking-tight">
+            {value}
+          </div>
+          {hint && <div className="text-xs text-faint">{hint}</div>}
+        </div>
+        {Icon && (
+          <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", iconTone)}>
+            <Icon size={16} strokeWidth={2.2} />
+          </span>
+        )}
+      </div>
+      {trend && (
+        <div className={cn("mt-3 flex items-center gap-1 text-xs font-medium", trendTone)}>
+          <span>{trend.direction === "up" ? "↗" : trend.direction === "down" ? "↘" : "→"}</span>
+          <span>{Math.abs(trend.value)}%</span>
+          <span className="text-faint">vs prev</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Keyboard hint ─── */
+export function Kbd({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <kbd className={cn("kbd", className)}>{children}</kbd>;
+}
+
+/* ────────────────────────────────────────────────────────────
+   EMPTY STATE
+   ──────────────────────────────────────────────────────────── */
+
 export function EmptyState({
   icon,
   title,
   hint,
   action,
+  className,
 }: {
-  icon?: React.ReactNode;
+  /** Accepts either a LucideIcon component or a pre-rendered ReactNode
+   * (kept for backwards compatibility with existing callsites). */
+  icon?: LucideIcon | React.ReactNode;
   title: string;
   hint?: string;
   action?: React.ReactNode;
+  className?: string;
 }) {
+  // Auto-detect: function = component (LucideIcon), otherwise treat as node.
+  const isComponent = typeof icon === "function";
+  const IconComp = isComponent ? (icon as LucideIcon) : null;
+
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-surface/50 px-6 py-12 text-center">
-      {icon && <div className="text-faint">{icon}</div>}
-      <div className="text-sm font-medium text-fg">{title}</div>
-      {hint && <div className="max-w-sm text-xs text-muted">{hint}</div>}
-      {action}
+    <div className={cn(
+      "flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-surface/40 px-6 py-16 text-center",
+      className,
+    )}>
+      {(IconComp || (icon && !isComponent)) && (
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-2 text-faint">
+          {IconComp ? <IconComp size={22} strokeWidth={1.75} /> : (icon as React.ReactNode)}
+        </span>
+      )}
+      <div className="space-y-1">
+        <div className="text-sm font-semibold text-fg">{title}</div>
+        {hint && <div className="mx-auto max-w-sm text-xs leading-relaxed text-muted">{hint}</div>}
+      </div>
+      {action && <div className="mt-2">{action}</div>}
     </div>
   );
 }
 
-/* ── Score badge (0–10) ── */
-export function ScoreBadge({ score }: { score?: number }) {
-  if (score == null) return <span className="text-faint">—</span>;
+/* ────────────────────────────────────────────────────────────
+   SCORE BADGE · 0-10
+   ──────────────────────────────────────────────────────────── */
+
+export function ScoreBadge({ score, size = "md" }: { score?: number; size?: "sm" | "md" | "lg" }) {
+  if (score == null) {
+    return <span className="text-faint mono">—</span>;
+  }
   const tone =
-    score >= 8.5
-      ? "bg-success/12 text-success"
-      : score >= 7
-        ? "bg-accent/15 text-accent"
-        : score >= 5
-          ? "bg-warning/15 text-warning"
-          : "bg-danger/12 text-danger";
+    score >= 8.5 ? "border-success/25 bg-success-soft text-success"
+    : score >= 7   ? "border-accent/25 bg-accent/10 text-accent"
+    : score >= 5   ? "border-warning/25 bg-warning-soft text-warning"
+    :                "border-danger/25 bg-danger-soft text-danger";
+  const sz = size === "lg" ? "h-8 min-w-[2.75rem] text-[14px]"
+           : size === "sm" ? "h-5 min-w-[2rem] text-[10.5px]"
+           :                 "h-6 min-w-[2.25rem] text-[11.5px]";
   return (
-    <span className={cn("chip border-transparent font-semibold", tone)}>
+    <span className={cn(
+      "inline-flex items-center justify-center rounded-md border px-1.5 font-semibold tabular",
+      tone, sz,
+    )}>
       {score.toFixed(1)}
     </span>
   );
 }
 
-/* ── Skeleton ── */
+/* ────────────────────────────────────────────────────────────
+   STRUCTURE · Divider · SectionHeading
+   ──────────────────────────────────────────────────────────── */
+
+export function Divider({ className }: { className?: string }) {
+  return <div className={cn("divider my-4", className)} aria-hidden />;
+}
+
+export function SectionHeading({
+  eyebrow,
+  title,
+  hint,
+  action,
+  className,
+}: {
+  eyebrow?: string;
+  title: string;
+  hint?: string;
+  action?: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn("mb-4 flex flex-wrap items-end justify-between gap-3", className)}>
+      <div>
+        {eyebrow && <div className="eyebrow mb-1.5">{eyebrow}</div>}
+        <h3 className="text-md font-semibold tracking-tight text-fg">{title}</h3>
+        {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+      </div>
+      {action && <div className="flex items-center gap-2">{action}</div>}
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   SKELETON
+   ──────────────────────────────────────────────────────────── */
+
 export function Skeleton({ className }: { className?: string }) {
   return <div className={cn("skeleton rounded-lg", className)} />;
 }

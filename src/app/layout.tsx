@@ -1,18 +1,30 @@
 import { AppShell } from "@/components/app-shell";
 import { Providers } from "@/components/providers";
 import type { Metadata, Viewport } from "next";
-import { Assistant } from "next/font/google";
+import { Assistant, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const assistant = Assistant({
+// Hebrew-first display + body. Assistant carries Hebrew + Latin at the
+// same weight rhythm so we don't pair-mismatch in mixed-language strings
+// like "₪450 לטיפול". Added the 300 and 800 weights for refined hierarchy.
+const sans = Assistant({
   subsets: ["latin", "hebrew"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   variable: "--font-sans",
   display: "swap",
 });
 
+// Mono for IDs, prices, tabular metadata · adds the "engineered" feel
+// you see in Linear / Stripe / Vercel — numbers feel deliberate.
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "MOOD Procurement Hub",
+  title: "MOOD · Procurement Hub",
   description:
     "מרכז השליטה ברכש של MOOD Ritual Chocolate — איתור, בדיקה, השוואה ובחירת ספקים.",
   manifest: "/manifest.webmanifest",
@@ -39,7 +51,7 @@ export default function RootLayout({
   // dir/lang are set on <html> at runtime by the I18nProvider (Hebrew/RTL default).
   return (
     <html lang="he" dir="rtl" suppressHydrationWarning>
-      <body className={`${assistant.variable} font-sans`}>
+      <body className={`${sans.variable} ${mono.variable} font-sans antialiased`}>
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>

@@ -3,56 +3,110 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────
-   MOOD Procurement Hub — design tokens
-   Light + dark, warm cacao brand over a Linear-grade neutral base.
+   MOOD Procurement Hub · Design System v2
+   Premium · Linear/Stripe/Vercel-tier polish for a Hebrew-first
+   creative tool. Light + dark with calibrated neutrals and a
+   single restrained cacao accent.
    ───────────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    --bg: 248 247 245;
-    --surface: 255 255 255;
-    --surface-2: 250 249 247;
-    --elevated: 255 255 255;
-    --border: 233 230 226;
-    --border-strong: 215 211 205;
-    --fg: 28 25 23;
-    --muted: 110 104 98;
-    --faint: 150 144 137;
+    /* Surfaces · refined 8-step neutral ramp on a paper-white base */
+    --bg:            252 251 249;     /* page background  · #FCFBF9 */
+    --surface:       255 255 255;     /* card             · #FFFFFF */
+    --surface-2:     248 246 242;     /* sunken / chip    · #F8F6F2 */
+    --surface-3:     242 239 234;     /* deeper sunken    · #F2EFEA */
+    --elevated:      255 255 255;     /* floating popover · #FFFFFF */
 
-    --brand: 124 72 46; /* roasted cacao */
-    --brand-fg: 255 252 250;
-    --brand-soft: 244 235 229;
+    --border:        232 228 222;     /* default hairline · #E8E4DE */
+    --border-strong: 214 209 201;     /* hover / focus    · #D6D1C9 */
+    --border-soft:   240 237 232;     /* subtle dividers  · #F0EDE8 */
 
-    --accent: 201 124 44; /* amber / caramel */
-    --success: 34 139 88;
-    --warning: 196 138 24;
-    --danger: 197 58 50;
-    --info: 49 110 196;
+    /* Foreground ramp · 4 steps */
+    --fg:            22 19 17;        /* primary text     · #161311 */
+    --fg-2:          61 56 51;        /* secondary text   · #3D3833 */
+    --muted:         110 104 96;      /* labels           · #6E6860 */
+    --faint:         154 148 138;     /* meta / hints     · #9A948A */
+
+    /* Brand · roasted cacao · used with intent */
+    --brand:         124 72 46;       /* primary action   · #7C482E */
+    --brand-2:       148 89 60;       /* hover            · #94593C */
+    --brand-fg:      255 252 250;     /* on-brand text    */
+    --brand-soft:    243 233 226;     /* tint bg          · #F3E9E2 */
+    --brand-ring:    124 72 46;       /* focus ring       */
+
+    /* Accent + status — calibrated to read clean on both surfaces */
+    --accent:        201 124 44;      /* amber / caramel  · #C97C2C */
+    --success:       28 134 84;       /* deeper green     · #1C8654 */
+    --success-soft:  219 240 230;
+    --warning:       186 128 18;      /* deeper amber     · #BA8012 */
+    --warning-soft:  248 233 198;
+    --danger:        191 51 48;       /* deeper red       · #BF3330 */
+    --danger-soft:   249 219 217;
+    --info:          43 100 184;      /* deeper blue      · #2B64B8 */
+    --info-soft:     217 230 248;
+
+    /* Shadow recipe · multi-layer for depth */
+    --shadow-sm: 0 1px 0 0 rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow:    0 1px 0 0 rgb(0 0 0 / 0.02), 0 4px 14px -4px rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow-md: 0 1px 0 0 rgb(0 0 0 / 0.02), 0 10px 24px -8px rgb(0 0 0 / 0.10), 0 4px 10px -4px rgb(0 0 0 / 0.06);
+    --shadow-lg: 0 24px 48px -16px rgb(0 0 0 / 0.16), 0 8px 16px -6px rgb(0 0 0 / 0.08);
+    --shadow-focus: 0 0 0 4px rgb(124 72 46 / 0.18), 0 0 0 1px rgb(124 72 46);
+
+    /* Gradient washes used in heroic moments */
+    --grad-warm: radial-gradient(1200px 600px at 0% 0%, rgb(243 233 226 / 0.9), transparent 60%);
+    --grad-mesh: radial-gradient(800px 400px at 100% 0%, rgb(243 233 226 / 0.7), transparent 60%), radial-gradient(600px 300px at 0% 100%, rgb(248 233 218 / 0.5), transparent 70%);
   }
 
   .dark {
-    --bg: 17 16 15;
-    --surface: 24 22 21;
-    --surface-2: 30 28 26;
-    --elevated: 34 31 29;
-    --border: 44 40 37;
-    --border-strong: 60 55 50;
-    --fg: 240 237 233;
-    --muted: 165 158 150;
-    --faint: 120 114 107;
+    /* Dark mode · espresso-rich, never grey-flat */
+    --bg:            12 11 10;        /* #0C0B0A */
+    --surface:       19 17 15;        /* #131110 — cards */
+    --surface-2:     25 22 20;        /* #191614 — sunken */
+    --surface-3:     32 28 25;        /* #201C19 */
+    --elevated:      28 25 23;        /* #1C1917 */
 
-    --brand: 196 142 110;
-    --brand-fg: 26 18 13;
-    --brand-soft: 48 38 32;
+    --border:        40 35 32;        /* #282320 */
+    --border-strong: 60 53 48;        /* #3C3530 */
+    --border-soft:   30 27 24;        /* #1E1B18 */
 
-    --accent: 222 158 88;
-    --success: 74 188 134;
-    --warning: 224 176 72;
-    --danger: 235 110 102;
-    --info: 110 162 240;
+    --fg:            247 244 240;
+    --fg-2:          212 207 200;
+    --muted:         162 156 148;
+    --faint:         118 112 104;
+
+    --brand:         210 156 122;     /* warm bronze in dark */
+    --brand-2:       226 174 142;
+    --brand-fg:      24 16 11;
+    --brand-soft:    44 33 26;
+    --brand-ring:    210 156 122;
+
+    --accent:        228 162 92;
+    --success:       82 196 142;
+    --success-soft:  20 50 38;
+    --warning:       230 184 80;
+    --warning-soft:  56 42 14;
+    --danger:        235 117 110;
+    --danger-soft:   58 22 22;
+    --info:          126 174 244;
+    --info-soft:     20 36 64;
+
+    --shadow-sm: 0 1px 0 0 rgb(0 0 0 / 0.30), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+    --shadow:    0 1px 0 0 rgb(0 0 0 / 0.4), 0 6px 18px -6px rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+    --shadow-md: 0 1px 0 0 rgb(0 0 0 / 0.4), 0 12px 30px -10px rgb(0 0 0 / 0.6), 0 4px 12px -4px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 30px 60px -20px rgb(0 0 0 / 0.8), 0 10px 20px -8px rgb(0 0 0 / 0.5);
+    --shadow-focus: 0 0 0 4px rgb(210 156 122 / 0.22), 0 0 0 1px rgb(210 156 122);
+
+    --grad-warm: radial-gradient(1200px 600px at 0% 0%, rgb(44 33 26 / 0.95), transparent 60%);
+    --grad-mesh: radial-gradient(800px 400px at 100% 0%, rgb(44 33 26 / 0.55), transparent 65%), radial-gradient(600px 300px at 0% 100%, rgb(40 28 22 / 0.45), transparent 70%);
   }
 
   * {
     border-color: rgb(var(--border));
+  }
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
 
   html,
@@ -65,71 +119,210 @@
     color: rgb(var(--fg));
     font-family: var(--font-sans), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     overscroll-behavior-y: none;
+    font-feature-settings: "cv11", "ss01", "ss03";
   }
 
-  /* RTL/LTR logical helpers handled by Tailwind's [dir] + logical props */
+  /* Tabular numbers for tables / metrics / money */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Monospace for IDs, codes, deltas */
+  .mono {
+    font-family: var(--font-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-feature-settings: "ss03", "zero";
+    font-variant-numeric: tabular-nums;
+  }
+
   ::selection {
-    background: rgb(var(--brand) / 0.22);
+    background: rgb(var(--brand) / 0.24);
+    color: rgb(var(--fg));
   }
 
-  /* Thin, unobtrusive scrollbars (Linear-style) */
+  /* Refined scrollbars · barely-there until you hover */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
   }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
   ::-webkit-scrollbar-thumb {
-    background: rgb(var(--border-strong));
+    background: rgb(var(--border-strong) / 0.6);
     border-radius: 999px;
     border: 3px solid transparent;
     background-clip: content-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--faint));
+    background: rgb(var(--faint) / 0.8);
     background-clip: content-box;
+  }
+
+  /* Focus baseline · double-layer ring like Vercel/Stripe */
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+    border-radius: 8px;
+  }
+
+  /* Heading rhythm */
+  h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
+    color: rgb(var(--fg));
   }
 }
 
 @layer components {
+  /* ─── Card · the workhorse surface ─── */
   .card {
-    @apply rounded-xl border border-border bg-surface shadow-card;
+    @apply rounded-xl border border-border bg-surface;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-elevated {
+    @apply card;
+    box-shadow: var(--shadow);
+  }
+  .card-floating {
+    @apply card bg-elevated;
+    box-shadow: var(--shadow-md);
+  }
+  .card-interactive {
+    @apply card transition-all duration-150;
+  }
+  .card-interactive:hover {
+    border-color: rgb(var(--border-strong));
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
   }
 
+  /* ─── Inputs · refined depth + double focus ring ─── */
   .input-base {
-    @apply w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-fg
-      placeholder:text-faint outline-none transition
-      focus:border-brand focus:shadow-focus;
+    @apply w-full rounded-lg border border-border bg-surface px-3.5 py-2 text-[14px] leading-6 text-fg
+      placeholder:text-faint outline-none transition-all duration-150;
+  }
+  .input-base:hover {
+    border-color: rgb(var(--border-strong));
+  }
+  .input-base:focus {
+    border-color: rgb(var(--brand));
+    box-shadow: 0 0 0 4px rgb(var(--brand-ring) / 0.16);
+  }
+  .input-base:disabled {
+    @apply cursor-not-allowed opacity-60;
   }
 
+  /* ─── Buttons · proportions tuned for Hebrew + English at 14px ─── */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium
-      transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-[13.5px] font-medium
+      transition-all duration-150 active:scale-[0.985]
+      disabled:pointer-events-none disabled:opacity-50
       whitespace-nowrap select-none;
+    letter-spacing: -0.005em;
   }
   .btn-primary {
-    @apply btn bg-brand text-brand-fg hover:opacity-90 shadow-card;
+    @apply btn text-brand-fg;
+    background: linear-gradient(180deg, rgb(var(--brand-2)) 0%, rgb(var(--brand)) 100%);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 rgb(255 255 255 / 0.12);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(180deg, rgb(var(--brand-2)) 0%, rgb(var(--brand-2)) 100%);
+    box-shadow: var(--shadow), inset 0 1px 0 0 rgb(255 255 255 / 0.15);
   }
   .btn-secondary {
-    @apply btn border border-border bg-surface text-fg hover:bg-surface-2;
+    @apply btn border border-border bg-surface text-fg;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-secondary:hover {
+    @apply bg-surface-2;
+    border-color: rgb(var(--border-strong));
   }
   .btn-ghost {
-    @apply btn text-muted hover:bg-surface-2 hover:text-fg;
+    @apply btn text-muted;
+  }
+  .btn-ghost:hover {
+    @apply bg-surface-2 text-fg;
   }
   .btn-danger {
-    @apply btn bg-danger text-white hover:opacity-90;
+    @apply btn text-white;
+    background: linear-gradient(180deg, rgb(var(--danger) / 1.05) 0%, rgb(var(--danger)) 100%);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 0 rgb(255 255 255 / 0.10);
+  }
+  .btn-danger:hover {
+    filter: brightness(1.05);
+    box-shadow: var(--shadow), inset 0 1px 0 0 rgb(255 255 255 / 0.12);
   }
 
+  /* Button size modifiers */
+  .btn-sm { @apply px-2.5 py-1.5 text-[12.5px]; }
+  .btn-lg { @apply px-5 py-2.5 text-[14.5px]; }
+
+  /* ─── Chip · the universal status pill ─── */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium;
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11.5px] font-medium;
+    letter-spacing: -0.01em;
+  }
+  .chip-sm { @apply px-2 py-0.5 text-[10.5px]; }
+
+  /* ─── Keyboard hint ─── */
+  .kbd {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded-[5px] border border-border bg-surface px-1.5
+      text-[10.5px] font-medium text-muted;
+    box-shadow: 0 1px 0 0 rgb(var(--border));
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
+
+  /* ─── Section eyebrow ─── */
+  .eyebrow {
+    @apply text-[10.5px] font-medium uppercase text-faint;
+    letter-spacing: 0.08em;
+  }
+
+  /* ─── Page surfaces for hero moments ─── */
+  .surface-warm {
+    background-image: var(--grad-warm);
+  }
+  .surface-mesh {
+    background-image: var(--grad-mesh);
+  }
+
+  /* ─── Pulse dot — used in status badges for "in motion" states ─── */
+  .pulse-dot {
+    position: relative;
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+  }
+  .pulse-dot::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.35;
+    animation: pulse-ring 1.6s ease-out infinite;
+  }
+  @keyframes pulse-ring {
+    0%   { transform: scale(0.6); opacity: 0.45; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  /* ─── Divider with subtle gradient ─── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(var(--border)), transparent);
   }
 }
 
-/* Skeleton shimmer */
+/* ─── Skeleton shimmer · used in suspense/loading states ─── */
 .skeleton {
   position: relative;
   overflow: hidden;
   background: rgb(var(--surface-2));
+  border-radius: 8px;
 }
 .skeleton::after {
   content: "";
@@ -139,21 +332,40 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(var(--border) / 0.6),
+    rgb(var(--border) / 0.5),
     transparent
   );
-  animation: shimmer 1.4s infinite;
-}
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
+  animation: shimmer 1.6s infinite;
 }
 
-/* Safe-area padding for iPhone (notch / home indicator) */
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
+/* ─── Animations · subtle, present, never busy ─── */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }
-.pt-safe {
-  padding-top: env(safe-area-inset-top);
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Safe-area insets for iOS PWA ─── */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.pe-safe { padding-inline-end: env(safe-area-inset-right); }
+.ps-safe { padding-inline-start: env(safe-area-inset-left); }
+
+/* ─── Reduced motion users — honor the OS setting ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

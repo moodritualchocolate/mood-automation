@@ -10,7 +10,11 @@ export default function FilesPage() {
   const role = useStore((s) => s.role);
   return (
     <>
-      <PageHeader title={t("files.title")} subtitle={t("files.subtitle")} />
+      <PageHeader
+        eyebrow={t("nav.section.decide")}
+        title={t("files.title")}
+        subtitle={t("files.subtitle")}
+      />
       <FileList editable={canEdit(role)} />
     </>
   );

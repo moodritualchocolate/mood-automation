@@ -27,12 +27,12 @@ export default function SamplesPage() {
   return (
     <>
       <PageHeader
+        eyebrow={t("nav.section.sourcing")}
         title={t("samples.title")}
         subtitle={t("samples.subtitle")}
         action={
           canEdit(role) && (
-            <Button variant="primary" onClick={() => setOpen(true)}>
-              <Plus size={16} />
+            <Button variant="primary" leadingIcon={Plus} onClick={() => setOpen(true)}>
               {t("samples.add")}
             </Button>
           )

@@ -76,7 +76,11 @@ export default function ComparePage() {
 
   return (
     <>
-      <PageHeader title={t("compare.title")} subtitle={t("compare.subtitle")} />
+      <PageHeader
+        eyebrow={t("nav.section.decide")}
+        title={t("compare.title")}
+        subtitle={t("compare.subtitle")}
+      />
 
       {/* Supplier picker */}
       <Card className="mb-4">
