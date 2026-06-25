@@ -63,6 +63,7 @@ export function SupplierForm({
       open={open}
       onClose={onClose}
       title={existing ? t("action.edit") : t("suppliers.new")}
+      subtitle={existing ? existing.company : undefined}
       footer={
         <>
           <Button onClick={onClose}>{t("action.cancel")}</Button>
@@ -72,67 +73,103 @@ export function SupplierForm({
         </>
       }
     >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label={t("suppliers.company")} className="sm:col-span-2">
-          <Input
-            value={form.company}
-            onChange={(e) => set("company", e.target.value)}
-            autoFocus
-            placeholder="Barry Callebaut"
+      <div className="space-y-6">
+        {/* Basic */}
+        <Section eyebrow={t("common.created").split("").length > 0 ? t("suppliers.company") : ""}>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label={t("suppliers.company")} required className="sm:col-span-2">
+              <Input
+                value={form.company}
+                onChange={(e) => set("company", e.target.value)}
+                autoFocus
+                placeholder="Barry Callebaut"
+              />
+            </Field>
+            <Field label={t("suppliers.category")}>
+              <Select value={form.category} onChange={(e) => set("category", e.target.value)}>
+                {SUPPLIER_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {t(`category.${cat}` as const)}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <Field label={t("suppliers.status")}>
+              <Select value={form.status} onChange={(e) => set("status", e.target.value)}>
+                {SUPPLIER_STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {t(`status.${s}` as const)}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+          </div>
+        </Section>
+
+        {/* Contact */}
+        <Section>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label={t("suppliers.contact")}>
+              <Input value={form.contact} onChange={(e) => set("contact", e.target.value)} placeholder="Ana Pereira" />
+            </Field>
+            <Field label={t("common.country")}>
+              <Input value={form.country} onChange={(e) => set("country", e.target.value)} placeholder="Belgium" />
+            </Field>
+            <Field label={t("suppliers.phone")}>
+              <Input
+                value={form.phone}
+                onChange={(e) => set("phone", e.target.value)}
+                dir="ltr"
+                inputMode="tel"
+                placeholder="+32 9 222 33 44"
+                className="mono"
+              />
+            </Field>
+            <Field label={t("suppliers.email")}>
+              <Input
+                value={form.email}
+                onChange={(e) => set("email", e.target.value)}
+                dir="ltr"
+                inputMode="email"
+                placeholder="ana@barry-callebaut.com"
+              />
+            </Field>
+            <Field label={t("suppliers.website")} className="sm:col-span-2">
+              <Input
+                value={form.website}
+                onChange={(e) => set("website", e.target.value)}
+                dir="ltr"
+                placeholder="https://"
+              />
+            </Field>
+          </div>
+        </Section>
+
+        {/* Notes */}
+        <Field label={t("common.notes")}>
+          <Textarea
+            value={form.notes}
+            onChange={(e) => set("notes", e.target.value)}
+            placeholder="—"
           />
-        </Field>
-        <Field label={t("suppliers.category")} className="sm:col-span-2">
-          <Select value={form.category} onChange={(e) => set("category", e.target.value)}>
-            {SUPPLIER_CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {t(`category.${cat}` as const)}
-              </option>
-            ))}
-          </Select>
-        </Field>
-        <Field label={t("suppliers.contact")}>
-          <Input value={form.contact} onChange={(e) => set("contact", e.target.value)} />
-        </Field>
-        <Field label={t("suppliers.phone")}>
-          <Input
-            value={form.phone}
-            onChange={(e) => set("phone", e.target.value)}
-            dir="ltr"
-            inputMode="tel"
-          />
-        </Field>
-        <Field label={t("suppliers.email")}>
-          <Input
-            value={form.email}
-            onChange={(e) => set("email", e.target.value)}
-            dir="ltr"
-            inputMode="email"
-          />
-        </Field>
-        <Field label={t("suppliers.website")}>
-          <Input
-            value={form.website}
-            onChange={(e) => set("website", e.target.value)}
-            dir="ltr"
-            placeholder="https://"
-          />
-        </Field>
-        <Field label={t("common.country")}>
-          <Input value={form.country} onChange={(e) => set("country", e.target.value)} />
-        </Field>
-        <Field label={t("suppliers.status")}>
-          <Select value={form.status} onChange={(e) => set("status", e.target.value)}>
-            {SUPPLIER_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {t(`status.${s}` as const)}
-              </option>
-            ))}
-          </Select>
-        </Field>
-        <Field label={t("common.notes")} className="sm:col-span-2">
-          <Textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} />
         </Field>
       </div>
     </Modal>
   );
 }
+
+function Section({
+  eyebrow,
+  children,
+}: {
+  eyebrow?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-3">
+      {eyebrow && <div className="eyebrow">{eyebrow}</div>}
+      {children}
+    </div>
+  );
+}
+

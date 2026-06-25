@@ -300,8 +300,13 @@ export function EmptyState({
   action?: React.ReactNode;
   className?: string;
 }) {
-  // Auto-detect: function = component (LucideIcon), otherwise treat as node.
-  const isComponent = typeof icon === "function";
+  // Lucide icons are forwardRef *components* — they're objects with a
+  // `render` field, not functions. Detect both function components and
+  // forwardRef components so we render them via JSX; everything else is
+  // treated as an already-rendered React element.
+  const isComponent =
+    typeof icon === "function" ||
+    (typeof icon === "object" && icon !== null && "render" in (icon as unknown as Record<string, unknown>));
   const IconComp = isComponent ? (icon as LucideIcon) : null;
 
   return (

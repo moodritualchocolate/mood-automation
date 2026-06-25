@@ -2,11 +2,11 @@
 
 import { StatusBadge } from "@/components/status";
 import { PageHeader } from "@/components/ui/page-header";
-import { Card, EmptyState, ScoreBadge } from "@/components/ui/primitives";
+import { Card, Chip, EmptyState, ScoreBadge } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n/provider";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
-import { BarChart3, Check } from "lucide-react";
+import { BarChart3, Check, Trophy } from "lucide-react";
 import { useMemo, useState } from "react";
 
 interface Row {
@@ -42,7 +42,6 @@ export default function ComparePage() {
       const mat = materials.find((m) => m.supplierId === id);
       const q = qs[0];
 
-      // Overall: weighted blend of rating, taste, price competitiveness, COA presence.
       let overall = 0;
       let w = 0;
       if (rating != null) { overall += rating * 3; w += 3; }
@@ -80,11 +79,29 @@ export default function ComparePage() {
         eyebrow={t("nav.section.decide")}
         title={t("compare.title")}
         subtitle={t("compare.subtitle")}
+        meta={
+          selected.length > 0 && (
+            <Chip tone="brand" size="sm">
+              <span className="mono">{selected.length}</span>
+              {t("compare.pick")}
+            </Chip>
+          )
+        }
       />
 
       {/* Supplier picker */}
-      <Card className="mb-4">
-        <div className="mb-3 text-sm font-semibold">{t("compare.pick")}</div>
+      <Card className="mb-5">
+        <div className="mb-3 flex items-center justify-between">
+          <div className="eyebrow">{t("compare.pick")}</div>
+          {selected.length > 0 && (
+            <button
+              onClick={() => setSelected([])}
+              className="text-[11.5px] font-medium text-muted hover:text-fg"
+            >
+              {t("action.cancel")}
+            </button>
+          )}
+        </div>
         <div className="flex flex-wrap gap-2">
           {suppliers.map((s) => {
             const on = selected.includes(s.id);
@@ -93,13 +110,13 @@ export default function ComparePage() {
                 key={s.id}
                 onClick={() => toggle(s.id)}
                 className={cn(
-                  "chip transition",
+                  "chip transition-all duration-150",
                   on
-                    ? "border-brand bg-brand-soft text-brand"
-                    : "border-border text-muted hover:border-border-strong",
+                    ? "border-brand bg-brand text-brand-fg shadow-sm"
+                    : "border-border text-fg-2 hover:border-border-strong hover:bg-surface-2",
                 )}
               >
-                {on && <Check size={13} />}
+                {on && <Check size={11} strokeWidth={2.6} />}
                 {s.company}
               </button>
             );
@@ -108,59 +125,111 @@ export default function ComparePage() {
       </Card>
 
       {rows.length < 2 ? (
-        <EmptyState icon={<BarChart3 size={28} />} title={t("compare.empty")} />
+        <EmptyState
+          icon={BarChart3}
+          title={t("compare.empty")}
+          hint="Select at least 2 suppliers above to compare."
+        />
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="sticky start-0 bg-surface px-4 py-3 text-start text-xs font-medium text-muted">
-                  {t("compare.metric")}
-                </th>
-                {rows.map((r) => (
-                  <th key={r.id} className="px-4 py-3 text-start font-semibold">
-                    {r.company}
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-[13px]">
+              <thead className="bg-surface-2/40">
+                <tr className="border-b border-border">
+                  <th className="sticky start-0 z-10 bg-surface-2/80 px-4 py-3 text-start text-[10.5px] font-semibold uppercase tracking-[0.06em] text-faint backdrop-blur-sm">
+                    {t("compare.metric")}
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <CompareRow label={t("suppliers.status")} cells={rows.map((r) => {
-                const s = suppliers.find((x) => x.id === r.id)!;
-                return <StatusBadge key={r.id} status={s.status} />;
-              })} />
-              <CompareRow
-                label={`${t("common.price")} (€/kg)`}
-                cells={rows.map((r) => (
-                  <span key={r.id} className={cn(r.price != null && r.price === bestPrice && "chip border-transparent bg-success/12 font-semibold text-success")}>
-                    {r.price != null ? r.price.toFixed(2) : "—"}
-                  </span>
-                ))}
-              />
-              <CompareRow label={t("compare.bestPrice") && "MOQ"} cells={rows.map((r) => <span key={r.id}>{r.moq || "—"}</span>)} />
-              <CompareRow label={t("common.country")} cells={rows.map((r) => <span key={r.id}>{r.country || "—"}</span>)} />
-              <CompareRow label={t("compare.taste")} cells={rows.map((r) => <ScoreBadge key={r.id} score={r.taste} />)} />
-              <CompareRow label={t("quotes.leadTime")} cells={rows.map((r) => <span key={r.id}>{r.leadTime || "—"}</span>)} />
-              <CompareRow label={t("compare.rating")} cells={rows.map((r) => <ScoreBadge key={r.id} score={r.rating} />)} />
-              <CompareRow
-                label={t("compare.overall")}
-                highlight
-                cells={rows.map((r) => (
-                  <span
-                    key={r.id}
-                    className={cn(
-                      "chip border-transparent font-bold",
-                      bestOverall != null && r.overall === bestOverall && r.overall > 0
-                        ? "bg-brand text-brand-fg"
-                        : "bg-surface-2",
-                    )}
-                  >
-                    {r.overall > 0 ? r.overall.toFixed(1) : "—"}
-                  </span>
-                ))}
-              />
-            </tbody>
-          </table>
+                  {rows.map((r) => (
+                    <th key={r.id} className="px-4 py-3 text-start text-[13.5px] font-semibold text-fg">
+                      {r.company}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <CompareRow
+                  label={t("suppliers.status")}
+                  cells={rows.map((r) => {
+                    const s = suppliers.find((x) => x.id === r.id)!;
+                    return <StatusBadge key={r.id} status={s.status} size="sm" />;
+                  })}
+                />
+                <CompareRow
+                  label={`${t("common.price")} (€/kg)`}
+                  cells={rows.map((r) => (
+                    <span key={r.id}>
+                      {r.price != null ? (
+                        r.price === bestPrice ? (
+                          <Chip tone="success" size="sm" className="font-semibold">
+                            <span className="mono">€{r.price.toFixed(2)}</span>
+                          </Chip>
+                        ) : (
+                          <span className="mono font-semibold text-fg">€{r.price.toFixed(2)}</span>
+                        )
+                      ) : (
+                        <span className="text-faint">—</span>
+                      )}
+                    </span>
+                  ))}
+                />
+                <CompareRow
+                  label="MOQ"
+                  cells={rows.map((r) => (
+                    <span key={r.id} className={cn("mono", r.moq ? "text-fg-2" : "text-faint")}>
+                      {r.moq || "—"}
+                    </span>
+                  ))}
+                />
+                <CompareRow
+                  label={t("common.country")}
+                  cells={rows.map((r) => (
+                    <span key={r.id} className={r.country ? "text-fg-2" : "text-faint"}>
+                      {r.country || "—"}
+                    </span>
+                  ))}
+                />
+                <CompareRow
+                  label={t("compare.taste")}
+                  cells={rows.map((r) => <ScoreBadge key={r.id} score={r.taste} />)}
+                />
+                <CompareRow
+                  label={t("quotes.leadTime")}
+                  cells={rows.map((r) => (
+                    <span key={r.id} className={r.leadTime ? "text-fg-2" : "text-faint"}>
+                      {r.leadTime || "—"}
+                    </span>
+                  ))}
+                />
+                <CompareRow
+                  label={t("compare.rating")}
+                  cells={rows.map((r) => <ScoreBadge key={r.id} score={r.rating} />)}
+                />
+                <CompareRow
+                  label={t("compare.overall")}
+                  highlight
+                  cells={rows.map((r) => {
+                    const isWinner = bestOverall != null && r.overall === bestOverall && r.overall > 0;
+                    return (
+                      <span key={r.id}>
+                        {r.overall > 0 ? (
+                          isWinner ? (
+                            <Chip tone="brand" className="font-bold">
+                              <Trophy size={11} strokeWidth={2.4} />
+                              <span className="mono">{r.overall.toFixed(1)}</span>
+                            </Chip>
+                          ) : (
+                            <span className="mono font-semibold text-fg">{r.overall.toFixed(1)}</span>
+                          )
+                        ) : (
+                          <span className="text-faint">—</span>
+                        )}
+                      </span>
+                    );
+                  })}
+                />
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </>
@@ -177,12 +246,15 @@ function CompareRow({
   highlight?: boolean;
 }) {
   return (
-    <tr className={cn("border-b border-border last:border-0", highlight && "bg-surface-2/60")}>
-      <td className="sticky start-0 bg-surface px-4 py-3 text-xs font-medium text-muted">
+    <tr className={cn(
+      "border-b border-border-soft last:border-0 transition-colors hover:bg-surface-2/30",
+      highlight && "bg-brand-soft/30",
+    )}>
+      <td className="sticky start-0 z-10 bg-surface px-4 py-3.5 text-[11.5px] font-medium text-muted">
         {label}
       </td>
       {cells.map((c, i) => (
-        <td key={i} className="px-4 py-3">
+        <td key={i} className="px-4 py-3.5">
           {c}
         </td>
       ))}

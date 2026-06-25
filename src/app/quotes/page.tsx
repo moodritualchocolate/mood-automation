@@ -2,7 +2,7 @@
 
 import { QuoteForm } from "@/components/quote-form";
 import { PageHeader } from "@/components/ui/page-header";
-import { Button, Card, EmptyState } from "@/components/ui/primitives";
+import { Button, Chip, EmptyState } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n/provider";
 import { canEdit, useStore } from "@/lib/store";
 import { formatDate } from "@/lib/utils";
@@ -35,6 +35,22 @@ export default function QuotesPage() {
         eyebrow={t("nav.section.sourcing")}
         title={t("quotes.title")}
         subtitle={t("quotes.subtitle")}
+        meta={
+          quotes.length > 0 && (
+            <>
+              <Chip tone="neutral" size="sm">
+                <span className="mono">{quotes.length}</span>
+                {t("nav.quotes")}
+              </Chip>
+              {best != null && (
+                <Chip tone="success" size="sm">
+                  {t("compare.bestPrice")}
+                  <span className="mono font-semibold">€{best.toFixed(2)}</span>
+                </Chip>
+              )}
+            </>
+          )
+        }
         action={
           canEdit(role) && (
             <Button variant="primary" leadingIcon={Plus} onClick={() => setOpen(true)}>
@@ -43,51 +59,81 @@ export default function QuotesPage() {
           )
         }
       />
+
       {quotes.length === 0 ? (
-        <EmptyState icon={<Receipt size={28} />} title={t("quotes.empty")} />
+        <EmptyState
+          icon={Receipt}
+          title={t("quotes.empty")}
+          hint="הוסף את ההצעה הראשונה כדי להתחיל להשוות מחירים."
+          action={
+            canEdit(role) && (
+              <Button variant="primary" leadingIcon={Plus} onClick={() => setOpen(true)}>
+                {t("quotes.add")}
+              </Button>
+            )
+          }
+        />
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-start text-xs text-muted">
-                <th className="px-4 py-3 text-start font-medium">{t("common.supplier")}</th>
-                <th className="px-4 py-3 text-start font-medium">{t("common.material")}</th>
-                <th className="px-4 py-3 text-start font-medium">{t("quotes.pricePerKg")}</th>
-                <th className="hidden px-4 py-3 text-start font-medium sm:table-cell">{t("quotes.moq")}</th>
-                <th className="hidden px-4 py-3 text-start font-medium md:table-cell">{t("quotes.leadTime")}</th>
-                <th className="hidden px-4 py-3 text-start font-medium lg:table-cell">{t("quotes.paymentTerms")}</th>
-                <th className="hidden px-4 py-3 text-start font-medium md:table-cell">{t("common.date")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {quotes.map((q) => {
-                const isBest = best != null && q.pricePerKg === best;
-                return (
-                  <tr key={q.id} className="border-b border-border last:border-0 hover:bg-surface-2">
-                    <td className="px-4 py-3">
-                      <Link href={`/suppliers/${q.supplierId}`} className="font-medium text-brand hover:underline">
-                        {supplierName(q.supplierId)}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3 text-muted">{q.material || "—"}</td>
-                    <td className="px-4 py-3">
-                      {q.pricePerKg != null ? (
-                        <span className={isBest ? "chip border-transparent bg-success/12 font-semibold text-success" : "font-semibold"}>
-                          {q.pricePerKg.toFixed(2)}€{isBest && ` · ${t("compare.bestPrice")}`}
-                        </span>
-                      ) : "—"}
-                    </td>
-                    <td className="hidden px-4 py-3 text-muted sm:table-cell">{q.moq || "—"}</td>
-                    <td className="hidden px-4 py-3 text-muted md:table-cell">{q.leadTime || "—"}</td>
-                    <td className="hidden px-4 py-3 text-muted lg:table-cell">{q.paymentTerms || "—"}</td>
-                    <td className="hidden px-4 py-3 text-faint md:table-cell">{formatDate(q.date, lang)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-[13.5px]">
+              <thead className="bg-surface-2/40">
+                <tr className="border-b border-border text-start text-[10.5px] uppercase tracking-[0.06em] text-faint">
+                  <th className="px-4 py-3 text-start font-semibold">{t("common.supplier")}</th>
+                  <th className="px-4 py-3 text-start font-semibold">{t("common.material")}</th>
+                  <th className="px-4 py-3 text-end font-semibold">{t("quotes.pricePerKg")}</th>
+                  <th className="hidden px-4 py-3 text-start font-semibold sm:table-cell">{t("quotes.moq")}</th>
+                  <th className="hidden px-4 py-3 text-start font-semibold md:table-cell">{t("quotes.leadTime")}</th>
+                  <th className="hidden px-4 py-3 text-start font-semibold lg:table-cell">{t("quotes.paymentTerms")}</th>
+                  <th className="hidden px-4 py-3 text-end font-semibold md:table-cell">{t("common.date")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {quotes.map((q) => {
+                  const isBest = best != null && q.pricePerKg === best;
+                  return (
+                    <tr
+                      key={q.id}
+                      className="border-b border-border-soft last:border-0 transition-colors hover:bg-surface-2/60"
+                    >
+                      <td className="px-4 py-3.5">
+                        <Link
+                          href={`/suppliers/${q.supplierId}`}
+                          className="font-semibold text-fg hover:text-brand"
+                        >
+                          {supplierName(q.supplierId)}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3.5 text-fg-2">{q.material || "—"}</td>
+                      <td className="mono px-4 py-3.5 text-end tabular">
+                        {q.pricePerKg != null ? (
+                          isBest ? (
+                            <Chip tone="success" size="sm" className="font-semibold">
+                              €{q.pricePerKg.toFixed(2)}
+                              <span className="text-[9.5px] uppercase tracking-wider opacity-80">best</span>
+                            </Chip>
+                          ) : (
+                            <span className="font-semibold text-fg">€{q.pricePerKg.toFixed(2)}</span>
+                          )
+                        ) : (
+                          <span className="text-faint">—</span>
+                        )}
+                      </td>
+                      <td className="mono hidden px-4 py-3.5 text-fg-2 sm:table-cell">{q.moq || "—"}</td>
+                      <td className="hidden px-4 py-3.5 text-fg-2 md:table-cell">{q.leadTime || "—"}</td>
+                      <td className="hidden px-4 py-3.5 text-fg-2 lg:table-cell">{q.paymentTerms || "—"}</td>
+                      <td className="mono hidden px-4 py-3.5 text-end text-faint md:table-cell">
+                        {formatDate(q.date, lang)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
+
       <QuoteForm open={open} onClose={() => setOpen(false)} />
     </>
   );

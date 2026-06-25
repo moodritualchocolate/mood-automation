@@ -12,6 +12,7 @@ import { Modal } from "@/components/ui/modal";
 import {
   Button,
   Card,
+  Chip,
   EmptyState,
   ScoreBadge,
   Select,
@@ -303,35 +304,39 @@ function TimelineTab({ supplierId, editable }: { supplierId: string; editable: b
   return (
     <>
       {editable && (
-        <Button variant="primary" className="mb-4 w-full sm:w-auto" onClick={() => setOpen(true)}>
-          <Plus size={16} />
+        <Button variant="primary" leadingIcon={Plus} className="mb-4 w-full sm:w-auto" onClick={() => setOpen(true)}>
           {t("timeline.add")}
         </Button>
       )}
       {events.length === 0 ? (
-        <EmptyState icon={<MessageSquarePlus size={26} />} title={t("timeline.empty")} />
+        <EmptyState icon={MessageSquarePlus} title={t("timeline.empty")} />
       ) : (
-        <ol className="relative space-y-4 border-s-2 border-border ps-5">
+        <ol className="relative space-y-3 ps-7">
+          <span className="absolute inset-y-1 start-[10px] w-px bg-border-soft" aria-hidden />
           {events.map((e) => (
             <li key={e.id} className="relative">
-              <span className="absolute -start-[27px] top-1 flex h-5 w-5 items-center justify-center rounded-full bg-surface text-[11px] ring-2 ring-border">
+              <span className="absolute -start-7 top-3 flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 border-bg bg-surface text-[11px] shadow-sm ring-1 ring-border">
                 {EVENT_ICON[e.type]}
               </span>
-              <Card className="group">
-                <div className="mb-1 flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold text-brand">
-                    {t(`event.${e.type}` as const)} · {formatDate(e.date, lang)}
-                  </span>
+              <Card className="group !p-4">
+                <div className="mb-1.5 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Chip tone="brand" size="sm">
+                      {t(`event.${e.type}` as const)}
+                    </Chip>
+                    <span className="mono text-[11px] text-faint">{formatDate(e.date, lang)}</span>
+                  </div>
                   {editable && (
                     <button
                       onClick={() => deleteEvent(e.id)}
-                      className="text-faint opacity-0 transition group-hover:opacity-100 hover:text-danger"
+                      className="flex h-7 w-7 items-center justify-center rounded-md text-faint opacity-0 transition group-hover:opacity-100 hover:bg-danger-soft hover:text-danger"
+                      aria-label={t("action.delete")}
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={13} />
                     </button>
                   )}
                 </div>
-                <p className="whitespace-pre-wrap text-sm leading-relaxed">{e.text}</p>
+                <p className="whitespace-pre-wrap text-[13.5px] leading-relaxed text-fg-2">{e.text}</p>
               </Card>
             </li>
           ))}
@@ -370,53 +375,51 @@ function MaterialsTab({ supplierId, editable }: { supplierId: string; editable: 
       {editable && (
         <Button
           variant="primary"
+          leadingIcon={Plus}
           className="mb-4 w-full sm:w-auto"
           onClick={() => {
             setEditing(undefined);
             setOpen(true);
           }}
         >
-          <Plus size={16} />
           {t("material.add")}
         </Button>
       )}
       {materials.length === 0 ? (
-        <EmptyState icon={<Package size={26} />} title={t("material.empty")} />
+        <EmptyState icon={Package} title={t("material.empty")} />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:gap-4">
           {materials.map((m) => (
-            <Card key={m.id} className="group">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="chip border-transparent bg-brand-soft text-brand">
+            <Card key={m.id} interactive className="group">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Chip tone="brand" size="sm">
                       {t(`material.${m.kind}` as const)}
-                    </span>
+                    </Chip>
                     {m.coa && (
-                      <span className="chip border-transparent bg-success/12 text-success">
-                        COA
-                      </span>
+                      <Chip tone="success" size="sm">COA</Chip>
                     )}
                   </div>
-                  <p className="mt-2 text-sm text-muted">{summary(m)}</p>
+                  <p className="mt-2.5 text-[13px] leading-relaxed text-fg-2">{summary(m)}</p>
                 </div>
-                <ScoreBadge score={m.score} />
+                <ScoreBadge score={m.score} size="lg" />
               </div>
-              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
-                {m.productCode && <span dir="ltr">#{m.productCode}</span>}
-                {m.moq && <span>MOQ {m.moq}</span>}
-                {m.price && <span className="font-semibold text-fg">{m.price}</span>}
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">
+                {m.productCode && <span className="mono text-muted" dir="ltr">#{m.productCode}</span>}
+                {m.moq && <span className="mono text-fg-2">MOQ <b>{m.moq}</b></span>}
+                {m.price && <span className="mono font-semibold text-fg">{m.price}</span>}
               </div>
               {m.tasteNotes && (
-                <p className="mt-2 text-xs italic text-muted">“{m.tasteNotes}”</p>
+                <p className="mt-2 text-[12.5px] italic leading-relaxed text-muted">“{m.tasteNotes}”</p>
               )}
               {editable && (
                 <div className="mt-3 flex justify-end gap-1 opacity-0 transition group-hover:opacity-100">
-                  <button onClick={() => { setEditing(m); setOpen(true); }} className="text-faint hover:text-fg">
-                    <Pencil size={14} />
+                  <button onClick={() => { setEditing(m); setOpen(true); }} className="flex h-7 w-7 items-center justify-center rounded-md text-faint hover:bg-surface-2 hover:text-fg">
+                    <Pencil size={13} />
                   </button>
-                  <button onClick={() => deleteMaterial(m.id)} className="text-faint hover:text-danger">
-                    <Trash2 size={14} />
+                  <button onClick={() => deleteMaterial(m.id)} className="flex h-7 w-7 items-center justify-center rounded-md text-faint hover:bg-danger-soft hover:text-danger">
+                    <Trash2 size={13} />
                   </button>
                 </div>
               )}
@@ -445,49 +448,55 @@ function SamplesTab({ supplierId, editable }: { supplierId: string; editable: bo
   return (
     <>
       {editable && (
-        <Button variant="primary" className="mb-4 w-full sm:w-auto" onClick={() => setOpen(true)}>
-          <Plus size={16} />
+        <Button variant="primary" leadingIcon={Plus} className="mb-4 w-full sm:w-auto" onClick={() => setOpen(true)}>
           {t("samples.add")}
         </Button>
       )}
       {samples.length === 0 ? (
-        <EmptyState icon={<FlaskConical size={26} />} title={t("samples.empty")} />
+        <EmptyState icon={FlaskConical} title={t("samples.empty")} />
       ) : (
         <div className="space-y-3">
           {samples.map((s) => (
-            <Card key={s.id} className="group">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="font-medium">{s.material || t("common.material")}</div>
-                  <div className="text-xs text-muted">{formatDate(s.date, lang)}</div>
+            <Card key={s.id} interactive className="group">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="text-[14px] font-semibold text-fg">{s.material || t("common.material")}</div>
+                  <div className="mono mt-0.5 text-[11.5px] text-faint">{formatDate(s.date, lang)}</div>
                 </div>
                 <div className="flex items-center gap-2">
                   {s.suitable != null &&
                     (s.suitable ? (
-                      <span className="chip border-transparent bg-success/12 text-success">
-                        <CheckCircle2 size={13} /> {t("samples.suitableShort")}
-                      </span>
+                      <Chip tone="success" size="sm" icon={CheckCircle2}>
+                        {t("samples.suitableShort")}
+                      </Chip>
                     ) : (
-                      <span className="chip border-transparent bg-danger/12 text-danger">
-                        <XCircle size={13} /> {t("common.no")}
-                      </span>
+                      <Chip tone="danger" size="sm" icon={XCircle}>
+                        {t("common.no")}
+                      </Chip>
                     ))}
-                  <ScoreBadge score={s.finalScore} />
+                  <ScoreBadge score={s.finalScore} size="lg" />
                 </div>
               </div>
-              <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="mt-3 grid grid-cols-3 gap-2">
                 <Metric label={t("samples.taste")} value={s.taste} />
                 <Metric label={t("samples.texture")} value={s.texture} />
                 <Metric label={t("samples.melt")} value={s.melt} />
               </div>
-              {s.impression && <p className="mt-3 text-sm text-muted">{s.impression}</p>}
+              {s.impression && (
+                <p className="mt-3 text-[13px] leading-relaxed text-fg-2">{s.impression}</p>
+              )}
               {s.aftertaste && (
-                <p className="mt-1 text-xs text-muted">{t("samples.aftertaste")}: {s.aftertaste}</p>
+                <p className="mt-1 text-[12px] text-muted">
+                  <span className="font-medium text-fg-2">{t("samples.aftertaste")}:</span> {s.aftertaste}
+                </p>
               )}
               {editable && (
                 <div className="mt-2 flex justify-end opacity-0 transition group-hover:opacity-100">
-                  <button onClick={() => deleteSample(s.id)} className="text-faint hover:text-danger">
-                    <Trash2 size={14} />
+                  <button
+                    onClick={() => deleteSample(s.id)}
+                    className="flex h-7 w-7 items-center justify-center rounded-md text-faint hover:bg-danger-soft hover:text-danger"
+                  >
+                    <Trash2 size={13} />
                   </button>
                 </div>
               )}
@@ -502,9 +511,9 @@ function SamplesTab({ supplierId, editable }: { supplierId: string; editable: bo
 
 function Metric({ label, value }: { label: string; value?: number }) {
   return (
-    <div className="rounded-lg bg-surface-2 py-2">
-      <div className="text-base font-semibold tabular-nums">{value ?? "—"}</div>
-      <div className="text-[10px] text-muted">{label}</div>
+    <div className="rounded-lg border border-border-soft bg-surface-2/50 py-2 text-center">
+      <div className="mono tabular text-[15px] font-semibold text-fg">{value ?? "—"}</div>
+      <div className="text-[10px] uppercase tracking-wider text-muted">{label}</div>
     </div>
   );
 }
@@ -525,36 +534,55 @@ function QuotesTab({ supplierId, editable }: { supplierId: string; editable: boo
   return (
     <>
       {editable && (
-        <Button variant="primary" className="mb-4 w-full sm:w-auto" onClick={() => setOpen(true)}>
-          <Plus size={16} />
+        <Button variant="primary" leadingIcon={Plus} className="mb-4 w-full sm:w-auto" onClick={() => setOpen(true)}>
           {t("quotes.add")}
         </Button>
       )}
       {quotes.length === 0 ? (
-        <EmptyState icon={<Receipt size={26} />} title={t("quotes.empty")} />
+        <EmptyState icon={Receipt} title={t("quotes.empty")} />
       ) : (
         <div className="space-y-3">
           {quotes.map((q) => (
-            <Card key={q.id} className="group">
-              <div className="flex items-start justify-between gap-2">
-                <div className="font-medium">{q.material || t("common.material")}</div>
+            <Card key={q.id} interactive className="group">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="text-[14px] font-semibold text-fg">{q.material || t("common.material")}</div>
+                  <div className="mono mt-0.5 text-[11.5px] text-faint">{formatDate(q.date, lang)}</div>
+                </div>
                 {q.pricePerKg != null && (
-                  <div className="text-lg font-bold text-brand">
-                    {q.pricePerKg.toFixed(2)}€<span className="text-xs font-normal text-muted">/kg</span>
+                  <div className="text-end">
+                    <div className="mono text-[22px] font-bold leading-none tabular text-brand">
+                      €{q.pricePerKg.toFixed(2)}
+                    </div>
+                    <div className="text-[10.5px] uppercase tracking-wider text-muted">/ kg</div>
                   </div>
                 )}
               </div>
-              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
-                {q.moq && <span>MOQ {q.moq}</span>}
-                {q.leadTime && <span>{t("quotes.leadTime")}: {q.leadTime}</span>}
-                {q.paymentTerms && <span>{q.paymentTerms}</span>}
-                <span className="ms-auto text-faint">{formatDate(q.date, lang)}</span>
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px]">
+                {q.moq && (
+                  <span className="mono text-fg-2">
+                    <span className="text-faint">MOQ</span> <b>{q.moq}</b>
+                  </span>
+                )}
+                {q.leadTime && (
+                  <span className="text-fg-2">
+                    <span className="text-faint">{t("quotes.leadTime")}:</span> <b>{q.leadTime}</b>
+                  </span>
+                )}
+                {q.paymentTerms && (
+                  <span className="text-fg-2">{q.paymentTerms}</span>
+                )}
               </div>
-              {q.notes && <p className="mt-2 text-sm text-muted">{q.notes}</p>}
+              {q.notes && (
+                <p className="mt-3 text-[13px] leading-relaxed text-fg-2">{q.notes}</p>
+              )}
               {editable && (
                 <div className="mt-2 flex justify-end opacity-0 transition group-hover:opacity-100">
-                  <button onClick={() => deleteQuote(q.id)} className="text-faint hover:text-danger">
-                    <Trash2 size={14} />
+                  <button
+                    onClick={() => deleteQuote(q.id)}
+                    className="flex h-7 w-7 items-center justify-center rounded-md text-faint hover:bg-danger-soft hover:text-danger"
+                  >
+                    <Trash2 size={13} />
                   </button>
                 </div>
               )}
@@ -586,45 +614,71 @@ function TasksTab({ supplierId, editable }: { supplierId: string; editable: bool
   return (
     <>
       {editable && (
-        <form
-          className="mb-4 flex gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!title.trim()) return;
-            addTask({ supplierId, title: title.trim() });
-            setTitle("");
-          }}
-        >
-          <input
-            className="input-base flex-1"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder={t("tasks.placeholder")}
-          />
-          <Button variant="primary" type="submit">
-            <Plus size={16} />
-          </Button>
-        </form>
+        <Card className="mb-4 !p-3">
+          <form
+            className="flex gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!title.trim()) return;
+              addTask({ supplierId, title: title.trim() });
+              setTitle("");
+            }}
+          >
+            <input
+              className="input-base flex-1"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={t("tasks.placeholder")}
+            />
+            <Button variant="primary" leadingIcon={Plus} type="submit">
+              {t("action.add")}
+            </Button>
+          </form>
+        </Card>
       )}
       {tasks.length === 0 ? (
-        <EmptyState icon={<CheckCircle2 size={26} />} title={t("tasks.empty")} />
+        <EmptyState icon={CheckCircle2} title={t("tasks.empty")} />
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-1.5">
           {tasks.map((tk) => (
-            <li key={tk.id} className="group flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2.5">
-              <input
-                type="checkbox"
-                checked={tk.done}
-                disabled={!editable}
-                onChange={() => toggleTask(tk.id)}
-                className="h-4 w-4 accent-[rgb(var(--brand))]"
-              />
-              <span className={cn("flex-1 text-sm", tk.done && "text-faint line-through")}>
+            <li
+              key={tk.id}
+              className="group flex items-center gap-3 rounded-xl border border-border-soft bg-surface px-4 py-3 transition-all duration-150 hover:border-border-strong hover:shadow-sm"
+            >
+              <label className="flex shrink-0 cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  checked={tk.done}
+                  disabled={!editable}
+                  onChange={() => toggleTask(tk.id)}
+                  className="peer sr-only"
+                />
+                <span className={cn(
+                  "flex h-[18px] w-[18px] items-center justify-center rounded-md border-2 transition-all",
+                  tk.done
+                    ? "border-success bg-success text-white"
+                    : "border-border-strong bg-surface hover:border-brand",
+                )}>
+                  {tk.done && (
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                      <path d="m5 12 4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </span>
+              </label>
+              <span className={cn(
+                "flex-1 text-[13.5px] font-medium",
+                tk.done ? "text-faint line-through" : "text-fg",
+              )}>
                 {tk.title}
               </span>
               {editable && (
-                <button onClick={() => deleteTask(tk.id)} className="text-faint opacity-0 transition group-hover:opacity-100 hover:text-danger">
-                  <Trash2 size={14} />
+                <button
+                  onClick={() => deleteTask(tk.id)}
+                  className="flex h-7 w-7 items-center justify-center rounded-md text-faint opacity-0 transition group-hover:opacity-100 hover:bg-danger-soft hover:text-danger"
+                  aria-label={t("action.delete")}
+                >
+                  <Trash2 size={13} />
                 </button>
               )}
             </li>

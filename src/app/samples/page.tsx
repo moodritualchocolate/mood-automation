@@ -2,7 +2,7 @@
 
 import { SampleForm } from "@/components/sample-form";
 import { PageHeader } from "@/components/ui/page-header";
-import { Button, Card, EmptyState, ScoreBadge } from "@/components/ui/primitives";
+import { Button, Card, Chip, EmptyState, ScoreBadge } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n/provider";
 import { canEdit, useStore } from "@/lib/store";
 import { formatDate } from "@/lib/utils";
@@ -30,6 +30,14 @@ export default function SamplesPage() {
         eyebrow={t("nav.section.sourcing")}
         title={t("samples.title")}
         subtitle={t("samples.subtitle")}
+        meta={
+          samples.length > 0 && (
+            <Chip tone="neutral" size="sm">
+              <span className="mono">{samples.length}</span>
+              {t("supplier.samples")}
+            </Chip>
+          )
+        }
         action={
           canEdit(role) && (
             <Button variant="primary" leadingIcon={Plus} onClick={() => setOpen(true)}>
@@ -38,42 +46,71 @@ export default function SamplesPage() {
           )
         }
       />
+
       {samples.length === 0 ? (
-        <EmptyState icon={<FlaskConical size={28} />} title={t("samples.empty")} />
+        <EmptyState
+          icon={FlaskConical}
+          title={t("samples.empty")}
+          action={
+            canEdit(role) && (
+              <Button variant="primary" leadingIcon={Plus} onClick={() => setOpen(true)}>
+                {t("samples.add")}
+              </Button>
+            )
+          }
+        />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4">
           {samples.map((s) => (
-            <Card key={s.id}>
-              <div className="flex items-start justify-between gap-2">
-                <Link href={`/suppliers/${s.supplierId}`} className="text-sm font-semibold text-brand hover:underline">
-                  {supplierName(s.supplierId)}
-                </Link>
-                <ScoreBadge score={s.finalScore} />
+            <Card key={s.id} interactive className="flex flex-col gap-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/suppliers/${s.supplierId}`}
+                    className="block truncate text-[14px] font-semibold text-fg hover:text-brand"
+                  >
+                    {supplierName(s.supplierId)}
+                  </Link>
+                  <div className="mt-0.5 truncate text-[12.5px] text-fg-2">
+                    {s.material || t("common.material")}
+                  </div>
+                  <div className="mono mt-0.5 text-[11px] text-faint">
+                    {formatDate(s.date, lang)}
+                  </div>
+                </div>
+                <ScoreBadge score={s.finalScore} size="lg" />
               </div>
-              <div className="mt-1 text-sm">{s.material || t("common.material")}</div>
-              <div className="text-xs text-muted">{formatDate(s.date, lang)}</div>
-              <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+
+              <div className="grid grid-cols-3 gap-2 text-center">
                 {[
                   [t("samples.taste"), s.taste],
                   [t("samples.texture"), s.texture],
                   [t("samples.melt"), s.melt],
                 ].map(([label, val], i) => (
-                  <div key={i} className="rounded-lg bg-surface-2 py-1.5">
-                    <div className="text-sm font-semibold tabular-nums">{(val as number) ?? "—"}</div>
-                    <div className="text-[10px] text-muted">{label as string}</div>
+                  <div
+                    key={i}
+                    className="rounded-lg border border-border-soft bg-surface-2/50 py-2"
+                  >
+                    <div className="mono tabular text-[15px] font-semibold text-fg">
+                      {(val as number) ?? "—"}
+                    </div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted">
+                      {label as string}
+                    </div>
                   </div>
                 ))}
               </div>
+
               {s.suitable != null && (
-                <div className="mt-3">
+                <div>
                   {s.suitable ? (
-                    <span className="chip border-transparent bg-success/12 text-success">
-                      <CheckCircle2 size={13} /> {t("samples.suitable")}
-                    </span>
+                    <Chip tone="success" size="sm" icon={CheckCircle2}>
+                      {t("samples.suitable")}
+                    </Chip>
                   ) : (
-                    <span className="chip border-transparent bg-danger/12 text-danger">
-                      <XCircle size={13} /> {t("common.no")}
-                    </span>
+                    <Chip tone="danger" size="sm" icon={XCircle}>
+                      {t("common.no")}
+                    </Chip>
                   )}
                 </div>
               )}
@@ -81,6 +118,7 @@ export default function SamplesPage() {
           ))}
         </div>
       )}
+
       <SampleForm open={open} onClose={() => setOpen(false)} />
     </>
   );
