@@ -685,6 +685,10 @@ function renderSystemPanel() {
     chip.className = 'mode-chip ' + (health.demoMode ? 'demo' : 'real');
   }
 
+  // The review page no longer renders the full system panel (it lives on the
+  // dashboard). Bail out cleanly when the container isn't present.
+  if (!$('#systemPanel')) return;
+
   const ytLine = health.youtubeConnected
     ? `<span class="flag-yes">מחובר${health.youtubeConnectionIsDemo ? ' (הדגמה)' : ''}</span>`
     : '<span class="flag-no">לא מחובר</span>';
