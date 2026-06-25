@@ -1,7 +1,7 @@
 "use client";
 
 import { PageHeader } from "@/components/ui/page-header";
-import { Button, Card } from "@/components/ui/primitives";
+import { Button, Card, Chip } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n/provider";
 import type { DictKey } from "@/lib/i18n/dictionary";
 import { useStore } from "@/lib/store";
@@ -10,7 +10,18 @@ import { useTheme } from "@/lib/theme";
 import type { Lang } from "@/lib/i18n/dictionary";
 import type { Role } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Cloud, Database, Languages, Moon, Shield, Sun } from "lucide-react";
+import {
+  Cloud,
+  CloudOff,
+  Database,
+  Languages,
+  type LucideIcon,
+  Moon,
+  RefreshCw,
+  Shield,
+  Sun,
+  Trash2,
+} from "lucide-react";
 
 export default function SettingsPage() {
   const { t, lang, setLang } = useI18n();
@@ -22,11 +33,18 @@ export default function SettingsPage() {
 
   return (
     <>
-      <PageHeader title={t("settings.title")} />
-      <div className="grid max-w-3xl grid-cols-1 gap-4">
+      <PageHeader
+        eyebrow={t("app.full")}
+        title={t("settings.title")}
+        subtitle="Preferences & data · saved locally on this device."
+      />
+
+      <div className="grid max-w-3xl grid-cols-1 gap-3">
         {/* Language */}
-        <Card>
-          <Row icon={<Languages size={16} />} title={t("settings.language")} />
+        <SettingsRow
+          icon={Languages}
+          title={t("settings.language")}
+        >
           <Segmented<Lang>
             value={lang}
             onChange={setLang}
@@ -35,11 +53,13 @@ export default function SettingsPage() {
               { value: "en", label: t("settings.english") },
             ]}
           />
-        </Card>
+        </SettingsRow>
 
         {/* Theme */}
-        <Card>
-          <Row icon={theme === "dark" ? <Moon size={16} /> : <Sun size={16} />} title={t("settings.theme")} />
+        <SettingsRow
+          icon={theme === "dark" ? Moon : Sun}
+          title={t("settings.theme")}
+        >
           <Segmented
             value={theme}
             onChange={(v) => setTheme(v as "light" | "dark")}
@@ -48,11 +68,14 @@ export default function SettingsPage() {
               { value: "dark", label: t("settings.dark") },
             ]}
           />
-        </Card>
+        </SettingsRow>
 
         {/* Role */}
-        <Card>
-          <Row icon={<Shield size={16} />} title={t("settings.role")} hint={t("settings.roleNote")} />
+        <SettingsRow
+          icon={Shield}
+          title={t("settings.role")}
+          hint={t("settings.roleNote")}
+        >
           <Segmented<Role>
             value={role}
             onChange={setRole}
@@ -61,29 +84,35 @@ export default function SettingsPage() {
               label: t(`settings.role.${r}` as DictKey),
             }))}
           />
-        </Card>
+        </SettingsRow>
 
         {/* Backend */}
-        <Card>
-          <Row icon={<Cloud size={16} />} title={t("settings.backend")} />
-          <div
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-3 py-2 text-sm",
-              isSupabaseConfigured ? "bg-success/12 text-success" : "bg-surface-2 text-muted",
-            )}
-          >
-            <span className={cn("h-2 w-2 rounded-full", isSupabaseConfigured ? "bg-success" : "bg-warning")} />
+        <SettingsRow
+          icon={isSupabaseConfigured ? Cloud : CloudOff}
+          title={t("settings.backend")}
+        >
+          <Chip tone={isSupabaseConfigured ? "success" : "neutral"}>
+            <span className={cn(
+              "inline-block h-1.5 w-1.5 rounded-full",
+              isSupabaseConfigured ? "bg-success" : "bg-faint",
+            )} />
             {isSupabaseConfigured ? t("settings.cloud") : t("settings.local")}
-          </div>
-        </Card>
+          </Chip>
+        </SettingsRow>
 
         {/* Data */}
-        <Card>
-          <Row icon={<Database size={16} />} title={t("settings.data")} />
+        <SettingsRow
+          icon={Database}
+          title={t("settings.data")}
+          hint="Reseed loads demo content · Clear removes all local data."
+        >
           <div className="flex flex-wrap gap-2">
-            <Button onClick={reseed}>{t("settings.reseed")}</Button>
+            <Button leadingIcon={RefreshCw} onClick={reseed}>
+              {t("settings.reseed")}
+            </Button>
             <Button
               variant="danger"
+              leadingIcon={Trash2}
               onClick={() => {
                 if (confirm(t("settings.clear") + "?")) clearAll();
               }}
@@ -91,29 +120,40 @@ export default function SettingsPage() {
               {t("settings.clear")}
             </Button>
           </div>
-        </Card>
+        </SettingsRow>
       </div>
     </>
   );
 }
 
-function Row({
-  icon,
+function SettingsRow({
+  icon: Icon,
   title,
   hint,
+  children,
 }: {
-  icon: React.ReactNode;
+  icon: LucideIcon;
   title: string;
   hint?: string;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="mb-3">
-      <div className="flex items-center gap-2 text-sm font-semibold">
-        <span className="text-muted">{icon}</span>
-        {title}
+    <Card className="!p-0">
+      <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-muted">
+            <Icon size={16} strokeWidth={2.2} />
+          </span>
+          <div className="min-w-0">
+            <div className="text-[13.5px] font-semibold text-fg">{title}</div>
+            {hint && (
+              <p className="mt-0.5 text-[12px] leading-relaxed text-muted">{hint}</p>
+            )}
+          </div>
+        </div>
+        <div className="shrink-0">{children}</div>
       </div>
-      {hint && <p className="mt-1 text-xs text-muted">{hint}</p>}
-    </div>
+    </Card>
   );
 }
 
@@ -127,14 +167,16 @@ function Segmented<T extends string>({
   options: { value: T; label: string }[];
 }) {
   return (
-    <div className="inline-flex flex-wrap gap-0.5 rounded-lg border border-border bg-surface-2 p-0.5">
+    <div className="inline-flex gap-0.5 rounded-lg border border-border bg-surface-2 p-0.5">
       {options.map((o) => (
         <button
           key={o.value}
           onClick={() => onChange(o.value)}
           className={cn(
-            "rounded-md px-3.5 py-1.5 text-sm font-medium transition",
-            value === o.value ? "bg-brand text-brand-fg shadow-card" : "text-muted hover:text-fg",
+            "rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-all duration-150",
+            value === o.value
+              ? "bg-surface text-fg shadow-sm"
+              : "text-muted hover:text-fg-2",
           )}
         >
           {o.label}

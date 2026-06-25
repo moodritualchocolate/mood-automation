@@ -96,88 +96,131 @@ export default function SupplierDetailPage() {
     <>
       <Link
         href="/suppliers"
-        className="mb-3 inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-fg"
+        className="mb-4 inline-flex items-center gap-1.5 text-[12.5px] font-medium text-muted transition hover:text-fg"
       >
-        <ArrowRight size={15} className="rtl:rotate-0 ltr:rotate-180" />
+        <ArrowRight size={13} className="rtl:rotate-0 ltr:rotate-180" />
         {t("nav.suppliers")}
       </Link>
 
-      {/* Header */}
-      <Card className="mb-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
-                {supplier.company}
-              </h1>
-              <StatusBadge status={supplier.status} />
-            </div>
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
-              {supplier.contact && (
-                <span className="flex items-center gap-1.5">
-                  <User size={13} /> {supplier.contact}
-                </span>
-              )}
-              {supplier.country && (
-                <span className="flex items-center gap-1.5">
-                  <MapPin size={13} /> {supplier.country}
-                </span>
-              )}
-              {supplier.phone && (
-                <a href={`tel:${supplier.phone}`} className="flex items-center gap-1.5 hover:text-fg" dir="ltr">
-                  <Phone size={13} /> {supplier.phone}
-                </a>
-              )}
-              {supplier.email && (
-                <a href={`mailto:${supplier.email}`} className="flex items-center gap-1.5 hover:text-fg" dir="ltr">
-                  <Mail size={13} /> {supplier.email}
-                </a>
-              )}
-              {supplier.website && (
-                <a href={supplier.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-fg" dir="ltr">
-                  <Globe size={13} /> {supplier.website.replace(/^https?:\/\//, "")}
-                </a>
-              )}
-            </div>
-            {supplier.notes && (
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-                {supplier.notes}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <Button variant="primary" onClick={() => setAiOpen(true)}>
-              <Sparkles size={16} />
-              {t("supplier.analyze")}
-            </Button>
-            {editable && (
-              <>
-                <Select
-                  value={supplier.status}
-                  onChange={(e) => setStatus(supplier.id, e.target.value as SupplierStatus)}
-                  className="w-auto"
+      {/* ─── Hero header ──────────────────────────────────────────── */}
+      <div className="relative mb-5 overflow-hidden rounded-2xl border border-border bg-surface bg-warm">
+        <div className="relative p-5 sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0 flex-1 space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-brand-fg shadow-sm"
+                  style={{
+                    background: "linear-gradient(135deg, rgb(var(--brand-2)) 0%, rgb(var(--brand)) 100%)",
+                    boxShadow: "inset 0 1px 0 0 rgb(255 255 255 / 0.18), 0 1px 2px rgb(0 0 0 / 0.10)",
+                  }}
                 >
-                  {SUPPLIER_STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {t(`status.${s}` as const)}
-                    </option>
-                  ))}
-                </Select>
-                <Button onClick={() => setEditOpen(true)}>
-                  <Pencil size={15} />
-                </Button>
-                <Button variant="ghost" onClick={() => setDelOpen(true)}>
-                  <Trash2 size={15} className="text-danger" />
-                </Button>
-              </>
-            )}
+                  <span className="text-[16px] font-bold">
+                    {supplier.company.slice(0, 1).toUpperCase()}
+                  </span>
+                </span>
+                <div className="min-w-0">
+                  <h1 className="truncate text-2xl font-bold tracking-tight text-fg sm:text-3xl">
+                    {supplier.company}
+                  </h1>
+                  <div className="mt-1">
+                    <StatusBadge status={supplier.status} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-[12.5px] text-fg-2">
+                {supplier.contact && (
+                  <span className="flex items-center gap-1.5">
+                    <User size={12} className="text-faint" />
+                    {supplier.contact}
+                  </span>
+                )}
+                {supplier.country && (
+                  <span className="flex items-center gap-1.5">
+                    <MapPin size={12} className="text-faint" />
+                    {supplier.country}
+                  </span>
+                )}
+                {supplier.phone && (
+                  <a
+                    href={`tel:${supplier.phone}`}
+                    className="mono flex items-center gap-1.5 transition hover:text-fg"
+                    dir="ltr"
+                  >
+                    <Phone size={12} className="text-faint" />
+                    {supplier.phone}
+                  </a>
+                )}
+                {supplier.email && (
+                  <a
+                    href={`mailto:${supplier.email}`}
+                    className="flex items-center gap-1.5 transition hover:text-fg"
+                    dir="ltr"
+                  >
+                    <Mail size={12} className="text-faint" />
+                    {supplier.email}
+                  </a>
+                )}
+                {supplier.website && (
+                  <a
+                    href={supplier.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 transition hover:text-fg"
+                    dir="ltr"
+                  >
+                    <Globe size={12} className="text-faint" />
+                    {supplier.website.replace(/^https?:\/\//, "")}
+                  </a>
+                )}
+              </div>
+
+              {supplier.notes && (
+                <p className="max-w-2xl text-[13.5px] leading-relaxed text-muted">
+                  {supplier.notes}
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <Button variant="primary" leadingIcon={Sparkles} onClick={() => setAiOpen(true)}>
+                {t("supplier.analyze")}
+              </Button>
+              {editable && (
+                <>
+                  <Select
+                    value={supplier.status}
+                    onChange={(e) => setStatus(supplier.id, e.target.value as SupplierStatus)}
+                    className="w-auto min-w-[140px]"
+                  >
+                    {SUPPLIER_STATUSES.map((s) => (
+                      <option key={s} value={s}>
+                        {t(`status.${s}` as const)}
+                      </option>
+                    ))}
+                  </Select>
+                  <Button leadingIcon={Pencil} onClick={() => setEditOpen(true)} aria-label={t("action.edit")}>
+                    <span className="sr-only">{t("action.edit")}</span>
+                  </Button>
+                  <Button variant="ghost" onClick={() => setDelOpen(true)} aria-label={t("action.delete")}>
+                    <Trash2 size={15} className="text-danger" />
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </Card>
+        {/* Soft top-right glow */}
+        <div
+          className="pointer-events-none absolute -top-24 -end-24 h-64 w-64 rounded-full opacity-25 blur-3xl"
+          style={{ background: "radial-gradient(closest-side, rgb(var(--brand) / 0.40), transparent)" }}
+          aria-hidden
+        />
+      </div>
 
-      {/* Tabs */}
-      <div className="mb-4 flex gap-1 overflow-x-auto border-b border-border">
+      {/* ─── Tabs ─────────────────────────────────────────────────── */}
+      <div className="mb-5 -mx-1 flex gap-0.5 overflow-x-auto border-b border-border px-1">
         {TABS.map((tb) => {
           const Icon = tb.icon;
           const active = tab === tb.id;
@@ -186,14 +229,15 @@ export default function SupplierDetailPage() {
               key={tb.id}
               onClick={() => setTab(tb.id)}
               className={cn(
-                "flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-medium transition",
-                active
-                  ? "border-brand text-brand"
-                  : "border-transparent text-muted hover:text-fg",
+                "relative flex items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-[13px] font-medium transition-colors",
+                active ? "text-brand" : "text-muted hover:text-fg-2",
               )}
             >
-              <Icon size={15} />
+              <Icon size={14} strokeWidth={active ? 2.4 : 2} />
               {t(tb.key)}
+              {active && (
+                <span className="absolute inset-x-2 -bottom-px h-[2px] rounded-full bg-brand" aria-hidden />
+              )}
             </button>
           );
         })}
