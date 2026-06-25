@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>סקירת סרטונים — MOOD</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="icon" href="/icons/favicon.svg" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div>
+        <h1>Social Video Review</h1>
+        <small>MOOD · בדיקה והמלצות לפני פרסום</small>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="/">דאשבורד</a>
+      <a href="/review.html" class="active">סקירת סרטונים</a>
+      <a href="/connections.html">חיבורי פלטפורמות</a>
+      <span id="modeChip" class="mode-chip"></span>
+    </nav>
+  </header>
+
+  <div class="banner">⚠️ פרסום מתבצע רק בלחיצה ידנית (YouTube Shorts בלבד) ורק לאחר השלמת רשימת האישור. אין פרסום אוטומטי.</div>
+
+  <main class="container">
+    <section id="systemPanel"></section>
+
+    <div class="toolbar">
+      <button class="btn primary" id="scanBtn">🔄 סרוק את התיקייה</button>
+      <select id="statusFilter" style="width:auto">
+        <option value="">כל הסטטוסים</option>
+      </select>
+      <div class="spacer"></div>
+      <span id="count" class="meta"></span>
+    </div>
+
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty" style="display:none">
+      <div class="big">🎬</div>
+      <div>עדיין אין סרטונים בתיקייה.</div>
+      <div class="meta" id="watchPath" style="margin-top:8px"></div>
+    </div>
+  </main>
+
+  <!-- Detail modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="modalTitle">—</h2>
+        <button class="close-x" id="closeModal">×</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

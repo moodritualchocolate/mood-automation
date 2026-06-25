@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Social Video Review — MOOD</title>
+  <title>דאשבורד — MOOD Social</title>
   <link rel="stylesheet" href="/css/styles.css" />
   <link rel="icon" href="/icons/favicon.svg" />
 </head>
@@ -12,52 +12,55 @@
     <div class="brand">
       <div class="logo">M</div>
       <div>
-        <h1>Social Video Review</h1>
-        <small>MOOD · בדיקה והמלצות לפני פרסום</small>
+        <h1>MOOD Social — דאשבורד</h1>
+        <small>סקירה, המלצות AI ופרסום לרשתות</small>
       </div>
     </div>
     <nav class="nav">
-      <a href="/" class="active">סקירת סרטונים</a>
+      <a href="/" class="active">דאשבורד</a>
+      <a href="/review.html">סקירת סרטונים</a>
       <a href="/connections.html">חיבורי פלטפורמות</a>
       <span id="modeChip" class="mode-chip"></span>
     </nav>
   </header>
 
-  <div class="banner">⚠️ פרסום מתבצע רק בלחיצה ידנית (YouTube Shorts בלבד) ורק לאחר השלמת רשימת האישור. אין פרסום אוטומטי.</div>
+  <div class="banner">⚠️ פרסום מתבצע רק בלחיצה ידנית (YouTube Shorts בלבד) ולאחר השלמת רשימת האישור. אין פרסום אוטומטי.</div>
 
   <main class="container">
-    <section id="systemPanel"></section>
+    <div class="toolbar" id="quickActions"></div>
 
-    <div class="toolbar">
-      <button class="btn primary" id="scanBtn">🔄 סרוק את התיקייה</button>
-      <select id="statusFilter" style="width:auto">
-        <option value="">כל הסטטוסים</option>
-      </select>
-      <div class="spacer"></div>
-      <span id="count" class="meta"></span>
-    </div>
+    <div id="kpis" class="kpi-grid"></div>
 
-    <div id="grid" class="grid"></div>
-    <div id="empty" class="empty" style="display:none">
-      <div class="big">🎬</div>
-      <div>עדיין אין סרטונים בתיקייה.</div>
-      <div class="meta" id="watchPath" style="margin-top:8px"></div>
+    <div class="dash-cols">
+      <div>
+        <div class="panel">
+          <h3>צינור העבודה (Pipeline)</h3>
+          <div id="funnel"></div>
+        </div>
+        <div class="panel">
+          <h3>פעילות אחרונה</h3>
+          <div id="recent"></div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3>בריאות המערכת</h3>
+          <div id="health"></div>
+        </div>
+        <div class="panel">
+          <h3>חיבורי פלטפורמות</h3>
+          <div id="connections"></div>
+        </div>
+        <div class="panel">
+          <h3>מדריך מודרך</h3>
+          <ul class="steps" id="steps"></ul>
+        </div>
+      </div>
     </div>
   </main>
 
-  <!-- Detail modal -->
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal">
-      <div class="modal-head">
-        <h2 id="modalTitle">—</h2>
-        <button class="close-x" id="closeModal">×</button>
-      </div>
-      <div class="modal-body" id="modalBody"></div>
-    </div>
-  </div>
-
   <div class="toast" id="toast"></div>
 
-  <script src="/js/app.js"></script>
+  <script src="/js/dashboard.js"></script>
 </body>
 </html>

@@ -234,6 +234,45 @@ label { display: block; font-size: .82rem; color: var(--muted); margin: 12px 0 5
 .perm-list li { font-size: .76rem; color: var(--muted); padding: 2px 0; }
 .perm-list li.missing::before { content: "✗ "; color: var(--bad); }
 
+/* ---- Overview dashboard ---- */
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px; margin-bottom: 16px;
+}
+.kpi {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+}
+.kpi .kpi-val { font-size: 1.9rem; font-weight: 800; line-height: 1; }
+.kpi .kpi-label { color: var(--muted); font-size: .82rem; margin-top: 6px; }
+.kpi .kpi-sub { font-size: .74rem; margin-top: 4px; }
+.kpi.accent .kpi-val { color: var(--accent); }
+.kpi.good .kpi-val { color: var(--good); }
+.kpi.warn .kpi-val { color: var(--warn); }
+.kpi.bad .kpi-val { color: var(--bad); }
+
+.dash-cols { display: grid; grid-template-columns: 1.1fr .9fr; gap: 16px; align-items: start; }
+@media (max-width: 860px) { .dash-cols { grid-template-columns: 1fr; } }
+
+.funnel-row { display: grid; grid-template-columns: 120px 1fr 44px; align-items: center; gap: 10px; margin: 8px 0; font-size: .85rem; }
+.funnel-bar { height: 16px; border-radius: 8px; background: var(--surface-2); overflow: hidden; }
+.funnel-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-strong)); }
+.funnel-row .fn-count { text-align: left; font-weight: 700; }
+
+.recent-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid var(--border); font-size: .85rem;
+}
+.recent-item:last-child { border-bottom: none; }
+.recent-item .rt {
+  width: 40px; height: 40px; border-radius: 8px; flex: 0 0 auto; display: grid; place-items: center;
+  background: linear-gradient(160deg, var(--accent-strong), #1f1a17); font-size: 1.1rem;
+}
+.recent-item .rname { flex: 1; word-break: break-all; }
+.recent-item a { color: inherit; text-decoration: none; display: flex; align-items: center; gap: 10px; flex: 1; }
+.conn-line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: .86rem; }
+.conn-line:last-child { border-bottom: none; }
+
 /* ---- Mode chip + system panel ---- */
 .mode-chip {
   padding: 6px 12px; border-radius: 999px; font-size: .8rem; font-weight: 700;
