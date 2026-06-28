@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>דאשבורד — MOOD Social (תצוגה עצמאית)</title>
+<style>
+/* MOOD Social — clean, light SaaS design system. RTL-first, mobile-friendly. */
+:root {
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --surface-2: #f4f2ee;
+  --border: #e8e4dd;
+  --border-strong: #d8d3ca;
+  --text: #1c1a17;
+  --text-2: #514c44;
+  --muted: #8a847a;
+  --accent: #9a5a33;       /* cacao */
+  --accent-hover: #824a28;
+  --accent-soft: #f3ebe4;
+  --good: #1f8a5b;
+  --good-soft: #e7f4ee;
+  --warn: #b07d15;
+  --warn-soft: #faf1d9;
+  --bad: #c0392b;
+  --bad-soft: #fbe9e6;
+  --info: #2563eb;
+  --info-soft: #eaf0fe;
+  --violet: #7c3aed;
+  --violet-soft: #f1ebfe;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 2px rgba(28, 26, 23, .04), 0 2px 8px rgba(28, 26, 23, .05);
+  --shadow-lg: 0 12px 32px rgba(28, 26, 23, .14);
+  --ring: 0 0 0 3px rgba(154, 90, 51, .22);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Heebo", "Assistant", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  direction: rtl;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+h1, h2, h3, h4 { margin: 0; font-weight: 650; letter-spacing: -0.01em; }
+
+:focus-visible { outline: none; box-shadow: var(--ring); border-radius: 8px; }
+
+/* ---- Top bar ---- */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 12px 24px;
+  background: rgba(255, 255, 255, .85);
+  backdrop-filter: saturate(140%) blur(8px);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand .logo {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(140deg, var(--accent), var(--accent-hover));
+  display: grid; place-items: center; font-weight: 800; color: #fff; font-size: 1.1rem;
+  box-shadow: var(--shadow);
+}
+.brand h1 { font-size: 1rem; }
+.brand small { color: var(--muted); display: block; font-weight: 400; font-size: .76rem; }
+
+.nav { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.nav a {
+  padding: 8px 14px; border-radius: 10px; color: var(--text-2);
+  font-size: .9rem; font-weight: 550; transition: background .15s, color .15s;
+}
+.nav a:hover { background: var(--surface-2); color: var(--text); }
+.nav a.active { background: var(--accent-soft); color: var(--accent); }
+
+.banner {
+  max-width: 1180px; margin: 18px auto -2px; padding: 10px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-inline-start: 3px solid var(--warn);
+  border-radius: var(--radius-sm); color: var(--text-2);
+  font-size: .82rem; box-shadow: var(--shadow);
+}
+
+/* ---- Layout ---- */
+.container { max-width: 1180px; margin: 0 auto; padding: 22px 24px 48px; }
+
+.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+.toolbar .spacer { flex: 1; }
+
+/* ---- Buttons ---- */
+.btn {
+  background: var(--surface); color: var(--text); border: 1px solid var(--border-strong);
+  padding: 9px 16px; border-radius: var(--radius-sm); cursor: pointer; font-size: .88rem;
+  font-weight: 550; font-family: inherit; transition: background .15s, border-color .15s, box-shadow .15s;
+  display: inline-flex; align-items: center; gap: 7px; line-height: 1.2;
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+select, input[type="text"], input[type="datetime-local"], textarea {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  padding: 9px 12px; font-family: inherit; font-size: .9rem; width: 100%;
+  transition: border-color .15s, box-shadow .15s;
+}
+select:focus, input:focus, textarea:focus { border-color: var(--accent); box-shadow: var(--ring); }
+textarea { resize: vertical; min-height: 92px; line-height: 1.6; }
+label { display: block; font-size: .8rem; color: var(--muted); margin: 14px 0 5px; font-weight: 550; }
+
+.meta { color: var(--muted); font-size: .82rem; }
+
+/* ---- Cards / panels ---- */
+.panel, .card, .conn-card, .kpi {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.panel { padding: 20px; margin-bottom: 16px; }
+.panel > h3 {
+  font-size: .92rem; margin-bottom: 14px; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ---- KPI stats ---- */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.kpi { padding: 18px 18px 16px; }
+.kpi .kpi-val { font-size: 2rem; font-weight: 750; line-height: 1; letter-spacing: -0.02em; }
+.kpi .kpi-label { color: var(--muted); font-size: .8rem; margin-top: 8px; font-weight: 550; }
+.kpi .kpi-sub { font-size: .74rem; margin-top: 3px; }
+.kpi.accent .kpi-val { color: var(--accent); }
+.kpi.good .kpi-val { color: var(--good); }
+.kpi.warn .kpi-val { color: var(--warn); }
+.kpi.bad .kpi-val { color: var(--bad); }
+
+.dash-cols { display: grid; grid-template-columns: 1.1fr .9fr; gap: 16px; align-items: start; }
+@media (max-width: 860px) { .dash-cols { grid-template-columns: 1fr; } }
+
+/* ---- Funnel ---- */
+.funnel-row { display: grid; grid-template-columns: 130px 1fr 36px; align-items: center; gap: 12px; margin: 10px 0; font-size: .85rem; }
+.funnel-bar { height: 10px; border-radius: 6px; background: var(--surface-2); overflow: hidden; }
+.funnel-bar > span { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), var(--accent-hover)); transition: width .4s ease; }
+.funnel-row .fn-count { text-align: start; font-weight: 700; color: var(--text-2); }
+
+/* ---- Recent / lines ---- */
+.recent-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .86rem; }
+.recent-item:last-child { border-bottom: none; }
+.recent-item .rt { width: 40px; height: 40px; border-radius: 9px; flex: 0 0 auto; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 1.05rem; }
+.recent-item .rname { flex: 1; word-break: break-word; }
+.recent-item a { color: inherit; display: flex; align-items: center; gap: 12px; flex: 1; }
+.recent-item a:hover .rname { color: var(--accent); }
+.conn-line { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: .86rem; }
+.conn-line:last-child { border-bottom: none; }
+
+/* ---- Status badges (soft tinted pills) ---- */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px; border-radius: 999px; font-size: .76rem; font-weight: 600;
+  background: var(--surface-2); color: var(--text-2);
+}
+.badge .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .9; }
+.badge[data-status="New"] { background: var(--info-soft); color: #1d4ed8; }
+.badge[data-status="Needs review"] { background: var(--warn-soft); color: #92600c; }
+.badge[data-status="Approved"] { background: var(--accent-soft); color: var(--accent); }
+.badge[data-status="Ready to publish"] { background: var(--good-soft); color: #14704a; }
+.badge[data-status="Published"] { background: var(--violet-soft); color: #6d28d9; }
+.badge[data-status="Failed"] { background: var(--bad-soft); color: #a32b1e; }
+
+.tag {
+  display: inline-block; background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 999px; padding: 3px 10px; font-size: .76rem; margin: 2px; color: var(--text-2);
+}
+.pill-ok { color: var(--good); font-weight: 600; }
+.pill-bad { color: var(--bad); font-weight: 600; }
+.pill-warn { color: var(--warn); font-weight: 600; }
+.flag-yes { color: var(--good); font-weight: 650; }
+.flag-no { color: var(--bad); font-weight: 650; }
+.flag-warn { color: var(--warn); font-weight: 650; }
+
+.notes { list-style: none; padding: 0; margin: 6px 0 0; }
+.notes li { font-size: .82rem; color: #92600c; padding: 7px 11px; background: var(--warn-soft); border-radius: var(--radius-sm); margin-bottom: 6px; line-height: 1.45; }
+.notes li.ok { color: #14704a; background: var(--good-soft); }
+
+.empty { text-align: center; color: var(--muted); padding: 56px 20px; border: 1px dashed var(--border-strong); border-radius: var(--radius); background: var(--surface); }
+.empty .big { font-size: 2.4rem; margin-bottom: 10px; }
+
+/* ---- Review grid ---- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px; }
+.card { overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .15s, transform .15s; }
+.card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.card .thumb { background: #efece7; aspect-ratio: 9/16; max-height: 270px; display: grid; place-items: center; cursor: pointer; position: relative; }
+.card .thumb video { width: 100%; height: 100%; object-fit: contain; background: #1c1a17; }
+.card .thumb .play-hint { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 2rem; pointer-events: none; text-shadow: 0 2px 10px rgba(0,0,0,.5); }
+.card .body { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 9px; }
+.card .fname { font-weight: 600; font-size: .9rem; word-break: break-word; }
+.card .meta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---- Modal ---- */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(28, 26, 23, .42); display: none; z-index: 50; padding: 24px; overflow: auto; }
+.modal-backdrop.open { display: block; }
+.modal { max-width: 900px; margin: 24px auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); }
+.modal-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2; border-radius: var(--radius) var(--radius) 0 0; }
+.modal-head h2 { font-size: 1rem; word-break: break-word; }
+.modal-body { padding: 22px; }
+.close-x { background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; line-height: 1; width: 34px; height: 34px; border-radius: 9px; }
+.close-x:hover { background: var(--surface-2); color: var(--text); }
+
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+.section-title { font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 20px 0 9px; font-weight: 700; }
+.section-title:first-child { margin-top: 0; }
+.preview-video { width: 100%; max-height: 60vh; border-radius: var(--radius-sm); background: #1c1a17; }
+
+.cap-option, .platform-block { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 10px; }
+.cap-option .cap-label { font-size: .78rem; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+.cap-text { white-space: pre-wrap; font-size: .88rem; line-height: 1.6; }
+.use-btn { margin-top: 9px; font-size: .78rem; padding: 6px 12px; }
+.platform-block h4 { margin: 0 0 6px; font-size: .9rem; }
+.kv { display: flex; gap: 8px; font-size: .8rem; color: var(--muted); margin-top: 5px; flex-wrap: wrap; }
+.kv b { color: var(--text-2); font-weight: 600; }
+.meta-row { display: flex; justify-content: space-between; font-size: .84rem; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.meta-row span:first-child { color: var(--muted); }
+
+/* ---- Connections page ---- */
+.conn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+.conn-card { padding: 18px; }
+.conn-card .conn-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.conn-card h3 { font-size: 1rem; }
+.conn-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .86rem; }
+.conn-row:last-child { border-bottom: none; }
+.conn-row .label { color: var(--muted); }
+.perm-list { margin: 6px 0 0; padding: 0; list-style: none; }
+.perm-list li { font-size: .76rem; color: var(--muted); padding: 2px 0; }
+.perm-list li.missing { color: var(--bad); }
+.perm-list li.missing::before { content: "✗ "; }
+
+/* ---- Mode chip / health / steps ---- */
+.mode-chip { padding: 5px 12px; border-radius: 999px; font-size: .78rem; font-weight: 700; align-self: center; }
+.mode-chip.demo { background: var(--warn-soft); color: #92600c; }
+.mode-chip.real { background: var(--good-soft); color: #14704a; }
+
+.health-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
+.health-row:last-child { border-bottom: none; }
+.health-row .label { color: var(--muted); }
+
+.steps { list-style: none; margin: 0; padding: 0; }
+.steps li { display: flex; gap: 11px; align-items: center; padding: 8px 0; font-size: .85rem; border-bottom: 1px solid var(--border); }
+.steps li:last-child { border-bottom: none; }
+.steps .num { width: 22px; height: 22px; border-radius: 50%; flex: 0 0 auto; display: grid; place-items: center; font-size: .72rem; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border-strong); color: var(--muted); }
+.steps li.done .num { background: var(--good); color: #fff; border-color: var(--good); }
+.steps li.done .step-text { color: var(--muted); }
+.step-hint { color: var(--muted); font-size: .76rem; }
+
+/* ---- Demo bits ---- */
+.demo-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.demo-poster { aspect-ratio: 9/16; max-height: 60vh; width: 100%; border-radius: var(--radius-sm); display: grid; place-items: center; text-align: center; background: var(--surface-2); border: 1px dashed var(--border-strong); color: var(--muted); }
+.demo-poster .big { font-size: 2.2rem; }
+.thumb.demo-thumb { background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-size: 1.9rem; }
+.frame-strip { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.frame-strip .frame { width: 30px; height: 52px; border-radius: 6px; background: var(--accent-soft); border: 1px solid var(--border); }
+.badge-demo { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .68rem; font-weight: 600; background: var(--warn-soft); color: #92600c; }
+
+/* ---- Toast ---- */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);
+  background: #1c1a17; color: #fff; padding: 11px 20px; border-radius: var(--radius-sm);
+  font-weight: 550; font-size: .88rem; box-shadow: var(--shadow-lg); z-index: 100; opacity: 0;
+  transition: opacity .2s, transform .2s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---- Mobile ---- */
+@media (max-width: 720px) {
+  body { font-size: 14.5px; }
+  .container { padding: 16px 14px 40px; }
+  .detail-grid { grid-template-columns: 1fr; gap: 18px; }
+  .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .topbar { padding: 10px 14px; }
+  .banner { margin: 12px 14px -2px; }
+  .modal { margin: 0; border-radius: 0; min-height: 100vh; }
+}
+@media (max-width: 460px) { .grid { grid-template-columns: 1fr; } }
+
+.offline-note{max-width:1180px;margin:14px auto -2px;padding:9px 16px;background:var(--accent-soft);color:var(--accent);border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">M</div>
+    <div><h1>MOOD Social — דאשבורד</h1><small>סקירה, המלצות AI ופרסום לרשתות</small></div>
+  </div>
+  <nav class="nav">
+    <a href="./" class="active">דאשבורד</a>
+    <span id="modeChip" class="mode-chip"></span>
+  </nav>
+</header>
+<div class="offline-note">🔎 תצוגת הדגמה חיה · נתוני דוגמה · אין פרסום אמיתי. נסה "הרץ הדגמה מלאה" — הכל מקומי בדפדפן.</div>
+<div class="banner">⚠️ פרסום מתבצע רק בלחיצה ידנית (YouTube Shorts בלבד) ולאחר השלמת רשימת האישור. אין פרסום אוטומטי.</div>
+<main class="container">
+  <div class="toolbar" id="quickActions"></div>
+  <div id="kpis" class="kpi-grid"></div>
+  <div class="dash-cols">
+    <div>
+      <div class="panel"><h3>צינור העבודה (Pipeline)</h3><div id="funnel"></div></div>
+      <div class="panel"><h3>פעילות אחרונה</h3><div id="recent"></div></div>
+    </div>
+    <div>
+      <div class="panel"><h3>בריאות המערכת</h3><div id="health"></div></div>
+      <div class="panel"><h3>חיבורי פלטפורמות</h3><div id="connections"></div></div>
+      <div class="panel"><h3>מדריך מודרך</h3><ul class="steps" id="steps"></ul></div>
+    </div>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+
+const __H = {"ok":true,"version":"0.1.0","demoMode":true,"watchDir":"/home/user/mood-automation/content/social-videos-to-review","ffmpegAvailable":false,"claudeConfigured":false,"transcriptionConfigured":false,"transcriptionMethod":"none","youtubeConfigured":false,"youtubeConnected":true,"youtubeConnectionIsDemo":true,"publishablePlatforms":["youtube"]};
+const __V = {"videos":[{"id":"demo-ready","filename":"demo-evening-ritual.mp4","demo":true,"path":"","relPath":"demo-evening-ritual.mp4","ext":".mp4","sizeBytes":32296141,"addedAt":"2026-06-25T12:12:41.898Z","modifiedAt":"2026-06-25T12:12:41.898Z","status":"Ready to publish","analysis":{"probed":true,"sizeBytes":32296141,"durationSec":22,"width":1080,"height":1920,"aspectRatio":"9:16","fps":30,"videoCodec":"h264","audioCodec":"aac","hasAudio":true,"bitrate":12000000,"ext":".mp4","readiness":{"ready":true,"notes":[]},"analyzedAt":"2026-06-25T12:12:41.898Z","demo":true},"transcript":{"available":true,"text":"בערב, כשהבית נרגע, אני מכינה לעצמי כוס קקאו. בלי טלפון, בלי רעש. רק אני והטעם הזה שמרגיע.","language":"he","source":"demo","transcribedAt":"2026-06-25T12:12:41.898Z","editedManually":false},"recommendations":{"generatedAt":"2026-06-25T12:12:41.898Z","source":"demo","model":"demo","framesAnalyzed":6,"usedTranscript":true,"contentAnalysis":"בסרטון נראית הכנה של משקה קקאו טקסי: מוזגים מים חמים לכוס עם אבקת קקאו כהה, מערבבים לאט, ועולה אדים. התאורה חמה והאווירה רגועה. בפס הקול נשמע קריינות שקטה על \"רגע של עצירה בבוקר\".","detectedElements":["כוס קרמיקה","אבקת קקאו","אדים","תאורה חמה","ידיים מערבבות","אווירה רגועה"],"styles":{"moodBrand":{"key":"moodBrand","name":"מותג MOOD","hook":"רגע של איזון, כוס אחת בכל פעם 🤎","caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Instagram Reels","suggestedTime":"19:30"},"emotional":{"key":"emotional","name":"רגשי","hook":"יש בקרים שמגיע לנו לעצור 🤎","caption":"ריח של קקאו אמיתי, אדים שעולים לאט, ונשימה אחת עמוקה.\nהטקס הקטן הזה הוא התזכורת לדאוג לעצמך.","cta":"תנו לעצמכם את הרגע הזה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Facebook Reels","suggestedTime":"20:00"},"funny":{"key":"funny","name":"הומור ישראלי","hook":"כולם רצים על קפה. אני? טקס שלם של קקאו 🍫🧘","caption":"בזמן שאתם בלחץ של הבוקר, אני מערבב קקאו כאילו אני שף במאסטר שף 😂\nתייגו את מי שחייב/ת להירגע.","cta":"בואו תתמכרו יפה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"TikTok","suggestedTime":"21:00"},"directResponse":{"key":"directResponse","name":"מכירה ישירה","hook":"🔥 חזר למלאי — וכמות מוגבלת","caption":"הטקס שכולם מדברים עליו חזר.\nקקאו פרימיום, מתכון נקי, וטעם שממכר.\nאל תתפספסו.","cta":"הזמינו עכשיו לפני שייגמר 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"YouTube Shorts","suggestedTime":"18:00"}}},"edits":{"caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","hashtags":"#מוד #שוקולד_טקסי #קקאו #טקס_בוקר #רגע_לעצמי #MOOD #RitualChocolate #Cacao #MorningRitual #SelfCare #Shorts","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","platforms":["youtube"],"publishTime":""},"approval":{"captionReviewed":true,"hashtagsReviewed":true,"platformSelected":true,"previewChecked":true,"rightsConfirmed":true,"publishTimeSelected":true},"publish":{},"publishHistory":[],"createdAt":"2026-06-25T12:12:41.898Z","updatedAt":"2026-06-25T12:12:41.898Z"},{"id":"demo-published","filename":"demo-behind-the-scenes.mp4","demo":true,"path":"","relPath":"demo-behind-the-scenes.mp4","ext":".mp4","sizeBytes":22020096,"addedAt":"2026-06-25T12:12:41.898Z","modifiedAt":"2026-06-25T12:12:41.898Z","status":"Published","analysis":{"probed":true,"sizeBytes":22020096,"durationSec":15,"width":1080,"height":1920,"aspectRatio":"9:16","fps":30,"videoCodec":"h264","audioCodec":"aac","hasAudio":true,"bitrate":12000000,"ext":".mp4","readiness":{"ready":true,"notes":[]},"analyzedAt":"2026-06-25T12:12:41.898Z","demo":true},"transcript":{"available":true,"text":"רגע מאחורי הקלעים: ככה נראית ההכנה של אצווה חדשה. קקאו טהור, בלי קיצורי דרך.","language":"he","source":"demo","transcribedAt":"2026-06-25T12:12:41.898Z","editedManually":false},"recommendations":{"generatedAt":"2026-06-25T12:12:41.898Z","source":"demo","model":"demo","framesAnalyzed":6,"usedTranscript":true,"contentAnalysis":"בסרטון נראית הכנה של משקה קקאו טקסי: מוזגים מים חמים לכוס עם אבקת קקאו כהה, מערבבים לאט, ועולה אדים. התאורה חמה והאווירה רגועה. בפס הקול נשמע קריינות שקטה על \"רגע של עצירה בבוקר\".","detectedElements":["כוס קרמיקה","אבקת קקאו","אדים","תאורה חמה","ידיים מערבבות","אווירה רגועה"],"styles":{"moodBrand":{"key":"moodBrand","name":"מותג MOOD","hook":"רגע של איזון, כוס אחת בכל פעם 🤎","caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Instagram Reels","suggestedTime":"19:30"},"emotional":{"key":"emotional","name":"רגשי","hook":"יש בקרים שמגיע לנו לעצור 🤎","caption":"ריח של קקאו אמיתי, אדים שעולים לאט, ונשימה אחת עמוקה.\nהטקס הקטן הזה הוא התזכורת לדאוג לעצמך.","cta":"תנו לעצמכם את הרגע הזה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Facebook Reels","suggestedTime":"20:00"},"funny":{"key":"funny","name":"הומור ישראלי","hook":"כולם רצים על קפה. אני? טקס שלם של קקאו 🍫🧘","caption":"בזמן שאתם בלחץ של הבוקר, אני מערבב קקאו כאילו אני שף במאסטר שף 😂\nתייגו את מי שחייב/ת להירגע.","cta":"בואו תתמכרו יפה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"TikTok","suggestedTime":"21:00"},"directResponse":{"key":"directResponse","name":"מכירה ישירה","hook":"🔥 חזר למלאי — וכמות מוגבלת","caption":"הטקס שכולם מדברים עליו חזר.\nקקאו פרימיום, מתכון נקי, וטעם שממכר.\nאל תתפספסו.","cta":"הזמינו עכשיו לפני שייגמר 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"YouTube Shorts","suggestedTime":"18:00"}}},"edits":{"caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","hashtags":"#מוד #שוקולד_טקסי #קקאו #טקס_בוקר #רגע_לעצמי #MOOD #RitualChocolate #Cacao #MorningRitual #SelfCare #Shorts","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","platforms":["youtube"],"publishTime":""},"approval":{"captionReviewed":true,"hashtagsReviewed":true,"platformSelected":true,"previewChecked":true,"rightsConfirmed":true,"publishTimeSelected":true},"publish":{"youtube":{"status":"published","videoId":"DEMO_8sQ2k","url":"https://www.youtube.com/shorts/DEMO_8sQ2k","publishedAt":"2026-06-25T12:12:41.898Z","privacyStatus":"unlisted","title":"MOOD Ritual Chocolate 🤎","error":null,"demo":true}},"publishHistory":[{"platform":"youtube","status":"published","at":"2026-06-25T12:12:41.898Z","videoId":"DEMO_8sQ2k","url":"https://www.youtube.com/shorts/DEMO_8sQ2k","privacyStatus":"unlisted","demo":true}],"createdAt":"2026-06-25T12:12:41.898Z","updatedAt":"2026-06-25T12:12:41.898Z"},{"id":"demo-new","filename":"demo-morning-cacao-ritual.mp4","demo":true,"path":"","relPath":"demo-morning-cacao-ritual.mp4","ext":".mp4","sizeBytes":26424115,"addedAt":"2026-06-25T12:12:41.886Z","modifiedAt":"2026-06-25T12:12:41.886Z","status":"New","analysis":{"probed":true,"sizeBytes":26424115,"durationSec":18,"width":1080,"height":1920,"aspectRatio":"9:16","fps":30,"videoCodec":"h264","audioCodec":"aac","hasAudio":true,"bitrate":12000000,"ext":".mp4","readiness":{"ready":true,"notes":[]},"analyzedAt":"2026-06-25T12:12:41.898Z","demo":true},"transcript":{"available":true,"text":"בוקר טוב. לפני שכל היום מתחיל, אני עוצרת לרגע אחד. מוזגים מים חמים, מערבבים את הקקאו לאט, ונושמים עמוק. זה כל הסוד — רגע אחד בשבילי.","language":"he","source":"demo","transcribedAt":"2026-06-25T12:12:41.898Z","editedManually":false},"recommendations":{"generatedAt":"2026-06-25T12:12:41.898Z","source":"demo","model":"demo","framesAnalyzed":6,"usedTranscript":true,"contentAnalysis":"בסרטון נראית הכנה של משקה קקאו טקסי: מוזגים מים חמים לכוס עם אבקת קקאו כהה, מערבבים לאט, ועולה אדים. התאורה חמה והאווירה רגועה. בפס הקול נשמע קריינות שקטה על \"רגע של עצירה בבוקר\".","detectedElements":["כוס קרמיקה","אבקת קקאו","אדים","תאורה חמה","ידיים מערבבות","אווירה רגועה"],"styles":{"moodBrand":{"key":"moodBrand","name":"מותג MOOD","hook":"רגע של איזון, כוס אחת בכל פעם 🤎","caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Instagram Reels","suggestedTime":"19:30"},"emotional":{"key":"emotional","name":"רגשי","hook":"יש בקרים שמגיע לנו לעצור 🤎","caption":"ריח של קקאו אמיתי, אדים שעולים לאט, ונשימה אחת עמוקה.\nהטקס הקטן הזה הוא התזכורת לדאוג לעצמך.","cta":"תנו לעצמכם את הרגע הזה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Facebook Reels","suggestedTime":"20:00"},"funny":{"key":"funny","name":"הומור ישראלי","hook":"כולם רצים על קפה. אני? טקס שלם של קקאו 🍫🧘","caption":"בזמן שאתם בלחץ של הבוקר, אני מערבב קקאו כאילו אני שף במאסטר שף 😂\nתייגו את מי שחייב/ת להירגע.","cta":"בואו תתמכרו יפה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"TikTok","suggestedTime":"21:00"},"directResponse":{"key":"directResponse","name":"מכירה ישירה","hook":"🔥 חזר למלאי — וכמות מוגבלת","caption":"הטקס שכולם מדברים עליו חזר.\nקקאו פרימיום, מתכון נקי, וטעם שממכר.\nאל תתפספסו.","cta":"הזמינו עכשיו לפני שייגמר 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"YouTube Shorts","suggestedTime":"18:00"}}},"edits":{"caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","hashtags":"#מוד #שוקולד_טקסי #קקאו #טקס_בוקר #רגע_לעצמי #MOOD #RitualChocolate #Cacao #MorningRitual #SelfCare #Shorts","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","platforms":["youtube"],"publishTime":""},"approval":{"captionReviewed":false,"hashtagsReviewed":false,"platformSelected":false,"previewChecked":false,"rightsConfirmed":false,"publishTimeSelected":false},"publish":{},"publishHistory":[],"createdAt":"2026-06-25T12:12:41.886Z","updatedAt":"2026-06-25T12:12:41.886Z"}],"statuses":["New","Needs review","Approved","Ready to publish","Published","Failed"],"approvalItems":[{"key":"captionReviewed","labelHe":"הכותרת נבדקה"},{"key":"hashtagsReviewed","labelHe":"ההאשטגים נבדקו"},{"key":"platformSelected","labelHe":"נבחרה פלטפורמה"},{"key":"previewChecked","labelHe":"התצוגה המקדימה נבדקה"},{"key":"rightsConfirmed","labelHe":"אושרו זכויות/הרשאות"},{"key":"publishTimeSelected","labelHe":"נבחר זמן פרסום"}],"gatedStatuses":["Ready to publish","Published"]};
+const __C = {"platforms":[{"key":"instagram","name":"Instagram","nameHe":"אינסטגרם","connected":false,"status":"Not connected","statusHe":"לא מחובר","accountName":null,"requiredPermissions":["instagram_basic","instagram_content_publish","pages_read_engagement"],"missingPermissions":["instagram_basic","instagram_content_publish","pages_read_engagement"],"missingCredentials":["IG_ACCESS_TOKEN","IG_BUSINESS_ID"],"canUpload":false,"canPublish":false,"publishDisabledReason":"פרסום מושבת בגרסה זו (v1) — המערכת לבדיקה והמלצות בלבד.","checkedAt":"2026-06-25T12:13:17.684Z"},{"key":"facebook","name":"Facebook","nameHe":"פייסבוק","connected":false,"status":"Not connected","statusHe":"לא מחובר","accountName":null,"requiredPermissions":["pages_manage_posts","pages_read_engagement","publish_video"],"missingPermissions":["pages_manage_posts","pages_read_engagement","publish_video"],"missingCredentials":["FB_PAGE_ACCESS_TOKEN","FB_PAGE_ID"],"canUpload":false,"canPublish":false,"publishDisabledReason":"פרסום מושבת בגרסה זו (v1) — המערכת לבדיקה והמלצות בלבד.","checkedAt":"2026-06-25T12:13:17.684Z"},{"key":"tiktok","name":"TikTok","nameHe":"טיקטוק","connected":false,"status":"Not connected","statusHe":"לא מחובר","accountName":null,"requiredPermissions":["video.upload","video.publish","user.info.basic"],"missingPermissions":["video.upload","video.publish","user.info.basic"],"missingCredentials":["TIKTOK_ACCESS_TOKEN","TIKTOK_OPEN_ID"],"canUpload":false,"canPublish":false,"publishDisabledReason":"פרסום מושבת בגרסה זו (v1) — המערכת לבדיקה והמלצות בלבד.","checkedAt":"2026-06-25T12:13:17.684Z"},{"key":"youtube","name":"YouTube","nameHe":"יוטיוב","connected":true,"demo":true,"status":"Connected (Demo)","statusHe":"מחובר (הדגמה)","accountName":"ערוץ הדגמה — MOOD","channelId":"DEMO_CHANNEL","requiredPermissions":["https://www.googleapis.com/auth/youtube.upload","https://www.googleapis.com/auth/youtube.readonly"],"missingPermissions":[],"missingCredentials":[],"configured":true,"canUpload":true,"canPublish":true,"publishDisabledReason":null,"privacyStatus":"unlisted","connectedAt":"2026-06-25T12:50:23.125Z","checkedAt":"2026-06-25T12:50:23.125Z","authUrlPath":"/api/youtube/oauth/start"}],"publishablePlatforms":["youtube"]};
+(function () {
+  let videos = JSON.parse(JSON.stringify(__V.videos));
+  const ORIG = JSON.stringify(__V.videos);
+  const approvalItems = __V.approvalItems;
+  const res = (data) => Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(data) });
+  window.fetch = function (path, opts) {
+    opts = opts || {};
+    const m = (opts.method || 'GET').toUpperCase();
+    const body = opts.body ? JSON.parse(opts.body) : {};
+    if (path === '/api/health') return res(__H);
+    if (path === '/api/connections') return res(__C);
+    if (path === '/api/videos') return res({ videos, statuses: __V.statuses, approvalItems, gatedStatuses: __V.gatedStatuses });
+    if (path === '/api/scan' && m === 'POST') return res({ videos });
+    if (path === '/api/demo/reset' && m === 'POST') { videos = JSON.parse(ORIG); return res({ videos, runTargetId: 'demo-new' }); }
+    let mm = path.match(/^\/api\/videos\/([^/]+)$/);
+    if (mm && m === 'PATCH') {
+      const v = videos.find((x) => x.id === mm[1]);
+      if (v) {
+        if (body.edits) v.edits = { ...v.edits, ...body.edits };
+        if (body.approval) v.approval = { ...v.approval, ...body.approval };
+        if (typeof body.transcript === 'string') v.transcript = { ...(v.transcript || {}), text: body.transcript, available: body.transcript.trim().length > 0, editedManually: true, source: 'manual' };
+        if (body.status) v.status = body.status;
+      }
+      return res(v || {});
+    }
+    mm = path.match(/^\/api\/videos\/([^/]+)\/publish\/youtube$/);
+    if (mm && m === 'POST') {
+      const v = videos.find((x) => x.id === mm[1]);
+      if (v) {
+        const vid = 'DEMO_' + Math.random().toString(16).slice(2, 10);
+        const at = new Date().toISOString();
+        const url = 'https://www.youtube.com/shorts/' + vid;
+        v.status = 'Published';
+        v.publish = { youtube: { status: 'published', videoId: vid, url, publishedAt: at, privacyStatus: 'unlisted', demo: true, error: null } };
+        v.publishHistory = [...(v.publishHistory || []), { platform: 'youtube', status: 'published', at, videoId: vid, url, privacyStatus: 'unlisted', demo: true }];
+      }
+      return res(v || {});
+    }
+    return res({});
+  };
+})();
+
+// MOOD Social — Overview dashboard client.
+'use strict';
+
+const STATUS_HE = {
+  'New': 'חדש',
+  'Needs review': 'דורש סקירה',
+  'Approved': 'מאושר',
+  'Ready to publish': 'מוכן לפרסום',
+  'Published': 'פורסם',
+  'Failed': 'נכשל',
+};
+const FUNNEL = ['New', 'Needs review', 'Approved', 'Ready to publish', 'Published'];
+let APPROVAL_ITEMS = [
+  { key: 'captionReviewed' }, { key: 'hashtagsReviewed' }, { key: 'platformSelected' },
+  { key: 'previewChecked' }, { key: 'rightsConfirmed' }, { key: 'publishTimeSelected' },
+];
+
+let health = null;
+let videos = [];
+let connections = [];
+
+const $ = (s) => document.querySelector(s);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+async function api(path, opts) {
+  const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText);
+  return res.json();
+}
+function flag(v) {
+  return v ? '<span class="flag-yes">כן</span>' : '<span class="flag-no">לא</span>';
+}
+function approvalComplete(a) {
+  return APPROVAL_ITEMS.every((i) => (a || {})[i.key]);
+}
+function fmtDateTime(iso) {
+  if (!iso) return '—';
+  try { return new Date(iso).toLocaleString('he-IL'); } catch { return iso; }
+}
+
+// ---- Renderers -------------------------------------------------------------
+
+function renderModeChip() {
+  const chip = $('#modeChip');
+  if (!chip || !health) return;
+  chip.textContent = health.demoMode ? '🧪 Demo Mode' : '🔧 Real Mode';
+  chip.className = 'mode-chip ' + (health.demoMode ? 'demo' : 'real');
+}
+
+function countBy(status) {
+  return videos.filter((v) => v.status === status).length;
+}
+
+function renderKpis() {
+  const transcripts = videos.filter((v) => v.transcript?.available).length;
+  const cards = [
+    { val: videos.length, label: 'סה״כ סרטונים', cls: 'accent' },
+    { val: countBy('New'), label: 'חדשים' },
+    { val: countBy('Ready to publish'), label: 'מוכנים לפרסום', cls: 'warn' },
+    { val: countBy('Published'), label: 'פורסמו', cls: 'good' },
+    { val: countBy('Failed'), label: 'נכשלו', cls: countBy('Failed') ? 'bad' : '' },
+    { val: transcripts, label: 'עם תמלול', sub: '🎙' },
+  ];
+  $('#kpis').innerHTML = cards
+    .map(
+      (c) => `<div class="kpi ${c.cls || ''}">
+        <div class="kpi-val">${c.val}</div>
+        <div class="kpi-label">${escapeHtml(c.label)}</div>
+        ${c.sub ? `<div class="kpi-sub meta">${c.sub}</div>` : ''}
+      </div>`,
+    )
+    .join('');
+}
+
+function renderFunnel() {
+  const max = Math.max(1, videos.length);
+  $('#funnel').innerHTML = FUNNEL.map((s) => {
+    const n = countBy(s);
+    const pct = Math.round((n / max) * 100);
+    return `<div class="funnel-row">
+      <span class="badge" data-status="${s}"><span class="dot"></span>${STATUS_HE[s]}</span>
+      <span class="funnel-bar"><span style="width:${pct}%"></span></span>
+      <span class="fn-count">${n}</span>
+    </div>`;
+  }).join('');
+}
+
+function statusBadge(status) {
+  return `<span class="badge" data-status="${status}"><span class="dot"></span>${STATUS_HE[status] || status}</span>`;
+}
+
+function renderRecent() {
+  const list = videos.slice(0, 6);
+  if (!list.length) {
+    $('#recent').innerHTML = '<div class="meta">אין סרטונים עדיין. הוסיפו וידאו או הריצו הדגמה.</div>';
+    return;
+  }
+  $('#recent').innerHTML = list
+    .map(
+      (v) => `<div class="recent-item">
+        <a href="/review.html">
+          <span class="rt">${v.demo ? '🎬' : '🎞'}</span>
+          <span class="rname">${escapeHtml(v.filename)}
+            ${v.demo ? '<span class="badge-demo">הדגמה</span>' : ''}
+            ${v.transcript?.available ? ' 🎙' : ''}
+            <br><span class="meta">${fmtDateTime(v.addedAt)}</span>
+          </span>
+        </a>
+        ${statusBadge(v.status)}
+      </div>`,
+    )
+    .join('');
+}
+
+function renderHealth() {
+  if (!health) return;
+  const ytLine = health.youtubeConnected
+    ? `<span class="flag-yes">מחובר${health.youtubeConnectionIsDemo ? ' (הדגמה)' : ''}</span>`
+    : '<span class="flag-no">לא מחובר</span>';
+  $('#health').innerHTML = `
+    <div class="health-row"><span class="label">תיקיית מעקב</span><span style="direction:ltr;font-size:.76rem">${escapeHtml(health.watchDir)}</span></div>
+    <div class="health-row"><span class="label">ffmpeg זמין</span>${flag(health.ffmpegAvailable)}</div>
+    <div class="health-row"><span class="label">מפתח Claude מוגדר</span>${flag(health.claudeConfigured)}</div>
+    <div class="health-row"><span class="label">תמלול מוגדר</span>${flag(health.transcriptionConfigured)}</div>
+    <div class="health-row"><span class="label">פרטי YouTube מוגדרים</span>${flag(health.youtubeConfigured)}</div>
+    <div class="health-row"><span class="label">YouTube מחובר</span>${ytLine}</div>`;
+}
+
+function renderConnections() {
+  if (!connections.length) { $('#connections').innerHTML = '<div class="meta">—</div>'; return; }
+  $('#connections').innerHTML = connections
+    .map((p) => {
+      const state = p.connected
+        ? `<span class="flag-yes">מחובר${p.demo ? ' (הדגמה)' : ''}</span>`
+        : p.key === 'youtube'
+        ? '<span class="flag-no">לא מחובר</span>'
+        : '<span class="meta">לא נבנה</span>';
+      const pub = p.canPublish ? ' · <span class="pill-ok">פרסום זמין</span>' : '';
+      return `<div class="conn-line"><span>${escapeHtml(p.nameHe)} · ${escapeHtml(p.name)}</span><span>${state}${pub}</span></div>`;
+    })
+    .join('');
+}
+
+function renderSteps() {
+  const any = (fn) => videos.some(fn);
+  const steps = [
+    { t: 'שלב 1: הוספת סרטון', done: videos.length > 0 },
+    { t: 'שלב 2: סקירת ההמלצות', done: any((v) => v.recommendations?.styles) },
+    { t: 'שלב 3: עריכת כותרת/האשטגים/CTA', done: any((v) => v.approval?.captionReviewed) },
+    { t: 'שלב 4: השלמת רשימת האישור', done: any((v) => approvalComplete(v.approval)) },
+    { t: 'שלב 5: חיבור YouTube', done: !!health?.youtubeConnected },
+    { t: 'שלב 6: העלאת בדיקה כ-Unlisted', done: any((v) => (v.publishHistory || []).length > 0) },
+    { t: 'שלב 7: פרסום ידני', done: any((v) => v.status === 'Published') },
+  ];
+  $('#steps').innerHTML = steps
+    .map(
+      (s, i) => `<li class="${s.done ? 'done' : ''}">
+        <span class="num">${s.done ? '✓' : i + 1}</span>
+        <span class="step-text">${escapeHtml(s.t)}</span>
+      </li>`,
+    )
+    .join('');
+}
+
+function renderQuickActions() {
+  const demo = !!health?.demoMode;
+  $('#quickActions').innerHTML = `
+    <button class="btn primary" id="scanBtn">🔄 סרוק תיקייה</button>
+    <a class="btn" href="/review.html">🎬 סקירת סרטונים</a>
+    <a class="btn" href="/connections.html">🔌 חיבורים</a>
+    ${demo ? '<button class="btn primary" id="runDemoBtn">▶️ הרץ הדגמה מלאה</button><button class="btn" id="resetDemoBtn">↺ אפס הדגמה</button>' : ''}
+    <div class="spacer"></div>
+    <span class="meta" id="lastUpdated"></span>`;
+
+  $('#scanBtn').addEventListener('click', async () => {
+    try { await api('/api/scan', { method: 'POST' }); await refresh(); toast('סריקה הושלמה'); }
+    catch (e) { toast('שגיאה: ' + e.message); }
+  });
+  const run = $('#runDemoBtn');
+  if (run) run.addEventListener('click', runFullDemo);
+  const reset = $('#resetDemoBtn');
+  if (reset) reset.addEventListener('click', async () => {
+    try { await api('/api/demo/reset', { method: 'POST' }); await refresh(); toast('ההדגמה אופסה'); }
+    catch (e) { toast('שגיאה: ' + e.message); }
+  });
+}
+
+// ---- Run Full Demo (drives the real gated endpoints; publish is simulated) --
+
+async function runFullDemo() {
+  const btn = $('#runDemoBtn');
+  if (btn) btn.disabled = true;
+  try {
+    const reset = await api('/api/demo/reset', { method: 'POST' });
+    const id = reset.runTargetId || 'demo-new';
+    await refresh();
+
+    toast('שלב 1: זוהה סרטון חדש 🎬'); await sleep(900);
+    toast('שלב 2: המלצות Claude מוכנות ✓'); await sleep(900);
+
+    const v = videos.find((x) => x.id === id);
+    const s = v?.recommendations?.styles?.moodBrand || {};
+    await api(`/api/videos/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        edits: {
+          caption: s.caption || '',
+          hashtags: [...(s.hashtags?.hebrew || []), ...(s.hashtags?.english || [])].join(' '),
+          cta: s.cta || '', platforms: ['youtube'],
+        },
+      }),
+    });
+    toast('שלב 3: כותרת/האשטגים/CTA נערכו ✓'); await sleep(900);
+
+    const approval = {};
+    APPROVAL_ITEMS.forEach((i) => (approval[i.key] = true));
+    await api(`/api/videos/${id}`, { method: 'PATCH', body: JSON.stringify({ approval }) });
+    toast('שלב 4: רשימת האישור הושלמה ✓'); await sleep(900);
+
+    await api(`/api/videos/${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'Ready to publish' }) });
+    toast('שלב 5: מוכן לפרסום · YouTube מחובר (הדגמה) ✓'); await sleep(900);
+
+    toast('שלב 6: מבצע העלאת בדיקה (Unlisted)…');
+    await api(`/api/videos/${id}/publish/youtube`, { method: 'POST' });
+    await sleep(700);
+    toast('שלב 7: פורסם בהדגמה — לא פורסם דבר באמת ✅');
+
+    await refresh();
+  } catch (e) {
+    toast('שגיאה בהדגמה: ' + e.message);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ---- Load + render ---------------------------------------------------------
+
+async function refresh() {
+  const [h, vd, cn] = await Promise.all([
+    api('/api/health').catch(() => null),
+    api('/api/videos').catch(() => ({ videos: [] })),
+    api('/api/connections').catch(() => ({ platforms: [] })),
+  ]);
+  health = h;
+  videos = vd.videos || [];
+  if (Array.isArray(vd.approvalItems) && vd.approvalItems.length) APPROVAL_ITEMS = vd.approvalItems;
+  connections = cn.platforms || [];
+
+  renderModeChip();
+  renderQuickActions();
+  renderKpis();
+  renderFunnel();
+  renderRecent();
+  renderHealth();
+  renderConnections();
+  renderSteps();
+  const lu = $('#lastUpdated');
+  if (lu) lu.textContent = 'עודכן: ' + new Date().toLocaleTimeString('he-IL');
+}
+
+refresh();
+setInterval(refresh, 8000);
+
+</script>
+</body>
+</html>
