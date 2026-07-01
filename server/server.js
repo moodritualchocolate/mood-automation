@@ -17,6 +17,7 @@ import { runChecks, getConnections } from './platforms.js';
 import * as youtube from './youtube.js';
 import * as demo from './demo.js';
 import * as research from './research.js';
+import * as autonomy from './autonomy.js';
 import { hasFfmpeg } from './frames.js';
 import { isAvailable as transcriptionAvailable } from './transcribe.js';
 import { isConfigured as claudeConfigured } from './claude.js';
@@ -338,6 +339,45 @@ async function handleApi(req, res, pathname, url) {
     return sendJson(res, 200, { platform: youtube.disconnect() });
   }
 
+  // --- Autonomous OS ---
+  if (req.method === 'GET' && pathname === '/api/os') {
+    return sendJson(res, 200, autonomy.snapshot());
+  }
+  if (req.method === 'POST' && pathname === '/api/os/autonomy') {
+    const body = await readBody(req);
+    try {
+      autonomy.setAutonomy(body.level);
+      return sendJson(res, 200, autonomy.snapshot());
+    } catch (e) {
+      return sendJson(res, 400, { error: e.message });
+    }
+  }
+  if (req.method === 'POST' && pathname === '/api/os/goals') {
+    const body = await readBody(req);
+    if (!body.title) return sendJson(res, 400, { error: 'title required' });
+    autonomy.addGoal({ title: body.title, description: body.description });
+    // Immediately advance once so the user sees work begin.
+    autonomy.tick({ force: true });
+    return sendJson(res, 200, autonomy.snapshot());
+  }
+  if (req.method === 'POST' && pathname === '/api/os/tick') {
+    autonomy.tick({ force: true });
+    return sendJson(res, 200, autonomy.snapshot());
+  }
+  let dm = pathname.match(/^\/api\/os\/decisions\/([^/]+)$/);
+  if (dm && req.method === 'POST') {
+    const body = await readBody(req);
+    autonomy.resolveDecision(dm[1], body.action === 'approve' ? 'approve' : 'reject');
+    return sendJson(res, 200, autonomy.snapshot());
+  }
+  let om = pathname.match(/^\/api\/os\/opportunities\/([^/]+)$/);
+  if (om && req.method === 'POST') {
+    const body = await readBody(req);
+    if (body.action === 'accept') autonomy.acceptOpportunity(om[1]);
+    else autonomy.dismissOpportunity(om[1]);
+    return sendJson(res, 200, autonomy.snapshot());
+  }
+
   // --- Competitor research ---
   if (req.method === 'GET' && pathname === '/api/competitors') {
     return sendJson(res, 200, { competitors: store.listCompetitors() });
@@ -410,7 +450,9 @@ async function handleApi(req, res, pathname, url) {
     if (req.method === 'POST' && pathname === '/api/demo/reset') {
       demo.clearDemoVideos();
       demo.clearDemoResearch();
+      demo.clearDemoOS();
       demo.seedDemoResearch();
+      demo.seedDemoOS();
       return sendJson(res, 200, { videos: demo.seedDemoVideos(), runTargetId: demo.RUN_TARGET_ID });
     }
     return notFound(res, 'Unknown demo route');
@@ -615,6 +657,17 @@ server.listen(config.port, config.host, () => {
   );
   console.log('────────────────────────────────────────────');
   watcher.start();
+
+  // Autonomous tick: the org advances safe work on its own when autonomy is on.
+  // Bounded per cycle; outward actions still require approval.
+  setInterval(() => {
+    try {
+      const lvl = store.getOS().autonomyLevel;
+      if (lvl && lvl !== 'off') autonomy.tick();
+    } catch (err) {
+      console.error('[autonomy] tick error:', err.message);
+    }
+  }, 20000);
 });
 
 function shutdown() {

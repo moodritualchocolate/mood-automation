@@ -8,7 +8,9 @@ import {
   listVideos, getVideo, upsertVideo, updateVideo, removeVideo,
   listCompetitors, upsertCompetitor, removeCompetitor,
   listInspiration, upsertInspiration, removeInspiration,
+  goals as goalStore, resetOS,
 } from './store.js';
+import * as autonomy from './autonomy.js';
 
 const DEMO_IDS = ['demo-new', 'demo-ready', 'demo-published'];
 
@@ -320,6 +322,26 @@ export function demoDiscover() {
 export function clearDemoResearch() {
   for (const c of listCompetitors()) if (c.demo) removeCompetitor(c.id);
   for (const a of listInspiration()) if (a.demo) removeInspiration(a.id);
+}
+
+// ---- Demo: Autonomous OS ---------------------------------------------------
+// Seeds by actually RUNNING the engine, so the "overnight accomplishments" are
+// real outputs of the same code path — including a pending approval decision.
+
+export function seedDemoOS() {
+  if (goalStore.list().length) return; // already seeded
+  autonomy.setAutonomy('auto');
+  autonomy.addGoal({ title: 'הגדלת הכנסות מ-YouTube Shorts', description: 'יותר צפיות והמרות מהערוץ' });
+  autonomy.addGoal({ title: 'לחזק נוכחות מול מתחרים בנישת הקקאו', description: 'מחקר, השראה ותוכן' });
+  autonomy.addGoal({ title: 'לשפר SEO ונראות בחיפוש', description: 'מילות מפתח ותיאורים' });
+  // Advance the org a few cycles → produces done tasks, activity, opportunities,
+  // and (from the outward "לפרסם…" task) a pending human decision.
+  for (let i = 0; i < 5; i++) autonomy.tick({ force: true });
+  return autonomy.snapshot();
+}
+
+export function clearDemoOS() {
+  resetOS();
 }
 
 // The video Run Full Demo should drive through the flow.

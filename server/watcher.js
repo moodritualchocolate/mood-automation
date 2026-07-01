@@ -12,7 +12,7 @@ import { config, APPROVAL_ITEMS } from './config.js';
 import { analyzeVideo } from './analyzer.js';
 import { generateRecommendations } from './recommend.js';
 import { transcribe } from './transcribe.js';
-import { seedDemoVideos, hasDemoVideos, seedDemoResearch } from './demo.js';
+import { seedDemoVideos, hasDemoVideos, seedDemoResearch, seedDemoOS } from './demo.js';
 import {
   listVideos,
   getVideoByPath,
@@ -205,7 +205,8 @@ export function start() {
   if (config.demoMode && !hasDemoVideos()) {
     seedDemoVideos();
     seedDemoResearch();
-    console.log('[watcher] Demo mode — seeded sample videos + research.');
+    seedDemoOS();
+    console.log('[watcher] Demo mode — seeded sample videos + research + OS.');
   }
 
   // Instant detection.

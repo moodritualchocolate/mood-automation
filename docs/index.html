@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>דאשבורד — MOOD Social (תצוגה עצמאית)</title>
+<title>מרכז שליטה — MOOD Autonomous OS (הדגמה)</title>
 <style>
 /* MOOD Social — clean, light SaaS design system. RTL-first, mobile-friendly. */
 :root {
@@ -268,6 +268,45 @@ label { display: block; font-size: .8rem; color: var(--muted); margin: 14px 0 5p
 .frame-strip .frame { width: 30px; height: 52px; border-radius: 6px; background: var(--accent-soft); border: 1px solid var(--border); }
 .badge-demo { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .68rem; font-weight: 600; background: var(--warn-soft); color: #92600c; }
 
+/* ---- Autonomous OS ---- */
+.os-hero { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 18px; }
+.os-hero-grid { display: grid; grid-template-columns: auto 1.2fr 1fr; gap: 22px; align-items: center; }
+@media (max-width: 860px) { .os-hero-grid { grid-template-columns: 1fr; gap: 16px; } }
+.hero-title { font-weight: 650; font-size: .95rem; }
+.autonomy { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.seg-group { display: inline-flex; border: 1px solid var(--border-strong); border-radius: 999px; overflow: hidden; }
+.seg { border: none; background: var(--surface); color: var(--text-2); padding: 7px 16px; cursor: pointer; font-size: .84rem; font-weight: 600; font-family: inherit; }
+.seg:hover { background: var(--surface-2); }
+.seg.active { background: var(--accent); color: #fff; }
+
+.health-ring {
+  --pct: 0; width: 108px; height: 108px; border-radius: 50%; flex: 0 0 auto;
+  background: conic-gradient(var(--accent) calc(var(--pct) * 1%), var(--surface-2) 0);
+  display: grid; place-items: center;
+}
+.hr-inner { width: 84px; height: 84px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; text-align: center; }
+.hr-score { font-size: 1.7rem; font-weight: 800; line-height: 1; }
+.hr-label { font-size: .72rem; color: var(--muted); }
+
+.act { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
+.act:last-child { border-bottom: none; }
+.act-ic { width: 22px; height: 22px; flex: 0 0 auto; border-radius: 50%; display: grid; place-items: center; font-size: .72rem; background: var(--surface-2); color: var(--muted); }
+.act.a-ok .act-ic { background: var(--good-soft); color: #14704a; }
+.act.a-dec .act-ic { background: var(--accent-soft); color: var(--accent); }
+.act.a-warn .act-ic { background: var(--warn-soft); color: #92600c; }
+.act-body { flex: 1; min-width: 0; line-height: 1.45; }
+
+.goal { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; }
+.goal-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+.decision, .opp { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; background: var(--surface); }
+.decision { border-inline-start: 3px solid var(--warn); }
+.opp { border-inline-start: 3px solid var(--accent); }
+
+.agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+.agent { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; }
+.agent-name { font-weight: 650; font-size: .84rem; }
+
 /* ---- Research: competitors + assets ---- */
 .comp { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px; background: var(--surface); }
 .comp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
@@ -307,108 +346,113 @@ label { display: block; font-size: .8rem; color: var(--muted); margin: 14px 0 5p
 </style>
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <div class="logo">M</div>
-    <div><h1>MOOD Social — דאשבורד</h1><small>סקירה, המלצות AI ופרסום לרשתות</small></div>
-  </div>
-  <nav class="nav">
-    <a href="./" class="active">דאשבורד</a>
-    <span id="modeChip" class="mode-chip"></span>
-  </nav>
-</header>
-<div class="offline-note">🔎 תצוגת הדגמה חיה · נתוני דוגמה · אין פרסום אמיתי. נסה "הרץ הדגמה מלאה" — הכל מקומי בדפדפן.</div>
-<div class="banner">⚠️ פרסום מתבצע רק בלחיצה ידנית (YouTube Shorts בלבד) ולאחר השלמת רשימת האישור. אין פרסום אוטומטי.</div>
-<main class="container">
-  <div class="toolbar" id="quickActions"></div>
-  <div id="kpis" class="kpi-grid"></div>
-  <div class="dash-cols">
-    <div>
-      <div class="panel"><h3>צינור העבודה (Pipeline)</h3><div id="funnel"></div></div>
-      <div class="panel"><h3>פעילות אחרונה</h3><div id="recent"></div></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div>
+        <h1>MOOD · מרכז שליטה</h1>
+        <small>מערכת הפעלה אוטונומית — היעדים שלך, מבוצעים על ידי צוות AI</small>
+      </div>
     </div>
-    <div>
-      <div class="panel"><h3>בריאות המערכת</h3><div id="health"></div></div>
-      <div class="panel"><h3>חיבורי פלטפורמות</h3><div id="connections"></div></div>
-      <div class="panel"><h3>מדריך מודרך</h3><ul class="steps" id="steps"></ul></div>
+    <nav class="nav"><a href="#" class="active">מרכז שליטה</a><span id="modeChip" class="mode-chip"></span></nav>
+  </header>
+
+  <div class="banner">🛡️ האוטומציה מבצעת עבודה פנימית בטוחה באופן עצמאי. כל פעולה חיצונית (פרסום/שליחה/הוצאה) ממתינה לאישורך — לעולם לא אוטומטית.</div>
+
+  <main class="container">
+    <section id="hero" class="os-hero"></section>
+
+    <div id="kpis" class="kpi-grid"></div>
+
+    <div class="dash-cols">
+      <div>
+        <div class="panel">
+          <h3>✅ מה הושלם (יומן הישגים)</h3>
+          <div id="activity"></div>
+        </div>
+        <div class="panel">
+          <h3>🎯 יעדים</h3>
+          <div id="goals"></div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3>🔔 החלטות שממתינות לך</h3>
+          <div id="decisions"></div>
+        </div>
+        <div class="panel">
+          <h3>💡 הזדמנויות שזוהו</h3>
+          <div id="opportunities"></div>
+        </div>
+        <div class="panel">
+          <h3>👥 צוות ה-AI</h3>
+          <div id="agents"></div>
+        </div>
+      </div>
     </div>
-  </div>
-</main>
-<div class="toast" id="toast"></div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  
+
+<div class="offline-note" style="position:relative;z-index:1">🔎 תצוגת הדגמה חיה של מערכת ההפעלה האוטונומית · נתוני דוגמה · אין פעולות חיצוניות אמיתיות.</div>
 <script>
 
+const __OS = {"autonomyLevel":"auto","lastTickAt":"2026-07-01T21:26:06.919Z","health":{"score":85,"label":"מצוין","tasksDone":9,"tasksPending":0,"decisionsOpen":1,"updatedAt":"2026-07-01T21:26:06.919Z"},"goals":[{"id":"goal-00ba0e7a","title":"הגדלת הכנסות מ-YouTube Shorts","description":"יותר צפיות והמרות מהערוץ","status":"active","progress":75,"createdAt":"2026-07-01T21:26:06.918Z"},{"id":"goal-513fd7ec","title":"לחזק נוכחות מול מתחרים בנישת הקקאו","description":"מחקר, השראה ותוכן","status":"done","progress":100,"createdAt":"2026-07-01T21:26:06.918Z"},{"id":"goal-90e520b7","title":"לשפר SEO ונראות בחיפוש","description":"מילות מפתח ותיאורים","status":"done","progress":100,"createdAt":"2026-07-01T21:26:06.918Z"}],"tasks":[{"id":"task-656dbbce","goalId":"goal-00ba0e7a","title":"לנתח את המרות הפוסטים האחרונים","agent":"analytics","priority":3,"value":5,"effort":2,"outward":false,"status":"done","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":"נותחו הנתונים: זוהתה עלייה של 18% בשמירות ווידאו קצר בבוקר עובד טוב יותר."},{"id":"task-9d266df1","goalId":"goal-00ba0e7a","title":"להפיק 5 רעיונות תוכן ממיר","agent":"copywriter","priority":3,"value":4,"effort":2,"outward":false,"status":"done","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":"הופקו 3 הוקים בעברית + וריאציית כיתוב מוכנה לסקירה."},{"id":"task-a318c2b6","goalId":"goal-00ba0e7a","title":"לזהות 3 קהלים חדשים לטרגוט","agent":"marketing","priority":3,"value":4,"effort":3,"outward":false,"status":"done","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":"הוגדר סקיצת קמפיין עם קהל יעד ומסר מרכזי."},{"id":"task-2861362c","goalId":"goal-00ba0e7a","title":"לפרסם את הסרטון בעל הביצועים הטובים","agent":"social","priority":3,"value":5,"effort":2,"outward":true,"status":"needs_approval","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":null},{"id":"task-c45f4e34","goalId":"goal-513fd7ec","title":"לסרוק מתחרים ולעדכן תובנות","agent":"research","priority":3,"value":4,"effort":2,"outward":false,"status":"done","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":"נסרקו מתחרים ועודכנו תובנות; זוהו 4 נכסי השראה רלוונטיים."},{"id":"task-ba89e85f","goalId":"goal-513fd7ec","title":"לגלות 5 נכסי השראה חדשים","agent":"research","priority":3,"value":4,"effort":2,"outward":false,"status":"done","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":"נסרקו מתחרים ועודכנו תובנות; זוהו 4 נכסי השראה רלוונטיים."},{"id":"task-5d1d9047","goalId":"goal-513fd7ec","title":"לתרגם מגמות ל-3 רעיונות ל-MOOD","agent":"copywriter","priority":3,"value":4,"effort":2,"outward":false,"status":"done","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":"הופקו 3 הוקים בעברית + וריאציית כיתוב מוכנה לסקירה."},{"id":"task-22232849","goalId":"goal-90e520b7","title":"לבצע ניתוח מילות מפתח לנישה","agent":"seo","priority":3,"value":4,"effort":2,"outward":false,"status":"done","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":"הופקו מילות מפתח ותיאורים משופרים לנישה."},{"id":"task-3eb90f18","goalId":"goal-90e520b7","title":"לשפר תיאורים והאשטגים לפי SEO","agent":"seo","priority":3,"value":3,"effort":2,"outward":false,"status":"done","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":"הופקו מילות מפתח ותיאורים משופרים לנישה."},{"id":"task-fe92e3c4","goalId":"goal-90e520b7","title":"לזהות פערי תוכן מול מתחרים","agent":"research","priority":3,"value":4,"effort":3,"outward":false,"status":"done","createdAt":"2026-07-01T21:26:06.918Z","updatedAt":"2026-07-01T21:26:06.918Z","result":"נסרקו מתחרים ועודכנו תובנות; זוהו 4 נכסי השראה רלוונטיים."}],"agents":[{"id":"ceo","name":"מנכ״ל AI","role":"אסטרטגיה ותעדוף","status":"idle","lastActive":null,"tasksDone":0},{"id":"research","name":"סוכן מחקר","role":"מתחרים ומגמות","status":"idle","lastActive":"2026-07-01T21:26:06.918Z","tasksDone":3},{"id":"marketing","name":"סוכן שיווק","role":"קמפיינים ותוכן","status":"idle","lastActive":"2026-07-01T21:26:06.918Z","tasksDone":1},{"id":"copywriter","name":"קופירייטר","role":"כותרות, הוקים והאשטגים","status":"idle","lastActive":"2026-07-01T21:26:06.918Z","tasksDone":2},{"id":"seo","name":"סוכן SEO","role":"נראות וחיפוש","status":"idle","lastActive":"2026-07-01T21:26:06.918Z","tasksDone":2},{"id":"analytics","name":"סוכן אנליטיקס","role":"מדדים ואנומליות","status":"idle","lastActive":"2026-07-01T21:26:06.918Z","tasksDone":1},{"id":"social","name":"סוכן סושיאל","role":"פרסום מגודר","status":"idle","lastActive":null,"tasksDone":0},{"id":"ops","name":"סוכן תפעול","role":"תזמון ומשימות","status":"idle","lastActive":null,"tasksDone":0},{"id":"finance","name":"סוכן פיננסים","role":"עלויות ותקציב","status":"idle","lastActive":null,"tasksDone":0}],"activity":[{"id":"act-e2662616","at":"2026-07-01T21:26:06.919Z","agent":"research","type":"info","message":"הזדמנות זוהתה: מגמת ASMR קקאו עולה."},{"id":"act-114596be","at":"2026-07-01T21:26:06.918Z","agent":"seo","type":"success","message":"לשפר תיאורים והאשטגים לפי SEO — הופקו מילות מפתח ותיאורים משופרים לנישה."},{"id":"act-dfbe716e","at":"2026-07-01T21:26:06.918Z","agent":"research","type":"success","message":"לזהות פערי תוכן מול מתחרים — נסרקו מתחרים ועודכנו תובנות; זוהו 4 נכסי השראה רלוונטיים."},{"id":"act-c522c9dc","at":"2026-07-01T21:26:06.918Z","agent":"marketing","type":"success","message":"לזהות 3 קהלים חדשים לטרגוט — הוגדר סקיצת קמפיין עם קהל יעד ומסר מרכזי."},{"id":"act-ada62545","at":"2026-07-01T21:26:06.918Z","agent":"seo","type":"success","message":"לבצע ניתוח מילות מפתח לנישה — הופקו מילות מפתח ותיאורים משופרים לנישה."},{"id":"act-89d6d1e2","at":"2026-07-01T21:26:06.918Z","agent":"copywriter","type":"success","message":"לתרגם מגמות ל-3 רעיונות ל-MOOD — הופקו 3 הוקים בעברית + וריאציית כיתוב מוכנה לסקירה."},{"id":"act-7d4b178f","at":"2026-07-01T21:26:06.918Z","agent":"research","type":"success","message":"לגלות 5 נכסי השראה חדשים — נסרקו מתחרים ועודכנו תובנות; זוהו 4 נכסי השראה רלוונטיים."},{"id":"act-07fdc660","at":"2026-07-01T21:26:06.918Z","agent":"research","type":"success","message":"לסרוק מתחרים ולעדכן תובנות — נסרקו מתחרים ועודכנו תובנות; זוהו 4 נכסי השראה רלוונטיים."},{"id":"act-8aa35c06","at":"2026-07-01T21:26:06.918Z","agent":"copywriter","type":"success","message":"להפיק 5 רעיונות תוכן ממיר — הופקו 3 הוקים בעברית + וריאציית כיתוב מוכנה לסקירה."},{"id":"act-8791c5ac","at":"2026-07-01T21:26:06.918Z","agent":"social","type":"decision","message":"הוכן ל\"לפרסם את הסרטון בעל הביצועים הטובים\" וממתין לאישורך."},{"id":"act-5f96bfb5","at":"2026-07-01T21:26:06.918Z","agent":"analytics","type":"success","message":"לנתח את המרות הפוסטים האחרונים — נותחו הנתונים: זוהתה עלייה של 18% בשמירות ווידאו קצר בבוקר עובד טוב יותר."},{"id":"act-7bb6b977","at":"2026-07-01T21:26:06.918Z","agent":"ceo","type":"info","message":"יעד חדש התקבל: \"לשפר SEO ונראות בחיפוש\". פורק ל-3 משימות."},{"id":"act-965afae3","at":"2026-07-01T21:26:06.918Z","agent":"ceo","type":"info","message":"יעד חדש התקבל: \"לחזק נוכחות מול מתחרים בנישת הקקאו\". פורק ל-3 משימות."},{"id":"act-8f357208","at":"2026-07-01T21:26:06.918Z","agent":"ceo","type":"info","message":"יעד חדש התקבל: \"הגדלת הכנסות מ-YouTube Shorts\". פורק ל-4 משימות."},{"id":"act-82c2745f","at":"2026-07-01T21:26:06.918Z","agent":"ceo","type":"info","message":"מצב אוטונומיה שונה ל: auto."}],"opportunities":[{"id":"opp-5b1931f0","at":"2026-07-01T21:26:06.919Z","status":"new","title":"מגמת ASMR קקאו עולה","detail":"זוהתה עלייה בסרטוני ASMR של הכנת קקאו — הזדמנות לסדרה קצרה.","source":"research","value":4}],"decisions":[{"id":"dec-0e3f6054","at":"2026-07-01T21:26:06.918Z","title":"אישור נדרש: לפרסם את הסרטון בעל הביצועים הטובים","detail":"פעולה חיצונית (פרסום/שליחה) — דורשת אישור אנושי לפי מדיניות הבטיחות.","taskId":"task-2861362c","recommendation":"מומלץ לאשר לאחר בדיקה קצרה.","status":"pending"}],"counts":{"tasksDone":9,"tasksActive":0,"needsApproval":1,"goalsActive":1,"opportunities":1}};
 const __H = {"ok":true,"version":"0.1.0","demoMode":true,"watchDir":"/home/user/mood-automation/content/social-videos-to-review","ffmpegAvailable":false,"claudeConfigured":false,"transcriptionConfigured":false,"transcriptionMethod":"none","youtubeConfigured":false,"youtubeConnected":true,"youtubeConnectionIsDemo":true,"researchConfigured":false,"publishablePlatforms":["youtube"]};
-const __V = {"videos":[{"id":"demo-ready","filename":"demo-evening-ritual.mp4","demo":true,"path":"","relPath":"demo-evening-ritual.mp4","ext":".mp4","sizeBytes":32296141,"addedAt":"2026-07-01T19:56:39.096Z","modifiedAt":"2026-07-01T19:56:39.096Z","status":"Ready to publish","analysis":{"probed":true,"sizeBytes":32296141,"durationSec":22,"width":1080,"height":1920,"aspectRatio":"9:16","fps":30,"videoCodec":"h264","audioCodec":"aac","hasAudio":true,"bitrate":12000000,"ext":".mp4","readiness":{"ready":true,"notes":[]},"analyzedAt":"2026-07-01T19:56:39.096Z","demo":true},"transcript":{"available":true,"text":"בערב, כשהבית נרגע, אני מכינה לעצמי כוס קקאו. בלי טלפון, בלי רעש. רק אני והטעם הזה שמרגיע.","language":"he","source":"demo","transcribedAt":"2026-07-01T19:56:39.096Z","editedManually":false},"recommendations":{"generatedAt":"2026-07-01T19:56:39.096Z","source":"demo","model":"demo","framesAnalyzed":6,"usedTranscript":true,"contentAnalysis":"בסרטון נראית הכנה של משקה קקאו טקסי: מוזגים מים חמים לכוס עם אבקת קקאו כהה, מערבבים לאט, ועולה אדים. התאורה חמה והאווירה רגועה. בפס הקול נשמע קריינות שקטה על \"רגע של עצירה בבוקר\".","detectedElements":["כוס קרמיקה","אבקת קקאו","אדים","תאורה חמה","ידיים מערבבות","אווירה רגועה"],"styles":{"moodBrand":{"key":"moodBrand","name":"מותג MOOD","hook":"רגע של איזון, כוס אחת בכל פעם 🤎","caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Instagram Reels","suggestedTime":"19:30"},"emotional":{"key":"emotional","name":"רגשי","hook":"יש בקרים שמגיע לנו לעצור 🤎","caption":"ריח של קקאו אמיתי, אדים שעולים לאט, ונשימה אחת עמוקה.\nהטקס הקטן הזה הוא התזכורת לדאוג לעצמך.","cta":"תנו לעצמכם את הרגע הזה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Facebook Reels","suggestedTime":"20:00"},"funny":{"key":"funny","name":"הומור ישראלי","hook":"כולם רצים על קפה. אני? טקס שלם של קקאו 🍫🧘","caption":"בזמן שאתם בלחץ של הבוקר, אני מערבב קקאו כאילו אני שף במאסטר שף 😂\nתייגו את מי שחייב/ת להירגע.","cta":"בואו תתמכרו יפה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"TikTok","suggestedTime":"21:00"},"directResponse":{"key":"directResponse","name":"מכירה ישירה","hook":"🔥 חזר למלאי — וכמות מוגבלת","caption":"הטקס שכולם מדברים עליו חזר.\nקקאו פרימיום, מתכון נקי, וטעם שממכר.\nאל תתפספסו.","cta":"הזמינו עכשיו לפני שייגמר 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"YouTube Shorts","suggestedTime":"18:00"}}},"edits":{"caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","hashtags":"#מוד #שוקולד_טקסי #קקאו #טקס_בוקר #רגע_לעצמי #MOOD #RitualChocolate #Cacao #MorningRitual #SelfCare #Shorts","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","platforms":["youtube"],"publishTime":""},"approval":{"captionReviewed":true,"hashtagsReviewed":true,"platformSelected":true,"previewChecked":true,"rightsConfirmed":true,"publishTimeSelected":true},"publish":{},"publishHistory":[],"createdAt":"2026-07-01T19:56:39.096Z","updatedAt":"2026-07-01T19:56:39.096Z"},{"id":"demo-published","filename":"demo-behind-the-scenes.mp4","demo":true,"path":"","relPath":"demo-behind-the-scenes.mp4","ext":".mp4","sizeBytes":22020096,"addedAt":"2026-07-01T19:56:39.096Z","modifiedAt":"2026-07-01T19:56:39.096Z","status":"Published","analysis":{"probed":true,"sizeBytes":22020096,"durationSec":15,"width":1080,"height":1920,"aspectRatio":"9:16","fps":30,"videoCodec":"h264","audioCodec":"aac","hasAudio":true,"bitrate":12000000,"ext":".mp4","readiness":{"ready":true,"notes":[]},"analyzedAt":"2026-07-01T19:56:39.096Z","demo":true},"transcript":{"available":true,"text":"רגע מאחורי הקלעים: ככה נראית ההכנה של אצווה חדשה. קקאו טהור, בלי קיצורי דרך.","language":"he","source":"demo","transcribedAt":"2026-07-01T19:56:39.096Z","editedManually":false},"recommendations":{"generatedAt":"2026-07-01T19:56:39.096Z","source":"demo","model":"demo","framesAnalyzed":6,"usedTranscript":true,"contentAnalysis":"בסרטון נראית הכנה של משקה קקאו טקסי: מוזגים מים חמים לכוס עם אבקת קקאו כהה, מערבבים לאט, ועולה אדים. התאורה חמה והאווירה רגועה. בפס הקול נשמע קריינות שקטה על \"רגע של עצירה בבוקר\".","detectedElements":["כוס קרמיקה","אבקת קקאו","אדים","תאורה חמה","ידיים מערבבות","אווירה רגועה"],"styles":{"moodBrand":{"key":"moodBrand","name":"מותג MOOD","hook":"רגע של איזון, כוס אחת בכל פעם 🤎","caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Instagram Reels","suggestedTime":"19:30"},"emotional":{"key":"emotional","name":"רגשי","hook":"יש בקרים שמגיע לנו לעצור 🤎","caption":"ריח של קקאו אמיתי, אדים שעולים לאט, ונשימה אחת עמוקה.\nהטקס הקטן הזה הוא התזכורת לדאוג לעצמך.","cta":"תנו לעצמכם את הרגע הזה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Facebook Reels","suggestedTime":"20:00"},"funny":{"key":"funny","name":"הומור ישראלי","hook":"כולם רצים על קפה. אני? טקס שלם של קקאו 🍫🧘","caption":"בזמן שאתם בלחץ של הבוקר, אני מערבב קקאו כאילו אני שף במאסטר שף 😂\nתייגו את מי שחייב/ת להירגע.","cta":"בואו תתמכרו יפה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"TikTok","suggestedTime":"21:00"},"directResponse":{"key":"directResponse","name":"מכירה ישירה","hook":"🔥 חזר למלאי — וכמות מוגבלת","caption":"הטקס שכולם מדברים עליו חזר.\nקקאו פרימיום, מתכון נקי, וטעם שממכר.\nאל תתפספסו.","cta":"הזמינו עכשיו לפני שייגמר 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"YouTube Shorts","suggestedTime":"18:00"}}},"edits":{"caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","hashtags":"#מוד #שוקולד_טקסי #קקאו #טקס_בוקר #רגע_לעצמי #MOOD #RitualChocolate #Cacao #MorningRitual #SelfCare #Shorts","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","platforms":["youtube"],"publishTime":""},"approval":{"captionReviewed":true,"hashtagsReviewed":true,"platformSelected":true,"previewChecked":true,"rightsConfirmed":true,"publishTimeSelected":true},"publish":{"youtube":{"status":"published","videoId":"DEMO_8sQ2k","url":"https://www.youtube.com/shorts/DEMO_8sQ2k","publishedAt":"2026-07-01T19:56:39.096Z","privacyStatus":"unlisted","title":"MOOD Ritual Chocolate 🤎","error":null,"demo":true}},"publishHistory":[{"platform":"youtube","status":"published","at":"2026-07-01T19:56:39.096Z","videoId":"DEMO_8sQ2k","url":"https://www.youtube.com/shorts/DEMO_8sQ2k","privacyStatus":"unlisted","demo":true}],"createdAt":"2026-07-01T19:56:39.096Z","updatedAt":"2026-07-01T19:56:39.096Z"},{"id":"demo-new","filename":"demo-morning-cacao-ritual.mp4","demo":true,"path":"","relPath":"demo-morning-cacao-ritual.mp4","ext":".mp4","sizeBytes":26424115,"addedAt":"2026-07-01T19:56:39.095Z","modifiedAt":"2026-07-01T19:56:39.095Z","status":"New","analysis":{"probed":true,"sizeBytes":26424115,"durationSec":18,"width":1080,"height":1920,"aspectRatio":"9:16","fps":30,"videoCodec":"h264","audioCodec":"aac","hasAudio":true,"bitrate":12000000,"ext":".mp4","readiness":{"ready":true,"notes":[]},"analyzedAt":"2026-07-01T19:56:39.096Z","demo":true},"transcript":{"available":true,"text":"בוקר טוב. לפני שכל היום מתחיל, אני עוצרת לרגע אחד. מוזגים מים חמים, מערבבים את הקקאו לאט, ונושמים עמוק. זה כל הסוד — רגע אחד בשבילי.","language":"he","source":"demo","transcribedAt":"2026-07-01T19:56:39.096Z","editedManually":false},"recommendations":{"generatedAt":"2026-07-01T19:56:39.096Z","source":"demo","model":"demo","framesAnalyzed":6,"usedTranscript":true,"contentAnalysis":"בסרטון נראית הכנה של משקה קקאו טקסי: מוזגים מים חמים לכוס עם אבקת קקאו כהה, מערבבים לאט, ועולה אדים. התאורה חמה והאווירה רגועה. בפס הקול נשמע קריינות שקטה על \"רגע של עצירה בבוקר\".","detectedElements":["כוס קרמיקה","אבקת קקאו","אדים","תאורה חמה","ידיים מערבבות","אווירה רגועה"],"styles":{"moodBrand":{"key":"moodBrand","name":"מותג MOOD","hook":"רגע של איזון, כוס אחת בכל פעם 🤎","caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Instagram Reels","suggestedTime":"19:30"},"emotional":{"key":"emotional","name":"רגשי","hook":"יש בקרים שמגיע לנו לעצור 🤎","caption":"ריח של קקאו אמיתי, אדים שעולים לאט, ונשימה אחת עמוקה.\nהטקס הקטן הזה הוא התזכורת לדאוג לעצמך.","cta":"תנו לעצמכם את הרגע הזה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"Facebook Reels","suggestedTime":"20:00"},"funny":{"key":"funny","name":"הומור ישראלי","hook":"כולם רצים על קפה. אני? טקס שלם של קקאו 🍫🧘","caption":"בזמן שאתם בלחץ של הבוקר, אני מערבב קקאו כאילו אני שף במאסטר שף 😂\nתייגו את מי שחייב/ת להירגע.","cta":"בואו תתמכרו יפה — קישור בביו","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"TikTok","suggestedTime":"21:00"},"directResponse":{"key":"directResponse","name":"מכירה ישירה","hook":"🔥 חזר למלאי — וכמות מוגבלת","caption":"הטקס שכולם מדברים עליו חזר.\nקקאו פרימיום, מתכון נקי, וטעם שממכר.\nאל תתפספסו.","cta":"הזמינו עכשיו לפני שייגמר 🍫","hashtags":{"hebrew":["#מוד","#שוקולד_טקסי","#קקאו","#טקס_בוקר","#רגע_לעצמי"],"english":["#MOOD","#RitualChocolate","#Cacao","#MorningRitual","#SelfCare","#Shorts"]},"suggestedPlatform":"YouTube Shorts","suggestedTime":"18:00"}}},"edits":{"caption":"MOOD Ritual Chocolate 🤎\nקקאו טקסי, נקי ואמיתי — בלי תוספות מיותרות.\nהבוקר מתחיל ברגע אחד של שקט.","hashtags":"#מוד #שוקולד_טקסי #קקאו #טקס_בוקר #רגע_לעצמי #MOOD #RitualChocolate #Cacao #MorningRitual #SelfCare #Shorts","cta":"הזמינו עכשיו דרך הקישור בביו 🍫","platforms":["youtube"],"publishTime":""},"approval":{"captionReviewed":false,"hashtagsReviewed":false,"platformSelected":false,"previewChecked":false,"rightsConfirmed":false,"publishTimeSelected":false},"publish":{},"publishHistory":[],"createdAt":"2026-07-01T19:56:39.095Z","updatedAt":"2026-07-01T19:56:39.095Z"}],"statuses":["New","Needs review","Approved","Ready to publish","Published","Failed"],"approvalItems":[{"key":"captionReviewed","labelHe":"הכותרת נבדקה"},{"key":"hashtagsReviewed","labelHe":"ההאשטגים נבדקו"},{"key":"platformSelected","labelHe":"נבחרה פלטפורמה"},{"key":"previewChecked","labelHe":"התצוגה המקדימה נבדקה"},{"key":"rightsConfirmed","labelHe":"אושרו זכויות/הרשאות"},{"key":"publishTimeSelected","labelHe":"נבחר זמן פרסום"}],"gatedStatuses":["Ready to publish","Published"]};
-const __C = {"platforms":[{"key":"instagram","name":"Instagram","nameHe":"אינסטגרם","connected":false,"status":"Not connected","statusHe":"לא מחובר","accountName":null,"requiredPermissions":["instagram_basic","instagram_content_publish","pages_read_engagement"],"missingPermissions":["instagram_basic","instagram_content_publish","pages_read_engagement"],"missingCredentials":["IG_ACCESS_TOKEN","IG_BUSINESS_ID"],"canUpload":false,"canPublish":false,"publishDisabledReason":"פרסום מושבת בגרסה זו (v1) — המערכת לבדיקה והמלצות בלבד.","checkedAt":"2026-07-01T19:56:47.629Z"},{"key":"facebook","name":"Facebook","nameHe":"פייסבוק","connected":false,"status":"Not connected","statusHe":"לא מחובר","accountName":null,"requiredPermissions":["pages_manage_posts","pages_read_engagement","publish_video"],"missingPermissions":["pages_manage_posts","pages_read_engagement","publish_video"],"missingCredentials":["FB_PAGE_ACCESS_TOKEN","FB_PAGE_ID"],"canUpload":false,"canPublish":false,"publishDisabledReason":"פרסום מושבת בגרסה זו (v1) — המערכת לבדיקה והמלצות בלבד.","checkedAt":"2026-07-01T19:56:47.629Z"},{"key":"tiktok","name":"TikTok","nameHe":"טיקטוק","connected":false,"status":"Not connected","statusHe":"לא מחובר","accountName":null,"requiredPermissions":["video.upload","video.publish","user.info.basic"],"missingPermissions":["video.upload","video.publish","user.info.basic"],"missingCredentials":["TIKTOK_ACCESS_TOKEN","TIKTOK_OPEN_ID"],"canUpload":false,"canPublish":false,"publishDisabledReason":"פרסום מושבת בגרסה זו (v1) — המערכת לבדיקה והמלצות בלבד.","checkedAt":"2026-07-01T19:56:47.629Z"},{"key":"youtube","name":"YouTube","nameHe":"יוטיוב","connected":true,"demo":true,"status":"Connected (Demo)","statusHe":"מחובר (הדגמה)","accountName":"ערוץ הדגמה — MOOD","channelId":"DEMO_CHANNEL","requiredPermissions":["https://www.googleapis.com/auth/youtube.upload","https://www.googleapis.com/auth/youtube.readonly"],"missingPermissions":[],"missingCredentials":[],"configured":true,"canUpload":true,"canPublish":true,"publishDisabledReason":null,"privacyStatus":"unlisted","connectedAt":"2026-07-01T19:56:47.629Z","checkedAt":"2026-07-01T19:56:47.629Z","authUrlPath":"/api/youtube/oauth/start"}],"publishablePlatforms":["youtube"]};
 (function () {
-  let videos = JSON.parse(JSON.stringify(__V.videos));
-  const ORIG = JSON.stringify(__V.videos);
-  const approvalItems = __V.approvalItems;
-  const res = (data) => Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(data) });
+  let os = JSON.parse(JSON.stringify(__OS));
+  const res = (d) => Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(d) });
+  const now = () => new Date().toISOString();
+  const rid = (p) => p + '-' + Math.random().toString(16).slice(2, 8);
+  function recount() {
+    os.counts.tasksDone = os.tasks.filter(t => t.status==='done').length;
+    os.counts.tasksActive = os.tasks.filter(t => ['queued','in_progress'].includes(t.status)).length;
+    os.counts.opportunities = os.opportunities.length;
+    os.counts.goalsActive = os.goals.filter(g => g.status==='active').length;
+  }
   window.fetch = function (path, opts) {
     opts = opts || {};
     const m = (opts.method || 'GET').toUpperCase();
     const body = opts.body ? JSON.parse(opts.body) : {};
     if (path === '/api/health') return res(__H);
-    if (path === '/api/connections') return res(__C);
-    if (path === '/api/videos') return res({ videos, statuses: __V.statuses, approvalItems, gatedStatuses: __V.gatedStatuses });
-    if (path === '/api/competitors') return res({"competitors":[{"id":"demo-comp-1","name":"Cacao Daily","youtube":"@cacaodaily","niche":"קקאו טקסי / בוקר","notes":"מתחרה ישיר בנישת הקקאו","platforms":{"youtube":"@cacaodaily"},"demo":true,"addedAt":"2026-07-01T19:56:39.096Z","recent":[{"source":"youtube","videoId":"demoA1","title":"ASMR הכנת קקאו טהור בבוקר","url":"https://www.youtube.com/watch?v=demoA1","shortsUrl":"https://www.youtube.com/shorts/demoA1","thumbnail":null,"channelTitle":"Cacao Daily","channelId":"DEMO","publishedAt":"2026-07-01T19:56:39.096Z","views":184000,"likes":11040,"adaptNote":"","demo":true},{"source":"youtube","videoId":"demoA2","title":"3 סיבות להחליף קפה בקקאו","url":"https://www.youtube.com/watch?v=demoA2","shortsUrl":"https://www.youtube.com/shorts/demoA2","thumbnail":null,"channelTitle":"Cacao Daily","channelId":"DEMO","publishedAt":"2026-07-01T19:56:39.096Z","views":92000,"likes":5520,"adaptNote":"","demo":true},{"source":"youtube","videoId":"demoA3","title":"טקס בוקר של 60 שניות","url":"https://www.youtube.com/watch?v=demoA3","shortsUrl":"https://www.youtube.com/shorts/demoA3","thumbnail":null,"channelTitle":"Cacao Daily","channelId":"DEMO","publishedAt":"2026-07-01T19:56:39.096Z","views":61000,"likes":3660,"adaptNote":"","demo":true}],"insight":{"summary":"Cacao Daily מצליחים עם קליפים אנכיים קצרים, סאונד ASMR של הכנה, וטקסט גדול על המסך. ההוק תמיד בשנייה הראשונה.","whatWorks":["ASMR של מזיגה/ערבוב","הבטחת תועלת מיידית (\"במקום קפה\")","טקסט עברית ברור על המסך"],"ideasForMood":["סדרת \"טקס בוקר\" עם קקאו MOOD","קליפ \"קפה מול קקאו\" בטון ישראלי","טיפ/מתכון ב-15 שניות"],"hooks":["תפסיקו לגלול — הטקס שישנה לכם את הבוקר","החלפתי קפה בזה ל-7 ימים","הדבר היחיד שאני עושה כל בוקר"]},"checkedAt":"2026-07-01T19:56:39.096Z"},{"id":"demo-comp-2","name":"Pure Rituals","youtube":"@purerituals","niche":"Wellness / self-care","notes":"אסתטיקה נקייה, קהל בינ״ל","platforms":{"youtube":"@purerituals"},"demo":true,"addedAt":"2026-07-01T19:56:39.096Z","recent":[],"insight":null,"checkedAt":null},{"id":"demo-comp-3","name":"שוקולד נקי","youtube":"@cleanchocil","niche":"שוקולד בריא (IL)","notes":"קהל ישראלי, טון קליל","platforms":{"youtube":"@cleanchocil"},"demo":true,"addedAt":"2026-07-01T19:56:39.096Z","recent":[],"insight":null,"checkedAt":null}]});
-    if (path === '/api/inspiration') return res({"inspiration":[{"source":"youtube","videoId":"insp1","title":"רגע של שקט לפני היום","url":"https://www.youtube.com/watch?v=insp1","shortsUrl":"https://www.youtube.com/shorts/insp1","thumbnail":null,"channelTitle":"Mindful Mornings","channelId":"DEMO","publishedAt":"2026-07-01T19:56:39.087Z","views":240000,"likes":14400,"adaptNote":"קחו את מבנה \"רגע שקט\" והמירו לטקס קקאו MOOD — 9:16, אור חם, קריינות בעברית. שנו הוק וטקסט.","demo":true,"id":"insp1","status":"saved","savedAt":"2026-07-01T19:56:39.096Z"},{"source":"youtube","videoId":"insp2","title":"ASMR chocolate pour","url":"https://www.youtube.com/watch?v=insp2","shortsUrl":"https://www.youtube.com/shorts/insp2","thumbnail":null,"channelTitle":"Sweet Sounds","channelId":"DEMO","publishedAt":"2026-07-01T19:56:39.088Z","views":512000,"likes":30720,"adaptNote":"הפורמט ASMR עובד מצוין. צלמו מזיגת קקאו MOOD בקלוז-אפ, בלי דיבור, עם כיתוב עדין.","demo":true,"id":"insp2","status":"saved","savedAt":"2026-07-01T19:56:39.096Z"},{"source":"youtube","videoId":"insp3","title":"Coffee vs Cacao — my honest take","url":"https://www.youtube.com/watch?v=insp3","shortsUrl":"https://www.youtube.com/shorts/insp3","thumbnail":null,"channelTitle":"The Ritual Guy","channelId":"DEMO","publishedAt":"2026-07-01T19:56:39.088Z","views":133000,"likes":7980,"adaptNote":"זווית השוואה. עשו גרסה ישראלית \"קפה מול קקאו\" עם דעה אישית וקריאה לפעולה בסוף.","demo":true,"id":"insp3","status":"saved","savedAt":"2026-07-01T19:56:39.096Z"}]});
-    if (path === '/api/scan' && m === 'POST') return res({ videos });
-    if (path === '/api/demo/reset' && m === 'POST') { videos = JSON.parse(ORIG); return res({ videos, runTargetId: 'demo-new' }); }
-    let mm = path.match(/^\/api\/videos\/([^/]+)$/);
-    if (mm && m === 'PATCH') {
-      const v = videos.find((x) => x.id === mm[1]);
-      if (v) {
-        if (body.edits) v.edits = { ...v.edits, ...body.edits };
-        if (body.approval) v.approval = { ...v.approval, ...body.approval };
-        if (typeof body.transcript === 'string') v.transcript = { ...(v.transcript || {}), text: body.transcript, available: body.transcript.trim().length > 0, editedManually: true, source: 'manual' };
-        if (body.status) v.status = body.status;
-      }
-      return res(v || {});
+    if (path === '/api/os' && m === 'GET') return res(os);
+    if (path === '/api/os/autonomy') { os.autonomyLevel = body.level; return res(os); }
+    if (path === '/api/os/tick') {
+      os.lastTickAt = now();
+      os.activity.unshift({ id: rid('act'), at: now(), agent: 'ceo', type: 'info', message: 'סבב עבודה בוצע — הצוות בדק משימות והזדמנויות.' });
+      return res(os);
     }
-    mm = path.match(/^\/api\/videos\/([^/]+)\/publish\/youtube$/);
-    if (mm && m === 'POST') {
-      const v = videos.find((x) => x.id === mm[1]);
-      if (v) {
-        const vid = 'DEMO_' + Math.random().toString(16).slice(2, 10);
-        const at = new Date().toISOString();
-        const url = 'https://www.youtube.com/shorts/' + vid;
-        v.status = 'Published';
-        v.publish = { youtube: { status: 'published', videoId: vid, url, publishedAt: at, privacyStatus: 'unlisted', demo: true, error: null } };
-        v.publishHistory = [...(v.publishHistory || []), { platform: 'youtube', status: 'published', at, videoId: vid, url, privacyStatus: 'unlisted', demo: true }];
-      }
-      return res(v || {});
+    if (path === '/api/os/goals') {
+      const g = { id: rid('goal'), title: body.title, description: '', status: 'active', progress: 20, createdAt: now() };
+      os.goals.unshift(g);
+      os.activity.unshift({ id: rid('act'), at: now(), agent: 'ceo', type: 'info', message: 'יעד חדש התקבל: "' + body.title + '". פורק למשימות.' });
+      recount(); return res(os);
+    }
+    let dm = path.match(/^\/api\/os\/decisions\/([^/]+)$/);
+    if (dm) {
+      os.decisions = os.decisions.filter(d => d.id !== dm[1]);
+      os.counts.needsApproval = 0;
+      os.activity.unshift({ id: rid('act'), at: now(), agent: 'ceo', type: body.action==='approve'?'success':'warn', message: (body.action==='approve'?'אישרת':'דחית')+' החלטה.' });
+      return res(os);
+    }
+    let om = path.match(/^\/api\/os\/opportunities\/([^/]+)$/);
+    if (om) {
+      const o = os.opportunities.find(x => x.id === om[1]);
+      os.opportunities = os.opportunities.filter(x => x.id !== om[1]);
+      if (body.action==='accept' && o) { os.goals.unshift({ id: rid('goal'), title: o.title, description: o.detail, status:'active', progress: 15, createdAt: now() }); os.activity.unshift({ id: rid('act'), at: now(), agent: 'ceo', type: 'success', message: 'הזדמנות אומצה ליעד: ' + o.title }); }
+      recount(); return res(os);
     }
     return res({});
   };
 })();
 
-// MOOD Social — Overview dashboard client.
+// MOOD Autonomous OS — Executive dashboard client.
 'use strict';
 
-const STATUS_HE = {
-  'New': 'חדש',
-  'Needs review': 'דורש סקירה',
-  'Approved': 'מאושר',
-  'Ready to publish': 'מוכן לפרסום',
-  'Published': 'פורסם',
-  'Failed': 'נכשל',
-};
-const FUNNEL = ['New', 'Needs review', 'Approved', 'Ready to publish', 'Published'];
-let APPROVAL_ITEMS = [
-  { key: 'captionReviewed' }, { key: 'hashtagsReviewed' }, { key: 'platformSelected' },
-  { key: 'previewChecked' }, { key: 'rightsConfirmed' }, { key: 'publishTimeSelected' },
-];
-
-let health = null;
-let videos = [];
-let connections = [];
-let competitors = [];
-let inspiration = [];
-
 const $ = (s) => document.querySelector(s);
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+let snap = null;
 
 function toast(msg) {
   const t = $('#toast');
@@ -417,7 +461,7 @@ function toast(msg) {
   clearTimeout(toast._t);
   toast._t = setTimeout(() => t.classList.remove('show'), 2200);
 }
-function escapeHtml(s) {
+function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
@@ -426,246 +470,197 @@ async function api(path, opts) {
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText);
   return res.json();
 }
-function flag(v) {
-  return v ? '<span class="flag-yes">כן</span>' : '<span class="flag-no">לא</span>';
+function timeAgo(iso) {
+  if (!iso) return '';
+  const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return 'הרגע';
+  if (s < 3600) return `לפני ${Math.floor(s / 60)} ד׳`;
+  if (s < 86400) return `לפני ${Math.floor(s / 3600)} ש׳`;
+  return `לפני ${Math.floor(s / 86400)} ימים`;
 }
-function approvalComplete(a) {
-  return APPROVAL_ITEMS.every((i) => (a || {})[i.key]);
-}
-function fmtDateTime(iso) {
-  if (!iso) return '—';
-  try { return new Date(iso).toLocaleString('he-IL'); } catch { return iso; }
-}
+
+const LEVELS = [
+  { key: 'off', label: 'כבוי' },
+  { key: 'suggest', label: 'מציע' },
+  { key: 'auto', label: 'אוטונומי' },
+];
+const AGENT_NAMES = {};
 
 // ---- Renderers -------------------------------------------------------------
 
-function renderModeChip() {
-  const chip = $('#modeChip');
-  if (!chip || !health) return;
-  chip.textContent = health.demoMode ? '🧪 Demo Mode' : '🔧 Real Mode';
-  chip.className = 'mode-chip ' + (health.demoMode ? 'demo' : 'real');
-}
-
-function countBy(status) {
-  return videos.filter((v) => v.status === status).length;
-}
-
-function renderKpis() {
-  const transcripts = videos.filter((v) => v.transcript?.available).length;
-  const cards = [
-    { val: videos.length, label: 'סה״כ סרטונים', cls: 'accent' },
-    { val: countBy('New'), label: 'חדשים' },
-    { val: countBy('Ready to publish'), label: 'מוכנים לפרסום', cls: 'warn' },
-    { val: countBy('Published'), label: 'פורסמו', cls: 'good' },
-    { val: countBy('Failed'), label: 'נכשלו', cls: countBy('Failed') ? 'bad' : '' },
-    { val: transcripts, label: 'עם תמלול', sub: '🎙' },
-    { val: competitors.length, label: 'מתחרים במעקב' },
-    { val: inspiration.length, label: 'רעיונות שנשמרו', cls: 'accent' },
-  ];
-  $('#kpis').innerHTML = cards
-    .map(
-      (c) => `<div class="kpi ${c.cls || ''}">
-        <div class="kpi-val">${c.val}</div>
-        <div class="kpi-label">${escapeHtml(c.label)}</div>
-        ${c.sub ? `<div class="kpi-sub meta">${c.sub}</div>` : ''}
-      </div>`,
-    )
-    .join('');
-}
-
-function renderFunnel() {
-  const max = Math.max(1, videos.length);
-  $('#funnel').innerHTML = FUNNEL.map((s) => {
-    const n = countBy(s);
-    const pct = Math.round((n / max) * 100);
-    return `<div class="funnel-row">
-      <span class="badge" data-status="${s}"><span class="dot"></span>${STATUS_HE[s]}</span>
-      <span class="funnel-bar"><span style="width:${pct}%"></span></span>
-      <span class="fn-count">${n}</span>
+function renderHero() {
+  const h = snap.health || { score: 0, label: '' };
+  const lvl = snap.autonomyLevel;
+  const seg = LEVELS.map((l) =>
+    `<button class="seg ${l.key === lvl ? 'active' : ''}" data-level="${l.key}">${l.label}</button>`).join('');
+  $('#hero').innerHTML = `
+    <div class="os-hero-grid">
+      <div class="health-ring" style="--pct:${h.score}">
+        <div class="hr-inner"><div class="hr-score">${h.score}</div><div class="hr-label">${esc(h.label)}</div></div>
+      </div>
+      <div class="hero-mid">
+        <div class="hero-title">בריאות העסק</div>
+        <div class="meta">עדכון אחרון: ${timeAgo(snap.lastTickAt) || '—'} · ${snap.counts.tasksDone} משימות הושלמו · ${snap.counts.goalsActive} יעדים פעילים</div>
+        <div class="autonomy">
+          <span class="meta">מצב אוטונומיה:</span>
+          <div class="seg-group">${seg}</div>
+          <button class="btn" id="tickBtn">⚡ הרץ עכשיו</button>
+        </div>
+      </div>
+      <div class="hero-goal">
+        <div class="hero-title">הגדר יעד — המערכת תפרק ותבצע</div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <input type="text" id="goalInput" placeholder="למשל: להגדיל הכנסות / למצוא ספקים / לשפר SEO" style="flex:1;min-width:180px" />
+          <button class="btn primary" id="addGoalBtn">➕ הוסף יעד</button>
+        </div>
+      </div>
     </div>`;
-  }).join('');
+
+  $('#hero').querySelectorAll('.seg').forEach((b) =>
+    b.addEventListener('click', () => setLevel(b.dataset.level)));
+  $('#tickBtn').addEventListener('click', runNow);
+  $('#addGoalBtn').addEventListener('click', addGoal);
+  $('#goalInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addGoal(); });
 }
 
-function statusBadge(status) {
-  return `<span class="badge" data-status="${status}"><span class="dot"></span>${STATUS_HE[status] || status}</span>`;
+function kpi(val, label, cls, sub) {
+  return `<div class="kpi ${cls || ''}"><div class="kpi-val">${val}</div><div class="kpi-label">${esc(label)}</div>${sub ? `<div class="kpi-sub meta">${sub}</div>` : ''}</div>`;
+}
+function renderKpis() {
+  const c = snap.counts;
+  $('#kpis').innerHTML = [
+    kpi(c.tasksDone, 'הושלמו', 'good'),
+    kpi(c.tasksActive, 'בעבודה', 'accent'),
+    kpi(snap.decisions.length, 'ממתין להחלטתך', c.needsApproval ? 'warn' : ''),
+    kpi(c.opportunities, 'הזדמנויות'),
+    kpi(c.goalsActive, 'יעדים פעילים'),
+    kpi((snap.health || {}).score ?? '—', 'בריאות העסק', 'good'),
+  ].join('');
 }
 
-function renderRecent() {
-  const list = videos.slice(0, 6);
-  if (!list.length) {
-    $('#recent').innerHTML = '<div class="meta">אין סרטונים עדיין. הוסיפו וידאו או הריצו הדגמה.</div>';
-    return;
-  }
-  $('#recent').innerHTML = list
-    .map(
-      (v) => `<div class="recent-item">
-        <a href="/review.html">
-          <span class="rt">${v.demo ? '🎬' : '🎞'}</span>
-          <span class="rname">${escapeHtml(v.filename)}
-            ${v.demo ? '<span class="badge-demo">הדגמה</span>' : ''}
-            ${v.transcript?.available ? ' 🎙' : ''}
-            <br><span class="meta">${fmtDateTime(v.addedAt)}</span>
-          </span>
-        </a>
-        ${statusBadge(v.status)}
-      </div>`,
-    )
-    .join('');
+const ACT_ICON = { success: '✓', info: '•', warn: '⚠', decision: '🔔' };
+const ACT_CLS = { success: 'a-ok', info: 'a-info', warn: 'a-warn', decision: 'a-dec' };
+function renderActivity() {
+  const el = $('#activity');
+  if (!snap.activity.length) { el.innerHTML = '<div class="meta">אין פעילות עדיין.</div>'; return; }
+  el.innerHTML = snap.activity.slice(0, 14).map((a) =>
+    `<div class="act ${ACT_CLS[a.type] || ''}">
+      <span class="act-ic">${ACT_ICON[a.type] || '•'}</span>
+      <span class="act-body"><b>${esc(AGENT_NAMES[a.agent] || a.agent)}</b> — ${esc(a.message)}<br><span class="meta">${timeAgo(a.at)}</span></span>
+    </div>`).join('');
 }
 
-function renderHealth() {
-  if (!health) return;
-  const ytLine = health.youtubeConnected
-    ? `<span class="flag-yes">מחובר${health.youtubeConnectionIsDemo ? ' (הדגמה)' : ''}</span>`
-    : '<span class="flag-no">לא מחובר</span>';
-  $('#health').innerHTML = `
-    <div class="health-row"><span class="label">תיקיית מעקב</span><span style="direction:ltr;font-size:.76rem">${escapeHtml(health.watchDir)}</span></div>
-    <div class="health-row"><span class="label">ffmpeg זמין</span>${flag(health.ffmpegAvailable)}</div>
-    <div class="health-row"><span class="label">מפתח Claude מוגדר</span>${flag(health.claudeConfigured)}</div>
-    <div class="health-row"><span class="label">תמלול מוגדר</span>${flag(health.transcriptionConfigured)}</div>
-    <div class="health-row"><span class="label">פרטי YouTube מוגדרים</span>${flag(health.youtubeConfigured)}</div>
-    <div class="health-row"><span class="label">YouTube מחובר</span>${ytLine}</div>`;
+function renderGoals() {
+  const el = $('#goals');
+  if (!snap.goals.length) { el.innerHTML = '<div class="meta">אין יעדים. הוסיפו יעד למעלה.</div>'; return; }
+  el.innerHTML = snap.goals.map((g) =>
+    `<div class="goal">
+      <div class="goal-head"><b>${esc(g.title)}</b><span class="badge" data-status="${g.status === 'done' ? 'Published' : 'Approved'}">${g.progress}%</span></div>
+      ${g.description ? `<div class="meta">${esc(g.description)}</div>` : ''}
+      <div class="funnel-bar" style="margin-top:6px"><span style="width:${g.progress}%"></span></div>
+    </div>`).join('');
 }
 
-function renderConnections() {
-  if (!connections.length) { $('#connections').innerHTML = '<div class="meta">—</div>'; return; }
-  $('#connections').innerHTML = connections
-    .map((p) => {
-      const state = p.connected
-        ? `<span class="flag-yes">מחובר${p.demo ? ' (הדגמה)' : ''}</span>`
-        : p.key === 'youtube'
-        ? '<span class="flag-no">לא מחובר</span>'
-        : '<span class="meta">לא נבנה</span>';
-      const pub = p.canPublish ? ' · <span class="pill-ok">פרסום זמין</span>' : '';
-      return `<div class="conn-line"><span>${escapeHtml(p.nameHe)} · ${escapeHtml(p.name)}</span><span>${state}${pub}</span></div>`;
-    })
-    .join('');
+function renderDecisions() {
+  const el = $('#decisions');
+  if (!snap.decisions.length) { el.innerHTML = '<div class="meta pill-ok">אין החלטות פתוחות — הכל תחת שליטה ✓</div>'; return; }
+  el.innerHTML = snap.decisions.map((d) =>
+    `<div class="decision">
+      <b>${esc(d.title)}</b>
+      <div class="meta">${esc(d.detail || '')}</div>
+      ${d.recommendation ? `<div class="meta pill-warn">המלצה: ${esc(d.recommendation)}</div>` : ''}
+      <div class="asset-actions">
+        <button class="btn primary" data-approve="${d.id}">אשר</button>
+        <button class="btn" data-reject="${d.id}">דחה</button>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('[data-approve]').forEach((b) => b.addEventListener('click', () => resolveDecision(b.dataset.approve, 'approve')));
+  el.querySelectorAll('[data-reject]').forEach((b) => b.addEventListener('click', () => resolveDecision(b.dataset.reject, 'reject')));
 }
 
-function renderSteps() {
-  const any = (fn) => videos.some(fn);
-  const steps = [
-    { t: 'שלב 1: הוספת סרטון', done: videos.length > 0 },
-    { t: 'שלב 2: סקירת ההמלצות', done: any((v) => v.recommendations?.styles) },
-    { t: 'שלב 3: עריכת כותרת/האשטגים/CTA', done: any((v) => v.approval?.captionReviewed) },
-    { t: 'שלב 4: השלמת רשימת האישור', done: any((v) => approvalComplete(v.approval)) },
-    { t: 'שלב 5: חיבור YouTube', done: !!health?.youtubeConnected },
-    { t: 'שלב 6: העלאת בדיקה כ-Unlisted', done: any((v) => (v.publishHistory || []).length > 0) },
-    { t: 'שלב 7: פרסום ידני', done: any((v) => v.status === 'Published') },
-  ];
-  $('#steps').innerHTML = steps
-    .map(
-      (s, i) => `<li class="${s.done ? 'done' : ''}">
-        <span class="num">${s.done ? '✓' : i + 1}</span>
-        <span class="step-text">${escapeHtml(s.t)}</span>
-      </li>`,
-    )
-    .join('');
+function renderOpportunities() {
+  const el = $('#opportunities');
+  if (!snap.opportunities.length) { el.innerHTML = '<div class="meta">אין הזדמנויות פתוחות כרגע.</div>'; return; }
+  el.innerHTML = snap.opportunities.map((o) =>
+    `<div class="opp">
+      <b>${esc(o.title)}</b>
+      <div class="meta">${esc(o.detail || '')}</div>
+      <div class="asset-actions">
+        <button class="btn primary" data-accept="${o.id}">אמץ ליעד</button>
+        <button class="btn" data-dismiss="${o.id}">התעלם</button>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('[data-accept]').forEach((b) => b.addEventListener('click', () => resolveOpp(b.dataset.accept, 'accept')));
+  el.querySelectorAll('[data-dismiss]').forEach((b) => b.addEventListener('click', () => resolveOpp(b.dataset.dismiss, 'dismiss')));
 }
 
-function renderQuickActions() {
-  const demo = !!health?.demoMode;
-  $('#quickActions').innerHTML = `
-    <button class="btn primary" id="scanBtn">🔄 סרוק תיקייה</button>
-    <a class="btn" href="/review.html">🎬 סקירת סרטונים</a>
-    <a class="btn" href="/research.html">🔎 מחקר מתחרים</a>
-    <a class="btn" href="/connections.html">🔌 חיבורים</a>
-    ${demo ? '<button class="btn primary" id="runDemoBtn">▶️ הרץ הדגמה מלאה</button><button class="btn" id="resetDemoBtn">↺ אפס הדגמה</button>' : ''}
-    <div class="spacer"></div>
-    <span class="meta" id="lastUpdated"></span>`;
-
-  $('#scanBtn').addEventListener('click', async () => {
-    try { await api('/api/scan', { method: 'POST' }); await refresh(); toast('סריקה הושלמה'); }
-    catch (e) { toast('שגיאה: ' + e.message); }
-  });
-  const run = $('#runDemoBtn');
-  if (run) run.addEventListener('click', runFullDemo);
-  const reset = $('#resetDemoBtn');
-  if (reset) reset.addEventListener('click', async () => {
-    try { await api('/api/demo/reset', { method: 'POST' }); await refresh(); toast('ההדגמה אופסה'); }
-    catch (e) { toast('שגיאה: ' + e.message); }
-  });
+function renderAgents() {
+  $('#agents').innerHTML = `<div class="agent-grid">${snap.agents.map((a) => {
+    AGENT_NAMES[a.id] = a.name;
+    return `<div class="agent">
+      <div class="agent-name">${esc(a.name)}</div>
+      <div class="meta">${esc(a.role)}</div>
+      <div class="meta">${a.tasksDone || 0} משימות · <span class="${a.status === 'working' ? 'pill-warn' : 'pill-ok'}">${a.status === 'working' ? 'עובד' : 'פנוי'}</span></div>
+    </div>`;
+  }).join('')}</div>`;
 }
 
-// ---- Run Full Demo (drives the real gated endpoints; publish is simulated) --
-
-async function runFullDemo() {
-  const btn = $('#runDemoBtn');
-  if (btn) btn.disabled = true;
-  try {
-    const reset = await api('/api/demo/reset', { method: 'POST' });
-    const id = reset.runTargetId || 'demo-new';
-    await refresh();
-
-    toast('שלב 1: זוהה סרטון חדש 🎬'); await sleep(900);
-    toast('שלב 2: המלצות Claude מוכנות ✓'); await sleep(900);
-
-    const v = videos.find((x) => x.id === id);
-    const s = v?.recommendations?.styles?.moodBrand || {};
-    await api(`/api/videos/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        edits: {
-          caption: s.caption || '',
-          hashtags: [...(s.hashtags?.hebrew || []), ...(s.hashtags?.english || [])].join(' '),
-          cta: s.cta || '', platforms: ['youtube'],
-        },
-      }),
-    });
-    toast('שלב 3: כותרת/האשטגים/CTA נערכו ✓'); await sleep(900);
-
-    const approval = {};
-    APPROVAL_ITEMS.forEach((i) => (approval[i.key] = true));
-    await api(`/api/videos/${id}`, { method: 'PATCH', body: JSON.stringify({ approval }) });
-    toast('שלב 4: רשימת האישור הושלמה ✓'); await sleep(900);
-
-    await api(`/api/videos/${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'Ready to publish' }) });
-    toast('שלב 5: מוכן לפרסום · YouTube מחובר (הדגמה) ✓'); await sleep(900);
-
-    toast('שלב 6: מבצע העלאת בדיקה (Unlisted)…');
-    await api(`/api/videos/${id}/publish/youtube`, { method: 'POST' });
-    await sleep(700);
-    toast('שלב 7: פורסם בהדגמה — לא פורסם דבר באמת ✅');
-
-    await refresh();
-  } catch (e) {
-    toast('שגיאה בהדגמה: ' + e.message);
-  } finally {
-    if (btn) btn.disabled = false;
-  }
+function renderMode() {
+  const chip = $('#modeChip');
+  if (!chip || !snap.mode) return;
+  chip.textContent = snap.mode.demoMode ? '🧪 Demo Mode' : '🔧 Real Mode';
+  chip.className = 'mode-chip ' + (snap.mode.demoMode ? 'demo' : 'real');
 }
 
-// ---- Load + render ---------------------------------------------------------
+// ---- Actions ---------------------------------------------------------------
 
 async function refresh() {
-  const [h, vd, cn, cp, ins] = await Promise.all([
-    api('/api/health').catch(() => null),
-    api('/api/videos').catch(() => ({ videos: [] })),
-    api('/api/connections').catch(() => ({ platforms: [] })),
-    api('/api/competitors').catch(() => ({ competitors: [] })),
-    api('/api/inspiration').catch(() => ({ inspiration: [] })),
-  ]);
-  health = h;
-  videos = vd.videos || [];
-  if (Array.isArray(vd.approvalItems) && vd.approvalItems.length) APPROVAL_ITEMS = vd.approvalItems;
-  connections = cn.platforms || [];
-  competitors = cp.competitors || [];
-  inspiration = ins.inspiration || [];
-
-  renderModeChip();
-  renderQuickActions();
-  renderKpis();
-  renderFunnel();
-  renderRecent();
-  renderHealth();
-  renderConnections();
-  renderSteps();
-  const lu = $('#lastUpdated');
-  if (lu) lu.textContent = 'עודכן: ' + new Date().toLocaleTimeString('he-IL');
+  try {
+    const [os, health] = await Promise.all([
+      api('/api/os'),
+      api('/api/health').catch(() => null),
+    ]);
+    snap = os;
+    snap.mode = health;
+    // Agent names first (used by activity feed).
+    snap.agents.forEach((a) => (AGENT_NAMES[a.id] = a.name));
+    renderMode();
+    renderHero();
+    renderKpis();
+    renderActivity();
+    renderGoals();
+    renderDecisions();
+    renderOpportunities();
+    renderAgents();
+  } catch (e) {
+    toast('שגיאה: ' + e.message);
+  }
+}
+async function setLevel(level) {
+  try { await api('/api/os/autonomy', { method: 'POST', body: JSON.stringify({ level }) }); toast('מצב אוטונומיה: ' + level); refresh(); }
+  catch (e) { toast('שגיאה: ' + e.message); }
+}
+async function runNow() {
+  try { await api('/api/os/tick', { method: 'POST' }); toast('הצוות ביצע סבב עבודה ⚡'); refresh(); }
+  catch (e) { toast('שגיאה: ' + e.message); }
+}
+async function addGoal() {
+  const title = $('#goalInput').value.trim();
+  if (!title) return toast('הזינו יעד');
+  try { await api('/api/os/goals', { method: 'POST', body: JSON.stringify({ title }) }); $('#goalInput').value = ''; toast('יעד נוסף — הצוות התחיל לעבוד'); refresh(); }
+  catch (e) { toast('שגיאה: ' + e.message); }
+}
+async function resolveDecision(id, action) {
+  try { await api('/api/os/decisions/' + id, { method: 'POST', body: JSON.stringify({ action }) }); toast(action === 'approve' ? 'אושר' : 'נדחה'); refresh(); }
+  catch (e) { toast('שגיאה: ' + e.message); }
+}
+async function resolveOpp(id, action) {
+  try { await api('/api/os/opportunities/' + id, { method: 'POST', body: JSON.stringify({ action }) }); toast(action === 'accept' ? 'אומץ ליעד' : 'הוסר'); refresh(); }
+  catch (e) { toast('שגיאה: ' + e.message); }
 }
 
 refresh();
-setInterval(refresh, 8000);
+setInterval(refresh, 7000);
 
 </script>
 </body>

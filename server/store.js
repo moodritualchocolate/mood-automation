@@ -11,6 +11,14 @@ let state = {
   youtube: null, // OAuth connection: { tokens, channel, scope, checkedAt }
   competitors: {}, // id -> competitor record
   inspiration: {}, // id -> saved reference asset
+  // Autonomous OS state
+  os: { autonomyLevel: 'off', lastTickAt: null, health: null, learnings: [] },
+  goals: {}, // id -> goal
+  osTasks: {}, // id -> task
+  agents: {}, // key -> agent
+  activity: [], // append-only memory log (newest first, capped)
+  opportunities: {}, // id -> opportunity
+  decisions: {}, // id -> human-in-the-loop decision
   meta: { version: 1 },
 };
 
@@ -34,6 +42,13 @@ export function load() {
         youtube: null,
         competitors: {},
         inspiration: {},
+        os: { autonomyLevel: 'off', lastTickAt: null, health: null, learnings: [] },
+        goals: {},
+        osTasks: {},
+        agents: {},
+        activity: [],
+        opportunities: {},
+        decisions: {},
         meta: { version: 1 },
         ...parsed,
       };
@@ -174,5 +189,51 @@ export function upsertInspiration(a) {
 }
 export function removeInspiration(id) {
   delete state.inspiration[id];
+  save();
+}
+
+// ---- Autonomous OS ---------------------------------------------------------
+
+export function getOS() {
+  return state.os;
+}
+export function setOS(patch) {
+  state.os = { ...state.os, ...patch };
+  save();
+  return state.os;
+}
+
+const collection = (key) => ({
+  list: () => Object.values(state[key]),
+  get: (id) => state[key][id] || null,
+  upsert: (o) => { state[key][o.id] = o; save(); return o; },
+  remove: (id) => { delete state[key][id]; save(); },
+});
+
+export const goals = collection('goals');
+export const osTasks = collection('osTasks');
+export const agents = collection('agents');
+export const opportunities = collection('opportunities');
+export const decisions = collection('decisions');
+
+// Memory / activity log (newest first, capped).
+export function addActivity(entry) {
+  state.activity.unshift({ id: 'act-' + Math.random().toString(16).slice(2, 10), ...entry });
+  if (state.activity.length > 300) state.activity.length = 300;
+  save();
+  return state.activity[0];
+}
+export function listActivity(limit = 40) {
+  return state.activity.slice(0, limit);
+}
+
+export function resetOS() {
+  state.os = { autonomyLevel: 'off', lastTickAt: null, health: null, learnings: [] };
+  state.goals = {};
+  state.osTasks = {};
+  state.agents = {};
+  state.activity = [];
+  state.opportunities = {};
+  state.decisions = {};
   save();
 }

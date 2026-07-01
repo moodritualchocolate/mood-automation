@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>תפעול — MOOD Social</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="icon" href="/icons/favicon.svg" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div>
+        <h1>לוח תפעול</h1>
+        <small>סקירה, המלצות AI ופרסום לרשתות</small>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="/">מרכז שליטה</a>
+      <a href="/operations.html" class="active">תפעול</a>
+      <a href="/review.html">סרטונים</a>
+      <a href="/research.html">מחקר</a>
+      <a href="/connections.html">חיבורים</a>
+      <span id="modeChip" class="mode-chip"></span>
+    </nav>
+  </header>
+
+  <div class="banner">⚠️ פרסום מתבצע רק בלחיצה ידנית (YouTube Shorts בלבד) ולאחר השלמת רשימת האישור. אין פרסום אוטומטי.</div>
+
+  <main class="container">
+    <div class="toolbar" id="quickActions"></div>
+    <div id="kpis" class="kpi-grid"></div>
+    <div class="dash-cols">
+      <div>
+        <div class="panel"><h3>צינור העבודה (Pipeline)</h3><div id="funnel"></div></div>
+        <div class="panel"><h3>פעילות אחרונה</h3><div id="recent"></div></div>
+      </div>
+      <div>
+        <div class="panel"><h3>בריאות המערכת</h3><div id="health"></div></div>
+        <div class="panel"><h3>חיבורי פלטפורמות</h3><div id="connections"></div></div>
+        <div class="panel"><h3>מדריך מודרך</h3><ul class="steps" id="steps"></ul></div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

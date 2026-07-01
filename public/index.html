@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>דאשבורד — MOOD Social</title>
+  <title>מרכז שליטה — MOOD Autonomous OS</title>
   <link rel="stylesheet" href="/css/styles.css" />
   <link rel="icon" href="/icons/favicon.svg" />
 </head>
@@ -12,56 +12,56 @@
     <div class="brand">
       <div class="logo">M</div>
       <div>
-        <h1>MOOD Social — דאשבורד</h1>
-        <small>סקירה, המלצות AI ופרסום לרשתות</small>
+        <h1>MOOD · מרכז שליטה</h1>
+        <small>מערכת הפעלה אוטונומית — היעדים שלך, מבוצעים על ידי צוות AI</small>
       </div>
     </div>
     <nav class="nav">
-      <a href="/" class="active">דאשבורד</a>
-      <a href="/review.html">סקירת סרטונים</a>
-      <a href="/research.html">מחקר מתחרים</a>
-      <a href="/connections.html">חיבורי פלטפורמות</a>
+      <a href="/" class="active">מרכז שליטה</a>
+      <a href="/operations.html">תפעול</a>
+      <a href="/review.html">סרטונים</a>
+      <a href="/research.html">מחקר</a>
+      <a href="/connections.html">חיבורים</a>
       <span id="modeChip" class="mode-chip"></span>
     </nav>
   </header>
 
-  <div class="banner">⚠️ פרסום מתבצע רק בלחיצה ידנית (YouTube Shorts בלבד) ולאחר השלמת רשימת האישור. אין פרסום אוטומטי.</div>
+  <div class="banner">🛡️ האוטומציה מבצעת עבודה פנימית בטוחה באופן עצמאי. כל פעולה חיצונית (פרסום/שליחה/הוצאה) ממתינה לאישורך — לעולם לא אוטומטית.</div>
 
   <main class="container">
-    <div class="toolbar" id="quickActions"></div>
+    <section id="hero" class="os-hero"></section>
 
     <div id="kpis" class="kpi-grid"></div>
 
     <div class="dash-cols">
       <div>
         <div class="panel">
-          <h3>צינור העבודה (Pipeline)</h3>
-          <div id="funnel"></div>
+          <h3>✅ מה הושלם (יומן הישגים)</h3>
+          <div id="activity"></div>
         </div>
         <div class="panel">
-          <h3>פעילות אחרונה</h3>
-          <div id="recent"></div>
+          <h3>🎯 יעדים</h3>
+          <div id="goals"></div>
         </div>
       </div>
       <div>
         <div class="panel">
-          <h3>בריאות המערכת</h3>
-          <div id="health"></div>
+          <h3>🔔 החלטות שממתינות לך</h3>
+          <div id="decisions"></div>
         </div>
         <div class="panel">
-          <h3>חיבורי פלטפורמות</h3>
-          <div id="connections"></div>
+          <h3>💡 הזדמנויות שזוהו</h3>
+          <div id="opportunities"></div>
         </div>
         <div class="panel">
-          <h3>מדריך מודרך</h3>
-          <ul class="steps" id="steps"></ul>
+          <h3>👥 צוות ה-AI</h3>
+          <div id="agents"></div>
         </div>
       </div>
     </div>
   </main>
 
   <div class="toast" id="toast"></div>
-
-  <script src="/js/dashboard.js"></script>
+  <script src="/js/os.js"></script>
 </body>
 </html>

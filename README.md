@@ -10,7 +10,30 @@ in phases** — **Phase 1 is YouTube Shorts only**, manual and gated.
 > approval checklist passes. Instagram, Facebook and TikTok are **not** built
 > for publishing yet — their Connections cards are status stubs only.
 
-## What it does
+## Autonomous OS (Executive layer)
+
+The home page (`/`) is an **Executive dashboard** for an autonomous operations
+core, not a tool menu. You set **goals**; an Executive Brain decomposes them into
+tasks, a roster of **AI agents** executes the safe internal work on an autonomous
+tick loop, surfaces **opportunities**, and shows a live **achievements feed**,
+**goal progress**, and **business-health** score.
+
+**Safe by default — this is the core guarantee:**
+
+- An **autonomy switch** (Off / Suggest / Auto). Auto executes only *safe
+  internal* work (research, drafting, planning, analysis).
+- **Every outward-facing action** (publish, send, spend) is **never** performed
+  automatically — it's routed to a **"Decisions for you"** queue for approval,
+  and the actual action still runs through its own gated module (e.g. the
+  YouTube publish flow with its approval checklist).
+- Autonomy defaults to **Off** in real mode; demo mode seeds a populated,
+  running org so you can see the whole thing.
+
+Endpoints: `GET /api/os` (snapshot), `POST /api/os/autonomy`, `/goals`, `/tick`,
+`/decisions/:id`, `/opportunities/:id`. Operational detail lives on the
+**תפעול / Operations** page.
+
+## What the social layer does
 
 1. **Watches** `content/social-videos-to-review/` (configurable) and detects new
    videos automatically.
@@ -224,6 +247,7 @@ server/
   recommend.js   # orchestrates frames+transcript → Claude → 4 styles; fallback
   youtube.js     # YouTube OAuth + resumable Shorts upload (Phase 1)
   research.js    # competitor research + similar-asset discovery (inspiration)
+  autonomy.js    # Autonomous OS: goals→plan→tasks, agents, tick loop, decisions
   demo.js        # demo-mode sample data (no files, no network, never posts)
   platforms.js   # connection cards (YouTube live; others are stubs)
   watcher.js     # folder watching + per-video processing
