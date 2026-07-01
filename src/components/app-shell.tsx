@@ -27,6 +27,7 @@ import {
   Settings,
   Sparkles,
   Sun,
+  Target,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -46,7 +47,10 @@ interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    items: [{ href: "/", key: "nav.dashboard", icon: LayoutDashboard }],
+    items: [
+      { href: "/",      key: "nav.dashboard", icon: LayoutDashboard },
+      { href: "/goals", key: "nav.goals",     icon: Target },
+    ],
   },
   {
     label: "nav.section.sourcing" as DictKey,

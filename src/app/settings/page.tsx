@@ -5,12 +5,14 @@ import { Button, Card, Chip } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n/provider";
 import type { DictKey } from "@/lib/i18n/dictionary";
 import { useStore } from "@/lib/store";
+import { useOsStore } from "@/lib/os/osStore";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { useTheme } from "@/lib/theme";
 import type { Lang } from "@/lib/i18n/dictionary";
 import type { Role } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
+  Bot,
   Cloud,
   CloudOff,
   Database,
@@ -30,6 +32,8 @@ export default function SettingsPage() {
   const setRole = useStore((s) => s.setRole);
   const reseed = useStore((s) => s.reseed);
   const clearAll = useStore((s) => s.clearAll);
+  const autonomyEnabled = useOsStore((s) => s.autonomyEnabled);
+  const setAutonomy = useOsStore((s) => s.setAutonomy);
 
   return (
     <>
@@ -40,6 +44,22 @@ export default function SettingsPage() {
       />
 
       <div className="grid max-w-3xl grid-cols-1 gap-3">
+        {/* Autonomy master switch */}
+        <SettingsRow
+          icon={Bot}
+          title={t("os.autonomy")}
+          hint={t("os.autonomy.note")}
+        >
+          <Segmented
+            value={autonomyEnabled ? "on" : "off"}
+            onChange={(v) => setAutonomy(v === "on")}
+            options={[
+              { value: "on", label: t("os.autonomy.on") },
+              { value: "off", label: t("os.autonomy.off") },
+            ]}
+          />
+        </SettingsRow>
+
         {/* Language */}
         <SettingsRow
           icon={Languages}

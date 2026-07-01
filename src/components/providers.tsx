@@ -1,5 +1,6 @@
 "use client";
 
+import { AutonomyRunner } from "@/components/autonomy-runner";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { useStore } from "@/lib/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -33,7 +34,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={client}>
       <I18nProvider>
-        <StoreHydrator>{children}</StoreHydrator>
+        <StoreHydrator>
+          {/* The Executive Brain heartbeat — senses, decides, acts, learns. */}
+          <AutonomyRunner />
+          {children}
+        </StoreHydrator>
       </I18nProvider>
     </QueryClientProvider>
   );
