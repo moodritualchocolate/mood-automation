@@ -155,6 +155,24 @@ Privacy defaults to `public` (a real Short); set `YT_PRIVACY_STATUS=unlisted` or
 `private` to test the full flow without a public post. Nothing is ever published
 automatically — only on your manual click.
 
+## Competitor research & similar-asset discovery
+
+The **מחקר מתחרים** page tracks competitors and finds reference content to draw
+inspiration from — **links, metadata, and AI "how to adapt for MOOD" notes
+only; it never downloads or reposts anyone's media.**
+
+- **Competitors:** add a competitor (name + YouTube `@handle` + niche). "Refresh"
+  pulls their recent Shorts and an AI insight (what works · ideas for MOOD ·
+  hooks to draw from).
+- **Discovery:** search by keyword (or your configured niche) to surface similar
+  reference Shorts, each with an AI adaptation note; save the good ones to your
+  ideas list.
+- **Data source:** set `YT_API_KEY` (YouTube Data API v3 — public search, no user
+  OAuth) for live results; without it, the page runs in demo/heuristic mode.
+  Claude powers the insights/adapt-notes when `ANTHROPIC_API_KEY` is set.
+
+The dashboard shows **competitors tracked** and **ideas saved** counts.
+
 ## Pre-publish approval checklist
 
 Before a video can move to a publish-ready status, a six-item checklist must be
@@ -205,6 +223,7 @@ server/
   claude.js      # Claude API client: vision + transcript + structured output
   recommend.js   # orchestrates frames+transcript → Claude → 4 styles; fallback
   youtube.js     # YouTube OAuth + resumable Shorts upload (Phase 1)
+  research.js    # competitor research + similar-asset discovery (inspiration)
   demo.js        # demo-mode sample data (no files, no network, never posts)
   platforms.js   # connection cards (YouTube live; others are stubs)
   watcher.js     # folder watching + per-video processing
@@ -230,6 +249,8 @@ content/social-videos-to-review/   # watched folder (videos are git-ignored)
 | `GET` | `/api/youtube/oauth/start` | Begin YouTube OAuth (redirects to Google). |
 | `GET` | `/api/youtube/oauth/callback` | OAuth redirect handler (stores tokens). |
 | `POST` | `/api/youtube/disconnect` | Disconnect the YouTube account. |
+| `GET`/`POST`/`DELETE` | `/api/competitors[...]` | Manage competitors; `:id/refresh` pulls content + insight. |
+| `GET` | `/api/inspiration` · `POST /api/inspiration/discover` · `/save` | Saved reference assets + discovery. |
 | `GET` | `/api/health` | System Health (watch dir, ffmpeg, Claude, transcription, YouTube). |
 | `POST` | `/api/demo/seed` · `/api/demo/reset` | Demo-mode only: seed/reset sample videos. |
 

@@ -16,6 +16,7 @@ import * as watcher from './watcher.js';
 import { runChecks, getConnections } from './platforms.js';
 import * as youtube from './youtube.js';
 import * as demo from './demo.js';
+import * as research from './research.js';
 import { hasFfmpeg } from './frames.js';
 import { isAvailable as transcriptionAvailable } from './transcribe.js';
 import { isConfigured as claudeConfigured } from './claude.js';
@@ -169,6 +170,7 @@ async function handleApi(req, res, pathname, url) {
       youtubeConfigured: youtube.isConfigured(),
       youtubeConnected: !!ytCard.connected,
       youtubeConnectionIsDemo: !!ytCard.demo,
+      researchConfigured: research.isYouTubeConfigured(),
       // Publishing is enabled (YouTube only) but always manual + gated; in demo
       // mode every publish is simulated.
       publishablePlatforms: ['youtube'],
@@ -336,6 +338,65 @@ async function handleApi(req, res, pathname, url) {
     return sendJson(res, 200, { platform: youtube.disconnect() });
   }
 
+  // --- Competitor research ---
+  if (req.method === 'GET' && pathname === '/api/competitors') {
+    return sendJson(res, 200, { competitors: store.listCompetitors() });
+  }
+  if (req.method === 'POST' && pathname === '/api/competitors') {
+    const body = await readBody(req);
+    if (!body.name) return sendJson(res, 400, { error: 'name required' });
+    const id = 'comp-' + crypto.randomBytes(4).toString('hex');
+    const c = store.upsertCompetitor({
+      id,
+      name: String(body.name).slice(0, 120),
+      platforms: { youtube: (body.youtube || '').trim() },
+      youtube: (body.youtube || '').trim(),
+      niche: (body.niche || '').slice(0, 120),
+      notes: (body.notes || '').slice(0, 500),
+      addedAt: new Date().toISOString(),
+      recent: [],
+      insight: null,
+      checkedAt: null,
+    });
+    return sendJson(res, 200, c);
+  }
+  m = pathname.match(/^\/api\/competitors\/([^/]+)$/);
+  if (m && req.method === 'DELETE') {
+    store.removeCompetitor(m[1]);
+    return sendJson(res, 200, { ok: true });
+  }
+  m = pathname.match(/^\/api\/competitors\/([^/]+)\/refresh$/);
+  if (m && req.method === 'POST') {
+    return refreshCompetitor(res, m[1]);
+  }
+
+  // --- Similar-asset discovery (inspiration) ---
+  if (req.method === 'GET' && pathname === '/api/inspiration') {
+    return sendJson(res, 200, { inspiration: store.listInspiration() });
+  }
+  if (req.method === 'POST' && pathname === '/api/inspiration/discover') {
+    const body = await readBody(req);
+    return discoverAssets(res, body);
+  }
+  if (req.method === 'POST' && pathname === '/api/inspiration/save') {
+    const body = await readBody(req);
+    const a = body.asset;
+    if (!a || !a.videoId) return sendJson(res, 400, { error: 'asset required' });
+    const saved = store.upsertInspiration({ ...a, id: a.videoId, status: 'saved', savedAt: new Date().toISOString() });
+    return sendJson(res, 200, saved);
+  }
+  m = pathname.match(/^\/api\/inspiration\/([^/]+)$/);
+  if (m && req.method === 'DELETE') {
+    store.removeInspiration(m[1]);
+    return sendJson(res, 200, { ok: true });
+  }
+  if (m && req.method === 'PATCH') {
+    const a = store.getInspiration(m[1]);
+    if (!a) return notFound(res, 'Not found');
+    const body = await readBody(req);
+    return sendJson(res, 200, store.upsertInspiration({ ...a, status: body.status || a.status }));
+  }
+
   // --- Demo mode (guarded) ---
   if (pathname.startsWith('/api/demo/')) {
     if (!config.demoMode) {
@@ -345,9 +406,11 @@ async function handleApi(req, res, pathname, url) {
     if (req.method === 'POST' && pathname === '/api/demo/seed') {
       return sendJson(res, 200, { videos: demo.seedDemoVideos() });
     }
-    // POST /api/demo/reset — re-seed sample videos to their initial state
+    // POST /api/demo/reset — re-seed sample data to its initial state
     if (req.method === 'POST' && pathname === '/api/demo/reset') {
       demo.clearDemoVideos();
+      demo.clearDemoResearch();
+      demo.seedDemoResearch();
       return sendJson(res, 200, { videos: demo.seedDemoVideos(), runTargetId: demo.RUN_TARGET_ID });
     }
     return notFound(res, 'Unknown demo route');
@@ -465,6 +528,59 @@ async function publishYouTube(res, id) {
     });
     return sendJson(res, 502, { error: 'Publish failed', message: err.message, video: updated });
   }
+}
+
+// Refresh a competitor's recent content + AI insight (live when keyed).
+async function refreshCompetitor(res, id) {
+  const c = store.getCompetitor(id);
+  if (!c) return notFound(res, 'Competitor not found');
+  const ref = c.platforms?.youtube || c.youtube;
+  let recent = [];
+  let mode = 'demo';
+  try {
+    if (research.isYouTubeConfigured() && !c.demo && !config.demoMode && ref) {
+      recent = await research.competitorRecent(ref, 6);
+      mode = 'live';
+    } else if (c.demo || config.demoMode) {
+      recent = c.recent && c.recent.length ? c.recent : demo.demoCompetitorRecent();
+      mode = 'demo';
+    } else {
+      recent = c.recent || [];
+      mode = 'no-key';
+    }
+  } catch (err) {
+    recent = c.recent || [];
+    mode = 'error:' + err.message.slice(0, 80);
+  }
+  let insight = null;
+  try {
+    insight = await research.competitorInsight(c.name, recent);
+  } catch { /* leave null */ }
+  const updated = store.upsertCompetitor({ ...c, recent, insight, checkedAt: new Date().toISOString(), refreshMode: mode });
+  return sendJson(res, 200, updated);
+}
+
+// Discover similar reference assets (links + metadata + adapt notes). Never
+// downloads media — inspiration only.
+async function discoverAssets(res, body) {
+  const q = (body.query || '').trim();
+  let assets = [];
+  let mode = 'demo';
+  if (config.demoMode || !research.isYouTubeConfigured()) {
+    assets = demo.demoDiscover();
+    mode = config.demoMode ? 'demo' : 'no-key';
+  } else {
+    const query = q || config.research.keywords.slice(0, 3).join(' ');
+    try {
+      const found = await research.searchYouTube(query, 8);
+      assets = await research.adaptNotes(found);
+      mode = 'live';
+    } catch (err) {
+      assets = demo.demoDiscover();
+      mode = 'error:' + err.message.slice(0, 80);
+    }
+  }
+  return sendJson(res, 200, { assets, mode, query: q });
 }
 
 // ---- Server ----------------------------------------------------------------

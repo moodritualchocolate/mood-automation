@@ -9,6 +9,8 @@ let state = {
   videos: {}, // id -> video record
   platformChecks: {}, // platformKey -> { checkedAt, ...result }
   youtube: null, // OAuth connection: { tokens, channel, scope, checkedAt }
+  competitors: {}, // id -> competitor record
+  inspiration: {}, // id -> saved reference asset
   meta: { version: 1 },
 };
 
@@ -26,7 +28,15 @@ export function load() {
     if (fs.existsSync(config.storeFile)) {
       const raw = fs.readFileSync(config.storeFile, 'utf8');
       const parsed = JSON.parse(raw);
-      state = { videos: {}, platformChecks: {}, youtube: null, meta: { version: 1 }, ...parsed };
+      state = {
+        videos: {},
+        platformChecks: {},
+        youtube: null,
+        competitors: {},
+        inspiration: {},
+        meta: { version: 1 },
+        ...parsed,
+      };
     }
   } catch (err) {
     console.error('[store] Failed to read store, starting fresh:', err.message);
@@ -125,4 +135,44 @@ export function setYouTube(data) {
 export function clearYouTube() {
   state.youtube = null;
   saveNow();
+}
+
+// ---- Competitors -----------------------------------------------------------
+
+export function listCompetitors() {
+  return Object.values(state.competitors).sort(
+    (a, b) => new Date(b.addedAt) - new Date(a.addedAt),
+  );
+}
+export function getCompetitor(id) {
+  return state.competitors[id] || null;
+}
+export function upsertCompetitor(c) {
+  state.competitors[c.id] = c;
+  save();
+  return c;
+}
+export function removeCompetitor(id) {
+  delete state.competitors[id];
+  save();
+}
+
+// ---- Inspiration / reference assets ----------------------------------------
+
+export function listInspiration() {
+  return Object.values(state.inspiration).sort(
+    (a, b) => new Date(b.savedAt || 0) - new Date(a.savedAt || 0),
+  );
+}
+export function getInspiration(id) {
+  return state.inspiration[id] || null;
+}
+export function upsertInspiration(a) {
+  state.inspiration[a.id] = a;
+  save();
+  return a;
+}
+export function removeInspiration(id) {
+  delete state.inspiration[id];
+  save();
 }

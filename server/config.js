@@ -97,6 +97,25 @@ export const config = {
     // Safety cap for the in-memory upload buffer (Shorts are small).
     maxUploadBytes: Number(env.YT_MAX_UPLOAD_BYTES) || 300 * 1024 * 1024,
   },
+
+  // Competitor research + similar-asset discovery. Uses the YouTube Data API
+  // (public search, no user auth needed) when YT_API_KEY is set; otherwise the
+  // system runs in demo/heuristic mode. Discovery surfaces links + metadata +
+  // AI "how to adapt for MOOD" notes — references and ideas only, never copies.
+  research: {
+    youtubeApiKey: env.YT_API_KEY || '',
+    region: env.RESEARCH_REGION || 'IL',
+    niche:
+      env.RESEARCH_NICHE ||
+      'ritual cacao, clean chocolate, morning wellness routine, mindful self-care',
+    keywords: (
+      env.RESEARCH_KEYWORDS ||
+      'cacao ritual,healthy chocolate,morning ritual,mindful snack,שוקולד טקסי,קקאו בריא,טקס בוקר'
+    )
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
+  },
 };
 
 // The pre-publish approval checklist. Every item must be confirmed before a

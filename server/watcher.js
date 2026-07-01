@@ -12,7 +12,7 @@ import { config, APPROVAL_ITEMS } from './config.js';
 import { analyzeVideo } from './analyzer.js';
 import { generateRecommendations } from './recommend.js';
 import { transcribe } from './transcribe.js';
-import { seedDemoVideos, hasDemoVideos } from './demo.js';
+import { seedDemoVideos, hasDemoVideos, seedDemoResearch } from './demo.js';
 import {
   listVideos,
   getVideoByPath,
@@ -201,10 +201,11 @@ export function start() {
   ensureWatchDir();
   console.log(`[watcher] Watching: ${config.watchDir}`);
 
-  // Seed demo videos so the dashboard shows the full flow immediately.
+  // Seed demo data so the dashboard shows the full flow immediately.
   if (config.demoMode && !hasDemoVideos()) {
     seedDemoVideos();
-    console.log('[watcher] Demo mode — seeded sample videos.');
+    seedDemoResearch();
+    console.log('[watcher] Demo mode — seeded sample videos + research.');
   }
 
   // Instant detection.

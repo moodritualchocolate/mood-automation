@@ -261,6 +261,20 @@ label { display: block; font-size: .8rem; color: var(--muted); margin: 14px 0 5p
 .frame-strip .frame { width: 30px; height: 52px; border-radius: 6px; background: var(--accent-soft); border: 1px solid var(--border); }
 .badge-demo { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .68rem; font-weight: 600; background: var(--warn-soft); color: #92600c; }
 
+/* ---- Research: competitors + assets ---- */
+.comp { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px; background: var(--surface); }
+.comp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.comp .insight { margin-top: 10px; background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 12px; }
+
+.asset { display: flex; gap: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 10px; background: var(--surface); }
+.asset-th { width: 96px; height: 128px; flex: 0 0 auto; border-radius: 8px; object-fit: cover; background: var(--accent-soft); }
+.asset-th.ph { display: grid; place-items: center; color: var(--accent); font-size: 1.6rem; }
+.asset-body { flex: 1; min-width: 0; }
+.asset-title { font-weight: 600; font-size: .9rem; margin-bottom: 4px; word-break: break-word; }
+.asset .adapt { margin-top: 8px; font-size: .82rem; line-height: 1.5; color: #14704a; background: var(--good-soft); border-radius: 8px; padding: 8px 10px; }
+.asset-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.asset-actions .btn { padding: 6px 12px; font-size: .8rem; }
+
 /* ---- Toast ---- */
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);

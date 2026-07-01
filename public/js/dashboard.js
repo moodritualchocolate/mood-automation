@@ -18,6 +18,8 @@ let APPROVAL_ITEMS = [
 let health = null;
 let videos = [];
 let connections = [];
+let competitors = [];
+let inspiration = [];
 
 const $ = (s) => document.querySelector(s);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -71,6 +73,8 @@ function renderKpis() {
     { val: countBy('Published'), label: 'פורסמו', cls: 'good' },
     { val: countBy('Failed'), label: 'נכשלו', cls: countBy('Failed') ? 'bad' : '' },
     { val: transcripts, label: 'עם תמלול', sub: '🎙' },
+    { val: competitors.length, label: 'מתחרים במעקב' },
+    { val: inspiration.length, label: 'רעיונות שנשמרו', cls: 'accent' },
   ];
   $('#kpis').innerHTML = cards
     .map(
@@ -178,6 +182,7 @@ function renderQuickActions() {
   $('#quickActions').innerHTML = `
     <button class="btn primary" id="scanBtn">🔄 סרוק תיקייה</button>
     <a class="btn" href="/review.html">🎬 סקירת סרטונים</a>
+    <a class="btn" href="/research.html">🔎 מחקר מתחרים</a>
     <a class="btn" href="/connections.html">🔌 חיבורים</a>
     ${demo ? '<button class="btn primary" id="runDemoBtn">▶️ הרץ הדגמה מלאה</button><button class="btn" id="resetDemoBtn">↺ אפס הדגמה</button>' : ''}
     <div class="spacer"></div>
@@ -247,15 +252,19 @@ async function runFullDemo() {
 // ---- Load + render ---------------------------------------------------------
 
 async function refresh() {
-  const [h, vd, cn] = await Promise.all([
+  const [h, vd, cn, cp, ins] = await Promise.all([
     api('/api/health').catch(() => null),
     api('/api/videos').catch(() => ({ videos: [] })),
     api('/api/connections').catch(() => ({ platforms: [] })),
+    api('/api/competitors').catch(() => ({ competitors: [] })),
+    api('/api/inspiration').catch(() => ({ inspiration: [] })),
   ]);
   health = h;
   videos = vd.videos || [];
   if (Array.isArray(vd.approvalItems) && vd.approvalItems.length) APPROVAL_ITEMS = vd.approvalItems;
   connections = cn.platforms || [];
+  competitors = cp.competitors || [];
+  inspiration = ins.inspiration || [];
 
   renderModeChip();
   renderQuickActions();

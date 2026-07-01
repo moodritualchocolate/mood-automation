@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>מחקר מתחרים — MOOD</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="icon" href="/icons/favicon.svg" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div><h1>מחקר מתחרים</h1><small>MOOD · השראה ותובנות — לא העתקה</small></div>
+    </div>
+    <nav class="nav">
+      <a href="/">דאשבורד</a>
+      <a href="/review.html">סקירת סרטונים</a>
+      <a href="/research.html" class="active">מחקר מתחרים</a>
+      <a href="/connections.html">חיבורי פלטפורמות</a>
+      <span id="modeChip" class="mode-chip"></span>
+    </nav>
+  </header>
+
+  <div class="banner">💡 השראה בלבד — המערכת מביאה קישורים, נתונים ורעיונות להתאמה ל-MOOD. אין הורדה או העתקה של תוכן של אחרים.</div>
+
+  <main class="container">
+    <div class="dash-cols">
+      <div>
+        <div class="panel">
+          <h3>מתחרים במעקב</h3>
+          <div id="addCompForm" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+            <input type="text" id="compName" placeholder="שם המתחרה" />
+            <input type="text" id="compYt" placeholder="ערוץ YouTube (@handle)" />
+            <input type="text" id="compNiche" placeholder="נישה (למשל: קקאו בוקר)" />
+            <button class="btn primary" id="addCompBtn">➕ הוסף מתחרה</button>
+          </div>
+          <div id="competitors"></div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3>גילוי נכסים דומים (השראה)</h3>
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+            <input type="text" id="discoverQuery" placeholder="מילות חיפוש (ריק = הנישה שלנו)" style="flex:1;min-width:160px" />
+            <button class="btn primary" id="discoverBtn">🔎 גלה רעיונות</button>
+          </div>
+          <div id="discoverResults"></div>
+        </div>
+        <div class="panel">
+          <h3>נכסים שנשמרו</h3>
+          <div id="savedAssets"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="/js/research.js"></script>
+</body>
+</html>
