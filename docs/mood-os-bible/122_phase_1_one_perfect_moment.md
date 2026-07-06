@@ -1,6 +1,14 @@
 # 122 — Phase 1 — One Perfect Moment
 
-> The smallest lovable slice: one hand-crafted Daily Moment — artwork, Reflection, one Challenge ladder, and an evening Journal — running fully local with no account.
+> The smallest lovable slice that still contains the **whole loop** (simplified): Discovery → Human Map → Moment → Recognition → Challenge → Evening Journal → Living Library — running fully local with no account.
+
+> **Founder mandate (ratified):** this slice is not "the Moment alone." It must
+> carry the entire loop, even if simplified, because *the loop is the game*. The
+> build-ready product definition — full copy, the tone-safe "Returning Pull" habit
+> model, and the Grok/Codex handoff briefs — lives in
+> [`specs/one_perfect_moment.md`](./specs/one_perfect_moment.md). It runs the full
+> studio pipeline including the **Feeling Gate** and **Reality Gate** (Ch. 00), and
+> is measured by one KPI: *did the player naturally want to return tomorrow?*
 
 ## Purpose
 Phase 1 proves the emotional core of MOOD with the least possible surface area. It builds exactly one authored Moment and lets a person live one honest pass through the core loop (Ch. 06), so the studio can feel whether the promise from Ch. 01 lands before investing in engines. Nothing here is generated at runtime, nothing requires a network. If this single Moment makes a tester feel seen, the product thesis holds.
