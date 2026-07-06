@@ -11,6 +11,9 @@ Top-level guides: [README](./README.md) ·
 
 ---
 
+## VOLUME 00 — Studio Governance
+- [00 — Studio Operating Model](./00_studio_operating_model.md)
+
 ## VOLUME 01 — Founder Master Prompt
 - [01 — Vision](./01_vision.md)
 - [02 — What MOOD Is Not](./02_what_mood_is_not.md)

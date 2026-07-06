@@ -66,6 +66,7 @@ Every chapter in this Bible connects back to this loop.
 
 Twelve volumes, 129 numbered chapters, plus these top-level guides:
 
+- **[00 — Studio Operating Model](./00_studio_operating_model.md)** — how the studio (Grok / Claude / Codex) works: roles, pipeline, disagreement protocol, the one quality bar.
 - **[README.md](./README.md)** — this file.
 - **[TABLE_OF_CONTENTS.md](./TABLE_OF_CONTENTS.md)** — every chapter, linked.
 - **[CODEX_BUILD_PLAN.md](./CODEX_BUILD_PLAN.md)** — build order + task plan for the engineering agent (Codex).
