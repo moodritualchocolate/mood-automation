@@ -1,0 +1,58 @@
+{
+  "note": "All app-chrome Hebrew copy, so the entire interface speaks from data. No streaks, no scores, no guilt, no diagnosis. Warm, short, human. Engineering reads these directly.",
+  "onboarding": {
+    "welcome": "פעם ביום. רגע אחד. שלך.",
+    "sub": "בלי שאלות, בלי מבחנים. רק רגע קטן שמסתכל עליך בעדינות.",
+    "begin": "להתחיל",
+    "no_account_note": "לא צריך חשבון. הכול נשאר אצלך."
+  },
+  "daily": {
+    "greeting_morning": "יש לך רגע היום.",
+    "greeting_returning": "טוב שחזרת.",
+    "open_moment": "פתח את הרגע של היום"
+  },
+  "evening_checkin": {
+    "prompt": "איך היה?",
+    "did_you_try": { "yes": "ניסיתי", "no": "לא הפעם" },
+    "how_felt": "איך הרגשת?",
+    "save": "שמור את הרגע",
+    "one_line": "משהו אחד שקרה? (לא חובה)"
+  },
+  "not_this_time": [
+    "גם זה בסדר גמור. הרגע נשאר שלך.",
+    "לא הפעם — ומחר יש רגע חדש. בלי חשבון."
+  ],
+  "reminder": {
+    "note": "At most one gentle local reminder per day, easily off. Never guilt, never a streak warning.",
+    "text": "הרגע שלך מחכה בערב.",
+    "settings_label": "תזכורת יומית עדינה",
+    "off_note": "אפשר לכבות בכל רגע. MOOD לא ינדנד."
+  },
+  "empty_states": {
+    "library_empty": "עוד אין כאן רגעים. הראשון יגיע היום.",
+    "patterns_early": "עוד לא אספנו מספיק כדי לשקף — וזה בסדר גמור.",
+    "no_connection": "אין חיבור כרגע — וזה בסדר. הכול עובד גם ככה, אצלך."
+  },
+  "celebration": {
+    "note": "Arrival, never confetti or points. A quiet acknowledgment.",
+    "first_moment": "זה הרגע הראשון בספרייה שלך. מחר יצטרף עוד אחד.",
+    "returned_after_gap": "חזרת. הרגעים שלך חיכו לך, בדיוק איפה שהשארת אותם."
+  },
+  "settings": {
+    "title": "MOOD שלך",
+    "footer": "אתה מחליט הכול.",
+    "appearance": "מראה",
+    "language": "שפה",
+    "privacy": "פרטיות",
+    "accessibility": "נגישות"
+  },
+  "privacy": {
+    "headline": "מה שקורה כאן נשאר אצלך.",
+    "body": "הרגעים, המילים והקול שלך נשמרים אצלך קודם כול. אתה בעל הבית. אפשר למחוק הכול, מתי שתרצה.",
+    "delete_all": "מחק הכול"
+  },
+  "errors": {
+    "generic": "משהו קטן השתבש. ננסה שוב בעדינות.",
+    "retry": "לנסות שוב"
+  }
+}

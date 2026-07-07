@@ -1,0 +1,29 @@
+{
+  "note": "Anonymous shared humanity. No likes, no profiles, no comparison, no follower counts. Belonging only. Numbers are real counts of anonymous acts, phrased as company, never competition.",
+  "shared_today": {
+    "template": "היום {count} אנשים בחרו גם הם {act}.",
+    "acts_by_dimension": {
+      "courage": "מעשה קטן של אומץ",
+      "connection": "להגיד משהו חם למישהו",
+      "rest": "לתת לעצמם לעצור",
+      "kindness": "חסד קטן",
+      "presence": "להיות נוכחים ברגע אחד",
+      "boundaries": "לשמור על עצמם",
+      "curiosity": "ללכת אחרי סקרנות",
+      "creativity": "לעשות דבר אחד קטן"
+    },
+    "fallback": "היום עוד אנשים, בשקט, ניסו משהו קטן. אתה לא לבד בזה."
+  },
+  "belonging_lines": [
+    "אתה לא לבד ברגע הזה.",
+    "עכשיו, ברגע הזה, עוד מישהו איפשהו עומד באותו סף בדיוק.",
+    "אנשים שלא תפגוש אף פעם עשו היום את אותו צעד קטן שלך."
+  ],
+  "no_compare_note": "Never rank, never show 'you vs others', never a leaderboard. Company, not competition.",
+  "dare_back": {
+    "note": "The one social action: pass courage to a real person. Not a share card, not vanity.",
+    "prompt": "מי צריך לדעת שעשית את זה?",
+    "invite_line": "מישהו שאכפת לך ממנו ניסה היום משהו קטן. הנה משהו קטן בשבילך.",
+    "decline": "לא עכשיו — וזה בסדר. זה נשאר שלך."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "note": "The portrait assembly logic — how accumulated Moments become 'who you're becoming'. Wraps the triangulation lines in becoming_statements.json with presentation copy. Never a score, never final. A tentative, warm, evolving reflection. This is the product's spine.",
+  "intro": "אספנו כמה רגעים קטנים שלך. ככה אתה מתחיל להיראות מבפנים.",
+  "growth_framing": {
+    "note": "Chosen by how many DISTINCT dimensions the user has engaged (triangulation), not by count of days.",
+    "rules": [
+      { "when_distinct_dimensions": 1, "line": "עוד מוקדם — יש רגע אחד, לא תמונה. אבל גם רגע אחד אומר משהו." },
+      { "when_distinct_dimensions": 2, "line": "מתחילים להצטייר שני קווים בך. עוד לא דיוקן — אבל כבר לא מקרי." },
+      { "when_distinct_dimensions": 3, "line": "זה כבר לא רגעים בודדים. שלושה כיוונים שונים מצביעים על אותו אדם — אתה." },
+      { "when_distinct_dimensions": "4+", "line": "מתוך דברים שונים לגמרי מצטייר אתה. זה מי שאתה נעשה, לאט, באמת." }
+    ]
+  },
+  "assembly_rule": "Show growth_framing (by distinct dimensions) + the matching line from becoming_statements.json (by which dimensions were engaged). If too little data, show early_state from becoming_statements.json.",
+  "the_question": {
+    "note": "Asked at a milestone (e.g. day 6). The single most important measurement — portrait truth.",
+    "prompt": "זה מי שאתה נעשה?",
+    "yes": "כן, זה אני",
+    "no": "עוד לא בדיוק",
+    "on_yes": ["טוב לשמוע. נמשיך לגלות יחד.", "אז נמשיך משם. יש עוד בך."],
+    "on_no": ["גם זה בסדר גמור. אולי אנחנו רואים רק חלק — או שזה עוד בדרך.", "תודה שאמרת. נלמד אותך יותר טוב מחר."]
+  },
+  "retrospective": {
+    "note": "Periodic gentle look back — the reward is seeing your own change, never a metric.",
+    "lines": [
+      "לפני שבוע התחלת כאן. תראה כמה כבר זז.",
+      "הרגע הראשון שלך ואיפה אתה עכשיו — זה לא אותו אדם בדיוק.",
+      "שום דבר לא הלך לאיבוד. כל רגע קטן עוד כאן, ומרכיב אותך."
+    ]
+  },
+  "tone": "tentative always ('נראה', 'מתחיל', 'אולי'); never 'you are X'; never a level or number; the user watches themselves become, they are never graded."
+}
