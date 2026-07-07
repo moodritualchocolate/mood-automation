@@ -72,7 +72,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   // Day One is a full-screen immersive experience — render it without the
   // procurement shell chrome (no sidebar, header, or nav).
-  if (pathname.startsWith("/day-one")) {
+  if (pathname.startsWith("/day-one") || pathname === "/one") {
     return <>{children}</>;
   }
 
