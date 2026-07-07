@@ -6,9 +6,10 @@ This operationalizes Volumes 07–08 and `GROK_ASSET_BRIEF.md`; where they defin
 *language*, this defines the *factory*.
 
 > **PRODUCTION GATE.** The pipeline, templates, and queue below are built now. **No
-> Grok batch runs until `OBSERVE_TEN` returns "wanted."** Exception: **Batch 00 — the
-> single Signature Proof** may run first, because it defines the language everything
-> else inherits. Spend nothing on volume before the one image proves the look.
+> Grok scene runs until `OBSERVE_TEN` returns "wanted."** Exception:
+> **`Scene_001_Before_Returning`** may run first, because it defines the light,
+> atmosphere, and emotional DNA every other scene inherits. Spend nothing on volume
+> before that one scene proves the world.
 
 ---
 
@@ -30,6 +31,61 @@ MOOD's four constants:
 
 If an image has these four, it is MOOD even if the subject changes. This document
 protects those four across every asset.
+
+---
+
+## 0.5 The Scene Is the Atomic Unit
+
+**We do not generate images. We generate emotional worlds.** The atomic unit of
+production is the **Scene** — one place, one light, one atmosphere, one emotional
+truth. Every asset the app, website, store, print, and film will ever need is a
+**crop, reframe, or motion pass of a Scene.** Nothing is generated in isolation.
+
+**NEW RULE:** Never generate an isolated image. Generate a Scene, then *derive*
+every asset from it. This is what guarantees one visual language — because every
+surface literally shares the same light and air.
+
+**Every Scene must be able to produce:** app · website · marketing · social · print ·
+collector · motion · video assets — all from the same visual DNA.
+
+### Scene folder (the reusable production universe)
+```
+scene_001_before_returning/
+  wide_16x9_v01.webp          establishing shot — the whole world (master)
+  hero_9x16_v01.webp          app hero crop
+  close_1x1_v01.webp          intimate detail crop
+  mobile_9x16_v01.webp        phone full-bleed
+  desktop_16x9_v01.webp       web full-bleed
+  story_9x16_v01.webp         social story
+  poster_3x4_v01.webp         marketing / print poster
+  print_3x4_v01.webp          high-res collector print
+  wallpaper_9x19_v01.webp     device wallpaper
+  transition_9x16_v01.webp    loop/transition still
+  video_frame_16x9_v01.webp   motion key-frame
+  background_9x16_v01.webp     text-bearing background
+  thumbnail_1x1_v01.webp       library thumb
+  collector_1x1_v01.webp       limited object art
+  metadata.json               scene DNA + version log (§7)
+  animation_notes.md          how the world breathes (§ motion)
+```
+
+### Scene template (define before the master prompt)
+```
+Scene ID:         scene_00N_<name>
+Emotional Truth:  the one human truth this world holds
+Place / World:    where it is
+The Light:        the single source, direction, time — the DNA
+Atmosphere:       air, weather, temperature, stillness
+Palette / LUT:    the fixed color of this world
+Human Presence:   none | hands | figures from behind
+Anchor Objects:   the few recurring props
+Negative Space:   where emptiness lives (for text/breath)
+Derivation Map:   which of the 15 outputs this scene must yield, and from which region
+Forbidden:        the no-list for this world
+```
+
+Derivations share the master's light and LUT **exactly** — a derivation that
+introduces a new light source is a QA failure, because it breaks the world.
 
 ---
 
@@ -183,48 +239,95 @@ without an `approved`. Rejections keep their reason so the language compounds.
 
 ---
 
-## 8. Master Asset List — MVP
+## 8. Master Scene List — MVP
 
-Grouped, prioritized (P0 blocks launch), with production order.
+We count **scenes**, not assets. Each scene yields its full derivation set (§0.5).
 
-| # | Group | Assets | Count | Priority |
-|---|-------|--------|-------|----------|
-| 1 | **Signature Proof** | `moment_001_hero` (the language-defining image) | 1 | **P0** |
-| 2 | Discovery | 4 pairs (belonging/initiation/energy/risk) ×2 | 8 | P0 |
-| 3 | Moment_001 | hero (9:16, 4:5, 1:1), library thumb | 4 | P0 |
-| 4 | Backgrounds | dusk, room, weaving-light, library ground | 4 | P0 |
-| 5 | States | loading, empty, celebrate(arrival), notthistime | 4 | P1 |
-| 6 | Moment_002 | hero set + thumb | 4 | P1 |
-| 7 | Portrait/Becoming | stages 1–5 | 5 | P1 |
-| 8 | Icon/Splash | app icon, splash light | 2 | P1 |
-| 9 | Marketing | hero 16:9, App Store 3–4, social ground | 6 | P2 |
+| # | Scene | Emotional Truth | Yields (app + brand) | Priority |
+|---|-------|-----------------|----------------------|----------|
+| 1 | **`Scene_001_Before_Returning`** | the held breath before you come back — to the app, to yourself | evening + becoming-close + dusk background + splash + wallpaper + marketing hero + social + collector | **P0 · master** |
+| 2 | `Scene_002_First_Hello` | the instant before a first hello | moment_001 hero/close/thumb + poster + story | P0 |
+| 3 | `Scene_003_Four_Doorways` | the small choices that reveal you | 8 discovery crops (4 pairs) + transitions | P0 |
+| 4 | `Scene_004_The_Unsaid_Word` | the warm thing you finally say | moment_002 hero/close/thumb + social | P1 |
+| 5 | `Scene_005_Becoming` | a self taking form, never finished | portrait stages 1–5 + collector + wallpaper | P1 |
 
-**Production order:** 1 → (gate) → 2 → 4 → 3 → 5 → 6 → 7 → 8 → 9.
-Total MVP ≈ **38 approved assets.** Optimize for the first one being unforgettable.
+Five scenes cover the entire MVP across app, web, store, print, and motion — because
+each is a world, not a picture. **Optimize for the first world being unforgettable.**
 
 ---
 
-## 9. Grok Production Queue
+## 9. Grok Scene Production Queue
+
+One scene at a time. Each scene = generate the master (wide establishing), approve
+the world, then derive its full set. The next scene never starts until the current
+scene's master is approved.
 
 ```
-Batch 00 — SIGNATURE PROOF     · 1 asset  · runs FIRST · defines the language
---- GATE: OBSERVE_TEN = "wanted" AND Batch 00 approved ---
-Batch 01 — Discovery           · 8 assets
-Batch 02 — Backgrounds         · 4 assets
-Batch 03 — Moment_001 set      · 4 assets
-Batch 04 — States              · 4 assets
-Batch 05 — Moment_002 set      · 4 assets
-Batch 06 — Portrait/Becoming   · 5 assets
-Batch 07 — Icon/Splash         · 2 assets
-Batch 08 — Marketing/App Store · 6 assets
+Scene_001_Before_Returning  · master + 15 derivations · runs FIRST · defines the DNA
+--- GATE: OBSERVE_TEN = "wanted" AND Scene_001 master approved ---
+Scene_003_Four_Doorways     · master + 8 discovery crops
+Scene_002_First_Hello       · master + derivations
+Scene_004_The_Unsaid_Word   · master + derivations
+Scene_005_Becoming          · master (5 stages) + derivations
 ```
-Never batch blindly: each batch is approved before the next begins.
+Never generate blindly: the **master establishes the world; derivations only reframe
+it.** A derivation that changes the light is rejected — it has left the scene.
 
 ---
 
-## 10. Grok Prompts (one asset at a time — exemplars that set the standard)
+## 10. Scenes (one world at a time — master, then derivations)
 
-### 10.1 — `moment_001_hero_9x16` · BATCH 00 · the Signature Proof
+### 10.0 — `Scene_001_Before_Returning` · MASTER · runs FIRST · defines the DNA
+```
+Scene ID:        scene_001_before_returning
+Emotional Truth: the held breath before you come back — to the app, to yourself,
+                 at the end of a day you actually lived.
+Place / World:   a quiet street at dusk, a warm lit doorway a little ahead
+The Light:       the last low gold sun from frame-left, dissolving into violet dusk
+                 — THIS falloff is the brand DNA every other scene inherits.
+Atmosphere:      still, private, cooling air holding one last warm breath
+Palette / LUT:   violet-blue dusk → warm amber, deeply muted; soft film grain
+Human Presence:  one figure from behind, walking gently toward the warm doorway
+Anchor Objects:  the lit doorway, a long soft shadow, an empty stretch of road
+Negative Space:  lower two-thirds (road + air) reserved for text/breath
+Derivation Map:  wide(master) → hero, close(doorway light), mobile, desktop, story,
+                 poster, print, wallpaper, transition, video_frame, background,
+                 thumbnail, collector; + metadata + animation_notes
+Forbidden:       faces to camera, second light source, cool-only cast, any text
+```
+**MASTER PROMPT (wide establishing — the world):**
+```
+timeless painterly photograph, one warm low directional light, soft film grain,
+shallow depth of field, muted filmic color, intimate human scale, generous reserved
+negative space, no text · one person seen from behind walking slowly toward a warm
+lit doorway on a quiet street at dusk, the held breath before returning home ·
+figure small and left, the empty road and dusk air filling the lower two-thirds ·
+last low gold sun from the left dissolving into violet dusk, one long soft shadow ·
+35mm, low eye level, deep-soft focus · violet-blue into warm amber, deeply muted ·
+homecoming
+--ar 16:9  --no text, letters, words, hebrew, captions, watermark, logo, signage,
+ui, numbers, faces to camera, posed stock, harsh flash, hdr, oversaturation, plastic
+skin, distorted hands, cluttered background, cool-only light
+```
+**DERIVATIONS (same world, reframed — never a new light):**
+| Output | Aspect | From region | Delta from master |
+|--------|--------|-------------|-------------------|
+| `hero` | 9:16 | recompose vertical | figure lower-left, doorway glow upper-right, road for text |
+| `close` | 1:1 | the doorway | just the warm lit doorway + spill, no figure |
+| `background` | 9:16 | the dusk air | the empty violet→amber sky only, lower 2/3 open |
+| `wallpaper` | 9:19 | full world | device-safe margins, figure off-center |
+| `poster`/`print` | 3:4 | full world | max resolution, collector crop |
+| `story`/`social` | 9:16 | full world | brand-safe center, breathing top |
+| `video_frame` | 16:9 | master | key-frame for a slow light-drift push-in |
+**Derivation prompt pattern:** reuse the master prompt verbatim, change only the
+subject-framing clause and `--ar`. If you find yourself re-describing the light, stop
+— you are leaving the scene.
+**QA:** run §6 in full. **Scene_001's master must score YES on every craft line
+before any other scene is authorized** — it is the world everything inherits.
+
+---
+
+### 10.1 — `Scene_002_First_Hello` · MASTER (moment_001 world)
 ```
 Purpose:        The one image that defines MOOD's language; hero for Moment_001.
 User Emotion:   tender hope — "someone is about to be brave."
@@ -254,10 +357,9 @@ left falling into warm shadow · 50mm, eye level, slight over-shoulder, shallow 
 ui, numbers, faces to camera, posed stock, harsh flash, hdr, oversaturation, plastic
 skin, distorted hands, cluttered background, cool blue light
 ```
-**QA:** run §6 in full. This asset must score YES on every craft line before ANY
-other batch is authorized.
+**QA:** run §6 in full. This is `Scene_002`'s master; approve it before deriving its set.
 
-### 10.2 — `discovery_belonging_a_9x16` (pair with `_b`)
+### 10.2 — `Scene_003_Four_Doorways` derivation · `discovery_belonging_a_9x16` (pair with `_b`)
 ```
 Purpose:  Discovery choice — the "from outside" pole of belonging.
 Emotion:  quiet longing to be inside the warmth.
@@ -279,7 +381,7 @@ faces to camera, posed stock, hdr, oversaturation, plastic skin, cluttered
 ```
 *(`_b` = the same world from **inside** a warm room — enveloped, belonging.)*
 
-### 10.3 — `background_dusk_bg_9x16`
+### 10.3 — `Scene_001_Before_Returning` derivation · `background_9x16` (same world, sky only)
 ```
 Purpose:  Evening / return backdrop for Check-in and the Becoming close.
 Emotion:  calm arrival, the day softening.
@@ -298,7 +400,7 @@ low at the base of the frame · wide, deep focus on emptiness · violet-to-amber
 harsh flash, hdr, oversaturation, cluttered, cool blue cast
 ```
 
-### 10.4 — `portrait_becoming_stage3_1x1`
+### 10.4 — `Scene_005_Becoming` · MASTER (stage 3 of 5) · `portrait_becoming_stage3_1x1`
 ```
 Purpose:  A stage in the Becoming portrait — the self accumulating.
 Emotion:  quiet recognition of one's own growth.
@@ -324,5 +426,5 @@ faces, portrait likeness, hdr, oversaturation, plastic, cluttered
 Purpose · Emotion · Composition · Camera · Light · Environment · Negative Space ·
 Color · Human Truth · Production Notes · Forbidden Elements · Aspect Ratio · Output
 Variants · QA Checklist — assembled in the §5 order, cleared through §6, versioned
-in §7. One asset at a time. The first unforgettable image outranks a thousand
-beautiful ones.
+in §7. **One scene at a time — master first, then derive; never re-invent the
+light.** The first unforgettable *world* outranks a thousand beautiful images.
