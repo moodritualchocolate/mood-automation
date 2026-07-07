@@ -1,0 +1,30 @@
+{
+  "rule": "First recognition whose every 'when' condition matches the Human Map wins; the entry with empty 'when' is the default.",
+  "recognitions": [
+    {
+      "key": "attentive",
+      "when": { "initiation": "<-0.2", "energy": "<0" },
+      "lines": ["נראה שאתה שם לב לאנשים", "עוד לפני שאתה ניגש אליהם.", "זו לא ביישנות — זו תשומת לב."]
+    },
+    {
+      "key": "opener",
+      "when": { "initiation": ">0.2", "risk": ">0.1" },
+      "lines": ["אתה נוטה לעשות את הצעד הראשון.", "חום בין אנשים צריך מישהו שיתחיל —", "ולרוב זה אתה."]
+    },
+    {
+      "key": "deep",
+      "when": { "belonging": ">0.2", "energy": "<0" },
+      "lines": ["אתה לא מחפש הרבה אנשים.", "אתה מחפש אדם אחד, באמת.", "זו לא הסתגרות — זו עומק."]
+    },
+    {
+      "key": "warm",
+      "when": { "energy": ">0.2" },
+      "lines": ["יש בך משהו שנפתח ליד אנשים.", "חדר מלא לא מלחיץ אותך —", "הוא קצת מדליק אותך."]
+    },
+    {
+      "key": "default",
+      "when": {},
+      "lines": ["יש בך סקרנות שקטה כלפי אנשים.", "לא תמיד אתה ניגש —", "אבל אתה כמעט תמיד שם לב."]
+    }
+  ]
+}

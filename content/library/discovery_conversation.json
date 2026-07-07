@@ -1,0 +1,31 @@
+{
+  "note": "Discovery is the first emotional conversation, not a quiz. MOOD speaks first and shows how it sees the world; the user answers by choosing the wordless image that feels more like them. Each choice writes soft signals.",
+  "opening": "בוא נכיר. בלי שאלות. רק תבחר מה מרגיש לך.",
+  "steps": [
+    {
+      "axis": "belonging",
+      "prompt": "מה מרגיש לך יותר?",
+      "left":  { "id": "outside", "scene": "window", "label": "מבחוץ, מסתכל פנימה", "signals": { "belonging": -0.4 } },
+      "right": { "id": "inside",  "scene": "room",   "label": "מבפנים, בתוך חדר חמים", "signals": { "belonging": 0.5 } }
+    },
+    {
+      "axis": "initiation",
+      "prompt": "ואיזה יד יותר את/ה?",
+      "left":  { "id": "reach", "scene": "reach", "label": "היד שמושטת ראשונה", "signals": { "initiation": 0.6, "risk": 0.2 } },
+      "right": { "id": "wait",  "scene": "wait",  "label": "היד שמחכה, פתוחה", "signals": { "initiation": -0.5 } }
+    },
+    {
+      "axis": "energy",
+      "prompt": "ואיפה אתה נושם יותר טוב?",
+      "left":  { "id": "crowd", "scene": "street", "label": "רחוב שוקק אנשים", "signals": { "energy": 0.6 } },
+      "right": { "id": "quiet", "scene": "bench",  "label": "אדם אחד על ספסל", "signals": { "energy": -0.6 } }
+    },
+    {
+      "axis": "risk",
+      "prompt": "ואיזו דלת דומה לך?",
+      "left":  { "id": "half", "scene": "door-half", "label": "דלת שפתוחה בחצי", "signals": { "risk": -0.4 } },
+      "right": { "id": "wide", "scene": "door-wide", "label": "דלת פתוחה לרווחה", "signals": { "risk": 0.6 } }
+    }
+  ],
+  "closing": "רגע אחד…"
+}

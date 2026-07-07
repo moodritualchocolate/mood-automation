@@ -1,0 +1,9 @@
+{
+  "note": "How MOOD gently resurfaces the past. Never nags, never guilt. Memory deepens the portrait; it does not police the user.",
+  "rules": [
+    { "when": "a dimension returns after several days", "surface": "לפני כמה ימים ניסית משהו דומה. תראה עד כמה זה כבר פחות מפחיד." },
+    { "when": "a challenge was chosen but marked 'not this time' before", "surface": "פעם קודמת זה נשאר בצד. אולי היום." },
+    { "when": "3+ different dimensions engaged", "surface": "מתחיל להצטייר קו — לא רק רגעים בודדים, אלא אתה." },
+    { "when": "user returns after a gap", "surface": "טוב שחזרת. שום דבר לא הלך לאיבוד — הרגעים שלך חיכו לך." }
+  ]
+}

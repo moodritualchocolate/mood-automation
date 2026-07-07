@@ -1,0 +1,19 @@
+{
+  "note": "Soft, non-diagnostic model. Never shown as a profile, never labeled. Values are floats in [-1,1] with confidence [0,1]. Used only to select recognition variants and to size the default challenge level.",
+  "axes": [
+    { "key": "belonging", "meaning": "pull toward being inside warmth vs observing from outside" },
+    { "key": "initiation", "meaning": "tendency to reach first vs wait and attend" },
+    { "key": "energy", "meaning": "opens up in crowds vs one-on-one quiet" },
+    { "key": "risk", "meaning": "comfort with an open door vs a measured one" }
+  ],
+  "confidence": { "start": 0.3, "gain_per_signal": 0.2, "max": 0.9 },
+  "decay": { "note": "signals soften over inactivity", "per_idle_day": 0.02 },
+  "challenge_sizing": {
+    "note": "default suggested level; user always overrides freely",
+    "rules": [
+      { "when": { "risk": ">0.3", "initiation": ">0.2" }, "default_level": "brave" },
+      { "when": { "risk": "<-0.2" }, "default_level": "easy" },
+      { "when": {}, "default_level": "medium" }
+    ]
+  }
+}

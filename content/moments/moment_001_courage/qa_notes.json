@@ -1,0 +1,11 @@
+{
+  "tone_checked": true,
+  "banned_absent": true,
+  "safety": "All levels consent-first and legal; 'brave' is a real conversation, never intrusion or romantic pressure. Success framed as the attempt in every string.",
+  "edge_cases": [
+    "not_this_time is warm and costless — no map penalty",
+    "no faces/streaks/scores referenced",
+    "works offline; all copy is local Hebrew",
+    "RTL long-string safe"
+  ]
+}

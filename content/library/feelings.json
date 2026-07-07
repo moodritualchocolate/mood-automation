@@ -1,0 +1,11 @@
+{
+  "note": "Evening feeling taps. Soft, never scored. Keys map to reflections.by_feeling across moments.",
+  "feelings": [
+    { "key": "open", "label": "פתוח יותר" },
+    { "key": "proud", "label": "קצת גאה" },
+    { "key": "awkward_happy", "label": "נבוך אבל שמח" },
+    { "key": "calm", "label": "רגוע" },
+    { "key": "surprised", "label": "מופתע מעצמי" },
+    { "key": "processing", "label": "עוד מעכל" }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "note": "Machine-readable content contract. Every Moment folder contains exactly these files. All copy is Hebrew (RTL). No streaks/scores/diagnosis. Success = trying. Engine plugs these in directly; nothing depends on the UI.",
+  "moment_folder": {
+    "metadata.json": {
+      "id": "string (moment_00N_<dimension>)",
+      "dimension": "courage|connection|rest|kindness|presence|boundaries|curiosity|creativity",
+      "title": "string (tiny Hebrew title)",
+      "theme": "string (internal, english)",
+      "hero_scene": "string (visual scene id)",
+      "emotional_truth": "string (english, internal)",
+      "safety": { "forbidden": ["string"], "notes": "string" }
+    },
+    "recognitions.json": {
+      "recognitions": [
+        { "key": "string", "when": { "<axis>": "<comparator><number> e.g. <-0.2 or >0.1" }, "lines": ["hebrew", "..."] }
+      ],
+      "rule": "First recognition whose every 'when' condition matches the Human Map wins; the entry with empty 'when' is the default and must exist."
+    },
+    "reflections.json": {
+      "on_try": ["hebrew"],
+      "on_not_this_time": ["hebrew"],
+      "by_feeling": { "<feeling_key>": ["hebrew"] }
+    },
+    "invitations.json": {
+      "invitation": "hebrew (one soft optional noticing, not a challenge)"
+    },
+    "challenge_ladder.json": {
+      "header": "hebrew",
+      "levels": [
+        { "level": "easy|medium|brave", "label": "hebrew", "text": "hebrew", "sub": "hebrew" }
+      ]
+    },
+    "voice_prompts.json": {
+      "prompt": "hebrew (invite a ~5s voice note)",
+      "responses": ["hebrew (warm acknowledgments, never evaluative)"]
+    },
+    "journal_alternatives.json": {
+      "did_you_try": { "yes": "hebrew", "no": "hebrew" },
+      "one_line_prompt": "hebrew (optional, effortless)",
+      "quick_taps": ["hebrew (optional zero-effort captures)"]
+    },
+    "becoming_seeds.json": {
+      "on_try": ["hebrew (fragment: 'you're becoming someone who...')"],
+      "on_notice": ["hebrew"]
+    },
+    "tomorrow_hooks.json": {
+      "hooks": ["hebrew (anticipation, never guilt, never streak)"]
+    },
+    "qa_notes.json": {
+      "tone_checked": "boolean",
+      "banned_absent": "boolean",
+      "safety": "string",
+      "edge_cases": ["string"]
+    }
+  },
+  "library": {
+    "becoming_statements.json": "triangulation rules: dimensions engaged -> a becoming line",
+    "discovery_conversation.json": "the first emotional conversation + choice pairs (data)",
+    "human_map.json": "axes, ranges, decay, and how the map sizes challenges / selects recognition",
+    "feelings.json": "the evening feeling taps",
+    "memory_evolution.json": "rules for what MOOD gently resurfaces over time",
+    "voice_responses_global.json": "generic warm acknowledgments"
+  },
+  "index.json": "registry of all moments + the 'life chooses the dimension' rotation rule"
+}

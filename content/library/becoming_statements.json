@@ -1,0 +1,20 @@
+{
+  "note": "Triangulation: the portrait grows by combining dimensions engaged over days, not by repeating one. First matching rule wins; 'default' must exist. Never a score, never a verdict — a tentative, warm noticing.",
+  "rules": [
+    { "when_dimensions": ["courage", "kindness"], "line": "אתה הופך למישהו שמעז להתקרב — ובעדינות." },
+    { "when_dimensions": ["courage", "connection"], "line": "אתה לומד לא רק לנסות, אלא גם להגיד את מה שחשוב." },
+    { "when_dimensions": ["rest", "boundaries"], "line": "אתה מתחיל לדעת מתי לעצור — ומתי להגיד 'לא'." },
+    { "when_dimensions": ["curiosity", "creativity"], "line": "יש בך משהו שמפסיק לצרוך ומתחיל ליצור." },
+    { "when_dimensions": ["presence", "connection"], "line": "אתה נעשה נוכח יותר — עם עצמך, ועם אנשים." },
+    { "when_dimensions": ["courage"], "line": "אתה מתחיל להיות מישהו שעושה את הצעד הראשון." },
+    { "when_dimensions": ["kindness"], "line": "יש בך חום שיוצא החוצה, לא רק נשאר בפנים." },
+    { "when_dimensions": ["rest"], "line": "אתה לומד שמנוחה זה לא ויתור — זה בחירה." },
+    { "when_dimensions": ["boundaries"], "line": "אתה מתחיל לשמור על ה'כן' שלך בעזרת 'לא'." },
+    { "when_dimensions": ["presence"], "line": "אתה נוכח יותר ברגעים הקטנים שהיית מפספס." },
+    { "when_dimensions": ["curiosity"], "line": "אתה הולך יותר אחרי הסקרנות הקטנה שלך." },
+    { "when_dimensions": ["creativity"], "line": "אתה מתחיל לעשות דברים, לא רק לחשוב עליהם." },
+    { "when_dimensions": ["connection"], "line": "אתה אומר יותר ממה שהיית אומר פעם." },
+    { "when_dimensions": [], "line": "משהו קטן בך מתחיל לזוז. עוד מוקדם לדעת בדיוק לאן — וזה בסדר." }
+  ],
+  "early_state": "עוד לא אספנו מספיק כדי לשקף — וזה בסדר גמור. נמשיך מחר."
+}

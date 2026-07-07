@@ -1,0 +1,27 @@
+{
+  "note": "Moment registry + the 'life chooses the dimension' rotation. The user never picks a path; a light rhythm does. Engine reads this to select each day's Moment.",
+  "moments": [
+    { "id": "moment_001_courage",     "dimension": "courage",     "folder": "moments/moment_001_courage" },
+    { "id": "moment_002_connection",  "dimension": "connection",  "folder": "moments/moment_002_connection" },
+    { "id": "moment_003_rest",        "dimension": "rest",        "folder": "moments/moment_003_rest" },
+    { "id": "moment_004_kindness",    "dimension": "kindness",    "folder": "moments/moment_004_kindness" },
+    { "id": "moment_005_presence",    "dimension": "presence",    "folder": "moments/moment_005_presence" },
+    { "id": "moment_006_boundaries",  "dimension": "boundaries",  "folder": "moments/moment_006_boundaries" },
+    { "id": "moment_007_curiosity",   "dimension": "curiosity",   "folder": "moments/moment_007_curiosity" },
+    { "id": "moment_008_creativity",  "dimension": "creativity",  "folder": "moments/moment_008_creativity" }
+  ],
+  "rotation": {
+    "note": "Not random and not user-chosen. A weighted rhythm so the sequence feels authored by the person's life, not shuffled.",
+    "rules": [
+      { "when": "weekday_evening", "prefer": ["connection", "courage", "kindness"] },
+      { "when": "weekend", "prefer": ["rest", "presence", "creativity", "curiosity"] },
+      { "when": "yesterday_was_brave", "prefer": ["rest", "presence"], "reason": "a softer day follows a bold one" },
+      { "when": "yesterday_skipped", "prefer": ["kindness", "presence"], "reason": "return gently, never with a harder dare" }
+    ],
+    "constraints": [
+      "never repeat the same dimension two days running unless the user asks",
+      "never present a 'brave' default two days running",
+      "aim for >=3 distinct dimensions across any 6-day window (triangulation floor)"
+    ]
+  }
+}
