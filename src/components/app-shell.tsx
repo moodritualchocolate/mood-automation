@@ -70,6 +70,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Day One is a full-screen immersive experience — render it without the
+  // procurement shell chrome (no sidebar, header, or nav).
+  if (pathname.startsWith("/day-one")) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex min-h-dvh">
       {/* Sidebar — desktop */}

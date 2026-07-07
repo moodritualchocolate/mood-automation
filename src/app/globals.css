@@ -157,3 +157,75 @@
 .pt-safe {
   padding-top: env(safe-area-inset-top);
 }
+
+/* ─────────────────────────────────────────────────────────────
+   MOOD · Day One — immersive experience layer (namespaced .d1-*)
+   Warm, filmic, wordless. Real Grok artwork replaces the CSS
+   scenes later; the light + grain + motion language stays.
+   ───────────────────────────────────────────────────────────── */
+.d1-root {
+  --d1-ink: 34 25 19;          /* deep warm near-black */
+  --d1-ink-2: 22 16 12;
+  --d1-cream: 245 232 214;     /* text on dark */
+  --d1-amber: 224 160 92;      /* golden light */
+  --d1-amber-deep: 178 108 54;
+  --d1-rose: 206 130 108;
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  color: rgb(var(--d1-cream));
+  background: rgb(var(--d1-ink-2));
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "kern";
+}
+.d1-grain::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  animation: d1-grain 0.6s steps(2) infinite;
+}
+@keyframes d1-grain {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-6px, 4px); }
+}
+@keyframes d1-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.95; transform: scale(1.06); }
+}
+@keyframes d1-drift {
+  0%, 100% { transform: translate3d(0,0,0); }
+  50% { transform: translate3d(0,-2%,0); }
+}
+@keyframes d1-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes d1-reveal {
+  from { opacity: 0; filter: blur(8px); transform: translateY(10px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+@keyframes d1-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.d1-rise { animation: d1-rise 0.9s cubic-bezier(0.16,1,0.3,1) both; }
+.d1-reveal { animation: d1-reveal 1.6s cubic-bezier(0.16,1,0.3,1) both; }
+.d1-fade { animation: d1-fade 1.4s ease both; }
+.d1-breathe { animation: d1-breathe 6s ease-in-out infinite; }
+.d1-drift { animation: d1-drift 14s ease-in-out infinite; }
+.d1-tap {
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s ease, filter 0.5s ease;
+}
+.d1-tap:active { transform: scale(0.985); }
+@media (hover: hover) {
+  .d1-tap:hover { filter: brightness(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .d1-grain::after, .d1-breathe, .d1-drift { animation: none !important; }
+  .d1-rise, .d1-reveal, .d1-fade { animation-duration: 0.01ms !important; }
+}
