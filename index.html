@@ -1,200 +1,345 @@
 <!doctype html><html lang="he" dir="rtl"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#140d08">
+<meta name="theme-color" content="#0c0a07">
 <meta name="robots" content="noindex">
 <title>MOOD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--cream:245,232,214}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;background:#0e0a06;overflow:hidden}
-#root{position:fixed;inset:0;color:rgb(var(--cream));font-family:'Frank Ruhl Libre','Assistant','Times New Roman',Georgia,serif;-webkit-font-smoothing:antialiased;overflow:hidden}
-.grain::after{content:"";position:absolute;inset:-50%;pointer-events:none;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain .6s steps(2) infinite}
-@keyframes grain{0%{transform:translate(0,0)}100%{transform:translate(-6px,4px)}}
-@keyframes breathe{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.95;transform:scale(1.06)}}
-@keyframes drift{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-2%,0)}}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes reveal{from{opacity:0;filter:blur(8px);transform:translateY(10px)}to{opacity:1;filter:blur(0);transform:translateY(0)}}
+:root{
+ --bg:#0c0a07; --bg2:#14100b; --panel:#171209; --panel2:#1d160d;
+ --gold:#c9a25e; --gold-2:#e6c489; --gold-dim:rgba(201,162,94,.35);
+ --ink:#efe4d2; --muted:#a89a83; --faint:#6f6553;
+ --line:rgba(201,162,94,.16);
+ --serif:'Frank Ruhl Libre','Times New Roman',serif;
+ --disp:'Cormorant Garamond',var(--serif);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);overflow:hidden}
+body{font-family:var(--serif);color:var(--ink)}
+#app{position:fixed;inset:0;max-width:520px;margin:0 auto;overflow:hidden;
+ background:radial-gradient(130% 80% at 50% 0%,#1a140c 0%,var(--bg) 55%)}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 22px calc(96px + env(safe-area-inset-bottom));animation:fade .6s ease both}
+.screen.center{justify-content:center;align-items:center;text-align:center}
+.pt{padding-top:calc(22px + env(safe-area-inset-top))}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-.rise{animation:rise .9s cubic-bezier(.16,1,.3,1) both}
-.reveal{animation:reveal 1.6s cubic-bezier(.16,1,.3,1) both}
-.fade{animation:fade 1.4s ease both}
-.breathe{animation:breathe 6s ease-in-out infinite}
-.drift{animation:drift 14s ease-in-out infinite}
-.scene{position:absolute;inset:0;overflow:hidden;background:rgb(22,16,12)}
-.scene .inr{position:absolute;inset:-4%}
-.lay{position:absolute;inset:0}
-.textlayer{position:absolute;inset-inline:0;bottom:0;z-index:10;padding:0 28px calc(40px + env(safe-area-inset-bottom));text-align:start}
-.textlayer .w{max-width:460px;margin:0 auto}
-.center{text-align:center}
-.title{font-size:30px;line-height:1.35;font-weight:300;letter-spacing:-.01em;margin:0}
-.body{font-size:19px;line-height:1.6;font-weight:300;color:rgba(var(--cream),.86);margin:0}
-.tiny{font-size:14px;letter-spacing:.06em;color:rgba(244,214,168,.8)}
-.tap{transition:transform .5s cubic-bezier(.16,1,.3,1),filter .5s}
-.tap:active{transform:scale(.985)}
-@media(hover:hover){.tap:hover{filter:brightness(1.06)}}
-button{font-family:inherit;color:inherit;cursor:pointer}
-.cta{background:rgba(244,214,168,.14);color:rgba(var(--cream),.96);border:1px solid rgba(244,214,168,.32);border-radius:99px;padding:14px 26px;font-size:16px}
-.pill{padding:12px 20px;border-radius:99px;font-size:16px;border:1px solid rgba(244,214,168,.22);background:rgba(28,18,11,.6);color:rgba(var(--cream),.9);transition:all .35s}
-.pill.on{background:rgba(244,214,168,.9);color:#241608;border-color:transparent}
-.dots{display:flex;gap:7px;justify-content:center;padding-top:calc(20px + env(safe-area-inset-top))}
-.dot{width:6px;height:6px;border-radius:99px;background:rgba(244,214,168,.22);transition:background .5s}
-.dot.on{background:rgba(244,214,168,.9)}
-@media(prefers-reduced-motion:reduce){.grain::after,.breathe,.drift{animation:none!important}.rise,.reveal,.fade{animation-duration:.01ms!important}}
-</style></head><body><div id="root" class="grain"></div>
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+.rise{animation:rise .8s cubic-bezier(.16,1,.3,1) both}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 14px}
+.brand{font-family:var(--disp);letter-spacing:.28em;font-size:19px;color:var(--gold-2);font-weight:500;padding-inline-start:.28em}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:17px}
+h1{font-weight:400;font-size:30px;line-height:1.3;margin:0;letter-spacing:.005em}
+h2{font-weight:400;font-size:23px;line-height:1.35;margin:0}
+.eyebrow{font-family:var(--disp);letter-spacing:.34em;font-size:12px;color:var(--gold);text-transform:uppercase;opacity:.85}
+.lead{font-size:19px;line-height:1.6;color:var(--muted);font-weight:300}
+.dim{color:var(--muted)} .sm{font-size:14px} .cap{font-size:12.5px;letter-spacing:.03em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--serif);font-size:17px;font-weight:400;
+ padding:15px 30px;border-radius:40px;border:1px solid transparent;cursor:pointer;transition:.35s;color:#20160a;
+ background:linear-gradient(180deg,var(--gold-2),var(--gold));box-shadow:0 6px 24px -8px rgba(201,162,94,.5)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--gold-dim);box-shadow:none}
+.btn.block{width:100%}
+.pill{display:block;width:100%;text-align:center;font-family:var(--serif);font-size:16.5px;color:var(--ink);
+ background:var(--panel);border:1px solid var(--line);border-radius:36px;padding:15px;margin:9px 0;cursor:pointer;transition:.3s}
+.pill.on{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:#20160a;border-color:transparent}
+.pill:active{transform:scale(.99)}
+.card{position:relative;border-radius:20px;overflow:hidden;background:#0a0806;border:1px solid var(--line);
+ box-shadow:0 20px 50px -20px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.02)}
+.card canvas{display:block;width:100%;height:100%}
+.card .sheen{position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 30%,rgba(255,220,160,.10),transparent 60%);pointer-events:none}
+.spark{position:absolute;width:3px;height:3px;border-radius:50%;background:#ffe6b0;box-shadow:0 0 6px 2px rgba(255,210,140,.6);pointer-events:none;animation:twinkle 3.5s ease-in-out infinite}
+.cardname{font-size:20px;text-align:center;margin-top:14px;letter-spacing:.02em}
+.cardglyph{display:block;text-align:center;color:var(--gold);font-size:15px;margin-top:5px;opacity:.9}
+.three{display:flex;gap:12px;justify-content:center;align-items:flex-end;margin-top:8px}
+.three .slot{flex:1;max-width:150px;transition:.4s;cursor:pointer}
+.three .slot .card{aspect-ratio:.62}
+.three .slot:active{transform:scale(.98)}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px}
+.grid .card{aspect-ratio:.64}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;font-size:14px;color:var(--muted);border:1px solid var(--line);border-radius:30px;padding:8px 16px;background:rgba(255,255,255,.02)}
+.chip.on{color:#20160a;background:var(--gold);border-color:transparent}
+.choice{display:flex;align-items:center;gap:16px;width:100%;text-align:start;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin:10px 0;cursor:pointer;transition:.3s}
+.choice:active{transform:scale(.99)}
+.choice .thumb{width:58px;height:74px;border-radius:12px;overflow:hidden;flex:none;border:1px solid var(--line)}
+.choice .big{font-size:18px} .choice .g{color:var(--gold);font-size:20px;margin-inline-start:auto}
+.nav{position:fixed;bottom:0;left:0;right:0;max-width:520px;margin:0 auto;display:flex;justify-content:space-around;
+ padding:12px 8px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(0deg,var(--bg) 60%,transparent);z-index:50}
+.nav button{background:none;border:none;color:var(--faint);font-family:var(--serif);font-size:12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:.3s}
+.nav button .ic{font-size:19px}
+.nav button.on{color:var(--gold-2)}
+.center-col{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;text-align:center}
+.divider{height:1px;background:var(--line);margin:22px 0}
+.menu-row{display:flex;align-items:center;gap:14px;padding:16px 4px;border-bottom:1px solid var(--line);font-size:16px}
+.menu-row .g{margin-inline-start:auto;color:var(--faint)}
+.tiny-input{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font-family:var(--serif);font-size:17px;text-align:center;outline:none}
+</style></head>
+<body><div id="app"></div>
 <script>
-const $=(h)=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstElementChild};
-const root=document.getElementById('root');
-const KEY='mood_dayone_pub_v1';
-// ---------- scenes ----------
-function scene(k,dim){
- const scrim='linear-gradient(to top,rgba(14,9,6,.92) 0%,rgba(14,9,6,.55) 26%,transparent 58%)';
- const bodies={
-  window:`<div class="lay" style="background:linear-gradient(160deg,#0e0906,#160f0a)"></div><div class="breathe" style="position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:34%;height:46%;border-radius:10px;background:linear-gradient(180deg,rgba(246,206,140,.95),rgba(206,138,74,.7));box-shadow:0 0 120px 40px rgba(232,176,104,.45)"></div>`,
-  room:`<div class="lay" style="background:radial-gradient(120% 100% at 50% 45%,#3a2417,#1a110b 70%)"></div><div class="lay" style="background:radial-gradient(90% 90% at 50% 46%,rgba(240,196,132,.85),rgba(120,70,40,.15) 55%,transparent 72%)"></div>`,
-  reach:`<div class="lay" style="background:linear-gradient(120deg,#241606,#3a2410)"></div><div class="lay" style="background:radial-gradient(80% 80% at 50% 42%,rgba(240,196,132,.7),transparent 60%)"></div><div style="position:absolute;left:38%;top:52%;width:20%;height:40%;transform:translate(-50%,-50%);background:rgba(18,11,7,.55);filter:blur(20px);border-radius:46% 46% 40% 40%"></div><div style="position:absolute;left:60%;top:50%;width:20%;height:42%;transform:translate(-50%,-50%);background:rgba(18,11,7,.55);filter:blur(20px);border-radius:46% 46% 40% 40%"></div>`,
-  wait:`<div class="lay" style="background:radial-gradient(120% 120% at 50% 55%,#2a1a0e,#150e08 72%)"></div><div class="breathe" style="position:absolute;left:50%;top:48%;width:22%;height:22%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(244,200,140,.9),rgba(210,140,80,.2) 70%,transparent)"></div>`,
-  street:`<div class="lay" style="background:linear-gradient(180deg,#3a2612,#241608 60%,#160e07)"></div><div class="lay" style="background:radial-gradient(70% 70% at 50% 26%,rgba(240,196,132,.6),transparent 60%)"></div>${[18,34,50,66,80].map((x,i)=>`<div style="position:absolute;left:${x}%;top:${62+(i%2)*6}%;width:7%;height:${22+(i%3)*4}%;background:rgba(18,11,7,.5);filter:blur(10px);border-radius:40% 40% 30% 30%"></div>`).join('')}`,
-  bench:`<div class="lay" style="background:linear-gradient(180deg,#2e1f10,#181009 78%)"></div><div class="lay" style="background:radial-gradient(70% 70% at 72% 34%,rgba(240,196,132,.6),transparent 60%)"></div><div style="position:absolute;left:34%;top:60%;width:13%;height:30%;transform:translate(-50%,-50%);background:rgba(18,11,7,.55);filter:blur(16px);border-radius:44% 44% 30% 30%"></div>`,
-  'door-half':`<div class="lay" style="background:linear-gradient(150deg,#0f0a06,#1c130c)"></div><div class="breathe" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:9%;height:62%;background:linear-gradient(180deg,rgba(244,202,142,.95),rgba(206,138,74,.6));box-shadow:0 0 90px 26px rgba(232,176,104,.45)"></div>`,
-  'door-wide':`<div class="lay" style="background:linear-gradient(150deg,#120b07,#20160d)"></div><div class="breathe" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:40%;height:68%;border-radius:8px 8px 0 0;background:linear-gradient(180deg,rgba(248,208,148,.92),rgba(210,142,80,.55));box-shadow:0 0 140px 50px rgba(236,180,108,.5)"></div>`,
-  twoPeople:`<div class="lay" style="background:linear-gradient(180deg,#4a3016,#2a1810 55%,#160e08)"></div><div class="lay" style="background:radial-gradient(78% 78% at 50% 34%,rgba(240,196,132,.9),rgba(120,70,40,.15) 55%,transparent 72%)"></div><div style="position:absolute;left:42%;top:46%;width:16%;height:40%;transform:translate(-50%,-50%);background:rgba(18,11,7,.6);filter:blur(18px);border-radius:46% 46% 38% 38%"></div><div style="position:absolute;left:58%;top:45%;width:16%;height:42%;transform:translate(-50%,-50%);background:rgba(18,11,7,.6);filter:blur(18px);border-radius:46% 46% 38% 38%"></div>`,
-  dusk:`<div class="lay" style="background:linear-gradient(180deg,#1a1630,#3a2418 62%,#5a361c)"></div><div class="lay" style="background:radial-gradient(80% 80% at 50% 86%,rgba(240,196,132,.6),transparent 55%)"></div>`,
-  paper:`<div class="lay" style="background:radial-gradient(120% 120% at 50% 40%,#2c1d12,#170f09 80%)"></div><div class="lay" style="background:radial-gradient(60% 60% at 50% 30%,rgba(240,196,132,.4),transparent 60%)"></div>`
- };
- return `<div class="scene"><div class="inr drift">${bodies[k]||''}</div><div class="lay" style="background:${scrim}"></div>${dim?'<div class="lay" style="background:rgba(10,7,5,.42)"></div>':''}</div>`;
+const app=document.getElementById('app');
+const el=(h)=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstElementChild};
+const KEY='mood_game_v1';
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||null}catch(e){return null}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+const CARDS=[
+ {id:'courage',name:'אומץ',glyph:'✦',motif:'figure',reflect:'אתה לא צריך להיות אמיץ. רק לעשות את הצעד הבא.',invite:'תגיד שלום לאדם אחד שאתה לא מכיר.',think:'מהו צעד קטן אחד שאתה יכול לעשות היום?'},
+ {id:'connection',name:'חיבור',glyph:'♡',motif:'two',reflect:'החום שאתה מרגיש שווה יותר כשהוא נאמר בקול.',invite:'שלח למישהו הודעה קטנה: חשבתי עליך.',think:'למי לא אמרת מזמן שהוא חשוב לך?'},
+ {id:'rest',name:'מנוחה',glyph:'☾',motif:'moon',reflect:'לעצור זה לא לוותר. זו בחירה.',invite:'שב שתי דקות בלי לעשות כלום, בכוונה.',think:'מתי בפעם האחרונה נתת לעצמך לנוח באמת?'},
+ {id:'presence',name:'נוכחות',glyph:'○',motif:'candle',reflect:'רוב החיים קורים כשאנחנו במקום אחר. חזור לרגע.',invite:'שים לב לשלושה דברים סביבך עכשיו, לאט.',think:'איפה הראש שלך כשהגוף שלך כאן?'},
+ {id:'boundaries',name:'גבולות',glyph:'‖',motif:'stairs',reflect:'כל "לא" שומר על "כן" שחשוב לך יותר.',invite:'אמור "תן לי לחשוב על זה" במקום כן אוטומטי.',think:'על מה אתה שומר כשאתה אומר לא?'},
+ {id:'curiosity',name:'סקרנות',glyph:'✧',motif:'path',reflect:'סקרנות היא איך נשארים חיים.',invite:'שאל שאלה אחת אמיתית על משהו שחלפת לידו.',think:'מה עורר בך פליאה לאחרונה?'},
+ {id:'growth',name:'צמיחה',glyph:'❧',motif:'plant',reflect:'אתה בדרך הנכונה. המשך כך.',invite:'עשה דבר קטן אחד שדחית שוב ושוב.',think:'מה גדל בך בשקט בזמן האחרון?'},
+ {id:'serenity',name:'שלווה',glyph:'≈',motif:'sail',reflect:'יש שקט שאפשר לבחור בו.',invite:'קח חמש נשימות איטיות, בעיניים עצומות.',think:'מה יעזור לך להרפות רגע?'},
+ {id:'hope',name:'תקווה',glyph:'☀',motif:'sunfig',reflect:'מחר עוד לא יודע מה יגלה עליך.',invite:'רשום דבר אחד שאתה מצפה לו.',think:'לאן אתה בדרך?'},
+ {id:'clarity',name:'בהירות',glyph:'◐',motif:'moonstair',reflect:'יש לך את כל מה שאתה צריך ברור בפנים.',invite:'כתוב משפט אחד על מה שחשוב לך היום.',think:'מה אתה כבר יודע ולא מודה בו?'},
+ {id:'creativity',name:'יצירה',glyph:'✺',motif:'spark',reflect:'לעשות דבר אחד קטן מנצח לצרוך דבר מושלם.',invite:'צור דבר קטן אחד — שרבוט, משפט, תמונה — ושמור.',think:'מה היית עושה אם זה לא היה חייב להיות טוב?'},
+ {id:'release',name:'שחרור',glyph:'~',motif:'path',reflect:'מה שאתה משחרר מפנה מקום למשהו חדש.',invite:'ותר על דבר אחד קטן שאתה נאחז בו.',think:'מה כבד לך לשאת סתם?'},
+];
+const byId=id=>CARDS.find(c=>c.id===id);
+const Q1={q:'מה הכי מעסיק אותך ברגעים האלה?',opts:['עבודה','זוגיות','לחץ ודאגות','חוסר ודאות']};
+const Q2={q:'מה אתה צריך יותר מכל?',opts:['אנרגיה','בהירות','שקט','ביטחון']};
+const READ={'אנרגיה':'תשישות שמחפשת ניצוץ','בהירות':'ערפל שמבקש קו אחד ברור','שקט':'עומס שמבקש רגע של שקט','ביטחון':'אי-שקט שמחפש קרקע'};
+
+function drawPortal(cv,card,seed){
+ const dpr=Math.min(2,window.devicePixelRatio||1);
+ const W=cv.clientWidth||210, H=cv.clientHeight||300;
+ cv.width=W*dpr; cv.height=H*dpr; const x=cv.getContext('2d'); x.scale(dpr,dpr);
+ const R=mulberry32((seed*2654435761)>>>0);
+ x.clearRect(0,0,W,H);
+ let bg=x.createLinearGradient(0,0,0,H); bg.addColorStop(0,'#0c0a07'); bg.addColorStop(1,'#050403'); x.fillStyle=bg; x.fillRect(0,0,W,H);
+ for(let i=0;i<80;i++){x.fillStyle=`rgba(${40+R()*30|0},${32+R()*20|0},22,${.12+R()*.2})`;const s=R()*2+.4;x.fillRect(R()*W,R()*H,s,s);}
+ const cx=W*0.5, cy=H*0.47, rx=W*0.36, ry=H*0.40, N=60, pts=[];
+ for(let i=0;i<N;i++){const a=i/N*Math.PI*2;const top=(Math.sin(a)<0)?0.86:1.06;const jit=1+(R()-0.5)*0.09;
+   pts.push([cx+Math.cos(a)*rx*jit, cy+Math.sin(a)*ry*top*jit]);}
+ const trace=()=>{x.beginPath();x.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<=N;i++){const p=pts[i%N],q=pts[(i+1)%N];x.quadraticCurveTo(p[0],p[1],(p[0]+q[0])/2,(p[1]+q[1])/2);}x.closePath();};
+ x.save(); trace(); x.clip();
+ let sky=x.createLinearGradient(0,cy-ry,0,cy+ry);
+ sky.addColorStop(0,'#20233c'); sky.addColorStop(.4,'#4a3348'); sky.addColorStop(.62,'#8a4f33'); sky.addColorStop(.8,'#e7a457'); sky.addColorStop(1,'#f3c877');
+ x.fillStyle=sky; x.fillRect(0,0,W,H);
+ const hy=cy+ry*0.34; const gl=x.createRadialGradient(cx,hy,4,cx,hy,rx*1.3);
+ gl.addColorStop(0,'rgba(255,236,190,.95)'); gl.addColorStop(.25,'rgba(255,200,120,.6)'); gl.addColorStop(1,'rgba(255,180,90,0)');
+ x.fillStyle=gl; x.fillRect(0,0,W,H);
+ for(let i=0;i<14;i++){const clx=R()*W, cly=cy-ry*0.3+R()*ry*1.1, cr=18+R()*46;
+   const cg=x.createRadialGradient(clx,cly,2,clx,cly,cr);const warm=cly>hy-10;
+   cg.addColorStop(0,warm?'rgba(255,214,150,.5)':'rgba(120,110,140,.4)'); cg.addColorStop(1,'rgba(0,0,0,0)');
+   x.fillStyle=cg; x.beginPath(); x.arc(clx,cly,cr,0,7); x.fill();}
+ drawMotif(x,card.motif,cx,cy,rx,ry,hy,R);
+ for(let i=0;i<26;i++){const sx=cx+(R()-.5)*rx*1.7, sy=cy+(R()-.5)*ry*1.7; x.fillStyle=`rgba(255,224,170,${.3+R()*.6})`; x.beginPath(); x.arc(sx,sy,R()*1.3+.3,0,7); x.fill();}
+ x.restore();
+ x.save(); trace(); x.lineWidth=2.4; x.strokeStyle='rgba(255,214,150,.45)'; x.shadowColor='rgba(255,190,110,.6)'; x.shadowBlur=16; x.stroke(); x.restore();
+ const vig=x.createRadialGradient(cx,cy,H*0.2,cx,cy,H*0.72); vig.addColorStop(0,'rgba(0,0,0,0)'); vig.addColorStop(1,'rgba(6,4,2,.85)'); x.fillStyle=vig; x.fillRect(0,0,W,H);
 }
-// ---------- content ----------
-const DISCOVERY=[
- {l:{id:'outside',s:'window',t:'מבחוץ, מסתכל פנימה',sig:{belonging:-.4}},r:{id:'inside',s:'room',t:'מבפנים, בתוך חדר חמים',sig:{belonging:.5}}},
- {l:{id:'reach',s:'reach',t:'היד שמושטת ראשונה',sig:{initiation:.6,risk:.2}},r:{id:'wait',s:'wait',t:'היד שמחכה, פתוחה',sig:{initiation:-.5}}},
- {l:{id:'crowd',s:'street',t:'רחוב שוקק אנשים',sig:{energy:.6}},r:{id:'quiet',s:'bench',t:'אדם אחד על ספסל',sig:{energy:-.6}}},
- {l:{id:'half',s:'door-half',t:'דלת שפתוחה בחצי',sig:{risk:-.4}},r:{id:'wide',s:'door-wide',t:'דלת פתוחה לרווחה',sig:{risk:.6}}}
-];
-const TITLE='רגע קטן של אומץ';
-const RECS=[
- {w:{initiation:['<',-0.2],energy:['<',0]},lines:['נראה שאתה שם לב לאנשים','עוד לפני שאתה ניגש אליהם.','זו לא ביישנות — זו תשומת לב.']},
- {w:{initiation:['>',0.2],risk:['>',0.1]},lines:['אתה נוטה לעשות את הצעד הראשון.','חום בין אנשים צריך מישהו שיתחיל —','ולרוב זה אתה.']},
- {w:{belonging:['>',0.2],energy:['<',0]},lines:['אתה לא מחפש הרבה אנשים.','אתה מחפש אדם אחד, באמת.','זו לא הסתגרות — זו עומק.']},
- {w:{energy:['>',0.2]},lines:['יש בך משהו שנפתח ליד אנשים.','חדר מלא לא מלחיץ אותך —','הוא קצת מדליק אותך.']},
- {w:{},lines:['יש בך סקרנות שקטה כלפי אנשים.','לא תמיד אתה ניגש —','אבל אתה כמעט תמיד שם לב.']}
-];
-const CH_HEADER='אין נכון ואין לא-נכון. יש רק לנסות.';
-const CHALLENGES=[
- {level:'easy',label:'רך',text:'תגיד שלום לאדם אחד שאתה לא מכיר.',sub:'מילה אחת מספיקה.'},
- {level:'medium',label:'אמצע',text:'פתח שיחה קצרה עם מישהו היום.',sub:'שאלה קטנה, חיוך, וזהו.'},
- {level:'brave',label:'אמיץ',text:'ניגש למישהו שסקרן אותך, והתחל שיחה אמיתית.',sub:'לא משנה איך זה ייגמר. מה שחשוב זה שניגשת.'}
-];
-const FEELINGS=['פתוח יותר','קצת גאה','נבוך אבל שמח','רגוע','מופתע מעצמי','עוד מעכל'];
-// ---------- engine ----------
-let map={belonging:0,initiation:0,energy:0,risk:0};
-function applyChoice(sig){for(const k in sig){map[k]=Math.max(-1,Math.min(1,map[k]+sig[k]))}}
-function pickRec(){for(const r of RECS){const w=r.w;if(!Object.keys(w).length)continue;let ok=true;for(const ax in w){const[op,n]=w[ax];const v=map[ax];if(op==='<'&&!(v<n))ok=false;if(op==='>'&&!(v>n))ok=false}if(ok)return r}return RECS[RECS.length-1]}
-let st={phase:'intro',step:0,level:null,tried:null,feels:[]};
-function today(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-function saved(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify({date:today(),level:st.level,tried:st.tried,feel:st.feels[0]}))}catch(e){}}
-function render(html){root.innerHTML='';root.appendChild($(`<div>${html}</div>`));bind()}
-function bind(){root.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
- root.querySelectorAll('[data-choose]').forEach(b=>b.onclick=()=>{const o=JSON.parse(b.dataset.choose);applyChoice(o.sig);if(st.step<3){st.step++;draw()}else{st.phase='weaving';draw()}});
- root.querySelectorAll('[data-level]').forEach(b=>b.onclick=()=>{st.level=b.dataset.level;go('live')});
- root.querySelectorAll('[data-tried]').forEach(b=>b.onclick=()=>{st.tried=b.dataset.tried==='1';draw()});
- root.querySelectorAll('[data-feel]').forEach(b=>b.onclick=()=>{const f=b.dataset.feel;st.feels=st.feels.includes(f)?st.feels.filter(x=>x!==f):[...st.feels,f];draw()});
- const rs=root.querySelector('[data-reset]');if(rs)rs.onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}location.reload()};
+function drawMotif(x,m,cx,cy,rx,ry,hy,R){
+ x.save(); const sil='rgba(14,9,6,.92)';
+ const figure=(fx,scale)=>{x.fillStyle=sil;const s=scale||1;const by=hy+ry*0.02;
+   x.beginPath();x.ellipse(fx,by-40*s,7*s,8*s,0,0,7);x.fill();
+   x.beginPath();x.moveTo(fx-9*s,by);x.quadraticCurveTo(fx-7*s,by-32*s,fx,by-33*s);x.quadraticCurveTo(fx+7*s,by-32*s,fx+9*s,by);x.closePath();x.fill();
+   x.fillRect(fx-6*s,by,4*s,26*s);x.fillRect(fx+2*s,by,4*s,26*s);
+   x.globalAlpha=.25;x.fillRect(fx-8*s,by+26*s,16*s,12*s);x.globalAlpha=1;};
+ if(m==='figure'||m==='sunfig'){figure(cx,1.15);}
+ else if(m==='two'){figure(cx-16,1.0);figure(cx+14,1.05);}
+ else if(m==='moon'||m==='moonstair'){const my=cy-ry*0.35;const mg=x.createRadialGradient(cx,my,2,cx,my,26);mg.addColorStop(0,'rgba(255,244,214,1)');mg.addColorStop(.6,'rgba(255,224,170,.9)');mg.addColorStop(1,'rgba(255,200,120,0)');x.fillStyle=mg;x.beginPath();x.arc(cx,my,26,0,7);x.fill();x.fillStyle='rgba(255,248,224,.95)';x.beginPath();x.arc(cx,my,12,0,7);x.fill();
+   if(m==='moonstair'){x.fillStyle=sil;for(let i=0;i<5;i++){x.fillRect(cx-24+i*10,hy+8+i*7,22,4);}}}
+ else if(m==='candle'){const my=hy-6;const cg=x.createRadialGradient(cx,my,1,cx,my,30);cg.addColorStop(0,'rgba(255,240,200,1)');cg.addColorStop(1,'rgba(255,190,110,0)');x.fillStyle=cg;x.beginPath();x.arc(cx,my,30,0,7);x.fill();x.fillStyle='#fff3d6';x.beginPath();x.ellipse(cx,my,3,6,0,0,7);x.fill();}
+ else if(m==='stairs'){x.fillStyle=sil;for(let i=0;i<6;i++){x.fillRect(cx-30+i*11,hy+16-i*9,26,5);}}
+ else if(m==='path'){x.strokeStyle='rgba(255,220,160,.5)';x.lineWidth=8;x.beginPath();x.moveTo(cx,hy+ry*0.45);x.quadraticCurveTo(cx+18,hy,cx,hy-ry*0.2);x.stroke();x.lineWidth=3;x.strokeStyle='rgba(255,240,200,.6)';x.stroke();}
+ else if(m==='plant'){x.strokeStyle=sil;x.lineWidth=2.4;const by=hy+ry*0.12;for(let s=-1;s<=1;s++){x.beginPath();x.moveTo(cx+s*10,by);x.quadraticCurveTo(cx+s*20,by-34,cx+s*8,by-58);x.stroke();for(let k=1;k<4;k++){const ly=by-14*k;x.beginPath();x.ellipse(cx+s*10-s*4,ly,7,3,s*0.6,0,7);x.fillStyle=sil;x.fill();}}}
+ else if(m==='sail'){x.fillStyle=sil;x.beginPath();x.moveTo(cx,hy-30);x.lineTo(cx+16,hy+6);x.lineTo(cx,hy+6);x.closePath();x.fill();x.fillRect(cx-1,hy-30,2,36);x.globalAlpha=.3;x.fillRect(cx-30,hy+8,60,3);x.globalAlpha=1;}
+ else if(m==='spark'){for(let i=0;i<7;i++){const a=i/7*7;const px=cx+Math.cos(a)*22,py=cy-ry*0.2+Math.sin(a)*22;const sg=x.createRadialGradient(px,py,0,px,py,9);sg.addColorStop(0,'rgba(255,240,200,1)');sg.addColorStop(1,'rgba(255,200,120,0)');x.fillStyle=sg;x.beginPath();x.arc(px,py,9,0,7);x.fill();}}
+ x.restore();
 }
-function go(p){st.phase=p;draw()}
-function draw(){
- const s=saved();
- if(st.phase==='intro'&&s&&s.date===today())st.phase='returning';
- const P=st.phase;
- if(P==='intro'){
-  render(`<button class="fade" style="position:absolute;inset:0;z-index:10;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(120% 90% at 50% 42%,#2a1a0e,#140d08 72%);border:none" data-go="discovery">
-   <div class="breathe" style="position:absolute;top:34%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(240,196,132,.55),transparent 68%)"></div>
-   <div style="z-index:2;letter-spacing:.42em;font-size:15px;padding-inline-start:.42em;color:rgba(245,224,190,.9)">MOOD</div>
-   <div class="rise body" style="z-index:2;font-size:21px;animation-delay:.5s">פעם ביום. רגע אחד. שלך.</div>
-   <div class="rise" style="z-index:2;font-size:14px;color:rgba(245,224,190,.5);margin-top:26px;animation-delay:1.4s">גע כדי להתחיל</div></button>`);return;
- }
- if(P==='discovery'){
-  const d=DISCOVERY[st.step];
-  render(`<div class="fade" style="position:absolute;inset:0">
-   <div class="dots">${[0,1,2,3].map(i=>`<span class="dot ${i<=st.step?'on':''}"></span>`).join('')}</div>
-   ${st.step===0?`<div style="position:absolute;top:48px;inset-inline:0;text-align:center;z-index:10;font-size:15px;color:rgba(245,224,190,.72)">מה מרגיש לך יותר?</div>`:''}
-   <div style="position:absolute;inset:0;display:flex;flex-direction:column">
-    ${[d.l,d.r].map((o,k)=>`<button class="tap" data-choose='${JSON.stringify(o)}' style="position:relative;flex:1;width:100%;border:none;background:transparent;padding:0;overflow:hidden;${k===1?'border-top:1px solid rgba(20,12,8,.9)':''}">${scene(o.s)}<div style="position:absolute;bottom:16px;inset-inline-start:20px;z-index:10;font-size:15px;color:rgba(245,232,214,.9)">${o.t}</div></button>`).join('')}
-   </div></div>`);return;
- }
- if(P==='weaving'){
-  render(`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#120c08"><div class="breathe" style="position:absolute;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(240,196,132,.5),transparent 68%)"></div><div class="fade body" style="z-index:2;font-size:20px">רגע אחד…</div></div>`);
-  setTimeout(()=>go('recognition'),2400);return;
- }
- if(P==='recognition'){
-  const r=pickRec();
-  render(`${scene('twoPeople')}<div class="textlayer"><div class="w">
-   <div class="reveal tiny" style="margin-bottom:14px">${TITLE}</div>
-   ${r.lines.map((l,i)=>`<div class="reveal title" style="animation-delay:${.5+i*1.4}s">${l}</div>`).join('')}
-   <button class="tap cta" data-go="challenge" style="margin-top:30px;opacity:0;animation:fade 1s ease ${1+r.lines.length*1.4}s forwards">יש לזה גם הזמנה קטנה →</button>
-  </div></div>`);return;
- }
- if(P==='challenge'){
-  render(`${scene('reach',true)}<div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:flex-end;padding:0 22px calc(40px + env(safe-area-inset-bottom))"><div class="rise" style="max-width:460px;margin:0 auto;width:100%">
-   <div class="body" style="font-size:17px;text-align:center;margin-bottom:22px;color:rgba(244,214,168,.9)">${CH_HEADER}</div>
-   ${CHALLENGES.map((c,i)=>`<button class="tap rise" data-level="${c.level}" style="display:block;width:100%;text-align:start;margin-bottom:12px;background:rgba(28,18,11,.66);border:1px solid rgba(244,214,168,.18);border-radius:18px;padding:17px 20px;animation-delay:${.1+i*.12}s">
-     <div style="font-size:12.5px;letter-spacing:.14em;color:rgba(244,214,168,.7);margin-bottom:7px">${c.label}</div>
-     <div style="font-size:18px;line-height:1.45">${c.text}</div>
-     <div style="font-size:14px;color:rgba(245,232,214,.55);margin-top:5px">${c.sub}</div></button>`).join('')}
-  </div></div>`);return;
- }
- if(P==='live'){
-  render(`${scene('dusk')}<div class="textlayer center"><div class="w">
-   <div class="reveal title" style="margin-bottom:14px">עכשיו החלק האמיתי.</div>
-   <div class="reveal body" style="animation-delay:.6s">צא לחיות את זה. הרגע יחכה לך כאן, בערב.</div>
-   <button class="tap cta fade" data-go="evening" style="margin-top:30px;animation-delay:1.6s">בערב, כשאחזור →</button>
-  </div></div>`);return;
- }
- if(P==='evening'){
-  render(`${scene('dusk',true)}<div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:flex-end;padding:0 24px calc(38px + env(safe-area-inset-bottom));overflow-y:auto"><div class="rise" style="max-width:460px;margin:0 auto;width:100%">
-   <div class="title" style="font-size:25px;margin-bottom:20px">איך היה?</div>
-   <div style="font-size:16px;color:rgba(245,232,214,.75);margin-bottom:10px">ניסית?</div>
-   <div style="display:flex;gap:10px;margin-bottom:18px">
-     <button class="tap pill ${st.tried===true?'on':''}" data-tried="1">ניסיתי</button>
-     <button class="tap pill ${st.tried===false?'on':''}" data-tried="0">לא הפעם</button></div>
-   ${st.tried!==null?`<div class="fade">
-     <div class="body" style="font-size:16px;margin-bottom:18px;color:rgba(244,214,168,.9)">${st.tried?'יופי שניסית. זה כל העניין.':'גם זה בסדר גמור. הרגע נשאר שלך.'}</div>
-     <div style="font-size:16px;color:rgba(245,232,214,.75);margin-bottom:10px">איך הרגשת?</div>
-     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">${FEELINGS.map(f=>`<button class="tap pill ${st.feels.includes(f)?'on':''}" style="font-size:15px;padding:9px 14px" data-feel="${f}">${f}</button>`).join('')}</div>
-     <button class="tap cta" data-go="library" style="width:100%">שמור את הרגע</button></div>`:''}
-  </div></div>`);
-  if(st.tried!==null&&!st._saved){st._saved=true;persist()}
+function mountCard(node,card,seed,sparks){
+ const cv=node.querySelector('canvas');
+ requestAnimationFrame(()=>{try{drawPortal(cv,card,seed)}catch(e){}});
+ if(sparks){for(let i=0;i<5;i++){const s=el('<span class="spark"></span>');s.style.left=(20+Math.random()*60)+'%';s.style.top=(20+Math.random()*55)+'%';s.style.animationDelay=(Math.random()*3)+'s';node.appendChild(s);}}
+}
+function cardEl(card,seed,opt){opt=opt||{};
+ const n=el('<div class="card"><canvas></canvas><div class="sheen"></div></div>');
+ setTimeout(()=>mountCard(n,card,seed||1,opt.sparks),0);
+ return n;
+}
+let state=load()||{name:'',setup:false,day:1,q1:null,q2:null,kept:[],offer:null,chosen:null,tab:'home',phase:'greet'};
+function todaySeed(){return state.day*97+7}
+function screen(html,cls){app.querySelectorAll('.screen,.nav').forEach(n=>n.remove());const s=el(`<div class="screen ${cls||''}">${html}</div>`);app.appendChild(s);return s}
+function nav(){
+ const items=[['home','בית','⌂'],['cards','קלפים','▦'],['journey','מסע','◠'],['profile','פרופיל','◔']];
+ const n=el(`<div class="nav">${items.map(([id,l,ic])=>`<button data-tab="${id}" class="${state.tab===id?'on':''}"><span class="ic">${ic}</span>${l}</button>`).join('')}</div>`);
+ n.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;save();route()});
+ app.appendChild(n);
+}
+function go(phase){state.phase=phase;save();route()}
+function route(){
+ if(!state.setup)return renderSetup();
+ if(state.tab==='home')return renderHome();
+ if(state.tab==='cards')return renderLibrary();
+ if(state.tab==='journey')return renderJourney();
+ if(state.tab==='profile')return renderProfile();
+}
+function renderSetup(){
+ const p=state.phase;
+ if(p==='greet'||!p){
+  const s=screen(`<div class="center-col">
+   <div class="eyebrow rise">MOOD</div>
+   <div style="height:280px;width:210px;margin:26px 0" class="rise" id="hero"></div>
+   <h1 class="rise" style="animation-delay:.1s">פעם ביום.<br>רגע אחד. שלך.</h1>
+   <p class="lead rise" style="animation-delay:.2s;max-width:320px">משחק קטן של להיות אדם. קלף ביום, צעד אחד אמיתי בעולם.</p>
+   <div class="rise" style="animation-delay:.35s;margin-top:26px;width:100%;max-width:320px">
+     <input class="tiny-input" id="nm" placeholder="איך קוראים לך?" maxlength="14">
+     <button class="btn block" id="start" style="margin-top:14px">התחל</button>
+   </div></div>`,'center');
+  const h=s.querySelector('#hero');const c=cardEl(byId('hope'),3,{sparks:true});c.style.height='280px';h.appendChild(c);
+  s.querySelector('#start').onclick=()=>{state.name=(s.querySelector('#nm').value||'').trim();go('q1')};
   return;
  }
- if(P==='library'){
-  const lvl=(CHALLENGES.find(c=>c.level===st.level)||{}).label||'';
-  render(`${scene('paper')}<div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:flex-end;padding:0 24px calc(40px + env(safe-area-inset-bottom))"><div class="rise" style="max-width:460px;margin:0 auto;width:100%">
-   <div class="body" style="font-size:17px;margin-bottom:16px;color:rgba(244,214,168,.9)">זה הרגע הראשון בספרייה שלך.</div>
-   <div style="border-radius:18px;overflow:hidden;border:1px solid rgba(244,214,168,.2);background:rgba(28,18,11,.5)">
-     <div style="position:relative;height:150px">${scene('twoPeople')}<div style="position:absolute;bottom:12px;inset-inline-start:16px;z-index:10;font-size:15px;color:rgba(245,232,214,.95)">${TITLE}</div></div>
-     <div style="padding:14px 16px;font-size:14.5px;color:rgba(245,232,214,.7)">${st.tried?'ניסית':'רגע שלך'}${lvl?' · '+lvl:''}${st.feels[0]?' · '+st.feels[0]:''}</div></div>
-   <button class="tap cta" data-go="dayTwo" style="width:100%;margin-top:20px">סיימנו להיום</button>
-  </div></div>`);return;
+ if(p==='q1'||p==='q2'){
+  const Q=p==='q1'?Q1:Q2; const cur=p==='q1'?state.q1:state.q2;
+  const s=screen(`<div class="pt topbar"><span class="cap dim">שלב ${p==='q1'?1:2} מתוך 2</span><span class="brand">mood</span><span style="width:40px"></span></div>
+   <div style="height:230px;width:170px;margin:6px auto 22px" id="qh"></div>
+   <h2 class="rise" style="text-align:center;max-width:360px;margin:0 auto 20px">${Q.q}</h2>
+   <div class="rise" style="max-width:380px;margin:0 auto;width:100%" id="opts"></div>`);
+  const c=cardEl(byId(p==='q1'?'presence':'clarity'),p==='q1'?5:9);c.style.height='230px';s.querySelector('#qh').appendChild(c);
+  const o=s.querySelector('#opts');
+  Q.opts.forEach(op=>{const b=el(`<button class="pill ${cur===op?'on':''}">${op}</button>`);b.onclick=()=>{if(p==='q1'){state.q1=op;go('q2')}else{state.q2=op;go('reading')}};o.appendChild(b)});
+  return;
  }
- if(P==='dayTwo'){
-  const lines=['הרגע הזה עכשיו שלך.','מחר מחכה לך רגע חדש —','הוא עוד לא יודע מה יגלה עליך.'];
-  render(`<div style="position:absolute;inset:0;background:radial-gradient(120% 100% at 50% 40%,#241708,#100a06 74%)">
-   <div class="breathe" style="position:absolute;top:26%;inset-inline:0;margin:0 auto;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(240,196,132,.5),transparent 68%)"></div>
-   <div class="textlayer center"><div class="w">
-    ${lines.map((l,i)=>`<div class="reveal title" style="font-size:24px;animation-delay:${.4+i*1.5}s">${l}</div>`).join('')}
-    <div class="fade" style="margin-top:34px;animation-delay:${.4+lines.length*1.5}s">
-      <div style="font-size:26px;font-weight:300;letter-spacing:.02em">נתראה מחר.</div>
-      <button data-reset style="margin-top:26px;background:none;border:none;color:rgba(245,232,214,.4);font-size:13px">התחל מחדש</button>
-    </div></div></div></div>`);return;
- }
- if(P==='returning'){
-  render(`${scene('dusk')}<div class="textlayer center"><div class="w">
-   <div class="reveal title" style="font-size:24px;margin-bottom:12px">היית כאן היום.</div>
-   <div class="reveal body" style="animation-delay:.6s">מחר יבוא רגע חדש — הוא עוד לא יודע מה יגלה עליך.</div>
-   <button data-reset style="margin-top:40px;background:none;border:none;color:rgba(245,232,214,.32);font-size:13px">התחל מחדש (התנסות)</button>
-  </div></div>`);return;
+ if(p==='reading'){
+  const line=READ[state.q2]||'רגע שמבקש קשב';
+  const s=screen(`<div class="center-col">
+   <div class="eyebrow rise">המצב הרגשי שלך היום</div>
+   <div style="height:250px;width:186px;margin:22px 0" id="rh" class="rise"></div>
+   <h1 class="rise" style="animation-delay:.1s">${line}</h1>
+   <p class="lead rise" style="animation-delay:.2s;max-width:320px">אתה נושא הרבה על הכתפיים. המשחק כאן כדי לתת לזה רגע.</p>
+   <button class="btn rise" style="animation-delay:.35s;margin-top:26px" id="c">בוא נראה מה היום ביקש</button></div>`,'center');
+  const c=cardEl(byId('rest'),12,{sparks:true});c.style.height='250px';s.querySelector('#rh').appendChild(c);
+  s.querySelector('#c').onclick=()=>{state.setup=true;state.phase='deal';state.tab='home';save();route()};
+  return;
  }
 }
-draw();
+function dealDay(){
+ const R=mulberry32(todaySeed());const pick=[];const used=new Set();
+ while(pick.length<3){const c=CARDS[Math.floor(R()*CARDS.length)];if(!used.has(c.id)){used.add(c.id);pick.push(c.id)}}
+ state.offer=pick;save();
+}
+function renderHome(){
+ const p=state.phase;
+ if(p==='deal'||p==='greet'){
+  if(!state.offer)dealDay();
+  const hi=state.name?`בוקר טוב, ${state.name}`:'בוקר טוב';
+  const s=screen(`<div class="pt topbar"><span class="icon-btn">◔</span><span class="brand">mood</span><span class="icon-btn">◇</span></div>
+   <div class="center-col" style="min-height:74vh">
+     <h1 class="rise">${hi}</h1>
+     <p class="lead rise" style="animation-delay:.1s">יום ${state.day} במסע שלך</p>
+     <div style="height:300px;width:216px;margin:26px 0" id="dh" class="rise"></div>
+     <button class="btn rise" style="animation-delay:.3s" id="open">בחר את הקלפים של היום</button>
+   </div>`);
+  const c=cardEl(byId(state.offer[1]),todaySeed()+1,{sparks:true});c.style.height='300px';s.querySelector('#dh').appendChild(c);
+  s.querySelector('#open').onclick=()=>go('choose');nav();return;
+ }
+ if(p==='choose'){
+  const s=screen(`<div class="pt topbar"><span style="width:40px"></span><span class="brand">mood</span><span style="width:40px"></span></div>
+   <h2 style="text-align:center;margin:6px auto 4px">הקלפים שלך להיום</h2>
+   <p class="lead sm" style="text-align:center;margin-bottom:8px">בחר קלף כדי להעמיק</p>
+   <div class="three" id="tr"></div>`);
+  const tr=s.querySelector('#tr');
+  state.offer.forEach((id,i)=>{const c=byId(id);const slot=el(`<div class="slot"><div class="ch"></div><div class="cardname">${c.name}</div><span class="cardglyph">${c.glyph}</span></div>`);
+   slot.querySelector('.ch').appendChild(cardEl(c,todaySeed()+i,{sparks:i===1}));
+   slot.onclick=()=>{state.chosen=id;go('reveal')};tr.appendChild(slot);});
+  nav();return;
+ }
+ if(p==='reveal'){
+  const c=byId(state.chosen);
+  const s=screen(`<div class="pt topbar"><span class="icon-btn" id="bk">‹</span><h2 style="font-size:20px">${c.name}</h2><span class="icon-btn">⋯</span></div>
+   <div style="height:340px;width:250px;margin:6px auto 18px" id="rv"></div>
+   <div style="max-width:380px;margin:0 auto;text-align:center">
+     <p class="rise" style="font-size:22px;line-height:1.5;font-weight:300">${c.reflect}</p>
+     <div class="divider"></div>
+     <div class="eyebrow" style="margin-bottom:8px">הזמנה קטנה</div>
+     <p class="lead rise" style="animation-delay:.1s">${c.invite}</p>
+     <div style="margin-top:12px" class="cap dim">שאלת מחשבה — ${c.think}</div>
+     <button class="btn block" style="margin-top:26px" id="keep">מה לעשות עם הקלף?</button>
+   </div>`);
+  const cc=cardEl(c,todaySeed()+9,{sparks:true});cc.style.height='340px';s.querySelector('#rv').appendChild(cc);
+  s.querySelector('#bk').onclick=()=>go('choose');s.querySelector('#keep').onclick=()=>go('decide');nav();return;
+ }
+ if(p==='decide'){
+  const c=byId(state.chosen);
+  const s=screen(`<div class="pt topbar"><span class="icon-btn" id="bk">‹</span><span class="brand">mood</span><span style="width:40px"></span></div>
+   <h2 style="text-align:center;margin:10px auto 20px;max-width:320px">מה תרצה לעשות עם הקלף?</h2>
+   <div style="max-width:400px;margin:0 auto;width:100%">
+    <button class="choice" id="live"><div class="thumb" id="t1"></div><div><div class="big">לחיות איתו</div><div class="sm dim">אני רוצה לזכור את זה היום</div></div><span class="g">♡</span></button>
+    <button class="choice" id="rel"><div class="thumb" id="t2"></div><div><div class="big">לשחרר אותו</div><div class="sm dim">אני מוכן להמשיך</div></div><span class="g">≈</span></button>
+   </div>`);
+  let a=cardEl(c,todaySeed()+9);a.style.height='74px';s.querySelector('#t1').appendChild(a);
+  let b=cardEl(byId('release'),todaySeed()+22);b.style.height='74px';s.querySelector('#t2').appendChild(b);
+  s.querySelector('#bk').onclick=()=>go('reveal');
+  s.querySelector('#live').onclick=()=>{state.kept.push(c.id+'#'+state.day);go('kept')};
+  s.querySelector('#rel').onclick=()=>go('released');nav();return;
+ }
+ if(p==='kept'||p==='released'){
+  const kept=p==='kept';const c=byId(state.chosen);
+  const s=screen(`<div class="center-col">
+    <div class="eyebrow rise">${kept?'נשמר במסע שלך':'שוחרר'}</div>
+    <div style="height:280px;width:206px;margin:24px 0" id="kh" class="rise"></div>
+    <h1 class="rise" style="animation-delay:.1s">${kept?c.name:'רגע קל יותר'}</h1>
+    <p class="lead rise" style="animation-delay:.2s;max-width:320px">${kept?c.invite:'מה ששחררת מפנה מקום. נתראה מחר.'}</p>
+    <button class="btn rise" style="animation-delay:.35s;margin-top:26px" id="done">${state.day>=7?'ראה את המסע שלך':'סיים את היום'}</button></div>`,'center');
+  const cc=cardEl(kept?c:byId('release'),todaySeed()+(kept?9:31),{sparks:kept});cc.style.height='280px';s.querySelector('#kh').appendChild(cc);
+  s.querySelector('#done').onclick=()=>{if(state.day>=7){state.tab='journey';go('week')}else{state.day++;state.offer=null;state.chosen=null;go('deal')}};
+  nav();return;
+ }
+ state.phase='deal';return renderHome();
+}
+function renderLibrary(){
+ const s=screen(`<div class="pt topbar"><span style="width:40px"></span><span class="brand">mood</span><span class="icon-btn">⌕</span></div>
+  <h2 style="text-align:center;margin-bottom:14px">ספריית הקלפים</h2>
+  <div class="chips" id="ch"></div><div class="grid" id="g"></div>`);
+ const ch=s.querySelector('#ch');['הכל','אומץ','חיבור','מנוחה','נוכחות','גבולות','סקרנות'].forEach((c,i)=>ch.appendChild(el(`<div class="chip ${i===0?'on':''}">${c}</div>`)));
+ const g=s.querySelector('#g');
+ CARDS.forEach((c,i)=>{const w=el(`<div><div class="cw"></div><div class="cap" style="text-align:center;margin-top:7px">${c.name}</div></div>`);
+  w.querySelector('.cw').appendChild(cardEl(c,i*13+1));g.appendChild(w);});
+ nav();
+}
+function renderJourney(){
+ const s=screen(`<div class="pt topbar"><span style="width:40px"></span><span class="brand">mood</span><span style="width:40px"></span></div>
+  <div class="center-col" style="min-height:70vh">
+   <div class="eyebrow rise">המסע שלך</div>
+   <h1 class="rise" style="animation-delay:.05s">${Math.min(state.day,7)} מתוך 7 ימים</h1>
+   <canvas id="con" style="width:280px;height:280px;margin:18px 0"></canvas>
+   <p class="lead rise" style="max-width:320px">כל קלף ששמרת הופך לאור. יחד הם מציירים מי שאתה נעשה.</p>
+   ${state.day>=7?'<button class="btn" id="rs" style="margin-top:20px">התחל מסע חדש</button>':''}
+  </div>`);
+ drawConstellation(s.querySelector('#con'));
+ const rs=s.querySelector('#rs');if(rs)rs.onclick=()=>{if(confirm('להתחיל מסע חדש?')){localStorage.removeItem(KEY);location.reload()}};
+ nav();
+}
+function drawConstellation(cv){
+ const dpr=2;cv.width=280*dpr;cv.height=280*dpr;const x=cv.getContext('2d');x.scale(dpr,dpr);
+ x.clearRect(0,0,280,280);const kept=state.kept.length;const cx=140,cy=140,r=98;
+ x.strokeStyle='rgba(201,162,94,.15)';x.beginPath();x.arc(cx,cy,r,0,7);x.stroke();
+ x.strokeStyle='rgba(255,214,150,.4)';x.lineWidth=1;x.beginPath();
+ for(let i=0;i<kept&&i<7;i++){const a=-Math.PI/2+i/7*Math.PI*2;const px=cx+Math.cos(a)*r,py=cy+Math.sin(a)*r;i?x.lineTo(px,py):x.moveTo(px,py);}x.stroke();
+ for(let i=0;i<7;i++){const a=-Math.PI/2+i/7*Math.PI*2;const px=cx+Math.cos(a)*r,py=cy+Math.sin(a)*r;const on=i<kept;
+   if(on){const g=x.createRadialGradient(px,py,0,px,py,16);g.addColorStop(0,'rgba(255,238,196,1)');g.addColorStop(1,'rgba(255,200,120,0)');x.fillStyle=g;x.beginPath();x.arc(px,py,16,0,7);x.fill();x.fillStyle='#fff3d6';x.beginPath();x.arc(px,py,3.5,0,7);x.fill();}
+   else{x.fillStyle='rgba(201,162,94,.25)';x.beginPath();x.arc(px,py,2,0,7);x.fill();}}
+}
+function renderProfile(){
+ const rows=['המסע שלי','הקלפים שלי','יומן מסע','סטטיסטיקות','הגדרות'];
+ const s=screen(`<div class="pt topbar"><span style="width:40px"></span><span class="brand">mood</span><span style="width:40px"></span></div>
+  <div style="display:flex;align-items:center;gap:16px;margin:10px 0 6px">
+    <div style="width:64px;height:64px;border-radius:50%;overflow:hidden;border:1px solid var(--line)" id="av"></div>
+    <div><div style="font-size:22px">${state.name||'אורח/ת'}</div><div class="sm dim">מסע ${state.day} ימים</div></div></div>
+  <div class="divider"></div>
+  ${rows.map(r=>`<div class="menu-row">${r}<span class="g">›</span></div>`).join('')}
+  <div class="menu-row" id="reset" style="color:var(--gold)">התחל מסע חדש<span class="g">↺</span></div>`);
+ const a=cardEl(byId('hope'),3);a.style.height='64px';s.querySelector('#av').appendChild(a);
+ s.querySelector('#reset').onclick=()=>{if(confirm('להתחיל מסע חדש?')){localStorage.removeItem(KEY);location.reload()}};
+ nav();
+}
+route();
 </script></body></html>
