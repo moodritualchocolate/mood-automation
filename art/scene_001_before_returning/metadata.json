@@ -1,0 +1,25 @@
+{
+  "scene": "scene_001_before_returning",
+  "emotional_truth": "the held breath before you return — to home, to yourself",
+  "status": "plate_frozen_awaiting_photography",
+  "plate": {
+    "file": "wide_16x9_v01.png",
+    "role": "architectural blueprint only — NOT a shippable asset",
+    "frozen": true,
+    "defines": ["composition", "light", "camera", "atmosphere", "negative_space"],
+    "rejected": [
+      { "v": "v0", "reason": "pawn-shaped figure, floating monolith doorway, UFO-ring shadow" }
+    ]
+  },
+  "vector_derivatives": {
+    "role": "blueprints only — must NEVER ship; retired once the photograph is approved",
+    "files": ["hero_9x16_v01.png", "background_9x16_v01.png", "close_1x1_v01.png", "poster_3x4_v01.png"]
+  },
+  "photograph": {
+    "status": "pending",
+    "blocked_by": "Grok generation must run in the Grok studio; not available in this environment",
+    "brief": "PHOTOGRAPHY_BRIEF.md",
+    "approved": null
+  },
+  "rule": "The plate is the drawing. The photograph is the building. Derivatives come only from the photograph."
+}
