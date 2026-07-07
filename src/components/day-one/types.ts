@@ -18,7 +18,8 @@ export type SceneKey =
   | "door-wide"
   | "twoPeople"
   | "dusk"
-  | "paper";
+  | "paper"
+  | "message"; // added for Moment_002 — a warm reach-out light
 
 export type ChoiceOption = {
   id: string;

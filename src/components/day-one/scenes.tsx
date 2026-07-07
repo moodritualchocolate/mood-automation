@@ -163,6 +163,23 @@ function sceneBody(scene: SceneKey) {
           <Sun x="50%" y="86%" size={80} intensity={0.7} />
         </>
       );
+    case "message":
+      // a warm reach-out: a glowing screen-light held in a dark room (Moment_002)
+      return (
+        <>
+          <Layer style={{ background: "radial-gradient(120% 120% at 50% 62%, #241708, #120c07 78%)" }} />
+          <div
+            className="d1-breathe"
+            style={{
+              position: "absolute", left: "50%", top: "58%", transform: "translate(-50%,-50%) rotate(-8deg)",
+              width: "26%", height: "34%", borderRadius: 14,
+              background: "linear-gradient(180deg, rgba(246,206,140,0.92), rgba(206,138,74,0.55))",
+              boxShadow: "0 0 120px 44px rgba(232,176,104,0.42)",
+            }}
+          />
+          <Form cx="50%" cy="66%" w={40} h={30} op={0.4} blur={30} />
+        </>
+      );
     case "paper":
       // library warm ground
       return (

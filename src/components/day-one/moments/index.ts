@@ -7,8 +7,9 @@
 
 import type { Moment } from "../types";
 import { moment_001 } from "./moment_001";
+import { moment_002 } from "./moment_002";
 
-export const MOMENTS: Moment[] = [moment_001];
+export const MOMENTS: Moment[] = [moment_001, moment_002];
 
 export function getMomentById(id: string): Moment | undefined {
   return MOMENTS.find((m) => m.id === id);
