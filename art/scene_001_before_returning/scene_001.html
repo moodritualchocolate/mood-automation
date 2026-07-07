@@ -1,0 +1,107 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:#0a0812;overflow:hidden}
+  #stage{width:1600px;height:900px}
+  svg{display:block}
+</style></head><body>
+<div id="stage">
+<!-- Scene_001_Before_Returning · wide 16:9 · the held breath before you return -->
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#120f26"/>
+      <stop offset="0.34" stop-color="#1b1733"/>
+      <stop offset="0.56" stop-color="#322540"/>
+      <stop offset="0.72" stop-color="#5e3a3f"/>
+      <stop offset="0.86" stop-color="#95562f"/>
+      <stop offset="1"    stop-color="#bf7435"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.13" cy="0.86" r="0.6">
+      <stop offset="0"    stop-color="#ffd79a" stop-opacity="0.95"/>
+      <stop offset="0.2"  stop-color="#f6b46a" stop-opacity="0.66"/>
+      <stop offset="0.48" stop-color="#c9793e" stop-opacity="0.24"/>
+      <stop offset="1"    stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="door" cx="0.5" cy="0.5" r="0.55">
+      <stop offset="0"   stop-color="#ffe6b0" stop-opacity="1"/>
+      <stop offset="0.55" stop-color="#f0a95c" stop-opacity="0.92"/>
+      <stop offset="1"   stop-color="#b56a30" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#3a2418"/>
+      <stop offset="0.4" stop-color="#241522"/>
+      <stop offset="1"   stop-color="#0d0912"/>
+    </linearGradient>
+    <radialGradient id="vign" cx="0.5" cy="0.46" r="0.75">
+      <stop offset="0.55" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1"    stop-color="#000" stop-opacity="0.55"/>
+    </radialGradient>
+    <linearGradient id="textscrim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"   stop-color="#0a0710" stop-opacity="0"/>
+      <stop offset="0.7" stop-color="#0a0710" stop-opacity="0.32"/>
+      <stop offset="1"   stop-color="#0a0710" stop-opacity="0.72"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="softer"><feGaussianBlur stdDeviation="24"/></filter>
+    <filter id="haze"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="shadowblur"><feGaussianBlur stdDeviation="11"/></filter>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0"/>
+    </filter>
+  </defs>
+
+  <!-- sky + sun -->
+  <rect width="1600" height="648" fill="url(#sky)"/>
+  <rect width="1600" height="720" fill="url(#sun)"/>
+  <rect x="0" y="566" width="1600" height="120" fill="#c88a4e" opacity="0.26" filter="url(#haze)"/>
+  <circle cx="1306" cy="120" r="1.6" fill="#e9e2ff" opacity="0.45"/>
+  <circle cx="1176" cy="82"  r="1.2" fill="#e9e2ff" opacity="0.32"/>
+
+  <!-- ground -->
+  <rect y="620" width="1600" height="280" fill="url(#ground)"/>
+
+  <!-- house mass on the right, grounding the doorway -->
+  <g fill="#160f16">
+    <rect x="1120" y="404" width="300" height="252"/>
+    <path d="M1108 408 L1270 336 L1432 408 Z"/>
+  </g>
+  <!-- warm spill from the doorway onto the road -->
+  <ellipse cx="1206" cy="690" rx="210" ry="52" fill="#e2a55e" opacity="0.30" filter="url(#softer)"/>
+  <!-- the doorway, cut into the wall -->
+  <rect x="1170" y="470" width="78" height="186" rx="4" fill="url(#door)" filter="url(#softer)" opacity="0.85"/>
+  <rect x="1180" y="482" width="56" height="174" fill="#ffe9bc"/>
+  <rect x="1180" y="482" width="56" height="174" fill="url(#door)" opacity="0.55"/>
+  <rect x="1174" y="476" width="70" height="180" fill="none" stroke="#0e0910" stroke-width="7" opacity="0.6"/>
+  <!-- a small warm window -->
+  <rect x="1330" y="486" width="34" height="30" rx="2" fill="#f0b86e" opacity="0.5"/>
+
+  <!-- long cast shadow from the figure, thrown to the right (sun is low-left) -->
+  <path d="M486 726 L900 742 L900 752 L486 742 Z" fill="#080510" opacity="0.5" filter="url(#shadowblur)"/>
+
+  <!-- the figure, from behind, small and left, walking toward the warm doorway -->
+  <g>
+    <!-- coat / body -->
+    <path d="M470 545
+             q6 -12 20 -12 q14 0 20 12
+             q10 20 8 44 l4 92
+             q-32 12 -64 0 l4 -92 q-2 -24 8 -44 z" fill="#130c16"/>
+    <!-- head, from behind -->
+    <ellipse cx="490" cy="527" rx="13" ry="15" fill="#130c16"/>
+    <!-- legs mid-stride -->
+    <path d="M472 678 l-6 46 q8 4 16 0 l6 -44 z" fill="#0e0812"/>
+    <path d="M500 678 l10 44 q8 3 15 -2 l-11 -44 z" fill="#0e0812"/>
+    <!-- warm rim light on the left (sun) edge -->
+    <path d="M470 512 q-9 20 -8 54 q0 40 4 78" stroke="#eab06a" stroke-width="3.5" fill="none" opacity="0.55" filter="url(#soft)"/>
+  </g>
+
+  <!-- fog rising off the ground -->
+  <rect y="628" width="1600" height="170" fill="#5a3a3e" opacity="0.16" filter="url(#haze)"/>
+
+  <!-- reserved negative space for live text -->
+  <rect y="360" width="1600" height="540" fill="url(#textscrim)"/>
+
+  <rect width="1600" height="900" fill="url(#vign)"/>
+  <rect width="1600" height="900" filter="url(#grain)" opacity="0.05" style="mix-blend-mode:overlay"/>
+</svg>
+</div>
+</body></html>
