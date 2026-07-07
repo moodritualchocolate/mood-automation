@@ -1,0 +1,12 @@
+{
+  "id": "moment_005_presence",
+  "dimension": "presence",
+  "title": "כאן, עכשיו",
+  "theme": "being fully in one moment",
+  "hero_scene": "scene_007_light_on_table",
+  "emotional_truth": "most of life is missed while we're somewhere else in our heads; presence is the smallest way to get it back",
+  "safety": {
+    "forbidden": ["forcing focus in a way that feels like a test", "shaming the wandering mind", "any framing that treats distraction as a flaw to fix"],
+    "notes": "A wandering mind is normal, not a failure. Presence is a gentle return, not a performance. Success is the noticing and the return, never how long attention held."
+  }
+}

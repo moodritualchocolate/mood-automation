@@ -1,0 +1,30 @@
+{
+  "rule": "First recognition whose every 'when' condition matches the Human Map wins; the entry with empty 'when' is the default.",
+  "recognitions": [
+    {
+      "key": "quiet_noticer",
+      "when": { "initiation": "<-0.2", "energy": "<0" },
+      "lines": ["אתה שם לב לפרטים שאחרים חולפים לידם.", "עוד לפני שאתה הולך אחריהם.", "זו לא פסיביות — זו סקרנות שקטה."]
+    },
+    {
+      "key": "follower_of_threads",
+      "when": { "initiation": ">0.2", "risk": ">0.1" },
+      "lines": ["כשמשהו מסקרן אותך, אתה הולך אחריו.", "לא כל אחד מרשה לעצמו את זה —", "אבל אתה כן."]
+    },
+    {
+      "key": "deep_diver",
+      "when": { "belonging": ">0.2", "energy": "<0" },
+      "lines": ["אתה לא רודף אחרי הרבה דברים.", "אתה נכנס לעומק של דבר אחד.", "זו לא צרות אופק — זו נאמנות לפליאה."]
+    },
+    {
+      "key": "wide_open",
+      "when": { "energy": ">0.2" },
+      "lines": ["יש בך משהו שנדלק מול הלא-נודע.", "שאלה פתוחה לא מלחיצה אותך —", "היא קצת מדליקה אותך."]
+    },
+    {
+      "key": "default",
+      "when": {},
+      "lines": ["יש בך פליאה קטנה שלא כבתה.", "לא תמיד אתה הולך אחריה —", "אבל אתה כמעט תמיד מרגיש אותה."]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "rule": "First recognition whose every 'when' condition matches the Human Map wins; the entry with empty 'when' is the default.",
+  "recognitions": [
+    {
+      "key": "always_on",
+      "when": { "initiation": ">0.2", "energy": "<0" },
+      "lines": ["אתה תמיד באמצע משהו.", "המנוחה מרגישה כמו עוד משימה —", "אבל היא בעצם בית."]
+    },
+    {
+      "key": "carries_others",
+      "when": { "belonging": ">0.2", "risk": "<0" },
+      "lines": ["אתה נושא הרבה על עצמך בשביל אחרים.", "לעצור לרגע זה לא לנטוש אותם —", "זה מה שמאפשר לך להישאר."]
+    },
+    {
+      "key": "guilty_stopper",
+      "when": { "risk": "<-0.2" },
+      "lines": ["קשה לך לעצור בלי להתנצל.", "כאילו מנוחה צריכה אישור —", "אבל היא כבר שלך."]
+    },
+    {
+      "key": "quiet_full",
+      "when": { "energy": ">0.2" },
+      "lines": ["יש בך מקום שיודע לשקוט.", "שקט לא מפחיד אותך —", "הוא ממלא אותך מחדש."]
+    },
+    {
+      "key": "default",
+      "when": {},
+      "lines": ["יש בך קול קטן שמבקש לעצור.", "לא תמיד אתה מקשיב לו —", "אבל היום אולי תיתן לו רשות."]
+    }
+  ]
+}

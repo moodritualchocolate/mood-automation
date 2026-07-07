@@ -1,0 +1,12 @@
+{
+  "id": "moment_003_rest",
+  "dimension": "rest",
+  "title": "רשות לעצור",
+  "theme": "permission to stop",
+  "hero_scene": "scene_005_quiet_room",
+  "emotional_truth": "rest is not giving up; choosing to stop is its own kind of courage",
+  "safety": {
+    "forbidden": ["framing rest as laziness or failure", "guilt for stopping", "pushing through exhaustion as a virtue"],
+    "notes": "All levels are gentle and costless. 'Brave' here means allowing yourself to stop, never abandoning a real responsibility to another person. Success is the attempt to actually rest, never how productive the day was."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "moment_007_curiosity",
+  "dimension": "curiosity",
+  "title": "ללכת אחרי",
+  "theme": "following a small wonder",
+  "hero_scene": "scene_009_lit_window",
+  "emotional_truth": "curiosity is how you stay alive to your own life; following one small wonder is enough",
+  "safety": {
+    "forbidden": ["prying into someone who signals no", "trespassing or unsafe places", "any curiosity that endangers self or others"],
+    "notes": "Curiosity is gentle, never intrusive. Following a wonder never means crossing someone's boundary. Success is the following itself, never what you find."
+  }
+}

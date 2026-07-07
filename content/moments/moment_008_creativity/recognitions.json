@@ -1,0 +1,30 @@
+{
+  "rule": "First recognition whose every 'when' condition matches the Human Map wins; the entry with empty 'when' is the default.",
+  "recognitions": [
+    {
+      "key": "quiet_maker",
+      "when": { "initiation": "<-0.2", "energy": "<0" },
+      "lines": ["אתה יוצר בשקט, לעצמך.", "לא כדי שיראו — כדי שיהיה.", "זו לא הסתגרות. זו יצירה פנימית."]
+    },
+    {
+      "key": "starter",
+      "when": { "initiation": ">0.2", "risk": ">0.1" },
+      "lines": ["אתה נוטה פשוט להתחיל.", "לא מחכה לרעיון מושלם —", "מתחיל, ומגלה תוך כדי."]
+    },
+    {
+      "key": "keeper",
+      "when": { "belonging": ">0.2", "energy": "<0" },
+      "lines": ["אתה שומר את הדברים הקטנים שאתה עושה.", "לא הרבה, אבל שלך —", "וזה מספיק לך."]
+    },
+    {
+      "key": "playful",
+      "when": { "energy": ">0.2" },
+      "lines": ["יש בך משהו שנדלק כשאתה יוצר.", "החומר ביד — וזמן נעלם.", "זה לא בזבוז. זה אתה חי."]
+    },
+    {
+      "key": "default",
+      "when": {},
+      "lines": ["יש בך יד שרוצה לעשות משהו.", "לא תמיד אתה נותן לה —", "אבל היא שם, ומחכה."]
+    }
+  ]
+}

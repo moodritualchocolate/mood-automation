@@ -1,0 +1,30 @@
+{
+  "rule": "First recognition whose every 'when' condition matches the Human Map wins; the entry with empty 'when' is the default.",
+  "recognitions": [
+    {
+      "key": "quiet_holder",
+      "when": { "initiation": "<-0.2", "risk": "<0" },
+      "lines": ["אתה מרגיש הרבה כלפי אנשים", "וגם כשאתה שותק — זה שם.", "לא הבעת אותו עדיין לא אומרת שאין."]
+    },
+    {
+      "key": "sayer",
+      "when": { "initiation": ">0.2", "belonging": ">0.1" },
+      "lines": ["אתה נוטה להגיד לאנשים מה הם בשבילך.", "לא כולם מעזים את זה —", "אצלך זה כמעט טבעי."]
+    },
+    {
+      "key": "loyal_few",
+      "when": { "belonging": ">0.2", "energy": "<0" },
+      "lines": ["יש לך מעט אנשים, אבל עמוקים.", "אתה לא מפזר חום —", "אתה שומר אותו למי שבאמת קרוב."]
+    },
+    {
+      "key": "warm_open",
+      "when": { "energy": ">0.2" },
+      "lines": ["חום זורם ממך בקלות כלפי אנשים.", "אתה נוגע בהם עוד לפני שאמרת מילה —", "ומילה אחת תעשה את זה שלם."]
+    },
+    {
+      "key": "default",
+      "when": {},
+      "lines": ["יש בך חיבה שקטה כלפי האנשים סביבך.", "לא תמיד אתה אומר אותה בקול —", "אבל אתה מרגיש אותה, וזה כבר הרבה."]
+    }
+  ]
+}

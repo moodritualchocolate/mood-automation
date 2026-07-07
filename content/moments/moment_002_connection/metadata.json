@@ -1,0 +1,12 @@
+{
+  "id": "moment_002_connection",
+  "dimension": "connection",
+  "title": "המילה שלא אמרת",
+  "theme": "telling someone they matter",
+  "hero_scene": "scene_004_the_unsaid_word",
+  "emotional_truth": "the warm thing you feel about someone is worth more when it's said, not just felt",
+  "safety": {
+    "forbidden": ["pressuring anyone to reciprocate", "romantic coercion or confessions that ignore a 'no'", "contacting someone who asked for space", "any message that endangers self or others"],
+    "notes": "All levels are consent-first and safe. The warmth is offered, never demanded. Success is saying it — never how the other person answers, or whether they answer at all."
+  }
+}

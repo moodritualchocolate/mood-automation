@@ -1,0 +1,12 @@
+{
+  "id": "moment_008_creativity",
+  "dimension": "creativity",
+  "title": "לעשות דבר אחד",
+  "theme": "make one small thing",
+  "hero_scene": "scene_010_hands_making",
+  "emotional_truth": "creating something small, however imperfect, beats consuming something perfect; making is how you leave a mark on your own day",
+  "safety": {
+    "forbidden": ["judging the quality of what was made", "comparison to other people's work", "any 'talent' or 'not talented' framing"],
+    "notes": "The making is the whole point, never the result. 'Imperfect' is safe and welcome. Sharing is optional and consent-first. Success is the attempt, never how good it turned out."
+  }
+}

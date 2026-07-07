@@ -1,0 +1,11 @@
+{
+  "tone_checked": true,
+  "banned_absent": true,
+  "safety": "Curiosity stays gentle and consent-first; 'brave' is a genuine question, never prying or crossing a boundary. Success framed as the following itself in every string, never what is found.",
+  "edge_cases": [
+    "not_this_time is warm and costless — no map penalty",
+    "no faces/streaks/scores referenced",
+    "works offline; all copy is local Hebrew",
+    "RTL long-string safe"
+  ]
+}

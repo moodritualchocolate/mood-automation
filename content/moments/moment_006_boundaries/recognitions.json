@@ -1,0 +1,30 @@
+{
+  "rule": "First recognition whose every 'when' condition matches the Human Map wins; the entry with empty 'when' is the default.",
+  "recognitions": [
+    {
+      "key": "over_giver",
+      "when": { "belonging": ">0.2", "energy": "<0" },
+      "lines": ["אתה נותן הרבה, לפעמים יותר ממה שיש לך.", "לא כי אתה חלש —", "אלא כי אכפת לך באמת."]
+    },
+    {
+      "key": "quiet_yes",
+      "when": { "initiation": "<-0.2", "risk": "<0" },
+      "lines": ["קל לך להגיד 'כן', גם כשבפנים יש 'לא'.", "זה לא חוסר גבולות —", "זו נדיבות שעוד לומדת לשמור על עצמה."]
+    },
+    {
+      "key": "clear_line",
+      "when": { "initiation": ">0.2", "risk": ">0.1" },
+      "lines": ["אתה יודע לומר איפה נגמר שלך.", "לא בקשיחות —", "אלא בבהירות שקטה."]
+    },
+    {
+      "key": "protector",
+      "when": { "energy": ">0.2" },
+      "lines": ["יש בך אנרגיה לשמור על מה שיקר לך.", "גבול אצלך הוא לא חומה —", "הוא דלת שאתה בוחר מתי לפתוח."]
+    },
+    {
+      "key": "default",
+      "when": {},
+      "lines": ["אתה מתחיל להרגיש איפה עובר הקו שלך.", "לא תמיד אתה אומר אותו בקול —", "אבל אתה כבר מזהה אותו בפנים."]
+    }
+  ]
+}

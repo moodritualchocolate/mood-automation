@@ -1,0 +1,12 @@
+{
+  "tone_checked": true,
+  "banned_absent": true,
+  "safety": "A wandering mind is treated as normal, never a flaw. Presence framed as a gentle return, not a focus test. Success is the noticing and the return in every string; no measure of how long attention held.",
+  "edge_cases": [
+    "not_this_time is warm and costless — no map penalty",
+    "restless/wandering-mind feeling reflected back with acceptance, not correction",
+    "no faces/streaks/scores referenced",
+    "works offline; all copy is local Hebrew",
+    "RTL long-string safe"
+  ]
+}

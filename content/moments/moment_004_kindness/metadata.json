@@ -1,0 +1,12 @@
+{
+  "id": "moment_004_kindness",
+  "dimension": "kindness",
+  "title": "חסד קטן",
+  "theme": "a small kindness to a stranger",
+  "hero_scene": "scene_006_shared_street",
+  "emotional_truth": "a tiny kindness, given freely, changes two people — the receiver and you",
+  "safety": {
+    "forbidden": ["forcing help on someone who said no", "touching or approaching in a way that ignores discomfort", "any act that endangers self or others", "kindness that expects something back"],
+    "notes": "Kindness is never intrusive. A stranger's 'no' is always respected — retreating warmly is its own kind of kindness. Success is the offering, never how it was received."
+  }
+}

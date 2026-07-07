@@ -1,0 +1,30 @@
+{
+  "rule": "First recognition whose every 'when' condition matches the Human Map wins; the entry with empty 'when' is the default.",
+  "recognitions": [
+    {
+      "key": "attentive",
+      "when": { "initiation": "<-0.2", "energy": "<0" },
+      "lines": ["אתה מרגיש מתי מישהו זקוק לרוך", "עוד לפני שהוא מבקש.", "זו לא ריחוק — זו לב ער."]
+    },
+    {
+      "key": "giver",
+      "when": { "initiation": ">0.2", "risk": ">0.1" },
+      "lines": ["אתה נותן בלי לחשוב פעמיים.", "חסד קטן צריך מישהו שיתחיל —", "ולרוב זה אתה."]
+    },
+    {
+      "key": "deep",
+      "when": { "belonging": ">0.2", "energy": "<0" },
+      "lines": ["אתה לא מפזר טוב לכל עבר.", "אתה נותן לאדם אחד, באמת.", "זו לא קמצנות — זה עומק."]
+    },
+    {
+      "key": "warm",
+      "when": { "energy": ">0.2" },
+      "lines": ["יש בך חום שנשפך על אנשים.", "לתת לזרים לא מרוקן אותך —", "זה קצת ממלא אותך."]
+    },
+    {
+      "key": "default",
+      "when": {},
+      "lines": ["יש בך נדיבות שקטה כלפי אנשים.", "לא תמיד אתה מושיט יד —", "אבל אתה כמעט תמיד שם לב מי צריך."]
+    }
+  ]
+}

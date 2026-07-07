@@ -1,0 +1,12 @@
+{
+  "tone_checked": true,
+  "banned_absent": true,
+  "safety": "All levels consent-first and safe; warmth is offered, never demanded, and 'brave' respects anyone who asked for space. Success framed as saying it, never the other person's response, in every string.",
+  "edge_cases": [
+    "not_this_time is warm and costless — no map penalty",
+    "no faces/streaks/scores referenced",
+    "works offline; all copy is local Hebrew",
+    "RTL long-string safe",
+    "no romantic pressure or coercion in any level"
+  ]
+}

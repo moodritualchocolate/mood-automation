@@ -1,0 +1,12 @@
+{
+  "tone_checked": true,
+  "banned_absent": true,
+  "safety": "All levels gentle and costless; 'brave' is allowing yourself to stop, never abandoning a real responsibility to another. Success framed as the attempt to rest in every string. Rest never framed as laziness or failure.",
+  "edge_cases": [
+    "not_this_time is warm and costless — no map penalty",
+    "no faces/streaks/scores referenced",
+    "works offline; all copy is local Hebrew",
+    "RTL long-string safe",
+    "guilt around stopping is met with permission, never reinforced"
+  ]
+}

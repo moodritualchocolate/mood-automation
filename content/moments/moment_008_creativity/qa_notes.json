@@ -1,0 +1,12 @@
+{
+  "tone_checked": true,
+  "banned_absent": true,
+  "safety": "No quality judgment, no talent framing, no comparison to others. 'Imperfect' is framed as safe and welcome. Sharing (brave) is optional and consent-first. Success framed as the making itself in every string.",
+  "edge_cases": [
+    "not_this_time is warm and costless — no map penalty",
+    "no faces/streaks/scores referenced",
+    "result is never evaluated — only the attempt to make",
+    "works offline; all copy is local Hebrew",
+    "RTL long-string safe"
+  ]
+}

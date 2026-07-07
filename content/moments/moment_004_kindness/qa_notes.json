@@ -1,0 +1,13 @@
+{
+  "tone_checked": true,
+  "banned_absent": true,
+  "safety": "All levels are gentle and non-intrusive; 'brave' respects a stranger's 'no' explicitly and never endangers anyone. Kindness expects nothing back. Success framed as the offering in every string.",
+  "edge_cases": [
+    "not_this_time is warm and costless — no map penalty",
+    "brave level names the 'no' and honors it as its own kindness",
+    "no faces/streaks/scores referenced",
+    "success is the attempt, never the stranger's reaction",
+    "works offline; all copy is local Hebrew",
+    "RTL long-string safe"
+  ]
+}
