@@ -3,17 +3,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Scene } from "./scenes";
 import {
-  CHALLENGES,
-  CHALLENGE_HEADER,
   DISCOVERY,
   FEELINGS,
-  MOMENT_TITLE,
   buildMap,
-  pickRecognition,
+  type ChallengeItem,
   type ChoiceOption,
   type Level,
   type Recognition,
+  type SceneKey,
 } from "./content";
+import { selectMoment } from "./moments";
 
 type Phase =
   | "intro"
@@ -66,9 +65,17 @@ export default function DayOne() {
   const [note, setNote] = useState("");
   const [remind, setRemind] = useState(true);
   const [saved, setSaved] = useState<Saved | null>(null);
+  const [overrideIndex, setOverrideIndex] = useState<number | null>(null);
 
   // Local-first: if this person already met today's moment, greet the return.
   useEffect(() => {
+    // Optional preview override (?moment=N) — engine capability, never per-Moment.
+    try {
+      const p = new URLSearchParams(location.search).get("moment");
+      if (p != null) setOverrideIndex(Number(p));
+    } catch {
+      /* ignore */
+    }
     const s = load();
     if (s && s.date === today()) {
       setSaved(s);
@@ -82,7 +89,9 @@ export default function DayOne() {
   }, []);
 
   const map = useMemo(() => buildMap(chosen), [chosen]);
-  const recognition: Recognition = useMemo(() => pickRecognition(map), [map]);
+  // The engine renders whatever Moment the registry hands it — it never names one.
+  const moment = useMemo(() => selectMoment(0, overrideIndex), [overrideIndex]);
+  const recognition: Recognition = useMemo(() => moment.recognize(map), [moment, map]);
 
   const persist = useCallback(
     (extra: Partial<Saved>) => {
@@ -126,10 +135,18 @@ export default function DayOne() {
       )}
       {phase === "weaving" && <Weaving onDone={() => setPhase("recognition")} />}
       {phase === "recognition" && (
-        <RecognitionScreen recognition={recognition} onNext={() => setPhase("challenge")} />
+        <RecognitionScreen
+          recognition={recognition}
+          title={moment.title}
+          heroScene={moment.heroScene}
+          onNext={() => setPhase("challenge")}
+        />
       )}
       {phase === "challenge" && (
         <ChallengeScreen
+          header={moment.challengeHeader}
+          challenges={moment.challenges}
+          scene={moment.challengeScene}
           onPick={(l) => {
             setLevel(l);
             setPhase("live");
@@ -152,7 +169,15 @@ export default function DayOne() {
         />
       )}
       {phase === "library" && (
-        <Library level={level} tried={tried} feeling={feelings[0]} onNext={() => setPhase("dayTwo")} />
+        <Library
+          level={level}
+          tried={tried}
+          feeling={feelings[0]}
+          title={moment.title}
+          heroScene={moment.heroScene}
+          challenges={moment.challenges}
+          onNext={() => setPhase("dayTwo")}
+        />
       )}
       {phase === "dayTwo" && (
         <DayTwo remind={remind} setRemind={(v) => { setRemind(v); persist({ remind: v }); }} />
@@ -280,7 +305,7 @@ function Weaving({ onDone }: { onDone: () => void }) {
   );
 }
 
-function RecognitionScreen({ recognition, onNext }: { recognition: Recognition; onNext: () => void }) {
+function RecognitionScreen({ recognition, title, heroScene, onNext }: { recognition: Recognition; title: string; heroScene: SceneKey; onNext: () => void }) {
   const [showCta, setShowCta] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setShowCta(true), 900 + recognition.lines.length * 1400);
@@ -288,10 +313,10 @@ function RecognitionScreen({ recognition, onNext }: { recognition: Recognition; 
   }, [recognition]);
   return (
     <>
-      <Scene scene="twoPeople" />
+      <Scene scene={heroScene} />
       <TextLayer>
         <div className="d1-reveal" style={{ fontSize: 14, letterSpacing: "0.06em", color: "rgba(244,214,168,0.8)", marginBottom: 14 }}>
-          {MOMENT_TITLE}
+          {title}
         </div>
         {recognition.lines.map((line, i) => (
           <div
@@ -320,16 +345,16 @@ function RecognitionScreen({ recognition, onNext }: { recognition: Recognition; 
   );
 }
 
-function ChallengeScreen({ onPick }: { onPick: (l: Level) => void }) {
+function ChallengeScreen({ header, challenges, scene, onPick }: { header: string; challenges: ChallengeItem[]; scene: SceneKey; onPick: (l: Level) => void }) {
   return (
     <>
-      <Scene scene="reach" dim />
+      <Scene scene={scene} dim />
       <div style={{ position: "absolute", inset: 0, zIndex: 10, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "0 22px 40px" }} className="pb-safe">
         <div className="d1-rise" style={{ maxWidth: 460, margin: "0 auto", width: "100%" }}>
           <div style={{ ...bodyStyle, fontSize: 17, textAlign: "center", marginBottom: 22, color: "rgba(244,214,168,0.9)" }}>
-            {CHALLENGE_HEADER}
+            {header}
           </div>
-          {CHALLENGES.map((c, i) => (
+          {challenges.map((c, i) => (
             <button
               key={c.level}
               onClick={() => onPick(c.level)}
@@ -478,8 +503,8 @@ function Pill({ children, active, onClick, small }: { children: React.ReactNode;
   );
 }
 
-function Library({ level, tried, feeling, onNext }: { level: Level | null; tried: boolean | null; feeling?: string; onNext: () => void }) {
-  const levelLabel = CHALLENGES.find((c) => c.level === level)?.label ?? "";
+function Library({ level, tried, feeling, title, heroScene, challenges, onNext }: { level: Level | null; tried: boolean | null; feeling?: string; title: string; heroScene: SceneKey; challenges: ChallengeItem[]; onNext: () => void }) {
+  const levelLabel = challenges.find((c) => c.level === level)?.label ?? "";
   return (
     <>
       <Scene scene="paper" />
@@ -491,9 +516,9 @@ function Library({ level, tried, feeling, onNext }: { level: Level | null; tried
           {/* the one entry — visibly #1, space around it implies growth */}
           <div style={{ borderRadius: 18, overflow: "hidden", border: "1px solid rgba(244,214,168,0.2)", background: "rgba(28,18,11,0.5)" }}>
             <div style={{ position: "relative", height: 150 }}>
-              <Scene scene="twoPeople" />
+              <Scene scene={heroScene} />
               <div style={{ position: "absolute", bottom: 12, insetInlineStart: 16, zIndex: 10, fontSize: 15, color: "rgba(245,232,214,0.95)" }}>
-                {MOMENT_TITLE}
+                {title}
               </div>
             </div>
             <div style={{ padding: "14px 16px", fontSize: 14.5, color: "rgba(245,232,214,0.7)", lineHeight: 1.6 }}>

@@ -1,37 +1,24 @@
-// MOOD · Day One — content + human-map logic (Product/Psychology owns this file).
-// All user-facing copy is Hebrew. No streaks, no scores, no diagnosis, no "cards".
-// Success is always the attempt, never the outcome.
+// MOOD · Day One — ENGINE-SHARED content (not Moment-specific).
+// Moment-specific content (title, challenges, reflections, hero art) lives in
+// ./moments/*. This file holds only what is universal across every Moment:
+// the discovery onboarding, the map math, and the evening feeling taps.
 
-export type Axis = "belonging" | "initiation" | "energy" | "risk";
+import type { Axis, ChoiceOption, DiscoveryStep, HumanMap } from "./types";
 
-// A single discovery choice: two wordless scenes; tapping one nudges soft signals.
-export type ChoiceOption = {
-  id: string;
-  scene: SceneKey;
-  // soft signal deltas in [-1..1] applied to the Human Map
-  signals: Partial<Record<Axis, number>>;
-};
+export type {
+  Axis,
+  ChoiceOption,
+  DiscoveryStep,
+  HumanMap,
+  Recognition,
+  Level,
+  ChallengeItem,
+  Moment,
+  SceneKey,
+} from "./types";
 
-export type DiscoveryStep = {
-  axis: Axis;
-  left: ChoiceOption;
-  right: ChoiceOption;
-};
-
-export type SceneKey =
-  | "window"
-  | "room"
-  | "reach"
-  | "wait"
-  | "street"
-  | "bench"
-  | "door-half"
-  | "door-wide"
-  | "twoPeople"
-  | "dusk"
-  | "paper";
-
-// The four choices. No labels are ever shown — the person just feels which is them.
+// The four discovery choices. Universal onboarding — builds the Human Map once.
+// No labels are ever shown; the person just feels which is them.
 export const DISCOVERY: DiscoveryStep[] = [
   {
     axis: "belonging",
@@ -55,8 +42,6 @@ export const DISCOVERY: DiscoveryStep[] = [
   },
 ];
 
-export type HumanMap = Record<Axis, { value: number; confidence: number }>;
-
 export function emptyMap(): HumanMap {
   return {
     belonging: { value: 0, confidence: 0.3 },
@@ -79,108 +64,11 @@ export function buildMap(chosen: ChoiceOption[]): HumanMap {
   return map;
 }
 
-function clamp(n: number, lo: number, hi: number) {
+export function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
 }
 
-// The Moment title never changes for Day One (theme: small social courage).
-export const MOMENT_TITLE = "רגע קטן של אומץ"; // "a small moment of courage"
-
-// Recognition = the line that reflects the person's own choices back to them.
-// Never a verdict ("you are X"). Always: reflect, then name a strength inside it.
-export type Recognition = {
-  key: string;
-  lines: string[]; // revealed one at a time
-};
-
-export function pickRecognition(map: HumanMap): Recognition {
-  const { initiation, energy, belonging, risk } = map;
-
-  // The attentive one — waits, quiet, notices first.
-  if (initiation.value < -0.2 && energy.value < 0) {
-    return {
-      key: "attentive",
-      lines: [
-        "נראה שאתה שם לב לאנשים",
-        "עוד לפני שאתה ניגש אליהם.",
-        "זו לא ביישנות — זו תשומת לב.",
-      ],
-    };
-  }
-
-  // The opener — reaches first, doors wide.
-  if (initiation.value > 0.2 && risk.value > 0.1) {
-    return {
-      key: "opener",
-      lines: [
-        "אתה נוטה לעשות את הצעד הראשון.",
-        "חום בין אנשים צריך מישהו שיתחיל —",
-        "ולרוב זה אתה.",
-      ],
-    };
-  }
-
-  // The deep one — belonging + quiet: depth over breadth.
-  if (belonging.value > 0.2 && energy.value < 0) {
-    return {
-      key: "deep",
-      lines: [
-        "אתה לא מחפש הרבה אנשים.",
-        "אתה מחפש אדם אחד, באמת.",
-        "זו לא הסתגרות — זו עומק.",
-      ],
-    };
-  }
-
-  // The warm-crowd one — energy + belonging.
-  if (energy.value > 0.2 && belonging.value >= 0) {
-    return {
-      key: "warm",
-      lines: [
-        "יש בך משהו שנפתח ליד אנשים.",
-        "חדר מלא לא מלחיץ אותך —",
-        "הוא קצת מדליק אותך.",
-      ],
-    };
-  }
-
-  // Gentle universal-but-specific fallback (still feels seen, never generic).
-  return {
-    key: "curious",
-    lines: [
-      "יש בך סקרנות שקטה כלפי אנשים.",
-      "לא תמיד אתה ניגש —",
-      "אבל אתה כמעט תמיד שם לב.",
-    ],
-  };
-}
-
-// One challenge ladder for the theme. Success = trying. Nothing is locked or scored.
-export type Level = "easy" | "medium" | "brave";
-export const CHALLENGES: { level: Level; label: string; text: string; sub: string }[] = [
-  {
-    level: "easy",
-    label: "רך",
-    text: "תגיד שלום לאדם אחד שאתה לא מכיר.",
-    sub: "מילה אחת מספיקה.",
-  },
-  {
-    level: "medium",
-    label: "אמצע",
-    text: "פתח שיחה קצרה עם מישהו היום.",
-    sub: "שאלה קטנה, חיוך, וזהו.",
-  },
-  {
-    level: "brave",
-    label: "אמיץ",
-    text: "ניגש למישהו שסקרן אותך, והתחל שיחה אמיתית.",
-    sub: "לא משנה איך זה ייגמר. מה שחשוב זה שניגשת.",
-  },
-];
-
-export const CHALLENGE_HEADER = "אין נכון ואין לא-נכון. יש רק לנסות.";
-
-// Evening journal — soft feeling taps (never mandatory, never scored).
+// Evening journal — soft feeling taps (never mandatory, never scored). Universal.
 export const FEELINGS = [
   "פתוח יותר",
   "קצת גאה",
