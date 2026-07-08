@@ -206,6 +206,15 @@ h2{font-family:var(--serif);font-weight:500;font-size:25px;line-height:1.25}
   100%{opacity:0;filter:blur(8px);transform:translateY(-30px) scale(1.06)}
 }
 .dissolving{animation:dissolve 1.1s ease forwards}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.15);opacity:1}}
+
+/* open-mission banner on home */
+.mbanner{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:20px;
+  border:1px solid var(--line);background:rgba(20,22,30,.6);backdrop-filter:blur(8px);
+  text-align:right;box-shadow:0 12px 30px -14px rgba(0,0,0,.7)}
+.mbanner .mi{width:30px;height:30px;color:var(--gold-bright);flex-shrink:0}
+.mbanner .mt{flex:1;font-size:14.5px;line-height:1.45}
+.mbanner .mk{font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;margin-bottom:3px}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001s!important;transition-duration:.12s!important}
@@ -247,16 +256,16 @@ h2{font-family:var(--serif);font-weight:500;font-size:25px;line-height:1.25}
 <script>
 //=================== DATA ===================
 const WORLDS=[
- {id:"courage",  he:"אומץ",   ic:"i-shield", line:"אתה לא צריך להיות אמיץ. רק לעשות את הצעד הבא.", q:"מהו צעד קטן אחד שאתה יכול לעשות היום?"},
- {id:"connection",he:"חיבור", ic:"i-heart",  line:"הקשר מתחיל ברגע שאתה מרשה לעצמך להיראות.", q:"למי היית רוצה להתקרב היום, ולו במעט?"},
- {id:"rest",     he:"מנוחה",  ic:"i-waves",  line:"מנוחה היא לא עצירה — היא חלק מהתנועה.", q:"איפה בגוף אתה יכול לשחרר קצת עכשיו?"},
- {id:"presence", he:"נוכחות", ic:"i-circle", line:"יש לך כבר בפנים את כל מה שאתה צריך.", q:"מה קורה סביבך ממש עכשיו, שלא שמת לב אליו?"},
- {id:"boundaries",he:"גבולות",ic:"i-bars",   line:"לומר לא למשהו הוא לומר כן לעצמך.", q:"לְמה מגיע לך לומר 'לא' היום?"},
- {id:"kindness", he:"נדיבות", ic:"i-leaf",   line:"נתינה קטנה יכולה לשנות יום שלם — גם שלך.", q:"מהו מחווה קטן שתוכל לתת למישהו היום?"},
- {id:"curiosity",he:"סקרנות", ic:"i-lens",   line:"כל שאלה פותחת דלת שלא ידעת שקיימת.", q:"מה תהית עליו לאחרונה, ולא בדקת?"},
- {id:"creativity",he:"יצירה", ic:"i-spark",  line:"אתה לא צריך השראה כדי להתחיל. רק להתחיל.", q:"מה תיצור היום בלי לחשוב אם זה 'טוב'?"},
- {id:"becoming", he:"השתנות", ic:"i-sun",    line:"אתה כבר בדרך. כל צעד קטן הוא מי שאתה נעשה.", q:"מי אתה נעשה, צעד אחד בכל פעם?"},
- {id:"discovery",he:"גילוי",  ic:"i-compass",line:"המסע מתחיל בסקרנות לגלות מה יש מעבר.", q:"לאן היית הולך, אם לא היה מוקדם מדי?"},
+ {id:"courage",  he:"אומץ",   ic:"i-shield", trait:"אמיץ",  line:"אתה לא צריך להיות אמיץ. רק לעשות את הצעד הבא.", q:"מהו צעד קטן אחד שאתה יכול לעשות היום?", m:"עשה דבר קטן אחד שדחית. רק את ההתחלה שלו."},
+ {id:"connection",he:"חיבור", ic:"i-heart",  trait:"מחובר", line:"הקשר מתחיל ברגע שאתה מרשה לעצמך להיראות.", q:"למי היית רוצה להתקרב היום, ולו במעט?", m:"שלח הודעה למישהו שחשבת עליו — בלי סיבה מיוחדת."},
+ {id:"rest",     he:"מנוחה",  ic:"i-waves",  trait:"רגוע",  line:"מנוחה היא לא עצירה — היא חלק מהתנועה.", q:"איפה בגוף אתה יכול לשחרר קצת עכשיו?", m:"קח 3 דקות בלי מסך. פשוט לשבת ולנשום."},
+ {id:"presence", he:"נוכחות", ic:"i-circle", trait:"נוכח",  line:"יש לך כבר בפנים את כל מה שאתה צריך.", q:"מה קורה סביבך ממש עכשיו, שלא שמת לב אליו?", m:"שים לב לדבר אחד יפה שקורה סביבך ממש עכשיו."},
+ {id:"boundaries",he:"גבולות",ic:"i-bars",   trait:"שלם עם עצמך", line:"לומר לא למשהו הוא לומר כן לעצמך.", q:"לְמה מגיע לך לומר 'לא' היום?", m:"אמור 'לא' לדבר אחד היום — בעדינות, בלי אשמה."},
+ {id:"kindness", he:"נדיבות", ic:"i-leaf",   trait:"נדיב",  line:"נתינה קטנה יכולה לשנות יום שלם — גם שלך.", q:"מהו מחווה קטן שתוכל לתת למישהו היום?", m:"עשה מחווה קטנה למישהו — גם לזר. חיוך נחשב."},
+ {id:"curiosity",he:"סקרנות", ic:"i-lens",   trait:"סקרן",  line:"כל שאלה פותחת דלת שלא ידעת שקיימת.", q:"מה תהית עליו לאחרונה, ולא בדקת?", m:"בדוק דבר אחד שתהית עליו ולא בדקת עד היום."},
+ {id:"creativity",he:"יצירה", ic:"i-spark",  trait:"יוצר",  line:"אתה לא צריך השראה כדי להתחיל. רק להתחיל.", q:"מה תיצור היום בלי לחשוב אם זה 'טוב'?", m:"צור משהו קטן ב-5 דקות — בלי לשפוט אם זה טוב."},
+ {id:"becoming", he:"השתנות", ic:"i-sun",    trait:"בתנועה",line:"אתה כבר בדרך. כל צעד קטן הוא מי שאתה נעשה.", q:"מי אתה נעשה, צעד אחד בכל פעם?", m:"עשה צעד זעיר לכיוון מי שאתה רוצה להיות."},
+ {id:"discovery",he:"גילוי",  ic:"i-compass",trait:"מגלה",  line:"המסע מתחיל בסקרנות לגלות מה יש מעבר.", q:"לאן היית הולך, אם לא היה מוקדם מדי?", m:"לך למקום שלא היית בו — ולו פינה חדשה בשכונה."},
 ];
 const W=Object.fromEntries(WORLDS.map(w=>[w.id,w]));
 const asset=id=>`assets/cards/${id}.jpg`;
@@ -283,7 +292,19 @@ const READINGS={
 const KEY="mood_game_v3";
 let S=load();
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){return fresh()}}
-function fresh(){return{day:1,kept:[],released:0,collected:0,name:"נדב",lastPlay:null}}
+function fresh(){return{day:1,kept:[],released:0,collected:0,name:"נדב",lastPlay:null,missions:[],traits:{}}}
+function openMission(){return (S.missions||[]).find(m=>m.status==="open")}
+function addMission(id){S.missions=S.missions||[];S.missions.push({world:id,status:"open",ts:Date.now()});save()}
+function completeMission(m){m.status="done";m.done=Date.now();const w=W[m.world];
+  S.traits=S.traits||{};S.traits[m.world]=(S.traits[m.world]||0)+1;S.collected++;S.lastPlay=Date.now();save()}
+function doneCount(){return (S.missions||[]).filter(m=>m.status==="done").length}
+function stepsWord(n){return n===1?"צעד אחד":n+" צעדים"}
+function becomingLine(){
+  const t=S.traits||{};const ord=Object.keys(t).sort((a,b)=>t[b]-t[a]).slice(0,3).map(k=>W[k].trait);
+  if(!ord.length)return "המסע שלך רק מתחיל.";
+  if(ord.length===1)return `אתה נעשה מישהו ${ord[0]}.`;
+  return `אתה נעשה מישהו ${ord.slice(0,-1).join(", ")} ו${ord.slice(-1)}.`;
+}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
 let flow={answers:[],deal:[],chosen:null};
 
@@ -362,25 +383,37 @@ function go(where){
 function Home(){
   showNav(true);curNav="home";
   const greet=greeting();
+  const om=openMission();
   screen(`
    <div class="pad grow center" style="text-align:center;padding-bottom:120px">
      <div class="lift" style="margin-top:8px">
        <div class="kicker">${greet.k}</div>
        <h1 style="margin:14px 0 6px">${greet.t}, ${S.name}</h1>
-       <p class="lead">איך אתה מרגיש היום?</p>
+       <p class="lead">${om?"יש לך צעד פתוח מהיום":"איך אתה מרגיש היום?"}</p>
      </div>
-     <div class="lift" style="margin:30px auto 26px;width:210px;aspect-ratio:29/40">
+     <div class="lift" style="margin:26px auto 22px;width:196px;aspect-ratio:29/40">
        <div class="card lit" style="width:100%;height:100%">
-         <div class="art" style="background-image:url('assets/bg/home.jpg')"></div>
+         <div class="art" style="background-image:url('${om?asset(om.world):'assets/bg/home.jpg'}')"></div>
          <div class="veil"></div><div class="glow"></div><div class="frame"></div>
        </div>
      </div>
+     ${om?`
+     <div class="mbanner lift" id="mbanner" style="max-width:360px;margin:0 auto 18px;width:100%">
+       <span class="mi">${svg(W[om.world].ic)}</span>
+       <div class="mt"><div class="mk">הצעד שלך</div>${W[om.world].m}</div>
+     </div>
+     <div class="lift" style="width:100%;max-width:340px;margin:0 auto">
+       <button class="btn" id="didhome"><span class="shimmer"></span>עשיתי את זה</button>
+       <button class="btn ghost" id="start" style="height:50px;margin-top:12px">מסע חדש להיום</button>
+       <p class="tiny" style="margin-top:14px">יום ${S.day} · ${stepsWord(doneCount())} נאספו</p>
+     </div>`:`
      <div class="lift" style="width:100%;max-width:340px;margin:0 auto">
        <button class="btn" id="start"><span class="shimmer"></span>התחל מסע יומי</button>
-       <p class="tiny" style="margin-top:16px">יום ${S.day} · המסע שלך</p>
-     </div>
+       <p class="tiny" style="margin-top:16px">יום ${S.day} · ${stepsWord(doneCount())} נאספו</p>
+     </div>`}
    </div>`,{bg:"night"});
   $("#start").onclick=()=>{buzz();flow={answers:[],deal:[],chosen:null};showNav(false);Question(0)};
+  const dh=$("#didhome");if(dh)dh.onclick=()=>{buzz(20);const m=openMission();if(m)completeMission(m);Becoming(m.world)};
 }
 function greeting(){const h=new Date().getHours();
   if(h<12)return{k:"בוקר",t:"בוקר טוב"};if(h<18)return{k:"צהריים",t:"צהריים טובים"};return{k:"ערב",t:"ערב טוב"}}
@@ -514,57 +547,85 @@ function Reveal(id){
        <button class="ib" id="shr" style="width:50px;height:50px;border-radius:50%;border:1px solid var(--line);background:rgba(20,22,30,.5);color:var(--gold);cursor:pointer">${svg("i-share","")}</button>
      </div>
      <div class="lift d4" style="width:100%;max-width:340px;margin-top:30px">
-       <button class="btn" id="next"><span class="shimmer"></span>מה עכשיו?</button>
+       <button class="btn" id="next"><span class="shimmer"></span>הצעד שלי היום</button>
      </div>
    </div>
   `,{bg:"night"});
   app.querySelectorAll("#fav svg,#shr svg").forEach(s=>s.style.width=s.style.height="22px");
   $("#fav").onclick=e=>{buzz();e.currentTarget.style.color="var(--gold-bright)";e.currentTarget.style.background="rgba(201,162,94,.18)"};
   $("#shr").onclick=()=>{buzz();navigator.share?navigator.share({title:"mood",text:w.line}).catch(()=>{}):null};
-  $("#next").onclick=()=>{buzz();Choose(id)};
+  $("#next").onclick=()=>{buzz();Mission(id)};
 }
 
-function Choose(id){
-  const w=W[id];
-  screen(`
-   <div class="safe-top"></div>
-   <div class="pad grow center" style="padding-bottom:100px">
-     <h2 class="lift" style="text-align:center;margin-bottom:30px">מה תרצה לעשות<br/>עם הקלף?</h2>
-     <div class="choice lift d1" style="max-width:380px;margin:0 auto;width:100%">
-       <div class="c" id="keep">
-         <div class="cbgimg" style="background-image:url('assets/bg/cave.jpg')"></div>
-         <div class="cico">${svg("i-heart")}</div>
-         <div><div class="ct">לחיות איתו</div><div class="cs">אשמור את ${w.he} על הלוח שלי היום</div></div>
-       </div>
-       <div class="c" id="rel">
-         <div class="cbgimg" style="background-image:url('assets/bg/river.jpg')"></div>
-         <div class="cico">${svg("i-waves")}</div>
-         <div><div class="ct">לשחרר אותו</div><div class="cs">אני מוכן להמשיך הלאה</div></div>
-       </div>
-     </div>
-   </div>
-  `,{bg:"cave"});
-  $("#keep").onclick=()=>{buzz();S.kept=S.kept||[];if(!S.kept.includes(id))S.kept.push(id);S.collected++;S.lastPlay=Date.now();save();Kept(id)};
-  $("#rel").onclick=()=>{buzz();S.released++;S.lastPlay=Date.now();save();Released(id)};
-}
-
-function Kept(id){
+// THE MISSION — the card gives a small real-world action
+function Mission(id){
   const w=W[id];
   screen(`
    <div class="safe-top"></div>
    <div class="pad grow center" style="text-align:center;padding-bottom:100px">
-     <div class="rcard lift" style="margin:0 auto 26px">
+     <div class="ico lift" style="width:34px;height:34px;color:var(--gold-bright);margin:0 auto 14px">${svg(w.ic)}</div>
+     <div class="kicker lift">הצעד שלך היום</div>
+     <h1 class="lift d1 serif" style="margin:18px auto 0;max-width:340px;font-size:29px;line-height:1.35">${w.m}</h1>
+     <div class="divider lift d2"></div>
+     <p class="lead lift d2" style="max-width:300px;margin:0 auto 38px;font-size:15px">קח את זה איתך אל היום האמיתי. אין צורך להצליח — רק לנסות.</p>
+     <div class="lift d3" style="width:100%;max-width:340px;margin:0 auto">
+       <button class="btn" id="accept"><span class="shimmer"></span>אני בפנים</button>
+       <button class="btn ghost" id="skip" style="height:50px;margin-top:12px">אולי מחר</button>
+     </div>
+   </div>
+  `,{bg:"cave"});
+  $("#accept").onclick=()=>{buzz(16);S.kept=S.kept||[];if(!S.kept.includes(id))S.kept.push(id);addMission(id);Today(id)};
+  $("#skip").onclick=()=>{buzz();S.released++;S.lastPlay=Date.now();save();Released(id)};
+}
+
+// TODAY — the open commitment; confirm you did it (now or later)
+function Today(id){
+  const w=W[id];
+  screen(`
+   <div class="safe-top"></div>
+   <div class="pad grow center" style="text-align:center;padding-bottom:100px">
+     <div class="rcard lift" style="margin:0 auto 22px">
        <div class="art" style="background-image:url('${asset(id)}')"></div><div class="veil"></div><div class="frame"></div>
      </div>
-     <h1 class="lift d1 serif">${w.he} איתך היום</h1>
-     <p class="lead lift d2" style="max-width:320px;margin:16px auto 34px">קח את המשפט הזה איתך. שוב תפגוש אותו כשתחזור.</p>
+     <div class="kicker lift d1">המשימה שלך פתוחה</div>
+     <h2 class="lift d1 serif" style="margin:14px auto 0;max-width:330px">${w.m}</h2>
+     <p class="lead lift d2" style="max-width:300px;margin:16px auto 36px;font-size:15px">כשתעשה את זה — חזור וסמן. הצעד שלך יהפוך לחלק ממי שאתה נעשה.</p>
+     <div class="lift d3" style="width:100%;max-width:340px;margin:0 auto">
+       <button class="btn" id="did"><span class="shimmer"></span>עשיתי את זה</button>
+       <button class="btn ghost" id="later" style="height:50px;margin-top:12px">אחזור לזה מאוחר יותר</button>
+     </div>
+   </div>
+  `,{bg:"night"});
+  $("#did").onclick=()=>{buzz(20);const m=openMission();if(m){completeMission(m)}Becoming(id)};
+  $("#later").onclick=()=>{buzz();S.day++;save();go("home")};
+}
+
+// BECOMING — the reward: evidence of who you're becoming
+function Becoming(id){
+  const w=W[id];
+  becomingBurst();
+  screen(`
+   <div class="safe-top"></div>
+   <div class="pad grow center" style="text-align:center;padding-bottom:100px">
+     <div class="lift" style="width:80px;height:80px;margin:0 auto 8px;position:relative">
+       <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(232,205,148,.35),transparent 70%);animation:pulse 2.4s ease-in-out infinite"></div>
+       <div class="ico" style="width:46px;height:46px;color:var(--gold-bright);position:absolute;inset:0;margin:auto">${svg(w.ic)}</div>
+     </div>
+     <div class="kicker lift d1">היום היית ${w.trait}</div>
+     <h1 class="lift d1 serif" style="margin:16px auto 0;max-width:330px;font-size:30px;line-height:1.35">${becomingLine()}</h1>
+     <div class="divider lift d2"></div>
+     <p class="lead lift d2" style="max-width:300px;margin:0 auto 8px;font-size:15px">אספת רגע אמיתי. ${stepsWord(doneCount())} עד עכשיו.</p>
+     <div class="lift d3" style="display:flex;gap:8px;justify-content:center;margin:22px 0 34px;flex-wrap:wrap;max-width:280px">
+       ${Array.from({length:Math.min(doneCount(),24)}).map((_,k)=>`<div style="width:9px;height:9px;border-radius:50%;background:var(--gold);opacity:${.4+.6*Math.random()};box-shadow:0 0 6px var(--gold);animation:lift .5s ${k*.03}s both"></div>`).join("")}
+     </div>
      <div class="lift d3" style="width:100%;max-width:340px;margin:0 auto">
        <button class="btn" id="done"><span class="shimmer"></span>סיום היום</button>
      </div>
    </div>
-  `,{bg:"night"});
+  `,{bg:"river"});
   $("#done").onclick=()=>{buzz();S.day++;save();go("journey")};
 }
+function becomingBurst(){setTimeout(releaseBurst,200)}
 
 function Released(id){
   const w=W[id];
@@ -587,8 +648,10 @@ function Released(id){
   const b=setInterval(()=>{const d=$("#done2");if(d){d.onclick=()=>{buzz();S.day++;save();go("journey")};clearInterval(b)}},200);
 }
 function releaseBurst(){
+  const screens=app.querySelectorAll(".screen");const host=screens[screens.length-1]?.querySelector(".content");
+  if(!host)return;
   const c=document.createElement("canvas");c.className="dust";c.style.zIndex=5;
-  app.querySelector(".screen .content").appendChild(c);
+  host.appendChild(c);
   const ctx=c.getContext("2d"),w=c.width=innerWidth,h=c.height=innerHeight;
   let ps=Array.from({length:60},()=>({x:w/2+(Math.random()-.5)*80,y:h*.36+(Math.random()-.5)*100,
     vx:(Math.random()-.5)*3,vy:-Math.random()*3-1,a:1,r:Math.random()*3+1}));
@@ -651,11 +714,11 @@ function Journey(){
   screen(`
    <div class="safe-top"></div>
    <div class="pad" style="margin-top:14px;text-align:center">
-     <div class="kicker">המסע שלך</div>
-     <h1 style="margin:10px 0 4px">${S.day} ימים</h1>
-     <p class="lead" style="font-size:15px">אתה בדרך הנכונה. המשך כך.</p>
+     <div class="kicker">מי שאתה נעשה</div>
+     <h1 class="serif" style="margin:14px auto 4px;max-width:330px;font-size:28px;line-height:1.35">${becomingLine()}</h1>
+     <p class="lead" style="font-size:14.5px">${doneCount()?'כל צעד שעשית בעולם האמיתי נאסף כאן.':'המסע שלך מתחיל בצעד הראשון.'}</p>
    </div>
-   <div class="pad center" style="align-items:center;margin:20px 0">
+   <div class="pad center" style="align-items:center;margin:22px 0">
      <div class="ring">
        <svg viewBox="0 0 200 200" style="width:100%;height:100%;transform:rotate(-90deg)">
          <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(201,162,94,.14)" stroke-width="6"/>
@@ -664,23 +727,37 @@ function Journey(){
          <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8cd94"/><stop offset="1" stop-color="#a9863f"/></linearGradient></defs>
        </svg>
        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-         <div class="serif" style="font-size:38px;color:var(--gold-bright)">${pct}%</div>
-         <div class="tiny">מתוך 90 יום</div>
+         <div class="serif" style="font-size:44px;color:var(--gold-bright)">${doneCount()}</div>
+         <div class="tiny">צעדים אמיתיים</div>
        </div>
      </div>
    </div>
    <div class="pad">
-     <div class="cal" style="margin-bottom:26px">
+     ${traitBars()}
+     <div class="cal" style="margin:6px 0 22px">
        ${days.map(d=>`<div class="d ${d.now?'now':''}"><span class="dn">${d.n}</span>${d.num}</div>`).join("")}
      </div>
      <div style="background:rgba(20,22,30,.5);border:1px solid var(--line-soft);border-radius:20px;padding:6px 20px">
-       <div class="stat"><span class="sl">קלפים שנאספו</span><span class="sv">${S.collected}</span></div>
-       <div class="stat"><span class="sl">קלפים ששוחררו</span><span class="sv">${S.released}</span></div>
+       <div class="stat"><span class="sl">צעדים שהשלמת</span><span class="sv">${doneCount()}</span></div>
+       <div class="stat"><span class="sl">קלפים שאספת</span><span class="sv">${S.collected}</span></div>
        <div class="stat" style="border:none"><span class="sl">רצף המסע</span><span class="sv">${S.day} ימים</span></div>
      </div>
      <div class="safe-bot"></div>
    </div>
   `,{bg:"river"});
+}
+function traitBars(){
+  const t=S.traits||{};const keys=Object.keys(t).sort((a,b)=>t[b]-t[a]).slice(0,5);
+  if(!keys.length)return "";
+  const max=Math.max(...keys.map(k=>t[k]));
+  return `<div style="margin-bottom:22px">`+keys.map(k=>{const w=W[k];const pc=Math.round(t[k]/max*100);
+    return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <span style="width:20px;height:20px;color:var(--gold);flex-shrink:0">${svg(w.ic)}</span>
+      <span style="width:64px;font-size:13.5px;color:var(--muted)">${w.he}</span>
+      <div style="flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden">
+        <div style="height:100%;width:${pc}%;background:linear-gradient(90deg,#a9863f,#e8cd94);border-radius:4px"></div></div>
+      <span style="font-size:12px;color:var(--gold-bright);width:16px;text-align:center">${t[k]}</span>
+    </div>`}).join("")+`</div>`;
 }
 
 //=================== PROFILE ===================
