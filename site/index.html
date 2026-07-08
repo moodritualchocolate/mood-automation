@@ -331,53 +331,37 @@ function svg(id,cls=""){return `<svg class="${cls}" viewBox="0 0 24 24"><use hre
 function buzz(ms=12){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
 let curNav="home";
 
-//=================== SOUND (generative, no assets) ===================
-let AC,master,ambientOn=false;
+//=================== SOUND — background music file ===================
+// Drop a looping track at assets/audio/ambient.mp3 (or .m4a) and it plays here.
+const MUSIC_SRC="assets/audio/ambient.mp3";
+const MUSIC_VOL=0.5;
+let bgm;
 function soundOn(){return localStorage.getItem("mood_sound")!=="off"}
+function fadeMusic(to,ms=800){
+  if(!bgm)return;clearInterval(bgm._f);
+  const from=bgm.volume,steps=Math.max(1,Math.round(ms/40));let i=0;
+  bgm._f=setInterval(()=>{i++;const v=from+(to-from)*(i/steps);
+    bgm.volume=Math.max(0,Math.min(1,v));
+    if(i>=steps){clearInterval(bgm._f);bgm.volume=Math.max(0,Math.min(1,to));if(to<=0)bgm.pause();}},40);
+}
 function initAudio(){
-  if(AC)return;
-  try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return}
-  master=AC.createGain();master.gain.value=0;master.connect(AC.destination);
-  if(soundOn()){master.gain.linearRampToValueAtTime(0.9,AC.currentTime+0.6);startAmbient();}
-}
-function startAmbient(){
-  if(!AC||ambientOn)return;ambientOn=true;
-  const g=AC.createGain();g.gain.value=0;g.connect(master);
-  ambientGain=g;
-  [110,164.81,220].forEach((f,i)=>{ // A2 · E3 · A3 — a warm open fifth
-    const o=AC.createOscillator();o.type=i===2?"triangle":"sine";o.frequency.value=f;
-    const lfo=AC.createOscillator();lfo.frequency.value=0.05+i*0.02;
-    const lg=AC.createGain();lg.gain.value=1.6+i;lfo.connect(lg);lg.connect(o.frequency);
-    const og=AC.createGain();og.gain.value=i===2?.14:.5;o.connect(og);og.connect(g);
-    o.start();lfo.start();
-  });
-  g.gain.linearRampToValueAtTime(0.05,AC.currentTime+5); // very soft bed
-}
-let ambientGain;
-function bell(freq=528,dur=2.2,vol=.18){
-  if(!AC||!soundOn())return;const t=AC.currentTime;
-  const o=AC.createOscillator(),o2=AC.createOscillator(),g=AC.createGain(),g2=AC.createGain();
-  o.type="sine";o.frequency.value=freq;o2.type="sine";o2.frequency.value=freq*2.005;
-  g2.gain.value=.28;o2.connect(g2);g2.connect(g);o.connect(g);g.connect(master);
-  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.015);
-  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  o.start(t);o2.start(t);o.stop(t+dur);o2.stop(t+dur);
-}
-function tap(){bell(660,.5,.05)} // soft touch tick
-function shimmer(){ // rising bloom for "you did it"
-  [523.25,659.25,783.99,1046.5].forEach((f,i)=>setTimeout(()=>bell(f,1.8,.13),i*95));
+  if(bgm)return;
+  bgm=new Audio(MUSIC_SRC);bgm.loop=true;bgm.preload="auto";bgm.volume=0;
+  bgm.addEventListener("error",()=>{bgm._missing=true;});
+  if(soundOn()){bgm.play().then(()=>fadeMusic(MUSIC_VOL)).catch(()=>{});}
 }
 function toggleSound(){
   const on=!soundOn();localStorage.setItem("mood_sound",on?"on":"off");
-  if(!AC)initAudio();
-  if(master){master.gain.linearRampToValueAtTime(on?0.9:0,AC.currentTime+0.3);}
-  if(on&&!ambientOn)startAmbient();
-  updSoundBtn();
-  return on;
+  if(!bgm)initAudio();
+  if(on){bgm.play().then(()=>fadeMusic(MUSIC_VOL)).catch(()=>{});}
+  else{fadeMusic(0,300);}
+  updSoundBtn();return on;
 }
 function updSoundBtn(){const b=$("#snd");if(b)b.innerHTML=svg(soundOn()?"i-sound":"i-mute");}
+// interaction cues are haptic-only now (music carries the mood)
+function bell(){}function tap(){}function shimmer(){}
 // unlock audio on first interaction
-document.addEventListener("pointerdown",function unlock(){initAudio();if(AC&&AC.state==="suspended")AC.resume();document.removeEventListener("pointerdown",unlock)},{once:true});
+document.addEventListener("pointerdown",function unlock(){initAudio();document.removeEventListener("pointerdown",unlock)},{once:true});
 
 function screen(html,{bg,nav,back}={}){
   const el=document.createElement("div");
