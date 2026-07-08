@@ -29,11 +29,14 @@ body{
   background:var(--bg);}
 /* ---------- screens ---------- */
 .screen{position:absolute; inset:0; display:flex; flex-direction:column;
-  opacity:0; visibility:hidden; transition:opacity .6s ease;
-  padding:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch;}
-.screen.on{opacity:1; visibility:visible;}
-.screen.up .lift{animation:lift .7s cubic-bezier(.16,1,.3,1) both;}
-@keyframes lift{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  opacity:0; visibility:hidden; transform:translateY(16px) scale(.994);
+  transition:opacity .3s ease, transform .44s cubic-bezier(.16,1,.3,1);
+  padding:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; will-change:opacity,transform;}
+.screen.on{opacity:1; visibility:visible; transform:none;}
+.screen.exit{opacity:0; transform:translateY(-12px) scale(1.008);
+  transition:opacity .24s ease, transform .32s cubic-bezier(.4,0,1,1);}
+.screen.up .lift{animation:lift .5s cubic-bezier(.16,1,.3,1) both;}
+@keyframes lift{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:none}}
 .pad{padding:0 22px;}
 .grow{flex:1 1 auto;}
 .safe-top{height:max(18px,env(safe-area-inset-top))}
@@ -191,14 +194,22 @@ h2{font-family:var(--serif);font-weight:500;font-size:25px;line-height:1.25}
 .nav button svg{width:22px;height:22px}
 .nav.hide{display:none}
 
+/* sound toggle */
+#snd{position:fixed;top:max(16px,env(safe-area-inset-top));left:16px;z-index:70;
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--line-soft);
+  background:rgba(12,14,20,.5);backdrop-filter:blur(8px);color:var(--gold);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;opacity:.55;transition:opacity .3s}
+#snd:active{opacity:1;transform:scale(.94)}
+#snd svg{width:19px;height:19px}
+
 /* avatar */
 .ava{width:56px;height:56px;border-radius:50%;border:1px solid var(--line);
   display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:22px;color:var(--gold-bright);
   background:radial-gradient(circle at 40% 35%,rgba(201,162,94,.2),rgba(20,22,30,.6))}
 
 .center{display:flex;flex-direction:column;justify-content:center;min-height:100%}
-.fadeup{animation:lift .8s cubic-bezier(.16,1,.3,1) both}
-.d1{animation-delay:.1s}.d2{animation-delay:.22s}.d3{animation-delay:.34s}.d4{animation-delay:.46s}
+.fadeup{animation:lift .7s cubic-bezier(.16,1,.3,1) both}
+.d1{animation-delay:.05s}.d2{animation-delay:.11s}.d3{animation-delay:.18s}.d4{animation-delay:.26s}
 
 /* dissolve on release */
 @keyframes dissolve{
@@ -228,6 +239,9 @@ h2{font-family:var(--serif);font-weight:500;font-size:25px;line-height:1.25}
 <!-- fly reveal overlay -->
 <div id="fly"><div id="flyDim"></div><div id="flyCard"><div class="art"></div><div class="frame"></div></div></div>
 
+<!-- sound toggle -->
+<button id="snd" aria-label="sound"></button>
+
 <!-- SVG icon sprite -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <g id="i-shield"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path fill="none" stroke="currentColor" stroke-width="1.2" d="M12 7v9"/></g>
@@ -251,6 +265,8 @@ h2{font-family:var(--serif);font-weight:500;font-size:25px;line-height:1.25}
 <g id="i-chart"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M5 19V5M5 19h14M9 15v-3M13 15V9M17 15v-6"/></g>
 <g id="i-chev"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M14 7l-5 5 5 5"/></g>
 <g id="i-back"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M14 6l-6 6 6 6"/></g>
+<g id="i-sound"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M4 9.5h3l4-3.5v12l-4-3.5H4z"/><path fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10"/></g>
+<g id="i-mute"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M4 9.5h3l4-3.5v12l-4-3.5H4z"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M15.5 9.5l4 5M19.5 9.5l-4 5"/></g>
 </defs></svg>
 
 <script>
@@ -315,18 +331,66 @@ function svg(id,cls=""){return `<svg class="${cls}" viewBox="0 0 24 24"><use hre
 function buzz(ms=12){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
 let curNav="home";
 
+//=================== SOUND (generative, no assets) ===================
+let AC,master,ambientOn=false;
+function soundOn(){return localStorage.getItem("mood_sound")!=="off"}
+function initAudio(){
+  if(AC)return;
+  try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return}
+  master=AC.createGain();master.gain.value=0;master.connect(AC.destination);
+  if(soundOn()){master.gain.linearRampToValueAtTime(0.9,AC.currentTime+0.6);startAmbient();}
+}
+function startAmbient(){
+  if(!AC||ambientOn)return;ambientOn=true;
+  const g=AC.createGain();g.gain.value=0;g.connect(master);
+  ambientGain=g;
+  [110,164.81,220].forEach((f,i)=>{ // A2 · E3 · A3 — a warm open fifth
+    const o=AC.createOscillator();o.type=i===2?"triangle":"sine";o.frequency.value=f;
+    const lfo=AC.createOscillator();lfo.frequency.value=0.05+i*0.02;
+    const lg=AC.createGain();lg.gain.value=1.6+i;lfo.connect(lg);lg.connect(o.frequency);
+    const og=AC.createGain();og.gain.value=i===2?.14:.5;o.connect(og);og.connect(g);
+    o.start();lfo.start();
+  });
+  g.gain.linearRampToValueAtTime(0.05,AC.currentTime+5); // very soft bed
+}
+let ambientGain;
+function bell(freq=528,dur=2.2,vol=.18){
+  if(!AC||!soundOn())return;const t=AC.currentTime;
+  const o=AC.createOscillator(),o2=AC.createOscillator(),g=AC.createGain(),g2=AC.createGain();
+  o.type="sine";o.frequency.value=freq;o2.type="sine";o2.frequency.value=freq*2.005;
+  g2.gain.value=.28;o2.connect(g2);g2.connect(g);o.connect(g);g.connect(master);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.015);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.start(t);o2.start(t);o.stop(t+dur);o2.stop(t+dur);
+}
+function tap(){bell(660,.5,.05)} // soft touch tick
+function shimmer(){ // rising bloom for "you did it"
+  [523.25,659.25,783.99,1046.5].forEach((f,i)=>setTimeout(()=>bell(f,1.8,.13),i*95));
+}
+function toggleSound(){
+  const on=!soundOn();localStorage.setItem("mood_sound",on?"on":"off");
+  if(!AC)initAudio();
+  if(master){master.gain.linearRampToValueAtTime(on?0.9:0,AC.currentTime+0.3);}
+  if(on&&!ambientOn)startAmbient();
+  updSoundBtn();
+  return on;
+}
+function updSoundBtn(){const b=$("#snd");if(b)b.innerHTML=svg(soundOn()?"i-sound":"i-mute");}
+// unlock audio on first interaction
+document.addEventListener("pointerdown",function unlock(){initAudio();if(AC&&AC.state==="suspended")AC.resume();document.removeEventListener("pointerdown",unlock)},{once:true});
+
 function screen(html,{bg,nav,back}={}){
   const el=document.createElement("div");
   el.className="screen";
   el.innerHTML=`
     ${bg?`<div class="bg" style="background-image:url('assets/bg/${bg}.jpg')"></div><div class="grain"></div><canvas class="dust"></canvas>`:`<div class="grain"></div>`}
     <div class="content">${back?`<button class="bk" style="position:absolute;top:max(20px,env(safe-area-inset-top));right:20px;z-index:5;background:none;border:none;color:var(--gold);width:34px;height:34px;cursor:pointer">${svg("i-back")}</button>`:""}${html}</div>`;
-  // swap
-  const old=app.querySelector(".screen");
+  // swap — fast layered push (new rises in, old lifts out)
+  const old=app.querySelector(".screen.on")||app.querySelector(".screen");
   app.appendChild(el);
   requestAnimationFrame(()=>{
     el.classList.add("on","up");
-    if(old){old.classList.remove("on");setTimeout(()=>old.remove(),650);}
+    if(old){old.classList.remove("on");old.classList.add("exit");setTimeout(()=>old.remove(),340);}
   });
   const c=el.querySelector("canvas.dust"); if(c) startDust(c);
   const bk=el.querySelector(".bk"); if(bk&&back) bk.onclick=()=>{buzz();back();};
@@ -436,7 +500,7 @@ function Question(i){
    </div>
   `,{bg:i%2?"cave":"river",back:()=>{i===0?Home():Question(i-1)}});
   app.querySelectorAll(".opt").forEach(o=>o.onclick=()=>{
-    buzz();o.classList.add("sel");flow.answers[i]={k:+o.dataset.k,q:Q};
+    buzz();tap();o.classList.add("sel");flow.answers[i]={k:+o.dataset.k,q:Q};
     setTimeout(()=>{ i+1<QUESTIONS.length?Question(i+1):Result(); },340);
   });
 }
@@ -451,7 +515,7 @@ function pickReading(){
 function Result(){
   const key=pickReading();
   const R=READINGS[key]||READINGS.presence;
-  flow.readingKey=key;
+  flow.readingKey=key; setTimeout(()=>bell(329.63,3,.1),200);
   screen(`
    <div class="safe-top"></div>
    <div class="pad grow center" style="text-align:center;padding-bottom:100px">
@@ -500,9 +564,9 @@ function Deal(){
   app.querySelectorAll("#deal .card").forEach(c=>c.onclick=()=>flyOpen(c,c.dataset.id));
 }
 
-// signature fly-open reveal
+// signature fly-open reveal — faster, with a light bloom + bell
 function flyOpen(fromEl,id){
-  buzz(18);
+  buzz(22); bell(392,1.8,.14);
   const r=fromEl.getBoundingClientRect();
   const fly=$("#fly"),fc=$("#flyCard"),dim=$("#flyDim");
   fc.querySelector(".art").style.backgroundImage=`url('${asset(id)}')`;
@@ -511,18 +575,19 @@ function flyOpen(fromEl,id){
   fc.style.left=r.left+"px";fc.style.top=r.top+"px";fc.style.width=r.width+"px";fc.style.height=r.height+"px";
   fromEl.style.opacity="0";
   requestAnimationFrame(()=>{
-    dim.style.background="rgba(6,7,10,.92)";
-    fc.style.transition="";
-    const W2=Math.min(240,innerWidth*.62),H2=W2*40/29;
+    dim.style.background="rgba(6,7,10,.94)";
+    fc.style.transition="all .6s cubic-bezier(.16,1,.3,1)";
+    const W2=Math.min(244,innerWidth*.62),H2=W2*40/29;
     fc.style.left=(innerWidth-W2)/2+"px";
     fc.style.top=(innerHeight-H2)/2-40+"px";
     fc.style.width=W2+"px";fc.style.height=H2+"px";
   });
+  setTimeout(()=>bell(588,2.4,.12),260);
   setTimeout(()=>{
     fly.classList.remove("on");fromEl.style.opacity="";
     dim.style.background="rgba(6,7,10,0)";
     Reveal(id);
-  },900);
+  },640);
 }
 
 function Reveal(id){
@@ -574,7 +639,7 @@ function Mission(id){
      </div>
    </div>
   `,{bg:"cave"});
-  $("#accept").onclick=()=>{buzz(16);S.kept=S.kept||[];if(!S.kept.includes(id))S.kept.push(id);addMission(id);Today(id)};
+  $("#accept").onclick=()=>{buzz(16);bell(440,1.6,.12);S.kept=S.kept||[];if(!S.kept.includes(id))S.kept.push(id);addMission(id);Today(id)};
   $("#skip").onclick=()=>{buzz();S.released++;S.lastPlay=Date.now();save();Released(id)};
 }
 
@@ -603,7 +668,7 @@ function Today(id){
 // BECOMING — the reward: evidence of who you're becoming
 function Becoming(id){
   const w=W[id];
-  becomingBurst();
+  becomingBurst(); shimmer(); buzz(30);
   screen(`
    <div class="safe-top"></div>
    <div class="pad grow center" style="text-align:center;padding-bottom:100px">
@@ -784,15 +849,17 @@ function Profile(){
 
 //=================== BOOT ===================
 mountNav();
+updSoundBtn();
+$("#snd").onclick=()=>{buzz();const on=toggleSound();if(on)bell(528,1.6,.12)};
 // splash then home
 (function boot(){
   const sp=document.createElement("div");sp.className="screen on";
-  sp.style.cssText="background:var(--bg);z-index:80";
+  sp.style.cssText="background:var(--bg);z-index:80;transform:none";
   sp.innerHTML=`<div class="content center" style="align-items:center;justify-content:center;text-align:center">
     <div class="fadeup"><div class="serif" style="font-size:46px;letter-spacing:.04em;color:var(--gold-bright)">mood</div>
     <div class="kicker" style="margin-top:14px">הרגע שלך מתחיל כאן</div></div></div>`;
   app.appendChild(sp);
-  setTimeout(()=>{sp.style.transition="opacity .7s";sp.style.opacity="0";setTimeout(()=>sp.remove(),700);Home();},1700);
+  setTimeout(()=>{sp.style.transition="opacity .6s";sp.style.opacity="0";setTimeout(()=>sp.remove(),600);Home();},1500);
 })();
 </script>
 </body>
