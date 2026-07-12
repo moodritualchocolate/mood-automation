@@ -1,0 +1,50 @@
+{
+  "moment_id": "presence_phone_conversation_001",
+  "middah": "presence",
+  "middah_he": "נוכחות",
+  "segment": "phone",
+  "visual_style": "mood_illustrated_v1",
+  "aspect_ratio": "9:16",
+  "importance": { "daily": 3, "emotional": 3, "connection": 3, "growth": 2, "ease": 3 },
+  "recognition": {
+    "title": "הטלפון רטט בזמן שמישהו דיבר אליך.",
+    "body": "הוא באמצע משפט. הטלפון מהבהב על השולחן, והמבט שלך כבר נמשך אליו.",
+    "asset": "01_recognition"
+  },
+  "feel_check": {
+    "prompt": "איך זה מרגיש לך?",
+    "options": ["רגוע", "לא בטוח", "במתח"]
+  },
+  "opportunity": "הפעם — תסתכל קודם עליו.",
+  "choice": {
+    "prompt": "מה אתה בוחר לעשות?",
+    "a": { "label": "בודק את הטלפון", "branch": "not_yet", "asset": "02_choice_phone" },
+    "b": { "label": "נשאר איתו ומקשיב", "branch": "present", "asset": "02_choice_stay" }
+  },
+  "branches": {
+    "present": {
+      "immediate": { "text": "הוא מרגיש שאתה איתו באמת.", "asset": "03_immediate_present" },
+      "short_term": { "text": "יש תחושת קרבה, והשיחה מעמיקה.", "asset": "04_short_present" },
+      "long_term": { "text": "אתה בונה אמון, קשרים עמוקים יותר, ונוכחות טבעית.", "asset": "05_long_present" },
+      "witness": { "text": "הטלפון מונח הפוך. שתי הכוסות קרובות. הוא נשאר.", "asset": "08_witness_present" },
+      "world": { "text": "עולם של חיבור אמיתי, הקשבה, והרגשה של משמעות.", "asset": "world_present" }
+    },
+    "not_yet": {
+      "immediate": { "text": "הוא ממשיך לדבר, ואתה כבר בטלפון.", "asset": "03_immediate_notyet" },
+      "short_term": { "text": "אתה מפספס חלקים חשובים מהשיחה, והחיבור נחלש.", "asset": "04_short_notyet" },
+      "long_term": { "text": "אתה נעשה פחות נוכח, ואנשים מרגישים פחות חשובים לך.", "asset": "05_long_notyet" },
+      "witness": { "text": "הרגע חלף בעדינות. הדרך עדיין כאן.", "asset": "08_witness_notyet" },
+      "world": { "text": "עולם של הסחות דעת וקשרים רדודים — אבל אור קטן נשאר.", "asset": "world_notyet" }
+    }
+  },
+  "wisdom": {
+    "text": "הנוכחות שלך היא המתנה הכי גדולה שאתה יכול לתת לאדם אחר.",
+    "source": "מתוך ספר הדרך · נוכחות",
+    "asset": "06_wisdom",
+    "show_when": "present"
+  },
+  "continuation": {
+    "text": "החיים זימנו עוד רגע. המסע ממשיך.",
+    "asset": "13_continuation"
+  }
+}

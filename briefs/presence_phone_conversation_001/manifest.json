@@ -1,0 +1,27 @@
+{
+  "moment_id": "presence_phone_conversation_001",
+  "middah": "presence",
+  "segment": "phone",
+  "visual_style": "mood_illustrated_v1",
+  "aspect_ratio": "9:16",
+  "canvas": { "width": 1080, "height": 1920 },
+  "characters": ["character_male_35_v1", "character_partner_female_34_v1"],
+  "location": "location_living_room_evening_v1",
+  "assets": [
+    { "state": "recognition", "file": "01_recognition.png", "approved": false },
+    { "state": "choice", "branch": "not_yet", "file": "02_choice_phone.png", "approved": false },
+    { "state": "choice", "branch": "present", "file": "02_choice_stay.png", "approved": false },
+    { "state": "immediate", "branch": "present", "file": "03_immediate_present.png", "approved": false },
+    { "state": "short_term", "branch": "present", "file": "04_short_present.png", "approved": false },
+    { "state": "long_term", "branch": "present", "file": "05_long_present.png", "approved": false },
+    { "state": "witness", "branch": "present", "file": "08_witness_present.png", "approved": false },
+    { "state": "world", "branch": "present", "file": "world_present.png", "approved": false },
+    { "state": "immediate", "branch": "not_yet", "file": "03_immediate_notyet.png", "approved": false },
+    { "state": "short_term", "branch": "not_yet", "file": "04_short_notyet.png", "approved": false },
+    { "state": "long_term", "branch": "not_yet", "file": "05_long_notyet.png", "approved": false },
+    { "state": "witness", "branch": "not_yet", "file": "08_witness_notyet.png", "approved": false },
+    { "state": "world", "branch": "not_yet", "file": "world_notyet.png", "approved": false },
+    { "state": "wisdom", "file": "06_wisdom.png", "approved": false },
+    { "state": "continuation", "file": "13_continuation.png", "approved": false }
+  ]
+}
