@@ -25,6 +25,7 @@ interface LibraryResponse {
     ugcScripts: UgcScript[];
     imageConcepts: ImageConcept[];
   };
+  shareToken?: string | null;
   generatedAt?: number;
 }
 
@@ -181,6 +182,14 @@ function LibraryInner() {
         subtitle="Your selected one-liner + the hooks, scripts, and concepts you marked to use. Copy what you need."
         actions={
           <>
+            {data.shareToken ? (
+              <Button
+                variant="ghost" size="md"
+                onClick={() => copy(`${window.location.origin}/share/${data.shareToken}`, 'share-link')}
+              >
+                {copied === 'share-link' ? 'Link copied ✓' : '⤴ Share kit'}
+              </Button>
+            ) : null}
             <Button variant="ghost" size="md" onClick={() => copy(kitAsText(), 'kit-all')}>
               {copied === 'kit-all' ? 'Copied ✓' : 'Copy everything'}
             </Button>

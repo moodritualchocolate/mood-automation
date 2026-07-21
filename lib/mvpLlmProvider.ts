@@ -37,6 +37,7 @@ import {
   type LlmGenerationPayload,
   type OpenaiGenerateOutcome,
 } from './mvpOpenaiAdapter';
+import { anthropicGenerate } from './mvpAnthropicAdapter';
 import { buildLearningModel, learningBoost, type LearningModel } from './mvpLearning';
 import { qualityScore, HOOK_QUALITY_FLOOR } from './mvpQualityScore';
 
@@ -429,9 +430,11 @@ export async function mvpGenerate(input: MvpGenerateInput): Promise<MvpGenerateO
 
   const provider = activeProvider();
 
-  // 3 · LLM path · only when OPENAI_API_KEY is set
-  if (provider === 'openai') {
-    const outcome = await openaiGenerate(ctx, {
+  // 3 · LLM path · OpenAI first, Anthropic as the second provider
+  // (roadmap #7) · both consume the same context + validator.
+  if (provider === 'openai' || provider === 'anthropic') {
+    const llmCall = provider === 'openai' ? openaiGenerate : anthropicGenerate;
+    const outcome = await llmCall(ctx, {
       artifact: input.artifact,
       audience: input.audience,
       emotional: input.emotional,
@@ -442,7 +445,7 @@ export async function mvpGenerate(input: MvpGenerateInput): Promise<MvpGenerateO
       const built = llmPayloadToOutput(outcome.result.payload, ctx, signals, learning);
       return {
         ...built,
-        providerId: 'openai',
+        providerId: provider,
         verticalId: verticalContext.verticalId,
         resolvedLocale: verticalContext.locale,
         detectionConfidence: verticalContext.detectionConfidence,

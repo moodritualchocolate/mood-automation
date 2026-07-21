@@ -167,7 +167,7 @@ function localeName(locale: 'he' | 'en'): string {
   return locale === 'he' ? 'Hebrew (עברית)' : 'English';
 }
 
-function buildSystemPrompt(ctx: GenerationContext): string {
+export function buildSystemPrompt(ctx: GenerationContext): string {
   const loc = ctx.locale;
   const localeWord = localeName(loc);
   const required = ctx.vocabularyRequired.slice(0, 12);
@@ -259,7 +259,7 @@ function buildSystemPrompt(ctx: GenerationContext): string {
   ].filter(Boolean).join('\n');
 }
 
-function buildUserPrompt(ctx: GenerationContext, input: OpenaiGenerateInput, retryHint?: string): string {
+export function buildUserPrompt(ctx: GenerationContext, input: OpenaiGenerateInput, retryHint?: string): string {
   const parts = [
     `Brand brief:`,
     `  · Sells: ${input.artifact || '(operator did not specify)'}`,
@@ -268,6 +268,14 @@ function buildUserPrompt(ctx: GenerationContext, input: OpenaiGenerateInput, ret
     `  · Operator-stated locale: ${input.locale}`,
     `  · Resolved vertical: ${ctx.vertical.displayName}`,
     `  · Output locale (binding): ${localeName(ctx.locale)}`,
+    '',
+    // Brand voice (roadmap #10): the operator's own phrasing is the
+    // brand's voice — echo its register, don't paraphrase it away.
+    `BRAND VOICE — the operator's own words are the brand's voice.`,
+    `Echo their register and word choices where natural. Their phrasing:`,
+    `  · "${(input.artifact || '').slice(0, 140)}"`,
+    `  · "${(input.emotional || '').slice(0, 140)}"`,
+    `At least 2 of the 10 hooks should visibly build on the operator's own wording.`,
     '',
     `Produce the full creative kit (2 positioning one-liners · 10 hooks · 5 UGC scripts · 10 image concepts · warnings · qualitySelfCheck) matching the strict JSON schema.`,
   ];

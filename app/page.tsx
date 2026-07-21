@@ -80,6 +80,51 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* REAL OUTPUT PER INDUSTRY (roadmap #22 · corpus = genuine system output) */}
+      <section className="border-t border-[rgba(247,245,242,0.06)]">
+        <div className="mx-auto max-w-[1240px] px-4 md:px-6 py-12 md:py-16">
+          <div className="text-[10px] uppercase tracking-[0.32em] text-[rgba(247,245,242,0.55)] mb-3">
+            Real output · not a promise
+          </div>
+          <h2 className="font-['EditorialNew','Times_New_Roman',serif] text-[32px] md:text-[44px] leading-tight tracking-tight max-w-2xl">
+            Written from inside your industry.
+          </h2>
+          <p className="mt-3 max-w-xl text-[14px] leading-relaxed text-[rgba(247,245,242,0.65)]">
+            These are genuine hooks the system generates today — per-industry knowledge,
+            not generic AI filler. 15 industries and counting.
+          </p>
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+            {[
+              {
+                label: 'Chocolate brand',
+                hooks: ['אתה לא צריך עוד מוצר. אתה צריך רגע.', 'הילדים לא יזכרו את המסך שלך. הם יזכרו אם היית שם.'],
+              },
+              {
+                label: 'Dental clinic',
+                hooks: ['לא היית אצל רופא שיניים חמש שנים? אנחנו לא הולכים להעיר על זה.', 'המחירון של המרפאה באתר. כולו. לפני שקבעת תור.'],
+              },
+              {
+                label: 'Real-estate agent',
+                hooks: ['הערכת שווי אצלי היא מסמך בכתב עם נימוקים. לא מספר באוויר.', 'העמלה שלי נאמרת בשיחה הראשונה. לפני שראיתי את הדירה.'],
+              },
+            ].map((col) => (
+              <div key={col.label} className="rounded-xl border border-[rgba(247,245,242,0.10)] bg-[#0A0A0A] p-5">
+                <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[rgba(247,245,242,0.45)]">
+                  {col.label}
+                </div>
+                <div className="space-y-4">
+                  {col.hooks.map((h) => (
+                    <div key={h} dir="rtl" className="font-['EditorialNew','Times_New_Roman',serif] text-[17px] leading-snug text-[#F7F5F2]">
+                      {h}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* WHAT YOU GET */}
       <section className="border-t border-[rgba(247,245,242,0.06)]">
         <div className="mx-auto max-w-[1240px] px-4 md:px-6 py-12 md:py-16">

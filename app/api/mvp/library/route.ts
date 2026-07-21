@@ -74,6 +74,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       ugcScripts: keptUgc,
       imageConcepts: keptConcepts,
     },
+    shareToken: generation.shareToken ?? null,
     generatedAt: generation.completedAt ?? generation.createdAt,
     advisoryNotice:
       'Creative library · operator-supervised · 90-day access. Human remains final authority.',
