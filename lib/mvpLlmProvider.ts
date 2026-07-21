@@ -37,6 +37,8 @@ import {
   type LlmGenerationPayload,
   type OpenaiGenerateOutcome,
 } from './mvpOpenaiAdapter';
+import { buildLearningModel, learningBoost, type LearningModel } from './mvpLearning';
+import { qualityScore, HOOK_QUALITY_FLOOR } from './mvpQualityScore';
 
 export interface MvpGenerateInput {
   artifact: string;
@@ -45,6 +47,8 @@ export interface MvpGenerateInput {
   locale: string;
   /** Optional override · forces a specific vertical (used by verifiers). */
   forceVerticalId?: import('./verticalIntelligence').VerticalId;
+  /** Hook texts already shown to this operator · excluded on regenerate. */
+  excludeTexts?: string[];
 }
 
 export interface MvpGenerateOutput {
@@ -171,8 +175,16 @@ function pickOneLiners(ctx: GenerationContext, signals: SignalBundle): OneLinerC
  *   3. Round-robin across families, picking the highest-relevance hook
  *      per family per round, until we have 10 (or run out of hooks).
  */
-function pickHooks(ctx: GenerationContext, signals: SignalBundle): HookItem[] {
-  const safe = ctx.availableHooks.filter((h) => isSafeOutput(h.text, ctx));
+function pickHooks(
+  ctx: GenerationContext,
+  signals: SignalBundle,
+  learning: LearningModel,
+  excludeTexts?: string[],
+): HookItem[] {
+  const excluded = new Set(excludeTexts ?? []);
+  const safe = ctx.availableHooks.filter(
+    (h) => isSafeOutput(h.text, ctx) && !excluded.has(h.text),
+  );
   if (safe.length === 0) return [];
 
   const byFamily = new Map<HookFamily, HookTemplate[]>();
@@ -197,24 +209,26 @@ function pickHooks(ctx: GenerationContext, signals: SignalBundle): HookItem[] {
     });
   }
 
+  // Overpick (up to 14) so the quality floor can drop weak hooks and
+  // still deliver a full set of 10.
+  const TARGET = 14;
   const families = Array.from(byFamily.keys());
   const picked: HookTemplate[] = [];
   let round = 0;
-  while (picked.length < 10) {
+  while (picked.length < TARGET) {
     let pickedThisRound = false;
     for (const f of families) {
       const bucket = byFamily.get(f);
       if (!bucket || bucket.length <= round) continue;
       picked.push(bucket[round]);
       pickedThisRound = true;
-      if (picked.length >= 10) break;
+      if (picked.length >= TARGET) break;
     }
     if (!pickedThisRound) break;
     round += 1;
   }
 
-  // De-duplicate by text (e.g., when two families share a punchline,
-  // which shouldn't happen in the seed corpus but defensively guard).
+  // De-duplicate by text (defensive guard).
   const seen = new Set<string>();
   const unique = picked.filter((h) => {
     if (seen.has(h.text)) return false;
@@ -222,22 +236,37 @@ function pickHooks(ctx: GenerationContext, signals: SignalBundle): HookItem[] {
     return true;
   });
 
-  // Build HookItem · keep the audience archetype label so the UI shows
-  // who the hook is for (locale-aware).
   const audienceLabel = ctx.resolvedAudience.label;
   const audienceDemo = ctx.resolvedAudience.demographic;
   const proven = ctx.vertical.bestPerformingAdFormats[0] ?? '';
 
-  return unique.map((h) => ({
-    id: newId('hook'),
-    text: h.text,
-    audience: `${audienceLabel} · ${audienceDemo}`,
-    situation: ctx.purchaseMoments[deterministicHash(h.text) % Math.max(1, ctx.purchaseMoments.length)] ?? '',
-    visualDirection: proven || (ctx.locale === 'he'
-      ? 'צילום דוקומנטרי 50מ"מ · אור טבעי · אדם אמיתי לא מדגמן'
-      : 'documentary 50mm · natural light · real adult · no posed shots'),
-    commercialScore: commercialScoreFor(h.text, signals.combined),
-  }));
+  const items = unique.map((h) => {
+    const q = qualityScore({
+      text: h.text, locale: ctx.locale, vocabulary: ctx.vocabularyRequired,
+    });
+    // Learning folds into commercialScore so downstream sorting
+    // (engine re-sorts by commercialScore desc) inherits the signal.
+    const boost = learningBoost(learning, ctx.verticalId, h.family, h.text);
+    return {
+      id: newId('hook'),
+      text: h.text,
+      audience: `${audienceLabel} · ${audienceDemo}`,
+      situation: ctx.purchaseMoments[deterministicHash(h.text) % Math.max(1, ctx.purchaseMoments.length)] ?? '',
+      visualDirection: proven || (ctx.locale === 'he'
+        ? 'צילום דוקומנטרי 50מ"מ · אור טבעי · אדם אמיתי לא מדגמן'
+        : 'documentary 50mm · natural light · real adult · no posed shots'),
+      commercialScore: Math.round(commercialScoreFor(h.text, signals.combined) * boost),
+      family: h.family as string,
+      qualityScore: q,
+    };
+  });
+
+  // Quality floor (roadmap #9): drop weak hooks while ≥10 remain.
+  const strong = items.filter((h) => (h.qualityScore ?? 0) >= HOOK_QUALITY_FLOOR);
+  const pool = strong.length >= 10 ? strong : items;
+  return pool
+    .sort((a, b) => b.commercialScore - a.commercialScore)
+    .slice(0, 10);
 }
 
 /**
@@ -296,6 +325,7 @@ function llmPayloadToOutput(
   payload: LlmGenerationPayload,
   ctx: GenerationContext,
   signals: SignalBundle,
+  learning: LearningModel,
 ): {
   oneLinerCandidates: OneLinerCandidate[];
   hooks: HookItem[];
@@ -306,18 +336,26 @@ function llmPayloadToOutput(
     .slice(0, 2)
     .map((o) => ({ id: newId('ol'), text: o.text }));
 
-  // Apply the existing deterministic commercial scoring to the LLM hooks
-  // and sort so the top-ranked hook surfaces first in the UI.
-  const scored = payload.hooks.map((h) => ({
-    id: newId('hook'),
-    text: h.text,
-    audience: h.audience || `${ctx.resolvedAudience.label} · ${ctx.resolvedAudience.demographic}`,
-    situation: h.situation || (ctx.purchaseMoments[0] ?? ''),
-    visualDirection: h.visualDirection || (ctx.vertical.bestPerformingAdFormats[0] ?? ''),
-    commercialScore: commercialScoreFor(h.text, signals.combined),
-  }));
+  // Deterministic commercial scoring × learning boost + quality score.
+  const scored = payload.hooks.map((h) => {
+    const boost = learningBoost(learning, ctx.verticalId, h.family, h.text);
+    return {
+      id: newId('hook'),
+      text: h.text,
+      audience: h.audience || `${ctx.resolvedAudience.label} · ${ctx.resolvedAudience.demographic}`,
+      situation: h.situation || (ctx.purchaseMoments[0] ?? ''),
+      visualDirection: h.visualDirection || (ctx.vertical.bestPerformingAdFormats[0] ?? ''),
+      commercialScore: Math.round(commercialScoreFor(h.text, signals.combined) * boost),
+      family: h.family,
+      qualityScore: qualityScore({
+        text: h.text, locale: ctx.locale, vocabulary: ctx.vocabularyRequired,
+      }),
+    };
+  });
   scored.sort((a, b) => b.commercialScore - a.commercialScore);
-  const hooks: HookItem[] = scored.slice(0, 10);
+  // Quality floor: drop weak LLM hooks only while ≥8 survive.
+  const strong = scored.filter((h) => (h.qualityScore ?? 0) >= HOOK_QUALITY_FLOOR);
+  const hooks: HookItem[] = (strong.length >= 8 ? strong : scored).slice(0, 10);
 
   const ugcScripts: UgcScriptItem[] = payload.ugcScripts.slice(0, 5).map((u) => ({
     id: newId('ugc'),
@@ -339,10 +377,15 @@ function llmPayloadToOutput(
   return { oneLinerCandidates, hooks, ugcScripts, imageConcepts };
 }
 
-function buildFromCorpus(ctx: GenerationContext, signals: SignalBundle) {
+function buildFromCorpus(
+  ctx: GenerationContext,
+  signals: SignalBundle,
+  learning: LearningModel,
+  excludeTexts?: string[],
+) {
   return {
     oneLinerCandidates: pickOneLiners(ctx, signals),
-    hooks: pickHooks(ctx, signals),
+    hooks: pickHooks(ctx, signals, learning, excludeTexts),
     ugcScripts: pickUgcScripts(ctx, signals),
     imageConcepts: pickImageConcepts(ctx, signals),
   };
@@ -376,9 +419,10 @@ export async function mvpGenerate(input: MvpGenerateInput): Promise<MvpGenerateO
     { forceVerticalId: input.forceVerticalId },
   );
 
-  // 2 · assemble the locale-filtered generation context
+  // 2 · assemble the locale-filtered generation context + learning model
   const ctx = assembleGenerationContext(verticalContext);
   const signals = makeSignalBundle(input);
+  const learning = await buildLearningModel();
 
   const provider = activeProvider();
 
@@ -392,7 +436,7 @@ export async function mvpGenerate(input: MvpGenerateInput): Promise<MvpGenerateO
     });
 
     if (outcome.result) {
-      const built = llmPayloadToOutput(outcome.result.payload, ctx, signals);
+      const built = llmPayloadToOutput(outcome.result.payload, ctx, signals, learning);
       return {
         ...built,
         providerId: 'openai',
@@ -405,7 +449,7 @@ export async function mvpGenerate(input: MvpGenerateInput): Promise<MvpGenerateO
 
     // LLM path failed after retry · degrade to corpus selection so the
     // user still gets a valid kit instead of an empty response.
-    const built = buildFromCorpus(ctx, signals);
+    const built = buildFromCorpus(ctx, signals, learning, input.excludeTexts);
     return {
       ...built,
       providerId: 'stub', // record what was actually used
@@ -417,7 +461,7 @@ export async function mvpGenerate(input: MvpGenerateInput): Promise<MvpGenerateO
   }
 
   // 4 · Corpus path (stub provider) · no API key, no LLM call
-  const built = buildFromCorpus(ctx, signals);
+  const built = buildFromCorpus(ctx, signals, learning, input.excludeTexts);
   return {
     ...built,
     providerId: 'stub',

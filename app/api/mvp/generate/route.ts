@@ -47,6 +47,8 @@ interface PostBody {
   organizationId?: string;
   workspaceId?: string;
   operatorReason: string;
+  /** Regenerate: exclude hooks the operator already saw. */
+  previousGenerationId?: string;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -85,6 +87,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     operatorId,
     organizationId,
     workspaceId,
+    previousGenerationId: typeof body.previousGenerationId === 'string'
+      ? body.previousGenerationId
+      : undefined,
   });
 
   if (result.status === 'failed') {

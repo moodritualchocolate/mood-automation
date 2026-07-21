@@ -29,6 +29,8 @@ export interface RunMvpGenerationInput {
   operatorId: string;
   organizationId: string;
   workspaceId: string;
+  /** Regenerate (roadmap #8): exclude hooks already shown in this generation. */
+  previousGenerationId?: string;
 }
 
 export interface RunMvpGenerationResult {
@@ -82,13 +84,23 @@ export async function runMvpGeneration(
   };
   await genStore.append(draft);
 
-  // 3 · call the LLM provider
+  // 3 · call the LLM provider — on regenerate, exclude hooks the
+  // operator already saw in the previous generation.
   try {
+    let excludeTexts: string[] | undefined;
+    if (input.previousGenerationId) {
+      const prev = await genStore.findById(input.previousGenerationId);
+      if (prev && prev.operatorId === input.operatorId) {
+        excludeTexts = prev.hooks.map((h) => h.text);
+      }
+    }
+
     const output = await mvpGenerate({
       artifact: brandInput.artifact,
       audience: brandInput.audience,
       emotional: brandInput.emotional,
       locale: brandInput.locale,
+      excludeTexts,
     });
 
     // 4 · sort hooks by commercialScore desc · keep top 10
@@ -101,12 +113,32 @@ export async function runMvpGeneration(
     const ugcScripts = output.ugcScripts.slice(0, 5);
     const imageConcepts = output.imageConcepts.slice(0, 10);
 
+    // Random unguessable share token (roadmap #25) — created up front
+    // so the operator can share as soon as the kit is ready.
+    const shareToken =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID().replace(/-/g, '')
+        : `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+
     await genStore.update(generationId, {
       oneLinerCandidates: oneLiners,
       hooks: rankedHooks,
       ugcScripts,
       imageConcepts,
       providerId: output.providerId,
+      verticalId: output.verticalId,
+      resolvedLocale: output.resolvedLocale,
+      telemetry: output.llmDiagnostics
+        ? {
+            attempts: output.llmDiagnostics.attempts,
+            latencyMs: output.llmDiagnostics.latencyMs,
+            tokensIn: output.llmDiagnostics.tokensIn,
+            tokensOut: output.llmDiagnostics.tokensOut,
+            model: output.llmDiagnostics.model,
+            fellBack: output.llmDiagnostics.fellBack,
+          }
+        : undefined,
+      shareToken,
       status: 'ready',
       completedAt: Date.now(),
     });

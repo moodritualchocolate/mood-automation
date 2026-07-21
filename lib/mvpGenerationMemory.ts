@@ -28,6 +28,10 @@ export interface HookItem {
   visualDirection: string;
   /** 0-100 internal commercial ranking · NOT shown to the user. */
   commercialScore: number;
+  /** Hook family (identity / permission / authority …) · learning key. */
+  family?: string;
+  /** 0-60 deterministic quality score · pipeline filter + telemetry. */
+  qualityScore?: number;
 }
 
 export interface UgcScriptItem {
@@ -61,6 +65,20 @@ export interface GenerationRecord {
   imageConcepts: ImageConceptItem[];
   status: GenerationStatus;
   providerId: 'stub' | 'openai' | 'anthropic';
+  /** Resolved vertical + locale · learning + telemetry keys. */
+  verticalId?: string;
+  resolvedLocale?: 'he' | 'en';
+  /** LLM cost/latency diagnostics (undefined on corpus path). */
+  telemetry?: {
+    attempts: number;
+    latencyMs: number;
+    tokensIn?: number;
+    tokensOut?: number;
+    model?: string;
+    fellBack?: boolean;
+  };
+  /** Public share token (roadmap #25) · random, unguessable. */
+  shareToken?: string;
   error?: string;
   createdAt: number;
   completedAt?: number;
