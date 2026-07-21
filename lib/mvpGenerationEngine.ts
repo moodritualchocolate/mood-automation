@@ -23,6 +23,7 @@ import {
   type GenerationRecord,
 } from './mvpGenerationMemory';
 import { mvpGenerate } from './mvpLlmProvider';
+import { ALL_VERTICAL_IDS, type VerticalId } from './verticalIntelligence';
 
 export interface RunMvpGenerationInput {
   brandInputId: string;
@@ -95,12 +96,20 @@ export async function runMvpGeneration(
       }
     }
 
+    // Operator-confirmed vertical wins over keyword detection.
+    const override = brandInput.verticalOverride;
+    const forceVerticalId =
+      override && (ALL_VERTICAL_IDS as string[]).includes(override)
+        ? (override as VerticalId)
+        : undefined;
+
     const output = await mvpGenerate({
       artifact: brandInput.artifact,
       audience: brandInput.audience,
       emotional: brandInput.emotional,
       locale: brandInput.locale,
       excludeTexts,
+      forceVerticalId,
     });
 
     // 4 · sort hooks by commercialScore desc · keep top 10

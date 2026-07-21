@@ -24,6 +24,8 @@ interface Body {
   audience: string;
   emotional: string;
   locale: string;
+  /** Operator-confirmed vertical id (roadmap #15). */
+  verticalOverride?: string;
   organizationId?: string;
   workspaceId?: string;
   operatorReason: string;
@@ -58,6 +60,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     audience: body.audience.trim(),
     emotional: body.emotional.trim(),
     locale: body.locale.trim(),
+    verticalOverride: typeof body.verticalOverride === 'string' && body.verticalOverride.trim()
+      ? body.verticalOverride.trim()
+      : undefined,
     createdAt: Date.now(),
     operatorReason: body.operatorReason,
   };

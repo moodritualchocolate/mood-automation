@@ -24,6 +24,8 @@ export interface BrandInputRecord {
   audience: string;
   emotional: string;
   locale: string;
+  /** Operator-confirmed vertical (roadmap #15) · overrides detection. */
+  verticalOverride?: string;
   createdAt: number;
   operatorReason: string;
 }

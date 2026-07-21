@@ -565,6 +565,9 @@ async function main() {
       'app/api/mvp/onboard/route.ts',
       'app/api/mvp/generate/route.ts',
       'app/api/mvp/selection/route.ts',
+      // ── vertical waitlist (roadmap #6 · refusal path; stores an
+      //    email + description only; sends nothing) ──
+      'app/api/mvp/waitlist/route.ts',
     ]);
     const unexpectedPostRoutes: string[] = [];
     for (const route of allRoutes) {
