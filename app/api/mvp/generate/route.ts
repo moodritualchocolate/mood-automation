@@ -11,6 +11,8 @@ import { PLATFORM_TENANT_ID_MOOD, PLATFORM_WORKSPACE_ID_MOOD } from '@lib/tenanc
 import { createMvpBrandInputMemoryStore } from '@lib/mvpBrandInputMemory';
 import { createMvpGenerationMemoryStore } from '@lib/mvpGenerationMemory';
 import { runMvpGeneration } from '@lib/mvpGenerationEngine';
+import { monthlyGenerationLimit, isThisMonth } from '@lib/mvpPlans';
+import { logMvpError } from '@lib/mvpErrorLogMemory';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -82,6 +84,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'brand input not owned by this operator' }, { status: 403 });
   }
 
+  // Monthly quota (roadmap #18) — count this operator's generations
+  // this calendar month before running another.
+  const limit = monthlyGenerationLimit();
+  const genState = await createMvpGenerationMemoryStore().read();
+  const usedThisMonth = genState.records.filter(
+    (r) => r.operatorId === operatorId && isThisMonth(r.createdAt),
+  ).length;
+  if (usedThisMonth >= limit) {
+    return NextResponse.json({
+      error: `monthly generation limit reached (${usedThisMonth}/${limit}). Resets on the 1st.`,
+      quota: { used: usedThisMonth, limit },
+    }, { status: 429 });
+  }
+
   const result = await runMvpGeneration({
     brandInputId: brandInput.brandInputId,
     operatorId,
@@ -93,6 +109,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   });
 
   if (result.status === 'failed') {
+    await logMvpError('generate', result.error ?? 'unknown failure', { operatorId, organizationId });
     return NextResponse.json({
       ok: false,
       generationId: result.generationId,

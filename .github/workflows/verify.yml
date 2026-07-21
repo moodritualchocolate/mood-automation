@@ -1,0 +1,38 @@
+# CI verifier gate (roadmap #19)
+#
+# The verifier suite only protects the product when it runs on every
+# push — locally it's a discipline, here it's a law.
+
+name: verify
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify · vertical intelligence
+        run: npx tsx scripts/verify-vertical-intelligence.ts
+
+      - name: Verify · real-LLM generator (stub mode)
+        run: npx tsx scripts/verify-real-llm-generator.ts
