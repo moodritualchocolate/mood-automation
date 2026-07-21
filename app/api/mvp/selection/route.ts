@@ -29,6 +29,8 @@ interface Body {
   keptHookIds: string[];
   keptUgcScriptIds: string[];
   keptImageConceptIds: string[];
+  /** hookId → operator-edited text (roadmap #12). */
+  editedHooks?: Record<string, string>;
   organizationId?: string;
   workspaceId?: string;
   operatorReason: string;
@@ -106,6 +108,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
   }
 
+  // Validate inline edits: keys must be real hook ids · values bounded.
+  let editedHooks: Record<string, string> | undefined;
+  if (body.editedHooks && typeof body.editedHooks === 'object') {
+    editedHooks = {};
+    for (const [id, text] of Object.entries(body.editedHooks)) {
+      if (!hookIds.has(id)) {
+        return NextResponse.json({ error: `editedHooks key not found: ${id}` }, { status: 400 });
+      }
+      if (typeof text !== 'string' || text.trim().length === 0) continue;
+      editedHooks[id] = text.trim().slice(0, 300);
+    }
+    if (Object.keys(editedHooks).length === 0) editedHooks = undefined;
+  }
+
   const record: SelectionRecord = {
     selectionId: newSelectionId(),
     generationId: body.generationId,
@@ -114,6 +130,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     keptHookIds: body.keptHookIds,
     keptUgcScriptIds: body.keptUgcScriptIds,
     keptImageConceptIds: body.keptImageConceptIds,
+    editedHooks,
     finalizedAt: Date.now(),
     operatorReason: body.operatorReason,
   };

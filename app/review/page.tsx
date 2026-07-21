@@ -16,6 +16,7 @@ interface UgcScript { id: string; title: string; durationSec: number; scriptHebr
 interface ImageConcept { id: string; title: string; visualDescription: string; forUseWith: string; renderingNote: string }
 interface Generation {
   generationId: string;
+  brandInputId: string;
   status: 'generating' | 'ready' | 'failed';
   oneLinerCandidates: OneLiner[];
   hooks: Hook[];
@@ -47,6 +48,10 @@ function ReviewInner() {
   const [hookKeep, setHookKeep] = React.useState<Record<string, boolean>>({});
   const [ugcKeep, setUgcKeep] = React.useState<Record<string, boolean>>({});
   const [conceptKeep, setConceptKeep] = React.useState<Record<string, boolean>>({});
+  // Inline edits (roadmap #12): hookId → edited text.
+  const [hookEdits, setHookEdits] = React.useState<Record<string, string>>({});
+  const [editingHook, setEditingHook] = React.useState<string | null>(null);
+  const [regenBusy, setRegenBusy] = React.useState(false);
 
   React.useEffect(() => {
     if (!tenant || !generationId) return;
@@ -82,6 +87,13 @@ function ReviewInner() {
       const keptUgcScriptIds = Object.entries(ugcKeep).filter(([, v]) => v).map(([k]) => k);
       const keptImageConceptIds = Object.entries(conceptKeep).filter(([, v]) => v).map(([k]) => k);
 
+      // Only send edits that actually differ from the generated text.
+      const editedHooks: Record<string, string> = {};
+      for (const [id, text] of Object.entries(hookEdits)) {
+        const original = gen.hooks.find((h) => h.id === id)?.text ?? '';
+        if (text.trim() && text.trim() !== original) editedHooks[id] = text.trim();
+      }
+
       const res = await fetch('/api/mvp/selection', {
         method: 'POST', credentials: 'include',
         headers: { 'content-type': 'application/json' },
@@ -89,6 +101,7 @@ function ReviewInner() {
           generationId: gen.generationId,
           chosenOneLinerId: chosenOneLiner,
           keptHookIds, keptUgcScriptIds, keptImageConceptIds,
+          editedHooks: Object.keys(editedHooks).length > 0 ? editedHooks : undefined,
           organizationId: tenant.organizationId,
           workspaceId: tenant.workspaceId,
           operatorReason: 'mvp review · finalize selection',
@@ -125,6 +138,39 @@ function ReviewInner() {
   const keptHookCount = Object.values(hookKeep).filter(Boolean).length;
   const keptUgcCount = Object.values(ugcKeep).filter(Boolean).length;
   const keptConceptCount = Object.values(conceptKeep).filter(Boolean).length;
+
+  // Regenerate (roadmap #8): a fresh kit that excludes every hook the
+  // operator already saw here.
+  async function regenerate() {
+    if (!tenant || !gen) return;
+    setRegenBusy(true); setSubmitError(null);
+    try {
+      // Re-use the same brand input: the generation's brandInputId is
+      // not exposed here, so we regenerate via the API's
+      // previousGenerationId path against the same brand input.
+      const res = await fetch('/api/mvp/generate', {
+        method: 'POST', credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          brandInputId: gen.brandInputId,
+          previousGenerationId: gen.generationId,
+          organizationId: tenant.organizationId,
+          workspaceId: tenant.workspaceId,
+          operatorReason: 'mvp review · regenerate excluding seen hooks',
+        }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({})) as { error?: string };
+        setSubmitError(j.error ?? `Regenerate failed (${res.status})`); return;
+      }
+      const j = await res.json() as { generationId: string };
+      router.replace(`/generating?generationId=${encodeURIComponent(j.generationId)}`);
+    } catch (e) {
+      setSubmitError((e as Error).message);
+    } finally {
+      setRegenBusy(false);
+    }
+  }
 
   return (
     <AppShell section="Review">
@@ -174,12 +220,20 @@ function ReviewInner() {
 
       {/* Section 2 · hooks */}
       <section className="mb-10">
-        <div className="eyebrow mb-3 text-[10px] uppercase tracking-[0.28em] text-[rgba(247,245,242,0.55)]">
-          02 · Pick the hooks you'll use ({keptHookCount} of {gen.hooks.length} kept)
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="eyebrow text-[10px] uppercase tracking-[0.28em] text-[rgba(247,245,242,0.55)]">
+            02 · Pick the hooks you'll use ({keptHookCount} of {gen.hooks.length} kept) · click ✎ to edit any hook
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => void regenerate()} disabled={regenBusy}>
+            {regenBusy ? 'Working…' : '↻ Give me 10 different hooks'}
+          </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {gen.hooks.map((h, idx) => {
             const kept = !!hookKeep[h.id];
+            const isEditing = editingHook === h.id;
+            const displayText = hookEdits[h.id] ?? h.text;
+            const wasEdited = hookEdits[h.id] != null && hookEdits[h.id].trim() !== h.text;
             return (
               <div
                 key={h.id}
@@ -192,22 +246,43 @@ function ReviewInner() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] uppercase tracking-[0.28em] text-[rgba(247,245,242,0.45)]">
-                    Hook {String(idx + 1).padStart(2, '0')}
+                    Hook {String(idx + 1).padStart(2, '0')}{wasEdited ? ' · edited' : ''}
                   </span>
-                  <button
-                    onClick={() => setHookKeep((s) => ({ ...s, [h.id]: !kept }))}
-                    className={[
-                      'rounded-full px-3 py-1 text-[11px] tracking-tight border transition-colors',
-                      kept ? 'bg-[#F7F5F2] text-[#0A0A0A] border-[#F7F5F2]'
-                           : 'bg-transparent text-[rgba(247,245,242,0.65)] border-[rgba(247,245,242,0.18)] hover:text-[#F7F5F2]',
-                    ].join(' ')}
-                  >
-                    {kept ? 'Keeping' : 'Skipped'}
-                  </button>
+                  <span className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingHook(isEditing ? null : h.id)}
+                      className="rounded-full border border-[rgba(247,245,242,0.18)] px-2.5 py-1 text-[11px] text-[rgba(247,245,242,0.65)] transition-colors hover:text-[#F7F5F2]"
+                      aria-label="Edit hook"
+                    >
+                      {isEditing ? 'Done' : '✎ Edit'}
+                    </button>
+                    <button
+                      onClick={() => setHookKeep((s) => ({ ...s, [h.id]: !kept }))}
+                      className={[
+                        'rounded-full px-3 py-1 text-[11px] tracking-tight border transition-colors',
+                        kept ? 'bg-[#F7F5F2] text-[#0A0A0A] border-[#F7F5F2]'
+                             : 'bg-transparent text-[rgba(247,245,242,0.65)] border-[rgba(247,245,242,0.18)] hover:text-[#F7F5F2]',
+                      ].join(' ')}
+                    >
+                      {kept ? 'Keeping' : 'Skipped'}
+                    </button>
+                  </span>
                 </div>
-                <div dir="rtl" className="text-[18px] font-['EditorialNew','Times_New_Roman',serif] mb-3 text-[#F7F5F2]">
-                  {h.text}
-                </div>
+                {isEditing ? (
+                  <textarea
+                    dir="rtl"
+                    autoFocus
+                    value={displayText}
+                    onChange={(e) => setHookEdits((s) => ({ ...s, [h.id]: e.target.value }))}
+                    onBlur={() => setEditingHook(null)}
+                    rows={2}
+                    className="mb-3 w-full rounded-lg border border-[rgba(247,245,242,0.30)] bg-[#050505] p-3 text-[18px] font-['EditorialNew','Times_New_Roman',serif] leading-snug text-[#F7F5F2] outline-none focus:border-[#F7F5F2]"
+                  />
+                ) : (
+                  <div dir="rtl" className="text-[18px] font-['EditorialNew','Times_New_Roman',serif] mb-3 text-[#F7F5F2]">
+                    {displayText}
+                  </div>
+                )}
                 <div className="space-y-1 text-[12px] text-[rgba(247,245,242,0.55)]">
                   <div><span className="text-[rgba(247,245,242,0.40)] mr-2">audience</span>{h.audience}</div>
                   <div><span className="text-[rgba(247,245,242,0.40)] mr-2">situation</span>{h.situation}</div>

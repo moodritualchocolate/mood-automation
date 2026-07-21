@@ -18,15 +18,17 @@ interface GenerationPoll {
   };
 }
 
-const PROGRESS_MESSAGES = [
-  'Mapping your audience…',
-  'Finding the emotional center of your brand…',
-  'Writing two positioning candidates…',
-  'Generating 10 ad hooks…',
-  'Ranking them by what will convert…',
-  'Drafting 5 UGC scripts…',
-  'Composing 10 image concepts…',
-  'Assembling your kit…',
+// Staged checklist (roadmap #14) — stages check off progressively so
+// the wait reads as work, not silence.
+const STAGES = [
+  { label: 'Detecting your industry', dwellMs: 1200 },
+  { label: 'Loading vertical intelligence — fears, desires, hooks that convert', dwellMs: 1800 },
+  { label: 'Matching your audience archetype', dwellMs: 1600 },
+  { label: 'Writing positioning candidates', dwellMs: 2000 },
+  { label: 'Composing 10 hooks across proven families', dwellMs: 2400 },
+  { label: 'Scoring every hook · dropping the weak ones', dwellMs: 2000 },
+  { label: 'Drafting UGC scripts + image concepts', dwellMs: 2400 },
+  { label: 'Validating language purity + brand safety', dwellMs: 1800 },
 ];
 
 export default function GeneratingPage() {
@@ -42,16 +44,16 @@ function GeneratingInner() {
   const router = useRouter();
   const params = useSearchParams();
   const generationId = params.get('generationId') ?? '';
-  const [progressIdx, setProgressIdx] = React.useState(0);
+  const [stageIdx, setStageIdx] = React.useState(0);
   const [error, setError] = React.useState<string | null>(null);
 
-  // Rotate progress messages while polling
+  // Advance through stages on their dwell times; hold on the last one
+  // until the poll redirects (never loops back — reads as real work).
   React.useEffect(() => {
-    const t = setInterval(() => {
-      setProgressIdx((i) => (i + 1) % PROGRESS_MESSAGES.length);
-    }, 1100);
-    return () => clearInterval(t);
-  }, []);
+    if (stageIdx >= STAGES.length - 1) return;
+    const t = setTimeout(() => setStageIdx((i) => i + 1), STAGES[stageIdx].dwellMs);
+    return () => clearTimeout(t);
+  }, [stageIdx]);
 
   // Poll the generation
   React.useEffect(() => {
@@ -113,12 +115,40 @@ function GeneratingInner() {
       />
 
       <Card raised>
-        <div className="flex items-center gap-4">
-          <div className="h-3 w-3 rounded-full bg-[#C9A24B] pulse" />
-          <div className="text-[15px] text-[rgba(247,245,242,0.85)]">
-            {PROGRESS_MESSAGES[progressIdx]}
-          </div>
+        {/* Progress bar */}
+        <div className="mb-5 h-1 overflow-hidden rounded-full bg-[rgba(247,245,242,0.08)]">
+          <div
+            className="h-full rounded-full bg-[#C9A24B] transition-all duration-700"
+            style={{ width: `${Math.round(((stageIdx + 1) / STAGES.length) * 92)}%` }}
+          />
         </div>
+        {/* Staged checklist */}
+        <ol className="space-y-2.5">
+          {STAGES.map((s, i) => {
+            const done = i < stageIdx;
+            const active = i === stageIdx;
+            return (
+              <li key={s.label} className="flex items-center gap-3">
+                <span className={[
+                  'flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px]',
+                  done ? 'bg-[#C9A24B] text-[#0A0A0A]'
+                    : active ? 'border border-[#C9A24B] text-[#C9A24B]'
+                    : 'border border-[rgba(247,245,242,0.15)]',
+                ].join(' ')}>
+                  {done ? '✓' : active ? '•' : ''}
+                </span>
+                <span className={[
+                  'text-[13.5px] transition-colors',
+                  done ? 'text-[rgba(247,245,242,0.45)] line-through decoration-[rgba(247,245,242,0.2)]'
+                    : active ? 'text-[#F7F5F2]'
+                    : 'text-[rgba(247,245,242,0.35)]',
+                ].join(' ')}>
+                  {s.label}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
         {error ? (
           <div className="mt-6 text-[12px] text-[#FF4D2D]">
             {error}

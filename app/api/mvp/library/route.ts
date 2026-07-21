@@ -57,7 +57,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const keptConceptSet = new Set(selection.keptImageConceptIds);
 
   const chosenOneLiner = generation.oneLinerCandidates.find((o) => o.id === selection.chosenOneLinerId) ?? null;
-  const keptHooks = generation.hooks.filter((h) => keptHookSet.has(h.id));
+  // Apply operator inline edits (roadmap #12) over the generated text.
+  const keptHooks = generation.hooks
+    .filter((h) => keptHookSet.has(h.id))
+    .map((h) => selection.editedHooks?.[h.id]
+      ? { ...h, text: selection.editedHooks[h.id] }
+      : h);
   const keptUgc = generation.ugcScripts.filter((u) => keptUgcSet.has(u.id));
   const keptConcepts = generation.imageConcepts.filter((c) => keptConceptSet.has(c.id));
 

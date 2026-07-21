@@ -23,6 +23,8 @@ export interface SelectionRecord {
   keptHookIds: string[];
   keptUgcScriptIds: string[];
   keptImageConceptIds: string[];
+  /** Inline edits (roadmap #12): hookId → operator-edited text. */
+  editedHooks?: Record<string, string>;
   finalizedAt: number;
   operatorReason: string;
 }
