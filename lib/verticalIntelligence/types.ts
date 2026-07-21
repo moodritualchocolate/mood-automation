@@ -30,7 +30,12 @@ export type VerticalId =
   | 'hvac'
   | 'jewelry'
   | 'cosmetics'
-  | 'chocolate';
+  | 'chocolate'
+  | 'dental'
+  | 'therapist'
+  | 'photographer'
+  | 'events'
+  | 'realtor';
 
 export type HookFamily =
   | 'authority'
@@ -78,6 +83,9 @@ export interface HookTemplate {
   family: HookFamily;
   locale: Locale;
   text: string;
+  /** When set, this hook targets one audience archetype (roadmap #3)
+   * and gets a ranking boost when that archetype is resolved. */
+  archetypeId?: string;
 }
 
 export interface UgcScriptTemplate {

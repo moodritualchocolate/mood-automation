@@ -1421,6 +1421,594 @@ const CHOCOLATE: VerticalKnowledge = {
 };
 
 // ────────────────────────────────────────────────────────────────
+// 11 · DENTAL CLINIC
+// ────────────────────────────────────────────────────────────────
+
+const DENTAL: VerticalKnowledge = {
+  id: 'dental',
+  displayName: 'Dental Clinic',
+  supportedLocales: ['he', 'en'],
+  audienceArchetypes: [
+    { id: 'avoider-returning', label: 'The avoider coming back', demographic: '30-55 · skipped the dentist 3-10 years', psychographic: 'Ashamed of the gap · afraid of judgment more than pain' },
+    { id: 'parent-first-visit', label: 'Parent booking for a child', demographic: '30-45 · first pediatric visits', psychographic: 'Wants a gentle experience that won\'t create dental fear' },
+    { id: 'smile-project', label: 'Smile-project adult', demographic: '28-55 · considering aligners / veneers / whitening', psychographic: 'Aesthetic motivation · compares clinics · reads reviews' },
+  ],
+  customerPains: {
+    he: ['פחד מכאב', 'בושה על שנים בלי טיפול', 'פחד מהצעת טיפול מנופחת', 'חוויית ילדות קשה אצל רופא שיניים', 'חשש מהמחיר ומהפתעות בתשלום'],
+    en: ['Fear of pain', 'Shame about the gap since the last visit', 'Fear of an inflated treatment plan', 'A bad childhood dental memory', 'Price anxiety and billing surprises'],
+  },
+  customerDesires: {
+    he: ['לחייך בלי להסתיר את הפה', 'רופא שמסביר לפני שהוא נוגע', 'תוכנית טיפול הגיונית בקצב שלהם', 'מרפאה שלא שופטת', 'לסיים עם זה כבר'],
+    en: ['Smile without hiding the mouth', 'A dentist who explains before touching', 'A sane treatment plan at their pace', 'A judgment-free clinic', 'To finally get it done'],
+  },
+  buyingTriggers: {
+    he: ['כאב שהתחיל בלילה', 'צילום סלפי או אירוע קרוב', 'ילד שמתלונן על שן', 'ביטוח שיניים חדש בעבודה', 'המלצת חברה אחרי חוויה טובה'],
+    en: ['A toothache that started at night', 'An upcoming event or photo', 'A child complaining about a tooth', 'New dental insurance at work', 'A friend\'s recommendation'],
+  },
+  purchaseMoments: {
+    he: ['הבוקר שאחרי לילה עם כאב', 'שבוע לפני חתונה או אירוע', 'תחילת שנת לימודים · תור לילדים', 'החלטת ראש השנה "השנה מטפלים בשיניים"', 'אחרי צילום שבו הסתירו את החיוך'],
+    en: ['The morning after a painful night', 'A week before a wedding or event', 'Back-to-school checkups', 'A new-year "this year I fix my teeth" decision', 'After a photo where they hid their smile'],
+  },
+  trustSignals: {
+    he: ['רופאה מומחית · 15 שנות ניסיון', 'הסבר מלא לפני כל טיפול', 'מחירון שקוף באתר', 'צוות שמתמחה בחרדתיים', 'תוכנית טיפול מדורגת · בלי לחץ'],
+    en: ['Specialist · 15 years of practice', 'Full explanation before any treatment', 'Transparent price list online', 'A team trained for anxious patients', 'A staged plan · no pressure'],
+  },
+  proofTypes: ['patient testimonial (fear-focused)', 'before/after smile (with consent)', 'doctor-explains video', 'transparent price post'],
+  ctaStyles: {
+    he: ['קבעו בדיקה ראשונה · בלי התחייבות.', 'שלחו הודעה — נחזור תוך שעה.', 'הגיע הזמן. קבעו תור.'],
+    en: ['Book a first checkup · no commitment.', 'Message us — we reply within the hour.', 'It\'s time. Book the visit.'],
+  },
+  ugcAnglePatterns: ['fear-to-relief-story', 'doctor-explains', 'parent-child-first-visit', 'smile-reveal'],
+  bestPerformingAdFormats: ['patient fear-to-relief testimonial', 'doctor-on-camera explaining one procedure', 'before/after smile', 'transparent pricing post'],
+  vocabulary: {
+    required: {
+      he: ['שיניים', 'מרפאה', 'רופא שיניים', 'רופאת שיניים', 'טיפול', 'חיוך', 'בדיקה', 'ניקוי', 'שתל', 'יישור'],
+      en: ['teeth', 'dental', 'dentist', 'clinic', 'treatment', 'smile', 'checkup', 'cleaning', 'implant', 'aligners'],
+    },
+    forbidden: {
+      he: ['ללא כאב מובטח', 'מבצע', 'הנחה ענקית', 'חינם לגמרי', 'הכי זול'],
+      en: ['guaranteed painless', 'mega sale', 'huge discount', 'totally free', 'cheapest in town'],
+    },
+    forbiddenWrongCategory: ['שוקולד', 'קקאו', 'ריבוע', 'נוכחות', 'מותר לעצור', 'chocolate', 'cacao', 'presence', 'mood'],
+  },
+  emotionalTerritory: {
+    he: 'לחייך בלי לחשוב על זה.',
+    en: 'Smiling without thinking about it.',
+  },
+  oneLiners: [
+    { locale: 'he', text: 'מרפאת שיניים לאנשים שדחו את זה שנים.' },
+    { locale: 'he', text: 'קודם מסבירים. אחר כך מטפלים. תמיד בקצב שלך.' },
+    { locale: 'he', text: 'החיוך שלך לא שופט אותך. גם אנחנו לא.' },
+    { locale: 'en', text: 'A dental clinic for people who put it off for years.' },
+    { locale: 'en', text: 'We explain first. Treat second. Always at your pace.' },
+    { locale: 'en', text: 'Your smile doesn\'t judge you. Neither do we.' },
+  ],
+  hooks: [
+    { family: 'empathy', locale: 'he', text: 'לא היית אצל רופא שיניים חמש שנים? אנחנו לא הולכים להעיר על זה.', archetypeId: 'avoider-returning' },
+    { family: 'permission', locale: 'he', text: 'מותר להתחיל רק בבדיקה וניקוי. בלי תוכנית טיפול ענקית ביום הראשון.' },
+    { family: 'transparency', locale: 'he', text: 'המחירון של המרפאה באתר. כולו. לפני שקבעת תור.' },
+    { family: 'authority', locale: 'he', text: '15 שנה, אלפי טיפולים — ועדיין כל שתל מתחיל בהסבר של רבע שעה.' },
+    { family: 'pain-mirror', locale: 'he', text: 'אתה מחייך עם פה סגור בתמונות. אנחנו יודעים. בוא נטפל בזה.' },
+    { family: 'empathy', locale: 'he', text: 'הפחד שלך מרופא שיניים התחיל בילדות. הטיפול שלנו מתחיל בלהקשיב.' },
+    { family: 'transparency', locale: 'he', text: 'בדיקה ראשונה: צילום, אבחון, תוכנית. בלי מקדחה בביקור הראשון.' },
+    { family: 'social-proof', locale: 'he', text: '340 מטופלים חרדתיים עברו אצלנו טיפול מלא בשנה האחרונה.' },
+    { family: 'invitation', locale: 'he', text: 'הילד הראשון שלך אצל רופאת שיניים? נהפוך את זה לביקור שהוא יזכור לטובה.', archetypeId: 'parent-first-visit' },
+    { family: 'curiosity', locale: 'he', text: 'מה באמת קורה בבדיקת שיניים ראשונה אחרי עשור? פחות ממה שאתה מדמיין.' },
+    { family: 'empathy', locale: 'en', text: 'Haven\'t seen a dentist in five years? We\'re not going to mention it.', archetypeId: 'avoider-returning' },
+    { family: 'permission', locale: 'en', text: 'It\'s okay to start with just a checkup and cleaning. No giant treatment plan on day one.' },
+    { family: 'transparency', locale: 'en', text: 'Our full price list is on the website. Before you ever book.' },
+    { family: 'authority', locale: 'en', text: '15 years, thousands of treatments — and every implant still starts with a 15-minute explanation.' },
+    { family: 'pain-mirror', locale: 'en', text: 'You smile with your mouth closed in photos. We know. Let\'s fix that.' },
+    { family: 'social-proof', locale: 'en', text: '340 anxious patients completed full treatment with us last year.' },
+    { family: 'invitation', locale: 'en', text: 'Your child\'s first dental visit? We\'ll make it one they remember well.', archetypeId: 'parent-first-visit' },
+  ],
+  ugcScripts: [
+    {
+      locale: 'he', title: 'עשר שנים בלי רופא שיניים', angle: 'fear-to-relief-story', durationSec: 24,
+      script: '[0-5] לא הייתי אצל רופא שיניים עשר שנים. [5-11] קבעתי בדיקה אחרי שכאבה לי שן בלילה. [11-18] אף אחד לא העיר לי מילה. צילום, הסבר, תוכנית מדורגת. [18-24] סיימתי את הטיפול לפני חודש. מחייך בתמונות. פה פתוח.',
+      shotList: ['person at clinic entrance', 'x-ray on screen', 'dentist explaining calmly', 'open-mouth smile close-up'],
+      cta: 'קבעו בדיקה. בלי שיפוט.',
+    },
+    {
+      locale: 'he', title: 'הביקור הראשון של נועה', angle: 'parent-child-first-visit', durationSec: 20,
+      script: '[0-5] נועה בת ארבע. הביקור הראשון אצל רופאת שיניים. [5-12] הצוות נתן לה להחזיק את המראה, להפעיל את הכיסא. [12-17] הבדיקה עצמה לקחה שלוש דקות. [17-20] היא שאלה מתי חוזרים.',
+      shotList: ['child in the big chair smiling', 'holding the little mirror', 'high-five with the dentist', 'sticker on shirt'],
+      cta: 'תור ראשון לילדים · חוויה חיובית.',
+    },
+    {
+      locale: 'he', title: 'מה עולה טיפול, באמת', angle: 'doctor-explains', durationSec: 20,
+      script: '[0-5] השאלה ששואלים אותי הכי הרבה: כמה זה יעלה. [5-11] אז המחירון של המרפאה נמצא באתר. כולו. [11-16] בבדיקה הראשונה תקבלו תוכנית טיפול עם מחיר סופי בכתב. [16-20] בלי הפתעות בסוף. ככה זה צריך להיות.',
+      shotList: ['dentist face-to-camera at clinic', 'price list on website screen', 'printed treatment plan handed over', 'patient nodding relieved'],
+      cta: 'המחירון באתר. הבדיקה אצלנו.',
+    },
+    {
+      locale: 'en', title: 'Ten years without a dentist', angle: 'fear-to-relief-story', durationSec: 24,
+      script: '[0-5] I hadn\'t seen a dentist in ten years. [5-11] I booked after a tooth kept me up at night. [11-18] Nobody said a word about the gap. X-ray, explanation, staged plan. [18-24] Finished treatment last month. I smile with my mouth open now.',
+      shotList: ['person at clinic entrance', 'x-ray on screen', 'dentist explaining calmly', 'open-mouth smile close-up'],
+      cta: 'Book a checkup. Zero judgment.',
+    },
+  ],
+  imageConcepts: [
+    { locale: 'he', title: 'ההסבר לפני', description: 'רופאת שיניים מציגה צילום למטופל על מסך · שניהם יושבים · אווירה רגועה · אור טבעי', renderingNote: 'documentary 50mm · real clinic · no masks-on drama · calm light' },
+    { locale: 'he', title: 'החיוך בתמונה', description: 'אדם בן 45 מחייך חיוך מלא בצילום משפחתי · הרגע שאחרי סיום טיפול', renderingNote: 'documentary candid · natural light · real person · no stock smiles' },
+    { locale: 'he', title: 'הכיסא הגדול', description: 'ילדה בת 4 יושבת בכיסא הטיפולים ומחזיקה מראה קטנה · הצוות מסביב · צבעים רכים', renderingNote: 'documentary · warm light · child at ease · no clinical coldness' },
+    { locale: 'en', title: 'The explanation first', description: 'A dentist showing an x-ray to a patient on screen · both seated · calm atmosphere · natural light', renderingNote: 'documentary 50mm · real clinic · calm light' },
+    { locale: 'en', title: 'The full smile', description: 'A 45-year-old smiling fully in a family photo · the moment after finishing treatment', renderingNote: 'documentary candid · natural light · real person' },
+  ],
+  legalConstraints: ['medical advertising regulations', 'cannot promise painless outcomes', 'before/after requires patient consent'],
+  regulatorySensitivityWarnings: ['avoid pain-free guarantees', 'avoid fear-mongering imagery'],
+};
+
+// ────────────────────────────────────────────────────────────────
+// 12 · THERAPIST · PRIVATE PRACTICE
+// ────────────────────────────────────────────────────────────────
+
+const THERAPIST: VerticalKnowledge = {
+  id: 'therapist',
+  displayName: 'Therapist · Private Practice',
+  supportedLocales: ['he', 'en'],
+  audienceArchetypes: [
+    { id: 'first-time-seeker', label: 'First-time therapy seeker', demographic: '25-45 · never been to therapy · researching for months', psychographic: 'Half-convinced they "don\'t need it" · afraid of being seen starting' },
+    { id: 'life-transition', label: 'Life-transition adult', demographic: '30-55 · divorce / loss / career break / new parenthood', psychographic: 'Knows why they\'re coming · wants a professional fit, not a friend' },
+    { id: 'couple-on-edge', label: 'Couple before the edge', demographic: '30-50 · relationship strained · one partner initiated', psychographic: 'Ambivalent · needs the first session to feel safe for both' },
+  ],
+  customerPains: {
+    he: ['תחושה שמשהו תקוע כבר שנים', 'חרדה שמנהלת את היום', 'זוגיות שנשחקת בשקט', 'בדידות שאי אפשר להגיד בקול', 'פחד שטיפול אומר שמשהו לא בסדר בהם'],
+    en: ['Feeling stuck for years', 'Anxiety running the day', 'A relationship quietly eroding', 'Loneliness they can\'t say out loud', 'Fear that starting therapy means something is wrong with them'],
+  },
+  customerDesires: {
+    he: ['מרחב אחד בשבוע שהוא רק שלהם', 'להבין למה הדפוס חוזר', 'לישון בלי מחשבות רצות', 'לדבר עם בן הזוג בלי שזה מתפוצץ', 'להרגיש שוב כמו עצמם'],
+    en: ['One hour a week that is only theirs', 'Understanding why the pattern repeats', 'Sleeping without racing thoughts', 'Talking to their partner without an explosion', 'Feeling like themselves again'],
+  },
+  buyingTriggers: {
+    he: ['לילה שלישי בלי שינה', 'ריב שחצה קו', 'אובדן או פרידה', 'המלצה מחברה שהעזה לספר', 'רגע מול המראה של "אני לא מזהה את עצמי"'],
+    en: ['A third sleepless night', 'A fight that crossed a line', 'A loss or a breakup', 'A friend who dared to share', 'A mirror moment of "I don\'t recognize myself"'],
+  },
+  purchaseMoments: {
+    he: ['ראשון בערב אחרי סופ"ש קשה', 'אחרי שהילדים נרדמו והשקט מציף', 'החיפוש בגוגל ב-23:40', 'שיחת הטלפון הראשונה · הקול רועד', 'הפגישה הראשונה · יד על הידית'],
+    en: ['Sunday evening after a hard weekend', 'After the kids fall asleep and the quiet floods in', 'The 11:40pm Google search', 'The first phone call · voice shaking', 'The first session · hand on the door handle'],
+  },
+  trustSignals: {
+    he: ['פסיכולוגית קלינית מוסמכת', '14 שנות פרקטיקה', 'שיחת היכרות טלפונית ללא עלות', 'סודיות מלאה · קליניקה דיסקרטית', 'גישה ממוקדת · לא טיפול אינסופי'],
+    en: ['Licensed clinical psychologist', '14 years in practice', 'A free intro phone call', 'Full confidentiality · discreet clinic', 'Focused approach · not endless therapy'],
+  },
+  proofTypes: ['approach-explainer video', 'anonymous client words (with consent)', 'first-session process post', 'credentials + supervision transparency'],
+  ctaStyles: {
+    he: ['שיחת היכרות של 15 דקות · ללא עלות.', 'אפשר לכתוב. לא חייבים להתקשר.', 'הצעד הראשון הוא הודעה אחת.'],
+    en: ['A free 15-minute intro call.', 'You can write. You don\'t have to call.', 'The first step is one message.'],
+  },
+  ugcAnglePatterns: ['what-first-session-looks-like', 'therapist-explains-approach', 'permission-to-start', 'myth-busting'],
+  bestPerformingAdFormats: ['therapist-on-camera explaining the first session', 'quiet text-led post naming the feeling', 'process-transparency carousel', 'anonymous client words'],
+  vocabulary: {
+    required: {
+      he: ['טיפול', 'מטפלת', 'מטפל', 'רגשות', 'חרדה', 'זוגיות', 'שיחה', 'קליניקה', 'תהליך', 'מרחב', 'פגישה'],
+      en: ['therapy', 'therapist', 'feelings', 'anxiety', 'relationship', 'session', 'process', 'space', 'clinic'],
+    },
+    forbidden: {
+      he: ['ריפוי מובטח', 'קסם', 'פתרון מיידי', 'שיטה מהפכנית', 'תוצאות תוך שבוע'],
+      en: ['guaranteed healing', 'magic', 'instant fix', 'revolutionary method', 'results in a week'],
+    },
+    forbiddenWrongCategory: ['שוקולד', 'קקאו', 'ריבוע', 'מותר לעצור', 'chocolate', 'cacao', 'mood'],
+  },
+  emotionalTerritory: {
+    he: 'שעה בשבוע שהיא רק שלך.',
+    en: 'One hour a week that is only yours.',
+  },
+  oneLiners: [
+    { locale: 'he', text: 'טיפול למי שדחו את השיחה הזאת הרבה זמן.' },
+    { locale: 'he', text: 'הדפוס שחוזר — אפשר להבין אותו. בקצב שלך.' },
+    { locale: 'he', text: 'שעה בשבוע. מרחב אחד. כל השאר נשאר בחוץ.' },
+    { locale: 'en', text: 'Therapy for people who postponed this conversation for years.' },
+    { locale: 'en', text: 'The repeating pattern can be understood. At your pace.' },
+    { locale: 'en', text: 'One hour a week. One space. Everything else stays outside.' },
+  ],
+  hooks: [
+    { family: 'permission', locale: 'he', text: 'לא צריך משבר כדי להתחיל טיפול. מספיק שמשהו מרגיש תקוע.', archetypeId: 'first-time-seeker' },
+    { family: 'empathy', locale: 'he', text: 'אתה מחזיק את זה לבד כבר הרבה זמן. זה מה שהקליניקה הזאת בשבילו.' },
+    { family: 'transparency', locale: 'he', text: 'ככה נראית פגישה ראשונה אצלי: שיחה. בלי ספה, בלי מבחנים, בלי אבחנות ביום הראשון.' },
+    { family: 'pain-mirror', locale: 'he', text: 'הראש רץ ב-2 בלילה על אותן מחשבות? בוא ניתן להן מקום אחר.' },
+    { family: 'authority', locale: 'he', text: '14 שנות טיפול לימדו אותי: הדפוס לא נעלם לבד. הוא נעלם כשמבינים אותו.' },
+    { family: 'permission', locale: 'he', text: 'מותר להגיע לטיפול זוגי לפני שזה נשבר. עדיף, בעצם.', archetypeId: 'couple-on-edge' },
+    { family: 'empathy', locale: 'he', text: 'החיפוש הזה ב-23:40 — הוא כבר הצעד הראשון. הבא הוא הודעה אחת.' },
+    { family: 'transparency', locale: 'he', text: 'שיחת היכרות של 15 דקות, ללא עלות. אם אני לא הכתובת — אגיד לך למי כן.' },
+    { family: 'curiosity', locale: 'he', text: 'מה באמת קורה בפגישה ראשונה אצל מטפלת? פחות מפחיד ממה שדמיינת.' },
+    { family: 'permission', locale: 'en', text: 'You don\'t need a crisis to start therapy. Something feeling stuck is enough.', archetypeId: 'first-time-seeker' },
+    { family: 'empathy', locale: 'en', text: 'You\'ve been carrying it alone for a long time. That\'s what this clinic is for.' },
+    { family: 'transparency', locale: 'en', text: 'A first session with me looks like this: a conversation. No couch, no tests, no labels on day one.' },
+    { family: 'pain-mirror', locale: 'en', text: 'Mind racing at 2am over the same thoughts? Let\'s give them another place to go.' },
+    { family: 'authority', locale: 'en', text: '14 years of practice taught me: the pattern doesn\'t vanish on its own. It fades when it\'s understood.' },
+    { family: 'transparency', locale: 'en', text: 'A free 15-minute intro call. If I\'m not the right fit — I\'ll tell you who is.' },
+  ],
+  ugcScripts: [
+    {
+      locale: 'he', title: 'הפגישה הראשונה', angle: 'what-first-session-looks-like', durationSec: 24,
+      script: '[0-5] אנשים שואלים אותי מה קורה בפגישה ראשונה. [5-12] אז ככה: אתה נכנס, יושב, ואנחנו מדברים. על מה שהביא אותך. [12-19] אין מבחנים. אין אבחנות ביום הראשון. אין שיפוט. [19-24] יש שעה שהיא רק שלך. זה הכל, וזה הרבה.',
+      shotList: ['clinic door opening', 'two chairs facing · warm light', 'therapist listening', 'clock showing the hour passed'],
+      cta: 'שיחת היכרות · ללא עלות.',
+    },
+    {
+      locale: 'he', title: 'למה חיכיתי שנתיים', angle: 'permission-to-start', durationSec: 22,
+      script: '[0-5] חיכיתי שנתיים לפני ששלחתי הודעה למטפלת. [5-12] חשבתי שצריך סיבה גדולה. משבר. משהו דרמטי. [12-18] בסוף הגעתי בגלל שהרגשתי תקועה. זה הספיק. [18-22] הלוואי שהייתי שולחת את ההודעה שנתיים קודם.',
+      shotList: ['phone with drafted message', 'walking to a clinic', 'sitting in session mid-conversation', 'walking out lighter'],
+      cta: 'ההודעה הראשונה קצרה משנדמה.',
+    },
+    {
+      locale: 'he', title: 'טיפול זה לא רק משברים', angle: 'myth-busting', durationSec: 20,
+      script: '[0-5] מיתוס: טיפול זה למי שקרה לו משהו נורא. [5-11] המציאות: רוב מי שמגיע לקליניקה שלי מתפקד מצוין מבחוץ. [11-16] הם מגיעים כי דפוס חוזר, כי חרדה שוחקת, כי הזוגיות נסדקת בשקט. [16-20] תהליך טיפולי הוא לא הודאה בכישלון. הוא החלטה.',
+      shotList: ['therapist face-to-camera', 'ordinary person leaving an office job', 'clinic chair · warm light', 'calendar with a weekly slot marked'],
+      cta: 'שיחת היכרות · 15 דקות.',
+    },
+    {
+      locale: 'en', title: 'The first session', angle: 'what-first-session-looks-like', durationSec: 24,
+      script: '[0-5] People ask me what happens in a first session. [5-12] You come in, sit down, and we talk. About what brought you. [12-19] No tests. No labels on day one. No judgment. [19-24] Just an hour that is only yours. That\'s all — and it\'s a lot.',
+      shotList: ['clinic door opening', 'two chairs facing · warm light', 'therapist listening', 'clock showing the hour passed'],
+      cta: 'A free intro call.',
+    },
+  ],
+  imageConcepts: [
+    { locale: 'he', title: 'שני כיסאות', description: 'קליניקה שקטה · שני כיסאות זה מול זה · צמח · אור חלון רך · אין אנשים בפריים', renderingNote: 'documentary still · single window light · warm and unclinical' },
+    { locale: 'he', title: 'ההודעה של 23:40', description: 'יד מחזיקה טלפון במיטה · טיוטת הודעה למטפלת · אור מסך בחושך', renderingNote: 'intimate documentary · screen glow only · no face needed' },
+    { locale: 'he', title: 'היציאה מהפגישה', description: 'אדם יוצא מדלת קליניקה אל רחוב אחר הצהריים · כתפיים משוחררות · אור נמוך', renderingNote: 'documentary 50mm · back view · natural light · quiet relief' },
+    { locale: 'en', title: 'Two chairs', description: 'A quiet clinic · two chairs facing each other · a plant · soft window light · no people in frame', renderingNote: 'documentary still · single window light · warm and unclinical' },
+    { locale: 'en', title: 'The 11:40pm message', description: 'A hand holding a phone in bed · a drafted message to a therapist · screen glow in the dark', renderingNote: 'intimate documentary · screen glow only' },
+  ],
+  legalConstraints: ['licensed-profession advertising rules', 'strict confidentiality — no client details ever', 'no outcome guarantees'],
+  regulatorySensitivityWarnings: ['never imply diagnosis by ad', 'avoid crisis-exploiting language'],
+};
+
+// ────────────────────────────────────────────────────────────────
+// 13 · PHOTOGRAPHER
+// ────────────────────────────────────────────────────────────────
+
+const PHOTOGRAPHER: VerticalKnowledge = {
+  id: 'photographer',
+  displayName: 'Photographer',
+  supportedLocales: ['en', 'he'],
+  audienceArchetypes: [
+    { id: 'engaged-couple', label: 'Engaged couple', demographic: '25-38 · wedding within 12 months', psychographic: 'One decisive partner + one budget-anxious · terrified of cheesy photos' },
+    { id: 'growing-family', label: 'Growing family', demographic: '28-45 · newborn / yearly family session', psychographic: 'Wants real moments, not studio stiffness · time-poor' },
+    { id: 'personal-brand', label: 'Personal-brand professional', demographic: '30-50 · founder / consultant / creator', psychographic: 'Needs photos that look like them on a good day · hates posing' },
+  ],
+  customerPains: {
+    he: ['פחד מתמונות מביכות ומלאכותיות', 'אלבום חתונה שנראה כמו של כולם', 'ילדים שלא משתפים פעולה בסטודיו', 'תמונות תדמית שלא מרגישות "הם"', 'המתנה של חודשים לתמונות'],
+    en: ['Fear of stiff, cheesy photos', 'A wedding album that looks like everyone else\'s', 'Kids who freeze in a studio', 'Headshots that don\'t feel like them', 'Waiting months for the gallery'],
+  },
+  customerDesires: {
+    he: ['תמונות שנראות כמו הרגע באמת', 'צלם שגורם להם לשכוח מהמצלמה', 'אלבום שההורים יבכו ממנו', 'גלריה מהירה אחרי האירוע', 'תמונה אחת שתהיה על הקיר עשור'],
+    en: ['Photos that look like the moment actually felt', 'A photographer who makes them forget the camera', 'An album their parents cry over', 'A fast gallery turnaround', 'One frame that stays on the wall for a decade'],
+  },
+  buyingTriggers: {
+    he: ['טבעת · תאריך נסגר', 'לידה מתקרבת', 'אתר חדש שצריך תמונות', 'אלבום של חברים שהרשים אותם', 'תמונות קודמות שאכזבו'],
+    en: ['A ring · a date set', 'A baby on the way', 'A new website needing photos', 'A friend\'s album that impressed them', 'A previous shoot that disappointed'],
+  },
+  purchaseMoments: {
+    he: ['שבוע אחרי ההצעה · חיפוש ספקים', 'טרימסטר שלישי · תיאום צילומי ניובורן', 'לפני השקת עסק', 'צהרי שישי · גלילת אינסטגרם השוואתית', 'שיחת הווידאו הראשונה עם הצלם'],
+    en: ['A week after the proposal · vendor hunting', 'Third trimester · booking newborn photos', 'Before a business launch', 'Friday-afternoon comparative Instagram scrolling', 'The first video call with the photographer'],
+  },
+  trustSignals: {
+    he: ['גלריות מלאות של חתונות אמיתיות · לא רק היילייטס', '120 חתונות מצולמות', 'גלריה תוך 14 יום · בחוזה', 'פגישת היכרות לפני סגירה', 'סגנון עקבי שרואים בכל אלבום'],
+    en: ['Full real-wedding galleries · not just highlights', '120 weddings photographed', 'Gallery in 14 days · in the contract', 'An intro meeting before booking', 'A consistent style visible across albums'],
+  },
+  proofTypes: ['full-gallery link', 'behind-the-scenes reel', 'client reaction video', 'printed-album flip-through'],
+  ctaStyles: {
+    he: ['בדקו זמינות לתאריך שלכם.', 'שלחו הודעה עם התאריך — עונה תוך יום.', 'קבעו שיחת היכרות.'],
+    en: ['Check availability for your date.', 'Message me your date — I reply within a day.', 'Book an intro call.'],
+  },
+  ugcAnglePatterns: ['behind-the-scenes', 'client-reaction', 'full-gallery-walkthrough', 'how-i-shoot-explainer'],
+  bestPerformingAdFormats: ['single striking frame + one-line story', 'behind-the-scenes reel', 'album flip-through video', 'client reaction'],
+  vocabulary: {
+    required: {
+      he: ['צילום', 'צלם', 'צלמת', 'חתונה', 'אלבום', 'גלריה', 'סשן', 'פורטרט', 'אור', 'תמונות', 'פריים'],
+      en: ['photography', 'photographer', 'wedding', 'album', 'gallery', 'session', 'portrait', 'light', 'frames', 'shoot'],
+    },
+    forbidden: {
+      he: ['הכי זול', 'מבצע רגעי', 'חבילה ב-999', 'סטוק', 'מקצוען מספר 1'],
+      en: ['cheapest', 'flash sale', 'limited slots!!!', 'number one photographer', 'stock quality'],
+    },
+    forbiddenWrongCategory: ['שוקולד', 'קקאו', 'ריבוע', 'נוכחות', 'chocolate', 'cacao', 'mood'],
+  },
+  emotionalTerritory: {
+    he: 'הרגע כמו שהוא הרגיש באמת.',
+    en: 'The moment, the way it actually felt.',
+  },
+  oneLiners: [
+    { locale: 'en', text: 'Wedding photography for couples who hate posing.' },
+    { locale: 'en', text: 'Frames that look like the day felt.' },
+    { locale: 'en', text: 'A full gallery in 14 days. In the contract.' },
+    { locale: 'he', text: 'צילום חתונות לזוגות ששונאים להצטלם.' },
+    { locale: 'he', text: 'פריימים שנראים כמו שהיום הרגיש.' },
+    { locale: 'he', text: 'גלריה מלאה תוך 14 יום. כתוב בחוזה.' },
+  ],
+  hooks: [
+    { family: 'pain-mirror', locale: 'en', text: 'You\'re not awkward in photos. You\'ve just had photographers who pose you.', archetypeId: 'engaged-couple' },
+    { family: 'transparency', locale: 'en', text: 'Ask any photographer for a FULL wedding gallery. Not highlights. Here are three of mine.' },
+    { family: 'authority', locale: 'en', text: '120 weddings taught me: the best frames happen between the moments you planned.' },
+    { family: 'craft', locale: 'en', text: 'One hour before sunset. One street lamp. That\'s the whole lighting setup for my favorite portrait.' },
+    { family: 'social-proof', locale: 'en', text: 'Last month, three couples booked me from one friend\'s album.' },
+    { family: 'invitation', locale: 'en', text: 'Send me your date. If I\'m free, we\'ll talk about the photos you actually want.' },
+    { family: 'pain-mirror', locale: 'en', text: 'Your kids won\'t sit still in a studio. Good. This session doesn\'t happen in a studio.', archetypeId: 'growing-family' },
+    { family: 'transparency', locale: 'en', text: 'Gallery in 14 days — it\'s in the contract, not in the promises.' },
+    { family: 'identity', locale: 'en', text: 'Headshots that look like you on a good day. Not a different person in your clothes.', archetypeId: 'personal-brand' },
+    { family: 'curiosity', locale: 'en', text: 'The one question I ask every couple that changes their entire wedding gallery.' },
+    { family: 'pain-mirror', locale: 'he', text: 'אתם לא "לא פוטוגניים". פשוט צילמו אתכם עם פוזות.', archetypeId: 'engaged-couple' },
+    { family: 'transparency', locale: 'he', text: 'תבקשו מכל צלם גלריה מלאה של חתונה. לא היילייטס. הנה שלוש שלי.' },
+    { family: 'authority', locale: 'he', text: '120 חתונות לימדו אותי: הפריימים הכי טובים קורים בין הרגעים שתכננתם.' },
+    { family: 'craft', locale: 'he', text: 'שעה לפני שקיעה. פנס רחוב אחד. זה כל הסט-אפ של הפורטרט האהוב עליי.' },
+    { family: 'invitation', locale: 'he', text: 'שלחו לי את התאריך. אם אני פנוי — נדבר על התמונות שאתם באמת רוצים.' },
+    { family: 'transparency', locale: 'he', text: 'גלריה תוך 14 יום — כתוב בחוזה, לא בהבטחות.' },
+  ],
+  ugcScripts: [
+    {
+      locale: 'en', title: 'The couple who hated cameras', angle: 'client-reaction', durationSec: 22,
+      script: '[0-5] They warned me: "we\'re terrible in photos." [5-12] So we walked. Talked. I shot from a distance while they forgot me. [12-18] When they opened the gallery, she called me crying. [18-22] "That\'s us. That\'s actually us."',
+      shotList: ['couple walking away candid', 'photographer at distance with long lens', 'gallery on a laptop', 'framed print on a wall'],
+      cta: 'Check your date.',
+    },
+    {
+      locale: 'en', title: 'How I shoot a newborn session', angle: 'how-i-shoot-explainer', durationSec: 24,
+      script: '[0-5] No studio. No props. I come to your home. [5-12] Morning light, the messy kitchen, the real blanket. [12-19] The baby eats, sleeps, cries — we shoot around your life. [19-24] In ten years, this is the version you\'ll want to remember.',
+      shotList: ['photographer entering a home', 'window light on crib', 'parent holding baby by the kitchen', 'black-and-white close of tiny hand'],
+      cta: 'Book your session window early.',
+    },
+    {
+      locale: 'en', title: 'The full gallery test', angle: 'full-gallery-walkthrough', durationSec: 22,
+      script: '[0-5] Every photographer shows you their ten best frames. [5-12] Ask for a FULL wedding gallery instead — every photo a couple received. [12-18] That\'s where you see consistency: the dark dance floor, the rainy ceremony, grandma\'s table. [18-22] Here\'s mine. Judge the worst frame, not the best.',
+      shotList: ['scrolling a full gallery', 'dark dance-floor frame', 'rainy ceremony frame', 'grandmother laughing at table'],
+      cta: 'Ask me for a full gallery.',
+    },
+    {
+      locale: 'he', title: 'הזוג ששנא מצלמות', angle: 'client-reaction', durationSec: 22,
+      script: '[0-5] הם הזהירו אותי: "אנחנו נוראיים בתמונות." [5-12] אז הלכנו. דיברנו. צילמתי מרחוק בזמן שהם שכחו ממני. [12-18] כשהם פתחו את הגלריה, היא התקשרה בוכה. [18-22] "זה אנחנו. באמת אנחנו."',
+      shotList: ['couple walking away candid', 'photographer at distance with long lens', 'gallery on a laptop', 'framed print on a wall'],
+      cta: 'בדקו זמינות לתאריך.',
+    },
+  ],
+  imageConcepts: [
+    { locale: 'en', title: 'Between the moments', description: 'A couple laughing mid-walk, shot from 30 meters with a long lens · golden hour · nobody looking at camera', renderingNote: 'candid documentary · long lens compression · golden light' },
+    { locale: 'en', title: 'The gallery reveal', description: 'A laptop on a kitchen table showing a wedding gallery · two people leaning in · one hand over mouth', renderingNote: 'documentary reaction · natural light · real emotion' },
+    { locale: 'en', title: 'One lamp portrait', description: 'A portrait lit by a single street lamp at night · deep shadow · honest expression', renderingNote: 'single-source night light · 50mm · unretouched feel' },
+    { locale: 'he', title: 'בין הרגעים', description: 'זוג צוחק באמצע הליכה · צולם מ-30 מטר בעדשה ארוכה · שעת זהב · אף אחד לא מסתכל למצלמה', renderingNote: 'candid documentary · long lens · golden light' },
+    { locale: 'he', title: 'פתיחת הגלריה', description: 'לפטופ על שולחן מטבח עם גלריית חתונה · שני אנשים רוכנים · יד על הפה', renderingNote: 'documentary reaction · natural light · real emotion' },
+  ],
+  legalConstraints: ['image rights + client consent for portfolio use', 'contract-stated delivery times must be honored'],
+  regulatorySensitivityWarnings: ['never share client photos without written consent'],
+};
+
+// ────────────────────────────────────────────────────────────────
+// 14 · EVENT PRODUCTION
+// ────────────────────────────────────────────────────────────────
+
+const EVENTS: VerticalKnowledge = {
+  id: 'events',
+  displayName: 'Event Production',
+  supportedLocales: ['he', 'en'],
+  audienceArchetypes: [
+    { id: 'wedding-couple', label: 'Wedding couple', demographic: '25-38 · planning 6-14 months out', psychographic: 'Overwhelmed by vendors · terrified of dropped balls on the day' },
+    { id: 'bar-mitzvah-parent', label: 'Bar/Bat-mitzvah parent', demographic: '38-50 · family event with grandparents watching', psychographic: 'Wants family honored + kid delighted · zero appetite for surprises' },
+    { id: 'company-hr', label: 'Company HR / office manager', demographic: '28-45 · owns the yearly company event', psychographic: 'Their reputation rides on it · needs one throat to choke' },
+  ],
+  customerPains: {
+    he: ['פחד שמשהו יפול ביום האירוע', 'תיאום עשרה ספקים במקביל', 'חריגות תקציב שמתגלות מאוחר', 'אולם שנראה אחרת מהתמונות', 'להיות עסוקים בלוגיסטיקה במקום לחגוג'],
+    en: ['Fear of a dropped ball on the day', 'Coordinating ten vendors at once', 'Budget overruns discovered late', 'A venue that looks nothing like the photos', 'Doing logistics instead of celebrating'],
+  },
+  customerDesires: {
+    he: ['להגיע לאירוע כאורחים של עצמם', 'תקציב סגור בלי הפתעות', 'קונספט שמרגיש "הם" ולא תבנית', 'מישהו אחד שמחזיק את כל החוטים', 'ערב שאנשים מדברים עליו אחר כך'],
+    en: ['Arriving at their own event as guests', 'A closed budget with no surprises', 'A concept that feels like THEM, not a template', 'One person holding every thread', 'A night people talk about afterwards'],
+  },
+  buyingTriggers: {
+    he: ['תאריך נסגר', 'ניסיון תיאום עצמאי שקרס', 'המלצה מאירוע שהם היו בו', 'לחץ משפחתי שמתחיל לגלוש', 'אישור תקציב לאירוע חברה'],
+    en: ['A date locked in', 'A DIY-coordination attempt that collapsed', 'A recommendation from an event they attended', 'Family pressure starting to spill', 'A company-event budget approved'],
+  },
+  purchaseMoments: {
+    he: ['שבועיים אחרי סגירת אולם · הבנת היקף', 'ליל שימוע ספקים ראשון', 'ריב ראשון על התקציב', 'רבעון אחרון · אישור אירוע סוף שנה', 'הפגישה שבה מישהו אומר "צריך מפיקה"'],
+    en: ['Two weeks after booking the venue · scope hits', 'The first vendor-comparison night', 'The first budget argument', 'Q4 · year-end event approved', 'The meeting where someone says "we need a producer"'],
+  },
+  trustSignals: {
+    he: ['180 אירועים מופקים', 'תקציב סגור בחוזה · חריגה עלינו', 'צוות נוכח מהבוקר עד האורח האחרון', 'רשימת ספקים שעברו אצלנו עשרות אירועים', 'וואטסאפ ישיר למפיקה'],
+    en: ['180 events produced', 'Budget locked in the contract · overruns on us', 'A team on-site from morning till the last guest', 'A vendor list proven across dozens of events', 'A direct line to your producer'],
+  },
+  proofTypes: ['event-day timelapse', 'couple/parent testimonial', 'budget-transparency post', 'vendor-team spotlight'],
+  ctaStyles: {
+    he: ['ספרו לנו על האירוע — נחזור עם כיוון ותקציב.', 'פגישת קונספט ראשונה · ללא עלות.', 'שלחו תאריך ומיקום. השאר עלינו.'],
+    en: ['Tell us about the event — we\'ll return with a direction and a budget.', 'A free first concept meeting.', 'Send a date and a venue. We take it from there.'],
+  },
+  ugcAnglePatterns: ['event-day-behind-the-scenes', 'client-arrives-as-guest', 'budget-transparency', 'concept-reveal'],
+  bestPerformingAdFormats: ['event-day timelapse reel', 'client "we were guests at our own event" testimonial', 'before/after venue transformation', 'budget-transparency post'],
+  vocabulary: {
+    required: {
+      he: ['הפקה', 'אירוע', 'חתונה', 'אולם', 'ספקים', 'קונספט', 'תקציב', 'אורחים', 'לוז', 'מפיקה', 'הפקת אירועים'],
+      en: ['production', 'event', 'wedding', 'venue', 'vendors', 'concept', 'budget', 'guests', 'timeline', 'producer'],
+    },
+    forbidden: {
+      he: ['הכי זול בשוק', 'חבילה מוזלת', 'מבצע לסוגרים היום', 'הפקת ענק ב-99'],
+      en: ['cheapest in the market', 'discount bundle', 'book-today deal', 'mega production for 99'],
+    },
+    forbiddenWrongCategory: ['שוקולד', 'קקאו', 'ריבוע', 'נוכחות', 'chocolate', 'cacao', 'mood'],
+  },
+  emotionalTerritory: {
+    he: 'להיות אורחים באירוע של עצמכם.',
+    en: 'Being guests at your own event.',
+  },
+  oneLiners: [
+    { locale: 'he', text: 'הפקת אירועים למי שרוצה לחגוג, לא לנהל.' },
+    { locale: 'he', text: 'תקציב סגור. לוז סגור. אתם רק מגיעים.' },
+    { locale: 'he', text: 'האירוע שאנשים מדברים עליו גם חודש אחרי.' },
+    { locale: 'en', text: 'Event production for people who want to celebrate, not manage.' },
+    { locale: 'en', text: 'Budget locked. Timeline locked. You just show up.' },
+    { locale: 'en', text: 'The event people still talk about a month later.' },
+  ],
+  hooks: [
+    { family: 'pain-mirror', locale: 'he', text: 'שבועיים אחרי שסגרתם אולם, מגיעה ההבנה: יש עוד עשרים החלטות. ולוז. ותקציב.', archetypeId: 'wedding-couple' },
+    { family: 'transparency', locale: 'he', text: 'התקציב נסגר בחוזה. אם ההפקה חורגת — זה עלינו, לא עליכם.' },
+    { family: 'authority', locale: 'he', text: '180 אירועים לימדו אותנו איפה הפקות נופלות. בגלל זה יש לנו לוז לכל רבע שעה.' },
+    { family: 'empathy', locale: 'he', text: 'ביום האירוע אתם לא עונים לאף ספק. אתם חוגגים. בשביל זה אנחנו שם מהבוקר.' },
+    { family: 'social-proof', locale: 'he', text: 'הזוג מהחתונה של יוני שלח אלינו שלושה זוגות מהאורחים שלו.' },
+    { family: 'invitation', locale: 'he', text: 'ספרו לנו על האירוע בהודעה אחת. נחזור עם קונספט ראשוני ותקציב.' },
+    { family: 'pain-mirror', locale: 'he', text: 'אירוע חברה זה הרגע שכל העובדים שופטים את מי שארגן. בואו נדאג שישפטו לטובה.', archetypeId: 'company-hr' },
+    { family: 'transparency', locale: 'he', text: 'ככה נראה לוז הפקה שלנו ליום אירוע. כל רבע שעה מכוסה. תבקשו לראות.' },
+    { family: 'empathy', locale: 'he', text: 'סבתא צריכה כיסא נוח, הילד רוצה במה, ואתם רוצים לנשום. שלושתם מסודרים.', archetypeId: 'bar-mitzvah-parent' },
+    { family: 'pain-mirror', locale: 'en', text: 'Two weeks after booking the venue, it hits: twenty more decisions. And a timeline. And a budget.', archetypeId: 'wedding-couple' },
+    { family: 'transparency', locale: 'en', text: 'The budget locks in the contract. If production overruns — that\'s on us, not you.' },
+    { family: 'authority', locale: 'en', text: '180 events taught us where productions fail. That\'s why our timeline covers every fifteen minutes.' },
+    { family: 'empathy', locale: 'en', text: 'On event day you answer to no vendor. You celebrate. That\'s why we\'re there from morning.' },
+    { family: 'invitation', locale: 'en', text: 'Tell us about the event in one message. We\'ll come back with a concept and a budget.' },
+    { family: 'social-proof', locale: 'en', text: 'June\'s wedding couple sent us three couples from their own guest list.' },
+  ],
+  ugcScripts: [
+    {
+      locale: 'he', title: 'אורחת בחתונה של עצמי', angle: 'client-arrives-as-guest', durationSec: 24,
+      script: '[0-5] בחתונה של אחותי ראיתי אותה עונה לטלפונים מהדי-ג\'יי. [5-12] בחתונה שלי — כיביתי טלפון בעשר בבוקר. [12-19] כל ספק ידע למי להתקשר. וזה לא היה אליי. [19-24] הייתי אורחת בחתונה של עצמי. זאת ההגדרה של הפקה.',
+      shotList: ['bride phone off · handing it away', 'producer with clipboard + earpiece', 'vendors arriving coordinated', 'couple dancing free'],
+      cta: 'ספרו לנו על האירוע שלכם.',
+    },
+    {
+      locale: 'he', title: 'הלוז של רבע שעה', angle: 'event-day-behind-the-scenes', durationSec: 22,
+      script: '[0-5] 06:00 — הצוות באולם. [5-11] 09:30 — פריקת פרחים. 11:15 — סאונד-צ\'ק. [11-17] 16:45 — גנרלית לכניסה. כל רבע שעה מכוסה. [17-22] בשמונה בערב הלקוחות שלנו עושים דבר אחד: חוגגים.',
+      shotList: ['empty venue at dawn', 'flowers unloading', 'sound check', 'packed dance floor at night'],
+      cta: 'תבקשו לראות לוז אמיתי שלנו.',
+    },
+    {
+      locale: 'he', title: 'איך נסגר תקציב אירוע', angle: 'budget-transparency', durationSec: 22,
+      script: '[0-5] תקציב אירוע לא אמור להיות הפתעה בסוף. [5-12] אצלנו: פגישת קונספט, טבלת ספקים עם מחירים, וסכום סופי בחוזה. [12-18] אם ספק מייקר באמצע — ההפרש עלינו. [18-22] ככה אתם יודעים ביום החתימה מה תשלמו ביום האירוע.',
+      shotList: ['budget spreadsheet on screen', 'vendor price table', 'contract signing close-up', 'handshake'],
+      cta: 'פגישת קונספט ראשונה · ללא עלות.',
+    },
+    {
+      locale: 'en', title: 'A guest at my own wedding', angle: 'client-arrives-as-guest', durationSec: 24,
+      script: '[0-5] At my sister\'s wedding I watched her take calls from the DJ. [5-12] At mine — my phone went off at 10am. [12-19] Every vendor knew who to call. It wasn\'t me. [19-24] I was a guest at my own wedding. That\'s what production means.',
+      shotList: ['bride handing phone away', 'producer with earpiece', 'vendors arriving coordinated', 'couple dancing free'],
+      cta: 'Tell us about your event.',
+    },
+  ],
+  imageConcepts: [
+    { locale: 'he', title: 'האולם בשש בבוקר', description: 'אולם ריק באור בוקר · מפיקה עם לוח ואוזנייה · ארגזי פרחים נפרקים ברקע', renderingNote: 'documentary dawn light · real crew · no glamour staging' },
+    { locale: 'he', title: 'הטלפון הכבוי', description: 'טלפון של כלה נמסר לידי מפיקה · תקריב ידיים · שמלה ברקע מטושטש', renderingNote: 'documentary close · soft window light · symbolic handoff' },
+    { locale: 'he', title: 'רבע לכניסה', description: 'מאחורי הקלעים רגע לפני כניסת חתן וכלה · צוות עם אוזניות · אורות אולם ברקע', renderingNote: 'backstage documentary · mixed light · anticipation' },
+    { locale: 'en', title: 'The venue at 6am', description: 'An empty venue in dawn light · a producer with clipboard and earpiece · flower crates unloading behind', renderingNote: 'documentary dawn light · real crew' },
+    { locale: 'en', title: 'The phone handoff', description: 'A bride\'s phone being handed to a producer · hands close-up · dress blurred behind', renderingNote: 'documentary close · soft light · symbolic' },
+  ],
+  legalConstraints: ['vendor contracts + liability clarity', 'budget-lock claims must match the actual contract'],
+  regulatorySensitivityWarnings: ['never promise what vendor contracts don\'t back'],
+};
+
+// ────────────────────────────────────────────────────────────────
+// 15 · REAL-ESTATE AGENT (residential resale · not investment)
+// ────────────────────────────────────────────────────────────────
+
+const REALTOR: VerticalKnowledge = {
+  id: 'realtor',
+  displayName: 'Real-Estate Agent',
+  supportedLocales: ['he', 'en'],
+  audienceArchetypes: [
+    { id: 'first-time-seller', label: 'First-time seller', demographic: '35-55 · selling the family apartment', psychographic: 'Emotionally attached · terrified of selling under value · suspicious of agents' },
+    { id: 'upgrading-family', label: 'Upgrading family', demographic: '32-45 · selling + buying simultaneously', psychographic: 'The timing chain scares them more than the price' },
+    { id: 'inherited-property', label: 'Inherited-property sibling', demographic: '40-60 · selling a parent\'s apartment with siblings', psychographic: 'Wants a fast clean process that keeps family peace' },
+  ],
+  customerPains: {
+    he: ['פחד למכור מתחת לשווי', 'חוסר אמון במתווכים', 'תזמון כפול של מכירה וקנייה', 'מסע מציאת קונים שנמרח חודשים', 'ריבים בין יורשים על המחיר'],
+    en: ['Fear of selling under value', 'Distrust of agents', 'The sell-buy timing chain', 'A buyer hunt dragging for months', 'Sibling arguments over price'],
+  },
+  customerDesires: {
+    he: ['לדעת מה הדירה באמת שווה', 'עסקה שנסגרת בזמן סביר', 'מתווך אחד שמוביל ולא נעלם', 'שקט מול הקונים והעורכי דין', 'לצאת בתחושה שלא עבדו עליהם'],
+    en: ['Knowing what the apartment is truly worth', 'A deal closed in reasonable time', 'One agent who leads and doesn\'t vanish', 'Quiet handling of buyers and lawyers', 'Walking away sure nobody played them'],
+  },
+  buyingTriggers: {
+    he: ['החלטת שדרוג אחרי ילד שני', 'ירושה שהתקבלה', 'שכן שמכר במחיר מפתיע', 'ניסיון מכירה עצמאית שנתקע', 'הודעה על התחדשות עירונית'],
+    en: ['An upgrade decision after a second child', 'An inheritance received', 'A neighbor\'s surprising sale price', 'A stuck for-sale-by-owner attempt', 'An urban-renewal notice'],
+  },
+  purchaseMoments: {
+    he: ['שיחת הערכת השווי הראשונה', 'סיור ראשון בדירה עם המתווך', 'פתיחת הבית הראשונה', 'שיחת "יש הצעה" בערב', 'החתימה אצל עורך הדין'],
+    en: ['The first valuation call', 'The first apartment walkthrough with the agent', 'The first open house', 'The evening "we have an offer" call', 'The signing at the lawyer\'s office'],
+  },
+  trustSignals: {
+    he: ['74 דירות נמכרו בשכונה הזאת', 'הערכת שווי מנומקת בכתב', 'עדכון שבועי קבוע בוואטסאפ', 'צלם מקצועי לכל נכס', 'עמלה שקופה מהשיחה הראשונה'],
+    en: ['74 apartments sold in this neighborhood', 'A written, reasoned valuation', 'A fixed weekly WhatsApp update', 'A professional photographer for every listing', 'A transparent fee from the first call'],
+  },
+  proofTypes: ['sold-in-X-days case post', 'seller testimonial', 'neighborhood price-data post', 'listing before/after photos'],
+  ctaStyles: {
+    he: ['קבעו שיחת הערכת שווי · ללא עלות.', 'שלחו כתובת — אחזור עם טווח מחיר מנומק.', 'בואו נדבר על הדירה שלכם.'],
+    en: ['Book a free valuation call.', 'Send the address — I\'ll return a reasoned price range.', 'Let\'s talk about your apartment.'],
+  },
+  ugcAnglePatterns: ['sold-story', 'valuation-explainer', 'neighborhood-data', 'seller-testimonial'],
+  bestPerformingAdFormats: ['sold-in-X-days story', 'neighborhood price-data post', 'valuation explainer video', 'seller testimonial'],
+  vocabulary: {
+    required: {
+      he: ['דירה', 'נכס', 'שכונה', 'מכירה', 'קונים', 'מתווך', 'מתווכת', 'הערכת שווי', 'עסקה', 'תיווך', 'שוק'],
+      en: ['apartment', 'listing', 'neighborhood', 'selling', 'buyers', 'agent', 'valuation', 'deal', 'market', 'home'],
+    },
+    forbidden: {
+      he: ['הזדמנות של פעם בחיים', 'מציאה', 'בלעדיות עכשיו', 'מחיר רצפה', 'חייבים למכור'],
+      en: ['once in a lifetime', 'steal of a deal', 'must sell now', 'rock-bottom price', 'exclusive!!!'],
+    },
+    forbiddenWrongCategory: ['שוקולד', 'קקאו', 'ריבוע', 'נוכחות', 'chocolate', 'cacao', 'mood'],
+  },
+  emotionalTerritory: {
+    he: 'למכור בראש שקט, במחיר אמיתי.',
+    en: 'Selling with a quiet mind, at a true price.',
+  },
+  oneLiners: [
+    { locale: 'he', text: 'מתווכת לאנשים שלא סומכים על מתווכים.' },
+    { locale: 'he', text: 'הערכת שווי מנומקת בכתב. לפני שחותמים על כלום.' },
+    { locale: 'he', text: 'הדירה שלכם שווה מספר. בואו נגלה אותו באמת.' },
+    { locale: 'en', text: 'An agent for people who don\'t trust agents.' },
+    { locale: 'en', text: 'A written, reasoned valuation. Before you sign anything.' },
+    { locale: 'en', text: 'Your apartment is worth a number. Let\'s find the real one.' },
+  ],
+  hooks: [
+    { family: 'pain-mirror', locale: 'he', text: 'השכן מכר ב-2.4 מיליון ואתם בטוחים שהדירה שלכם שווה יותר? בואו נבדוק ברצינות.', archetypeId: 'first-time-seller' },
+    { family: 'transparency', locale: 'he', text: 'הערכת שווי אצלי היא מסמך בכתב עם נימוקים. לא מספר באוויר בשיחת טלפון.' },
+    { family: 'authority', locale: 'he', text: '74 דירות מכרתי בשכונה הזאת. אני יודעת מה קונים מוכנים לשלם בכל רחוב.' },
+    { family: 'empathy', locale: 'he', text: 'למכור את דירת הילדות של ההורים זה לא רק עסקה. ככה מנהלים את זה בין אחים בשלום.', archetypeId: 'inherited-property' },
+    { family: 'transparency', locale: 'he', text: 'העמלה שלי נאמרת בשיחה הראשונה. לפני שראיתי את הדירה.' },
+    { family: 'pain-mirror', locale: 'he', text: 'למכור ולקנות באותו חודש — זו השרשרת שמפחידה אתכם. בשביל זה יש תכנון תזמונים.', archetypeId: 'upgrading-family' },
+    { family: 'social-proof', locale: 'he', text: 'הדירה ברחוב סירקין נמכרה תוך 19 יום, 4% מעל הערכת השווי.' },
+    { family: 'invitation', locale: 'he', text: 'שלחו לי כתובת. אחזור עם טווח מחיר מנומק תוך יומיים.' },
+    { family: 'competence', locale: 'he', text: 'עדכון שבועי קבוע: מי התקשר, מי ביקר, מה ההצעות. גם כשאין חדש — תשמעו ממני.' },
+    { family: 'pain-mirror', locale: 'en', text: 'The neighbor sold at a surprising price and now you\'re unsure what yours is worth? Let\'s check properly.', archetypeId: 'first-time-seller' },
+    { family: 'transparency', locale: 'en', text: 'My valuation is a written document with reasons. Not a number tossed out on a call.' },
+    { family: 'authority', locale: 'en', text: 'I\'ve sold 74 apartments in this neighborhood. I know what buyers pay on every street.' },
+    { family: 'transparency', locale: 'en', text: 'My fee is stated on the first call. Before I\'ve seen the apartment.' },
+    { family: 'competence', locale: 'en', text: 'A fixed weekly update: who called, who visited, what was offered. Even when nothing\'s new — you hear from me.' },
+    { family: 'invitation', locale: 'en', text: 'Send me the address. I\'ll return a reasoned price range within two days.' },
+  ],
+  ugcScripts: [
+    {
+      locale: 'he', title: '19 יום לעסקה', angle: 'sold-story', durationSec: 24,
+      script: '[0-5] הדירה עמדה למכירה עצמאית ארבעה חודשים. [5-12] נכנסתי: צילום מקצועי, מחיר מנומק, פתיחת בית אחת מסודרת. [12-19] תשעה ביקורים בשבוע הראשון. שתי הצעות. [19-24] נסגרה ב-19 יום, ארבעה אחוז מעל ההערכה.',
+      shotList: ['old listing photos vs pro photos', 'open-house prep', 'visitors at the door', 'signing at the lawyer'],
+      cta: 'שלחו כתובת. נתחיל בהערכה.',
+    },
+    {
+      locale: 'he', title: 'איך בונים הערכת שווי', angle: 'valuation-explainer', durationSec: 24,
+      script: '[0-5] מספר באוויר זו לא הערכת שווי. [5-12] אני שולפת כל עסקה ברדיוס 300 מטר מהשנה האחרונה. [12-19] מנרמלת לפי קומה, מצב, חניה ומרפסת. [19-24] אתם מקבלים מסמך בכתב. ואז מחליטים בשקט.',
+      shotList: ['screen with transaction data', 'walking the actual street', 'annotated valuation document', 'sellers reading it at their table'],
+      cta: 'הערכת שווי מנומקת · ללא עלות.',
+    },
+    {
+      locale: 'he', title: 'העדכון השבועי', angle: 'seller-testimonial', durationSec: 20,
+      script: '[0-5] המתווכת הקודמת נעלמה לנו לשבועיים. [5-11] אצל מיכל קיבלנו כל יום ראשון הודעה: כמה התקשרו, מי ביקר בדירה, מה אמרו. [11-16] גם בשבוע שלא קרה כלום — קיבלנו את ההודעה. [16-20] ככה נראית שליטה בתהליך מכירה.',
+      shotList: ['weekly WhatsApp update on phone', 'agent showing the apartment', 'notes after a viewing', 'sellers reading the update at dinner'],
+      cta: 'שלחו כתובת · נתחיל.',
+    },
+    {
+      locale: 'en', title: '19 days to a deal', angle: 'sold-story', durationSec: 24,
+      script: '[0-5] The apartment sat for-sale-by-owner for four months. [5-12] I stepped in: pro photos, a reasoned price, one well-run open house. [12-19] Nine viewings in week one. Two offers. [19-24] Closed in 19 days, four percent above valuation.',
+      shotList: ['old photos vs pro photos', 'open-house prep', 'visitors at the door', 'signing at the lawyer'],
+      cta: 'Send the address. We start with a valuation.',
+    },
+  ],
+  imageConcepts: [
+    { locale: 'he', title: 'מסמך ההערכה', description: 'מסמך הערכת שווי מודפס על שולחן מטבח · זוג קורא · קפה · אור בוקר', renderingNote: 'documentary still · home kitchen light · real document' },
+    { locale: 'he', title: 'פתיחת הבית', description: 'דלת דירה פתוחה · מבקרים נכנסים · מתווכת מקבלת בחיוך · אור טבעי ממרפסת', renderingNote: 'documentary 35mm · real apartment · no staging gloss' },
+    { locale: 'he', title: 'החתימה', description: 'ידיים חותמות על חוזה אצל עורך דין · שתי משפחות סביב שולחן · לחיצת יד ברקע', renderingNote: 'documentary close · office light · quiet relief' },
+    { locale: 'en', title: 'The valuation document', description: 'A printed valuation on a kitchen table · a couple reading · coffee · morning light', renderingNote: 'documentary still · home light · real document' },
+    { locale: 'en', title: 'The open house', description: 'An apartment door open · visitors entering · the agent greeting · balcony light', renderingNote: 'documentary 35mm · real apartment' },
+  ],
+  legalConstraints: ['licensed-agent advertising rules', 'valuation language must avoid guarantee of sale price'],
+  regulatorySensitivityWarnings: ['avoid pressure language ("must sell now")', 'never misstate comparable-sale data'],
+};
+
+// ────────────────────────────────────────────────────────────────
 // EXPORTS
 // ────────────────────────────────────────────────────────────────
 
@@ -1435,11 +2023,17 @@ export const VERTICAL_KNOWLEDGE_BASE: Record<VerticalId, VerticalKnowledge> = {
   'jewelry': JEWELRY,
   'cosmetics': COSMETICS,
   'chocolate': CHOCOLATE,
+  'dental': DENTAL,
+  'therapist': THERAPIST,
+  'photographer': PHOTOGRAPHER,
+  'events': EVENTS,
+  'realtor': REALTOR,
 };
 
 export const ALL_VERTICAL_IDS: VerticalId[] = [
   'real-estate', 'accountant', 'lawyer', 'fitness', 'restaurant',
   'saas', 'hvac', 'jewelry', 'cosmetics', 'chocolate',
+  'dental', 'therapist', 'photographer', 'events', 'realtor',
 ];
 
 export function getVertical(id: VerticalId): VerticalKnowledge {

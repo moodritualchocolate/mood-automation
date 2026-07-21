@@ -90,6 +90,36 @@ const DETECTION_RULES: DetectionRule[] = [
     keywordsEn: ['cosmetics', 'skincare', 'skin-care', 'beauty brand', 'face cream', 'moisturizer', 'serum', 'cleanser'],
     priority: 85,
   },
+  {
+    id: 'dental',
+    keywordsHe: ['רופא שיניים', 'רופאת שיניים', 'מרפאת שיניים', 'שיניים', 'יישור שיניים', 'שתלים', 'הלבנת שיניים'],
+    keywordsEn: ['dental', 'dentist', 'teeth', 'orthodont', 'implants', 'whitening', 'aligners'],
+    priority: 95,
+  },
+  {
+    id: 'therapist',
+    keywordsHe: ['פסיכולוג', 'פסיכולוגית', 'מטפלת רגשית', 'טיפול רגשי', 'טיפול זוגי', 'פסיכותרפיה', 'קליניקה לטיפול'],
+    keywordsEn: ['therapist', 'therapy practice', 'psychologist', 'psychotherapy', 'counseling', 'couples therapy', 'mental health practice'],
+    priority: 92,
+  },
+  {
+    id: 'photographer',
+    keywordsHe: ['צלם', 'צלמת', 'צילום חתונות', 'צילומי משפחה', 'צילומי תדמית', 'סטודיו לצילום'],
+    keywordsEn: ['photographer', 'photography', 'wedding photos', 'family photos', 'headshots', 'photo studio', 'portrait sessions'],
+    priority: 90,
+  },
+  {
+    id: 'events',
+    keywordsHe: ['הפקת אירועים', 'מפיקת אירועים', 'מפיק אירועים', 'הפקות', 'ניהול אירועים', 'תכנון חתונות'],
+    keywordsEn: ['event production', 'event producer', 'event planning', 'wedding planner', 'event management', 'productions company'],
+    priority: 92,
+  },
+  {
+    id: 'realtor',
+    keywordsHe: ['מתווך', 'מתווכת', 'תיווך', 'מכירת דירות', 'תיווך נדל"ן', 'סוכן נדל"ן', 'סוכנת נדל"ן'],
+    keywordsEn: ['realtor', 'real estate agent', 'estate agent', 'listing agent', 'selling homes', 'brokerage', 'home selling'],
+    priority: 93,
+  },
 ];
 
 const HEBREW_RE = /[֐-׿]/;

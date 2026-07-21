@@ -246,7 +246,10 @@ function pickHooks(
     });
     // Learning folds into commercialScore so downstream sorting
     // (engine re-sorts by commercialScore desc) inherits the signal.
-    const boost = learningBoost(learning, ctx.verticalId, h.family, h.text);
+    // Archetype-targeted hooks (roadmap #3) get a further boost when
+    // the operator's audience resolved to that archetype.
+    const archetypeBoost = h.archetypeId === ctx.resolvedAudience.id ? 1.15 : 1;
+    const boost = learningBoost(learning, ctx.verticalId, h.family, h.text) * archetypeBoost;
     return {
       id: newId('hook'),
       text: h.text,

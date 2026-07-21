@@ -179,6 +179,71 @@ const FIXTURES: Fixture[] = [
     // language · so the cross-vertical guard is empty here.
     forbiddenCrossVertical: [],
   },
+  {
+    verticalId: 'dental',
+    brandName: 'Smile Clinic',
+    locale: 'he',
+    input: {
+      artifact: 'מרפאת שיניים פרטית המתמחה במטופלים חרדתיים',
+      audience: 'מבוגרים 30-55 שדחו טיפולי שיניים שנים',
+      emotional: 'לחייך בלי לחשוב על זה',
+      locale: 'Israel · Hebrew',
+    },
+    expectedKeywords: ['שיניים', 'מרפאה', 'רופא שיניים', 'רופאת שיניים', 'טיפול', 'חיוך', 'בדיקה', 'ניקוי', 'שתל'],
+    forbiddenCrossVertical: ['שוקולד', 'קקאו', 'ריבוע', 'נוכחות', 'מותר לעצור'],
+  },
+  {
+    verticalId: 'therapist',
+    brandName: 'Merhav Clinic',
+    locale: 'he',
+    input: {
+      artifact: 'קליניקה פרטית לפסיכותרפיה וטיפול זוגי',
+      audience: 'מבוגרים 28-50 שמרגישים תקועים או שחוקים',
+      emotional: 'שעה בשבוע שהיא רק שלהם',
+      locale: 'Israel · Hebrew',
+    },
+    expectedKeywords: ['טיפול', 'מטפלת', 'מטפל', 'חרדה', 'זוגיות', 'שיחה', 'קליניקה', 'תהליך', 'פגישה'],
+    forbiddenCrossVertical: ['שוקולד', 'קקאו', 'ריבוע', 'מותר לעצור'],
+  },
+  {
+    verticalId: 'photographer',
+    brandName: 'Frame & Field',
+    locale: 'en',
+    input: {
+      artifact: 'Documentary wedding photography for couples who hate posing',
+      audience: 'Engaged couples 25-38 planning within 12 months',
+      emotional: 'Frames that look like the day actually felt',
+      locale: 'Global · English',
+    },
+    expectedKeywords: ['photography', 'photographer', 'wedding', 'album', 'gallery', 'session', 'portrait', 'light', 'frames', 'shoot'],
+    forbiddenCrossVertical: ['chocolate', 'cacao', 'presence', 'mood', 'square'],
+  },
+  {
+    verticalId: 'events',
+    brandName: 'Hafaka One',
+    locale: 'he',
+    input: {
+      artifact: 'חברת הפקת אירועים לחתונות ואירועי חברה',
+      audience: 'זוגות מתחתנים והורים לבר מצווה שרוצים לחגוג בלי לנהל',
+      emotional: 'להיות אורחים באירוע של עצמם',
+      locale: 'Israel · Hebrew',
+    },
+    expectedKeywords: ['הפקה', 'אירוע', 'חתונה', 'אולם', 'ספקים', 'קונספט', 'תקציב', 'לוז', 'מפיקה'],
+    forbiddenCrossVertical: ['שוקולד', 'קקאו', 'ריבוע', 'נוכחות', 'מותר לעצור'],
+  },
+  {
+    verticalId: 'realtor',
+    brandName: 'Michal Realty',
+    locale: 'he',
+    input: {
+      artifact: 'שירותי תיווך למכירת דירות מגורים בשרון',
+      audience: 'משפחות 35-55 שמוכרות דירה ראשונה או נכס ירושה',
+      emotional: 'למכור בראש שקט במחיר אמיתי',
+      locale: 'Israel · Hebrew',
+    },
+    expectedKeywords: ['דירה', 'נכס', 'שכונה', 'מכירה', 'קונים', 'מתווך', 'מתווכת', 'הערכת שווי', 'עסקה', 'תיווך'],
+    forbiddenCrossVertical: ['שוקולד', 'קקאו', 'ריבוע', 'נוכחות', 'מותר לעצור'],
+  },
 ];
 
 // ─── shared cross-vertical leakage list (the "MOOD language") ──
@@ -385,7 +450,7 @@ function checkAllVerticalsHaveCorpus() {
   // Sanity: every supported vertical has at least 4 hook templates in
   // each supported locale (otherwise the round-robin selector picks
   // duplicates).
-  const ids: VerticalId[] = ['real-estate', 'accountant', 'lawyer', 'fitness', 'restaurant', 'saas', 'hvac', 'jewelry', 'cosmetics', 'chocolate'];
+  const ids: VerticalId[] = Object.keys(VERTICAL_KNOWLEDGE_BASE) as VerticalId[];
   for (const id of ids) {
     const v = VERTICAL_KNOWLEDGE_BASE[id];
     for (const locale of v.supportedLocales) {
