@@ -33,3 +33,7 @@ yarn-error.log*
 # hyperframes transient snapshots
 video/**/snaps/
 video/**/snapshots/
+
+# hyperframes transient render work dirs
+video/**/renders/work-*/
+video/**/renders/.*hf-transaction*/
