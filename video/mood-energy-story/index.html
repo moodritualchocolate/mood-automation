@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="he">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>mood ENERGY — הקפה הפסיק לעבוד</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Heebo";
+        src: url("assets/fonts/heebo-latin.woff2") format("woff2");
+        font-weight: 100 900;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Heebo";
+        src: url("assets/fonts/heebo-hebrew.woff2") format("woff2");
+        font-weight: 100 900;
+        font-display: block;
+        unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html, body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+      }
+      body { font-family: "Heebo", sans-serif; }
+
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+      }
+
+      /* ---- persistent background ---- */
+      #bg { position: absolute; inset: 0; background: #F5EEE4; }
+      #bg-glow {
+        position: absolute;
+        width: 1300px;
+        height: 1300px;
+        top: -200px;
+        right: -300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,107,53,0.28) 0%, rgba(255,107,53,0) 65%);
+      }
+      #bg-grain {
+        position: absolute;
+        inset: 0;
+        opacity: 0.5;
+        background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+        background-size: 4px 4px;
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 90px;
+        color: #1A1512;
+        direction: rtl;
+      }
+
+      .kicker {
+        font-weight: 700;
+        font-size: 40px;
+        letter-spacing: 2px;
+        color: #FF6B35;
+      }
+      .line { display: block; font-weight: 900; line-height: 1.02; }
+      .lg { font-size: 128px; }
+      .md { font-size: 104px; }
+      .clock { font-weight: 900; font-size: 300px; letter-spacing: -6px; }
+
+      .orange { color: #FF6B35; }
+      .word { display: inline-block; }
+
+      /* highlight bar behind a word */
+      .hl-wrap { position: relative; display: inline-block; }
+      .hl-bar {
+        position: absolute;
+        left: -14px; right: -14px;
+        top: 12%; bottom: 12%;
+        background: #FF6B35;
+        z-index: 0;
+        transform-origin: right center;
+      }
+      .hl-text { position: relative; z-index: 1; color: #FFFFFF; }
+
+      /* ---- mood wordmark ---- */
+      .wordmark {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 900;
+        color: #1A1512;
+        line-height: 1;
+        direction: ltr;
+      }
+      .wordmark .glyph { display: inline-block; }
+      .oo {
+        display: inline-block;
+        border-radius: 50%;
+        background: #FF6B35;
+        position: relative;
+      }
+      .oo::after {
+        content: "";
+        position: absolute;
+        left: 50%; top: 50%;
+        width: 26%; height: 26%;
+        background: #F5EEE4;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .wm-lg { font-size: 190px; }
+      .wm-lg .oo { width: 150px; height: 150px; margin: 0 6px; }
+      .wm-sm { font-size: 96px; }
+      .wm-sm .oo { width: 76px; height: 76px; margin: 0 4px; }
+
+      .tagline { font-weight: 700; font-size: 46px; letter-spacing: 6px; color: #6B5E54; }
+      .energy-mark {
+        font-weight: 900; font-size: 150px; letter-spacing: 14px;
+        color: #FF6B35; direction: ltr;
+      }
+      .ingredients { font-weight: 700; font-size: 44px; color: #3B322C; line-height: 1.5; max-width: 900px; }
+      .ing { display: inline-block; }
+      .dot-sep { color: #FF6B35; margin: 0 14px; display: inline-block; }
+
+      .launch { font-weight: 900; font-size: 220px; color: #1A1512; direction: ltr; }
+      .cta { font-weight: 700; font-size: 52px; color: #FF6B35; letter-spacing: 3px; }
+
+      .stack { display: flex; flex-direction: column; align-items: center; }
+      .stack > * + * { margin-top: 26px; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-width="1080"
+      data-height="1920"
+      data-duration="25"
+    >
+      <!-- persistent background -->
+      <section id="bg-scene" class="clip" data-start="0" data-duration="25" data-track-index="0" style="padding:0">
+        <div id="bg"></div>
+        <div id="bg-glow"></div>
+        <div id="bg-grain"></div>
+      </section>
+
+      <!-- Scene 1: 16:30 -->
+      <section id="s1" class="clip" data-start="0" data-duration="4.2" data-track-index="1">
+        <div class="clock" id="s1-clock">16:30</div>
+        <div class="lg" id="s1-hook" style="margin-top:20px">עוד קפה?</div>
+      </section>
+
+      <!-- Scene 2: 5 cups, still nothing -->
+      <section id="s2" class="clip" data-start="4.2" data-duration="4" data-track-index="2">
+        <div class="stack">
+          <span class="line lg" id="s2-a">5 כוסות.</span>
+          <span class="line lg" id="s2-b">ועדיין כלום.</span>
+        </div>
+      </section>
+
+      <!-- Scene 3: what if coffee is the problem -->
+      <section id="s3" class="clip" data-start="8.2" data-duration="4.8" data-track-index="3">
+        <div class="stack">
+          <span class="line md" id="s3-a">מה אם הקפה</span>
+          <span class="line lg" id="s3-b">
+            הוא
+            <span class="hl-wrap">
+              <span class="hl-bar" id="s3-bar"></span>
+              <span class="hl-text" id="s3-problem">הבעיה?</span>
+            </span>
+          </span>
+        </div>
+      </section>
+
+      <!-- Scene 4: there is another ritual -> logo -->
+      <section id="s4" class="clip" data-start="13" data-duration="4" data-track-index="4">
+        <div class="lg" id="s4-line">יש ריטואל אחר.</div>
+        <div class="wordmark wm-lg" id="s4-logo" style="margin-top:10px">
+          <span class="glyph">m</span><span class="glyph">o</span><span class="oo"></span><span class="glyph">d</span>
+        </div>
+      </section>
+
+      <!-- Scene 5: product + ingredients -->
+      <section id="s5" class="clip" data-start="17" data-duration="4.4" data-track-index="5">
+        <div class="stack">
+          <div class="wordmark wm-sm" id="s5-logo">
+            <span class="glyph">m</span><span class="glyph">o</span><span class="oo"></span><span class="glyph">d</span>
+          </div>
+          <div class="energy-mark" id="s5-energy">ENERGY</div>
+          <div class="tagline" id="s5-tag">ריטואל פונקציונלי</div>
+          <div class="ingredients" id="s5-ing" style="margin-top:20px">
+            <span class="ing">25מ״ג קפאין טבעי</span><span class="dot-sep">·</span><span class="ing">מאקה</span><span class="dot-sep">·</span><span class="ing">גוארנה</span><span class="dot-sep">·</span><span class="ing">ג׳ינסנג</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 6: launch date + CTA -->
+      <section id="s6" class="clip" data-start="21.4" data-duration="3.6" data-track-index="6">
+        <div class="stack">
+          <div class="kicker" id="s6-kicker">משיקים</div>
+          <div class="launch" id="s6-date">12.8</div>
+          <div class="wordmark wm-sm" id="s6-logo" style="margin-top:14px">
+            <span class="glyph">m</span><span class="glyph">o</span><span class="oo"></span><span class="glyph">d</span>
+          </div>
+          <div class="cta" id="s6-cta" style="margin-top:14px">בלינק בביו</div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const EASE = "power3.out";
+
+      /* ---- background: slow drifting glow (the film's current) ---- */
+      tl.fromTo("#bg-glow",
+        { x: 0, y: 0, scale: 1 },
+        { x: -180, y: 240, scale: 1.25, duration: 25, ease: "none" }, 0);
+
+      /* ================= Scene 1 (0–4.2) ================= */
+      tl.fromTo("#s1-clock", { scale: 1.35, autoAlpha: 0 },
+        { scale: 1, autoAlpha: 1, duration: 0.7, ease: "power4.out" }, 0.15);
+      tl.fromTo("#s1-hook", { y: 60, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.5, ease: "power4.out" }, 1.25);
+      tl.to(["#s1-clock", "#s1-hook"], { autoAlpha: 0, y: -40, duration: 0.4, ease: "power2.in" }, 3.7);
+
+      /* ================= Scene 2 (4.2–8.2) ================= */
+      tl.fromTo("#s2-a", { y: 70, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.5, ease: EASE }, 4.5);
+      tl.fromTo("#s2-b", { y: 70, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.5, ease: EASE }, 5.15);
+      tl.to(["#s2-a", "#s2-b"], { autoAlpha: 0, y: -40, duration: 0.4, ease: "power2.in" }, 7.7);
+
+      /* ================= Scene 3 (8.2–13) ================= */
+      tl.fromTo("#s3-a", { y: 60, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.5, ease: EASE }, 8.5);
+      tl.fromTo("#s3-b", { y: 60, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.5, ease: EASE }, 9.15);
+      /* highlight bar wipes in behind "הבעיה?" (RTL: right → left) */
+      tl.fromTo("#s3-bar", { scaleX: 0 },
+        { scaleX: 1, duration: 0.5, ease: "power4.inOut" }, 9.9);
+      tl.fromTo("#s3-problem", { scale: 1 },
+        { scale: 1.08, duration: 0.5, ease: "power2.out" }, 9.9);
+      tl.to(["#s3-a", "#s3-b"], { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 12.5);
+
+      /* ================= Scene 4 (13–17) ================= */
+      tl.fromTo("#s4-line", { y: 50, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.5, ease: EASE }, 13.3);
+      tl.to("#s4-line", { y: -60, autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 14.6);
+      tl.fromTo("#s4-logo", { scale: 0.6, autoAlpha: 0 },
+        { scale: 1, autoAlpha: 1, duration: 0.7, ease: "power4.out" }, 14.8);
+      /* orange "o" lights up */
+      tl.fromTo("#s4-logo .oo", { scale: 0.2 },
+        { scale: 1, duration: 0.55, ease: "back.out(2.2)" }, 15.0);
+      tl.to("#s4-logo", { autoAlpha: 0, scale: 0.9, duration: 0.4, ease: "power2.in" }, 16.6);
+      tl.set("#s4-logo", { autoAlpha: 0 }, 17.0);
+
+      /* ================= Scene 5 (17–21.4) ================= */
+      tl.fromTo("#s5-logo", { y: 40, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.45, ease: EASE }, 17.2);
+      tl.fromTo("#s5-energy", { scale: 1.25, autoAlpha: 0 },
+        { scale: 1, autoAlpha: 1, duration: 0.55, ease: "power4.out" }, 17.5);
+      tl.fromTo("#s5-tag", { y: 30, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.45, ease: EASE }, 17.95);
+      tl.fromTo("#s5-ing .ing", { y: 30, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.4, ease: EASE, stagger: 0.12 }, 18.45);
+      tl.fromTo("#s5-ing .dot-sep", { autoAlpha: 0 },
+        { autoAlpha: 1, duration: 0.3, stagger: 0.12 }, 18.55);
+      tl.to("#s5", { autoAlpha: 0, duration: 0.4, ease: "power2.in" }, 20.9);
+
+      /* ================= Scene 6 (21.4–25) ================= */
+      tl.fromTo("#s6-kicker", { y: 30, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.4, ease: EASE }, 21.6);
+      tl.fromTo("#s6-date", { scale: 1.3, autoAlpha: 0 },
+        { scale: 1, autoAlpha: 1, duration: 0.6, ease: "power4.out" }, 21.85);
+      tl.fromTo("#s6-logo", { y: 30, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.45, ease: EASE }, 22.5);
+      tl.fromTo("#s6-cta", { y: 24, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.45, ease: EASE }, 22.9);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

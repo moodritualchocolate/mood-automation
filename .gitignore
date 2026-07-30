@@ -29,3 +29,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# hyperframes transient snapshots
+video/**/snaps/
+video/**/snapshots/
