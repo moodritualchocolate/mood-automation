@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="he">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>mood ENERGY — hero</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Heebo";
+        src: url("assets/fonts/heebo-latin.woff2") format("woff2");
+        font-weight: 100 900; font-display: block;
+      }
+      @font-face {
+        font-family: "Heebo";
+        src: url("assets/fonts/heebo-hebrew.woff2") format("woff2");
+        font-weight: 100 900; font-display: block;
+        unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; }
+      body { font-family: "Heebo", sans-serif; }
+
+      #root {
+        position: relative;
+        width: 1080px; height: 1920px;
+        overflow: hidden;
+        perspective: 1400px;
+        background: #EFE6D8;
+      }
+
+      /* generative light-field canvas */
+      #field { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+      /* soft vignette above the field */
+      #vignette {
+        position: absolute; inset: 0;
+        background: radial-gradient(120% 90% at 50% 42%, rgba(0,0,0,0) 46%, rgba(60,30,10,0.16) 100%);
+        pointer-events: none;
+      }
+
+      .clip {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column;
+        justify-content: center; align-items: center;
+        text-align: center; padding: 0 90px;
+        color: #1A1512; direction: rtl;
+        transform-style: preserve-3d;
+      }
+
+      .line { display: block; font-weight: 900; line-height: 1.03; }
+      .lg { font-size: 132px; }
+      .md { font-size: 108px; }
+      .clock { font-weight: 900; font-size: 310px; letter-spacing: -8px; color: #2A211B; direction: ltr; }
+      .sub { font-weight: 700; font-size: 46px; letter-spacing: 3px; color: #8A6B4A; }
+
+      .hl-wrap { position: relative; display: inline-block; }
+      .hl-bar {
+        position: absolute; left: -18px; right: -18px; top: 10%; bottom: 10%;
+        background: #FF6B35; border-radius: 6px; z-index: 0; transform-origin: right center;
+        box-shadow: 0 14px 40px rgba(255,107,53,0.45);
+      }
+      .hl-text { position: relative; z-index: 1; color: #FFFFFF; }
+
+      .stack { display: flex; flex-direction: column; align-items: center; }
+      .stack > * + * { margin-top: 26px; }
+
+      /* ---------- 3D chocolate square ---------- */
+      #product { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; transform-style: preserve-3d; }
+      .square-rig { transform-style: preserve-3d; }
+      .square {
+        position: relative;
+        width: 420px; height: 420px;
+        border-radius: 40px;
+        background:
+          linear-gradient(150deg, #6B4326 0%, #4A2C18 46%, #3A2213 100%);
+        box-shadow:
+          0 60px 120px rgba(40,20,8,0.45),
+          inset 0 6px 10px rgba(255,220,180,0.30),
+          inset 0 -18px 30px rgba(0,0,0,0.55);
+        transform-style: preserve-3d;
+        overflow: hidden;
+      }
+      /* chocolate sheen sweep */
+      .square::before {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(115deg, rgba(255,235,200,0) 30%, rgba(255,235,200,0.35) 48%, rgba(255,235,200,0) 62%);
+      }
+      /* segment grooves (2x2) */
+      .grid-v, .grid-h { position: absolute; background: rgba(0,0,0,0.38); box-shadow: 1px 0 1px rgba(255,220,180,0.18); }
+      .grid-v { top: 8%; bottom: 8%; width: 4px; left: 50%; margin-left: -2px; }
+      .grid-h { left: 8%; right: 8%; height: 4px; top: 50%; margin-top: -2px; box-shadow: 0 1px 1px rgba(255,220,180,0.18); }
+      /* embossed mood dot */
+      .emboss {
+        position: absolute; left: 50%; top: 50%;
+        width: 150px; height: 150px; margin: -75px 0 0 -75px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 38% 34%, #FF8A5C 0%, #FF6B35 55%, #E4551F 100%);
+        box-shadow: inset 0 6px 10px rgba(255,200,160,0.6), inset 0 -8px 14px rgba(120,40,10,0.6), 0 10px 24px rgba(0,0,0,0.4);
+      }
+      .emboss::after {
+        content: ""; position: absolute; left: 50%; top: 50%;
+        width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
+        background: #EFE6D8; box-shadow: inset 0 3px 5px rgba(120,40,10,0.5);
+      }
+      /* warm rim-light that ignites */
+      #rimlight {
+        position: absolute; left: 50%; top: 50%;
+        width: 720px; height: 720px; margin: -360px 0 0 -360px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,140,70,0.55) 0%, rgba(255,120,50,0) 60%);
+        z-index: -1;
+      }
+
+      /* ---------- wordmark ---------- */
+      .wordmark { display: inline-flex; align-items: center; font-weight: 900; color: #1A1512; line-height: 1; direction: ltr; }
+      .oo { display: inline-block; border-radius: 50%; background: #FF6B35; position: relative; }
+      .oo::after { content: ""; position: absolute; left: 50%; top: 50%; width: 26%; height: 26%; background: #EFE6D8; border-radius: 50%; transform: translate(-50%,-50%); }
+      .wm-sm { font-size: 100px; }
+      .wm-sm .oo { width: 80px; height: 80px; margin: 0 5px; }
+      .energy-mark { font-weight: 900; font-size: 158px; letter-spacing: 16px; color: #E4551F; direction: ltr; text-shadow: 0 10px 30px rgba(228,85,31,0.28); }
+      .tagline { font-weight: 700; font-size: 46px; letter-spacing: 7px; color: #6B5E54; }
+      .ingredients { font-weight: 700; font-size: 42px; color: #3B322C; line-height: 1.5; max-width: 900px; }
+      .ing { display: inline-block; }
+      .dot-sep { color: #E4551F; margin: 0 14px; display: inline-block; }
+      .kicker { font-weight: 800; font-size: 42px; letter-spacing: 4px; color: #B24A20; }
+      .launch { font-weight: 900; font-size: 230px; color: #2A211B; direction: ltr; }
+      .cta { font-weight: 800; font-size: 50px; color: #FFFFFF; letter-spacing: 3px; background: #E4551F; padding: 18px 46px; border-radius: 100px; box-shadow: 0 18px 44px rgba(228,85,31,0.4); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="25">
+
+      <!-- generative light-field background (spans whole film) -->
+      <section id="bg" class="clip" data-start="0" data-duration="25" data-track-index="0" style="padding:0; display:block">
+        <canvas id="field" width="1080" height="1920"></canvas>
+        <div id="vignette"></div>
+      </section>
+
+      <!-- S1 -->
+      <section id="s1" class="clip" data-start="0" data-duration="4.2" data-track-index="1">
+        <div class="clock" id="s1-clock">16:30</div>
+        <div class="lg" id="s1-hook" style="margin-top:24px">עוד קפה?</div>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip" data-start="4.2" data-duration="4" data-track-index="2">
+        <div class="stack">
+          <span class="line lg" id="s2-a">5 כוסות.</span>
+          <span class="line lg" id="s2-b">ועדיין כלום.</span>
+        </div>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip" data-start="8.2" data-duration="4.8" data-track-index="3">
+        <div class="stack">
+          <span class="line md" id="s3-a">מה אם הקפה</span>
+          <span class="line lg" id="s3-b">
+            הוא
+            <span class="hl-wrap"><span class="hl-bar" id="s3-bar"></span><span class="hl-text" id="s3-problem">הבעיה?</span></span>
+          </span>
+        </div>
+      </section>
+
+      <!-- S4 text -->
+      <section id="s4" class="clip" data-start="13" data-duration="3.6" data-track-index="4" style="justify-content:flex-start; padding-top:360px">
+        <div class="lg" id="s4-line">יש ריטואל אחר.</div>
+      </section>
+
+      <!-- PRODUCT (persists 13.4 -> 25) -->
+      <section id="product" class="clip" data-start="13.4" data-duration="11.6" data-track-index="5" style="padding:0">
+        <div class="square-rig" id="square-rig">
+          <div id="rimlight"></div>
+          <div class="square">
+            <span class="grid-v"></span><span class="grid-h"></span>
+            <span class="emboss"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- S5 text -->
+      <section id="s5" class="clip" data-start="17.6" data-duration="4" data-track-index="6" style="justify-content:flex-end; padding-bottom:300px">
+        <div class="stack">
+          <div class="wordmark wm-sm" id="s5-logo"><span>m</span><span>o</span><span class="oo"></span><span>d</span></div>
+          <div class="energy-mark" id="s5-energy">ENERGY</div>
+          <div class="tagline" id="s5-tag">ריטואל פונקציונלי</div>
+          <div class="ingredients" id="s5-ing" style="margin-top:14px"><span class="ing">25מ״ג קפאין טבעי</span><span class="dot-sep">·</span><span class="ing">מאקה</span><span class="dot-sep">·</span><span class="ing">גוארנה</span><span class="dot-sep">·</span><span class="ing">ג׳ינסנג</span></div>
+        </div>
+      </section>
+
+      <!-- S6 text -->
+      <section id="s6" class="clip" data-start="21.6" data-duration="3.4" data-track-index="7" style="justify-content:flex-end; padding-bottom:220px">
+        <div class="stack">
+          <div class="kicker" id="s6-kicker">משיקים 12.8</div>
+          <div class="wordmark wm-sm" id="s6-logo" style="margin-top:6px"><span>m</span><span>o</span><span class="oo"></span><span>d</span></div>
+          <div class="cta" id="s6-cta" style="margin-top:20px">בלינק בביו</div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      /* ---------------- generative light-field (deterministic) ---------------- */
+      const cv = document.getElementById("field");
+      const ctx = cv.getContext("2d");
+      const W = 1080, H = 1920;
+
+      function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+      const rnd = mulberry32(20260812);
+      const N = 140;
+      const P = [];
+      for (let i = 0; i < N; i++) {
+        P.push({
+          x: rnd()*W,
+          y: rnd()*H,
+          r: 4 + rnd()*22,
+          spd: 10 + rnd()*46,
+          sway: 20 + rnd()*90,
+          freq: 0.15 + rnd()*0.5,
+          phase: rnd()*Math.PI*2,
+          depth: 0.35 + rnd()*0.65,
+          tw: 0.5 + rnd()*0.5
+        });
+      }
+
+      function drawField(t, energy) {
+        // warm base gradient, shifts warmer as energy rises
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        const warm = 0.10 + energy*0.16;
+        g.addColorStop(0, `rgb(${245-10*energy|0}, ${232-6*energy|0}, ${216-8*energy|0})`);
+        g.addColorStop(0.5, "#EFE6D8");
+        g.addColorStop(1, `rgb(${236-6*energy|0}, ${216-14*energy|0}, ${196-20*energy|0})`);
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+
+        // central warm glow that blooms with energy
+        const cx = W*0.5 + Math.sin(t*0.12)*60;
+        const cy = H*0.42 + Math.cos(t*0.1)*70;
+        const R = 520 + energy*360 + Math.sin(t*0.5)*30;
+        const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+        rg.addColorStop(0, `rgba(255,140,70,${0.10 + energy*0.30})`);
+        rg.addColorStop(0.55, `rgba(255,120,50,${0.03 + energy*0.10})`);
+        rg.addColorStop(1, "rgba(255,120,50,0)");
+        ctx.fillStyle = rg;
+        ctx.fillRect(0, 0, W, H);
+
+        // drifting warm light motes
+        ctx.globalCompositeOperation = "lighter";
+        for (let i = 0; i < N; i++) {
+          const p = P[i];
+          const rise = p.spd * (1 + energy*1.4) * t;
+          let y = p.y - rise;
+          y = ((y % (H + 240)) + (H + 240)) % (H + 240) - 120;
+          const x = p.x + Math.sin(t*p.freq + p.phase) * p.sway * p.depth;
+          const tw = 0.35 + 0.65 * (0.5 + 0.5*Math.sin(t*1.7*p.tw + p.phase));
+          const a = (0.05 + 0.22*p.depth) * tw * (0.6 + energy*0.9);
+          const rad = p.r * p.depth * (1 + energy*0.5);
+          const bg = ctx.createRadialGradient(x, y, 0, x, y, rad);
+          bg.addColorStop(0, `rgba(255,${170 - 40*p.depth|0},${90}, ${a})`);
+          bg.addColorStop(1, "rgba(255,150,80,0)");
+          ctx.fillStyle = bg;
+          ctx.beginPath(); ctx.arc(x, y, rad, 0, 6.2832); ctx.fill();
+        }
+        ctx.globalCompositeOperation = "source-over";
+      }
+
+      /* ---------------- timeline ---------------- */
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const OUT = "power3.out";
+
+      // field driver: energy ramps up as the product ignites (t≈13.4→18)
+      const fs = { t: 0 };
+      tl.to(fs, {
+        t: 25, duration: 25, ease: "none",
+        onUpdate: () => {
+          const t = fs.t;
+          const energy = Math.min(1, Math.max(0, (t - 12.5) / 5.5));
+          drawField(t, energy);
+        }
+      }, 0);
+      drawField(0, 0);
+
+      // slow dolly on the whole field (parallax vs foreground)
+      tl.fromTo("#field", { scale: 1.0, transformOrigin: "50% 42%" }, { scale: 1.12, duration: 25, ease: "none" }, 0);
+
+      /* S1 */
+      tl.fromTo("#s1-clock", { z: -500, scale: 1.3, autoAlpha: 0 }, { z: 0, scale: 1, autoAlpha: 1, duration: 0.8, ease: "power4.out" }, 0.15);
+      tl.fromTo("#s1-hook", { y: 70, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power4.out" }, 1.35);
+      tl.to(["#s1-clock", "#s1-hook"], { z: 260, autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 3.6);
+
+      /* S2 */
+      tl.fromTo("#s2-a", { z: -350, autoAlpha: 0 }, { z: 0, autoAlpha: 1, duration: 0.5, ease: OUT }, 4.5);
+      tl.fromTo("#s2-b", { z: -350, autoAlpha: 0 }, { z: 0, autoAlpha: 1, duration: 0.5, ease: OUT }, 5.15);
+      tl.to(["#s2-a", "#s2-b"], { z: 220, autoAlpha: 0, duration: 0.45, ease: "power2.in" }, 7.6);
+
+      /* S3 */
+      tl.fromTo("#s3-a", { y: 70, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: OUT }, 8.5);
+      tl.fromTo("#s3-b", { y: 70, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: OUT }, 9.15);
+      tl.fromTo("#s3-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power4.inOut" }, 9.95);
+      tl.fromTo("#s3-problem", { scale: 1 }, { scale: 1.1, duration: 0.5, ease: "back.out(2)" }, 9.95);
+      tl.to(["#s3-a", "#s3-b"], { autoAlpha: 0, z: 180, duration: 0.45, ease: "power2.in" }, 12.4);
+
+      /* S4 line */
+      tl.fromTo("#s4-line", { y: 60, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: OUT }, 13.2);
+      tl.to("#s4-line", { y: -90, autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 15.2);
+      tl.set("#s4-line", { autoAlpha: 0 }, 16.6);
+
+      /* PRODUCT — tumble in, ignite, settle, lift, shrink */
+      tl.fromTo("#square-rig",
+        { rotationY: -140, rotationX: 30, z: -700, scale: 0.4, autoAlpha: 0, transformOrigin: "50% 50%" },
+        { rotationY: -18, rotationX: 14, z: 0, scale: 1, autoAlpha: 1, duration: 1.3, ease: "power4.out" }, 13.5);
+      // idle-free continuous slow turn (performs, doesn't wobble)
+      tl.to("#square-rig", { rotationY: 14, duration: 6.3, ease: "sine.inOut" }, 15.0);
+      tl.fromTo("#rimlight", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 1.1, ease: "power2.out" }, 14.2);
+      // lift up to make room for S5 copy
+      tl.to("#square-rig", { y: -300, scale: 0.82, duration: 0.9, ease: "power3.inOut" }, 17.4);
+      // shrink toward top for S6
+      tl.to("#square-rig", { y: -430, scale: 0.6, rotationY: 0, rotationX: 8, duration: 0.8, ease: "power3.inOut" }, 21.4);
+
+      /* S5 copy */
+      tl.fromTo("#s5-logo", { y: 40, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: OUT }, 18.1);
+      tl.fromTo("#s5-energy", { z: -300, scale: 1.2, autoAlpha: 0 }, { z: 0, scale: 1, autoAlpha: 1, duration: 0.6, ease: "power4.out" }, 18.35);
+      tl.fromTo("#s5-tag", { y: 26, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: OUT }, 18.85);
+      tl.fromTo("#s5-ing .ing", { y: 26, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.4, ease: OUT, stagger: 0.1 }, 19.2);
+      tl.fromTo("#s5-ing .dot-sep", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, stagger: 0.1 }, 19.3);
+      tl.to("#s5", { autoAlpha: 0, y: -30, duration: 0.4, ease: "power2.in" }, 21.1);
+
+      /* S6 copy */
+      tl.fromTo("#s6-kicker", { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: OUT }, 21.9);
+      tl.fromTo("#s6-logo", { y: 26, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: OUT }, 22.25);
+      tl.fromTo("#s6-cta", { scale: 0.7, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.5, ease: "back.out(2)" }, 22.7);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
