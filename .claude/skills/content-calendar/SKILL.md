@@ -23,8 +23,9 @@ already knows what it is.
 ## Step 1 — Inputs
 
 Establish, from project instructions or a short exchange:
-- **Goal & phase** — pre-launch buzz, launch, sustain, sale? (e.g. MOOD launches 12.8 — pre-launch is
-  a countdown arc.) The goal shapes the mix.
+- **Goal & phase** — pre-launch buzz, launch, sustain, sale? (a pre-launch phase toward a known
+  launch date becomes a countdown arc.) The goal shapes the mix. Never assume a launch date — use the
+  one the user gives; if none is set, keep launch copy neutral (e.g. "בקרוב" / "coming soon").
 - **Platforms & cadence** — where, and how often *realistically sustainable*. Better to hold a
   cadence you can keep than to burn out. A tight, consistent 3/week beats a heroic 7 that collapses.
 - **Key dates** — launch, drops, holidays, cultural moments to trend-jack.
@@ -48,11 +49,11 @@ Lay out the calendar so every slot is already briefed — this is what makes it 
 ```
 # Content Calendar — {brand} · {month/phase}
 Cadence: {e.g. Reels ×3/wk} · Pillars: {…}
-| Date  | Platform | Pillar        | Angle (from trend-scout)        | Format          | Hook (on-screen)        | Asset needed        | Status |
-|-------|----------|---------------|---------------------------------|-----------------|-------------------------|---------------------|--------|
-| 12.1  | Reel     | Contrarian    | "everyone adds caffeine…"       | HyperFrames     | "25 מ״ג. וזה מספיק."     | (built)             | ✅     |
-| 12.3  | Reel     | Trend-jack    | absurdist substitution          | footage         | "— קפה. — לא, זה."       | founder clip        | 🎬     |
-| …     |          |               |                                 |                 |                         |                     |        |
+| Day    | Platform | Pillar        | Angle (from trend-scout)        | Format          | Hook (on-screen)        | Asset needed        | Status |
+|--------|----------|---------------|---------------------------------|-----------------|-------------------------|---------------------|--------|
+| Wk1 Mon| Reel     | Contrarian    | "everyone adds caffeine…"       | HyperFrames     | "25 מ״ג. וזה מספיק."     | (built)             | ✅     |
+| Wk1 Wed| Reel     | Trend-jack    | absurdist substitution          | footage         | "— קפה. — לא, זה."       | founder clip        | 🎬     |
+| …      |          |               |                                 |                 |                         |                     |        |
 ```
 
 - Pull the **angles from `trend-scout`** so the slate rides current trends, not evergreen guesses.
