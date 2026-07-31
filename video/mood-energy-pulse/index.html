@@ -88,18 +88,18 @@
       // studio environment -> glossy chocolate reflections (direct envMap, software-GL safe)
       const envTex=loader.load("./assets/img/studio_env.jpg");
       envTex.mapping=THREE.EquirectangularReflectionMapping; envTex.colorSpace=THREE.SRGBColorSpace;
-      const faceMat=new THREE.MeshStandardMaterial({ map:albedo, normalMap:normal, roughness:0.34, metalness:0.0, envMap:envTex, envMapIntensity:0.5, emissive:0xff5a1e, emissiveIntensity:0.0 });
+      const faceMat=new THREE.MeshStandardMaterial({ map:albedo, normalMap:normal, roughness:0.4, metalness:0.0, envMap:envTex, envMapIntensity:0.4, emissive:0xff5a1e, emissiveIntensity:0.0 });
       faceMat.normalScale=new THREE.Vector2(0.8,0.8);
-      const sideMat=new THREE.MeshStandardMaterial({ color:0x140a05, roughness:0.4, metalness:0.0, envMap:envTex, envMapIntensity:0.5, emissive:0xff5a1e, emissiveIntensity:0.0 });
+      const sideMat=new THREE.MeshStandardMaterial({ color:0x140a05, roughness:0.4, metalness:0.0, envMap:envTex, envMapIntensity:0.4, emissive:0xff5a1e, emissiveIntensity:0.0 });
       const geo=new THREE.BoxGeometry(1.225,2.5,0.255);
       // face order: [px,nx,py,ny,pz,nz] -> texture front(pz)+back(nz), dark sides
       const bar=new THREE.Mesh(geo,[sideMat,sideMat,sideMat,sideMat,faceMat,faceMat]);
       bar.position.y=0.55; scene.add(bar);
 
-      scene.add(new THREE.HemisphereLight(0xfff0e0,0x160c06,0.28));
-      const key=new THREE.DirectionalLight(0xfff2e2,1.7); key.position.set(-4,5,4); scene.add(key);
-      const rim=new THREE.DirectionalLight(0xffb070,0.75); rim.position.set(5,-1,2); scene.add(rim);
-      const front=new THREE.PointLight(0xff8030,0.7,20); front.position.set(0,0.5,3); scene.add(front);
+      scene.add(new THREE.HemisphereLight(0xf4ecff,0x120a06,0.18));
+      const key=new THREE.DirectionalLight(0xffffff,1.05); key.position.set(-4,5,4); scene.add(key);
+      const rim=new THREE.DirectionalLight(0xffd6b0,0.45); rim.position.set(5,-1,2); scene.add(rim);
+      const front=new THREE.PointLight(0xff8030,0.35,20); front.position.set(0,0.5,3); scene.add(front);
 
       const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
       const eo=x=>1-Math.pow(1-clamp(x,0,1),3);
