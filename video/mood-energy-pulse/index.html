@@ -11,52 +11,48 @@
       * { margin:0; padding:0; box-sizing:border-box; }
       html, body { width:1080px; height:1920px; overflow:hidden; }
       body { font-family:"Heebo", sans-serif; }
-      #root { position:relative; width:1080px; height:1920px; overflow:hidden; background:#1C120C; }
+      #root { position:relative; width:1080px; height:1920px; overflow:hidden; background:#160E08; }
 
       #field { position:absolute; inset:0; width:1080px; height:1920px; display:block; }
+      #flash { position:absolute; inset:0; background:#FFE0C0; opacity:0; pointer-events:none; mix-blend-mode:screen; }
 
       .clip { position:absolute; inset:0; direction:rtl; }
-      .mid { display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
 
-      /* real assets */
-      #lightning { position:absolute; left:50%; top:760px; width:250px; height:250px; margin-left:-125px; margin-top:-125px;
-        filter:drop-shadow(0 24px 70px rgba(255,110,40,0.65)); }
+      #lightning { position:absolute; left:50%; top:740px; width:250px; height:250px; margin-left:-125px; margin-top:-125px;
+        filter:drop-shadow(0 24px 70px rgba(255,110,40,0.7)); }
       #lightning svg { width:100%; height:100%; display:block; }
-      .powder { position:absolute; left:50%; top:760px; width:280px; margin-left:-140px; margin-top:-100px; }
-      #bar { position:absolute; left:50%; top:760px; width:560px; margin-left:-280px; margin-top:-175px;
-        filter:drop-shadow(0 40px 70px rgba(20,10,4,0.6)); }
-      #barSnap { position:absolute; left:50%; top:760px; width:560px; margin-left:-280px; margin-top:-120px;
-        filter:drop-shadow(0 40px 70px rgba(20,10,4,0.6)); }
 
-      /* text */
-      .head { position:absolute; left:0; right:0; top:1180px; text-align:center; direction:rtl; }
-      .line { font-weight:900; font-size:118px; line-height:1.06; color:#F6ECDE; text-shadow:0 6px 30px rgba(0,0,0,0.45); }
+      #bar, #barSnap { position:absolute; left:50%; top:760px; width:600px; margin-left:-300px;
+        filter:drop-shadow(0 40px 70px rgba(10,6,2,0.7)); }
+      #bar { margin-top:-186px; } #barSnap { margin-top:-128px; }
+
+      .head { position:absolute; left:0; right:0; top:1170px; text-align:center; direction:rtl; }
+      .line { font-weight:900; font-size:128px; line-height:1.05; color:#F6ECDE; text-shadow:0 8px 40px rgba(0,0,0,0.5); }
       .accent { color:#FF7A3C; }
       .mwm { color:#FF7A3C; font-weight:900; }
 
-      /* brand lockup */
+      #ings { position:absolute; left:0; right:0; top:900px; text-align:center; direction:rtl; }
+      .ing { display:inline-block; font-weight:900; font-size:66px; color:#F6ECDE; margin:0 4px; }
+      .ing.o { color:#FF7A3C; }
+
       #brand { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; direction:rtl; }
-      .wordmark { display:inline-flex; align-items:center; font-weight:900; color:#1A1512; line-height:1; direction:ltr; font-size:120px; }
-      .oo { display:inline-block; width:100px; height:100px; margin:0 6px; border-radius:50%; background:#FF6B35; position:relative; }
+      .wordmark { display:inline-flex; align-items:center; font-weight:900; color:#1A1512; line-height:1; direction:ltr; font-size:126px; }
+      .oo { display:inline-block; width:106px; height:106px; margin:0 6px; border-radius:50%; background:#FF6B35; position:relative; }
       .oo::after { content:""; position:absolute; left:50%; top:50%; width:26%; height:26%; background:#F3EAD9; border-radius:50%; transform:translate(-50%,-50%); }
-      .energy { font-weight:900; font-size:150px; letter-spacing:16px; color:#E4551F; direction:ltr; margin-top:14px; text-shadow:0 10px 30px rgba(228,85,31,0.3); }
-      .tag { font-weight:800; font-size:44px; color:#6B5044; letter-spacing:4px; margin-top:14px; }
-      .ings { font-weight:800; font-size:40px; color:#4A382C; margin-top:24px; }
-      .ing { display:inline-block; } .sep { color:#E4551F; margin:0 14px; display:inline-block; }
-      .kick { font-weight:800; font-size:40px; letter-spacing:5px; color:#B24A20; margin-top:30px; }
-      .cta { font-weight:800; font-size:46px; color:#FFF; letter-spacing:3px; background:#E4551F; padding:16px 44px; border-radius:100px; margin-top:18px; box-shadow:0 18px 44px rgba(228,85,31,0.4); }
-      .stack>*+*{margin-top:0;}
+      .energy { font-weight:900; font-size:158px; letter-spacing:16px; color:#E4551F; direction:ltr; margin-top:16px; text-shadow:0 10px 30px rgba(228,85,31,0.3); }
+      .kick { font-weight:800; font-size:42px; letter-spacing:5px; color:#B24A20; margin-top:34px; }
+      .cta { font-weight:800; font-size:48px; color:#FFF; letter-spacing:3px; background:#E4551F; padding:16px 46px; border-radius:100px; margin-top:20px; box-shadow:0 18px 44px rgba(228,85,31,0.45); }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="13">
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="11">
 
-      <section id="bg" class="clip" data-start="0" data-duration="13" data-track-index="0">
+      <section id="bg" class="clip" data-start="0" data-duration="11" data-track-index="0">
         <canvas id="field" width="1080" height="1920"></canvas>
+        <div id="flash"></div>
       </section>
 
-      <!-- CORE: lightning ignites + powder burst -->
-      <section id="core" class="clip" data-start="0" data-duration="5.6" data-track-index="1">
+      <section id="core" class="clip" data-start="0" data-duration="3.0" data-track-index="1">
         <div id="lightning">
           <svg viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="49" fill="#FF6B35"/>
@@ -65,27 +61,29 @@
         </div>
       </section>
 
-      <!-- PRODUCT: real bar radiates, then snaps -->
-      <section id="product" class="clip" data-start="4.8" data-duration="6.2" data-track-index="2">
+      <section id="product" class="clip" data-start="2.6" data-duration="4.4" data-track-index="2">
         <img id="bar" src="assets/img/bar_pan.png" alt="">
         <img id="barSnap" src="assets/img/bar_snap.png" alt="">
       </section>
 
-      <!-- TEXT beats -->
-      <section id="txt" class="clip" data-start="5.4" data-duration="5.4" data-track-index="3">
+      <section id="txt" class="clip" data-start="3.0" data-duration="4.0" data-track-index="3">
         <div class="head">
           <div class="line" id="t1">ביס אחד.</div>
           <div class="line" id="t2">וזה ה-<span dir="ltr" class="mwm">mood</span> שלך משתנה.</div>
         </div>
       </section>
 
-      <!-- BRAND lockup -->
-      <section id="brandClip" class="clip" data-start="10.6" data-duration="2.4" data-track-index="4">
+      <section id="ingClip" class="clip" data-start="6.6" data-duration="2.2" data-track-index="4">
+        <div id="ings">
+          <span class="ing o" id="i1">ודיפולה</span><span class="ing" id="i2">תה ירוק</span><span class="ing o" id="i3">קינמון</span><span class="ing" id="i4">ליקוריץ</span><span class="ing o" id="i5">גוארנה</span>
+        </div>
+      </section>
+
+      <section id="brandClip" class="clip" data-start="8.6" data-duration="2.4" data-track-index="5">
         <div id="brand">
-          <div class="stack" style="display:flex;flex-direction:column;align-items:center">
+          <div style="display:flex;flex-direction:column;align-items:center">
             <div class="wordmark" id="wm"><span>m</span><span>o</span><span class="oo"></span><span>d</span></div>
             <div class="energy" id="en">ENERGY</div>
-            <div class="ings" id="ings"><span class="ing">תה ירוק</span><span class="sep">·</span><span class="ing">קינמון</span><span class="sep">·</span><span class="ing">גוארנה</span><span class="sep">·</span><span class="ing">ליקוריץ</span></div>
             <div class="kick" id="kick">בקרוב</div>
             <div class="cta" id="cta">בלינק בביו</div>
           </div>
@@ -94,104 +92,102 @@
     </div>
 
     <script>
-      /* ---------------- generative energy-frequency field ---------------- */
+      /* ---------------- energy field with a BEAT ---------------- */
       const cv=document.getElementById("field"), ctx=cv.getContext("2d"), W=1080, H=1920;
-      const CX=540, CY=760;
-      function lerp(a,b,t){return a+(b-a)*t;}
-      function draw(t, energy, warm, shock){
-        // background: deep mocha -> warm cream (warm 0..1)
-        const g=ctx.createLinearGradient(0,0,0,H);
-        g.addColorStop(0, `rgb(${lerp(40,245,warm)|0},${lerp(26,235,warm)|0},${lerp(18,220,warm)|0})`);
-        g.addColorStop(1, `rgb(${lerp(20,236,warm)|0},${lerp(12,216,warm)|0},${lerp(8,196,warm)|0})`);
-        ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+      const CX=540, CY=760, BPS=124/60;
+      const L=(a,b,t)=>a+(b-a)*t;
+      function draw(t, energy, warm){
+        const ph=(t*BPS)%1, beat=Math.pow(1-ph,3);   // spike on each beat
+        const bg=ctx.createLinearGradient(0,0,0,H);
+        bg.addColorStop(0,`rgb(${L(36,245,warm)|0},${L(22,235,warm)|0},${L(14,220,warm)|0})`);
+        bg.addColorStop(1,`rgb(${L(18,236,warm)|0},${L(10,216,warm)|0},${L(6,196,warm)|0})`);
+        ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
 
         ctx.globalCompositeOperation="lighter";
-        // central core glow
-        const cr=260+energy*260+Math.sin(t*3)*18;
+        const em=(1-warm*0.6);
+        // core glow, pumped by the beat
+        const cr=230+energy*220+beat*120;
         const rg=ctx.createRadialGradient(CX,CY,0,CX,CY,cr);
-        rg.addColorStop(0,`rgba(255,150,70,${(0.30+0.4*energy)*(1-warm*0.7)})`);
-        rg.addColorStop(0.5,`rgba(255,110,40,${0.10*(1-warm*0.6)})`);
+        rg.addColorStop(0,`rgba(255,150,70,${(0.28+0.4*energy+beat*0.28)*em})`);
+        rg.addColorStop(0.5,`rgba(255,110,40,${(0.08+beat*0.1)*em})`);
         rg.addColorStop(1,"rgba(255,110,40,0)");
         ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
 
-        // radiating concentric rings (the frequency)
-        const interval=0.5, speed=540, life=3.4, gain=(0.35+0.65*energy)*(1-warm*0.55);
-        const nmax=Math.floor(t/interval);
-        for(let n=0;n<=nmax;n++){
+        // fast radiating rings
+        const interval=0.26, speed=760, life=2.1, gain=(0.4+0.6*energy)*em*(1+beat*0.7);
+        for(let n=Math.floor(t/interval);n>=0;n--){
           const age=t-n*interval; if(age<0||age>life) continue;
-          const r=age*speed; const a=(1-age/life)*0.42*gain;
-          if(a<=0.003) continue;
+          const r=age*speed, a=(1-age/life)*0.5*gain; if(a<0.004) continue;
           ctx.beginPath(); ctx.arc(CX,CY,r,0,6.2832);
-          ctx.strokeStyle=`rgba(255,${140-30*(age/life)|0},70,${a})`;
-          ctx.lineWidth=2+age*2.2; ctx.stroke();
-        }
-        // snap shockwave (one big fast bright ring)
-        if(shock>0){
-          const sr=shock*1750; const sa=(1-shock)*0.85;
-          ctx.beginPath(); ctx.arc(CX,CY,sr,0,6.2832);
-          ctx.strokeStyle=`rgba(255,180,110,${sa})`; ctx.lineWidth=10*(1-shock)+3; ctx.stroke();
-          const sr2=shock*1250;
-          ctx.beginPath(); ctx.arc(CX,CY,sr2,0,6.2832);
-          ctx.strokeStyle=`rgba(255,140,70,${sa*0.7})`; ctx.lineWidth=6*(1-shock)+2; ctx.stroke();
+          ctx.strokeStyle=`rgba(255,${150-40*(age/life)|0},70,${a})`;
+          ctx.lineWidth=2+age*2.4; ctx.stroke();
         }
         ctx.globalCompositeOperation="source-over";
       }
 
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused:true });
-      const OUT="power3.out";
+      const PUNCH="back.out(2.2)";
 
       const fs={t:0};
-      tl.to(fs,{t:13,duration:13,ease:"none",onUpdate:()=>{
+      tl.to(fs,{t:11,duration:11,ease:"none",onUpdate:()=>{
         const t=fs.t;
-        const energy=Math.min(1,Math.max(0,(t-0.4)/3.2));               // build 0->1
-        const warm=Math.min(1,Math.max(0,(t-9.6)/1.6));                 // mocha -> cream near the end
-        let shock=0; const s=t-8.35; if(s>0&&s<1.05) shock=s/1.05;      // snap shockwave
-        draw(t,energy,warm,shock);
+        const energy=Math.min(1,Math.max(0,(t-0.2)/1.4));
+        const warm=Math.min(1,Math.max(0,(t-8.0)/1.4));
+        draw(t,energy,warm);
       }},0);
-      draw(0,0,0,0);
+      draw(0,0,0);
 
-      /* ---- CORE: lightning + powders ---- */
-      // spark -> lightning ignites
-      tl.fromTo("#lightning",{scale:0.15,autoAlpha:0,transformOrigin:"50% 50%"},
-        {scale:1,autoAlpha:1,duration:0.7,ease:"back.out(1.8)"},2.1);
-      // a subtle held pulse on the bolt while the field radiates (performs, not idle)
-      tl.to("#lightning",{scale:1.07,duration:1.4,ease:"sine.inOut"},2.9);
-      // lightning recedes as the product rises
-      tl.to("#lightning",{scale:0.7,y:"-=40",autoAlpha:0,duration:0.7,ease:"power2.in"},4.9);
-      tl.set("#core",{autoAlpha:0},5.6);
+      // white flash helper on impacts
+      const flash=(at,peak=0.5)=>{ tl.fromTo("#flash",{opacity:peak},{opacity:0,duration:0.32,ease:"power2.out"},at); };
 
-      /* ---- PRODUCT: bar rises, radiates, snaps ---- */
+      /* ---- CORE icon: flashes in, pulses electric, exits ---- */
+      tl.fromTo("#lightning",{scale:0.2,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.34,ease:PUNCH},0.35);
+      flash(0.35,0.55);
+      // electric double-pulse on the beat
+      tl.to("#lightning",{keyframes:{scale:[1,1.16,1,1.12,1]},duration:1.0,ease:"none"},0.9);
+      // exit fast as the bar slams
+      tl.to("#lightning",{scale:1.5,autoAlpha:0,duration:0.28,ease:"power3.in"},2.55);
+      tl.set("#core",{autoAlpha:0},3.0);
+
+      /* ---- PRODUCT: bar SLAMS in, punch-zoom, violent SNAP ---- */
       tl.set("#barSnap",{autoAlpha:0},0);
-      tl.fromTo("#bar",{scale:0.6,autoAlpha:0,transformOrigin:"50% 50%"},
-        {scale:1,autoAlpha:1,duration:0.9,ease:"power4.out"},5.0);
-      // gentle breathing radiate (performs, subtle)
-      tl.to("#bar",{scale:1.05,duration:1.6,ease:"sine.inOut"},6.2);
-      // THE SNAP: whole bar -> snapped bar, with a jolt
-      tl.to("#bar",{autoAlpha:0,duration:0.12},8.35);
-      tl.fromTo("#barSnap",{scale:1.14,autoAlpha:0,rotation:-2},
-        {scale:1,autoAlpha:1,rotation:0,duration:0.6,ease:"power4.out"},8.35);
-      tl.fromTo("#product",{x:-14},{x:0,duration:0.4,ease:"power3.out"},8.4);
-      tl.to("#product",{autoAlpha:0,duration:0.5,ease:"power2.in"},10.3);
-      tl.set("#product",{autoAlpha:0},10.8);
+      tl.fromTo("#bar",{scale:1.9,rotation:-10,autoAlpha:0,transformOrigin:"50% 50%"},
+        {scale:1,rotation:0,autoAlpha:1,duration:0.42,ease:"power4.out"},2.72);
+      flash(2.72,0.6);
+      tl.to("#bar",{keyframes:{x:[0,-16,12,-6,0]},duration:0.3,ease:"none"},2.74); // land shake
+      tl.to("#bar",{scale:1.07,duration:1.4,ease:"power1.inOut"},3.3);              // slow push-in energy
+      // THE SNAP
+      tl.to("#bar",{autoAlpha:0,duration:0.08},4.9);
+      tl.fromTo("#barSnap",{scale:1.32,rotation:4,autoAlpha:0,transformOrigin:"50% 50%"},
+        {scale:1,rotation:0,autoAlpha:1,duration:0.4,ease:"power4.out"},4.9);
+      flash(4.9,0.8);
+      tl.to("#barSnap",{keyframes:{x:[0,-22,16,-9,0]},duration:0.34,ease:"none"},4.92); // impact shake
+      tl.to("#product",{autoAlpha:0,duration:0.35,ease:"power2.in"},6.5);
+      tl.set("#product",{autoAlpha:0},7.0);
 
-      /* ---- TEXT ---- */
+      /* ---- TEXT: kinetic punch ---- */
       tl.set("#t2",{autoAlpha:0},0);
-      tl.fromTo("#t1",{y:50,autoAlpha:0},{y:0,autoAlpha:1,duration:0.5,ease:OUT},5.9);
-      tl.to("#t1",{y:-40,autoAlpha:0,duration:0.45,ease:"power2.in"},7.9);
-      tl.set("#t1",{autoAlpha:0},8.35);
-      tl.fromTo("#t2",{y:50,autoAlpha:0},{y:0,autoAlpha:1,duration:0.55,ease:OUT},8.7);
-      tl.to("#t2",{autoAlpha:0,duration:0.45,ease:"power2.in"},10.3);
-      tl.set("#txt",{autoAlpha:0},10.8);
+      tl.fromTo("#t1",{scale:1.5,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.32,ease:PUNCH},3.25);
+      tl.to("#t1",{scale:0.7,autoAlpha:0,duration:0.28,ease:"power3.in"},4.7);
+      tl.set("#t1",{autoAlpha:0},4.9);
+      tl.fromTo("#t2",{scale:1.4,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.36,ease:PUNCH},5.05);
+      tl.to("#t2",{autoAlpha:0,duration:0.3,ease:"power2.in"},6.5);
+      tl.set("#txt",{autoAlpha:0},7.0);
 
-      /* ---- BRAND ---- */
-      tl.fromTo("#wm",{scale:0.7,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.6,ease:"power4.out"},10.8);
-      tl.fromTo("#wm .oo",{scale:0.2},{scale:1,duration:0.5,ease:"back.out(2.2)"},11.05);
-      tl.fromTo("#en",{y:26,autoAlpha:0},{y:0,autoAlpha:1,duration:0.45,ease:OUT},11.15);
-      tl.fromTo("#ings .ing",{y:22,autoAlpha:0},{y:0,autoAlpha:1,duration:0.4,ease:OUT,stagger:0.1},11.5);
-      tl.fromTo("#ings .sep",{autoAlpha:0},{autoAlpha:1,duration:0.3,stagger:0.1},11.6);
-      tl.fromTo("#kick",{y:20,autoAlpha:0},{y:0,autoAlpha:1,duration:0.4,ease:OUT},11.9);
-      tl.fromTo("#cta",{scale:0.7,autoAlpha:0},{scale:1,autoAlpha:1,duration:0.5,ease:"back.out(2)"},12.15);
+      /* ---- INGREDIENTS: rapid-fire ---- */
+      tl.fromTo("#ings .ing",{scale:1.6,y:30,autoAlpha:0,transformOrigin:"50% 50%"},
+        {scale:1,y:0,autoAlpha:1,duration:0.3,ease:PUNCH,stagger:0.09},6.75);
+      tl.to("#ings .ing",{autoAlpha:0,duration:0.3,ease:"power2.in",stagger:0.03},8.4);
+      tl.set("#ingClip",{autoAlpha:0},8.6);
+
+      /* ---- BRAND: confident slam ---- */
+      tl.fromTo("#wm",{scale:0.6,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.42,ease:PUNCH},8.65);
+      flash(8.65,0.4);
+      tl.fromTo("#wm .oo",{scale:0.2},{scale:1,duration:0.4,ease:"back.out(3)"},8.85);
+      tl.fromTo("#en",{scale:1.4,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.36,ease:PUNCH},8.95);
+      tl.fromTo("#kick",{y:20,autoAlpha:0},{y:0,autoAlpha:1,duration:0.34,ease:"power3.out"},9.35);
+      tl.fromTo("#cta",{scale:0.6,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.42,ease:PUNCH},9.6);
 
       window.__timelines["main"]=tl;
     </script>
