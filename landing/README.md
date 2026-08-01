@@ -1,11 +1,26 @@
 # mood — cinematic landing (source)
 
-Two deliverables, both self-contained (all libs/fonts/textures inlined, CSP-safe):
+Self-contained deliverables (all libs/fonts/images inlined, CSP-safe).
 
-- `mood-experience.html` — the full 6-act scroll experience (self-contained, ~1MB).
-  Open directly in a browser, or deploy as a static file. Source template with
-  placeholder tokens is `mood-experience.template.html`.
+- **`mood-warm.html` — the brand-true landing (primary).** Warm cream/chocolate
+  world, real product photography, honest scroll narrative. This is the on-brand
+  version; open directly or deploy as a static file. Template: `mood-warm.template.html`,
+  real product art in `warm-assets/`, reference frames `warm-assets/frame_*.png`.
+- `mood-experience.html` — the earlier dark-luxe 6-act experience (kept for
+  reference; the aesthetic was judged off-brand). Template `mood-experience.template.html`.
 - (hero-only variant lives in the artifact history; template `mood-energy.template.html`.)
+
+## mood-warm — design intent
+Warm cream (`#F1E7D6`) / deep chocolate palette, amber cacao-dust point-field that
+subtly sweeps hue with scroll (amber → sage → dusk — the mood-shift metaphor, kept
+warm, never neon). Real ENERGY pouch + real dark-chocolate bars (white backgrounds
+flood-fill keyed to transparent so they float on cream). Honest Hebrew-first
+narrative: ritual → the shift → real 70% cacao product → transparent formula
+(exact mg per ingredient) → born-in-Israel → CTA. Signature "warm background wash"
+crossfades the page tint across the same amber→sage→dusk arc.
+
+Stack: vanilla Three.js + custom GLSL point shader + GSAP ScrollTrigger + Heebo
+(all inlined). Renders on software WebGL.
 
 ## Stack (live version)
 Vanilla Three.js (r160) + custom GLSL point-cloud (simplex-noise displacement +

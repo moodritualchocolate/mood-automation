@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>mood — ritual chocolate</title>
+<style>
+@font-face{font-family:"Heebo";src:url(data:font/woff2;base64,__HEEBO_LAT__) format("woff2");font-weight:100 900;font-display:block;}
+@font-face{font-family:"Heebo";src:url(data:font/woff2;base64,__HEEBO_HE__) format("woff2");font-weight:100 900;font-display:block;unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F;}
+
+:root{
+  --cream:#F1E7D6; --cream2:#E9DAC3; --paper:#F7EFE2;
+  --choc:#2C1B10; --choc2:#3E2716; --ink:#2A1C12;
+  --orange:#E4611F; --orange2:#FF7A3C; --amber:#C9541F;
+  --sage:#7E9350; --dusk:#6A5A88;
+  --muted:#8A7458;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:auto;}
+body{font-family:"Heebo",system-ui,sans-serif;background:var(--cream);color:var(--ink);
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+#grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+main{position:relative;z-index:2;}
+
+section{position:relative;min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:9vh 7vw;text-align:center;}
+.reveal{opacity:0;transform:translateY(34px);}
+.eyebrow{font-size:clamp(12px,2.6vw,15px);font-weight:700;letter-spacing:.34em;
+  color:var(--amber);text-transform:uppercase;margin-bottom:22px;}
+.kicker{font-size:clamp(13px,2.7vw,16px);font-weight:600;letter-spacing:.06em;color:var(--muted);}
+h1,h2{font-weight:900;line-height:1.02;letter-spacing:-.015em;color:var(--choc);}
+h1{font-size:clamp(58px,15vw,150px);}
+h2{font-size:clamp(38px,8.5vw,84px);}
+p.lead{font-size:clamp(19px,4.4vw,30px);font-weight:500;line-height:1.5;color:#4B3826;
+  max-width:20ch;margin:26px auto 0;}
+.o{color:var(--orange);}
+.wm{font-weight:900;color:var(--choc);direction:ltr;display:inline-flex;align-items:center;line-height:1;}
+.wm .oo{display:inline-block;border-radius:50%;background:var(--orange);position:relative;}
+.wm .oo::after{content:"";position:absolute;left:50%;top:50%;width:30%;height:30%;
+  background:var(--cream);border-radius:50%;transform:translate(-50%,-50%);}
+
+/* HERO */
+#hero{min-height:100vh;}
+#hero .wm{font-size:clamp(64px,17vw,168px);margin-bottom:6px;}
+#hero .wm .oo{width:.62em;height:.62em;margin:0 .05em;}
+#hero .tag{font-weight:800;letter-spacing:.5em;color:var(--amber);
+  font-size:clamp(13px,3.2vw,20px);text-transform:uppercase;margin-top:4px;}
+#hero .pouch{width:min(52vw,290px);margin:5vh auto 0;filter:drop-shadow(0 34px 46px rgba(60,30,10,.26));}
+#hero .sub{margin-top:4vh;}
+.scrollcue{position:absolute;bottom:3.4vh;left:50%;transform:translateX(-50%);
+  font-size:12px;letter-spacing:.3em;color:var(--muted);opacity:.7;font-weight:600;}
+.scrollcue::after{content:"";display:block;width:1px;height:34px;margin:12px auto 0;
+  background:linear-gradient(var(--muted),transparent);}
+
+/* RITUAL / mood-shift */
+#shift h2{max-width:14ch;}
+#shift .bar{width:min(78vw,560px);margin:6vh auto 0;
+  filter:drop-shadow(0 40px 60px rgba(40,20,8,.4));}
+
+/* PRODUCT */
+#product{flex-direction:row;gap:6vw;flex-wrap:wrap;}
+#product .barface{width:min(46vw,300px);
+  filter:drop-shadow(0 30px 50px rgba(40,20,8,.42));}
+#product .copy{max-width:30ch;text-align:right;}
+#product .copy h2{font-size:clamp(34px,7vw,68px);margin-bottom:20px;}
+#product .copy p{font-size:clamp(17px,3.6vw,22px);line-height:1.6;color:#4B3826;font-weight:500;}
+.pill{display:inline-flex;align-items:center;gap:9px;background:rgba(228,97,31,.12);
+  border:1px solid rgba(228,97,31,.28);color:var(--amber);font-weight:700;
+  padding:9px 18px;border-radius:100px;font-size:clamp(13px,3vw,16px);margin:6px 6px 0 0;}
+
+/* FORMULA */
+#formula{background:linear-gradient(180deg,transparent,rgba(44,27,16,.03));}
+#formula .grid{display:grid;grid-template-columns:1fr;gap:14px;
+  width:min(560px,86vw);margin:5vh auto 0;}
+.ing{display:flex;align-items:center;justify-content:space-between;
+  background:var(--paper);border:1px solid rgba(60,40,20,.09);border-radius:16px;
+  padding:18px 22px;box-shadow:0 10px 26px rgba(60,40,20,.05);text-align:right;}
+.ing .n{font-weight:800;font-size:clamp(18px,4.4vw,24px);color:var(--choc);}
+.ing .d{font-weight:500;font-size:clamp(12px,3vw,14px);color:var(--muted);margin-top:3px;}
+.ing .amt{font-weight:900;font-size:clamp(19px,4.6vw,26px);color:var(--orange);
+  white-space:nowrap;margin-right:16px;}
+.ing .dot{width:11px;height:11px;border-radius:50%;flex:none;margin-left:14px;}
+
+/* ISRAELI */
+#origin h2{max-width:16ch;}
+#origin .lead{max-width:26ch;}
+#origin .flagdot{display:inline-block;width:10px;height:10px;border-radius:50%;
+  background:var(--orange);margin:0 6px;vertical-align:middle;}
+
+/* CTA */
+#cta{gap:0;}
+#cta .wm{font-size:clamp(52px,13vw,120px);}
+#cta .wm .oo{width:.6em;height:.6em;margin:0 .05em;}
+#cta .energy{font-weight:900;letter-spacing:.34em;color:var(--orange);
+  font-size:clamp(30px,8vw,72px);margin-top:10px;direction:ltr;}
+#cta .btn{margin-top:5vh;background:var(--choc);color:var(--cream);font-weight:800;
+  letter-spacing:.04em;font-size:clamp(17px,4vw,22px);padding:19px 52px;border-radius:100px;
+  box-shadow:0 20px 44px rgba(44,27,16,.32);}
+#cta .soon{margin-top:26px;font-weight:700;letter-spacing:.28em;color:var(--muted);
+  font-size:clamp(12px,3vw,15px);text-transform:uppercase;}
+footer{position:relative;z-index:2;text-align:center;padding:40px 0 46px;color:var(--muted);
+  font-size:13px;letter-spacing:.06em;}
+footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-size:11px;opacity:.8;}
+@media(max-width:640px){
+  #product{flex-direction:column;}
+  #product .copy{text-align:center;}
+}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div id="grain"></div>
+<main>
+
+  <section id="hero">
+    <div class="wm reveal" data-d="0"><span>m</span><span>o</span><span class="oo"></span><span>d</span></div>
+    <div class="tag reveal" data-d="1">RITUAL CHOCOLATE</div>
+    <img class="pouch reveal" data-d="2" src="data:image/png;base64,__POUCH__" alt="mood energy" />
+    <p class="lead sub reveal" data-d="3">טקס. לא ממתק.<br/>שוקולד מריר עם כוונה.</p>
+    <div class="scrollcue">גלול</div>
+  </section>
+
+  <section id="shift">
+    <div class="eyebrow reveal" data-d="0">הרגע</div>
+    <h2 class="reveal" data-d="1">ביס אחד.<br/>וה־<span class="o" dir="ltr" style="direction:ltr">mood</span> שלך משתנה.</h2>
+    <img class="bar reveal" data-d="2" src="data:image/png;base64,__BARHERO__" alt="mood bar" />
+    <p class="lead reveal" data-d="3">לא סוכר. לא הבטחות ריקות.<br/>שוקולד אמיתי שעובד איתך.</p>
+  </section>
+
+  <section id="product">
+    <img class="barface reveal" data-d="0" src="data:image/png;base64,__BARFACE__" alt="mood energy bar" />
+    <div class="copy">
+      <div class="eyebrow reveal" data-d="1">המוצר</div>
+      <h2 class="reveal" data-d="2">שוקולד מריר,<br/>אמיתי לגמרי.</h2>
+      <p class="reveal" data-d="3">70% קקאו יחיד־מקור. בלי חומרים משמרים, בלי צבעי מאכל. רק קקאו אמיתי ותמצית צמחים פונקציונלית שנטחנת פנימה.</p>
+      <div class="reveal" data-d="4">
+        <span class="pill">70% קקאו</span>
+        <span class="pill">טבעוני</span>
+        <span class="pill">ללא גלוטן</span>
+        <span class="pill">ללא סוכר מזוקק</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="formula">
+    <div class="eyebrow reveal" data-d="0">שקוף לגמרי</div>
+    <h2 class="reveal" data-d="1">מה בפנים —<br/>עד המיליגרם.</h2>
+    <p class="kicker reveal" data-d="2" style="margin-top:16px;">ENERGY · אנרגיה טבעית למיקוד וחיוניות</p>
+    <div class="grid">
+      <div class="ing reveal" data-d="3"><div style="display:flex;align-items:center"><span class="dot" style="background:#E4611F"></span><div><div class="n">רודיאלה</div><div class="d">תמיכה באנרגיה וסיבולת נפשית</div></div></div><div class="amt">660 מ״ג</div></div>
+      <div class="ing reveal" data-d="4"><div style="display:flex;align-items:center"><span class="dot" style="background:#7E9350"></span><div><div class="n">תה ירוק</div><div class="d">נוגד חמצון ותמיכה במיקוד וריכוז</div></div></div><div class="amt">80 מ״ג</div></div>
+      <div class="ing reveal" data-d="5"><div style="display:flex;align-items:center"><span class="dot" style="background:#B5642A"></span><div><div class="n">קינמון</div><div class="d">תמיכה ברמת סוכר מאוזנת</div></div></div><div class="amt">40 מ״ג</div></div>
+      <div class="ing reveal" data-d="6"><div style="display:flex;align-items:center"><span class="dot" style="background:#D89A3C"></span><div><div class="n">ליקוריץ</div><div class="d">תמיכה במערכת ואיזון טבעי</div></div></div><div class="amt">13 מ״ג</div></div>
+      <div class="ing reveal" data-d="7"><div style="display:flex;align-items:center"><span class="dot" style="background:#8A5A38"></span><div><div class="n">גוארנה</div><div class="d">מקור טבעי לאנרגיה מתמשכת</div></div></div><div class="amt">7 מ״ג</div></div>
+    </div>
+  </section>
+
+  <section id="origin">
+    <div class="eyebrow reveal" data-d="0">מאיפה זה בא</div>
+    <h2 class="reveal" data-d="1">נולד בישראל.<span class="flagdot"></span><br/>נבנה סביב טקס.</h2>
+    <p class="lead reveal" data-d="2">התחלנו כי חיפשנו רגע אחד ביום שהוא רק שלנו — כזה שגם עושה טוב לגוף וגם טעים באמת. אז הכנו אותו.</p>
+  </section>
+
+  <section id="cta">
+    <div class="eyebrow reveal" data-d="0">קרוב יותר ממה שנדמה</div>
+    <div class="wm reveal" data-d="1"><span>m</span><span>o</span><span class="oo"></span><span>d</span></div>
+    <div class="energy reveal" data-d="2">ENERGY</div>
+    <div class="btn reveal" data-d="3">שמרו לי מקום</div>
+    <div class="soon reveal" data-d="4">בקרוב · בלינק בביו</div>
+  </section>
+
+</main>
+<footer>
+  <div>mood · ritual chocolate</div>
+  <div class="r" style="margin-top:8px">made in israel</div>
+</footer>
+
+<script>/*__THREE__*/</script>
+<script>/*__GSAP__*/</script>
+<script>/*__SCROLLTRIGGER__*/</script>
+<script>
+(function(){
+  // ---------- warm ambient cacao-dust field ----------
+  const canvas=document.getElementById("bg");
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,100);
+  camera.position.z=14;
+
+  const COUNT=520, R=18;
+  const pos=new Float32Array(COUNT*3), seed=new Float32Array(COUNT), sz=new Float32Array(COUNT);
+  for(let i=0;i<COUNT;i++){
+    const a=(i*2.399963), r=Math.sqrt(i/COUNT)*R;
+    pos[i*3]=Math.cos(a)*r + (i%7-3)*0.6;
+    pos[i*3+1]=(i/COUNT-0.5)*R*1.7;
+    pos[i*3+2]=Math.sin(a)*r*0.5 - 2 - (i%5);
+    seed[i]=i*0.61803; sz[i]=6+(i%9);
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute("position",new THREE.BufferAttribute(pos,3));
+  g.setAttribute("seed",new THREE.BufferAttribute(seed,1));
+  g.setAttribute("sz",new THREE.BufferAttribute(sz,1));
+
+  const uni={ uT:{value:0}, uHue:{value:0}, uScroll:{value:0} };
+  const mat=new THREE.ShaderMaterial({
+    uniforms:uni, transparent:true, depthWrite:false, blending:THREE.NormalBlending,
+    vertexShader:`
+      attribute float seed; attribute float sz;
+      uniform float uT; uniform float uScroll;
+      varying float vA; varying float vS;
+      void main(){
+        vec3 p=position;
+        float w=uT*0.12+seed;
+        p.x+=sin(w*1.3)*0.9; p.y+=cos(w)*0.7+ uScroll*3.0*fract(seed); p.z+=sin(w*0.7)*0.6;
+        vS=seed;
+        vec4 mv=modelViewMatrix*vec4(p,1.0);
+        gl_PointSize=sz*(70.0/-mv.z);
+        gl_Position=projectionMatrix*mv;
+        vA=0.28+0.32*sin(w*1.7+seed);
+      }`,
+    fragmentShader:`
+      precision mediump float;
+      uniform float uHue; varying float vA; varying float vS;
+      void main(){
+        vec2 c=gl_PointCoord-0.5;
+        float d=length(c);
+        if(d>0.5) discard;
+        float soft=smoothstep(0.5,0.0,d);
+        // warm palette shifting subtly: amber -> sage-ish -> dusk, staying warm
+        vec3 amber=vec3(0.90,0.47,0.16);
+        vec3 sage =vec3(0.58,0.55,0.30);
+        vec3 dusk =vec3(0.52,0.40,0.55);
+        vec3 col=mix(amber,sage,clamp(uHue,0.0,1.0));
+        col=mix(col,dusk,clamp(uHue-1.0,0.0,1.0));
+        col=mix(col, amber, 0.25*sin(vS)); // per-particle warmth variance
+        gl_FragColor=vec4(col, soft*vA);
+      }`
+  });
+  const pts=new THREE.Points(g,mat); scene.add(pts);
+
+  // soft warm vignette plane behind (big gradient sprite) via fog color
+  scene.fog=new THREE.FogExp2(0xF1E7D6,0.012);
+
+  function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}
+  addEventListener("resize",resize); resize();
+
+  let t=0, mx=0,my=0, tmx=0,tmy=0;
+  addEventListener("pointermove",e=>{tmx=(e.clientX/innerWidth-0.5);tmy=(e.clientY/innerHeight-0.5);});
+  function loop(){
+    t+=0.016; uni.uT.value=t;
+    mx+=(tmx-mx)*0.04; my+=(tmy-my)*0.04;
+    const sc=Math.min(1,(scrollY)/(document.body.scrollHeight-innerHeight||1));
+    uni.uScroll.value=sc;
+    uni.uHue.value=sc*2.0; // sweep amber->sage->dusk across the page
+    pts.rotation.y=mx*0.5 + t*0.008;
+    pts.rotation.x=my*0.3;
+    camera.position.x=mx*1.6; camera.position.y=-my*1.2 - sc*1.0;
+    camera.lookAt(0,-sc*1.0,0);
+    renderer.render(scene,camera);
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  // ---------- scroll-driven warm background wash ----------
+  const stops=[
+    [0.0,[0xF1,0xE7,0xD6]], // cream (energy top)
+    [0.34,[0xF3,0xE6,0xCE]],// warm amber cream
+    [0.62,[0xEC,0xE8,0xD4]],// faint sage cream
+    [0.85,[0xE7,0xE1,0xE4]],// faint dusk cream
+    [1.0,[0xF2,0xEA,0xDD]] // settle warm
+  ];
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function washAt(p){
+    for(let i=0;i<stops.length-1;i++){
+      const [p0,c0]=stops[i],[p1,c1]=stops[i+1];
+      if(p>=p0&&p<=p1){
+        const k=(p-p0)/(p1-p0);
+        return `rgb(${Math.round(lerp(c0[0],c1[0],k))},${Math.round(lerp(c0[1],c1[1],k))},${Math.round(lerp(c0[2],c1[2],k))})`;
+      }
+    }
+    return "#F1E7D6";
+  }
+  function updateWash(){
+    const p=Math.min(1,scrollY/(document.body.scrollHeight-innerHeight||1));
+    const col=washAt(p);
+    document.body.style.background=col;
+    scene.fog.color.set(col);
+  }
+  addEventListener("scroll",updateWash,{passive:true}); updateWash();
+
+  // ---------- reveals ----------
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll("section").forEach(sec=>{
+    const items=sec.querySelectorAll(".reveal");
+    gsap.to(items,{opacity:1,y:0,duration:0.9,ease:"power3.out",
+      stagger:0.12,
+      scrollTrigger:{trigger:sec,start:"top 72%"}});
+  });
+  // subtle parallax on product images
+  gsap.utils.toArray("#hero .pouch,#shift .bar,#product .barface").forEach(el=>{
+    gsap.to(el,{yPercent:-8,ease:"none",
+      scrollTrigger:{trigger:el,start:"top bottom",end:"bottom top",scrub:0.6}});
+  });
+})();
+</script>
+</body>
+</html>
