@@ -1,0 +1,328 @@
+<style>
+  @font-face{font-family:"Heebo";font-weight:100 900;font-display:block;
+    src:url("data:font/woff2;base64,__HEEBO_LAT__") format("woff2");}
+  @font-face{font-family:"Heebo";font-weight:100 900;font-display:block;
+    unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F;
+    src:url("data:font/woff2;base64,__HEEBO_HE__") format("woff2");}
+  :root{
+    --bg:#0A0604; --ink:#F3EAD9; --ink2:#D8C6AE; --muted:#A98A6B;
+    --accent:#FF6B35; --accent-hot:#FFB07A;
+    --glass:rgba(22,15,9,0.44); --glass-brd:rgba(255,150,90,0.16);
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Heebo",sans-serif;-webkit-font-smoothing:antialiased}
+  #bg{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+  .veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(140% 110% at 50% 110%, rgba(0,0,0,0.6), transparent 55%),
+      linear-gradient(180deg, rgba(10,6,4,0.5) 0%, transparent 18%, transparent 68%, rgba(6,4,3,0.9) 100%);}
+  .fixedwm{position:fixed;top:26px;left:clamp(20px,4vw,64px);z-index:6;display:inline-flex;align-items:center;
+    font-weight:900;font-size:30px;letter-spacing:-.5px;mix-blend-mode:screen}
+  .fixedwm .o{display:inline-block;width:23px;height:23px;margin:0 3px;border-radius:50%;background:var(--accent);position:relative;transition:background .6s}
+  .fixedwm .o::after{content:"";position:absolute;inset:36%;border-radius:50%;background:var(--bg)}
+  .rail{position:fixed;top:28px;right:clamp(20px,4vw,64px);z-index:6;font-family:var(--mono);font-size:11px;
+    letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+  .prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:7;background:linear-gradient(90deg,var(--accent),var(--accent-hot))}
+
+  main{position:relative;z-index:2}
+  section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    padding:12vh clamp(24px,6vw,110px);direction:rtl}
+  .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:5px;text-transform:uppercase;color:var(--accent);
+    display:inline-flex;align-items:center;gap:12px;margin-bottom:22px;transition:color .6s}
+  .eyebrow::before{content:"";width:40px;height:1px;background:linear-gradient(90deg,transparent,currentColor)}
+  h1{font-weight:900;font-size:clamp(50px,8.4vw,132px);line-height:.96;letter-spacing:-2px;text-wrap:balance;
+    text-shadow:0 20px 60px rgba(0,0,0,.55)}
+  h2{font-weight:900;font-size:clamp(40px,6vw,92px);line-height:1.0;letter-spacing:-1.5px;text-wrap:balance;
+    text-shadow:0 16px 50px rgba(0,0,0,.5)}
+  .mood{color:var(--accent);direction:ltr;font-style:normal;transition:color .6s}
+  .sub{margin-top:24px;font-size:clamp(17px,1.6vw,22px);line-height:1.55;color:var(--ink2);max-width:540px;font-weight:500}
+  .reveal{opacity:0;transform:translateY(30px)}
+
+  /* hero */
+  .hero{align-items:flex-start;text-align:right}
+  .hero h1 .ln{display:block;overflow:hidden}
+  .scrollhint{margin-top:60px;font-family:var(--mono);font-size:11px;letter-spacing:4px;color:var(--muted);
+    text-transform:uppercase;display:flex;align-items:center;gap:12px}
+  .scrollhint .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.6s infinite}
+  @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+
+  /* product act – content sits to the side, bar is the 3D centerpiece */
+  .product{align-items:flex-start}
+  .spec{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;direction:rtl}
+  .chip{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--ink2);
+    padding:10px 16px;border:1px solid var(--glass-brd);border-radius:100px;background:var(--glass);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+  /* formula */
+  .formula{align-items:center;text-align:center}
+  .ings{margin-top:34px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;max-width:760px}
+  .ing{padding:14px 20px;border-radius:16px;background:var(--glass);border:1px solid var(--glass-brd);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);text-align:center;min-width:120px}
+  .ing .n{font-weight:900;font-size:22px}
+  .ing .mg{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--accent);margin-top:3px}
+
+  /* SKUs */
+  .skus{align-items:center;text-align:center}
+  .skugrid{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px;width:min(1040px,94vw);direction:rtl}
+  .sku{padding:34px 26px;border-radius:26px;background:var(--glass);border:1px solid var(--glass-brd);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);text-align:center;transition:transform .35s,border-color .35s}
+  .sku:hover{transform:translateY(-8px)}
+  .sku .ic{width:74px;height:74px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;
+    font-size:34px;color:#fff}
+  .sku .name{font-weight:900;font-size:30px;letter-spacing:6px;direction:ltr}
+  .sku .role{margin-top:6px;color:var(--ink2);font-size:16px}
+  .sku .mg{margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--muted)}
+  .sku.energy .ic{background:linear-gradient(180deg,#FF8A3C,#E4551F)} .sku.energy .name{color:#FF6B35}
+  .sku.relax .ic{background:linear-gradient(180deg,#8FB07A,#5C8058)} .sku.relax .name{color:#7FA46A}
+  .sku.sleep .ic{background:linear-gradient(180deg,#7C6BB0,#4A2C5C)} .sku.sleep .name{color:#8A78C0}
+  .sku.energy:hover{border-color:rgba(255,120,60,.4)} .sku.relax:hover{border-color:rgba(120,164,106,.4)} .sku.sleep:hover{border-color:rgba(138,120,192,.4)}
+
+  /* launch */
+  .launch{align-items:center;text-align:center;min-height:100vh}
+  .biglogo{display:inline-flex;align-items:center;font-weight:900;font-size:clamp(70px,13vw,190px);letter-spacing:-3px;direction:ltr}
+  .biglogo .o{display:inline-block;width:.62em;height:.62em;margin:0 .06em;border-radius:50%;background:var(--accent);position:relative}
+  .biglogo .o::after{content:"";position:absolute;inset:36%;border-radius:50%;background:var(--bg)}
+  .cta{margin-top:40px;display:flex;gap:16px;flex-direction:row-reverse}
+  .btn{font-weight:800;font-size:17px;padding:17px 34px;border-radius:100px;border:0;cursor:pointer;font-family:"Heebo";
+    transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;will-change:transform}
+  .btn.primary{background:linear-gradient(180deg,var(--accent-hot),var(--accent));color:#1a0d05;
+    box-shadow:0 14px 40px rgba(255,90,30,.4),inset 0 1px 0 rgba(255,230,200,.6)}
+  .btn.ghost{background:var(--glass);color:var(--ink);border:1px solid var(--glass-brd);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .foot{margin-top:70px;font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+
+  @media (max-width:760px){
+    .skugrid{grid-template-columns:1fr}
+    section{padding:12vh 22px}
+  }
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
+</style>
+
+<canvas id="bg"></canvas>
+<div class="veil"></div>
+<div class="prog" id="prog"></div>
+<div class="fixedwm">m<span class="o" id="wmO"></span><span>od</span></div>
+<div class="rail">Ritual Chocolate · IL</div>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow reveal">mood · Energy</div>
+    <h1>
+      <span class="ln"><span class="reveal">ביס אחד.</span></span>
+      <span class="ln"><span class="reveal">וזה ה־<span class="mood">mood</span></span></span>
+      <span class="ln"><span class="reveal">שלך משתנה.</span></span>
+    </h1>
+    <p class="sub reveal">שוקולד מריר 70% עם פורמולה טבעית מדויקת — אנרגיה נקייה, בלי הרעש של הכוס הרביעית.</p>
+    <div class="scrollhint reveal"><span class="dot"></span> גלול לגלות · scroll</div>
+  </section>
+
+  <section class="shift">
+    <h2 class="reveal">16:37.<br>הקפה הרביעי.<br>ועדיין כלום.</h2>
+    <p class="sub reveal">חמש כוסות ביום, ובכל זאת עייף. אולי הקפה הוא לא הפתרון — אלא הבעיה.</p>
+  </section>
+
+  <section class="product">
+    <div class="eyebrow reveal">The Ritual</div>
+    <h2 class="reveal">ריבוע אחד.<br>אנרגיה נקייה.</h2>
+    <p class="sub reveal">שוקולד ריטואל שנמס לאט — רגע קטן של כוונה, לא עוד שוט של קפאין.</p>
+    <div class="spec">
+      <span class="chip reveal">70% קקאו</span>
+      <span class="chip reveal">7 גרם · 30 יח׳</span>
+      <span class="chip reveal">אנרגיה טבעית</span>
+    </div>
+  </section>
+
+  <section class="formula">
+    <div class="eyebrow reveal">The Formula</div>
+    <h2 class="reveal">פורמולה מדויקת.</h2>
+    <p class="sub reveal" style="margin-inline:auto">חמישה רכיבים טבעיים, מגובי מחקר — מכוילים לאנרגיה יציבה.</p>
+    <div class="ings">
+      <div class="ing reveal"><div class="n">רודיאלה</div><div class="mg">660 mg</div></div>
+      <div class="ing reveal"><div class="n">תה ירוק</div><div class="mg">80 mg</div></div>
+      <div class="ing reveal"><div class="n">קינמון</div><div class="mg">40 mg</div></div>
+      <div class="ing reveal"><div class="n">ליקוריץ</div><div class="mg">13 mg</div></div>
+      <div class="ing reveal"><div class="n">גוארנה</div><div class="mg">7 mg</div></div>
+    </div>
+  </section>
+
+  <section class="skus">
+    <div class="eyebrow reveal">The Range</div>
+    <h2 class="reveal">מצב לכל רגע.</h2>
+    <div class="skugrid">
+      <div class="sku energy reveal"><div class="ic">⚡</div><div class="name">ENERGY</div><div class="role">אנרגיה טבעית</div><div class="mg">morning · reset</div></div>
+      <div class="sku relax reveal"><div class="ic">〜</div><div class="name">RELAX</div><div class="role">הרגעה ואיזון</div><div class="mg">evening · unwind</div></div>
+      <div class="sku sleep reveal"><div class="ic">☾</div><div class="name">SLEEP</div><div class="role">שינה עמוקה</div><div class="mg">night · rest</div></div>
+    </div>
+  </section>
+
+  <section class="launch">
+    <div class="eyebrow reveal" style="justify-content:center">Launching soon</div>
+    <div class="biglogo reveal">m<span class="o"></span><span>od</span></div>
+    <p class="sub reveal" style="margin-inline:auto;margin-top:18px">ביס אחד, וזה ה-mood שלך משתנה. הצטרפו לרשימת ההשקה.</p>
+    <div class="cta reveal">
+      <button class="btn primary" id="joinBtn">הצטרפו להשקה</button>
+      <button class="btn ghost">הפורמולה שלנו</button>
+    </div>
+    <div class="foot reveal">ritual chocolate · made in israel · בקרוב</div>
+  </section>
+</main>
+
+<script>/*__THREE__*/</script>
+<script>/*__GSAP__*/</script>
+<script>/*__SCROLLTRIGGER__*/</script>
+<script>
+(function(){
+  const canvas=document.getElementById("bg");
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:"high-performance"});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(52,1,0.1,100);
+  camera.position.set(0,0,15);
+
+  const C_ORANGE=new THREE.Color(0xff6b35), C_GREEN=new THREE.Color(0x6f9a58), C_BLUE=new THREE.Color(0x7c6bb0);
+  const C_HOT=new THREE.Color(0xffd8a8);
+
+  /* ---------- particle energy field ---------- */
+  const COUNT=7000;
+  const pos=new Float32Array(COUNT*3), rnd=new Float32Array(COUNT), sz=new Float32Array(COUNT);
+  for(let i=0;i<COUNT;i++){
+    const r=Math.pow(Math.random(),0.6)*15, a=Math.random()*6.2832;
+    pos[i*3]=Math.cos(a)*r*1.3; pos[i*3+1]=Math.sin(a)*r*0.92; pos[i*3+2]=(Math.random()-0.5)*7;
+    rnd[i]=Math.random(); sz[i]=0.5+Math.random()*Math.random()*3.2;
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute("position",new THREE.BufferAttribute(pos,3));
+  g.setAttribute("aRnd",new THREE.BufferAttribute(rnd,1));
+  g.setAttribute("aSize",new THREE.BufferAttribute(sz,1));
+  const U={uTime:{value:0},uMouse:{value:new THREE.Vector3(999,999,0)},uAccent:{value:C_ORANGE.clone()},
+    uHot:{value:C_HOT},uPix:{value:renderer.getPixelRatio()},uEnergy:{value:0},uConverge:{value:0}};
+  const vert=`uniform float uTime;uniform vec3 uMouse;uniform float uPix;uniform float uEnergy;uniform float uConverge;
+    attribute float aRnd;attribute float aSize;varying float vG;varying float vR;
+    vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
+    vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
+    float snoise(vec3 v){const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);
+      vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);vec3 gg=step(x0.yzx,x0.xyz);vec3 l=1.0-gg;
+      vec3 i1=min(gg.xyz,l.zxy);vec3 i2=max(gg.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;i=mod289(i);
+      vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));
+      float n_=0.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.0*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);
+      vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.0-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
+      vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh=-step(h,vec4(0.0));
+      vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+      vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+      vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
+      vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);m=m*m;
+      return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}
+    void main(){vec3 p=position;float t=uTime*0.12;
+      float n1=snoise(p*0.12+vec3(t,0.0,t*0.5));float n2=snoise(p*0.18+vec3(0.0,t*0.8,t));
+      p.x+=n1*1.9;p.y+=n2*1.9;p.z+=snoise(p*0.15+t)*1.4;
+      p+=normalize(p+0.001)*sin(uTime*0.5+aRnd*6.28)*0.4*(0.5+uEnergy);
+      p=mix(p,normalize(p)*2.5+vec3(0.0,0.0,0.0),uConverge*0.7);
+      vec3 d=p-uMouse;float dl=length(d.xy);float force=exp(-dl*dl*0.03)*3.2;
+      p.xy+=normalize(d.xy+0.001)*force;
+      vR=length(position.xy);vG=clamp(force*0.5+(1.0-vR/18.0)*0.6+uEnergy*0.5+uConverge*0.6,0.0,1.5);
+      vec4 mv=modelViewMatrix*vec4(p,1.0);gl_Position=projectionMatrix*mv;
+      gl_PointSize=aSize*uPix*(120.0/-mv.z)*(0.6+vG*0.5);}`;
+  const frag=`precision highp float;uniform vec3 uAccent;uniform vec3 uHot;varying float vG;varying float vR;
+    void main(){vec2 c=gl_PointCoord-0.5;float d=length(c);if(d>0.5)discard;float a=smoothstep(0.5,0.0,d);a*=a;
+      vec3 col=mix(uAccent,uHot,clamp(vG*0.7,0.0,1.0));col=mix(col*0.55,col,smoothstep(16.0,2.0,vR));
+      gl_FragColor=vec4(col,a*(0.20+vG*0.55));}`;
+  const pts=new THREE.Points(g,new THREE.ShaderMaterial({uniforms:U,vertexShader:vert,fragmentShader:frag,
+    transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
+  scene.add(pts);
+
+  /* ---------- the 3D chocolate bar (dark, orange rim-lit) ---------- */
+  const barGroup=new THREE.Group(); barGroup.visible=false; scene.add(barGroup);
+  const loader=new THREE.TextureLoader();
+  const alb=loader.load("data:image/jpeg;base64,__BAR_ALBEDO__"); alb.colorSpace=THREE.SRGBColorSpace;
+  const nrm=loader.load("data:image/jpeg;base64,__BAR_NORMAL__");
+  const face=new THREE.MeshStandardMaterial({map:alb,normalMap:nrm,roughness:0.42,metalness:0.0,emissive:0x1a0800,emissiveIntensity:0.25});
+  face.normalScale=new THREE.Vector2(0.9,0.9);
+  const side=new THREE.MeshStandardMaterial({color:0x120a05,roughness:0.5,metalness:0.0});
+  const bar=new THREE.Mesh(new THREE.BoxGeometry(1.5,3.05,0.3),[side,side,side,side,face,face]);
+  barGroup.add(bar);
+  barGroup.add(new THREE.HemisphereLight(0x3a2a20,0x080402,0.5));
+  const rimL=new THREE.DirectionalLight(0xff7a30,3.6); rimL.position.set(4,3,-3); barGroup.add(rimL);
+  const rimR=new THREE.DirectionalLight(0xffb070,2.2); rimR.position.set(-4,-1,2); barGroup.add(rimR);
+  const keyL=new THREE.DirectionalLight(0xffffff,0.5); keyL.position.set(-2,5,5); barGroup.add(keyL);
+  barGroup.position.set(2.4,-0.2,2);
+
+  /* ---------- interaction ---------- */
+  let S=0; const target=new THREE.Vector3(999,999,0); const par={x:0,y:0};
+  function toWorld(mx,my){const v=new THREE.Vector3((mx/innerWidth)*2-1,-(my/innerHeight)*2+1,0.5).unproject(camera);
+    const dir=v.sub(camera.position).normalize();const dist=-camera.position.z/dir.z;return camera.position.clone().add(dir.multiplyScalar(dist));}
+  addEventListener("pointermove",e=>{const w=toWorld(e.clientX,e.clientY);target.set(w.x,w.y,0);
+    par.x=e.clientX/innerWidth-0.5;par.y=e.clientY/innerHeight-0.5;
+    gsap.to(U.uEnergy,{value:1,duration:.6,overwrite:true});clearTimeout(window._e);window._e=setTimeout(()=>gsap.to(U.uEnergy,{value:0,duration:1.4}),140);});
+  addEventListener("pointerleave",()=>target.set(999,999,0));
+  function resize(){renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();U.uPix.value=renderer.getPixelRatio();}
+  addEventListener("resize",resize);resize();
+
+  /* ---------- scroll ---------- */
+  const root=document.documentElement, wmO=document.getElementById("wmO"), prog=document.getElementById("prog");
+  const accTmp=new THREE.Color(), a2=new THREE.Color();
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.create({start:0,end:"max",scrub:true,onUpdate:s=>{S=s.progress;prog.style.width=(S*100)+"%";}});
+  gsap.utils.toArray(".reveal").forEach(el=>{
+    gsap.to(el,{opacity:1,y:0,duration:1,ease:"power3.out",
+      scrollTrigger:{trigger:el,start:"top 88%",toggleActions:"play none none reverse"}});
+  });
+  // hero intro (before scroll)
+  const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  if(!reduce){
+    gsap.from(pts.scale,{x:.2,y:.2,z:.2,duration:1.8,ease:"power2.out"});
+    gsap.timeline({defaults:{ease:"power3.out"}})
+      .to(".hero .eyebrow",{opacity:1,y:0,duration:.7},.3)
+      .fromTo(".hero h1 .reveal",{yPercent:120,opacity:0,filter:"blur(12px)"},{yPercent:0,opacity:1,filter:"blur(0)",duration:1,stagger:.12},.5)
+      .to(".hero .sub",{opacity:1,y:0,duration:.8},1.2).to(".hero .scrollhint",{opacity:1,y:0,duration:.7},1.5);
+  }
+  // magnetic CTA
+  const jb=document.getElementById("joinBtn");
+  jb.addEventListener("pointermove",e=>{const r=jb.getBoundingClientRect();gsap.to(jb,{x:(e.clientX-r.left-r.width/2)*.3,y:(e.clientY-r.top-r.height/2)*.4,duration:.3});});
+  jb.addEventListener("pointerleave",()=>gsap.to(jb,{x:0,y:0,duration:.5,ease:"elastic.out(1,.4)"}));
+
+  /* ---------- render ---------- */
+  const clock=new THREE.Clock();
+  function sat(x){return Math.max(0,Math.min(1,x));}
+  function loop(){
+    const t=clock.getElapsedTime(); U.uTime.value=t;
+    U.uMouse.value.lerp(target,0.08);
+
+    // accent color journey (orange -> SKU spectrum -> orange)
+    if(S<0.76){accTmp.copy(C_ORANGE);}
+    else if(S<0.90){const p=(S-0.76)/0.14*2;
+      if(p<1){accTmp.copy(C_ORANGE).lerp(C_GREEN,p);}else{accTmp.copy(C_GREEN).lerp(C_BLUE,p-1);}}
+    else{const p=sat((S-0.90)/0.06);accTmp.copy(C_BLUE).lerp(C_ORANGE,p);}
+    U.uAccent.value.lerp(accTmp,0.08);
+    a2.copy(U.uAccent.value); root.style.setProperty("--accent","#"+a2.getHexString());
+    wmO.style.background="#"+a2.getHexString();
+
+    // energy rises in "shift" and "formula" acts; converge in formula
+    const eShift=Math.exp(-Math.pow((S-0.24)/0.09,2));
+    const eForm=Math.exp(-Math.pow((S-0.66)/0.07,2));
+    U.uEnergy.value=Math.max(U.uEnergy.value, eShift*0.7+eForm*0.9);
+    U.uConverge.value+= (eForm - U.uConverge.value)*0.06;
+
+    // 3D bar: visible ~0.30–0.60, rotates & rises with scroll
+    const bp=sat((S-0.30)/0.30);            // 0..1 across product act
+    const vis=sat((S-0.28)/0.05)*(1-sat((S-0.60)/0.05));
+    barGroup.visible=vis>0.01;
+    barGroup.scale.setScalar(0.6+vis*0.55);
+    bar.rotation.y=-0.5 + bp*3.4 + par.x*0.3;
+    bar.rotation.x=-0.05 + par.y*0.15;
+    barGroup.position.y=-0.2 + (1-vis)*(S<0.4?2:-2);
+    face.emissiveIntensity=0.18+U.uEnergy.value*0.25;
+    rimL.color.copy(U.uAccent.value);
+
+    // camera parallax + gentle scroll dolly
+    camera.position.x+=(par.x*2.0-camera.position.x)*0.04;
+    camera.position.y+=(-par.y*1.4 - S*1.5 -camera.position.y)*0.04;
+    camera.lookAt(1.5,-S*1.2,0);
+    pts.rotation.z=Math.sin(t*0.05)*0.05 + S*0.4;
+
+    renderer.render(scene,camera);
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
