@@ -12,7 +12,8 @@
   --cream:#F1E7D6; --cream2:#E9DAC3; --paper:#F7EFE2;
   --choc:#2C1B10; --choc2:#3E2716; --ink:#2A1C12;
   --orange:#E4611F; --orange2:#FF7A3C; --amber:#C9541F;
-  --sage:#7E9350; --dusk:#6A5A88;
+  --energy:#D8703F; --relax:#6E8148; --sleep:#536588;
+  --sage:#6E8148; --dusk:#536588;
   --muted:#8A7458;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -59,27 +60,23 @@ p.lead{font-size:clamp(19px,4.2vw,28px);font-weight:400;line-height:1.5;color:#4
 #shift .bar{width:min(82vw,600px);margin:6vh auto 0;transform-origin:50% 50%;
   filter:drop-shadow(0 46px 64px rgba(40,20,8,.42));}
 
-/* RANGE — mood-shift made legible: Energy -> Relax -> Sleep */
+/* RANGE — mood-shift made legible with the real trio: Energy -> Relax -> Sleep */
 #range{overflow:hidden;}
-#range .moods{display:flex;gap:clamp(14px,4vw,48px);margin-top:7vh;
-  align-items:flex-start;justify-content:center;flex-wrap:wrap;}
-.mood{display:flex;flex-direction:column;align-items:center;width:clamp(88px,26vw,150px);}
-.mood .orb{width:clamp(80px,24vw,140px);height:clamp(80px,24vw,140px);border-radius:50%;
-  position:relative;box-shadow:0 24px 50px rgba(60,40,20,.18);}
-.mood .orb::after{content:"";position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.55),rgba(255,255,255,0) 46%);}
-.mood.energy .orb{background:radial-gradient(circle at 40% 36%,#F4813E,#D8501B);}
-.mood.relax  .orb{background:radial-gradient(circle at 40% 36%,#9DB06A,#6E8544);}
-.mood.sleep  .orb{background:radial-gradient(circle at 40% 36%,#8377AC,#574B76);}
-.mood .he{font-weight:900;font-size:clamp(18px,5vw,26px);color:var(--choc);margin-top:18px;}
-.mood .en{font-weight:800;font-size:clamp(10px,2.6vw,12px);letter-spacing:.28em;
-  text-transform:uppercase;color:var(--muted);margin-top:5px;}
-.mood .st{font-weight:700;font-size:clamp(10px,2.4vw,11px);letter-spacing:.14em;margin-top:10px;
-  padding:4px 12px;border-radius:100px;text-transform:uppercase;}
-.mood.energy .st{color:#B84A17;background:rgba(216,80,27,.13);}
-.mood .st.soon{color:var(--muted);background:rgba(60,40,20,.07);}
-#range .track{display:flex;align-items:center;gap:0;margin:4vh auto 0;width:min(560px,82vw);}
-#range .track .seg{height:6px;flex:1;border-radius:100px;}
+#range .trio{width:min(92vw,760px);margin:6vh auto 0;
+  filter:drop-shadow(0 46px 60px rgba(60,40,20,.20));}
+#range .moods{display:flex;margin:3.4vh auto 0;width:min(760px,92vw);}
+.mood{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 2vw;}
+.mood .he{font-weight:900;font-size:clamp(17px,4.6vw,26px);color:var(--choc);}
+.mood .en{font-weight:800;font-size:clamp(9px,2.4vw,12px);letter-spacing:.26em;
+  text-transform:uppercase;margin-top:5px;}
+.mood.energy .en{color:var(--energy);} .mood.relax .en{color:var(--relax);} .mood.sleep .en{color:var(--sleep);}
+.mood .desc{font-weight:500;font-size:clamp(11px,2.7vw,14px);color:var(--muted);margin-top:8px;line-height:1.4;max-width:16ch;}
+.mood .st{font-weight:700;font-size:clamp(9px,2.2vw,11px);letter-spacing:.14em;margin-top:12px;
+  padding:4px 13px;border-radius:100px;text-transform:uppercase;}
+.mood.energy .st{color:#fff;background:var(--energy);}
+.mood .st.soon{color:var(--muted);background:rgba(60,40,20,.08);}
+#range .track{display:flex;direction:ltr;margin:4vh auto 0;width:min(600px,86vw);height:6px;border-radius:100px;overflow:hidden;}
+#range .track .seg{flex:1;}
 
 /* PRODUCT */
 #product{flex-direction:row;gap:6vw;flex-wrap:wrap;}
@@ -104,6 +101,13 @@ p.lead{font-size:clamp(19px,4.2vw,28px);font-weight:400;line-height:1.5;color:#4
 .ing .amt{font-weight:900;font-size:clamp(19px,4.6vw,26px);color:var(--orange);
   white-space:nowrap;margin-right:16px;}
 .ing .dot{width:11px;height:11px;border-radius:50%;flex:none;margin-left:14px;}
+#formula .trust{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,2vw,10px);
+  margin:6.5vh auto 0;width:min(680px,92vw);}
+#formula .trust .t{flex:1 1 140px;background:var(--paper);border:1px solid rgba(60,40,20,.08);
+  border-radius:14px;padding:16px 12px;text-align:center;box-shadow:0 8px 22px rgba(60,40,20,.04);}
+#formula .trust .t b{display:block;font-weight:900;font-size:clamp(14px,3.4vw,17px);color:var(--choc);}
+#formula .trust .t span{display:block;font-weight:500;font-size:clamp(11px,2.6vw,12.5px);
+  color:var(--muted);margin-top:4px;line-height:1.3;}
 
 /* ISRAELI */
 #origin h2{max-width:16ch;}
@@ -167,7 +171,7 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
   </section>
 
   <section id="formula">
-    <div class="eyebrow reveal" data-d="0">שקוף לגמרי</div>
+    <div class="eyebrow reveal" data-d="0">הפורמולה שלנו · מדויקת · טבעית</div>
     <h2 class="reveal" data-d="1">מה בפנים —<br/>עד המיליגרם.</h2>
     <p class="kicker reveal" data-d="2" style="margin-top:16px;">ENERGY · אנרגיה טבעית למיקוד וחיוניות</p>
     <div class="grid">
@@ -177,19 +181,26 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
       <div class="ing reveal" data-d="6"><div style="display:flex;align-items:center"><span class="dot" style="background:#D89A3C"></span><div><div class="n">ליקוריץ</div><div class="d">תמיכה במערכת ואיזון טבעי</div></div></div><div class="amt">13 מ״ג</div></div>
       <div class="ing reveal" data-d="7"><div style="display:flex;align-items:center"><span class="dot" style="background:#8A5A38"></span><div><div class="n">גוארנה</div><div class="d">מקור טבעי לאנרגיה מתמשכת</div></div></div><div class="amt">7 מ״ג</div></div>
     </div>
+    <div class="trust">
+      <div class="t reveal" data-d="8"><b>טבעי</b><span>רכיבים באיכות גבוהה</span></div>
+      <div class="t reveal" data-d="9"><b>מבוסס מחקר</b><span>פורמולה מדויקת</span></div>
+      <div class="t reveal" data-d="10"><b>70% קקאו</b><span>שוקולד פרימיום</span></div>
+      <div class="t reveal" data-d="11"><b>ישראלי</b><span>פותח ומיוצר באהבה</span></div>
+    </div>
   </section>
 
   <section id="range">
     <div class="eyebrow reveal" data-d="0">mood אחד · שלושה מצבים</div>
     <h2 class="reveal" data-d="1">צבע לכל<br/>מצב־רוח.</h2>
-    <div class="moods">
-      <div class="mood energy reveal" data-d="2"><div class="orb"></div><div class="he">אנרגיה</div><div class="en">Energy</div><div class="st">עכשיו</div></div>
-      <div class="mood relax reveal" data-d="3"><div class="orb"></div><div class="he">רוגע</div><div class="en">Relax</div><div class="st soon">בקרוב</div></div>
-      <div class="mood sleep reveal" data-d="4"><div class="orb"></div><div class="he">שינה</div><div class="en">Sleep</div><div class="st soon">בקרוב</div></div>
+    <img class="trio" src="data:image/png;base64,__TRIO__" alt="mood energy relax sleep" />
+    <div class="moods" style="direction:ltr">
+      <div class="mood energy reveal" data-d="3"><div class="he">אנרגיה</div><div class="en">Energy</div><div class="desc">למיקוד וחיוניות</div><div class="st">עכשיו</div></div>
+      <div class="mood relax reveal" data-d="4"><div class="he">רוגע</div><div class="en">Relax</div><div class="desc">לאיזון ורוגע</div><div class="st soon">בקרוב</div></div>
+      <div class="mood sleep reveal" data-d="5"><div class="he">שינה</div><div class="en">Sleep</div><div class="desc">עמוקה ומרגיעה</div><div class="st soon">בקרוב</div></div>
     </div>
-    <div class="track reveal" data-d="5">
-      <div class="seg" style="background:linear-gradient(90deg,#D8501B,#9DB06A)"></div>
-      <div class="seg" style="background:linear-gradient(90deg,#9DB06A,#574B76)"></div>
+    <div class="track reveal" data-d="6">
+      <div class="seg" style="background:linear-gradient(90deg,#D8703F,#6E8148)"></div>
+      <div class="seg" style="background:linear-gradient(90deg,#6E8148,#536588)"></div>
     </div>
   </section>
 
@@ -319,8 +330,8 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
         float soft=smoothstep(0.5,0.04,d);
         vec3 cocoa=vec3(0.55,0.37,0.20);
         vec3 amber=vec3(0.87,0.53,0.22);
-        vec3 sage =vec3(0.55,0.53,0.32);
-        vec3 dusk =vec3(0.50,0.42,0.55);
+        vec3 sage =vec3(0.47,0.53,0.30);
+        vec3 dusk =vec3(0.36,0.44,0.58);   // real Sleep dusty-blue
         vec3 col=mix(cocoa,amber,vWarm);
         col=mix(col,sage,clamp(uScrollHue,0.0,1.0)*0.5);
         col=mix(col,dusk,clamp(uScrollHue-1.0,0.0,1.0)*0.6);
@@ -375,8 +386,8 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
   addEventListener("resize",resize); resize();
 
   // ---- scroll-driven warm cream (amber -> sage -> dusk) ----
-  const topStops=[[0,[0xF7,0xEE,0xDD]],[0.34,[0xF6,0xEC,0xD2]],[0.62,[0xF0,0xEE,0xDE]],[0.85,[0xEE,0xEA,0xEC]],[1,[0xF6,0xEF,0xE3]]];
-  const botStops=[[0,[0xEC,0xDF,0xCA]],[0.34,[0xEE,0xE2,0xC4]],[0.62,[0xE6,0xE2,0xCE]],[0.85,[0xE2,0xDC,0xDE]],[1,[0xEC,0xE3,0xD3]]];
+  const topStops=[[0,[0xF7,0xEE,0xDD]],[0.34,[0xF6,0xEC,0xD2]],[0.62,[0xEE,0xEF,0xDE]],[0.85,[0xE7,0xEC,0xF0]],[1,[0xF3,0xEE,0xE6]]];
+  const botStops=[[0,[0xEC,0xDF,0xCA]],[0.34,[0xEE,0xE2,0xC4]],[0.62,[0xE2,0xE6,0xCE]],[0.85,[0xD6,0xDE,0xE8]],[1,[0xE6,0xE3,0xD6]]];
   const L=(a,b,t)=>a+(b-a)*t;
   function pick(stops,p){for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1];
     if(p>=p0&&p<=p1){const k=(p-p0)/(p1-p0);return[L(c0[0],c1[0],k)/255,L(c0[1],c1[1],k)/255,L(c0[2],c1[2],k)/255];}}
@@ -461,9 +472,11 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
   // the bite bar turns + settles as you scroll through the shift — a live product beat
   gsap.fromTo("#shift .bar",{rotate:-9,scale:0.92},{rotate:5,scale:1.02,ease:"none",
     scrollTrigger:{trigger:"#shift",start:"top bottom",end:"bottom top",scrub:0.8}});
-  // mood orbs rise in with a soft spring
-  gsap.from("#range .mood .orb",{scale:0.4,autoAlpha:0,duration:0.7,ease:"back.out(1.7)",
-    stagger:0.14,scrollTrigger:{trigger:"#range",start:"top 68%"}});
+  // the trio settles in + gentle scroll parallax
+  gsap.from("#range .trio",{scale:0.94,opacity:0,duration:0.9,ease:"power3.out",
+    scrollTrigger:{trigger:"#range",start:"top 85%"}});
+  gsap.to("#range .trio",{yPercent:-6,ease:"none",
+    scrollTrigger:{trigger:"#range",start:"top bottom",end:"bottom top",scrub:0.6}});
 })();
 </script>
 </body>
