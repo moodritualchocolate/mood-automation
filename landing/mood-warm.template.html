@@ -30,11 +30,11 @@ section{position:relative;min-height:100vh;display:flex;flex-direction:column;
 .eyebrow{font-size:clamp(12px,2.6vw,15px);font-weight:700;letter-spacing:.34em;
   color:var(--amber);text-transform:uppercase;margin-bottom:22px;}
 .kicker{font-size:clamp(13px,2.7vw,16px);font-weight:600;letter-spacing:.06em;color:var(--muted);}
-h1,h2{font-weight:900;line-height:1.02;letter-spacing:-.015em;color:var(--choc);}
+h1,h2{font-weight:900;line-height:1.0;letter-spacing:-.02em;color:var(--choc);text-wrap:balance;}
 h1{font-size:clamp(58px,15vw,150px);}
-h2{font-size:clamp(38px,8.5vw,84px);}
-p.lead{font-size:clamp(19px,4.4vw,30px);font-weight:500;line-height:1.5;color:#4B3826;
-  max-width:20ch;margin:26px auto 0;}
+h2{font-size:clamp(42px,9.5vw,92px);}
+p.lead{font-size:clamp(19px,4.2vw,28px);font-weight:400;line-height:1.5;color:#4B3826;
+  max-width:26ch;margin:26px auto 0;text-wrap:balance;}
 .o{color:var(--orange);}
 .wm{font-weight:900;color:var(--choc);direction:ltr;display:inline-flex;align-items:center;line-height:1;}
 .wm .oo{display:inline-block;border-radius:50%;background:var(--orange);position:relative;}
@@ -47,17 +47,39 @@ p.lead{font-size:clamp(19px,4.4vw,30px);font-weight:500;line-height:1.5;color:#4
 #hero .wm .oo{width:.62em;height:.62em;margin:0 .05em;}
 #hero .tag{font-weight:800;letter-spacing:.5em;color:var(--amber);
   font-size:clamp(13px,3.2vw,20px);text-transform:uppercase;margin-top:4px;}
-#hero .pouch{width:min(52vw,290px);margin:5vh auto 0;filter:drop-shadow(0 34px 46px rgba(60,30,10,.26));}
-#hero .sub{margin-top:4vh;}
+#hero .pouch{width:min(58vw,330px);margin:5vh auto 0;filter:drop-shadow(0 40px 52px rgba(60,30,10,.22));}
+#hero .sub{margin-top:4vh;font-weight:500;}
 .scrollcue{position:absolute;bottom:3.4vh;left:50%;transform:translateX(-50%);
   font-size:12px;letter-spacing:.3em;color:var(--muted);opacity:.7;font-weight:600;}
 .scrollcue::after{content:"";display:block;width:1px;height:34px;margin:12px auto 0;
   background:linear-gradient(var(--muted),transparent);}
 
-/* RITUAL / mood-shift */
-#shift h2{max-width:14ch;}
-#shift .bar{width:min(78vw,560px);margin:6vh auto 0;
-  filter:drop-shadow(0 40px 60px rgba(40,20,8,.4));}
+/* RITUAL / the shift */
+#shift h2{max-width:15ch;}
+#shift .bar{width:min(82vw,600px);margin:6vh auto 0;transform-origin:50% 50%;
+  filter:drop-shadow(0 46px 64px rgba(40,20,8,.42));}
+
+/* RANGE — mood-shift made legible: Energy -> Relax -> Sleep */
+#range{overflow:hidden;}
+#range .moods{display:flex;gap:clamp(14px,4vw,48px);margin-top:7vh;
+  align-items:flex-start;justify-content:center;flex-wrap:wrap;}
+.mood{display:flex;flex-direction:column;align-items:center;width:clamp(88px,26vw,150px);}
+.mood .orb{width:clamp(80px,24vw,140px);height:clamp(80px,24vw,140px);border-radius:50%;
+  position:relative;box-shadow:0 24px 50px rgba(60,40,20,.18);}
+.mood .orb::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.55),rgba(255,255,255,0) 46%);}
+.mood.energy .orb{background:radial-gradient(circle at 40% 36%,#F4813E,#D8501B);}
+.mood.relax  .orb{background:radial-gradient(circle at 40% 36%,#9DB06A,#6E8544);}
+.mood.sleep  .orb{background:radial-gradient(circle at 40% 36%,#8377AC,#574B76);}
+.mood .he{font-weight:900;font-size:clamp(18px,5vw,26px);color:var(--choc);margin-top:18px;}
+.mood .en{font-weight:800;font-size:clamp(10px,2.6vw,12px);letter-spacing:.28em;
+  text-transform:uppercase;color:var(--muted);margin-top:5px;}
+.mood .st{font-weight:700;font-size:clamp(10px,2.4vw,11px);letter-spacing:.14em;margin-top:10px;
+  padding:4px 12px;border-radius:100px;text-transform:uppercase;}
+.mood.energy .st{color:#B84A17;background:rgba(216,80,27,.13);}
+.mood .st.soon{color:var(--muted);background:rgba(60,40,20,.07);}
+#range .track{display:flex;align-items:center;gap:0;margin:4vh auto 0;width:min(560px,82vw);}
+#range .track .seg{height:6px;flex:1;border-radius:100px;}
 
 /* PRODUCT */
 #product{flex-direction:row;gap:6vw;flex-wrap:wrap;}
@@ -126,7 +148,7 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
     <div class="eyebrow reveal" data-d="0">הרגע</div>
     <h2 class="reveal" data-d="1">ביס אחד.<br/>וה־<span class="o" dir="ltr" style="direction:ltr">mood</span> שלך משתנה.</h2>
     <img class="bar reveal" data-d="2" src="data:image/png;base64,__BARHERO__" alt="mood bar" />
-    <p class="lead reveal" data-d="3">לא סוכר. לא הבטחות ריקות.<br/>שוקולד אמיתי שעובד איתך.</p>
+    <p class="lead reveal" data-d="3">לא&nbsp;סוכר, לא&nbsp;הבטחות&nbsp;ריקות —<br/>שוקולד&nbsp;אמיתי שעובד&nbsp;איתך.</p>
   </section>
 
   <section id="product">
@@ -134,7 +156,7 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
     <div class="copy">
       <div class="eyebrow reveal" data-d="1">המוצר</div>
       <h2 class="reveal" data-d="2">שוקולד מריר,<br/>אמיתי לגמרי.</h2>
-      <p class="reveal" data-d="3">70% קקאו יחיד־מקור. בלי חומרים משמרים, בלי צבעי מאכל. רק קקאו אמיתי ותמצית צמחים פונקציונלית שנטחנת פנימה.</p>
+      <p class="reveal" data-d="3">70%&nbsp;קקאו יחיד־מקור. בלי חומרים משמרים, בלי צבעי מאכל — רק קקאו אמיתי ותמצית צמחים פונקציונלית שנטחנת פנימה.</p>
       <div class="reveal" data-d="4">
         <span class="pill">70% קקאו</span>
         <span class="pill">טבעוני</span>
@@ -154,6 +176,20 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
       <div class="ing reveal" data-d="5"><div style="display:flex;align-items:center"><span class="dot" style="background:#B5642A"></span><div><div class="n">קינמון</div><div class="d">תמיכה ברמת סוכר מאוזנת</div></div></div><div class="amt">40 מ״ג</div></div>
       <div class="ing reveal" data-d="6"><div style="display:flex;align-items:center"><span class="dot" style="background:#D89A3C"></span><div><div class="n">ליקוריץ</div><div class="d">תמיכה במערכת ואיזון טבעי</div></div></div><div class="amt">13 מ״ג</div></div>
       <div class="ing reveal" data-d="7"><div style="display:flex;align-items:center"><span class="dot" style="background:#8A5A38"></span><div><div class="n">גוארנה</div><div class="d">מקור טבעי לאנרגיה מתמשכת</div></div></div><div class="amt">7 מ״ג</div></div>
+    </div>
+  </section>
+
+  <section id="range">
+    <div class="eyebrow reveal" data-d="0">mood אחד · שלושה מצבים</div>
+    <h2 class="reveal" data-d="1">צבע לכל<br/>מצב־רוח.</h2>
+    <div class="moods">
+      <div class="mood energy reveal" data-d="2"><div class="orb"></div><div class="he">אנרגיה</div><div class="en">Energy</div><div class="st">עכשיו</div></div>
+      <div class="mood relax reveal" data-d="3"><div class="orb"></div><div class="he">רוגע</div><div class="en">Relax</div><div class="st soon">בקרוב</div></div>
+      <div class="mood sleep reveal" data-d="4"><div class="orb"></div><div class="he">שינה</div><div class="en">Sleep</div><div class="st soon">בקרוב</div></div>
+    </div>
+    <div class="track reveal" data-d="5">
+      <div class="seg" style="background:linear-gradient(90deg,#D8501B,#9DB06A)"></div>
+      <div class="seg" style="background:linear-gradient(90deg,#9DB06A,#574B76)"></div>
     </div>
   </section>
 
@@ -422,6 +458,12 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
     gsap.to(el,{yPercent:-8,ease:"none",
       scrollTrigger:{trigger:el,start:"top bottom",end:"bottom top",scrub:0.6}});
   });
+  // the bite bar turns + settles as you scroll through the shift — a live product beat
+  gsap.fromTo("#shift .bar",{rotate:-9,scale:0.92},{rotate:5,scale:1.02,ease:"none",
+    scrollTrigger:{trigger:"#shift",start:"top bottom",end:"bottom top",scrub:0.8}});
+  // mood orbs rise in with a soft spring
+  gsap.from("#range .mood .orb",{scale:0.4,autoAlpha:0,duration:0.7,ease:"back.out(1.7)",
+    stagger:0.14,scrollTrigger:{trigger:"#range",start:"top 68%"}});
 })();
 </script>
 </body>
