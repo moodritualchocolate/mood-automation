@@ -5,6 +5,7 @@
 <!-- ============ MOOD — living 3D formula, clean futuristic layout ============ -->
 <section id="mood-xp" dir="rtl">
   <canvas class="xp-gl"></canvas>
+  <div class="xp-vig"></div>
   <div class="xp-ui">
     <div class="xp-top">
       <div class="xp-eyebrow">שוקולד ריטואל פונקציונלי</div>
@@ -40,6 +41,8 @@
 #mood-xp *{box-sizing:border-box;}
 #mood-xp .xp-gl{position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:pan-y;cursor:grab;}
 #mood-xp .xp-gl:active{cursor:grabbing;}
+#mood-xp .xp-vig{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(115% 78% at 50% 33%,rgba(0,0,0,0) 52%,rgba(74,44,22,.05) 82%,rgba(48,30,14,.13) 100%);}
 #mood-xp .xp-ui{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:space-between;
   align-items:center;padding:clamp(26px,5vh,54px) 0 0;pointer-events:none;}
 #mood-xp .xp-ui button{pointer-events:auto;font-family:inherit;cursor:pointer;border:0;}
@@ -121,15 +124,24 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const S=new THREE.Scene(), C=new THREE.PerspectiveCamera(34,1,0.1,100); C.position.set(0,0,14.3);
   let SCENE_Y=1.25;
   const env=(function(){const cv=document.createElement("canvas");cv.width=512;cv.height=256;const g=cv.getContext("2d");
-    const lg=g.createLinearGradient(0,0,0,256);lg.addColorStop(0,"#ffffff");lg.addColorStop(.42,"#f2e6d2");lg.addColorStop(.72,"#a97e4f");lg.addColorStop(1,"#3a2414");
+    const lg=g.createLinearGradient(0,0,0,256);lg.addColorStop(0,"#5e4326");lg.addColorStop(.32,"#3a2814");lg.addColorStop(.62,"#221408");lg.addColorStop(1,"#0e0703");
     g.fillStyle=lg;g.fillRect(0,0,512,256);
-    const s=g.createRadialGradient(150,54,6,150,54,150);s.addColorStop(0,"rgba(255,255,255,1)");s.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=s;g.fillRect(0,0,512,256);
+    // one crisp bright streak = the glossy highlight; rest stays dark so the chocolate reads dark
+    const bar=g.createLinearGradient(0,38,0,66);bar.addColorStop(0,"rgba(255,250,240,0)");bar.addColorStop(.5,"rgba(255,252,244,1)");bar.addColorStop(1,"rgba(255,250,240,0)");
+    g.fillStyle=bar;g.fillRect(0,38,512,28);
+    const s=g.createRadialGradient(150,52,3,150,52,80);s.addColorStop(0,"rgba(255,250,238,.98)");s.addColorStop(1,"rgba(255,250,238,0)");g.fillStyle=s;g.fillRect(0,0,512,256);
     const t=new THREE.CanvasTexture(cv);t.mapping=THREE.EquirectangularReflectionMapping;t.colorSpace=THREE.SRGBColorSpace;return t;})();
-  const chocMat=new THREE.MeshStandardMaterial({color:0x4d2c19,roughness:0.19,metalness:0.24,envMap:env,envMapIntensity:1.55});
-  S.add(new THREE.HemisphereLight(0xffffff,0xe7d5ba,1.05));
-  const key=new THREE.DirectionalLight(0xffffff,2.5);key.position.set(-4,5.5,6);S.add(key);
-  const fill=new THREE.DirectionalLight(0xffffff,1.0);fill.position.set(4,1.5,5);S.add(fill);
-  const rim=new THREE.DirectionalLight(0xffcaa0,1.4);rim.position.set(4.5,-1,1.5);S.add(rim);
+  const chocMat=new THREE.MeshStandardMaterial({color:0x3f2413,roughness:0.2,metalness:0.16,envMap:env,envMapIntensity:1.25});
+  S.add(new THREE.HemisphereLight(0xffffff,0xe7d5ba,0.85));
+  const key=new THREE.DirectionalLight(0xffffff,3.0);key.position.set(-4,6,6);S.add(key);
+  const fill=new THREE.DirectionalLight(0xffffff,0.85);fill.position.set(4,1.5,5);S.add(fill);
+  const rim=new THREE.DirectionalLight(0xffc89a,1.7);rim.position.set(4.8,-1,1.2);S.add(rim);
+  // soft spotlight glow behind the chocolate so it pops (filmic)
+  const spotTex=(function(){const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
+    const gr=g.createRadialGradient(64,64,4,64,64,64);gr.addColorStop(0,"rgba(255,248,236,.9)");gr.addColorStop(.5,"rgba(255,242,222,.32)");gr.addColorStop(1,"rgba(255,240,220,0)");
+    g.fillStyle=gr;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);})();
+  const spot=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:spotTex,transparent:true,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending,opacity:0.55}));
+  spot.scale.set(4.4,4.4,1);S.add(spot);
 
   function extG(shape,ctr){const g=new THREE.ExtrudeGeometry(shape,{depth:0.62,bevelEnabled:true,bevelThickness:0.13,bevelSize:0.12,bevelSegments:5,curveSegments:36});if(ctr!==false)g.center();return g;}
   function boltShape(){const s=new THREE.Shape();const p=[[0.32,1.5],[-0.62,0.16],[-0.06,0.16],[-0.32,-1.5],[0.66,-0.02],[0.12,-0.02]];
@@ -157,9 +169,15 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   pg.setAttribute("psize",new THREE.BufferAttribute(aSize,1));
   pg.setAttribute("palpha",new THREE.BufferAttribute(aA,1));
   const pMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,blending:THREE.NormalBlending,
-    vertexShader:`attribute vec3 pcolor;attribute float psize;attribute float palpha;varying vec3 vC;varying float vA;
-      void main(){vC=pcolor;vA=palpha;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=psize*(82.0/max(0.1,-mv.z));gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`varying vec3 vC;varying float vA;void main(){vec2 d=gl_PointCoord-0.5;float r=length(d);float a=smoothstep(0.5,0.36,r);gl_FragColor=vec4(vC,a*vA);}`});
+    uniforms:{uFocus:{value:14.3},uRange:{value:3.4}},
+    vertexShader:`attribute vec3 pcolor;attribute float psize;attribute float palpha;varying vec3 vC;varying float vA;varying float vBlur;
+      uniform float uFocus;uniform float uRange;
+      void main(){vC=pcolor;vA=palpha;vec4 mv=modelViewMatrix*vec4(position,1.0);float vz=-mv.z;
+      vBlur=clamp(abs(vz-uFocus)/uRange,0.0,1.0);
+      gl_PointSize=psize*(82.0/max(0.1,vz))*(1.0+vBlur*1.25);gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`varying vec3 vC;varying float vA;varying float vBlur;
+      void main(){vec2 d=gl_PointCoord-0.5;float r=length(d);float inner=mix(0.4,0.08,vBlur);
+      float a=smoothstep(0.5,inner,r);gl_FragColor=vec4(vC,a*vA*(1.0-vBlur*0.38));}`});
   const points=new THREE.Points(pg,pMat);points.frustumCulled=false;S.add(points);
 
   const sampleCache={}, IMG={};
@@ -231,7 +249,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   function size(){const w=cvs.clientWidth||300,h=cvs.clientHeight||300;R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(w,h,false);
     const aspect=w/h;C.aspect=aspect;const tan=Math.tan(C.fov*Math.PI/360);
     C.position.z=clamp(2.42/(tan*Math.max(0.34,aspect)),13.5,20.5);   // pull back on narrow screens so the orbit never clips
-    SCENE_Y=C.position.z*0.088;C.updateProjectionMatrix();}
+    SCENE_Y=C.position.z*0.088;C.updateProjectionMatrix();
+    pMat.uniforms.uFocus.value=C.position.z;spot.position.set(0,SCENE_Y,-1.6);}
   let T=0;
   function loop(ts){T+=0.016;size();
     if(!down){vel*=0.94;drag+=vel;}
