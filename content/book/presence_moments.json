@@ -1,0 +1,51 @@
+{
+  "middah": "presence",
+  "middah_he": "נוכחות",
+  "chapter_law": "כל רגע נוכחות: (1) יש אדם/מקום/חוויה שכבר מולך; (2) משהו מושך אותך החוצה; (3) אפשר לחזור בפעולה קטנה ומוחשית.",
+  "lead_sentence": "נוכחות אינה לתת למישהו את כל היום שלך. היא לתת לו רגע אחד שבו שום דבר אחר אינו חשוב יותר.",
+  "segments": [
+    { "key": "phone", "he": "עם הטלפון" },
+    { "key": "parents", "he": "עם ההורים" },
+    { "key": "partner", "he": "עם בן/בת הזוג" },
+    { "key": "kids", "he": "עם הילדים" },
+    { "key": "work", "he": "בעבודה" },
+    { "key": "friends", "he": "עם חברים ואנשים" }
+  ],
+  "moments": [
+    { "id": "presence_phone_01", "n": 1, "segment": "phone", "situation": "הטלפון רטט בזמן שמישהו דיבר אליך.", "opportunity": "הפעם, תסתכל קודם עליו." },
+    { "id": "presence_phone_02", "n": 2, "segment": "phone", "situation": "פתחת את הטלפון רק כדי לבדוק משהו קטן… ונשארת שם.", "opportunity": "בפעם הבאה, סגור אחרי מה שחיפשת." },
+    { "id": "presence_phone_03", "n": 3, "segment": "phone", "situation": "בדקת את הטלפון באמצע שיחה.", "opportunity": "השאר אותו הפוך עד סוף השיחה." },
+    { "id": "presence_phone_04", "n": 4, "segment": "phone", "situation": "סגרת את הטלפון ופתחת אותו שוב מיד.", "opportunity": "לפני הפתיחה הבאה, קח נשימה." },
+    { "id": "presence_phone_05", "n": 5, "segment": "phone", "situation": "ישבת לאכול כשהטלפון ליד הצלחת.", "opportunity": "בארוחה אחת, הנח אותו מחוץ ליד." },
+
+    { "id": "presence_parents_06", "n": 6, "segment": "parents", "situation": "מתי בפעם האחרונה התקשרת לאמא בלי שהיית צריך משהו?", "opportunity": "התקשר רק כדי לשמוע אותה." },
+    { "id": "presence_parents_07", "n": 7, "segment": "parents", "situation": "חשבת על ההורים… אבל לא התקשרת.", "opportunity": "אל תחכה לסיבה. תתקשר." },
+    { "id": "presence_parents_08", "n": 8, "segment": "parents", "situation": "יש הודעה מההורים שעדיין מחכה לתשובה.", "opportunity": "שלח עכשיו משפט אחד חם." },
+    { "id": "presence_parents_09", "n": 9, "segment": "parents", "situation": "אבא התקשר, וחשבת לחזור אליו אחר כך.", "opportunity": "כשאפשר, תחזור לפני שהיום בורח." },
+    { "id": "presence_parents_10", "n": 10, "segment": "parents", "situation": "ביקרת את ההורים, אבל רוב הזמן היית במסך.", "opportunity": "בביקור הבא, השאר את הטלפון בצד." },
+
+    { "id": "presence_partner_11", "n": 11, "segment": "partner", "situation": "בן/בת הזוג התחילו לספר משהו… והמשכת בטלפון.", "opportunity": "הנח אותו והישאר בשיחה." },
+    { "id": "presence_partner_12", "n": 12, "segment": "partner", "situation": "עבר יום שלם בלי ששאלת באמת איך עבר עליו.", "opportunity": "שאל פעם אחת — וחכה לתשובה." },
+    { "id": "presence_partner_13", "n": 13, "segment": "partner", "situation": "אמרת ״עוד רגע״… והרגע לא הגיע.", "opportunity": "בפעם הבאה, תן את הרגע עכשיו." },
+    { "id": "presence_partner_14", "n": 14, "segment": "partner", "situation": "ישבתם יחד, אבל כל אחד היה במסך שלו.", "opportunity": "שתי דקות. בלי מסכים." },
+    { "id": "presence_partner_15", "n": 15, "segment": "partner", "situation": "שמעת את המילים, אבל הראש שלך כבר היה במקום אחר.", "opportunity": "חזור על הדבר החשוב ששמעת." },
+
+    { "id": "presence_kids_16", "n": 16, "segment": "kids", "situation": "הילד קרא לך, ואמרת ״עוד רגע״.", "opportunity": "בפעם אחת, תיגש עכשיו." },
+    { "id": "presence_kids_17", "n": 17, "segment": "kids", "situation": "הילד רצה להראות לך משהו, והעיניים שלך נשארו במסך.", "opportunity": "הרם את הראש ותן לו מבט מלא." },
+    { "id": "presence_kids_18", "n": 18, "segment": "kids", "situation": "שיחקת איתו, אבל חשבת על העבודה.", "opportunity": "עשר דקות שבהן אתה רק איתו." },
+    { "id": "presence_kids_19", "n": 19, "segment": "kids", "situation": "הוא סיפר סיפור ארוך, ורצית שכבר יגיע לסוף.", "opportunity": "תן לסיפור להיגמר בקצב שלו." },
+    { "id": "presence_kids_20", "n": 20, "segment": "kids", "situation": "הילד שאל שאלה בזמן שהיית עסוק.", "opportunity": "עצור ותענה לו כאילו היא חשובה." },
+
+    { "id": "presence_work_21", "n": 21, "segment": "work", "situation": "מישהו דיבר בישיבה, ואתה כבר כתבת הודעה אחרת.", "opportunity": "בישיבה אחת, סגור את החלון האחר." },
+    { "id": "presence_work_22", "n": 22, "segment": "work", "situation": "קראת מייל בזמן שמישהו ישב מולך.", "opportunity": "סיים קודם את השיחה שבחדר." },
+    { "id": "presence_work_23", "n": 23, "segment": "work", "situation": "סגרת את המחשב, אבל העבודה המשיכה איתך הביתה.", "opportunity": "לפני הכניסה הביתה, עצור לדקה." },
+    { "id": "presence_work_24", "n": 24, "segment": "work", "situation": "מישהו ביקש ממך עזרה, אבל הראש שלך היה במשימה הבאה.", "opportunity": "תן לו שתי דקות בלי לעשות דבר אחר." },
+    { "id": "presence_work_25", "n": 25, "segment": "work", "situation": "ענית ״כן, כן״ בלי באמת לשמוע את הבקשה.", "opportunity": "בקש שיחזור — והקשב הפעם." },
+
+    { "id": "presence_friends_26", "n": 26, "segment": "friends", "situation": "ישבת עם חבר ובדקת הודעות באמצע הסיפור שלו.", "opportunity": "השאר את הטלפון בכיס עד שיסיים." },
+    { "id": "presence_friends_27", "n": 27, "segment": "friends", "situation": "מישהו שאל אותך ״מה שלומך?״ — וענית אוטומטית.", "opportunity": "פעם אחת, ענה באמת." },
+    { "id": "presence_friends_28", "n": 28, "segment": "friends", "situation": "שאלת מישהו מה שלומו, אבל כבר המשכת הלאה.", "opportunity": "שאל שוב וחכה." },
+    { "id": "presence_friends_29", "n": 29, "segment": "friends", "situation": "מישהו התחיל לספר, ואתה כבר הכנת עצה.", "opportunity": "לפני העצה, שאל אם הוא רוצה אותה." },
+    { "id": "presence_friends_30", "n": 30, "segment": "friends", "situation": "ישבת מול אדם שאתה אוהב, והראש שלך היה כבר בדבר הבא.", "opportunity": "תן לו רגע אחד בלי למהר לשום מקום." }
+  ]
+}
