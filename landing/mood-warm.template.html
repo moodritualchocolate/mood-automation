@@ -120,6 +120,16 @@ p.lead{font-size:clamp(19px,4.2vw,28px);font-weight:400;line-height:1.5;color:#4
 #formula .trust .t b{display:block;font-weight:900;font-size:clamp(14px,3.4vw,17px);color:var(--choc);}
 #formula .trust .t span{display:block;font-weight:500;font-size:clamp(11px,2.6vw,12.5px);
   color:var(--muted);margin-top:4px;line-height:1.3;}
+/* real-powder formula cluster */
+#fCluster{position:relative;width:min(540px,92vw);aspect-ratio:1/1.08;margin:4vh auto 5vh;}
+#formula .tot{margin-top:1vh;position:relative;z-index:1;}
+#fCluster .cl-icon{position:absolute;left:50%;top:50%;width:22%;transform:translate(-50%,-50%);
+  filter:drop-shadow(0 14px 20px rgba(40,20,8,.26));transition:opacity .35s;z-index:2;}
+#fCluster .cl-pw{position:absolute;transform:translate(-50%,-50%);text-align:center;transition:opacity .4s;}
+#fCluster .cl-pw img{display:block;width:100%;filter:drop-shadow(0 10px 16px rgba(60,40,20,.14));}
+#fCluster .cl-pw .cn{font-weight:900;font-size:clamp(13px,3vw,17px);color:var(--choc);margin-top:2px;white-space:nowrap;}
+#fCluster .cl-pw .cn .cd{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--acc);margin:0 3px 1px 0;vertical-align:middle;}
+#fCluster .cl-pw .ca{font-weight:900;color:var(--acc);}
 
 /* ISRAELI */
 #origin h2{max-width:16ch;}
@@ -191,7 +201,7 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
       <button class="tab" data-m="2"><span>שינה</span><span class="en">Sleep</span></button>
     </div>
     <p class="fTag reveal" data-d="3" id="fTag"></p>
-    <div class="grid" id="fGrid"></div>
+    <div id="fCluster" class="reveal" data-d="4"></div>
     <div class="tot" id="fTot"></div>
     <div class="trust">
       <div class="t reveal" data-d="8"><b>טבעי</b><span>רכיבים באיכות גבוהה</span></div>
@@ -514,23 +524,28 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
       ings:[["מליסה","הרגעה לקראת שינה",224],["פסיפלורה","תמיכה בשינה רגועה",224],
             ["ולריאן","תמיכה בשינה עמוקה",224],["ליקוריץ","איזון טבעי",56]]}
   ];
-  const fSec=document.getElementById("formula"), fGrid=document.getElementById("fGrid"),
+  const MOOD_ASSETS=__MOOD_ASSETS__;               // real cut powders + mood icons per SKU
+  const MKEY=["energy","relax","sleep"];
+  const POS5=[[50,8],[16,42],[84,42],[28,77],[72,77]];
+  const POS4=[[50,6],[15,48],[85,48],[50,83]];
+  const fSec=document.getElementById("formula"), fCluster=document.getElementById("fCluster"),
         fTag=document.getElementById("fTag"), fTot=document.getElementById("fTot"),
         fTabs=Array.from(document.querySelectorAll("#fTabs .tab"));
   function renderMood(i,lock){
-    const m=MOODS[i];
+    const m=MOODS[i], A=MOOD_ASSETS[MKEY[i]];
     fSec.style.setProperty("--acc",m.acc);
     fTabs.forEach(b=>{const on=+b.dataset.m===i;b.classList.toggle("active",on);
       b.style.background=on?m.acc:"transparent";});
     fTag.textContent=m.tag;
     const total=m.ings.reduce((s,x)=>s+x[2],0);
     fTot.textContent=`סה״כ תמצית צמחים פונקציונלית: ${total} מ״ג בכל חטיף`;
-    fGrid.innerHTML=m.ings.map(x=>
-      `<div class="ing"><div style="display:flex;align-items:center"><span class="dot"></span>`+
-      `<div><div class="n">${x[0]}</div><div class="d">${x[1]}</div></div></div>`+
-      `<div class="amt">${x[2]} מ״ג</div></div>`).join("");
-    if(lock){ gsap.fromTo("#fGrid .ing",{y:16,autoAlpha:0},
-      {y:0,autoAlpha:1,duration:0.45,ease:"power3.out",stagger:0.06}); selectedMood=i; }
+    const pos=m.ings.length===4?POS4:POS5, pwW=m.ings.length===4?27:25;
+    fCluster.innerHTML=`<img class="cl-icon" src="data:image/png;base64,${A.icon}"/>`+
+      m.ings.map((x,j)=>`<div class="cl-pw" style="left:${pos[j][0]}%;top:${pos[j][1]}%;width:${pwW}%">`+
+        `<img src="data:image/png;base64,${A.pw[j]}"/>`+
+        `<div class="cn"><span class="cd"></span>${x[0]} <span class="ca">${x[2]} מ״ג</span></div></div>`).join("");
+    if(lock){ gsap.fromTo("#fCluster .cl-pw, #fCluster .cl-icon",{autoAlpha:0},
+      {autoAlpha:1,duration:0.5,ease:"power2.out",stagger:0.05}); selectedMood=i; }
   }
   fTabs.forEach(b=>b.addEventListener("click",()=>renderMood(+b.dataset.m,true)));
   renderMood(0,false);   // default Energy shown; atmosphere stays scroll-driven until a click
