@@ -498,6 +498,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
 
     requestAnimationFrame(frame);
   }
+  // prime both trail buffers to cream so there is no dark warm-up flash on load
+  renderer.setClearColor(0xF3EADD,1.0);
+  renderer.setRenderTarget(rtA); renderer.clear();
+  renderer.setRenderTarget(rtB); renderer.clear();
+  renderer.setRenderTarget(null);
   frame();
 
   // ---------- reveals ----------

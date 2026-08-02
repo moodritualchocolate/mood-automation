@@ -469,6 +469,11 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
 
     requestAnimationFrame(frame);
   }
+  // prime both trail buffers to cream so there is no dark warm-up flash on load
+  renderer.setClearColor(0xF3EADD,1.0);
+  renderer.setRenderTarget(rtA); renderer.clear();
+  renderer.setRenderTarget(rtB); renderer.clear();
+  renderer.setRenderTarget(null);
   frame();
 
   // ---------- reveals ----------
