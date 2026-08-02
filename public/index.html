@@ -9,7 +9,7 @@
   <div class="xp-ui">
     <div class="xp-top">
       <div class="xp-eyebrow">שוקולד ריטואל פונקציונלי</div>
-      <h2 class="xp-title">מה בפנים,<br/>עד&nbsp;המיליגרם.</h2>
+      <h2 class="xp-title">מה בפנים, עד המיליגרם</h2>
     </div>
     <div class="xp-bottom">
       <div class="xp-benefit"></div>
@@ -44,8 +44,8 @@
 #mood-xp .xp-ui button{pointer-events:auto;font-family:inherit;cursor:pointer;border:0;}
 #mood-xp .xp-top{display:flex;flex-direction:column;align-items:center;}
 #mood-xp .xp-eyebrow{font-weight:700;letter-spacing:.30em;font-size:clamp(10px,2.4vw,12px);color:var(--muted);text-transform:uppercase;}
-#mood-xp .xp-title{font-weight:800;line-height:.98;letter-spacing:-.025em;color:var(--choc);margin-top:9px;
-  font-size:clamp(26px,6.4vw,46px);}
+#mood-xp .xp-title{font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--choc);margin-top:8px;
+  font-size:clamp(19px,4.6vw,30px);}
 #mood-xp .xp-bottom{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;}
 #mood-xp .xp-benefit{font-weight:800;font-size:clamp(16px,4vw,23px);color:var(--acc);transition:color .7s;letter-spacing:-.01em;}
 #mood-xp .xp-total{font-weight:600;font-size:clamp(13px,3vw,17px);color:var(--muted);}
@@ -133,7 +133,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   pg.setAttribute("pcolor",new THREE.BufferAttribute(aCol,3));
   pg.setAttribute("psize",new THREE.BufferAttribute(aSize,1));
   pg.setAttribute("palpha",new THREE.BufferAttribute(aA,1));
-  const pMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:false,blending:THREE.NormalBlending,
+  const pMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,blending:THREE.NormalBlending,
     vertexShader:`attribute vec3 pcolor;attribute float psize;attribute float palpha;varying vec3 vC;varying float vA;
       void main(){vC=pcolor;vA=palpha;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=psize*(82.0/max(0.1,-mv.z));gl_Position=projectionMatrix*mv;}`,
     fragmentShader:`varying vec3 vC;varying float vA;void main(){vec2 d=gl_PointCoord-0.5;float r=length(d);float a=smoothstep(0.5,0.36,r);gl_FragColor=vec4(vC,a*vA);}`});
@@ -162,9 +162,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         P_ROLE=new Uint8Array(MAXP), P_T=new Float32Array(MAXP), P_SPD=new Float32Array(MAXP);
   function loadMood(idx){const m=MOODS[idx];const n=m.ings.length,pos=n===4?POS4:POS5;count=n;
     const maxMg=Math.max.apply(null,m.ings.map(x=>x[1]));
-    clouds=m.ings.map((it,i)=>({base:new THREE.Vector3(pos[i][0],pos[i][1],0),
-      H:0.62+0.98*Math.sqrt(it[1]/maxMg),ar:IMG[it[2]]||1,ph:i*1.9,
-      bspd:0.4+i*0.09,dspd:0.24+i*0.07,rot:0.16+i*0.05,ang:0,pos:new THREE.Vector3(pos[i][0],pos[i][1],0)}));
+    clouds=m.ings.map((it,i)=>({H:0.54+0.82*Math.sqrt(it[1]/maxMg),ar:IMG[it[2]]||1,ph:i*1.9,
+      theta:i*(Math.PI*2/n),rot:0.16+i*0.05,ang:0,pos:new THREE.Vector3()}));
     let p=0;
     m.ings.forEach((it,i)=>{const pts=sampleCache[it[2]]||[],cl=clouds[i],w=cl.H,L=pts.length||1;
       for(let j=0;j<pts.length&&p<MAXP;j++){const s=pts[j];
@@ -172,8 +171,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         P_PH[p]=(j*0.618+i)*6.283%6.283;P_R[p]=0.4+0.6*((j*97)%100)/100;
         aCol[p*3]=s[2];aCol[p*3+1]=s[3];aCol[p*3+2]=s[4];
         aSize[p]=0.5+w*0.24;aA[p]=0.9;p++;}
-      // stream particles: flow from this ingredient into the central chocolate (binds it to one unit)
-      const nS=66;
+      // (streams off — the orbit itself is the unifier)
+      const nS=0;
       for(let k=0;k<nS&&p<MAXP;k++){const s=pts[(k*7)%L]||[0,0,.5,.4,.3];
         P_ROLE[p]=1;P_CLOUD[p]=i;P_T[p]=k/nS;P_SPD[p]=0.10+((k*13)%50)/50*0.11;
         aCol[p*3]=s[2];aCol[p*3+1]=s[3];aCol[p*3+2]=s[4];aSize[p]=0.42+w*0.1;aA[p]=0;p++;}
@@ -210,13 +209,15 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   let T=0;
   function loop(){T+=0.016;size();
     if(!down){vel*=0.94;drag+=vel;}
-    shapeGroup.rotation.y=T*0.5+drag+mx*0.3;
-    shapeGroup.rotation.x=clamp(-0.05+Math.sin(T*0.45)*0.07-my*0.15,-0.4,0.4);
-    shapeGroup.position.y=Math.sin(T*0.6)*0.06;
-    // update each cloud centre (independent float) + slow 3D turn
-    for(let i=0;i<count;i++){const c=clouds[i];
-      c.pos.set(c.base.x+Math.sin(T*c.dspd+c.ph)*0.07, c.base.y+Math.cos(T*c.bspd+c.ph)*0.09, 0);
-      c.ang=Math.sin(T*c.rot+c.ph)*0.5;}     // rock the whole volume so its depth reads
+    // the world (chocolate) stays the stable centre — gently turns, never edge-on
+    shapeGroup.rotation.y=Math.sin(T*0.38)*0.5+drag*0.5+mx*0.25;
+    shapeGroup.rotation.x=clamp(-0.04+Math.sin(T*0.3)*0.05-my*0.12,-0.3,0.3);
+    shapeGroup.position.y=Math.sin(T*0.6)*0.05;
+    // ingredients revolve around the central chocolate (our world) as one system
+    const Phi=T*0.3+drag, RAD=1.85, TILT=0.5;
+    for(let i=0;i<count;i++){const c=clouds[i];const a=c.theta+Phi;
+      c.pos.set(RAD*Math.cos(a), RAD*Math.sin(a)*Math.sin(TILT), RAD*Math.sin(a)*Math.cos(TILT));
+      c.ang=Math.sin(T*c.rot+c.ph)*0.5;}
     // update every particle: clouds (3D volume, turning) + streams flowing into the chocolate
     const cy=shapeGroup.position.y;
     for(let i=0;i<activeCount;i++){const ci=P_CLOUD[i],c=clouds[ci];if(!c)continue;const o=i*3;
@@ -244,6 +245,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       const ly=(sc.y<H2*0.42)? sc.y-prY-28 : sc.y+prY+22;
       el.style.left=clamp(sc.x,62,W-62)+"px";
       el.style.top=clamp(ly,H2*0.165,H2-140)+"px";
+      el.style.opacity=clamp(0.14+(c.pos.z+0.85)/1.9,0.14,1);   // fade as it revolves behind
     }
     requestAnimationFrame(loop);
   }
