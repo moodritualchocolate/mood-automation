@@ -10,8 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#efe6d4; --ink:#39322a; --ink-soft:#665c4b; --faint:#9a8f78;
-  --olive:#6d7a4c; --olive-d:#586440; --dusk:#8a7f93; --dusk-d:#6f6580; --line:#d9ccb2;
+  --paper:#efe6d4; --paper-d:#e6dcc6; --ink:#38312a; --ink-soft:#655c4b; --faint:#9a8f78;
+  --olive:#6d7a4c; --olive-d:#586440; --terra:#b06a45; --dusk:#8a7f93; --line:#d9ccb2;
   --serif:'Frank Ruhl Libre',serif; --sans:'Heebo',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -20,67 +20,67 @@ body{background:#0e0c08;color:var(--ink);font-family:var(--sans);font-weight:300
   overflow:hidden;position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 #stage{position:relative;width:100vw;height:100vh;max-width:calc(100vh*9/16);
   background:var(--paper);overflow:hidden;box-shadow:0 0 80px rgba(0,0,0,.6)}
-
-.screen{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .55s ease}
+.screen{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .7s ease}
 .screen.on{opacity:1;visibility:visible}
+
+/* image scene */
 .scene{position:absolute;inset:0;background-size:cover;background-position:center top;background-color:var(--paper)}
-.scene.kb{animation:kb 14s ease-out both}
-@keyframes kb{from{transform:scale(1.08)}to{transform:scale(1)}}
-.veil{position:absolute;left:0;right:0;bottom:0;height:58%;
-  background:linear-gradient(180deg,rgba(239,230,212,0),rgba(239,230,212,.86) 40%,var(--paper) 64%)}
-.tap-hint{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 18px);left:0;right:0;text-align:center;
-  font-size:12px;color:var(--faint);letter-spacing:.1em;z-index:4;animation:blink 2.6s ease-in-out infinite;pointer-events:none}
-@keyframes blink{0%,100%{opacity:.25}50%{opacity:.7}}
+.scene.kb{animation:kb 16s ease-out both}
+@keyframes kb{from{transform:scale(1.09)}to{transform:scale(1)}}
+.veil{position:absolute;left:0;right:0;bottom:0;height:60%;
+  background:linear-gradient(180deg,rgba(239,230,212,0),rgba(239,230,212,.88) 42%,var(--paper) 66%)}
+.dim{position:absolute;inset:0;background:rgba(239,230,212,0);transition:background 1.2s}
+.dim.on{background:rgba(236,226,206,.66)}
 
-.top{position:absolute;top:0;left:0;right:0;height:8%;display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:5}
-.bk{background:none;border:none;color:var(--ink-soft);width:30px;height:30px;cursor:pointer;opacity:.55}
+.top{position:absolute;top:0;left:0;right:0;height:8%;display:flex;align-items:center;justify-content:space-between;padding:0 22px;z-index:6}
+.bk{background:none;border:none;color:var(--ink-soft);width:30px;height:30px;cursor:pointer;opacity:.5}
 .bk svg{width:22px;height:22px}
-.pips{display:flex;gap:5px}
-.pip{width:6px;height:6px;border-radius:50%;background:rgba(90,72,40,.22)}
-.pip.on{background:var(--olive)}
-.eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--olive-d);font-weight:400}
+.rgv{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);font-weight:500}
 
-.panel{position:absolute;left:0;right:0;bottom:0;z-index:3;
-  padding:0 28px max(30px,calc(env(safe-area-inset-bottom) + 22px));
-  display:flex;flex-direction:column;align-items:center;text-align:center;gap:13px}
-.kick{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--olive-d);font-weight:500}
-.beat{font-family:var(--serif);font-weight:500;line-height:1.42;color:var(--ink);white-space:pre-line;text-wrap:balance;opacity:0}
-.beat.b-sm{font-size:17px;color:var(--ink-soft);font-weight:400;font-family:var(--sans);line-height:1.6}
-.beat.b-md{font-size:20px}
-.beat.b-lg{font-size:24px}
-.beat.show{animation:rise .7s cubic-bezier(.16,1,.3,1) both}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.acts{display:flex;flex-direction:column;gap:11px;width:100%;max-width:360px;margin-top:6px;opacity:0}
-.acts.show{animation:rise .7s cubic-bezier(.16,1,.3,1) both}
+.panel{position:absolute;left:0;right:0;bottom:0;z-index:4;
+  padding:0 30px max(32px,calc(env(safe-area-inset-bottom) + 24px));
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:15px}
+.panel.mid{top:0;justify-content:center;padding-bottom:0}
+.kick{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--olive-d);font-weight:500;opacity:0}
+.line{font-family:var(--serif);font-weight:500;line-height:1.45;color:var(--ink);white-space:pre-line;text-wrap:balance;opacity:0}
+.line.accent{color:var(--terra)}
+.line.s{font-size:18px;font-family:var(--sans);font-weight:400;color:var(--ink-soft);line-height:1.6}
+.line.m{font-size:22px} .line.l{font-size:26px} .line.xl{font-size:30px;line-height:1.32}
+.show{animation:rise .9s cubic-bezier(.16,1,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.acts{display:flex;flex-direction:column;gap:11px;width:100%;max-width:360px;margin-top:8px;opacity:0}
+.acts.show{animation:rise .8s cubic-bezier(.16,1,.3,1) both}
 .btn{min-height:56px;border:none;border-radius:30px;cursor:pointer;font-family:var(--sans);font-weight:500;font-size:16.5px;
   color:#fbf7ee;padding:8px 18px;line-height:1.3;box-shadow:0 8px 22px -10px rgba(70,55,30,.55);transition:transform .1s}
 .btn:active{transform:translateY(1px) scale(.99)}
 .btn.olive{background:var(--olive)} .btn.dusk{background:var(--dusk)}
-.btn.line{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);box-shadow:none;font-weight:400}
-.chips{display:flex;gap:10px;justify-content:center;width:100%;max-width:360px}
-.chip{flex:1;min-height:52px;border:1.5px solid var(--line);border-radius:26px;background:rgba(255,255,255,.4);cursor:pointer;
-  font-family:var(--sans);font-size:15.5px;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:8px}
-.chip:active{transform:scale(.98)}
-.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
-.dot.g{background:var(--olive)} .dot.w{background:#cfc4ab;border:1px solid var(--faint)}
+.btn.soft{background:rgba(255,255,255,.5);color:var(--ink);border:1.5px solid var(--line);box-shadow:none;font-weight:400}
+.btn.ghost{background:transparent;color:var(--ink-soft);border:none;box-shadow:none;font-weight:400;min-height:44px;font-size:15px}
+.mtag{display:inline-flex;align-items:center;gap:8px;padding:7px 17px;border-radius:22px;background:rgba(109,122,76,.14);
+  border:1px solid rgba(109,122,76,.4);color:var(--olive-d);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+.tap{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 20px);left:0;right:0;text-align:center;
+  font-size:12px;color:var(--faint);letter-spacing:.12em;z-index:5;animation:blink 2.8s ease-in-out infinite;pointer-events:none}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:.65}}
 
-/* mission accent */
-.mission-tag{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:22px;
-  background:rgba(109,122,76,.14);border:1px solid rgba(109,122,76,.4);color:var(--olive-d);
-  font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+/* opening */
+.open{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  text-align:center;padding:0 34px;background:
+    radial-gradient(130% 80% at 50% 30%,#f6efdd,var(--paper) 60%,var(--paper-d))}
+.open .halo{width:96px;height:96px;border-radius:50%;margin-bottom:6px;
+  background:radial-gradient(circle,rgba(176,106,69,.28),transparent 68%);
+  display:flex;align-items:center;justify-content:center;animation:breath 5s ease-in-out infinite}
+.open .halo::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--terra);box-shadow:0 0 20px var(--terra)}
+@keyframes breath{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.12);opacity:1}}
 
-/* exit-to-life breath */
-.breathe{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;z-index:6;
-  background:radial-gradient(circle at 50% 45%,rgba(239,230,212,.35),rgba(239,230,212,.92) 68%);opacity:0;visibility:hidden;transition:opacity 1.1s}
+/* exit breath */
+.breathe{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;z-index:7;
+  background:radial-gradient(circle at 50% 45%,rgba(239,230,212,.4),rgba(239,230,212,.94) 66%);opacity:0;visibility:hidden;transition:opacity 1.2s}
 .breathe.on{opacity:1;visibility:visible}
-.breathe .ring{width:130px;height:130px;border-radius:50%;border:1.5px solid var(--olive);
-  animation:pulse 4s ease-in-out infinite;display:flex;align-items:center;justify-content:center;color:var(--olive-d);font-family:var(--serif);font-size:17px}
-@keyframes pulse{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.14);opacity:1}}
-.breathe .sub{font-size:13.5px;color:var(--ink-soft);letter-spacing:.06em}
-
-/* reward bloom */
-.bloom{position:absolute;inset:0;pointer-events:none;z-index:2}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.12s!important}.beat,.acts{opacity:1!important}}
+.breathe .ring{width:132px;height:132px;border-radius:50%;border:1.5px solid var(--olive);display:flex;align-items:center;justify-content:center;
+  color:var(--olive-d);font-family:var(--serif);font-size:17px;animation:breath 4.5s ease-in-out infinite}
+.breathe .sub{font-size:13.5px;color:var(--ink-soft);letter-spacing:.05em;max-width:26ch;text-align:center;line-height:1.6}
+.bloom{position:absolute;inset:0;pointer-events:none;z-index:3}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.15s!important}.line,.kick,.acts{opacity:1!important}}
 </style>
 </head>
 <body>
@@ -90,163 +90,188 @@ body{background:#0e0c08;color:var(--ink);font-family:var(--sans);font-weight:300
 </defs></svg>
 
 <script>
-//===================== MOMENT DATA (voice + mission live here, not in engine) =====================
+//======================= MOMENT DATA (voice lives here) =======================
 const MOMENT = {
-  moment_id:"presence_phone_conversation_003",
-  title:"אני עדיין מקשיב",
+  moment_id:"presence_phone_conversation_003", rgv:"רגע 003", greetName:"",
   dir:"assets/moments/presence_phone_conversation_003/screens",
   img:{recognition:"01_recognition.jpg",identification:"02_identification.jpg",opportunity:"03_opportunity.jpg",
     exit:"04_exit_to_life.jpg",return:"05_return.jpg",connected:"06a_chose_differently.jpg",not_yet:"06b_not_yet.jpg",
     witness_c:"08a_witness_chose_differently.jpg",witness_n:"08b_witness_not_yet.jpg",continuation:"10_continuation.jpg"},
-  // each screen = a few beats revealed in rhythm (that is where the emotion lives)
-  recognition:["ערב. קפה.","מישהו שאתה אוהב יושב מולך, באמצע משפט.","הטלפון על השולחן נדלק —","״אני עדיין מקשיב,״ אתה אומר לעצמך.\nוהיד כבר זזה אליו."],
+  // 1 · recognition (beats on the scene)
+  recognition:[
+    {t:"מישהו שאתה אוהב יושב מולך."},
+    {t:"הוא באמצע משפט —\nוהטלפון על השולחן נדלק."},
+    {t:"״אני עדיין מקשיב,״ אתה אומר לעצמך.\nוהיד כבר זזה.", accent:true}
+  ],
+  // 2 · identification
   identify_prompt:"רגע. זה אתה?",
-  identify:["זה אני","לא ממש"],
-  opportunity:["יש חלון קטן.","שנייה אחת, בין הרטט לבין היד שלך.","בשנייה הזו — הכול נמצא."],
-  mission:{tag:"המשימה שלך",lines:["בשיחה הקרובה שלך היום,","תן לה להיגמר —","לפני שאתה נוגע בטלפון."],
-    take:"אני לוקח את זה",skip:"לא היום"},
-  exit:{lines:["עכשיו צא.","השיחה הבאה לא תקרה כאן, במסך."],hint:"היא תקרה שם, בחוץ.\nחזור כשזה יקרה — עוד שעה, מחר, לא משנה.",breath:"קח את הרגע",back:"זה קרה — חזרתי"},
+  identify:["נכון. גם לי זה קורה","אני נשאר — כשמדברים אליי"],
+  // 3 · emotion + line (the compassionate reframe, then the meaning blow)
+  reframe:[{t:"זה לא שלא אכפת לך."},{t:"פשוט המסך תמיד מבקש עוד שנייה.",accent:true}],
+  meaning:"אבל השיחה הזאת —\nהיא לא תחזור בדיוק ככה.",
+  // 4 · mission (the solution)
+  mission:{tag:"המשימה שלך",lines:["בשיחה הקרובה שלך היום","הנח את הטלפון —","ותן לה להיגמר."],take:"אני לוקח את זה",skip:"לא היום"},
+  exit:{lines:["עכשיו צא.","זה יקרה שם, בחוץ — לא כאן."],hint:"חזור כשזה יקרה.\nעוד שעה, מחר — אין מהירות.",breath:"קח את הרגע",back:"זה קרה — חזרתי"},
   return_prompt:"כשהרגע חזר… מה עשית?",
   branch_c:"נשארתי בשיחה", branch_n:"עוד לא",
   witness_c:["השיחה קיבלה עוד כמה רגעים","להיות באמת שיחה.","והוא הרגיש את זה."],
-  witness_n:["היד עלתה לפני ששמת לב.","וזה בסדר.","עכשיו אתה יודע איפה הרגע מסתתר —","ומחר תזהה אותו שנייה אחת מוקדם יותר."],
+  witness_n:["היד עלתה לפני ששמת לב.","וזה בסדר.","מחר תזהה את הרגע\nשנייה אחת מוקדם יותר."],
   reward_c:"עוד רגע שבו היית שם באמת.",
   reward_n:"עוד רגע שלמדת לזהות.",
   continuation:["מחר מחכה לך עוד רגע.","המסע ממשיך."]
 };
 
-//===================== ENGINE (generic; rhythm + mission + accrual) =====================
+//======================= ENGINE =======================
 const stage=document.getElementById("stage");
 const svg=id=>`<svg viewBox="0 0 24 24"><use href="#${id}"/></svg>`;
 const buzz=(ms=12)=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 const src=k=>`${MOMENT.dir}/${MOMENT.img[k]}`;
 const M=MOMENT;
-let branch=null, hist=[];
+let branch=null,hist=[];
 const KEY="mood_moments_v1";
 const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{steps:0}}catch(e){return{steps:0}}};
 const save=s=>localStorage.setItem(KEY,JSON.stringify(s));
-const TOTAL=8;
 
-function frame(imgKey,pip,{kb=true,tap=false}={}){
+function frame(imgKey,{kb=true,dim=false,tap=false,mid=false}={}){
   const el=document.createElement("div");el.className="screen";
   el.innerHTML=`
     <div class="scene ${kb?'kb':''}" style="background-image:url('${src(imgKey)}')"></div>
-    <div class="veil"></div>
-    <div class="top">
-      <button class="bk" onclick="back()">${svg("i-back")}</button>
-      <div class="pips">${Array.from({length:TOTAL}).map((_,i)=>`<div class="pip ${i<=pip?'on':''}"></div>`).join("")}</div>
-      <div class="eyebrow">נוכחות</div>
-    </div>
-    <div class="panel"></div>
-    ${tap?`<div class="tap-hint">הקש להמשך</div>`:""}`;
-  const old=stage.querySelector(".screen.on");
-  stage.appendChild(el);
-  requestAnimationFrame(()=>{el.classList.add("on");if(old){old.classList.remove("on");setTimeout(()=>old.remove(),560);}});
+    <div class="veil"></div><div class="dim ${dim?'on':''}"></div>
+    <div class="top"><button class="bk" onclick="back()">${svg("i-back")}</button><div class="rgv">${M.rgv}</div><div style="width:30px"></div></div>
+    <div class="panel ${mid?'mid':''}"></div>
+    ${tap?`<div class="tap">הקש להמשך</div>`:""}`;
+  const old=stage.querySelector(".screen.on");stage.appendChild(el);
+  requestAnimationFrame(()=>{el.classList.add("on");if(old){old.classList.remove("on");setTimeout(()=>old.remove(),720);}});
   return el;
 }
-// reveal beats one by one; resolve when done
-function beats(panel, lines, cls="b-md", start=350, gap=1100){
-  return new Promise(res=>{
-    lines.forEach((t,i)=>{
-      const d=document.createElement("div");d.className=`beat ${cls}`;d.textContent=t;panel.appendChild(d);
-      setTimeout(()=>d.classList.add("show"), start+i*gap);
-    });
-    setTimeout(res, start+lines.length*gap);
-  });
+function addLine(panel,txt,cls="m",accent=false){
+  const d=document.createElement("div");d.className=`line ${cls} ${accent?'accent':''}`;d.textContent=txt;
+  panel.appendChild(d);requestAnimationFrame(()=>d.classList.add("show"));return d;
 }
-function actions(panel, html){
-  const w=document.createElement("div");w.className="acts";w.innerHTML=html;panel.appendChild(w);
-  requestAnimationFrame(()=>w.classList.add("show"));return w;
-}
+function addKick(panel,txt){const d=document.createElement("div");d.className="kick";d.innerHTML=txt;panel.appendChild(d);requestAnimationFrame(()=>d.classList.add("show"));return d;}
+function actions(panel,html){const w=document.createElement("div");w.className="acts";w.innerHTML=html;panel.appendChild(w);requestAnimationFrame(()=>w.classList.add("show"));return w;}
 function go(fn){hist.push(fn);fn();}
 function back(){buzz();if(hist.length>1){hist.pop();hist[hist.length-1]();}else location.href="index.html";}
-function tapNext(el,fn){const h=()=>{el.removeEventListener("click",h);fn();};setTimeout(()=>el.addEventListener("click",h),300);}
+// reveal beats with a tap to advance each (user controls the breath)
+function sequence(el,panel,beats,cls,{onDone}={}){
+  let i=0;
+  const step=()=>{
+    if(i<beats.length){const b=beats[i++];addLine(panel,b.t,cls,b.accent);
+      if(i<beats.length){armTap()} else {el.querySelector(".tap")?.remove();setTimeout(onDone,650);}}
+  };
+  function armTap(){const h=()=>{el.removeEventListener("click",h);step();};setTimeout(()=>el.addEventListener("click",h),650);}
+  step();
+}
 
-// ---- steps ----
-async function Recognition(){
-  const el=frame("recognition",0,{tap:true});
-  await beats(el.querySelector(".panel"), M.recognition, "b-lg", 500, 1300);
-  tapNext(el, ()=>{buzz();go(Identification)});
+// ---- 0 · OPEN DAY ----
+function Open(){
+  const el=document.createElement("div");el.className="screen";
+  const hr=new Date().getHours();const g=hr<12?"בוקר טוב":hr<18?"צהריים טובים":"ערב טוב";
+  el.innerHTML=`<div class="open">
+    <div class="halo"></div>
+    <div class="line l show">${g}${M.greetName?", "+M.greetName:""}.</div>
+    <div class="line s show" style="animation-delay:.5s;max-width:24ch">יש רגע אחד שמחכה לך היום.</div>
+    <div class="acts show" style="animation-delay:1.1s;max-width:320px"><button class="btn olive" id="enter">להיכנס לרגע</button></div>
+  </div>`;
+  stage.appendChild(el);requestAnimationFrame(()=>el.classList.add("on"));
+  el.querySelector("#enter").onclick=()=>{buzz();el.classList.remove("on");setTimeout(()=>el.remove(),700);go(Recognition)};
 }
+// ---- 1 · RECOGNITION ----
+function Recognition(){
+  const el=frame("recognition",{tap:true});
+  sequence(el,el.querySelector(".panel"),M.recognition,"l",{onDone:()=>go(Identification)});
+}
+// ---- 2 · IDENTIFICATION ----
 function Identification(){
-  const el=frame("identification",1);
-  const p=el.querySelector(".panel");
-  beats(p,[M.identify_prompt],"b-lg",300,700).then(()=>{
-    actions(p,`<div class="chips">
-      <button class="chip" data-b="me"><span class="dot g"></span>${M.identify[0]}</button>
-      <button class="chip" data-b="no"><span class="dot w"></span>${M.identify[1]}</button></div>`);
-    p.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{buzz();go(Opportunity)});
-  });
+  const el=frame("identification",{});const p=el.querySelector(".panel");
+  addLine(p,M.identify_prompt,"l");
+  setTimeout(()=>{
+    actions(p,`<button class="btn soft" data-b="0">${M.identify[0]}</button><button class="btn soft" data-b="1">${M.identify[1]}</button>`);
+    p.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>{buzz();go(Reframe)});
+  },800);
 }
-async function Opportunity(){
-  const el=frame("opportunity",2);const p=el.querySelector(".panel");
-  await beats(p, M.opportunity, "b-md", 350, 1150);
-  actions(p,`<button class="btn olive" id="n">יש לי את זה</button>`);
-  p.querySelector("#n").onclick=()=>{buzz();go(Mission)};
+// ---- 3 · EMOTION + MEANING ----
+function Reframe(){
+  const el=frame("opportunity",{});const p=el.querySelector(".panel");
+  sequence(el,el.querySelector(".panel"),M.reframe,"m",{onDone:()=>go(Meaning)});
+  el.querySelector(".tap")||el.insertAdjacentHTML("beforeend",`<div class="tap">הקש להמשך</div>`);
 }
-async function Mission(){
-  const el=frame("opportunity",3,{kb:false});const p=el.querySelector(".panel");
-  const tag=document.createElement("div");tag.className="beat b-sm show";
-  tag.innerHTML=`<span class="mission-tag">${M.mission.tag}</span>`;p.appendChild(tag);
-  await beats(p, M.mission.lines, "b-lg", 500, 1050);
-  actions(p,`<button class="btn olive" id="take">${M.mission.take}</button>
-    <button class="btn line" id="skip">${M.mission.skip}</button>`);
-  p.querySelector("#take").onclick=()=>{buzz(18);go(ExitToLife)};
-  p.querySelector("#skip").onclick=()=>{buzz();location.href="index.html"};
+function Meaning(){
+  // the blow — alone, centered, dimmed image, held
+  const el=frame("opportunity",{dim:true,mid:true,tap:true});const p=el.querySelector(".panel");
+  addLine(p,M.meaning,"xl");
+  const h=()=>{el.removeEventListener("click",h);el.querySelector(".tap")?.remove();go(Mission);};
+  setTimeout(()=>el.addEventListener("click",h),1400);
 }
-async function ExitToLife(){
-  const el=frame("exit",4);const p=el.querySelector(".panel");
-  await beats(p, M.exit.lines, "b-md", 350, 1050);
-  const h=document.createElement("div");h.className="beat b-sm";h.textContent=M.exit.hint;p.appendChild(h);
-  requestAnimationFrame(()=>h.classList.add("show"));
-  actions(p,`<button class="btn olive" id="did">${M.exit.back}</button>`);
-  const br=document.createElement("div");br.className="breathe";
-  br.innerHTML=`<div class="ring">${M.exit.breath}</div><div class="sub">קח את הזמן. אנחנו כאן כשתחזור.</div>`;el.appendChild(br);
-  p.querySelector("#did").onclick=()=>{buzz(18);br.classList.add("on");setTimeout(()=>go(Return),1600)};
+// ---- 4 · MISSION ----
+function Mission(){
+  const el=frame("opportunity",{kb:false});const p=el.querySelector(".panel");
+  addKick(p,`<span class="mtag">${M.mission.tag}</span>`);
+  let i=0;const lines=M.mission.lines;
+  (function rev(){ if(i<lines.length){addLine(p,lines[i++],"l");setTimeout(rev,900);}
+    else setTimeout(()=>{
+      actions(p,`<button class="btn olive" id="take">${M.mission.take}</button><button class="btn ghost" id="skip">${M.mission.skip}</button>`);
+      p.querySelector("#take").onclick=()=>{buzz(18);go(ExitToLife)};
+      p.querySelector("#skip").onclick=()=>{buzz();location.href="index.html"};
+    },500);})();
 }
+// ---- 5 · EXIT TO LIFE ----
+function ExitToLife(){
+  const el=frame("exit",{});const p=el.querySelector(".panel");
+  addLine(p,M.exit.lines[0],"m");setTimeout(()=>addLine(p,M.exit.lines[1],"m"),900);
+  setTimeout(()=>addLine(p,M.exit.hint,"s"),1700);
+  setTimeout(()=>{
+    actions(p,`<button class="btn olive" id="did">${M.exit.back}</button>`);
+    const br=document.createElement("div");br.className="breathe";
+    br.innerHTML=`<div class="ring">${M.exit.breath}</div><div class="sub">קח את הזמן.<br>אנחנו כאן כשתחזור.</div>`;el.appendChild(br);
+    p.querySelector("#did").onclick=()=>{buzz(18);br.classList.add("on");setTimeout(()=>go(Return),1700)};
+  },2500);
+}
+// ---- 6 · RETURN ----
 function Return(){
-  const el=frame("return",5);const p=el.querySelector(".panel");
-  beats(p,[M.return_prompt],"b-lg",300,700).then(()=>{
-    actions(p,`<button class="btn olive" id="c"><span class="dot g" style="margin-inline-end:8px"></span>${M.branch_c}</button>
-      <button class="btn dusk" id="ny"><span class="dot w" style="margin-inline-end:8px"></span>${M.branch_n}</button>`);
+  const el=frame("return",{});const p=el.querySelector(".panel");
+  addLine(p,M.return_prompt,"l");
+  setTimeout(()=>{
+    actions(p,`<button class="btn olive" id="c">${M.branch_c}</button><button class="btn dusk" id="ny">${M.branch_n}</button>`);
     p.querySelector("#c").onclick=()=>{buzz(16);branch="c";go(Witness)};
     p.querySelector("#ny").onclick=()=>{buzz(16);branch="n";go(Witness)};
-  });
+  },800);
 }
-async function Witness(){
-  const isC=branch==="c";
-  const el=frame(isC?"witness_c":"witness_n",6);const p=el.querySelector(".panel");
-  // accrue a real step
+// ---- 7 · WITNESS + REWARD ----
+function Witness(){
+  const isC=branch==="c";const el=frame(isC?"witness_c":"witness_n",{});const p=el.querySelector(".panel");
   const s=load();s.steps=(s.steps||0)+1;save(s);
-  await beats(p, isC?M.witness_c:M.witness_n, "b-md", 400, 1150);
-  if(isC) bloom(el);
-  const rew=document.createElement("div");rew.className="beat b-sm";
-  rew.innerHTML=`${isC?M.reward_c:M.reward_n}<br><span style="color:var(--olive-d);font-weight:500">${s.steps} רגעים נאספו</span>`;
-  p.appendChild(rew);requestAnimationFrame(()=>rew.classList.add("show"));
-  actions(p,`<button class="btn ${isC?'olive':'dusk'}" id="n">המשך</button>`);
-  p.querySelector("#n").onclick=()=>{buzz();go(Continuation)};
+  const beats=(isC?M.witness_c:M.witness_n).map(t=>({t}));
+  sequence(el,p,beats,"m",{onDone:()=>{
+    if(isC)bloom(el);
+    const r=document.createElement("div");r.className="line s";
+    r.innerHTML=`${isC?M.reward_c:M.reward_n}<br><span style="color:var(--olive-d);font-weight:600">${s.steps===1?'רגע אחד נאסף':s.steps+' רגעים נאספו'}</span>`;
+    p.appendChild(r);requestAnimationFrame(()=>r.classList.add("show"));
+    actions(p,`<button class="btn ${isC?'olive':'dusk'}" id="n">המשך</button>`);
+    p.querySelector("#n").onclick=()=>{buzz();go(Continuation)};
+  }});
+  el.querySelector(".tap")||el.insertAdjacentHTML("beforeend",`<div class="tap">הקש להמשך</div>`);
 }
-async function Continuation(){
-  const el=frame("continuation",7);const p=el.querySelector(".panel");
-  await beats(p, M.continuation, "b-md", 400, 1050);
-  actions(p,`<button class="btn olive" id="again">רגע חדש</button>
-    <button class="btn line" id="home">חזרה למשחק</button>`);
-  p.querySelector("#again").onclick=()=>{buzz();branch=null;hist=[];go(Recognition)};
-  p.querySelector("#home").onclick=()=>{buzz();location.href="index.html"};
+// ---- 8 · CONTINUATION ----
+function Continuation(){
+  const el=frame("continuation",{});const p=el.querySelector(".panel");
+  addLine(p,M.continuation[0],"m");setTimeout(()=>addLine(p,M.continuation[1],"m"),900);
+  setTimeout(()=>{
+    actions(p,`<button class="btn olive" id="again">רגע חדש</button><button class="btn ghost" id="home">חזרה למשחק</button>`);
+    p.querySelector("#again").onclick=()=>{buzz();branch=null;hist=[];go(Recognition)};
+    p.querySelector("#home").onclick=()=>{buzz();location.href="index.html"};
+  },1600);
 }
 function bloom(el){
   const c=document.createElement("canvas");c.className="bloom";el.appendChild(c);
   const ctx=c.getContext("2d"),w=c.width=el.clientWidth,h=c.height=el.clientHeight;
-  let ps=Array.from({length:46},()=>({x:w/2+(Math.random()-.5)*w*.5,y:h*.4+(Math.random()-.5)*90,
-    vx:(Math.random()-.5)*1.4,vy:-Math.random()*1.6-.3,a:1,r:Math.random()*2.4+1}));
-  let t=0;(function loop(){ctx.clearRect(0,0,w,h);t++;
-    ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.02;p.a-=.009;
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fillStyle=`rgba(150,160,90,${Math.max(0,p.a)})`;ctx.fill()});
+  let ps=Array.from({length:48},()=>({x:w/2+(Math.random()-.5)*w*.5,y:h*.42+(Math.random()-.5)*90,vx:(Math.random()-.5)*1.3,vy:-Math.random()*1.5-.3,a:1,r:Math.random()*2.4+1}));
+  let t=0;(function loop(){ctx.clearRect(0,0,w,h);t++;ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.02;p.a-=.009;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fillStyle=`rgba(150,160,90,${Math.max(0,p.a)})`;ctx.fill()});
     if(t<150)requestAnimationFrame(loop);else c.remove();})();
 }
-
 Object.values(MOMENT.img).forEach(f=>{const i=new Image();i.src=`${MOMENT.dir}/${f}`;});
-go(Recognition);
+Open();
 </script>
 </body>
 </html>
