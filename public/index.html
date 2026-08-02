@@ -96,7 +96,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const fill=new THREE.DirectionalLight(0xffffff,1.0);fill.position.set(4,1.5,5);S.add(fill);
   const rim=new THREE.DirectionalLight(0xffcaa0,1.4);rim.position.set(4.5,-1,1.5);S.add(rim);
 
-  function extG(shape,ctr){const g=new THREE.ExtrudeGeometry(shape,{depth:0.44,bevelEnabled:true,bevelThickness:0.1,bevelSize:0.1,bevelSegments:4,curveSegments:36});if(ctr!==false)g.center();return g;}
+  function extG(shape,ctr){const g=new THREE.ExtrudeGeometry(shape,{depth:0.62,bevelEnabled:true,bevelThickness:0.13,bevelSize:0.12,bevelSegments:5,curveSegments:36});if(ctr!==false)g.center();return g;}
   function boltShape(){const s=new THREE.Shape();const p=[[0.32,1.5],[-0.62,0.16],[-0.06,0.16],[-0.32,-1.5],[0.66,-0.02],[0.12,-0.02]];
     s.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length;i++)s.lineTo(p[i][0],p[i][1]);s.closePath();return s;}
   function waveShape(yc){const s=new THREE.Shape();const A=0.30,th=0.27,x0=-1.2,x1=1.2,N=64;
@@ -152,17 +152,17 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   /* ---------------- build a mood's clouds into the particle buffer ---------------- */
   let clouds=[], labelEls=[], count=0, activeCount=0;
   const P_CLOUD=new Int16Array(MAXP), P_LX=new Float32Array(MAXP), P_LY=new Float32Array(MAXP),
-        P_PH=new Float32Array(MAXP), P_R=new Float32Array(MAXP);
+        P_LZ=new Float32Array(MAXP), P_PH=new Float32Array(MAXP), P_R=new Float32Array(MAXP);
   function loadMood(idx){const m=MOODS[idx];const n=m.ings.length,pos=n===4?POS4:POS5;count=n;
     const maxMg=Math.max.apply(null,m.ings.map(x=>x[1]));
     clouds=m.ings.map((it,i)=>({base:new THREE.Vector3(pos[i][0],pos[i][1],0),
       H:0.62+0.98*Math.sqrt(it[1]/maxMg),ar:IMG[it[2]]||1,ph:i*1.9,
-      bspd:0.4+i*0.09,dspd:0.24+i*0.07,pos:new THREE.Vector3(pos[i][0],pos[i][1],0)}));
+      bspd:0.4+i*0.09,dspd:0.24+i*0.07,rot:0.16+i*0.05,ang:0,pos:new THREE.Vector3(pos[i][0],pos[i][1],0)}));
     let p=0;
     m.ings.forEach((it,i)=>{const pts=sampleCache[it[2]]||[],cl=clouds[i],w=cl.H;
       for(let j=0;j<pts.length&&p<MAXP;j++){const s=pts[j];
-        P_CLOUD[p]=i;P_LX[p]=s[0]*w;P_LY[p]=s[1]*w;P_PH[p]=(j*0.618+i)*6.283%6.283;
-        P_R[p]=0.4+0.6*((j*97)%100)/100;
+        P_CLOUD[p]=i;P_LX[p]=s[0]*w;P_LY[p]=s[1]*w;P_LZ[p]=(((j*53)%100)/100-0.5)*w*0.85;
+        P_PH[p]=(j*0.618+i)*6.283%6.283;P_R[p]=0.4+0.6*((j*97)%100)/100;
         aCol[p*3]=s[2];aCol[p*3+1]=s[3];aCol[p*3+2]=s[4];
         aSize[p]=0.5+w*0.24;aA[p]=0.9;p++;}
     });
@@ -200,17 +200,17 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     shapeGroup.rotation.y=T*0.5+drag+mx*0.3;
     shapeGroup.rotation.x=clamp(-0.05+Math.sin(T*0.45)*0.07-my*0.15,-0.4,0.4);
     shapeGroup.position.y=Math.sin(T*0.6)*0.06;
-    // update each cloud centre (independent float)
+    // update each cloud centre (independent float) + slow 3D turn
     for(let i=0;i<count;i++){const c=clouds[i];
-      c.pos.set(c.base.x+Math.sin(T*c.dspd+c.ph)*0.07, c.base.y+Math.cos(T*c.bspd+c.ph)*0.09, 0);}
-    // update every particle: living swirl + breath + depth
-    const swirl=0.05;
+      c.pos.set(c.base.x+Math.sin(T*c.dspd+c.ph)*0.07, c.base.y+Math.cos(T*c.bspd+c.ph)*0.09, 0);
+      c.ang=Math.sin(T*c.rot+c.ph)*0.5;}     // rock the whole volume so its depth reads
+    // update every particle: real 3D volume, turning + swirl + breath
     for(let i=0;i<activeCount;i++){const ci=P_CLOUD[i],c=clouds[ci];if(!c)continue;const o=i*3;
-      const ph=P_PH[i], br=1+0.06*Math.sin(T*0.9+ph);
-      const sx=Math.sin(T*0.8+ph)*swirl, sy=Math.cos(T*0.7+ph*1.3)*swirl, sz=Math.sin(T*0.6+ph*0.7)*0.22+P_R[i]*0.5-0.25;
-      aPos[o]=c.pos.x+P_LX[i]*br+sx;
-      aPos[o+1]=c.pos.y+P_LY[i]*br+sy;
-      aPos[o+2]=sz;
+      const ph=P_PH[i], br=1+0.05*Math.sin(T*0.9+ph), ca=Math.cos(c.ang), sa=Math.sin(c.ang);
+      const lx=P_LX[i]*br, lz=P_LZ[i]*br;
+      aPos[o]=c.pos.x + (lx*ca-lz*sa) + Math.sin(T*0.9+ph)*0.045;
+      aPos[o+1]=c.pos.y + P_LY[i]*br + Math.cos(T*0.8+ph*1.3)*0.055;
+      aPos[o+2]=(lx*sa+lz*ca) + Math.sin(T*0.7+ph*0.7)*0.06;
     }
     pg.attributes.position.needsUpdate=true;
     R.render(S,C);
