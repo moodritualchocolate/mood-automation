@@ -100,14 +100,13 @@ h2{font-size:clamp(26px,3.6vw,40px)}
 .ing .he{font-family:'Heebo';font-weight:800;font-size:17px}.ing .mg{font-family:'Heebo';font-weight:700;color:var(--accent-ink);font-size:13px}
 .formula.center{text-align:center}
 .formula .lede{margin:14px auto 0;max-width:46ch;color:var(--muted);font-weight:600;font-size:15.5px}
-.fburst{margin:16px auto 0;max-width:420px}
-.fburst img{width:100%;display:block;border-radius:0}
+.fburst{margin:0 auto;max-width:380px;aspect-ratio:512/800;overflow:hidden}
+.fpanel .fburst img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:0}
 .fspec{display:flex;justify-content:center;gap:clamp(28px,6vw,56px);margin-top:30px}
 .fspec div b{font-family:'Heebo';font-weight:900;font-size:40px;color:var(--accent-ink);display:block;line-height:1}
 .fspec div span{color:var(--muted);font-weight:600;font-size:13px;margin-top:4px;display:block}
 .fpanel{text-align:center;align-self:center}
-.feyebrow{font-family:'Heebo';font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-ink)}
-.fcap{margin-top:16px;font-family:'Heebo';font-weight:700;font-size:12.5px;color:var(--muted)}
+.why{padding-top:44px;padding-bottom:44px}
 .choc{background:var(--dark);color:#F4EEE3;padding:0;position:relative}
 .choc .cgrid{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
 .choc .cimg{overflow:hidden}
@@ -165,10 +164,10 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
   .gthumbs{display:none}.dots{display:flex}
   .gal .main{aspect-ratio:4/5}
   section{padding:38px 16px}
-  .split{grid-template-columns:1fr;gap:22px}
+  .split{grid-template-columns:1fr;gap:18px}
   .split img{aspect-ratio:4/3;object-fit:cover;max-height:56vh}
-  .fpanel .fburst img{aspect-ratio:auto;object-fit:contain;max-height:none;border-radius:0}
-  .fpanel .fburst{max-width:340px}
+  .why{padding-top:30px;padding-bottom:30px}
+  .fpanel .fburst{max-width:330px}
   .choc .cgrid{grid-template-columns:1fr}
   .choc .cimg{aspect-ratio:16/10}
   .choc .ctext{padding:32px 18px}
@@ -251,14 +250,7 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
       </div>
     </div>
     <div class="rv fpanel">
-      <div class="feyebrow">THE ENERGY FORMULA</div>
-      <div class="fburst"><img src="__FORMULA__" alt="פורמולת ENERGY — רודיולה, תה ירוק, קינמון, ליקוריץ, גוארנה" loading="lazy" decoding="async"></div>
-      <div class="fspec">
-        <div><b class="mono">5</b><span>רכיבים טבעיים</span></div>
-        <div><b class="mono">800</b><span>מ״ג פורמולה</span></div>
-        <div><b class="mono">1</b><span>ריבוע ביום</span></div>
-      </div>
-      <div class="fcap">שחרור מדויק · הכל בתוך ריבוע שוקולד אחד</div>
+      <div class="fburst"><img src="__FORMULA__" alt="פורמולת ENERGY — רודיולה 660, תה ירוק 80, קינמון 40, ליקוריץ 13, גוארנה 7 מ״ג" loading="lazy" decoding="async"></div>
     </div>
   </section>
 
