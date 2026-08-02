@@ -98,6 +98,15 @@ h2{font-size:clamp(26px,3.6vw,40px)}
 .ing{margin-top:22px;border-top:1px solid #EAD3C2}
 .ing div{display:flex;justify-content:space-between;align-items:baseline;padding:12px 2px;border-bottom:1px solid #EAD3C2}
 .ing .he{font-family:'Heebo';font-weight:800;font-size:17px}.ing .mg{font-family:'Heebo';font-weight:700;color:var(--accent-ink);font-size:13px}
+.formula.center{text-align:center}
+.formula .lede{margin:14px auto 0;max-width:46ch;color:var(--muted);font-weight:600;font-size:15.5px}
+.fburst{margin:30px auto 0;max-width:400px;background:#fff;border:1px solid #EAD3C2;border-radius:22px;padding:16px}
+.fburst img{width:100%;display:block;border-radius:12px}
+.fspec{display:flex;justify-content:center;gap:clamp(28px,6vw,56px);margin-top:30px}
+.fspec div b{font-family:'Heebo';font-weight:900;font-size:40px;color:var(--accent-ink);display:block;line-height:1}
+.fspec div span{color:var(--muted);font-weight:600;font-size:13px;margin-top:4px;display:block}
+.ftrust{margin-top:26px;font-family:'Heebo';font-weight:700;font-size:12.5px;letter-spacing:.02em;color:var(--muted)}
+.ftrust b{color:var(--accent-ink)}
 .choc{background:var(--dark);color:#F4EEE3;padding:0;position:relative}
 .choc .cgrid{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
 .choc .cimg{overflow:hidden}
@@ -234,24 +243,17 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
     <img class="rv" src="__WHY__" alt="רגע ENERGY" loading="lazy" decoding="async">
   </section>
 
-  <section class="formula split">
-    <div class="fig rv"><img src="__FORMULA__" alt="פורמולת ENERGY — ברק הרכיבים" loading="lazy" decoding="async"></div>
-    <div class="rv">
-      <div class="eyebrow">THE ENERGY FORMULA</div>
-      <h2 style="margin-top:10px">פורמולה מדויקת.<br>רגע שקל להתמיד בו.</h2>
-      <div class="spec">
-        <div><b class="mono">1</b><span>ריבוע ביום</span></div>
-        <div><b class="mono">5</b><span>רכיבים</span></div>
-        <div><b class="mono">800</b><span>מ״ג סה״כ</span></div>
-      </div>
-      <div class="ing">
-        <div><span class="he">רודיולה</span><span class="mg mono">660 מ״ג</span></div>
-        <div><span class="he">תה ירוק</span><span class="mg mono">80 מ״ג</span></div>
-        <div><span class="he">קינמון</span><span class="mg mono">40 מ״ג</span></div>
-        <div><span class="he">ליקוריץ</span><span class="mg mono">13 מ״ג</span></div>
-        <div><span class="he">גוארנה</span><span class="mg mono">7 מ״ג</span></div>
-      </div>
+  <section class="formula center">
+    <div class="eyebrow rv">THE ENERGY FORMULA</div>
+    <h2 class="rv" style="margin-top:10px">פורמולה מדויקת. רגע שקל להתמיד בו.</h2>
+    <p class="lede rv">חמישה רכיבים טבעיים במינון מדויק לפי מחקר — 800 מ״ג של פורמציה שפיתחנו, בתוך ריבוע שוקולד אחד.</p>
+    <div class="fburst rv"><img src="__FORMULA__" alt="פורמולת ENERGY — רודיולה, תה ירוק, קינמון, ליקוריץ, גוארנה" loading="lazy" decoding="async"></div>
+    <div class="fspec rv">
+      <div><b class="mono">1</b><span>ריבוע ביום</span></div>
+      <div><b class="mono">5</b><span>רכיבים טבעיים</span></div>
+      <div><b class="mono">800</b><span>מ״ג פורמולה</span></div>
     </div>
+    <div class="ftrust rv">✓ לפי מחקר &nbsp;·&nbsp; ✓ רכיבים באיכות גבוהה &nbsp;·&nbsp; ✓ <b>ללא סוכר</b></div>
   </section>
 
   <section class="choc" id="choc"><div class="cgrid">
