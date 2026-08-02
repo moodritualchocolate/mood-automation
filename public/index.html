@@ -143,7 +143,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     for(let y=0;y<th;y++)for(let x=0;x<tw;x++){const o=(y*tw+x)*4,al=data[o+3];
       if(al>92){raw.push([(x/tw-0.5)*ar,(0.5-y/th),data[o]/255,data[o+1]/255,data[o+2]/255]);}}
     // thin to ~ target
-    const target=1750;let pts=raw;
+    const target=1450;let pts=raw;
     if(raw.length>target){pts=[];let sd=raw.length;const keep=target/raw.length;let acc=0;
       for(let i=0;i<raw.length;i++){acc+=keep;if(acc>=1){acc-=1;pts.push(raw[i]);}}}
     sampleCache[k]=pts;
@@ -152,19 +152,25 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   /* ---------------- build a mood's clouds into the particle buffer ---------------- */
   let clouds=[], labelEls=[], count=0, activeCount=0;
   const P_CLOUD=new Int16Array(MAXP), P_LX=new Float32Array(MAXP), P_LY=new Float32Array(MAXP),
-        P_LZ=new Float32Array(MAXP), P_PH=new Float32Array(MAXP), P_R=new Float32Array(MAXP);
+        P_LZ=new Float32Array(MAXP), P_PH=new Float32Array(MAXP), P_R=new Float32Array(MAXP),
+        P_ROLE=new Uint8Array(MAXP), P_T=new Float32Array(MAXP), P_SPD=new Float32Array(MAXP);
   function loadMood(idx){const m=MOODS[idx];const n=m.ings.length,pos=n===4?POS4:POS5;count=n;
     const maxMg=Math.max.apply(null,m.ings.map(x=>x[1]));
     clouds=m.ings.map((it,i)=>({base:new THREE.Vector3(pos[i][0],pos[i][1],0),
       H:0.62+0.98*Math.sqrt(it[1]/maxMg),ar:IMG[it[2]]||1,ph:i*1.9,
       bspd:0.4+i*0.09,dspd:0.24+i*0.07,rot:0.16+i*0.05,ang:0,pos:new THREE.Vector3(pos[i][0],pos[i][1],0)}));
     let p=0;
-    m.ings.forEach((it,i)=>{const pts=sampleCache[it[2]]||[],cl=clouds[i],w=cl.H;
+    m.ings.forEach((it,i)=>{const pts=sampleCache[it[2]]||[],cl=clouds[i],w=cl.H,L=pts.length||1;
       for(let j=0;j<pts.length&&p<MAXP;j++){const s=pts[j];
-        P_CLOUD[p]=i;P_LX[p]=s[0]*w;P_LY[p]=s[1]*w;P_LZ[p]=(((j*53)%100)/100-0.5)*w*0.85;
+        P_ROLE[p]=0;P_CLOUD[p]=i;P_LX[p]=s[0]*w;P_LY[p]=s[1]*w;P_LZ[p]=(((j*53)%100)/100-0.5)*w*0.85;
         P_PH[p]=(j*0.618+i)*6.283%6.283;P_R[p]=0.4+0.6*((j*97)%100)/100;
         aCol[p*3]=s[2];aCol[p*3+1]=s[3];aCol[p*3+2]=s[4];
         aSize[p]=0.5+w*0.24;aA[p]=0.9;p++;}
+      // stream particles: flow from this ingredient into the central chocolate (binds it to one unit)
+      const nS=66;
+      for(let k=0;k<nS&&p<MAXP;k++){const s=pts[(k*7)%L]||[0,0,.5,.4,.3];
+        P_ROLE[p]=1;P_CLOUD[p]=i;P_T[p]=k/nS;P_SPD[p]=0.10+((k*13)%50)/50*0.11;
+        aCol[p*3]=s[2];aCol[p*3+1]=s[3];aCol[p*3+2]=s[4];aSize[p]=0.42+w*0.1;aA[p]=0;p++;}
     });
     activeCount=p;pg.setDrawRange(0,activeCount);
     pg.attributes.pcolor.needsUpdate=true;pg.attributes.psize.needsUpdate=true;pg.attributes.palpha.needsUpdate=true;
@@ -204,15 +210,24 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     for(let i=0;i<count;i++){const c=clouds[i];
       c.pos.set(c.base.x+Math.sin(T*c.dspd+c.ph)*0.07, c.base.y+Math.cos(T*c.bspd+c.ph)*0.09, 0);
       c.ang=Math.sin(T*c.rot+c.ph)*0.5;}     // rock the whole volume so its depth reads
-    // update every particle: real 3D volume, turning + swirl + breath
+    // update every particle: clouds (3D volume, turning) + streams flowing into the chocolate
+    const cy=shapeGroup.position.y;
     for(let i=0;i<activeCount;i++){const ci=P_CLOUD[i],c=clouds[ci];if(!c)continue;const o=i*3;
-      const ph=P_PH[i], br=1+0.05*Math.sin(T*0.9+ph), ca=Math.cos(c.ang), sa=Math.sin(c.ang);
-      const lx=P_LX[i]*br, lz=P_LZ[i]*br;
-      aPos[o]=c.pos.x + (lx*ca-lz*sa) + Math.sin(T*0.9+ph)*0.045;
-      aPos[o+1]=c.pos.y + P_LY[i]*br + Math.cos(T*0.8+ph*1.3)*0.055;
-      aPos[o+2]=(lx*sa+lz*ca) + Math.sin(T*0.7+ph*0.7)*0.06;
+      if(P_ROLE[i]===1){                       // stream: this ingredient flows into the centre
+        const t=(P_T[i]+T*P_SPD[i])%1, e=t*t*(3-2*t), arc=Math.sin(Math.PI*t);
+        aPos[o]  =c.base.x*(1-e)      + Math.sin(T*2.0+P_T[i]*9)*0.05*arc;
+        aPos[o+1]=c.base.y*(1-e)+cy*e + arc*0.14;
+        aPos[o+2]=Math.cos(T*2.0+P_T[i]*9)*0.05*arc;
+        aA[i]=arc*0.8;
+      } else {
+        const ph=P_PH[i], br=1+0.05*Math.sin(T*0.9+ph), ca=Math.cos(c.ang), sa=Math.sin(c.ang);
+        const lx=P_LX[i]*br, lz=P_LZ[i]*br;
+        aPos[o]=c.pos.x + (lx*ca-lz*sa) + Math.sin(T*0.9+ph)*0.045;
+        aPos[o+1]=c.pos.y + P_LY[i]*br + Math.cos(T*0.8+ph*1.3)*0.055;
+        aPos[o+2]=(lx*sa+lz*ca) + Math.sin(T*0.7+ph*0.7)*0.06;
+      }
     }
-    pg.attributes.position.needsUpdate=true;
+    pg.attributes.position.needsUpdate=true; pg.attributes.palpha.needsUpdate=true;
     R.render(S,C);
     // labels follow cloud centres
     const W=cvs.clientWidth,H2=cvs.clientHeight;
