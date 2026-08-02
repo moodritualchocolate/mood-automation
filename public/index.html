@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>mood — experience</title></head>
 <body style="margin:0;background:#FDFBF8">
-<!-- ============ MOOD — clean 3D formula (self-contained section) ============ -->
+<!-- ============ MOOD — living 3D formula (self-contained section) ============ -->
 <section id="mood-xp" dir="rtl">
   <canvas class="xp-gl"></canvas>
   <div class="xp-ings"></div>
@@ -32,8 +32,7 @@
 #mood-xp .xp-gl{position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:pan-y;cursor:grab;}
 #mood-xp .xp-gl:active{cursor:grabbing;}
 #mood-xp .xp-ings{position:absolute;inset:0;z-index:2;pointer-events:none;}
-#mood-xp .xp-ig{position:absolute;transform:translate(-50%,-50%);text-align:center;white-space:nowrap;
-  will-change:left,top;transition:opacity .5s;}
+#mood-xp .xp-ig{position:absolute;transform:translate(-50%,-50%);text-align:center;white-space:nowrap;will-change:left,top;}
 #mood-xp .xp-ig .n{font-weight:700;font-size:clamp(12px,3vw,16px);color:var(--choc);letter-spacing:.005em;}
 #mood-xp .xp-ig .a{font-weight:800;font-size:clamp(12px,3vw,15.5px);color:var(--acc);margin-top:1px;
   font-variant-numeric:tabular-nums;transition:color .7s;}
@@ -43,8 +42,6 @@
 #mood-xp .xp-ui button{pointer-events:auto;font-family:inherit;cursor:pointer;border:0;}
 #mood-xp .xp-top{display:flex;flex-direction:column;align-items:center;}
 #mood-xp .xp-eyebrow{font-weight:700;letter-spacing:.30em;font-size:clamp(10px,2.4vw,12px);color:var(--muted);text-transform:uppercase;}
-#mood-xp .xp-title{font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--acc);margin-top:12px;
-  font-size:clamp(30px,7vw,52px);transition:color .7s;}
 #mood-xp .xp-bottom{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;}
 #mood-xp .xp-total{font-weight:600;font-size:clamp(13px,3vw,17px);color:var(--muted);}
 #mood-xp .xp-total b{font-weight:900;color:var(--choc);font-variant-numeric:tabular-nums;}
@@ -80,9 +77,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   ];
   const POS5=[[0,2.05],[-1.34,0.55],[-0.98,-1.7],[0.98,-1.7],[1.34,0.55]];
   const POS4=[[0,2.05],[-1.38,-0.02],[1.38,-0.02],[0,-1.82]];
-  const ui={eyebrow:root.querySelector(".xp-eyebrow"),
-    ings:root.querySelector(".xp-ings"),total:root.querySelector(".xp-total"),
-    pills:[].slice.call(root.querySelectorAll(".xp-pill"))};
+  const ui={eyebrow:root.querySelector(".xp-eyebrow"),ings:root.querySelector(".xp-ings"),
+    total:root.querySelector(".xp-total"),pills:[].slice.call(root.querySelectorAll(".xp-pill"))};
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), ease3=x=>1-Math.pow(1-clamp(x,0,1),3);
 
   const cvs=root.querySelector(".xp-gl");
@@ -117,43 +113,75 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   Object.values(shapes).forEach(o=>{o.visible=false;shapeGroup.add(o);});
   let curShape=null;function setShape(k){if(curShape)curShape.visible=false;curShape=shapes[k];curShape.visible=true;}
 
-  // soft shadow under shape
   const shTex=(function(){const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
-    const gr=g.createRadialGradient(64,64,2,64,64,62);gr.addColorStop(0,"rgba(70,45,25,.30)");gr.addColorStop(.6,"rgba(70,45,25,.12)");gr.addColorStop(1,"rgba(70,45,25,0)");
+    const gr=g.createRadialGradient(64,64,2,64,64,62);gr.addColorStop(0,"rgba(70,45,25,.26)");gr.addColorStop(.6,"rgba(70,45,25,.1)");gr.addColorStop(1,"rgba(70,45,25,0)");
     g.fillStyle=gr;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);})();
-  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shTex,transparent:true,depthWrite:false,depthTest:false,opacity:0.28}));
-  shadow.position.set(0,-1.9,-1);shadow.scale.set(2.6,0.7,1);S.add(shadow);
+  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shTex,transparent:true,depthWrite:false,depthTest:false,opacity:0.24}));
+  shadow.position.set(0,-1.95,-1);shadow.scale.set(2.9,0.66,1);S.add(shadow);
 
-  // ---- all ingredient powders together ----
-  const texCache={};function tex(k){if(texCache[k])return texCache[k];const t=new THREE.TextureLoader().load(ASSETS[k]);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;texCache[k]=t;return t;}
-  const IMG={};(function(){Object.keys(ASSETS).forEach(k=>{const im=new Image();im.onload=()=>IMG[k]=im.width/im.height;im.src=ASSETS[k];IMG[k]=1;});})();
-  const POOL=5, powders=[];
-  for(let i=0;i<POOL;i++){const m=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({transparent:true,depthWrite:false,depthTest:false,opacity:0}));
-    m.visible=false;m.renderOrder=5;S.add(m);powders.push(m);}
-  let labelEls=[], count=0;
+  /* ---------------- living powder = 3D particle clouds sampled from the real powder ---------------- */
+  const MAXP=9200;
+  const aPos=new Float32Array(MAXP*3), aCol=new Float32Array(MAXP*3), aSize=new Float32Array(MAXP), aA=new Float32Array(MAXP);
+  const pg=new THREE.BufferGeometry();
+  pg.setAttribute("position",new THREE.BufferAttribute(aPos,3));
+  pg.setAttribute("pcolor",new THREE.BufferAttribute(aCol,3));
+  pg.setAttribute("psize",new THREE.BufferAttribute(aSize,1));
+  pg.setAttribute("palpha",new THREE.BufferAttribute(aA,1));
+  const pMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:false,blending:THREE.NormalBlending,
+    vertexShader:`attribute vec3 pcolor;attribute float psize;attribute float palpha;varying vec3 vC;varying float vA;
+      void main(){vC=pcolor;vA=palpha;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=psize*(82.0/max(0.1,-mv.z));gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`varying vec3 vC;varying float vA;void main(){vec2 d=gl_PointCoord-0.5;float r=length(d);float a=smoothstep(0.5,0.36,r);gl_FragColor=vec4(vC,a*vA);}`});
+  const points=new THREE.Points(pg,pMat);points.frustumCulled=false;S.add(points);
 
+  // sample a powder image -> array of {x,y,r,g,b} (x,y normalised to plane, y up)
+  const sampleCache={}, IMG={};
+  const scratch=document.createElement("canvas"), sctx=scratch.getContext("2d",{willReadFrequently:true});
+  function samplePowder(k,im){const ar=im.width/im.height;IMG[k]=ar;
+    const th=96, tw=Math.max(8,Math.round(th*ar));scratch.width=tw;scratch.height=th;
+    sctx.clearRect(0,0,tw,th);sctx.drawImage(im,0,0,tw,th);
+    const data=sctx.getImageData(0,0,tw,th).data, raw=[];
+    for(let y=0;y<th;y++)for(let x=0;x<tw;x++){const o=(y*tw+x)*4,al=data[o+3];
+      if(al>92){raw.push([(x/tw-0.5)*ar,(0.5-y/th),data[o]/255,data[o+1]/255,data[o+2]/255]);}}
+    // thin to ~ target
+    const target=1750;let pts=raw;
+    if(raw.length>target){pts=[];let sd=raw.length;const keep=target/raw.length;let acc=0;
+      for(let i=0;i<raw.length;i++){acc+=keep;if(acc>=1){acc-=1;pts.push(raw[i]);}}}
+    sampleCache[k]=pts;
+  }
+
+  /* ---------------- build a mood's clouds into the particle buffer ---------------- */
+  let clouds=[], labelEls=[], count=0, activeCount=0;
+  const P_CLOUD=new Int16Array(MAXP), P_LX=new Float32Array(MAXP), P_LY=new Float32Array(MAXP),
+        P_PH=new Float32Array(MAXP), P_R=new Float32Array(MAXP);
   function loadMood(idx){const m=MOODS[idx];const n=m.ings.length,pos=n===4?POS4:POS5;count=n;
     const maxMg=Math.max.apply(null,m.ings.map(x=>x[1]));
-    m.ings.forEach((it,i)=>{const p=powders[i];p.visible=true;p.material.map=tex(it[2]);p.material.needsUpdate=true;
-      const ar=IMG[it[2]]||1,norm=it[1]/maxMg,H=0.56+0.92*Math.sqrt(norm);
-      p.userData={base:new THREE.Vector3(pos[i][0],pos[i][1],0),ar,H,ph:i*1.7,
-        rspd:0.32+i*0.11, bspd:0.42+i*0.09, pspd:0.7+i*0.08, dspd:0.26+i*0.07};});
-    for(let i=n;i<POOL;i++)powders[i].visible=false;
+    clouds=m.ings.map((it,i)=>({base:new THREE.Vector3(pos[i][0],pos[i][1],0),
+      H:0.62+0.98*Math.sqrt(it[1]/maxMg),ar:IMG[it[2]]||1,ph:i*1.9,
+      bspd:0.4+i*0.09,dspd:0.24+i*0.07,pos:new THREE.Vector3(pos[i][0],pos[i][1],0)}));
+    let p=0;
+    m.ings.forEach((it,i)=>{const pts=sampleCache[it[2]]||[],cl=clouds[i],w=cl.H;
+      for(let j=0;j<pts.length&&p<MAXP;j++){const s=pts[j];
+        P_CLOUD[p]=i;P_LX[p]=s[0]*w;P_LY[p]=s[1]*w;P_PH[p]=(j*0.618+i)*6.283%6.283;
+        P_R[p]=0.4+0.6*((j*97)%100)/100;
+        aCol[p*3]=s[2];aCol[p*3+1]=s[3];aCol[p*3+2]=s[4];
+        aSize[p]=0.5+w*0.24;aA[p]=0.9;p++;}
+    });
+    activeCount=p;pg.setDrawRange(0,activeCount);
+    pg.attributes.pcolor.needsUpdate=true;pg.attributes.psize.needsUpdate=true;pg.attributes.palpha.needsUpdate=true;
+    // labels
     ui.ings.innerHTML=m.ings.map((it,i)=>`<div class="xp-ig" data-i="${i}"><div class="n">${it[0]}</div><div class="a"><b class="v" data-v="${it[1]}">0</b> <span class="u">מ״ג</span></div></div>`).join("");
     labelEls=[].slice.call(ui.ings.querySelectorAll(".xp-ig"));
-    // count-up
     labelEls.forEach((el)=>{const b=el.querySelector(".v"),v=+b.dataset.v;let s0=null;
       function up(ts){s0=s0||ts;const k=clamp((ts-s0)/700,0,1);b.textContent=Math.round(v*ease3(k));if(k<1)requestAnimationFrame(up);}requestAnimationFrame(up);});
   }
   function switchMood(idx){const m=MOODS[idx];root.style.setProperty("--acc",m.acc);
-    ui.pills.forEach(p=>p.classList.toggle("on",+p.dataset.m===idx));
-    setShape(m.shape);loadMood(idx);
+    ui.pills.forEach(p=>p.classList.toggle("on",+p.dataset.m===idx));setShape(m.shape);loadMood(idx);
     const total=m.ings.reduce((s,x)=>s+x[1],0);let s0=null;
     function tu(ts){s0=s0||ts;const k=clamp((ts-s0)/800,0,1);ui.total.innerHTML=`בכל חטיף · <b>${Math.round(total*ease3(k))}</b> מ״ג תמצית צמחים`;if(k<1)requestAnimationFrame(tu);}requestAnimationFrame(tu);
   }
   ui.pills.forEach(p=>p.addEventListener("click",()=>switchMood(+p.dataset.m)));
 
-  // drag (optional) — adds to the auto-spin
+  // drag (optional)
   let drag=0,down=false,lastX=0,vel=0,mx=0,my=0,tmx=0,tmy=0;
   cvs.addEventListener("pointerdown",e=>{down=true;lastX=e.clientX;vel=0;});
   addEventListener("pointerup",()=>down=false);
@@ -163,39 +191,47 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
 
   const vv=new THREE.Vector3();
   function toScreen(v,W,H){vv.copy(v).project(C);return {x:(vv.x*0.5+0.5)*W,y:(-vv.y*0.5+0.5)*H};}
-  const up3=new THREE.Vector3(0,1,0),right3=new THREE.Vector3(1,0,0),tmp=new THREE.Vector3();
+  const up3=new THREE.Vector3(0,1,0),tmp=new THREE.Vector3();
 
   function size(){const w=cvs.clientWidth||300,h=cvs.clientHeight||300;R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(w,h,false);C.aspect=w/h;C.updateProjectionMatrix();}
   let T=0;
   function loop(){T+=0.016;size();
     if(!down){vel*=0.94;drag+=vel;}
-    // the chocolate spins on its own, continuously (drag adds on top)
     shapeGroup.rotation.y=T*0.5+drag+mx*0.3;
     shapeGroup.rotation.x=clamp(-0.05+Math.sin(T*0.45)*0.07-my*0.15,-0.4,0.4);
     shapeGroup.position.y=Math.sin(T*0.6)*0.06;
-    // every ingredient is independently alive — its own drift, tilt, breath
-    for(let i=0;i<count;i++){const p=powders[i],d=p.userData;if(!d)continue;
-      const bx=Math.sin(T*d.dspd+d.ph)*0.06, by=Math.cos(T*d.bspd+d.ph)*0.08;
-      p.position.set(d.base.x+bx,d.base.y+by,d.base.z);
-      p.rotation.z=Math.sin(T*d.rspd+d.ph)*0.12;
-      const s=d.H*(1+0.03*Math.sin(T*d.pspd+d.ph));p.scale.set(s*d.ar,s,1);
-      if(p.material.opacity<1)p.material.opacity=Math.min(1,p.material.opacity+0.05);
+    // update each cloud centre (independent float)
+    for(let i=0;i<count;i++){const c=clouds[i];
+      c.pos.set(c.base.x+Math.sin(T*c.dspd+c.ph)*0.07, c.base.y+Math.cos(T*c.bspd+c.ph)*0.09, 0);}
+    // update every particle: living swirl + breath + depth
+    const swirl=0.05;
+    for(let i=0;i<activeCount;i++){const ci=P_CLOUD[i],c=clouds[ci];if(!c)continue;const o=i*3;
+      const ph=P_PH[i], br=1+0.06*Math.sin(T*0.9+ph);
+      const sx=Math.sin(T*0.8+ph)*swirl, sy=Math.cos(T*0.7+ph*1.3)*swirl, sz=Math.sin(T*0.6+ph*0.7)*0.22+P_R[i]*0.5-0.25;
+      aPos[o]=c.pos.x+P_LX[i]*br+sx;
+      aPos[o+1]=c.pos.y+P_LY[i]*br+sy;
+      aPos[o+2]=sz;
     }
+    pg.attributes.position.needsUpdate=true;
     R.render(S,C);
-    // labels
-    const W=cvs.clientWidth,H2=cvs.clientHeight,cx=W/2,cy=H2/2;
-    for(let i=0;i<count;i++){const p=powders[i],d=p.userData,el=labelEls[i];if(!d||!el)continue;
-      const c=toScreen(p.position,W,H2);
-      tmp.copy(p.position).addScaledVector(up3,d.H*0.5);const prY=Math.abs(toScreen(tmp,W,H2).y-c.y);
-      const ly=(c.y<H2*0.42)? c.y-prY-30 : c.y+prY+24;   // top powder -> above; all others -> below (outward from centre)
-      el.style.left=clamp(c.x,62,W-62)+"px";
+    // labels follow cloud centres
+    const W=cvs.clientWidth,H2=cvs.clientHeight;
+    for(let i=0;i<count;i++){const c=clouds[i],el=labelEls[i];if(!c||!el)continue;
+      const sc=toScreen(c.pos,W,H2);
+      tmp.copy(c.pos).addScaledVector(up3,c.H*0.5);const prY=Math.abs(toScreen(tmp,W,H2).y-sc.y);
+      const ly=(sc.y<H2*0.42)? sc.y-prY-30 : sc.y+prY+24;
+      el.style.left=clamp(sc.x,62,W-62)+"px";
       el.style.top=clamp(ly,H2*0.09,H2-104)+"px";
     }
     requestAnimationFrame(loop);
   }
-  switchMood(0);
+
+  // preload + sample all powders, then start
+  let ready=0;const keys=Object.keys(ASSETS),need=keys.length;
+  keys.forEach(k=>{const im=new Image();im.onload=()=>{samplePowder(k,im);if(++ready===need)switchMood(0);};im.onerror=()=>{if(++ready===need)switchMood(0);};im.src=ASSETS[k];});
+  setShape(MOODS[0].shape);
   requestAnimationFrame(loop);
-  window.__xp={switchMood};window.__xpMOODS=MOODS;
+  window.__xp={switchMood};window.__xpMOODS=MOODS;window.__xpReady=()=>ready===need;
 })();
 </script>
 </body></html>
