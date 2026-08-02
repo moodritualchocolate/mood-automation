@@ -99,7 +99,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const R=new THREE.WebGLRenderer({canvas:cvs,antialias:true,alpha:true,premultipliedAlpha:false});
   R.outputColorSpace=THREE.SRGBColorSpace;
   const S=new THREE.Scene(), C=new THREE.PerspectiveCamera(34,1,0.1,100); C.position.set(0,0,14.3);
-  const SCENE_Y=1.25;
+  let SCENE_Y=1.25;
   const env=(function(){const cv=document.createElement("canvas");cv.width=512;cv.height=256;const g=cv.getContext("2d");
     const lg=g.createLinearGradient(0,0,0,256);lg.addColorStop(0,"#ffffff");lg.addColorStop(.42,"#f2e6d2");lg.addColorStop(.72,"#a97e4f");lg.addColorStop(1,"#3a2414");
     g.fillStyle=lg;g.fillRect(0,0,512,256);
@@ -206,7 +206,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   root.addEventListener("pointermove",e=>{const r=root.getBoundingClientRect();tmx=(e.clientX-r.left)/r.width-0.5;tmy=(e.clientY-r.top)/r.height-0.5;});
   setInterval(()=>{mx+=(tmx-mx)*0.06;my+=(tmy-my)*0.06;},16);
 
-  function size(){const w=cvs.clientWidth||300,h=cvs.clientHeight||300;R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(w,h,false);C.aspect=w/h;C.updateProjectionMatrix();}
+  function size(){const w=cvs.clientWidth||300,h=cvs.clientHeight||300;R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(w,h,false);
+    const aspect=w/h;C.aspect=aspect;const tan=Math.tan(C.fov*Math.PI/360);
+    C.position.z=clamp(2.42/(tan*Math.max(0.34,aspect)),13.5,20.5);   // pull back on narrow screens so the orbit never clips
+    SCENE_Y=C.position.z*0.088;C.updateProjectionMatrix();}
   let T=0;
   function loop(ts){T+=0.016;size();
     if(!down){vel*=0.94;drag+=vel;}
