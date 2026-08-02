@@ -198,7 +198,7 @@ def main():
     if hp.exists():
         html = hp.read_text(encoding="utf-8").replace("/*__FONTS__*/", fonts)
         home_imgs = {"__HERO__":"choc_moods.jpg","__PENERGY__":"energy_hero.jpg","__PRELAX__":"relax_hero.jpg",
-                     "__PSLEEP__":"sleep_hero.jpg","__CHOC__":"choc_dark.jpg","__TRIAL__":"life_hero.jpg"}
+                     "__PSLEEP__":"sleep_hero.jpg","__CHOC__":"choc_dark.jpg","__FOUNDERS__":"founders.jpg","__TRIAL__":"life_hero.jpg"}
         for m,f in home_imgs.items():
             html = html.replace(m, data_uri(f))
         left = re.findall(r"__[A-Z]+__", html)
