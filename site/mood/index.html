@@ -241,15 +241,16 @@ float mapSquare(vec3 p){
   return d;
 }
 mat2 r2(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
-float map(vec3 p){ p.xz=r2(sin(uTime*0.28)*0.10)*p.xz; p.y-=sin(uTime*0.5)*0.035; if(uCast<0.02) return mapLiquid(p); if(uCast>0.985) return mapSquare(p); return mix(mapLiquid(p),mapSquare(p),smoothstep(0.0,1.0,uCast)); }
+float map(vec3 p){ p.xz=r2(sin(uTime*0.28)*mix(0.10,0.035,uCast))*p.xz; p.y-=sin(uTime*0.5)*0.035; if(uCast<0.02) return mapLiquid(p); if(uCast>0.985) return mapSquare(p); return mix(mapLiquid(p),mapSquare(p),smoothstep(0.0,1.0,uCast)); }
 vec3 nrm(vec3 p){vec2 e=vec2(0.002,0.);return normalize(vec3(
   map(p+e.xyy)-map(p-e.xyy),map(p+e.yxy)-map(p-e.yxy),map(p+e.yyx)-map(p-e.yyx)));}
 vec3 sky(vec2 uv){
   vec3 g=mix(uBg2,uBg1,clamp(uv.y*1.15,0.,1.));
   vec2 sun=vec2(0.50+0.06*sin(uTime*0.06),0.60);
   float glow=smoothstep(0.85,0.0,length((uv-sun)*vec2(1.20,1.0)));
-  g+=uAccent*glow*0.11;                              // warm spotlight pool behind the piece
-  g+=vec3(0.10,0.08,0.06)*glow*0.5;                  // soft studio lift
+  float breath=0.88+0.14*sin(uTime*0.5);             // the light breathes — alive, not fixed
+  g+=uAccent*glow*0.11*breath;                       // warm spotlight pool behind the piece
+  g+=vec3(0.11,0.085,0.06)*glow*0.52*breath;         // soft studio lift
   g*=1.0-0.12*pow(length(uv-0.5),1.8);               // gentle vignette
   return g;
 }
@@ -263,10 +264,18 @@ vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),0.0,1.0
 void main(){
   vec2 uv=gl_FragCoord.xy/uRes.xy;
   vec2 p=(gl_FragCoord.xy-0.5*uRes.xy)/uRes.y;
-  vec3 ro=vec3(0.0,2.05,4.05), ta=vec3(0.0,-0.05,0.0);
+  // ---- cinematic scroll-orbit: liquid forms → turns to you → dollies in close ----
+  float cz=smoothstep(0.0,1.0,uCast);
+  float oa=mix(0.34,-0.05,cz) + 0.03*sin(uTime*0.18);          // orbit sweep + slow living drift
+  float dist=mix(4.55,3.62,smoothstep(0.5,1.0,cz));            // dolly IN at the climax = comes to you
+  float hgt=mix(2.28,1.80,cz) + 0.03*sin(uTime*0.33);          // gentle vertical breathe
+  vec3 ro=vec3(sin(oa)*dist, hgt, cos(oa)*dist);
+  vec3 ta=vec3(0.0,-0.03,0.0);
   vec3 f=normalize(ta-ro),rr=normalize(cross(f,vec3(0,1,0))),u=cross(rr,f);
-  vec3 rd=normalize(p.x*rr+p.y*u+1.5*f);
-  vec3 L1=normalize(vec3(-0.6+uLight.x*0.9,0.8,0.55+uLight.y*0.9));
+  vec3 rd=normalize(p.x*rr+p.y*u+mix(1.6,1.42,cz)*f);          // subtle lens push
+  // living warm key light — drifts and breathes like candlelight
+  float lt=uTime*0.32;
+  vec3 L1=normalize(vec3(-0.58+uLight.x*0.9+0.09*sin(lt),0.80+0.05*sin(lt*0.7),0.56+uLight.y*0.9+0.09*cos(lt)));
   float t=0.,hit=0.; vec3 pos;
   for(int i=0;i<96;i++){pos=ro+rd*t;float d=map(pos);if(d<0.001){hit=1.;break;}t+=d;if(t>8.)break;}
   vec3 col=sky(uv);
