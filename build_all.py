@@ -49,15 +49,18 @@ SRC_FAQ12 = """      <div class="item open"><button class="q">מה מיוחד ב
 SRC_XSELL = """      <a class="xcard rv" href="#"><div class="th" style="background:#E5ECE1"><img src="__RELAX__" alt="RELAX" loading="lazy"></div><div><div class="eyebrow" style="color:#5E7358"><i style="background:#8FA98C"></i>RELAX · EVENING</div><h3>לכבות את הרעש.</h3><p>לערב שהראש עדיין מהיר בו.</p></div><div class="go" style="color:#5E7358">←</div></a>
       <a class="xcard rv" href="#"><div class="th" style="background:#E1E7F0"><img src="__SLEEP__" alt="SLEEP" loading="lazy"></div><div><div class="eyebrow" style="color:#566B8E"><i style="background:#8AA0C4"></i>SLEEP · NIGHT</div><h3>לעבור למצב לילה.</h3><p>לרגע השקט שלפני השינה.</p></div><div class="go" style="color:#566B8E">←</div></a>"""
 
-def why_block(sku, eyebrow_c, h2, lede, benefits):
-    return f"""  <section class="why">
-    <div class="rv" style="max-width:760px;margin:0 auto">
+def why_split(sku, h2, lede, benefits, alt):
+    return f"""  <section class="why split">
+    <div class="rv">
       <div class="eyebrow">WHY {sku}</div>
       <h2 style="margin-top:10px">{h2}</h2>
       <p class="lede" style="margin-top:14px;color:var(--muted)">{lede}</p>
       <div class="benefits">
 {benefits}
       </div>
+    </div>
+    <div class="rv fpanel">
+      <div class="fburst"><img src="__FORMULA__" alt="{alt}" loading="lazy" decoding="async"></div>
     </div>
   </section>"""
 
@@ -76,7 +79,7 @@ SKUS = {
  "energy": {"images":{"__HERO__":"energy_hero.jpg","__PACKBAR__":"choc_packbar.jpg","__MOODS__":"choc_moods.jpg","__FORMULA__":"formula_energy.jpg","__CHOC__":"choc_dark.jpg","__RELAX__":"sku_relax.png","__SLEEP__":"sku_sleep.png","__ENERGYX__":"energy_hero.jpg"},
    "repl":[]},
  "relax": {
-   "images":{"__HERO__":"relax_hero.jpg","__PACKBAR__":"sku_relax.png","__MOODS__":"choc_dark.jpg","__FORMULA__":"choc_moods.jpg","__CHOC__":"choc_dark.jpg","__RELAX__":"sku_relax.png","__SLEEP__":"sku_sleep.png","__ENERGYX__":"energy_hero.jpg"},
+   "images":{"__HERO__":"relax_hero.jpg","__PACKBAR__":"sku_relax.png","__MOODS__":"choc_dark.jpg","__FORMULA__":"formula_relax.jpg","__CHOC__":"choc_dark.jpg","__RELAX__":"sku_relax.png","__SLEEP__":"sku_sleep.png","__ENERGYX__":"energy_hero.jpg"},
    "repl":[
     (SRC_ROOT, "  --accent:#7E9B63;--accent-ink:#4C6138;--accent-soft:#E7EEDD;\n  --cta:#55702F;--green:#C6D4B8;--green-ink:#3E4A34;"),
     ("linear-gradient(180deg,#C25E14,#B85510)","linear-gradient(180deg,#607D34,#55702F)"),
@@ -96,13 +99,14 @@ SKUS = {
     ("אנרגיה בלי הנפילה של הקפה","הרפיה עדינה בסוף היום"),
     ("<b>800 מ״ג</b> פורמולה","<b>700 מ״ג</b> פורמולה"),
     # WHY block -> single column
-    (SRC_WHY, why_block("RELAX","#4C6138","רגע לכבות בו<br>את הרעש.",
+    (SRC_WHY, why_split("RELAX","רגע לכבות בו<br>את הרעש.",
       "לא כדור שינה — חמישה רכיבים טבעיים, כל אחד עושה את שלו להרפיה עדינה ורגועה. הנה מה יש בפנים:",
       '        <div style="--dc:#7E9153"><b>מליסה · 266 מ״ג</b><span>עלה מרגיע שמפחית מתח ומרגיע את הגוף</span></div>\n'
       '        <div style="--dc:#9A7FB0"><b>פסיפלורה · 182 מ״ג</b><span>משקיטה את הראש בעדינות, בלי טשטוש</span></div>\n'
       '        <div style="--dc:#C9A05A"><b>מאקה · 140 מ״ג</b><span>שורש אדפטוגני לאיזון ותמיכה בגוף</span></div>\n'
       '        <div style="--dc:#6E8B6A"><b>ולריאן · 70 מ״ג</b><span>צמח מסורתי להרפיה ולערב רגוע</span></div>\n'
-      '        <div style="--dc:#C99A57"><b>ליקוריץ · 42 מ״ג</b><span>שורש תומך לאיזון לאורך היום</span></div>')),
+      '        <div style="--dc:#C99A57"><b>ליקוריץ · 42 מ״ג</b><span>שורש תומך לאיזון לאורך היום</span></div>',
+      "פורמולת RELAX — מליסה 266, פסיפלורה 182, מאקה 140, ולריאן 70, ליקוריץ 42 מ״ג")),
     # moments
     (SRC_MOMENTS,
      '      <div class="mitem rv"><b class="mnum">01</b><div class="minfo"><b>אחרי יום ארוך</b><p>לכבות הילוך ולנשום רגע.</p></div></div>\n'
@@ -123,7 +127,7 @@ SKUS = {
     ('src="__PACKBAR__" alt="mood ENERGY"','src="__PACKBAR__" alt="mood RELAX"'),
    ]},
  "sleep": {
-   "images":{"__HERO__":"sleep_hero.jpg","__PACKBAR__":"sku_sleep.png","__MOODS__":"choc_dark.jpg","__FORMULA__":"choc_moods.jpg","__CHOC__":"choc_dark.jpg","__RELAX__":"sku_relax.png","__SLEEP__":"sku_sleep.png","__ENERGYX__":"energy_hero.jpg"},
+   "images":{"__HERO__":"sleep_hero.jpg","__PACKBAR__":"sku_sleep.png","__MOODS__":"choc_dark.jpg","__FORMULA__":"formula_sleep.jpg","__CHOC__":"choc_dark.jpg","__RELAX__":"sku_relax.png","__SLEEP__":"sku_sleep.png","__ENERGYX__":"energy_hero.jpg"},
    "repl":[
     (SRC_ROOT, "  --accent:#7C93BE;--accent-ink:#3C5480;--accent-soft:#E4E9F2;\n  --cta:#3B5488;--green:#C6D4B8;--green-ink:#3E4A34;"),
     ("linear-gradient(180deg,#C25E14,#B85510)","linear-gradient(180deg,#45609A,#3B5488)"),
@@ -143,12 +147,13 @@ SKUS = {
     ("אנרגיה בלי הנפילה של הקפה","מעבר רך למצב לילה"),
     ("<b>800 מ״ג</b> פורמולה","<b>728 מ״ג</b> פורמולה"),
     ("<b>5</b> רכיבים טבעיים","<b>4</b> רכיבים טבעיים"),
-    (SRC_WHY, why_block("SLEEP","#3C5480","רגע לעבור בו<br>למצב לילה.",
+    (SRC_WHY, why_split("SLEEP","רגע לעבור בו<br>למצב לילה.",
       "לא כדור שינה — ארבעה רכיבים טבעיים, כל אחד עושה את שלו למעבר רך אל השינה. הנה מה יש בפנים:",
       '        <div style="--dc:#7E9153"><b>מליסה · 224 מ״ג</b><span>עלה מרגיע שמכין את הגוף למנוחה</span></div>\n'
       '        <div style="--dc:#9A7FB0"><b>פסיפלורה · 224 מ״ג</b><span>משקיטה מחשבות ומרגיעה את המערכת</span></div>\n'
       '        <div style="--dc:#5E7BA8"><b>ולריאן · 224 מ״ג</b><span>צמח מסורתי לשינה עמוקה ורציפה</span></div>\n'
-      '        <div style="--dc:#C99A57"><b>ליקוריץ · 56 מ״ג</b><span>שורש תומך לאיזון</span></div>')),
+      '        <div style="--dc:#C99A57"><b>ליקוריץ · 56 מ״ג</b><span>שורש תומך לאיזון</span></div>',
+      "פורמולת SLEEP — מליסה 224, פסיפלורה 224, ולריאן 224, ליקוריץ 56 מ״ג")),
     (SRC_MOMENTS,
      '      <div class="mitem rv"><b class="mnum">01</b><div class="minfo"><b>שעה לפני השינה</b><p>לאותת לגוף שהיום נגמר.</p></div></div>\n'
      '      <div class="mitem rv"><b class="mnum">02</b><div class="minfo"><b>אחרי ערב מול מסך</b><p>להוריד את הראש מהגירויים.</p></div></div>\n'
