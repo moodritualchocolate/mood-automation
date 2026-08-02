@@ -193,6 +193,19 @@ def main():
         out = ROOT/f"{sku}.html"
         out.write_text(html, encoding="utf-8")
         print(f"built {out.name} ({out.stat().st_size/1024:.0f} KB)")
+    # ---- home page ----
+    hp = ROOT/"home.tpl.html"
+    if hp.exists():
+        html = hp.read_text(encoding="utf-8").replace("/*__FONTS__*/", fonts)
+        home_imgs = {"__HERO__":"choc_moods.jpg","__PENERGY__":"energy_hero.jpg","__PRELAX__":"relax_hero.jpg",
+                     "__PSLEEP__":"sleep_hero.jpg","__CHOC__":"choc_dark.jpg","__TRIAL__":"life_hero.jpg"}
+        for m,f in home_imgs.items():
+            html = html.replace(m, data_uri(f))
+        left = re.findall(r"__[A-Z]+__", html)
+        if left:
+            sys.exit(f"[home] unreplaced markers: {set(left)}")
+        (ROOT/"home.html").write_text(html, encoding="utf-8")
+        print(f"built home.html ({(ROOT/'home.html').stat().st_size/1024:.0f} KB)")
 
 if __name__ == "__main__":
     main()
