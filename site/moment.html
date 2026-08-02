@@ -111,20 +111,20 @@ const MOMENT={
   dir:"assets/moments/presence_phone_conversation_003",
   stems:{recognition:"01_recognition",identification:"02_identification",opportunity:"03_opportunity",exit:"04_exit_to_life",
     return:"05_return",connected:"06a_chose_differently",not_yet:"06b_not_yet",witness_c:"08a_witness_chose_differently",witness_n:"08b_witness_not_yet",continuation:"10_continuation"},
-  recognition:[{t:"מישהו שאתה אוהב יושב מולך."},{t:"הוא באמצע משפט —\nוהטלפון על השולחן נדלק."},{t:"״אני עדיין מקשיב,״ אתה אומר לעצמך.\nוהיד כבר זזה.",accent:true}],
-  identify_prompt:"רגע. זה אתה?", identify:["נכון. גם לי זה קורה","אני נשאר — כשמדברים אליי"],
-  reframe:[{t:"זה לא שלא אכפת לך."},{t:"פשוט המסך תמיד מבקש עוד שנייה.",accent:true}],
-  meaning:"אבל השיחה הזאת —\nהיא לא תחזור בדיוק ככה.",
-  mission:{tag:"המשימה שלך",lines:["בשיחה הקרובה שלך היום","הנח את הטלפון —","ותן לה להיגמר."],take:"אני לוקח את זה",skip:"לא היום"},
-  exit:{lines:["עכשיו צא.","זה יקרה שם, בחוץ — לא כאן."],hint:"חזור כשזה יקרה.\nעוד שעה, מחר — אין מהירות.",breath:"קח את הרגע",back:"זה קרה — חזרתי"},
-  return_prompt:"כשהרגע חזר… מה עשית?", branch_c:"נשארתי בשיחה", branch_n:"עוד לא",
-  witness_c:["השיחה קיבלה עוד כמה רגעים","להיות באמת שיחה.","והוא הרגיש את זה."],
-  witness_n:["היד עלתה לפני ששמת לב.","וזה בסדר.","מחר תזהה את הרגע\nשנייה אחת מוקדם יותר."],
-  reward_c:"עוד רגע שבו היית שם באמת.", reward_n:"עוד רגע שלמדת לזהות.",
+  recognition:[{t:"מישהו שאתה אוהב מדבר אליך."},{t:"והיד כבר על הטלפון.",accent:true}],
+  identify_prompt:"זה אתה?", identify:["כן. גם לי","לא ממש"],
+  reframe:[{t:"זה לא שאין לך זמן."},{t:"המסך פשוט מבקש עוד שנייה.",accent:true}],
+  meaning:"השיחה הזאת\nלא תחזור בדיוק ככה.",
+  mission:{tag:"המשימה שלך",lines:["הנח את הטלפון.","תן לשיחה להיגמר."],take:"אני בפנים",skip:"לא היום"},
+  exit:{lines:["צא. זה קורה שם — לא כאן."],hint:"חזור כשזה יקרה.",breath:"קח את הרגע",back:"עשיתי"},
+  return_prompt:"מה עשית?", branch_c:"נשארתי בשיחה", branch_n:"עוד לא",
+  witness_c:["השיחה הפכה לשיחה.","והוא הרגיש את זה."],
+  witness_n:["היד עלתה מהר מדי.","מחר תזהה את זה מוקדם יותר."],
+  reward_c:"היית שם באמת.", reward_n:"למדת לזהות.",
   middah:{name:"נוכחות", def:"נוכחות היא היכולת להיות באמת\nבמקום שבו הגוף שלך כבר נמצא.",
     lead:"היא לא לתת למישהו את כל היום שלך —\nאלא רגע אחד שבו שום דבר אחר אינו חשוב יותר."},
   wisdom:{quote:"הֱוֵי מְקַבֵּל אֶת כָּל הָאָדָם\nבְּסֵבֶר פָּנִים יָפוֹת.", source:"פרקי אבות א׳, ט״ו"},
-  continuation:["מחר מחכה לך עוד רגע.","המסע ממשיך."]
+  continuation:["מחר — עוד רגע."]
 };
 //======================= ENGINE =======================
 const stage=document.getElementById("stage");
@@ -195,10 +195,13 @@ function actions(p,h){const w=document.createElement("div");w.className="acts";w
 function choose(btn,p,fn){buzz(20);btn.classList.add("picked");p.querySelectorAll(".btn").forEach(x=>{if(x!==btn)x.classList.add("dim")});setTimeout(fn,360);}
 function go(fn){hist.push(fn);fn();}
 function back(){buzz();if(hist.length>1){hist.pop();hist[hist.length-1]();}else location.href="index.html";}
+// one sentence at a time — clears the previous line before showing the next (never stacks)
 function sequence(el,p,beats,cls,{onDone}={}){let i=0;
-  const step=()=>{if(i<beats.length){const b=beats[i++];addLine(p,b.t,cls,b.accent);
-    if(i<beats.length)arm();else{el.querySelector(".tap")?.remove();setTimeout(onDone,700);}}};
-  function arm(){const h=()=>{el.removeEventListener("click",h);step();};setTimeout(()=>el.addEventListener("click",h),700);}
+  const clear=()=>p.querySelectorAll(".line").forEach(o=>{o.style.transition="opacity .3s";o.style.opacity="0";setTimeout(()=>o.remove(),300);});
+  const step=()=>{if(i<beats.length){const b=beats[i++];clear();
+    setTimeout(()=>addLine(p,b.t,cls,b.accent), i>1?300:0);
+    if(i<beats.length)arm();else{el.querySelector(".tap")?.remove();setTimeout(onDone,1000);}}};
+  function arm(){const h=ev=>{if(ev.target.closest(".btn"))return;el.removeEventListener("click",h);step();};setTimeout(()=>el.addEventListener("click",h),750);}
   step();}
 
 function Open(){
@@ -216,9 +219,8 @@ function MiddahIntro(){
     <div class="halo"></div>
     <div class="line s show" style="letter-spacing:.24em;text-transform:uppercase;color:var(--olive-d);font-weight:600;font-family:var(--sans)">מידה</div>
     <div class="line l show" style="animation-delay:.25s;font-size:clamp(30px,9vw,40px)">${M.middah.name}</div>
-    <div class="line s show" style="animation-delay:.7s;max-width:30ch;white-space:pre-line">${M.middah.def}</div>
-    <div class="line s show" style="animation-delay:1.05s;max-width:30ch;white-space:pre-line;color:var(--faint)">${M.middah.lead}</div>
-    <div class="acts show" style="animation-delay:1.5s;max-width:320px"><button class="btn olive" id="go">מתחילים</button></div></div>`);
+    <div class="line s show" style="animation-delay:.7s;max-width:28ch;white-space:pre-line">${M.middah.def}</div>
+    <div class="acts show" style="animation-delay:1.2s;max-width:320px"><button class="btn olive" id="go">מתחילים</button></div></div>`);
   el.querySelector("#go").onclick=()=>{buzz();go(Recognition)};
 }
 function Wisdom(){
@@ -237,15 +239,16 @@ function Identification(){const el=frame("identification");const p=box(el);addLi
 function Reframe(){const el=frame("opportunity",{tap:true});sequence(el,box(el),M.reframe,"m",{onDone:()=>go(Meaning)});}
 function Meaning(){const el=frame("opportunity",{dim:true,mid:true,tap:true});addLine(box(el),M.meaning,"xl");
   const h=()=>{el.removeEventListener("click",h);el.querySelector(".tap")?.remove();go(Mission);};setTimeout(()=>el.addEventListener("click",h),1500);}
-function Mission(){const el=frame("opportunity");const p=box(el);addKick(p,`<span class="mtag">${M.mission.tag}</span>`);
-  let i=0;(function rev(){if(i<M.mission.lines.length){addLine(p,M.mission.lines[i++],"l");setTimeout(rev,950);}
-    else setTimeout(()=>{actions(p,`<button class="btn olive" id="take">${M.mission.take}</button><button class="btn ghost" id="skip">${M.mission.skip}</button>`);
-      p.querySelector("#take").onclick=()=>{buzz(18);go(ExitToLife)};p.querySelector("#skip").onclick=()=>{buzz();location.href="index.html"};},500);})();}
+function Mission(){const el=frame("opportunity",{tap:true});const p=box(el);addKick(p,`<span class="mtag">${M.mission.tag}</span>`);
+  sequence(el,p,M.mission.lines.map(t=>({t})),"l",{onDone:()=>{
+    actions(p,`<button class="btn olive" id="take">${M.mission.take}</button><button class="btn ghost" id="skip">${M.mission.skip}</button>`);
+    p.querySelector("#take").onclick=()=>{buzz(18);go(ExitToLife)};p.querySelector("#skip").onclick=()=>{buzz();location.href="index.html"};}});}
 function ExitToLife(){const el=frame("exit");const p=box(el);
-  addLine(p,M.exit.lines[0],"m");setTimeout(()=>addLine(p,M.exit.lines[1],"m"),900);setTimeout(()=>addLine(p,M.exit.hint,"s"),1700);
+  addLine(p,M.exit.lines[0],"m");
+  setTimeout(()=>addLine(p,M.exit.hint,"s"),900);
   setTimeout(()=>{actions(p,`<button class="btn olive" id="did">${M.exit.back}</button>`);
     const br=document.createElement("div");br.className="breathe";br.innerHTML=`<div class="ring">${M.exit.breath}</div><div class="sub">קח את הזמן.<br>אנחנו כאן כשתחזור.</div>`;el.appendChild(br);
-    p.querySelector("#did").onclick=()=>{buzz(18);br.classList.add("on");setTimeout(()=>go(Return),1700)};},2500);}
+    p.querySelector("#did").onclick=()=>{buzz(18);br.classList.add("on");setTimeout(()=>go(Return),1700)};},1500);}
 function Return(){const el=frame("return");const p=box(el);addLine(p,M.return_prompt,"l");
   setTimeout(()=>{actions(p,`<button class="btn olive" id="c">${M.branch_c}</button><button class="btn dusk" id="ny">${M.branch_n}</button>`);
     p.querySelector("#c").onclick=e=>choose(e.currentTarget,p,()=>{branch="c";go(Witness)});
@@ -253,10 +256,11 @@ function Return(){const el=frame("return");const p=box(el);addLine(p,M.return_pr
 function Witness(){const isC=branch==="c";const el=frame(isC?"witness_c":"witness_n",{tap:true});const p=box(el);
   const s=load();s.steps=(s.steps||0)+1;save(s);
   sequence(el,p,(isC?M.witness_c:M.witness_n).map(t=>({t})),"m",{onDone:()=>{if(isC)bloom(el);
-    const r=document.createElement("div");r.className="line s";r.innerHTML=`${isC?M.reward_c:M.reward_n}<br><span style="color:var(--olive-d);font-weight:600">${s.steps===1?'רגע אחד נאסף':s.steps+' רגעים נאספו'}</span>`;
+    p.querySelectorAll(".line").forEach(o=>o.remove());
+    const r=document.createElement("div");r.className="line m";r.innerHTML=`${isC?M.reward_c:M.reward_n}<br><span class="line s" style="display:block;margin-top:8px;color:var(--olive-d);font-weight:600">${s.steps===1?'רגע אחד נאסף':s.steps+' רגעים נאספו'}</span>`;
     p.appendChild(r);requestAnimationFrame(()=>r.classList.add("show"));
     actions(p,`<button class="btn ${isC?'olive':'dusk'}" id="n">המשך</button>`);p.querySelector("#n").onclick=()=>{buzz();go(Wisdom)};}});}
-function Continuation(){const el=frame("continuation");const p=box(el);addLine(p,M.continuation[0],"m");setTimeout(()=>addLine(p,M.continuation[1],"m"),900);
+function Continuation(){const el=frame("continuation");const p=box(el);addLine(p,M.continuation[0],"m");
   setTimeout(()=>{actions(p,`<button class="btn olive" id="again">רגע חדש</button><button class="btn ghost" id="home">חזרה למשחק</button>`);
     p.querySelector("#again").onclick=()=>{buzz();branch=null;hist=[];go(Recognition)};p.querySelector("#home").onclick=()=>{buzz();location.href="index.html"};},1600);}
 function bloom(el){const c=document.createElement("canvas");c.className="bloom";el.appendChild(c);
