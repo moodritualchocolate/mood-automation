@@ -20,7 +20,7 @@ body{background:#0c0a07;color:var(--ink);font-family:var(--sans);font-weight:300
 #stage{position:relative;width:100vw;height:100dvh;max-width:calc(100dvh*9/16);background:var(--paper);overflow:hidden;box-shadow:0 0 90px rgba(0,0,0,.7);perspective:1200px}
 .screen{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .6s ease}
 .screen.on{opacity:1;visibility:visible}
-.screen.out{opacity:0;transition:opacity .45s ease}
+.screen.out{opacity:0;transition:opacity .6s ease}
 
 /* ---- living diorama ---- */
 .diorama{position:absolute;inset:0;overflow:hidden;background:var(--paper)}
@@ -56,11 +56,24 @@ body{background:#0c0a07;color:var(--ink);font-family:var(--sans);font-weight:300
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .acts{display:flex;flex-direction:column;gap:11px;width:100%;max-width:380px;margin-top:8px;opacity:0}
 .acts.show{animation:rise .8s cubic-bezier(.16,1,.3,1) both}
-.btn{min-height:58px;border:none;border-radius:32px;cursor:pointer;font-family:var(--sans);font-weight:500;font-size:clamp(15px,4.6vw,17px);color:#fbf7ee;padding:8px 18px;line-height:1.3;box-shadow:0 10px 24px -10px rgba(70,55,30,.6),inset 0 1px 0 rgba(255,255,255,.25);transition:transform .1s}
-.btn:active{transform:translateY(1px) scale(.99)}
-.btn.olive{background:linear-gradient(180deg,#7d8a58,#5c6842)} .btn.dusk{background:linear-gradient(180deg,#9a8fa4,#736885)}
-.btn.soft{background:rgba(255,255,255,.6);color:var(--ink);border:1.5px solid var(--line);box-shadow:0 4px 12px -6px rgba(70,55,30,.3);font-weight:400}
-.btn.ghost{background:transparent;color:var(--ink-soft);border:none;box-shadow:none;font-weight:400;min-height:46px}
+.btn{position:relative;overflow:hidden;min-height:60px;border:1px solid rgba(201,162,94,.32);border-radius:34px;cursor:pointer;
+  font-family:var(--sans);font-weight:600;font-size:clamp(15px,4.6vw,17px);letter-spacing:.01em;color:#fbf7ee;padding:8px 18px;line-height:1.3;
+  box-shadow:0 14px 28px -12px rgba(60,45,20,.7), inset 0 2px 0 rgba(255,255,255,.22), inset 0 -3px 8px rgba(0,0,0,.14);
+  transition:transform .16s cubic-bezier(.2,.7,.2,1), box-shadow .22s, opacity .3s, filter .3s}
+.btn:active{transform:translateY(2px) scale(.98);box-shadow:0 6px 14px -10px rgba(60,45,20,.6), inset 0 2px 6px rgba(0,0,0,.2)}
+.btn.olive{background:linear-gradient(165deg,#8c9a64,#5c6842 72%,#4b5535)}
+.btn.dusk{background:linear-gradient(165deg,#a49aae,#6f6580 78%,#5d5470)}
+.btn::after{content:"";position:absolute;top:0;left:-45%;width:34%;height:100%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-18deg);animation:sheen 5.5s ease-in-out infinite}
+@keyframes sheen{0%,58%{left:-45%}82%{left:125%}100%{left:125%}}
+.btn.picked{transform:scale(1.035);box-shadow:0 18px 34px -12px rgba(88,100,64,.75), 0 0 0 2px rgba(201,162,94,.5)}
+.btn.dim{opacity:.38;filter:saturate(.6)}
+.btn.soft{background:rgba(255,255,255,.66);color:var(--ink);border:1.5px solid var(--line);font-weight:500;
+  box-shadow:0 7px 18px -9px rgba(60,45,20,.4), inset 0 1px 0 rgba(255,255,255,.6)}
+.btn.soft::after{display:none}
+.btn.soft:active{transform:translateY(1px) scale(.985)}
+.btn.soft.picked{background:linear-gradient(165deg,#8c9a64,#5c6842);color:#fbf7ee;border-color:transparent;transform:scale(1.02)}
+.btn.ghost{background:transparent;color:var(--ink-soft);border:1px solid rgba(120,100,60,.22);box-shadow:none;font-weight:500;min-height:48px}
+.btn.ghost::after{display:none}
 .mtag{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:22px;background:rgba(109,122,76,.15);border:1px solid rgba(109,122,76,.45);color:var(--olive-d);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
 .tap{position:absolute;left:0;right:0;bottom:max(18px,calc(env(safe-area-inset-bottom) + 12px));text-align:center;font-size:12px;color:rgba(60,45,20,.55);letter-spacing:.1em;z-index:7;animation:blink 2.8s ease-in-out infinite;pointer-events:none}
 @keyframes blink{0%,100%{opacity:.2}50%{opacity:.7}}
@@ -154,13 +167,14 @@ function frame(sceneKey,{dim=false,mid=false,tap=false}={}){
   cur={bg:el.querySelector(".layer.bg"),sh:el.querySelector(".layer.shadow"),fg:el.querySelector(".layer.fg")};
   requestAnimationFrame(()=>{el.classList.add("on");
     const sh=el.querySelector(".sheet");if(sh)setTimeout(()=>sh.classList.add("up"),140);
-    if(old){old.classList.remove("on");old.classList.add("out");setTimeout(()=>old.remove(),480);}});
+    if(old){old.classList.remove("on");old.classList.add("out");setTimeout(()=>old.remove(),640);}});
   return el;
 }
 function box(el){return el.querySelector(".sheet")||el.querySelector(".mid")}
 function addLine(p,t,cls="m",ac=false){const d=document.createElement("div");d.className=`line ${cls} ${ac?'accent':''}`;d.textContent=t;p.appendChild(d);requestAnimationFrame(()=>d.classList.add("show"));return d;}
 function addKick(p,h){const d=document.createElement("div");d.className="kick";d.innerHTML=h;p.appendChild(d);requestAnimationFrame(()=>d.classList.add("show"));return d;}
 function actions(p,h){const w=document.createElement("div");w.className="acts";w.innerHTML=h;p.appendChild(w);requestAnimationFrame(()=>w.classList.add("show"));return w;}
+function choose(btn,p,fn){buzz(20);btn.classList.add("picked");p.querySelectorAll(".btn").forEach(x=>{if(x!==btn)x.classList.add("dim")});setTimeout(fn,360);}
 function go(fn){hist.push(fn);fn();}
 function back(){buzz();if(hist.length>1){hist.pop();hist[hist.length-1]();}else location.href="index.html";}
 function sequence(el,p,beats,cls,{onDone}={}){let i=0;
@@ -182,7 +196,7 @@ function Open(){
 function Recognition(){const el=frame("recognition",{tap:true});sequence(el,box(el),M.recognition,"l",{onDone:()=>go(Identification)});}
 function Identification(){const el=frame("identification");const p=box(el);addLine(p,M.identify_prompt,"l");
   setTimeout(()=>{actions(p,`<button class="btn soft" data-b="0">${M.identify[0]}</button><button class="btn soft" data-b="1">${M.identify[1]}</button>`);
-    p.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>{buzz();go(Reframe)});},750);}
+    p.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>choose(b,p,()=>go(Reframe)));},750);}
 function Reframe(){const el=frame("opportunity",{tap:true});sequence(el,box(el),M.reframe,"m",{onDone:()=>go(Meaning)});}
 function Meaning(){const el=frame("opportunity",{dim:true,mid:true,tap:true});addLine(box(el),M.meaning,"xl");
   const h=()=>{el.removeEventListener("click",h);el.querySelector(".tap")?.remove();go(Mission);};setTimeout(()=>el.addEventListener("click",h),1500);}
@@ -197,7 +211,8 @@ function ExitToLife(){const el=frame("exit");const p=box(el);
     p.querySelector("#did").onclick=()=>{buzz(18);br.classList.add("on");setTimeout(()=>go(Return),1700)};},2500);}
 function Return(){const el=frame("return");const p=box(el);addLine(p,M.return_prompt,"l");
   setTimeout(()=>{actions(p,`<button class="btn olive" id="c">${M.branch_c}</button><button class="btn dusk" id="ny">${M.branch_n}</button>`);
-    p.querySelector("#c").onclick=()=>{buzz(16);branch="c";go(Witness)};p.querySelector("#ny").onclick=()=>{buzz(16);branch="n";go(Witness)};},750);}
+    p.querySelector("#c").onclick=e=>choose(e.currentTarget,p,()=>{branch="c";go(Witness)});
+    p.querySelector("#ny").onclick=e=>choose(e.currentTarget,p,()=>{branch="n";go(Witness)});},750);}
 function Witness(){const isC=branch==="c";const el=frame(isC?"witness_c":"witness_n",{tap:true});const p=box(el);
   const s=load();s.steps=(s.steps||0)+1;save(s);
   sequence(el,p,(isC?M.witness_c:M.witness_n).map(t=>({t})),"m",{onDone:()=>{if(isC)bloom(el);
