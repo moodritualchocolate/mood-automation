@@ -83,10 +83,15 @@ nav .tools{font-family:'Heebo';font-weight:700;font-size:13px;color:var(--muted)
 .assure{display:flex;flex-direction:column;gap:7px;margin-top:16px}
 .assure div{display:flex;gap:9px;font-weight:600;font-size:13.5px}.assure .ic{color:var(--cta);font-weight:800}
 .pay{margin-top:12px;color:var(--muted);font-size:11.5px;text-align:center;font-weight:600}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);background:var(--dark);color:#F4EEE3;margin-top:26px;gap:1px}
-.stats div{text-align:center;padding:22px 8px;background:var(--dark)}
-.stats b{font-family:'Heebo';font-weight:900;font-size:26px;display:block}
-.stats span{color:#B7B0A4;font-size:12px}
+.promise{background:var(--dark);color:#F4EEE3;padding:46px 30px;margin-top:26px}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);max-width:1040px;margin:0 auto}
+.pcard{padding:4px 28px;text-align:center;position:relative}
+.pcard+.pcard{border-inline-start:1px solid rgba(255,255,255,.12)}
+.pmark{display:block;width:28px;height:3px;border-radius:3px;background:var(--accent);margin:0 auto 15px}
+.pk{font-family:'Heebo';font-weight:900;font-size:19px;color:#FBF5EC;margin-bottom:9px;line-height:1.2}
+.pcard p{color:#C6BDB0;font-weight:600;font-size:13.5px;line-height:1.6}
+.pcard p b{color:var(--accent);font-weight:800}
+.ptrust{max-width:1040px;margin:28px auto 0;padding-top:22px;border-top:1px solid rgba(255,255,255,.12);text-align:center;font-family:'Heebo';font-weight:700;font-size:12.5px;color:#B0A899}
 section{padding:56px 30px}
 .eyebrow{font-family:'Heebo';font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-ink)}
 h2{font-size:clamp(26px,3.6vw,40px)}
@@ -116,16 +121,13 @@ h2{font-size:clamp(26px,3.6vw,40px)}
 .fspec div span{color:var(--muted);font-weight:600;font-size:13px;margin-top:4px;display:block}
 .fpanel{text-align:center;align-self:center}
 .why{padding-top:44px;padding-bottom:44px}
-.moments{background:linear-gradient(180deg,#FBF7F2 0%,#F4E9DE 100%);overflow:hidden}
-.msplit{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;max-width:1120px;margin:0 auto}
-.mimg{border-radius:22px;overflow:hidden;box-shadow:0 22px 54px rgba(27,26,23,.12)}
-.mimg img{width:100%;display:block;aspect-ratio:5/4;object-fit:cover}
-.mlist{margin-top:24px;display:flex;flex-direction:column}
-.mitem{display:flex;gap:20px;align-items:baseline;padding:18px 2px;border-top:1px solid rgba(158,82,48,.16)}
-.mitem:last-child{border-bottom:1px solid rgba(158,82,48,.16)}
-.mnum{font-family:'Heebo';font-weight:900;font-size:26px;color:var(--accent);line-height:1;flex:0 0 auto;width:38px;font-variant-numeric:tabular-nums}
+.moments{background:linear-gradient(180deg,#FBF7F2 0%,#F4E9DE 100%);text-align:center;overflow:hidden}
+.mlist{display:grid;grid-template-columns:repeat(3,1fr);max-width:1000px;margin:38px auto 0}
+.mitem{text-align:center;padding:6px 32px}
+.mitem+.mitem{border-inline-start:1px solid rgba(158,82,48,.16)}
+.mnum{font-family:'Heebo';font-weight:900;font-size:34px;color:var(--accent);display:block;margin-bottom:12px;line-height:1;font-variant-numeric:tabular-nums}
 .minfo b{font-family:'Heebo';font-weight:800;font-size:20px;display:block;line-height:1.2}
-.minfo p{color:var(--muted);font-weight:600;font-size:14.5px;margin-top:5px;line-height:1.55}
+.minfo p{color:var(--muted);font-weight:600;font-size:14px;margin-top:7px;line-height:1.55}
 .choc{background:var(--dark);color:#F4EEE3;padding:0;position:relative}
 .choc .cgrid{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
 .choc .cimg{overflow:hidden}
@@ -187,16 +189,19 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
   .split img{aspect-ratio:4/3;object-fit:cover;max-height:56vh}
   .why{padding-top:30px;padding-bottom:14px}
   .fpanel .fburst{max-width:330px}
-  .msplit{grid-template-columns:1fr;gap:22px}
-  .mimg{order:-1}
-  .mimg img{aspect-ratio:4/3}
-  .mlist{margin-top:8px}
-  .mnum{font-size:23px;width:34px}
+  .mlist{grid-template-columns:1fr;margin-top:26px}
+  .mitem{padding:20px 8px}
+  .mitem+.mitem{border-inline-start:none;border-top:1px solid rgba(158,82,48,.16)}
+  .mnum{font-size:30px;margin-bottom:8px}
   .minfo b{font-size:19px}
   .choc .cgrid{grid-template-columns:1fr}
   .choc .cimg{aspect-ratio:16/10}
   .choc .ctext{padding:32px 18px}
-  .stats{grid-template-columns:1fr 1fr}.stats b{font-size:24px}
+  .promise{padding:34px 18px}
+  .pgrid{grid-template-columns:1fr}
+  .pcard{padding:20px 6px}
+  .pcard+.pcard{border-inline-start:none;border-top:1px solid rgba(255,255,255,.12)}
+  .pk{font-size:18px}
   .rtop{grid-template-columns:1fr;gap:18px}
   .rgrid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:84%;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:8px;scrollbar-width:none}
   .rgrid::-webkit-scrollbar{display:none}.rcard{scroll-snap-align:center}
@@ -257,11 +262,13 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
     </div>
   </div>
 
-  <div class="stats" id="stats">
-    <div><b class="mono" data-to="800">0</b><span>מ״ג פורמולה / ריבוע</span></div>
-    <div><b class="mono" data-to="7">0</b><span>גרם · 70% קקאו</span></div>
-    <div><b class="mono" data-to="30">0</b><span>ריבועים אישיים</span></div>
-    <div><b class="mono">0</b><span>סוכר · ללא תוספת</span></div>
+  <div class="promise">
+    <div class="pgrid">
+      <div class="pcard rv"><span class="pmark"></span><div class="pk">בלי הנפילה של הקפה</div><p>אנרגיה שעולה לאט ומחזיקה — בלי הרעד, בלי הקריסה של 16:00.</p></div>
+      <div class="pcard rv"><span class="pmark"></span><div class="pk">פורמולה, לא תוסף</div><p><b>800 מ״ג</b> פורמציה · 5 רכיבים טבעיים · <b>0 סוכר</b> — בתוך ריבוע אחד.</p></div>
+      <div class="pcard rv"><span class="pmark"></span><div class="pk">פרימיום אמיתי</div><p>שוקולד מריר 70% עם מלח ים — פותח עם שוקולטייר זוכה זהב עולמי.</p></div>
+    </div>
+    <div class="ptrust">🔒 כשר פרווה · ביטול בכל עת · משלוח חינם מעל 249 ₪</div>
   </div>
 
   <section class="why split">
@@ -283,17 +290,12 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
   </section>
 
   <section class="moments">
-    <div class="msplit">
-      <div class="mbody rv">
-        <div class="eyebrow">מתי לוקחים</div>
-        <h2 style="margin-top:10px">לכל יום יש<br>את הרגע שלו.</h2>
-        <div class="mlist">
-          <div class="mitem"><b class="mnum">01</b><div class="minfo"><b>לפני האימון</b><p>ריבוע לפני שיוצאים — אנרגיה נקייה לתנועה, בלי כובד בבטן.</p></div></div>
-          <div class="mitem"><b class="mnum">02</b><div class="minfo"><b>במהלך יום עבודה</b><p>במקום הקפה השלישי — מיקוד שקט, בלי הרעד של אחר הצהריים.</p></div></div>
-          <div class="mitem"><b class="mnum">03</b><div class="minfo"><b>לפני שהילדים חוזרים</b><p>רגע קטן להיטען מחדש — להיכנס לערב עם אנרגיה וסבלנות.</p></div></div>
-        </div>
-      </div>
-      <div class="mimg rv"><img src="__MOODS__" alt="ריבוע שוקולד mood — האנרגיה שמשתחררת ממנו" loading="lazy" decoding="async"></div>
+    <div class="eyebrow rv">מתי לוקחים</div>
+    <h2 class="rv" style="margin-top:10px">לכל יום יש את הרגע שלו.</h2>
+    <div class="mlist">
+      <div class="mitem rv"><b class="mnum">01</b><div class="minfo"><b>לפני האימון</b><p>ריבוע ביד לפני שיוצאים — אנרגיה נקייה לתנועה, בלי כובד בבטן.</p></div></div>
+      <div class="mitem rv"><b class="mnum">02</b><div class="minfo"><b>במהלך יום עבודה</b><p>במקום הקפה השלישי — מיקוד שקט, בלי הרעד של אחר הצהריים.</p></div></div>
+      <div class="mitem rv"><b class="mnum">03</b><div class="minfo"><b>לפני שהילדים חוזרים</b><p>רגע קטן להיטען מחדש — להיכנס לערב עם אנרגיה וסבלנות.</p></div></div>
     </div>
   </section>
 
