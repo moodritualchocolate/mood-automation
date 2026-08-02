@@ -121,15 +121,15 @@ h2{font-size:clamp(26px,3.6vw,40px)}
 .fspec div span{color:var(--muted);font-weight:600;font-size:13px;margin-top:4px;display:block}
 .fpanel{text-align:center;align-self:center}
 .why{padding-top:44px;padding-bottom:44px}
-.moments{background:var(--greige);text-align:center}
-.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
-.mcard{background:#fff;border:1px solid var(--hairline);border-radius:18px;padding:30px 22px;display:flex;flex-direction:column;align-items:center;gap:9px;transition:transform .18s,box-shadow .18s}
-.mcard:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(27,26,23,.07)}
-.mcard .mic{width:52px;height:52px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;margin-bottom:4px}
-.mcard .mic svg{width:26px;height:26px;color:var(--accent-ink);stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.mtxt{display:flex;flex-direction:column;gap:4px}
-.mcard b{font-family:'Heebo';font-weight:800;font-size:18px}
-.mcard span{color:var(--muted);font-weight:600;font-size:13.5px;line-height:1.55}
+.moments{background:linear-gradient(180deg,#FBF7F2 0%,#F4E9DE 100%);text-align:center;overflow:hidden}
+.mtimeline{max-width:640px;margin:40px auto 0;position:relative;text-align:right}
+.mtimeline::before{content:"";position:absolute;top:30px;bottom:30px;inset-inline-start:31px;width:2px;background:linear-gradient(180deg,var(--accent),rgba(217,133,94,.15));border-radius:2px}
+.mrow{position:relative;display:flex;gap:24px;padding:22px 4px;align-items:center}
+.mrail{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:1}
+.mdot{width:15px;height:15px;border-radius:50%;background:var(--accent);border:3px solid #FBF3EB;box-shadow:0 2px 8px rgba(217,133,94,.4)}
+.mnum{font-family:'Heebo';font-weight:900;font-size:32px;color:var(--accent-ink);line-height:1;font-variant-numeric:tabular-nums}
+.minfo b{font-family:'Heebo';font-weight:800;font-size:22px;display:block;line-height:1.15}
+.minfo p{color:var(--muted);font-weight:600;font-size:14.5px;margin-top:6px;line-height:1.55;max-width:40ch}
 .choc{background:var(--dark);color:#F4EEE3;padding:0;position:relative}
 .choc .cgrid{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
 .choc .cimg{overflow:hidden}
@@ -191,10 +191,13 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
   .split img{aspect-ratio:4/3;object-fit:cover;max-height:56vh}
   .why{padding-top:30px;padding-bottom:30px}
   .fpanel .fburst{max-width:330px}
-  .mgrid{grid-template-columns:1fr;gap:12px;margin-top:24px}
-  .mcard{padding:20px;flex-direction:row;text-align:right;align-items:center;gap:16px}
-  .mcard .mic{margin-bottom:0;flex:0 0 auto;width:46px;height:46px}
-  .mcard .mic svg{width:23px;height:23px}
+  .mtimeline{margin-top:28px}
+  .mtimeline::before{inset-inline-start:25px}
+  .mrow{gap:18px;padding:18px 2px;align-items:flex-start}
+  .mrail{flex-basis:52px}
+  .mnum{font-size:26px}
+  .minfo b{font-size:19px}
+  .minfo p{font-size:14px}
   .choc .cgrid{grid-template-columns:1fr}
   .choc .cimg{aspect-ratio:16/10}
   .choc .ctext{padding:32px 18px}
@@ -287,19 +290,10 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
   <section class="moments">
     <div class="eyebrow rv">מתי לוקחים</div>
     <h2 class="rv" style="margin-top:10px">לכל יום יש<br>את הרגע שלו.</h2>
-    <div class="mgrid">
-      <div class="mcard rv">
-        <span class="mic"><svg viewBox="0 0 24 24"><path d="M4 9v6M20 9v6M7 7.5v9M17 7.5v9M7 12h10"/></svg></span>
-        <div class="mtxt"><b>לפני האימון</b><span>ריבוע לפני שיוצאים — אנרגיה נקייה לתנועה</span></div>
-      </div>
-      <div class="mcard rv">
-        <span class="mic"><svg viewBox="0 0 24 24"><rect x="4.5" y="6" width="15" height="9.5" rx="1.2"/><path d="M2.5 19h19"/></svg></span>
-        <div class="mtxt"><b>במהלך יום עבודה</b><span>במקום הקפה השלישי — מיקוד בלי רעד</span></div>
-      </div>
-      <div class="mcard rv">
-        <span class="mic"><svg viewBox="0 0 24 24"><path d="M4 11l8-6 8 6"/><path d="M6 9.5V19h12V9.5"/><path d="M10 19v-5h4v5"/></svg></span>
-        <div class="mtxt"><b>לפני שהילדים חוזרים</b><span>רגע קטן להיטען מחדש לפני הסבב הבא</span></div>
-      </div>
+    <div class="mtimeline">
+      <div class="mrow rv"><div class="mrail"><span class="mdot"></span><b class="mnum">01</b></div><div class="minfo"><b>לפני האימון</b><p>ריבוע לפני שיוצאים — אנרגיה נקייה לתנועה, בלי כובד בבטן.</p></div></div>
+      <div class="mrow rv"><div class="mrail"><span class="mdot"></span><b class="mnum">02</b></div><div class="minfo"><b>במהלך יום עבודה</b><p>במקום הקפה השלישי — מיקוד שקט, בלי הרעד של אחר הצהריים.</p></div></div>
+      <div class="mrow rv"><div class="mrail"><span class="mdot"></span><b class="mnum">03</b></div><div class="minfo"><b>לפני שהילדים חוזרים</b><p>רגע קטן להיטען מחדש — להיכנס לערב עם אנרגיה וסבלנות.</p></div></div>
     </div>
   </section>
 
