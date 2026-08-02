@@ -13,8 +13,8 @@
   --cta:#B85510;--green:#C6D4B8;--green-ink:#3E4A34;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--greige)}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{background:var(--greige);overflow-x:clip}
 .wrap{background:var(--greige);color:var(--ink);font-family:'Assistant',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;direction:rtl;min-height:100vh}
 .page{max-width:1180px;margin:0 auto;background:var(--paper);box-shadow:0 1px 60px rgba(27,26,23,.06);overflow:hidden}
 h1,h2,h3,.eyebrow,.logo{font-family:'Heebo',sans-serif}
@@ -112,6 +112,12 @@ h2{font-size:clamp(26px,3.6vw,40px)}
 .fspec div span{color:var(--muted);font-weight:600;font-size:13px;margin-top:4px;display:block}
 .ftrust{margin-top:26px;font-family:'Heebo';font-weight:700;font-size:12.5px;letter-spacing:.02em;color:var(--muted)}
 .ftrust b{color:var(--accent-ink)}
+.trustbar-sec{background:var(--greige);padding:40px 22px}
+.trustbar{max-width:920px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.ti{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+.ti .ic{width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid var(--hairline);display:grid;place-items:center}
+.ti svg{width:22px;height:22px;color:var(--accent-ink);stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ti span{font-family:'Heebo';font-weight:700;font-size:13px;color:var(--ink);line-height:1.4}
 .choc{background:var(--dark);color:#F4EEE3;padding:0;position:relative}
 .choc .cgrid{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
 .choc .cimg{overflow:hidden}
@@ -163,7 +169,9 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
   .gthumbs{display:none}.dots{display:flex}
   .gal .main{aspect-ratio:4/5}
   section{padding:38px 16px}
+  .split{grid-template-columns:1fr;gap:24px}
   .split img{aspect-ratio:4/3;object-fit:cover;max-height:56vh}
+  .trustbar{grid-template-columns:1fr 1fr;gap:24px 14px}
   .choc .cgrid{grid-template-columns:1fr}
   .choc .cimg{aspect-ratio:16/10}
   .choc .ctext{padding:32px 18px}
@@ -258,7 +266,15 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
       <div><b class="mono">5</b><span>רכיבים טבעיים</span></div>
       <div><b class="mono">800</b><span>מ״ג פורמולה</span></div>
     </div>
-    <div class="ftrust rv">✓ לפי מחקר &nbsp;·&nbsp; ✓ רכיבים באיכות גבוהה &nbsp;·&nbsp; ✓ <b>ללא סוכר</b></div>
+  </section>
+
+  <section class="trustbar-sec">
+    <div class="trustbar">
+      <div class="ti rv"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20c0-8 6-14 16-14 0 10-6 16-16 14z"/><path d="M5 19c4-6 8-8 12-9"/></svg></span><span>רכיבים טבעיים<br>באיכות גבוהה</span></div>
+      <div class="ti rv"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 8.5A2 2 0 007 21h10a2 2 0 001.9-3.5L14 9V3"/></svg></span><span>פורמולה מדויקת<br>לפי מחקר</span></div>
+      <div class="ti rv"><span class="ic"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="5.5" ry="9"/><path d="M12 3.5v17"/></svg></span><span>שוקולד פרמיום<br>70% קקאו</span></div>
+      <div class="ti rv"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 20s-6.5-4.3-6.5-9.3A3.5 3.5 0 0112 7a3.5 3.5 0 016.5 3.7C18.5 15.7 12 20 12 20z"/></svg></span><span>פותח בישראל<br>מיוצר באהבה</span></div>
+    </div>
   </section>
 
   <section class="choc" id="choc"><div class="cgrid">
