@@ -110,21 +110,22 @@ h2{font-size:clamp(26px,3.6vw,40px)}
 .formula.center{text-align:center}
 .formula .lede{margin:14px auto 0;max-width:46ch;color:var(--muted);font-weight:600;font-size:15.5px}
 .fburst{margin:0 auto;max-width:380px;aspect-ratio:512/800;overflow:hidden}
-.fpanel .fburst img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:0}
+.fpanel .fburst img{width:100%;height:100%;max-height:none;object-fit:cover;object-position:center;display:block;border-radius:0}
 .fspec{display:flex;justify-content:center;gap:clamp(28px,6vw,56px);margin-top:30px}
 .fspec div b{font-family:'Heebo';font-weight:900;font-size:40px;color:var(--accent-ink);display:block;line-height:1}
 .fspec div span{color:var(--muted);font-weight:600;font-size:13px;margin-top:4px;display:block}
 .fpanel{text-align:center;align-self:center}
 .why{padding-top:44px;padding-bottom:44px}
-.moments{background:linear-gradient(180deg,#FBF7F2 0%,#F4E9DE 100%);text-align:center;overflow:hidden;padding-top:50px;padding-bottom:56px}
-.mtimeline{max-width:940px;margin:40px auto 0;display:flex;justify-content:space-between;gap:24px;position:relative}
-.mtimeline::before{content:"";position:absolute;top:51px;left:9%;right:9%;height:2px;background:linear-gradient(90deg,rgba(217,133,94,.15),var(--accent) 25%,var(--accent) 75%,rgba(217,133,94,.15))}
-.mrow{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
-.mrail{display:contents}
-.mnum{font-family:'Heebo';font-weight:900;font-size:36px;color:var(--accent-ink);line-height:1;font-variant-numeric:tabular-nums;margin-bottom:13px}
-.mdot{width:16px;height:16px;border-radius:50%;background:var(--accent);border:3px solid #FBF3EB;box-shadow:0 2px 10px rgba(217,133,94,.45);position:relative;z-index:1;margin-bottom:20px}
-.minfo b{font-family:'Heebo';font-weight:800;font-size:19px;display:block;line-height:1.2}
-.minfo p{color:var(--muted);font-weight:600;font-size:13.5px;margin-top:7px;line-height:1.55;max-width:24ch;margin-inline:auto}
+.moments{background:linear-gradient(180deg,#FBF7F2 0%,#F4E9DE 100%);overflow:hidden}
+.msplit{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;max-width:1120px;margin:0 auto}
+.mimg{border-radius:22px;overflow:hidden;box-shadow:0 22px 54px rgba(27,26,23,.12)}
+.mimg img{width:100%;display:block;aspect-ratio:5/4;object-fit:cover}
+.mlist{margin-top:24px;display:flex;flex-direction:column}
+.mitem{display:flex;gap:20px;align-items:baseline;padding:18px 2px;border-top:1px solid rgba(158,82,48,.16)}
+.mitem:last-child{border-bottom:1px solid rgba(158,82,48,.16)}
+.mnum{font-family:'Heebo';font-weight:900;font-size:26px;color:var(--accent);line-height:1;flex:0 0 auto;width:38px;font-variant-numeric:tabular-nums}
+.minfo b{font-family:'Heebo';font-weight:800;font-size:20px;display:block;line-height:1.2}
+.minfo p{color:var(--muted);font-weight:600;font-size:14.5px;margin-top:5px;line-height:1.55}
 .choc{background:var(--dark);color:#F4EEE3;padding:0;position:relative}
 .choc .cgrid{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
 .choc .cimg{overflow:hidden}
@@ -184,16 +185,14 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
   section{padding:38px 16px}
   .split{grid-template-columns:1fr;gap:18px}
   .split img{aspect-ratio:4/3;object-fit:cover;max-height:56vh}
-  .why{padding-top:30px;padding-bottom:30px}
+  .why{padding-top:30px;padding-bottom:14px}
   .fpanel .fburst{max-width:330px}
-  .mtimeline{display:block;max-width:none;margin-top:26px;text-align:right}
-  .mtimeline::before{top:26px;bottom:26px;left:auto;right:auto;inset-inline-start:25px;width:2px;height:auto;background:linear-gradient(180deg,var(--accent),rgba(217,133,94,.15))}
-  .mrow{flex-direction:row;align-items:center;gap:18px;padding:16px 2px;text-align:right}
-  .mrail{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 52px}
-  .mnum{font-size:24px;margin-bottom:0;order:2}
-  .mdot{margin-bottom:0;order:1}
+  .msplit{grid-template-columns:1fr;gap:22px}
+  .mimg{order:-1}
+  .mimg img{aspect-ratio:4/3}
+  .mlist{margin-top:8px}
+  .mnum{font-size:23px;width:34px}
   .minfo b{font-size:19px}
-  .minfo p{font-size:14px;max-width:none;margin-inline:0}
   .choc .cgrid{grid-template-columns:1fr}
   .choc .cimg{aspect-ratio:16/10}
   .choc .ctext{padding:32px 18px}
@@ -284,12 +283,17 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
   </section>
 
   <section class="moments">
-    <div class="eyebrow rv">מתי לוקחים</div>
-    <h2 class="rv" style="margin-top:10px">לכל יום יש<br>את הרגע שלו.</h2>
-    <div class="mtimeline">
-      <div class="mrow rv"><div class="mrail"><b class="mnum">01</b><span class="mdot"></span></div><div class="minfo"><b>לפני האימון</b><p>ריבוע לפני שיוצאים — אנרגיה נקייה לתנועה, בלי כובד בבטן.</p></div></div>
-      <div class="mrow rv"><div class="mrail"><b class="mnum">02</b><span class="mdot"></span></div><div class="minfo"><b>במהלך יום עבודה</b><p>במקום הקפה השלישי — מיקוד שקט, בלי הרעד של אחר הצהריים.</p></div></div>
-      <div class="mrow rv"><div class="mrail"><b class="mnum">03</b><span class="mdot"></span></div><div class="minfo"><b>לפני שהילדים חוזרים</b><p>רגע קטן להיטען מחדש — להיכנס לערב עם אנרגיה וסבלנות.</p></div></div>
+    <div class="msplit">
+      <div class="mbody rv">
+        <div class="eyebrow">מתי לוקחים</div>
+        <h2 style="margin-top:10px">לכל יום יש<br>את הרגע שלו.</h2>
+        <div class="mlist">
+          <div class="mitem"><b class="mnum">01</b><div class="minfo"><b>לפני האימון</b><p>ריבוע לפני שיוצאים — אנרגיה נקייה לתנועה, בלי כובד בבטן.</p></div></div>
+          <div class="mitem"><b class="mnum">02</b><div class="minfo"><b>במהלך יום עבודה</b><p>במקום הקפה השלישי — מיקוד שקט, בלי הרעד של אחר הצהריים.</p></div></div>
+          <div class="mitem"><b class="mnum">03</b><div class="minfo"><b>לפני שהילדים חוזרים</b><p>רגע קטן להיטען מחדש — להיכנס לערב עם אנרגיה וסבלנות.</p></div></div>
+        </div>
+      </div>
+      <div class="mimg rv"><img src="__MOODS__" alt="ריבוע שוקולד mood — האנרגיה שמשתחררת ממנו" loading="lazy" decoding="async"></div>
     </div>
   </section>
 
