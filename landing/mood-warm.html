@@ -90,17 +90,29 @@ p.lead{font-size:clamp(19px,4.2vw,28px);font-weight:400;line-height:1.5;color:#4
   padding:9px 18px;border-radius:100px;font-size:clamp(13px,3vw,16px);margin:6px 6px 0 0;}
 
 /* FORMULA */
-#formula{background:linear-gradient(180deg,transparent,rgba(44,27,16,.03));}
+#formula{background:linear-gradient(180deg,transparent,rgba(44,27,16,.03));--acc:var(--energy);}
+#formula .tabs{display:flex;direction:rtl;gap:8px;justify-content:center;flex-wrap:wrap;margin:3.4vh auto 0;}
+#formula .tab{display:inline-flex;align-items:baseline;gap:7px;font-family:inherit;
+  font-weight:800;font-size:clamp(14px,3.6vw,17px);padding:11px 22px;border-radius:100px;
+  border:1.5px solid rgba(60,40,20,.16);color:var(--muted);background:transparent;cursor:pointer;
+  transition:color .3s,background .3s,border-color .3s,transform .2s;}
+#formula .tab .en{font-size:.66em;font-weight:700;letter-spacing:.14em;opacity:.7;}
+#formula .tab:hover{transform:translateY(-1px);}
+#formula .tab.active{color:#fff;border-color:transparent;box-shadow:0 12px 26px rgba(60,40,20,.16);}
+#formula .fTag{font-size:clamp(13px,2.9vw,16px);font-weight:600;letter-spacing:.04em;
+  color:var(--acc);margin-top:20px;transition:color .4s;}
 #formula .grid{display:grid;grid-template-columns:1fr;gap:14px;
-  width:min(560px,86vw);margin:5vh auto 0;}
+  width:min(560px,86vw);margin:4vh auto 0;}
 .ing{display:flex;align-items:center;justify-content:space-between;
   background:var(--paper);border:1px solid rgba(60,40,20,.09);border-radius:16px;
   padding:18px 22px;box-shadow:0 10px 26px rgba(60,40,20,.05);text-align:right;}
 .ing .n{font-weight:800;font-size:clamp(18px,4.4vw,24px);color:var(--choc);}
 .ing .d{font-weight:500;font-size:clamp(12px,3vw,14px);color:var(--muted);margin-top:3px;}
-.ing .amt{font-weight:900;font-size:clamp(19px,4.6vw,26px);color:var(--orange);
-  white-space:nowrap;margin-right:16px;}
-.ing .dot{width:11px;height:11px;border-radius:50%;flex:none;margin-left:14px;}
+.ing .amt{font-weight:900;font-size:clamp(19px,4.6vw,26px);color:var(--acc);
+  white-space:nowrap;margin-right:16px;transition:color .4s;}
+.ing .dot{width:11px;height:11px;border-radius:50%;flex:none;margin-left:14px;background:var(--acc);}
+.ing .tot{font-weight:700;font-size:clamp(11px,2.6vw,12.5px);color:var(--muted);
+  margin-top:5vh;letter-spacing:.02em;}
 #formula .trust{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,2vw,10px);
   margin:6.5vh auto 0;width:min(680px,92vw);}
 #formula .trust .t{flex:1 1 140px;background:var(--paper);border:1px solid rgba(60,40,20,.08);
@@ -173,14 +185,14 @@ footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-siz
   <section id="formula">
     <div class="eyebrow reveal" data-d="0">הפורמולה שלנו · מדויקת · טבעית</div>
     <h2 class="reveal" data-d="1">מה בפנים —<br/>עד המיליגרם.</h2>
-    <p class="kicker reveal" data-d="2" style="margin-top:16px;">ENERGY · אנרגיה טבעית למיקוד וחיוניות</p>
-    <div class="grid">
-      <div class="ing reveal" data-d="3"><div style="display:flex;align-items:center"><span class="dot" style="background:#E4611F"></span><div><div class="n">רודיאלה</div><div class="d">תמיכה באנרגיה וסיבולת נפשית</div></div></div><div class="amt">660 מ״ג</div></div>
-      <div class="ing reveal" data-d="4"><div style="display:flex;align-items:center"><span class="dot" style="background:#7E9350"></span><div><div class="n">תה ירוק</div><div class="d">נוגד חמצון ותמיכה במיקוד וריכוז</div></div></div><div class="amt">80 מ״ג</div></div>
-      <div class="ing reveal" data-d="5"><div style="display:flex;align-items:center"><span class="dot" style="background:#B5642A"></span><div><div class="n">קינמון</div><div class="d">תמיכה ברמת סוכר מאוזנת</div></div></div><div class="amt">40 מ״ג</div></div>
-      <div class="ing reveal" data-d="6"><div style="display:flex;align-items:center"><span class="dot" style="background:#D89A3C"></span><div><div class="n">ליקוריץ</div><div class="d">תמיכה במערכת ואיזון טבעי</div></div></div><div class="amt">13 מ״ג</div></div>
-      <div class="ing reveal" data-d="7"><div style="display:flex;align-items:center"><span class="dot" style="background:#8A5A38"></span><div><div class="n">גוארנה</div><div class="d">מקור טבעי לאנרגיה מתמשכת</div></div></div><div class="amt">7 מ״ג</div></div>
+    <div class="tabs reveal" data-d="2" id="fTabs">
+      <button class="tab active" data-m="0"><span>אנרגיה</span><span class="en">Energy</span></button>
+      <button class="tab" data-m="1"><span>רוגע</span><span class="en">Relax</span></button>
+      <button class="tab" data-m="2"><span>שינה</span><span class="en">Sleep</span></button>
     </div>
+    <p class="fTag reveal" data-d="3" id="fTag"></p>
+    <div class="grid" id="fGrid"></div>
+    <div class="tot" id="fTot"></div>
     <div class="trust">
       <div class="t reveal" data-d="8"><b>טבעי</b><span>רכיבים באיכות גבוהה</span></div>
       <div class="t reveal" data-d="9"><b>מבוסס מחקר</b><span>פורמולה מדויקת</span></div>
@@ -362,8 +374,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         vec3 sage =vec3(0.47,0.53,0.30);
         vec3 dusk =vec3(0.36,0.44,0.58);   // real Sleep dusty-blue
         vec3 col=mix(cocoa,amber,vWarm);
-        col=mix(col,sage,clamp(uScrollHue,0.0,1.0)*0.5);
-        col=mix(col,dusk,clamp(uScrollHue-1.0,0.0,1.0)*0.6);
+        col=mix(col,sage,clamp(uScrollHue,0.0,1.0)*0.72);
+        col=mix(col,dusk,clamp(uScrollHue-1.0,0.0,1.0)*0.85);
         float a=soft*(0.09+0.20*vWarm)*(0.4+0.6*vBand)*vMask;
         gl_FragColor=vec4(col,a);
       }`
@@ -426,7 +438,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   let tmx=0,tmy=0,mx=0,my=0,cursorOn=0;
   addEventListener("pointermove",e=>{tmx=e.clientX/innerWidth-0.5;tmy=e.clientY/innerHeight-0.5;cursorOn=1;},{passive:true});
 
-  let t=0;
+  let t=0, hue=0, selectedMood=null;   // selectedMood: null=scroll-driven, else 0/1/2
   function frame(){
     t+=0.016;
     const sc=Math.min(1,scrollY/(document.body.scrollHeight-innerHeight||1));
@@ -460,15 +472,18 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       pos[ix]=P[ix]; pos[ix+1]=P[ix+1]; pos[ix+2]=P[ix+2];
     }
     geo.attributes.position.needsUpdate=true;
-    ptsUni.uScrollHue.value=sc*2.0;
+    // mood hue: once a SKU is picked it drives the whole atmosphere; else scroll does
+    const hueTarget=(selectedMood==null)?sc*2:selectedMood;
+    hue+=(hueTarget-hue)*0.06;
+    ptsUni.uScrollHue.value=hue;
 
     // camera drifts with cursor + scroll (parallax life)
     camera.position.x=mx*1.7; camera.position.y=-my*1.1 - sc*0.8;
     camera.lookAt(0,-sc*0.8,0);
 
     // colours for this scroll position
-    fadeMat.uniforms.uCreamTop.value.setRGB(...pick(topStops,sc));
-    fadeMat.uniforms.uCreamBot.value.setRGB(...pick(botStops,sc));
+    fadeMat.uniforms.uCreamTop.value.setRGB(...pick(topStops,hue/2));
+    fadeMat.uniforms.uCreamBot.value.setRGB(...pick(botStops,hue/2));
     fadeMat.uniforms.uGlow.value=0.8+0.4*Math.sin(t*0.42);      // light pool breathes
     fadeMat.uniforms.uGlowPos.value.set(0.5+mx*0.25,0.60-my*0.2);
 
@@ -506,6 +521,43 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     scrollTrigger:{trigger:"#range",start:"top 85%"}});
   gsap.to("#range .trio",{yPercent:-6,ease:"none",
     scrollTrigger:{trigger:"#range",start:"top bottom",end:"bottom top",scrub:0.6}});
+
+  // ---------- interactive formula switcher ----------
+  // Pick a mood -> the ingredient list, accent, dust field and background wash
+  // all shift in real time. Real formulas from the brand sheet.
+  const MOODS=[
+    {he:"אנרגיה",en:"ENERGY",acc:"#D8703F",tag:"ENERGY · אנרגיה טבעית למיקוד וחיוניות",
+      ings:[["רודיאלה","תמיכה באנרגיה וסיבולת נפשית",660],["תה ירוק","נוגד חמצון, תמיכה במיקוד",80],
+            ["קינמון","תמיכה ברמת סוכר מאוזנת",40],["ליקוריץ","תמיכה ואיזון טבעי",13],
+            ["גוארנה","מקור טבעי לאנרגיה מתמשכת",7]]},
+    {he:"רוגע",en:"RELAX",acc:"#6E8148",tag:"RELAX · הרגעה טבעית לאיזון ורוגע",
+      ings:[["מליסה","הרגעה ואיזון טבעי",266],["פסיפלורה","תמיכה ברוגע ובמצב הרוח",182],
+            ["מאקה","איזון ואנרגיה עדינה",140],["ולריאן","תמיכה בהרפיה",70],
+            ["ליקוריץ","איזון טבעי",42]]},
+    {he:"שינה",en:"SLEEP",acc:"#536588",tag:"SLEEP · שינה טבעית עמוקה ומרגיעה",
+      ings:[["מליסה","הרגעה לקראת שינה",224],["פסיפלורה","תמיכה בשינה רגועה",224],
+            ["ולריאן","תמיכה בשינה עמוקה",224],["ליקוריץ","איזון טבעי",56]]}
+  ];
+  const fSec=document.getElementById("formula"), fGrid=document.getElementById("fGrid"),
+        fTag=document.getElementById("fTag"), fTot=document.getElementById("fTot"),
+        fTabs=Array.from(document.querySelectorAll("#fTabs .tab"));
+  function renderMood(i,lock){
+    const m=MOODS[i];
+    fSec.style.setProperty("--acc",m.acc);
+    fTabs.forEach(b=>{const on=+b.dataset.m===i;b.classList.toggle("active",on);
+      b.style.background=on?m.acc:"transparent";});
+    fTag.textContent=m.tag;
+    const total=m.ings.reduce((s,x)=>s+x[2],0);
+    fTot.textContent=`סה״כ תמצית צמחים פונקציונלית: ${total} מ״ג בכל חטיף`;
+    fGrid.innerHTML=m.ings.map(x=>
+      `<div class="ing"><div style="display:flex;align-items:center"><span class="dot"></span>`+
+      `<div><div class="n">${x[0]}</div><div class="d">${x[1]}</div></div></div>`+
+      `<div class="amt">${x[2]} מ״ג</div></div>`).join("");
+    if(lock){ gsap.fromTo("#fGrid .ing",{y:16,autoAlpha:0},
+      {y:0,autoAlpha:1,duration:0.45,ease:"power3.out",stagger:0.06}); selectedMood=i; }
+  }
+  fTabs.forEach(b=>b.addEventListener("click",()=>renderMood(+b.dataset.m,true)));
+  renderMood(0,false);   // default Energy shown; atmosphere stays scroll-driven until a click
 })();
 </script>
 </body>

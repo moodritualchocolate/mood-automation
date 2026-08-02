@@ -22,6 +22,22 @@ crossfades the page tint across the same amber→sage→dusk arc.
 Stack: vanilla Three.js + custom GLSL point shader + GSAP ScrollTrigger + Heebo
 (all inlined). Renders on software WebGL.
 
+### Living ambient field
+The cacao-dust background is a coherent **curl-noise flow field** (divergence-free
+swirls), warmth rising as the dominant current, a slow breathing inhale/exhale, and
+a **half-res feedback-trail buffer** so every mote leaves a flowing filament. Cursor
+adds a local updraft. A compact deterministic 3D simplex noise (no deps) drives it.
+
+### Real brand assets + interactive formula switcher
+Uses the founder's real photography: the ENERGY pouch and both dark-chocolate bars
+are flood-keyed off their white/cream backgrounds (keeping real contact shadows),
+and the three-SKU trio anchors the mood-shift beat. Palette is sampled from the
+brand sheet — Energy `#FC660F` / Relax `#576E22` / Sleep `#536588` (dusty blue).
+The formula section is an **interactive switcher**: picking Energy / Relax / Sleep
+re-renders the real per-SKU ingredient list (exact mg + total), swaps the accent,
+and drives the whole atmosphere — dust hue + background wash ease to that mood.
+Reference states: `warm-assets/formula_{energy,relax,sleep}.png`.
+
 ## Stack (live version)
 Vanilla Three.js (r160) + custom GLSL point-cloud (simplex-noise displacement +
 cursor force-field) + GSAP ScrollTrigger + glassmorphism UI + Heebo (inlined).
