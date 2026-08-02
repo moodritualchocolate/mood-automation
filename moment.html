@@ -106,6 +106,34 @@ body{background:#0c0a07;color:var(--ink);font-family:var(--sans);font-weight:300
   border:none;cursor:pointer;background:rgba(244,238,222,.5);backdrop-filter:blur(6px);color:var(--ink-soft);
   display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .6s}
 .mute.on{opacity:.8}.mute svg{width:17px;height:17px}
+/* ---- the mission board (home: where you start & return) ---- */
+.board{position:absolute;inset:0;z-index:2;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  background:radial-gradient(150% 62% at 50% 0%,#f8f1de,var(--paper) 52%,#e6dcc6);
+  padding:calc(env(safe-area-inset-top) + 34px) 22px calc(env(safe-area-inset-bottom) + 40px)}
+.board-h{text-align:center;margin:0 auto 24px;max-width:440px}
+.board-h .line{opacity:1}
+.board-note{text-align:center;color:var(--faint);font-size:12px;letter-spacing:.06em;margin-top:26px}
+.progress{display:flex;align-items:center;justify-content:center;gap:7px;margin:16px auto 0}
+.progress .dot{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.progress .dot.f{background:var(--olive)}
+.cards{display:flex;flex-direction:column;gap:13px;max-width:440px;margin:0 auto}
+.card{position:relative;display:flex;align-items:center;gap:15px;text-align:right;width:100%;
+  background:var(--sheet);border:1px solid var(--line);border-radius:22px;padding:17px 19px;cursor:pointer;font-family:inherit;
+  box-shadow:0 12px 26px -18px rgba(60,45,20,.55);transition:transform .18s cubic-bezier(.2,.7,.2,1),box-shadow .25s}
+.card:active{transform:scale(.985);box-shadow:0 6px 16px -12px rgba(60,45,20,.5)}
+.card .ic{width:48px;height:48px;flex-shrink:0;border-radius:15px;display:flex;align-items:center;justify-content:center;background:rgba(109,122,76,.13)}
+.card .ic svg{width:24px;height:24px;color:var(--olive-d)}
+.card .tx{flex:1;min-width:0}
+.card .tt{display:block;font-family:var(--serif);font-size:19px;color:var(--ink);font-weight:500;line-height:1.25}
+.card .sb{display:block;font-size:13px;color:var(--ink-soft);margin-top:3px;line-height:1.4}
+.card .lim{display:inline-block;margin-top:9px;font-size:11px;letter-spacing:.06em;color:var(--olive-d);
+  background:rgba(109,122,76,.12);border:1px solid rgba(109,122,76,.32);padding:3px 11px;border-radius:13px;font-weight:600}
+.card .chk{position:absolute;top:15px;left:17px;width:20px;height:20px;color:var(--olive);opacity:0;transition:opacity .3s}
+.card .chk svg{width:20px;height:20px}
+.card.done{opacity:.66}.card.done .chk{opacity:1}.card.done .ic{background:rgba(109,122,76,.28)}
+.card.rise{animation:cardin .6s cubic-bezier(.16,1,.3,1) both}
+@keyframes cardin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.lmbk{position:absolute;top:max(14px,env(safe-area-inset-top));right:22px;z-index:8}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.15s!important}.line,.kick,.acts,.sheet{opacity:1!important;transform:none!important}}
 </style>
 </head>
@@ -123,6 +151,12 @@ body{background:#0c0a07;color:var(--ink);font-family:var(--sans);font-weight:300
 <g id="i-leaf"><path fill="none" stroke="currentColor" stroke-width="1.4" d="M20 4C10 4 5 10 5 18c8 0 15-4 15-14zM8 18c3-5 6-8 10-10"/></g>
 <g id="i-sound"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M16 9c1.2 1 1.2 5 0 6M18.5 7c2 1.8 2 8.2 0 10"/></g>
 <g id="i-muted"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M17 9l5 6M22 9l-5 6"/></g>
+<g id="i-heart"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M12 20S3.5 15 3.5 8.8C3.5 6 5.4 4.5 7.4 4.5c1.8 0 3.1 1.1 4.6 3 1.5-1.9 2.8-3 4.6-3 2 0 3.9 1.5 3.9 4.3C20.5 15 12 20 12 20z"/></g>
+<g id="i-kids"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M8.5 9.5a2.4 2.4 0 100-4.8 2.4 2.4 0 000 4.8zM4.5 19v-3c0-2 1.8-3.3 4-3.3s4 1.3 4 3.3v3M16.5 11a1.9 1.9 0 100-3.8M15 19v-2.5c0-1.7-1-2.9-2.6-3.2"/></g>
+<g id="i-call"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M6.5 4.5c1 0 1.6.6 2 1.9.3 1 .6 1.7.3 2.3-.2.5-.7.8-1.1 1.3-.3.3-.3.7 0 1.2 1 1.7 2.4 3.1 4.1 4.1.5.3.9.3 1.2 0 .5-.4.8-.9 1.3-1.1.6-.3 1.3 0 2.3.3 1.3.4 1.9 1 1.9 2 0 2.6-2.2 4.3-4.4 3.8C9.5 19.4 4.6 14.5 3.2 8.9 2.7 6.7 4 4.5 6.5 4.5z"/></g>
+<g id="i-chat"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M4.5 5.5h15v9h-9l-3.5 3v-3h-2.5z"/></g>
+<g id="i-users"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M9.5 10.5a3 3 0 100-6 3 3 0 000 6zM3.5 19c0-2.6 2.7-4.3 6-4.3s6 1.7 6 4.3M16.5 10.5a2.6 2.6 0 000-5.2M20.5 19c0-2-1.2-3.4-3.2-4"/></g>
+<g id="i-still"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M12 8a2.2 2.2 0 100-4.4A2.2 2.2 0 0012 8zm0 1.2c-1 1.8-3 3-5.2 3.4M12 9.2c1 1.8 3 3 5.2 3.4M12 9.2V15m0 0l-3 4.5M12 15l3 4.5"/></g>
 </defs></svg>
 <script>
 //======================= MOMENT DATA =======================
@@ -146,6 +180,27 @@ const MOMENT={
   wisdom:{quote:"הֱוֵי מְקַבֵּל אֶת כָּל הָאָדָם\nבְּסֵבֶר פָּנִים יָפוֹת.", source:"פרקי אבות א׳, ט״ו"},
   continuation:["מחר — עוד רגע."]
 };
+//======================= MISSION BOARD (real-life presence actions, each bounded) =======================
+// engine:"cine" = the full cinematic moment (has depth art) · "light" = commit → go → return
+const MISSIONS=[
+  {id:"conversation", cat:"שיחה", icon:"i-chat", engine:"cine", tint:"#f4ecd8",
+   title:"שיחה אמיתית", sub:"מישהו מדבר אליך — והיד על הטלפון.", limit:"שיחה אחת"},
+  {id:"partner", cat:"זוגיות", icon:"i-heart", engine:"light", tint:"#f6e6da",
+   title:"להיות עם בן/בת הזוג", sub:"הערב, אחרי שהילדים ישנים.",
+   action:"הנח את הטלפון בחדר אחר.\nתן לערב להיות שלכם.", limit:"ערב אחד", witness:"הייתם יחד באמת."},
+  {id:"children", cat:"הורות", icon:"i-kids", engine:"light", tint:"#eef0dc",
+   title:"להיות עם הילדים", sub:"רד לגובה שלהם — בלי מסך.",
+   action:"שב איתם על הרצפה.\nתן להם להוביל את המשחק.", limit:"20 דקות", witness:"הם הרגישו שאתה שם."},
+  {id:"parents", cat:"הורים", icon:"i-call", engine:"light", tint:"#f6ecd2",
+   title:"להתקשר להורים", sub:"מתי דיברת איתם באמת?",
+   action:"תתקשר. אל תמהר לסיים.\nשאל שאלה אחת אמיתית.", limit:"שיחה אחת", witness:"עשית להם את היום."},
+  {id:"friend", cat:"חברות", icon:"i-users", engine:"light", tint:"#eee7ef",
+   title:"חבר שנעלם", sub:"מישהו שהתכוונת לחזור אליו.",
+   action:"אל תשלח הודעה.\nתתקשר עכשיו.", limit:"שיחה אחת", witness:"חידשתם קשר."},
+  {id:"self", cat:"עצמי", icon:"i-still", engine:"light", tint:"#edefe0",
+   title:"רגע לעצמך", sub:"עצור. אתה גם בן אדם.",
+   action:"שב. נשום עשר נשימות.\nבלי לגלול, בלי לבדוק.", limit:"דקה אחת", witness:"חזרת לעצמך."}
+];
 //============ DIRECTION (the shot list — per screen ROLE, data-driven; applies to all moments) ============
 // s=camera scale · y=vertical drift(px) · b=background blur(px, rack-focus) · d=move duration(s)
 // bars=letterbox in · light=god-light swell · release=open the frame back to life
@@ -166,10 +221,17 @@ const SHOTS={
 const stage=document.getElementById("stage");
 const svg=id=>`<svg viewBox="0 0 24 24"><use href="#${id}"/></svg>`;
 const buzz=(ms=12)=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
-const M=MOMENT;let branch=null,hist=[];
+const M=MOMENT;let branch=null,hist=[],activeMission=null;
 const KEY="mood_moments_v1";
 const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{steps:0}}catch(e){return{steps:0}}};
 const save=s=>localStorage.setItem(KEY,JSON.stringify(s));
+// ---- board state: which missions were done today (daily rhythm, no penalty across days) ----
+const BKEY="mood_board_v1";
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();};
+function boardState(){try{const s=JSON.parse(localStorage.getItem(BKEY));if(s&&s.date===today())return s;}catch(e){}return{date:today(),done:[]};}
+function saveBoard(s){s.date=today();try{localStorage.setItem(BKEY,JSON.stringify(s));}catch(e){}}
+function markDone(id){const s=boardState();if(id&&!s.done.includes(id))s.done.push(id);saveBoard(s);
+  const t=load();t.steps=(t.steps||0)+1;save(t);}
 const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
 
 // ---- parallax controller (targets current diorama layers) ----
@@ -279,7 +341,7 @@ function addKick(p,h){const d=document.createElement("div");d.className="kick";d
 function actions(p,h){const w=document.createElement("div");w.className="acts";w.innerHTML=h;p.appendChild(w);requestAnimationFrame(()=>w.classList.add("show"));return w;}
 function choose(btn,p,fn){buzz(20);btn.classList.add("picked");p.querySelectorAll(".btn").forEach(x=>{if(x!==btn)x.classList.add("dim")});setTimeout(fn,360);}
 function go(fn){hist.push(fn);fn();}
-function back(){buzz();if(hist.length>1){hist.pop();hist[hist.length-1]();}else location.href="index.html";}
+function back(){buzz();if(hist.length>1){hist.pop();hist[hist.length-1]();}else Board();}
 // one sentence at a time — clears the previous line before showing the next (never stacks)
 function sequence(el,p,beats,cls,{onDone}={}){let i=0;
   const clear=()=>p.querySelectorAll(".line").forEach(o=>{o.style.transition="opacity .3s";o.style.opacity="0";setTimeout(()=>o.remove(),300);});
@@ -289,6 +351,71 @@ function sequence(el,p,beats,cls,{onDone}={}){let i=0;
   function arm(){const h=ev=>{if(ev.target.closest(".btn"))return;el.removeEventListener("click",h);step();};setTimeout(()=>el.addEventListener("click",h),750);}
   step();}
 
+//======================= THE BOARD — home: where you start & where you return =======================
+function Board(){
+  hist=[Board]; branch=null; activeMission=null;
+  const bs=boardState(), doneN=bs.done.length, total=MISSIONS.length;
+  const cards=MISSIONS.map((m,i)=>{const done=bs.done.includes(m.id);
+    return `<button class="card ${done?'done':''}" data-m="${m.id}" style="animation-delay:${i*70+120}ms">
+      <span class="ic" style="background:${done?'rgba(109,122,76,.28)':(m.tint||'rgba(109,122,76,.13)')}">${svg(m.icon)}</span>
+      <span class="tx"><span class="tt">${m.title}</span><span class="sb">${m.sub}</span><span class="lim">${m.limit}</span></span>
+      <span class="chk">${svg("i-leaf")}</span></button>`;}).join("");
+  const dots=MISSIONS.map((m)=>`<span class="dot ${bs.done.includes(m.id)?'f':''}"></span>`).join("");
+  const hr=new Date().getHours();const g=hr<12?"בוקר טוב":hr<18?"צהריים טובים":"ערב טוב";
+  const el=plain(`<div class="board">
+     <div class="board-h">
+       <div class="line s" style="letter-spacing:.24em;text-transform:uppercase;color:var(--olive-d);font-weight:600;font-family:var(--sans)">מידה · ${M.middah.name}</div>
+       <div class="line l" style="margin-top:10px">${g}.</div>
+       <div class="line s" style="margin-top:6px;max-width:28ch;margin-inline:auto">בחר רגע אחד. לך ותהיה בו — באמת.<br>אנחנו נחכה כאן.</div>
+       <div class="progress">${dots}</div>
+     </div>
+     <div class="cards">${cards}</div>
+     <div class="board-note">${doneN===0?"רגע אחד ביום מספיק.":doneN>=total?"אספת את כל היום. תנוח.":doneN+" מתוך "+total+" — רגע אחד ביום מספיק."}</div>
+  </div>`);
+  requestAnimationFrame(()=>el.querySelectorAll(".card").forEach(c=>c.classList.add("rise")));
+  el.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{buzz();startMission(MISSIONS.find(x=>x.id===b.dataset.m));});
+}
+function startMission(m){ if(!m)return; activeMission=m; hist=[Board]; branch=null;
+  if(m.engine==="cine"){ go(Recognition); } else LightMission(m); }
+
+// ---- light mission: recognition → the bounded action → go live → return ----
+function lightBg(t){return `radial-gradient(135% 78% at 50% 28%,${t||'#f7f0dd'},var(--paper) 60%,#e6dcc6)`;}
+function LightMission(m){
+  const recog=()=>{const el=plain(`<div class="open" style="background:${lightBg(m.tint)}">
+      <button class="bk lmbk" id="bk">${svg("i-back")}</button>
+      <div class="line s show" style="letter-spacing:.24em;text-transform:uppercase;color:var(--olive-d);font-weight:600;font-family:var(--sans)">${m.cat}</div>
+      <div class="line l show" style="animation-delay:.25s;max-width:16ch">${m.title}</div>
+      <div class="line s show" style="animation-delay:.75s;max-width:26ch">${m.sub}</div>
+      <div class="acts show" style="animation-delay:1.25s;max-width:340px"><button class="btn olive" id="n">מה המשימה?</button></div></div>`);
+    el.querySelector("#bk").onclick=()=>{buzz();Board()};
+    el.querySelector("#n").onclick=()=>{buzz();task()};};
+  const task=()=>{const el=plain(`<div class="open" style="background:${lightBg(m.tint)}">
+      <button class="bk lmbk" id="bk">${svg("i-back")}</button>
+      <span class="mtag show" style="align-self:center">המשימה שלך</span>
+      <div class="line l show" style="animation-delay:.3s;white-space:pre-line;max-width:22ch">${m.action}</div>
+      <div class="lim show" style="animation-delay:.8s">${m.limit}</div>
+      <div class="acts show" style="animation-delay:1.25s;max-width:340px">
+        <button class="btn olive" id="do">צא ועשה את זה</button>
+        <button class="btn ghost" id="not">עוד לא</button></div></div>`);
+    el.querySelector("#bk").onclick=()=>{buzz();recog()};
+    el.querySelector("#do").onclick=()=>{buzz(18);exit()};
+    el.querySelector("#not").onclick=()=>{buzz();Board()};};
+  const exit=()=>{const el=plain(`<div class="open" style="background:${lightBg(m.tint)}">
+      <div class="line m show" style="max-width:20ch">צא. זה קורה שם — לא כאן.</div>
+      <div class="line s show" style="animation-delay:.6s">${m.limit} — זה מספיק.</div>
+      <div class="acts show" style="animation-delay:1.2s;max-width:340px"><button class="btn olive" id="did">עשיתי</button></div></div>`);
+    const br=document.createElement("div");br.className="breathe";br.innerHTML=`<div class="ring">${M.exit.breath}</div><div class="sub">קח את הזמן.<br>אנחנו כאן כשתחזור.</div>`;el.appendChild(br);
+    el.querySelector("#did").onclick=()=>{buzz(18);br.classList.add("on");setTimeout(done,1700);};};
+  const done=()=>{markDone(m.id);const n=boardState().done.length;
+    const el=plain(`<div class="note">
+      <div class="leaf show">${svg("i-leaf")}</div>
+      <div class="rule show" style="animation-delay:.2s"></div>
+      <div class="line show" style="animation-delay:.4s;font-size:clamp(23px,7vw,29px);line-height:1.5">${m.witness||"היית שם."}</div>
+      <div class="line s show" style="animation-delay:.9s;color:var(--olive-d);font-weight:600">${n===1?"רגע אחד נאסף":n+" רגעים נאספו"}</div>
+      <div class="acts show" style="animation-delay:1.4s;max-width:340px"><button class="btn olive" id="b">חזרה ללוח</button></div></div>`);
+    el.querySelector("#b").onclick=()=>{buzz();Board()};};
+  recog();
+}
 function Open(){
   const el=document.createElement("div");el.className="screen";
   const hr=new Date().getHours();const g=hr<12?"בוקר טוב":hr<18?"צהריים טובים":"ערב טוב";
@@ -297,7 +424,7 @@ function Open(){
     <div class="line s show" style="animation-delay:.5s;max-width:24ch">יש רגע אחד שמחכה לך היום.</div>
     <div class="acts show" style="animation-delay:1.1s;max-width:320px"><button class="btn olive" id="enter">להיכנס לרגע</button></div></div>`;
   stage.appendChild(el);requestAnimationFrame(()=>el.classList.add("on"));
-  el.querySelector("#enter").onclick=()=>{buzz();enableGyro();startScore();go(MiddahIntro)};
+  el.querySelector("#enter").onclick=()=>{buzz();enableGyro();startScore();Board()};
 }
 function MiddahIntro(){
   const el=plain(`<div class="open">
@@ -327,7 +454,7 @@ function Meaning(){const el=frame("opportunity",{dim:true,mid:true,tap:true,shot
 function Mission(){const el=frame("opportunity",{tap:true,shot:"mission"});const p=box(el);addKick(p,`<span class="mtag">${M.mission.tag}</span>`);
   sequence(el,p,M.mission.lines.map(t=>({t})),"l",{onDone:()=>{
     actions(p,`<button class="btn olive" id="take">${M.mission.take}</button><button class="btn ghost" id="skip">${M.mission.skip}</button>`);
-    p.querySelector("#take").onclick=()=>{buzz(18);go(ExitToLife)};p.querySelector("#skip").onclick=()=>{buzz();location.href="index.html"};}});}
+    p.querySelector("#take").onclick=()=>{buzz(18);go(ExitToLife)};p.querySelector("#skip").onclick=()=>{buzz();Board()};}});}
 function ExitToLife(){const el=frame("exit");const p=box(el);
   addLine(p,M.exit.lines[0],"m");
   setTimeout(()=>addLine(p,M.exit.hint,"s"),900);
@@ -339,15 +466,15 @@ function Return(){const el=frame("return");const p=box(el);addLine(p,M.return_pr
     p.querySelector("#c").onclick=e=>choose(e.currentTarget,p,()=>{branch="c";go(Witness)});
     p.querySelector("#ny").onclick=e=>choose(e.currentTarget,p,()=>{branch="n";go(Witness)});},750);}
 function Witness(){const isC=branch==="c";const el=frame(isC?"witness_c":"witness_n",{tap:true});const p=box(el);
-  const s=load();s.steps=(s.steps||0)+1;save(s);
+  if(activeMission)markDone(activeMission.id);const n=boardState().done.length;
   sequence(el,p,(isC?M.witness_c:M.witness_n).map(t=>({t})),"m",{onDone:()=>{if(isC)bloom(el);
     p.querySelectorAll(".line").forEach(o=>o.remove());
-    const r=document.createElement("div");r.className="line m";r.innerHTML=`${isC?M.reward_c:M.reward_n}<br><span class="line s" style="display:block;margin-top:8px;color:var(--olive-d);font-weight:600">${s.steps===1?'רגע אחד נאסף':s.steps+' רגעים נאספו'}</span>`;
+    const r=document.createElement("div");r.className="line m";r.innerHTML=`${isC?M.reward_c:M.reward_n}<br><span class="line s" style="display:block;margin-top:8px;color:var(--olive-d);font-weight:600">${n===1?'רגע אחד נאסף':n+' רגעים נאספו'}</span>`;
     p.appendChild(r);requestAnimationFrame(()=>r.classList.add("show"));
     actions(p,`<button class="btn ${isC?'olive':'dusk'}" id="n">המשך</button>`);p.querySelector("#n").onclick=()=>{buzz();go(Wisdom)};}});}
 function Continuation(){const el=frame("continuation");const p=box(el);addLine(p,M.continuation[0],"m");
-  setTimeout(()=>{actions(p,`<button class="btn olive" id="again">רגע חדש</button><button class="btn ghost" id="home">חזרה למשחק</button>`);
-    p.querySelector("#again").onclick=()=>{buzz();branch=null;hist=[];go(Recognition)};p.querySelector("#home").onclick=()=>{buzz();location.href="index.html"};},1600);}
+  setTimeout(()=>{actions(p,`<button class="btn olive" id="board">חזרה ללוח</button>`);
+    p.querySelector("#board").onclick=()=>{buzz();Board()};},1600);}
 function bloom(el){const c=document.createElement("canvas");c.className="bloom";el.appendChild(c);
   const ctx=c.getContext("2d"),w=c.width=el.clientWidth,h=c.height=el.clientHeight;
   let ps=Array.from({length:50},()=>({x:w/2+(Math.random()-.5)*w*.5,y:h*.4+(Math.random()-.5)*90,vx:(Math.random()-.5)*1.3,vy:-Math.random()*1.5-.3,a:1,r:Math.random()*2.4+1}));
