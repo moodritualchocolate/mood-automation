@@ -84,9 +84,16 @@ h2{font-size:clamp(28px,4vw,44px)}
 .stg b.n{font-family:'Heebo';font-weight:900;font-size:34px;color:var(--accent);display:block;margin-bottom:10px}
 .stg b.t{font-family:'Heebo';font-weight:800;font-size:20px;display:block}
 .stg p{color:var(--muted);font-weight:600;font-size:14px;margin-top:6px}
-.founders{background:var(--paper);text-align:center}
-.founders .in{max-width:720px;margin:0 auto}
-.founders p{color:var(--muted);font-weight:600;font-size:17px;margin-top:18px;line-height:1.7}
+.moment{background:var(--paper);text-align:center}
+.moment .sec-head{margin-bottom:22px}
+.moment .mlead{max-width:600px;margin:0 auto;color:var(--muted);font-weight:600;font-size:19px;line-height:1.75}
+.moment .mlead b{color:var(--ink);font-weight:800}
+.founders{background:var(--paper-2)}
+.founders .fgrid{display:grid;grid-template-columns:.82fr 1.18fr;gap:46px;align-items:center;max-width:1000px;margin:0 auto}
+.founders .fimg{border-radius:22px;overflow:hidden;box-shadow:0 22px 50px rgba(27,26,23,.16)}
+.founders .fimg img{width:100%;display:block;aspect-ratio:4/5;object-fit:cover}
+.founders h2{margin-top:10px}
+.founders p{color:var(--muted);font-weight:600;font-size:17px;margin-top:16px;line-height:1.7}
 .founders .sig{margin-top:20px;font-family:'Heebo';font-weight:800;font-size:15px;color:var(--ink)}
 .founders .sig span{display:block;color:var(--muted);font-weight:600;font-size:13px;margin-top:2px}
 .trial{background:var(--greige)}
@@ -115,6 +122,8 @@ footer .fnav a{color:#D8D0C4}
   .p3grid{grid-template-columns:1fr;gap:16px}.pc{aspect-ratio:16/11}
   .choc .cgrid{grid-template-columns:1fr}.choc .cimg{aspect-ratio:16/10}.choc .ctext{padding:34px 18px}
   .stgrid{grid-template-columns:1fr;margin-top:24px}.stg{padding:20px 8px}.stg+.stg{border-inline-start:none;border-top:1px solid rgba(158,82,48,.16)}
+  .founders .fgrid{grid-template-columns:1fr;gap:24px}.founders .fimg img{aspect-ratio:4/3}
+  .moment .mlead{font-size:17px}
   .trialcard{grid-template-columns:1fr}.trialcard .t-img{order:-1}.trialcard .t-txt{padding:30px 20px}
 }
 </style>
@@ -132,9 +141,9 @@ footer .fnav a{color:#D8D0C4}
     <div class="hh-text rv">
       <div class="brandline">mood · ritual chocolate</div>
       <h1>רגע קטן.<br>שמשנה את כל היום.</h1>
-      <p>שוקולד מריר פרמיום 70% קקאו עם מלח ים, ובכל ריבוע פורמולה פונקציונלית טבעית. שלושה רגעים ביום — אנרגיה, רוגע, שינה.</p>
+      <p>שוקולד מריר 70% קקאו עם מלח ים, ובכל ריבוע פורמולה פונקציונלית טבעית. שלושה רגעים ביום — אנרגיה, רוגע, שינה.</p>
       <div class="hh-cta">
-        <a class="cta" href="#products">גלו את השלושה</a>
+        <a class="cta" href="#products">לשלושת הרגעים</a>
         <a class="cta ghost" href="#how">איך זה עובד</a>
       </div>
       <div class="htrust">
@@ -151,7 +160,7 @@ footer .fnav a{color:#D8D0C4}
       <span class="mq-item"><b>0</b> גרם סוכר</span><span class="mq-sep"></span>
       <span class="mq-item">רכיבים טבעיים בלבד</span><span class="mq-sep"></span>
       <span class="mq-item">כשר פרווה</span><span class="mq-sep"></span>
-      <span class="mq-item">שוקולטייר זוכה זהב עולמי</span><span class="mq-sep"></span>
+      <span class="mq-item">נעשה ביד בישראל</span><span class="mq-sep"></span>
       <span class="mq-item">משלוח חינם מעל 249 ₪</span><span class="mq-sep"></span>
       <span class="mq-item">ביטול בכל עת</span><span class="mq-sep"></span>
       <span class="mq-item" aria-hidden="true">שוקולד מריר <b>70%</b> עם מלח ים</span><span class="mq-sep" aria-hidden="true"></span>
@@ -159,11 +168,16 @@ footer .fnav a{color:#D8D0C4}
       <span class="mq-item" aria-hidden="true"><b>0</b> גרם סוכר</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">רכיבים טבעיים בלבד</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">כשר פרווה</span><span class="mq-sep" aria-hidden="true"></span>
-      <span class="mq-item" aria-hidden="true">שוקולטייר זוכה זהב עולמי</span><span class="mq-sep" aria-hidden="true"></span>
+      <span class="mq-item" aria-hidden="true">נעשה ביד בישראל</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">משלוח חינם מעל 249 ₪</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">ביטול בכל עת</span><span class="mq-sep" aria-hidden="true"></span>
     </div>
   </div>
+
+  <section class="moment">
+    <div class="sec-head rv"><div class="eyebrow">הרגע</div><h2>לכל יום יש את הרגעים הקשים שלו.</h2></div>
+    <p class="mlead rv"><b>16:30</b> והאנרגיה נגמרה. <b>22:00</b> והראש לא נכבה. <b>3 לפנות בוקר</b> — ושוב אתה ער. לכל רגע כזה יש עכשיו תשובה קטנה: ריבוע אחד.</p>
+  </section>
 
   <section class="hproducts" id="products">
     <div class="sec-head rv"><div class="eyebrow">המוצרים</div><h2>לכל רגע יש את הריבוע שלו.</h2></div>
@@ -179,8 +193,8 @@ footer .fnav a{color:#D8D0C4}
     <div class="ctext">
       <div class="eyebrow">THE CHOCOLATE</div>
       <h2>הפורמולה עושה את העבודה.<br>השוקולד הופך אותה לריטואל.</h2>
-      <p>שוקולד מריר פרמיום 70% קקאו עם מלח ים, ללא סוכר ובלי טעמים מוספים. לא כדור ולא תוסף — חצי דקה לעצמכם, כל יום.</p>
-      <div class="ron">פותח עם רונן אפללו · שוקולטייר זוכה GOLD · International Chocolate Awards 2022</div>
+      <p>שוקולד מריר 70% קקאו עם מלח ים, ללא סוכר ובלי טעמים מוספים. לא כדור ולא תוסף — חצי דקה לעצמכם, כל יום.</p>
+      <div class="ron">70% קקאו · מלח ים · נעשה ביד בישראל</div>
     </div>
   </div></section>
 
@@ -194,11 +208,14 @@ footer .fnav a{color:#D8D0C4}
   </section>
 
   <section class="founders" id="story">
-    <div class="in rv">
-      <div class="eyebrow">הסיפור שלנו</div>
-      <h2 style="margin-top:10px">התחיל מרגע קטן.</h2>
-      <p>חיפשנו דרך לעצור באמצע היום — בלי עוד כוס קפה, בלי עוד תוסף שנשכח בארון. אז לקחנו שני דברים שאנחנו אוהבים: שוקולד מריר אמיתי, ופורמולות טבעיות מדויקות — וחיברנו אותם לריבוע אחד. mood הוא לא חטיף ולא כדור. הוא רגע קטן שחוזר על עצמו כל יום, ומרגיש כמו מתנה שאתם נותנים לעצמכם.</p>
-      <div class="sig">צוות mood<span>פותח ומיוצר בישראל · עם רונן אפללו</span></div>
+    <div class="fgrid">
+      <div class="fimg rv"><img src="__FOUNDERS__" alt="נדב יצחקי ומתיאס דומינגז, מייסדי mood, בסדנת השוקולד" loading="lazy" decoding="async"></div>
+      <div class="rv">
+        <div class="eyebrow">הסיפור שלנו</div>
+        <h2>התחיל משני חברים ורגע קטן.</h2>
+        <p>נדב ומתיאס לא חיפשו להקים עוד חברת שוקולד. הם חיפשו דרך לעצור באמצע היום — בלי עוד כוס קפה, בלי עוד תוסף שנשכח בארון. אז לקחו שני דברים שהם אוהבים — שוקולד מריר אמיתי ופורמולות טבעיות מדויקות — וחיברו אותם לריבוע אחד. mood הוא לא חטיף ולא כדור. הוא רגע קטן שחוזר כל יום.</p>
+        <div class="sig">נדב יצחקי ומתיאס דומינגז<span>מייסדי mood · פותח ומיוצר בישראל</span></div>
+      </div>
     </div>
   </section>
 
@@ -207,7 +224,7 @@ footer .fnav a{color:#D8D0C4}
       <div class="t-txt">
         <div class="eyebrow">חבילת התנסות</div>
         <h2>לא בטוחים מאיפה להתחיל?</h2>
-        <p>טעימה משלושת הרגעים — Energy, Relax ו-Sleep — במארז אחד. הדרך הכי פשוטה לגלות איזה ריטואל מתאים לכם.</p>
+        <p>טעימה משלושת הרגעים — Energy, Relax ו-Sleep — במארז אחד. הדרך הכי פשוטה לדעת איזה ריטואל מתאים לכם.</p>
         <div class="badges"><span style="background:var(--en-i)">Energy</span><span style="background:var(--re-i)">Relax</span><span style="background:var(--sl-i)">Sleep</span></div>
         <a class="cta" href="#">למארז ההתנסות ←</a>
       </div>
