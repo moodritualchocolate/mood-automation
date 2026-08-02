@@ -1,0 +1,36 @@
+{
+  "moment_id": "presence_phone_conversation_003",
+  "n": "003",
+  "segment": "phone",
+  "title": "אני עדיין מקשיב",
+  "content_source": "Drive · Human Library V1 · approved_content.json (locked, director-approved)",
+  "assets_dir": "assets/moments/presence_phone_conversation_003/screens",
+  "images": {
+    "recognition": "01_recognition.jpg",
+    "identification": "02_identification.jpg",
+    "opportunity": "03_opportunity.jpg",
+    "exit_to_life": "04_exit_to_life.jpg",
+    "return": "05_return.jpg",
+    "choice_connected": "06a_chose_differently.jpg",
+    "choice_not_yet": "06b_not_yet.jpg",
+    "witness_connected": "08a_witness_chose_differently.jpg",
+    "witness_not_yet": "08b_witness_not_yet.jpg",
+    "continuation": "10_continuation.jpg"
+  },
+  "copy": {
+    "recognition": "״אני עדיין מקשיב…״\nאמרתי לעצמי כשהרמתי את הטלפון.",
+    "identification_prompt": "זה אני?",
+    "identification_options": ["זה אני", "לא ממש"],
+    "opportunity": "תן לשיחה להיגמר לפני שאתה פותח את המסך.",
+    "exit_to_life": "צא. השיחה הבאה לא תקרה כאן.",
+    "exit_hint": "עשה את זה עכשיו, בחיים. חזור כשתסיים — אין מהירות.",
+    "return_prompt": "כשהרגע חזר…",
+    "branch_connected_label": "נשארתי בשיחה",
+    "branch_not_yet_label": "עוד לא",
+    "outcome_connected_title": "בחרת אחרת",
+    "outcome_not_yet_title": "עוד לא — וזה בסדר",
+    "witness_connected": "השיחה קיבלה עוד כמה רגעים להיות באמת שיחה.",
+    "witness_not_yet": "היד עלתה לפני ששמת לב. עכשיו כבר יש רגע קטן שבו אפשר לעצור אותה.",
+    "continuation": "מחר יגיע עוד רגע. המסע ממשיך."
+  }
+}
