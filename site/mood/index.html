@@ -196,7 +196,8 @@ float mapSquare(vec3 p){
   float top=smoothstep(bDim.y-0.07,bDim.y+0.01,q.y);
   return d-emboss(q)*top;
 }
-float map(vec3 p){ if(uCast<0.02) return mapLiquid(p); if(uCast>0.985) return mapSquare(p); return mix(mapLiquid(p),mapSquare(p),smoothstep(0.0,1.0,uCast)); }
+mat2 r2(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+float map(vec3 p){ p.xz=r2(sin(uTime*0.28)*0.10)*p.xz; p.y-=sin(uTime*0.5)*0.035; if(uCast<0.02) return mapLiquid(p); if(uCast>0.985) return mapSquare(p); return mix(mapLiquid(p),mapSquare(p),smoothstep(0.0,1.0,uCast)); }
 vec3 nrm(vec3 p){vec2 e=vec2(0.002,0.);return normalize(vec3(
   map(p+e.xyy)-map(p-e.xyy),map(p+e.yxy)-map(p-e.yxy),map(p+e.yyx)-map(p-e.yyx)));}
 vec3 sky(vec2 uv){
@@ -217,7 +218,7 @@ vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),0.0,1.0
 void main(){
   vec2 uv=gl_FragCoord.xy/uRes.xy;
   vec2 p=(gl_FragCoord.xy-0.5*uRes.xy)/uRes.y;
-  vec3 ro=vec3(0.0,1.95,3.6), ta=vec3(0.0,-0.06,0.0);
+  vec3 ro=vec3(0.0,2.2,4.7), ta=vec3(0.0,-0.05,0.0);
   vec3 f=normalize(ta-ro),rr=normalize(cross(f,vec3(0,1,0))),u=cross(rr,f);
   vec3 rd=normalize(p.x*rr+p.y*u+1.5*f);
   float t=0.,hit=0.; vec3 pos;
@@ -275,6 +276,31 @@ void main(){
   vec3 col=dofc+bloom*1.7; col=aces(col*1.02);
   gl_FragColor=vec4(col,1.0);
 }
+`, POWV=`
+attribute vec4 aSeed; uniform float uTime; uniform vec2 uRes; uniform float uCast; uniform float uDpr;
+varying vec3 vCol; varying float vA;
+void main(){
+  float id=floor(aSeed.w*5.0);
+  vec3 col=vec3(1.0,0.5,0.2);
+  if(id>0.5&&id<1.5) col=vec3(0.42,0.66,0.30);
+  else if(id>1.5&&id<2.5) col=vec3(0.82,0.66,0.42);
+  else if(id>2.5&&id<3.5) col=vec3(0.86,0.34,0.30);
+  else if(id>3.5) col=vec3(0.42,0.27,0.18);
+  float depth=aSeed.z*0.5+0.5;
+  float dir=aSeed.y>0.5?1.0:-1.0;
+  float ang=aSeed.x*6.2831 + uTime*(0.14+0.24*depth)*dir;
+  float rad=(0.26+aSeed.y*0.98) + sin(uTime*0.6+aSeed.x*12.0)*0.05;
+  rad*=mix(1.18,0.82,uCast);
+  vec2 pos=vec2(cos(ang),sin(ang))*rad;
+  pos.y += -0.06;
+  float aspect=uRes.x/uRes.y;
+  gl_Position=vec4(pos.x/aspect,pos.y,0.0,1.0);
+  gl_PointSize=mix(3.0,13.0,depth)*uDpr;
+  vCol=col; vA=(0.38+0.5*depth)*mix(1.0,0.55,uCast);
+}
+`, POWF=`
+precision mediump float; varying vec3 vCol; varying float vA;
+void main(){ vec2 c=gl_PointCoord-0.5; float m=smoothstep(0.5,0.0,length(c)); if(m<=0.001)discard; gl_FragColor=vec4(vCol, m*vA); }
 `;
 (function(){
   function pad(n){return (n<10?'0':'')+n;}
@@ -300,7 +326,11 @@ void main(){
     if(!gl.getShaderParameter(x,gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(x)); return x; }
   function prog(vs,fs){ const p=gl.createProgram(); gl.attachShader(p,sh(gl.VERTEX_SHADER,vs)); gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(p);
     if(!gl.getProgramParameter(p,gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p)); return p; }
-  const pScene=prog(VERT,FRAG), pComp=prog(VERT,COMP);
+  const pScene=prog(VERT,FRAG), pComp=prog(VERT,COMP), pPow=prog(POWV,POWF);
+  const NPOW=540, powSeeds=new Float32Array(NPOW*4);
+  for(let i=0;i<NPOW;i++){ powSeeds[i*4]=Math.random(); powSeeds[i*4+1]=Math.random(); powSeeds[i*4+2]=Math.random()*2-1; powSeeds[i*4+3]=Math.random(); }
+  const powBuf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,powBuf); gl.bufferData(gl.ARRAY_BUFFER,powSeeds,gl.STATIC_DRAW);
+  const PW={time:gl.getUniformLocation(pPow,'uTime'),res:gl.getUniformLocation(pPow,'uRes'),cast:gl.getUniformLocation(pPow,'uCast'),dpr:gl.getUniformLocation(pPow,'uDpr')};
   const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
   gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
   function bindAttr(p){ const l=gl.getAttribLocation(p,'a'); gl.enableVertexAttribArray(l); gl.vertexAttribPointer(l,2,gl.FLOAT,false,0,0); }
@@ -350,6 +380,10 @@ void main(){
       gl.uniform3fv(SL.acc,m.ac); gl.uniform3fv(SL.b1,m.b1); gl.uniform3fv(SL.b2,m.b2);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,tex); gl.uniform1i(SL.texL,0);
       gl.drawArrays(gl.TRIANGLES,0,3);
+      gl.useProgram(pPow); gl.bindBuffer(gl.ARRAY_BUFFER,powBuf);
+      const pal=gl.getAttribLocation(pPow,'aSeed'); gl.enableVertexAttribArray(pal); gl.vertexAttribPointer(pal,4,gl.FLOAT,false,0,0);
+      gl.uniform1f(PW.time,t); gl.uniform2f(PW.res,FW,FH); gl.uniform1f(PW.cast,cast); gl.uniform1f(PW.dpr,1.0);
+      gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA); gl.colorMask(true,true,true,false); gl.drawArrays(gl.POINTS,0,NPOW); gl.colorMask(true,true,true,true); gl.disable(gl.BLEND);
       gl.bindFramebuffer(gl.FRAMEBUFFER,null); gl.viewport(0,0,cv.width,cv.height);
       gl.useProgram(pComp); gl.bindBuffer(gl.ARRAY_BUFFER,buf); bindAttr(pComp);
       gl.uniform2f(CL.res,cv.width,cv.height);
