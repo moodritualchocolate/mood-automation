@@ -164,40 +164,43 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const boltG=extG(boltShape());shapes.bolt=new THREE.Mesh(boltG,chocMat);
   const moonG=extG(moonShape());shapes.moon=new THREE.Mesh(moonG,chocMat);
   shapes.wave=new THREE.Group();[waveShape(0.46),waveShape(-0.46)].forEach(w=>shapes.wave.add(new THREE.Mesh(extG(w,false),chocMat)));
-  /* ---- CPU silhouette outlines (local geom coords) → depth-independent occlusion mask, works on every device ---- */
-  function inflate(pts,k){let cx=0,cy=0;for(const p of pts){cx+=p[0];cy+=p[1];}cx/=pts.length;cy/=pts.length;
-    return pts.map(p=>[cx+(p[0]-cx)*k,cy+(p[1]-cy)*k]);}
-  const boltLoop=inflate([[0.32,1.5],[-0.62,0.16],[-0.06,0.16],[-0.32,-1.5],[0.66,-0.02],[0.12,-0.02]].map(p=>[p[0]-boltG.userData.ox,p[1]-boltG.userData.oy]),1.22);
-  function waveLoop(yc){const A=0.30,th=0.27,x0=-1.2,x1=1.2,M=18,pts=[];
-    for(let i=0;i<=M;i++){const x=x0+(x1-x0)*i/M;pts.push([x,yc+Math.sin(i/M*Math.PI*2)*A+th/2]);}
-    for(let i=M;i>=0;i--){const x=x0+(x1-x0)*i/M;pts.push([x,yc+Math.sin(i/M*Math.PI*2)*A-th/2]);}return inflate(pts,1.24);}
-  const moonLoop=(function(){const Ro=1.34,cx=-moonG.userData.ox,cy=-moonG.userData.oy,pts=[];
-    for(let i=0;i<28;i++){const a=i/28*Math.PI*2;pts.push([cx+Math.cos(a)*Ro*1.13,cy+Math.sin(a)*Ro*1.13]);}return pts;})();
-  const CULL={bolt:[boltLoop],wave:[waveLoop(0.46),waveLoop(-0.46)],moon:[moonLoop]};
+  /* ---- device-independent occlusion: rasterize the REAL chocolate silhouette into a small screen grid each frame ---- */
+  function meshData(g){return {pos:g.attributes.position.array, idx:g.index?g.index.array:null, n:g.index?g.index.count:g.attributes.position.count};}
+  const CULLMESH={bolt:[meshData(boltG)],moon:[meshData(moonG)],wave:shapes.wave.children.map(c=>meshData(c.geometry))};
   const CHOC_Z=2.4;   // chocolate sits FORWARD of the orbit → it pops out of the screen and always occludes the powder behind it
   const shapeGroup=new THREE.Group();shapeGroup.scale.setScalar(0.9);shapeGroup.position.z=CHOC_Z;S.add(shapeGroup);
   Object.values(shapes).forEach(o=>{o.visible=false;shapeGroup.add(o);});
-  // invisible depth wall that fills the crescent's footprint so no powder ever peeks through the hollow
-  const moonOcc=new THREE.Mesh(new THREE.CircleGeometry(1.24,44),new THREE.MeshBasicMaterial({colorWrite:false}));
-  moonOcc.position.set(0,SCENE_Y,CHOC_Z-0.65);moonOcc.visible=false;S.add(moonOcc);
-  let curShape=null,curKey=null;function setShape(k){if(curShape)curShape.visible=false;curShape=shapes[k];curShape.visible=true;curKey=k;moonOcc.visible=(k==="moon");}
-  // project chocolate outline loops to screen (NDC) each frame; particles landing inside are hidden — GPU-independent occlusion
+  let curShape=null,curKey=null;function setShape(k){if(curShape)curShape.visible=false;curShape=shapes[k];curShape.visible=true;curKey=k;}
+  // Each frame: project the chocolate mesh triangles to screen and rasterize them into a coverage grid.
+  // Any powder particle whose screen cell is covered is hidden — exact silhouette, correct at every rotation, no halo, zero GPU reliance.
   const _vp=new THREE.Matrix4(),_mvp=new THREE.Matrix4();
-  let cullPoly=[],cullBox=[9,9,-9,-9];
-  function buildCull(){cullPoly=[];cullBox=[9,9,-9,-9];const loops=CULL[curKey];if(!loops)return;
+  const GW=80,GH=150,grid=new Uint8Array(GW*GH),grid2=new Uint8Array(GW*GH);
+  const _px=new Float32Array(20000),_py=new Float32Array(20000); // projected vert screen coords (grid space)
+  function buildCull(){grid.fill(0);const list=CULLMESH[curKey];if(!list)return;
     shapeGroup.updateMatrixWorld(true);C.updateMatrixWorld(true);
     _vp.multiplyMatrices(C.projectionMatrix,C.matrixWorldInverse);
     _mvp.multiplyMatrices(_vp,shapeGroup.matrixWorld);const m=_mvp.elements;
-    for(const loop of loops){const poly=[];for(const p of loop){const lx=p[0],ly=p[1];
-      const cw=m[3]*lx+m[7]*ly+m[15];const nx=(m[0]*lx+m[4]*ly+m[12])/cw,ny=(m[1]*lx+m[5]*ly+m[13])/cw;
-      poly.push(nx,ny);if(nx<cullBox[0])cullBox[0]=nx;if(ny<cullBox[1])cullBox[1]=ny;if(nx>cullBox[2])cullBox[2]=nx;if(ny>cullBox[3])cullBox[3]=ny;}
-      cullPoly.push(poly);}}
-  function culled(nx,ny){if(nx<cullBox[0]||nx>cullBox[2]||ny<cullBox[1]||ny>cullBox[3])return false;
-    for(const poly of cullPoly){let inside=false;const n=poly.length;
-      for(let i=0,j=n-2;i<n;j=i,i+=2){const xi=poly[i],yi=poly[i+1],xj=poly[j],yj=poly[j+1];
-        if(((yi>ny)!==(yj>ny))&&(nx<(xj-xi)*(ny-yi)/(yj-yi)+xi))inside=!inside;}
-      if(inside)return true;}
-    return false;}
+    for(const md of list){const pos=md.pos,idx=md.idx,VN=pos.length/3;
+      for(let v=0;v<VN;v++){const lx=pos[v*3],ly=pos[v*3+1],lz=pos[v*3+2];
+        const cw=m[3]*lx+m[7]*ly+m[11]*lz+m[15];
+        _px[v]=((m[0]*lx+m[4]*ly+m[8]*lz+m[12])/cw*0.5+0.5)*GW;
+        _py[v]=((m[1]*lx+m[5]*ly+m[9]*lz+m[13])/cw*0.5+0.5)*GH;}
+      const nT=md.n;
+      for(let t=0;t<nT;t+=3){const a=idx?idx[t]:t,b=idx?idx[t+1]:t+1,c=idx?idx[t+2]:t+2;
+        rasterTri(_px[a],_py[a],_px[b],_py[b],_px[c],_py[c]);}}
+    dilate();}
+  function rasterTri(x0,y0,x1,y1,x2,y2){
+    let minx=Math.floor(Math.min(x0,x1,x2)),maxx=Math.ceil(Math.max(x0,x1,x2));
+    let miny=Math.floor(Math.min(y0,y1,y2)),maxy=Math.ceil(Math.max(y0,y1,y2));
+    if(maxx<0||minx>=GW||maxy<0||miny>=GH)return;
+    if(minx<0)minx=0;if(miny<0)miny=0;if(maxx>=GW)maxx=GW-1;if(maxy>=GH)maxy=GH-1;
+    const d=(y1-y2)*(x0-x2)+(x2-x1)*(y0-y2);if(Math.abs(d)<1e-9)return;const id=1/d;
+    for(let gy=miny;gy<=maxy;gy++){const py=gy+0.5;for(let gx=minx;gx<=maxx;gx++){const px=gx+0.5;
+      const w0=((y1-y2)*(px-x2)+(x2-x1)*(py-y2))*id;const w1=((y2-y0)*(px-x2)+(x0-x2)*(py-y2))*id;const w2=1-w0-w1;
+      if(w0>=-0.001&&w1>=-0.001&&w2>=-0.001)grid[gy*GW+gx]=1;}}}
+  function dilate(){grid2.set(grid);// grow coverage by 1 cell so large sprites can't overhang the chocolate edge
+    for(let y=0;y<GH;y++)for(let x=0;x<GW;x++){if(!grid2[y*GW+x])continue;const o=y*GW+x;
+      grid[o]=1;if(x>0)grid[o-1]=1;if(x<GW-1)grid[o+1]=1;if(y>0)grid[o-GW]=1;if(y<GH-1)grid[o+GW]=1;}}
 
   /* ---- living powder = 3D particle clouds sampled from the real powder ---- */
   const MAXP=9200;
@@ -289,7 +292,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     const aspect=w/h;C.aspect=aspect;const tan=Math.tan(C.fov*Math.PI/360);
     C.position.z=clamp(2.85/(tan*Math.max(0.34,aspect)),13.5,21.5);   // pull back on narrow screens so the orbit never clips
     SCENE_Y=C.position.z*0.088;C.updateProjectionMatrix();
-    pMat.uniforms.uFocus.value=C.position.z;spot.position.set(0,SCENE_Y,CHOC_Z-0.9);moonOcc.position.set(0,SCENE_Y,CHOC_Z-0.65);}
+    pMat.uniforms.uFocus.value=C.position.z;spot.position.set(0,SCENE_Y,CHOC_Z-0.9);}
   let T=0;
   function loop(ts){T+=0.016;size();
     if(!down){vel*=0.94;drag+=vel;}
@@ -324,10 +327,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         az-=(0.8+Math.abs(az))*1.6*s;}   // scatter recedes BACKWARD so powder never crosses in front of the chocolate
       if(az>1.45)az=1.45;                // hard depth wall: no particle is ever nearer than the chocolate's back face
       aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;
-      // hide any particle whose screen position lands on the chocolate silhouette (it is always behind it) — pure-CPU, device-independent
+      // hide any particle whose screen cell lands on the chocolate silhouette (it is always behind it) — pure-CPU, device-independent
       const cw=ve[3]*ax+ve[7]*ay+ve[11]*az+ve[15];
-      const nx=(ve[0]*ax+ve[4]*ay+ve[8]*az+ve[12])/cw, ny=(ve[1]*ax+ve[5]*ay+ve[9]*az+ve[13])/cw;
-      aA[i]= culled(nx,ny) ? 0 : 0.92*asm;
+      const gx=((ve[0]*ax+ve[4]*ay+ve[8]*az+ve[12])/cw*0.5+0.5)*GW|0;
+      const gy=((ve[1]*ax+ve[5]*ay+ve[9]*az+ve[13])/cw*0.5+0.5)*GH|0;
+      aA[i]=(gx>=0&&gx<GW&&gy>=0&&gy<GH&&grid[gy*GW+gx])?0:0.92*asm;
     }
     pg.attributes.position.needsUpdate=true;pg.attributes.palpha.needsUpdate=true;
     R.render(S,C);
