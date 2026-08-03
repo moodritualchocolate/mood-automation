@@ -436,6 +436,7 @@ CAP_JS = """  <script>
       r.style.setProperty("--accent",ACCENT[sku]);
       r.innerHTML='<img class="rpouch" src="'+POUCH[sku]+'" alt=""><div class="rkick">'+c.k+'</div><h3>'+c.h+'</h3><p>'+c.p+'</p><button class="qbtn">קחו אותי לריטואל</button><button class="qreset">‹ נסו שוב</button>';
       q.style.display="none"; r.classList.add("on");
+      r.querySelector(".qbtn").addEventListener("click",function(){ if(window.moodPrefill)window.moodPrefill(sku); });
       r.querySelector(".qreset").addEventListener("click",function(){r.classList.remove("on");r.innerHTML="";q.style.display="";});
     });});
   })();
@@ -461,6 +462,11 @@ CAP_JS = """  <script>
       qs[sku]=Math.max(0,Math.min(9,qs[sku]+ +btn.dataset.d)); render();
     });
     render();
+    // quiz → funnel spine: the quiz result prefills THIS bundle with the
+    // recommended SKU and brings the visitor straight here (steal Mayven)
+    window.moodPrefill=function(sku){ if(qs[sku]===undefined)return;
+      qs={energy:0,relax:0,sleep:0}; qs[sku]=1; render();
+      bundle.scrollIntoView({behavior:"smooth",block:"center"}); };
     var bar=document.querySelector(".bbar");
     new IntersectionObserver(function(es){es.forEach(function(e){bar.classList.toggle("show",e.isIntersecting);});},
       {rootMargin:"-30% 0px -20% 0px"}).observe(bundle);
