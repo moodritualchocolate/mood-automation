@@ -123,6 +123,9 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const cvs=root.querySelector(".xp-gl");
   const R=new THREE.WebGLRenderer({canvas:cvs,antialias:true,alpha:true,premultipliedAlpha:false});
   R.outputColorSpace=THREE.SRGBColorSpace;
+  // offscreen silhouette mask of the chocolate → drives depth-independent particle occlusion
+  const maskRT=new THREE.WebGLRenderTarget(2,2,{depthBuffer:true});
+  const maskMat=new THREE.MeshBasicMaterial({color:0xffffff});
   const S=new THREE.Scene(), C=new THREE.PerspectiveCamera(34,1,6,42); C.position.set(0,0,14.3);
   // tight near/far (nothing is closer than ~10u) → high depth-buffer precision so the chocolate cleanly occludes the powder even on 16-bit mobile depth buffers
   let SCENE_Y=1.25;
@@ -180,14 +183,19 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   pg.setAttribute("psize",new THREE.BufferAttribute(aSize,1));
   pg.setAttribute("palpha",new THREE.BufferAttribute(aA,1));
   const pMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,blending:THREE.NormalBlending,
-    uniforms:{uFocus:{value:14.3},uRange:{value:3.4}},
-    vertexShader:`attribute vec3 pcolor;attribute float psize;attribute float palpha;varying vec3 vC;varying float vA;varying float vBlur;
+    uniforms:{uFocus:{value:14.3},uRange:{value:3.4},uMask:{value:null}},
+    vertexShader:`attribute vec3 pcolor;attribute float psize;attribute float palpha;varying vec3 vC;varying float vA;varying float vBlur;varying vec2 vUV;
       uniform float uFocus;uniform float uRange;
       void main(){vC=pcolor;vA=palpha;vec4 mv=modelViewMatrix*vec4(position,1.0);float vz=-mv.z;
       vBlur=clamp(abs(vz-uFocus)/uRange,0.0,1.0);
-      gl_PointSize=psize*(82.0/max(0.1,vz))*(1.0+vBlur*1.25);gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`varying vec3 vC;varying float vA;varying float vBlur;
-      void main(){vec2 d=gl_PointCoord-0.5;float r=length(d);float inner=mix(0.4,0.08,vBlur);
+      gl_PointSize=psize*(82.0/max(0.1,vz))*(1.0+vBlur*1.25);gl_Position=projectionMatrix*mv;
+      vUV=gl_Position.xy/gl_Position.w*0.5+0.5;}`,
+    fragmentShader:`varying vec3 vC;varying float vA;varying float vBlur;varying vec2 vUV;
+      uniform sampler2D uMask;
+      void main(){
+      // depth-independent occlusion: if the chocolate silhouette covers this pixel, the particle is behind it → hide it (works even where mobile GPU depth-test fails)
+      if(texture2D(uMask,vUV).r>0.5) discard;
+      vec2 d=gl_PointCoord-0.5;float r=length(d);float inner=mix(0.4,0.08,vBlur);
       float a=smoothstep(0.5,inner,r);gl_FragColor=vec4(vC,a*vA*(1.0-vBlur*0.38));}`});
   const points=new THREE.Points(pg,pMat);points.frustumCulled=false;S.add(points);
 
@@ -257,10 +265,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   root.addEventListener("pointermove",e=>{const r=root.getBoundingClientRect();tmx=(e.clientX-r.left)/r.width-0.5;tmy=(e.clientY-r.top)/r.height-0.5;});
   setInterval(()=>{mx+=(tmx-mx)*0.06;my+=(tmy-my)*0.06;},16);
 
-  function size(){const w=cvs.clientWidth||300,h=cvs.clientHeight||300;R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(w,h,false);
+  function size(){const w=cvs.clientWidth||300,h=cvs.clientHeight||300;const pr=Math.min(devicePixelRatio,2);R.setPixelRatio(pr);R.setSize(w,h,false);
     const aspect=w/h;C.aspect=aspect;const tan=Math.tan(C.fov*Math.PI/360);
     C.position.z=clamp(2.85/(tan*Math.max(0.34,aspect)),13.5,21.5);   // pull back on narrow screens so the orbit never clips
     SCENE_Y=C.position.z*0.088;C.updateProjectionMatrix();
+    maskRT.setSize(Math.max(2,Math.round(w*pr*0.75)),Math.max(2,Math.round(h*pr*0.75)));
     pMat.uniforms.uFocus.value=C.position.z;spot.position.set(0,SCENE_Y,CHOC_Z-0.9);moonOcc.position.set(0,SCENE_Y,CHOC_Z-0.65);}
   let T=0;
   function loop(ts){T+=0.016;size();
@@ -296,6 +305,14 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;aA[i]=0.92*asm;
     }
     pg.attributes.position.needsUpdate=true;pg.attributes.palpha.needsUpdate=true;
+    // pass 1 — render ONLY the chocolate as a white silhouette mask (depth-independent occluder for the powder)
+    points.visible=false;spot.visible=false;
+    S.overrideMaterial=maskMat;
+    R.setRenderTarget(maskRT);R.setClearColor(0x000000,1);R.render(S,C);
+    S.overrideMaterial=null;
+    R.setRenderTarget(null);R.setClearColor(0x000000,0);
+    points.visible=true;spot.visible=true;pMat.uniforms.uMask.value=maskRT.texture;
+    // pass 2 — the real scene; particles landing on the mask are discarded in-shader
     R.render(S,C);
     requestAnimationFrame(loop);
   }
