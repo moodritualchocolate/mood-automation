@@ -129,12 +129,12 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     const lg=g.createLinearGradient(0,0,0,256);lg.addColorStop(0,"#5e4326");lg.addColorStop(.32,"#3a2814");lg.addColorStop(.62,"#221408");lg.addColorStop(1,"#0e0703");
     g.fillStyle=lg;g.fillRect(0,0,512,256);
     // one crisp bright streak = the glossy highlight; rest stays dark so the chocolate reads dark
-    const bar=g.createLinearGradient(0,38,0,66);bar.addColorStop(0,"rgba(255,250,240,0)");bar.addColorStop(.5,"rgba(255,252,244,1)");bar.addColorStop(1,"rgba(255,250,240,0)");
-    g.fillStyle=bar;g.fillRect(0,38,512,28);
-    const s=g.createRadialGradient(150,52,3,150,52,80);s.addColorStop(0,"rgba(255,250,238,.98)");s.addColorStop(1,"rgba(255,250,238,0)");g.fillStyle=s;g.fillRect(0,0,512,256);
+    const bar=g.createLinearGradient(0,42,0,60);bar.addColorStop(0,"rgba(255,250,240,0)");bar.addColorStop(.5,"rgba(255,253,247,1)");bar.addColorStop(1,"rgba(255,250,240,0)");
+    g.fillStyle=bar;g.fillRect(0,42,512,18);
+    const s=g.createRadialGradient(150,50,2,150,50,58);s.addColorStop(0,"rgba(255,251,240,1)");s.addColorStop(1,"rgba(255,250,238,0)");g.fillStyle=s;g.fillRect(0,0,512,256);
     const t=new THREE.CanvasTexture(cv);t.mapping=THREE.EquirectangularReflectionMapping;t.colorSpace=THREE.SRGBColorSpace;return t;})();
-  const chocMat=new THREE.MeshStandardMaterial({color:0x3f2413,roughness:0.2,metalness:0.16,envMap:env,envMapIntensity:1.25});
-  S.add(new THREE.HemisphereLight(0xffffff,0xe7d5ba,0.85));
+  const chocMat=new THREE.MeshStandardMaterial({color:0x35200f,roughness:0.14,metalness:0.14,envMap:env,envMapIntensity:1.55});
+  S.add(new THREE.HemisphereLight(0xffffff,0xe7d5ba,0.55));
   const key=new THREE.DirectionalLight(0xffffff,3.0);key.position.set(-4,6,6);S.add(key);
   const fill=new THREE.DirectionalLight(0xffffff,0.85);fill.position.set(4,1.5,5);S.add(fill);
   const rim=new THREE.DirectionalLight(0xffc89a,1.7);rim.position.set(4.8,-1,1.2);S.add(rim);
@@ -161,7 +161,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const CHOC_Z=2.4;   // chocolate sits FORWARD of the orbit → it pops out of the screen and always occludes the powder behind it
   const shapeGroup=new THREE.Group();shapeGroup.scale.setScalar(0.9);shapeGroup.position.z=CHOC_Z;S.add(shapeGroup);
   Object.values(shapes).forEach(o=>{o.visible=false;shapeGroup.add(o);});
-  let curShape=null;function setShape(k){if(curShape)curShape.visible=false;curShape=shapes[k];curShape.visible=true;}
+  // invisible depth wall that fills the crescent's footprint so no powder ever peeks through the hollow
+  const moonOcc=new THREE.Mesh(new THREE.CircleGeometry(1.24,44),new THREE.MeshBasicMaterial({colorWrite:false}));
+  moonOcc.position.set(0,SCENE_Y,CHOC_Z-0.65);moonOcc.visible=false;S.add(moonOcc);
+  let curShape=null;function setShape(k){if(curShape)curShape.visible=false;curShape=shapes[k];curShape.visible=true;moonOcc.visible=(k==="moon");}
 
   /* ---- living powder = 3D particle clouds sampled from the real powder ---- */
   const MAXP=9200;
@@ -253,7 +256,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     const aspect=w/h;C.aspect=aspect;const tan=Math.tan(C.fov*Math.PI/360);
     C.position.z=clamp(2.85/(tan*Math.max(0.34,aspect)),13.5,21.5);   // pull back on narrow screens so the orbit never clips
     SCENE_Y=C.position.z*0.088;C.updateProjectionMatrix();
-    pMat.uniforms.uFocus.value=C.position.z;spot.position.set(0,SCENE_Y,CHOC_Z-0.9);}
+    pMat.uniforms.uFocus.value=C.position.z;spot.position.set(0,SCENE_Y,CHOC_Z-0.9);moonOcc.position.set(0,SCENE_Y,CHOC_Z-0.65);}
   let T=0;
   function loop(ts){T+=0.016;size();
     if(!down){vel*=0.94;drag+=vel;}
