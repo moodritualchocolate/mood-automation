@@ -167,7 +167,35 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const CHOC_Z=2.4;   // chocolate sits FORWARD of the orbit → it pops out of the screen and always occludes the powder behind it
   const shapeGroup=new THREE.Group();shapeGroup.scale.setScalar(0.9);shapeGroup.position.z=CHOC_Z;S.add(shapeGroup);
   Object.values(shapes).forEach(o=>{o.visible=false;shapeGroup.add(o);});
-  let curShape=null;function setShape(k){if(curShape)curShape.visible=false;curShape=shapes[k];curShape.visible=true;}
+  // This iOS device's depth buffer will NOT occlude the transparent powder behind the opaque chocolate (fails for points AND quads).
+  // So occlusion is done on the CPU: rasterize the real chocolate mesh silhouette into a high-res screen grid each frame (exact edge → no halo).
+  function meshData(g){return {pos:g.attributes.position.array, idx:g.index?g.index.array:null, n:g.index?g.index.count:g.attributes.position.count};}
+  const CULLMESH={bolt:[meshData(boltG)],moon:[meshData(moonG)],wave:shapes.wave.children.map(c=>meshData(c.geometry))};
+  let curShape=null,curKey=null;function setShape(k){if(curShape)curShape.visible=false;curShape=shapes[k];curShape.visible=true;curKey=k;}
+  const _vp=new THREE.Matrix4(),_mvp=new THREE.Matrix4();
+  const GW=132,GH=248,grid=new Uint8Array(GW*GH);
+  const _px=new Float32Array(20000),_py=new Float32Array(20000);
+  function buildCull(){grid.fill(0);const list=CULLMESH[curKey];if(!list)return;
+    shapeGroup.updateMatrixWorld(true);C.updateMatrixWorld(true);
+    _vp.multiplyMatrices(C.projectionMatrix,C.matrixWorldInverse);
+    _mvp.multiplyMatrices(_vp,shapeGroup.matrixWorld);const m=_mvp.elements;
+    for(const md of list){const pos=md.pos,idx=md.idx,VN=pos.length/3;
+      for(let v=0;v<VN;v++){const lx=pos[v*3],ly=pos[v*3+1],lz=pos[v*3+2];
+        const cw=m[3]*lx+m[7]*ly+m[11]*lz+m[15];
+        _px[v]=((m[0]*lx+m[4]*ly+m[8]*lz+m[12])/cw*0.5+0.5)*GW;
+        _py[v]=((m[1]*lx+m[5]*ly+m[9]*lz+m[13])/cw*0.5+0.5)*GH;}
+      const nT=md.n;
+      for(let t=0;t<nT;t+=3){const a=idx?idx[t]:t,b=idx?idx[t+1]:t+1,c=idx?idx[t+2]:t+2;
+        rasterTri(_px[a],_py[a],_px[b],_py[b],_px[c],_py[c]);}}}
+  function rasterTri(x0,y0,x1,y1,x2,y2){
+    let minx=Math.floor(Math.min(x0,x1,x2)),maxx=Math.ceil(Math.max(x0,x1,x2));
+    let miny=Math.floor(Math.min(y0,y1,y2)),maxy=Math.ceil(Math.max(y0,y1,y2));
+    if(maxx<0||minx>=GW||maxy<0||miny>=GH)return;
+    if(minx<0)minx=0;if(miny<0)miny=0;if(maxx>=GW)maxx=GW-1;if(maxy>=GH)maxy=GH-1;
+    const d=(y1-y2)*(x0-x2)+(x2-x1)*(y0-y2);if(Math.abs(d)<1e-9)return;const id=1/d;
+    for(let gy=miny;gy<=maxy;gy++){const py=gy+0.5;for(let gx=minx;gx<=maxx;gx++){const px=gx+0.5;
+      const w0=((y1-y2)*(px-x2)+(x2-x1)*(py-y2))*id;const w1=((y2-y0)*(px-x2)+(x0-x2)*(py-y2))*id;
+      if(w0>=0&&w1>=0&&(w0+w1)<=1)grid[gy*GW+gx]=1;}}}
 
   /* ---- living powder = INSTANCED BILLBOARD QUADS (real geometry → correct depth occlusion on every device incl. iOS; no halo, no dots) ---- */
   const MAXP=9200;
@@ -285,6 +313,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       c.pos.set(RAD*Math.cos(a), SCENE_Y+RAD*Math.sin(a)*Math.sin(TILT), ORB_Z+RAD*Math.sin(a)*Math.cos(TILT));
       c.ang=Math.sin(T*c.rot+c.ph)*0.5;
       c.asm = phaseMode==='out' ? 1-clamp(el/DUR_OUT,0,1) : (phaseMode==='in'? ease3((el-i*STAG)/DUR_IN) : 1);}
+    buildCull();const ve=_vp.elements;
     // particles: assembled position, but scatter outward + fade when asm<1 (converge = the formula forms)
     for(let i=0;i<activeCount;i++){const c=clouds[P_CLOUD[i]];if(!c)continue;const o=i*3;
       const ph=P_PH[i], br=1+0.05*Math.sin(T*0.9+ph), ca=Math.cos(c.ang), sa=Math.sin(c.ang);
@@ -297,8 +326,13 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         ax+=ax*1.7*s+Math.cos(ph*4.1)*s*0.55;
         ay+=dyp*1.7*s+Math.sin(ph*5.7)*s*0.55;
         az-=(0.8+Math.abs(az))*1.6*s;}   // scatter recedes BACKWARD so powder never crosses in front of the chocolate
-      if(az>1.45)az=1.45;                // keep every particle behind the chocolate; the GPU depth test does the exact per-pixel occlusion
-      aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;aA[i]=0.92*asm;
+      if(az>1.45)az=1.45;                // keep every particle behind the chocolate
+      aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;
+      // exact-silhouette CPU occlusion (device-independent): particle behind the chocolate footprint → hidden. High-res grid → edge is crisp, no halo.
+      const cw=ve[3]*ax+ve[7]*ay+ve[11]*az+ve[15];
+      const gx=((ve[0]*ax+ve[4]*ay+ve[8]*az+ve[12])/cw*0.5+0.5)*GW|0;
+      const gy=((ve[1]*ax+ve[5]*ay+ve[9]*az+ve[13])/cw*0.5+0.5)*GH|0;
+      aA[i]=(gx>=0&&gx<GW&&gy>=0&&gy<GH&&grid[gy*GW+gx])?0:0.92*asm;
     }
     pg.attributes.iPos.needsUpdate=true;pg.attributes.iAlpha.needsUpdate=true;
     R.render(S,C);
