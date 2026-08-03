@@ -530,12 +530,42 @@ XHERO_CSS = """
 .xtrust{background:var(--ink);color:#efe7db;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;padding:13px 20px;font-size:13px;font-weight:700;direction:rtl}
 .xtrust span{display:inline-flex;align-items:center;gap:8px}
 .xtrust span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--energy)}
+/* discovery box — the founding-member intro offer (steal GOOM) */
+.xkit{background:linear-gradient(180deg,#ffffff,#f5eee4);padding:clamp(56px,8vw,104px) 24px}
+.xkit-in{width:min(1060px,100%);margin:0 auto;display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,5vw,60px);align-items:center;direction:rtl}
+.xkit-media{position:relative;display:grid;place-items:center;min-height:360px}
+.xkit-glow{position:absolute;width:80%;height:70%;border-radius:50%;background:radial-gradient(closest-side,rgba(232,129,44,.20),transparent);filter:blur(8px)}
+.xkit-pouches{position:relative;display:flex;justify-content:center;align-items:flex-end}
+.xkit-pouches img{height:clamp(190px,25vw,300px);width:auto;filter:drop-shadow(0 22px 26px rgba(41,31,18,.22))}
+.xkit-pouches img:nth-child(1){transform:rotate(-8deg) translateX(26px);z-index:1}
+.xkit-pouches img:nth-child(2){height:clamp(220px,29vw,344px);z-index:3}
+.xkit-pouches img:nth-child(3){transform:rotate(8deg) translateX(-26px);z-index:1}
+.xkit-badge{position:absolute;top:6px;right:6px;background:var(--ink);color:#fff;font-size:11px;font-weight:900;letter-spacing:.08em;padding:8px 13px;border-radius:999px;z-index:4}
+.xkit-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#b06a3a}
+.xkit-h{font-size:clamp(32px,4.4vw,52px);line-height:1;letter-spacing:-.045em;font-weight:900;color:var(--ink);margin:12px 0 0}
+.xkit-sub{margin:16px 0 0;color:#4c4841;font-size:clamp(15px,1.4vw,18px);line-height:1.6;max-width:440px}
+.xkit-list{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:9px}
+.xkit-list li{position:relative;padding-right:26px;font-size:14.5px;font-weight:600;color:#3a352e}
+.xkit-list li::before{content:"✓";position:absolute;right:0;top:0;color:#e8812c;font-weight:900}
+.xkit-price{display:flex;align-items:baseline;gap:12px;margin:24px 0 0;direction:rtl}
+.xkit-now{font-size:40px;font-weight:900;letter-spacing:-.03em;color:var(--ink)}
+.xkit-was{font-size:20px;font-weight:700;color:#a89a86;text-decoration:line-through}
+.xkit-save{font-size:12px;font-weight:900;color:#3f7a3a;background:#e6f0e2;border-radius:999px;padding:6px 12px}
+.xkit-pay{margin:8px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
+.xkit-cta{display:inline-block;margin:22px 0 0;background:var(--ink);color:#fff;padding:17px 38px;border-radius:999px;font-size:16px;font-weight:800;text-decoration:none;transition:transform .2s}
+.xkit-cta:hover{transform:translateY(-2px)}
+.xkit-guar{margin:16px 0 0;font-size:13px;color:#6a6157}
+.xkit-guar b{color:var(--ink);font-weight:800}
 @media(max-width:820px){
   .xnav-links{display:none}
   .xhero{grid-template-columns:1fr;min-height:0}
   .xhero-media{order:1;aspect-ratio:4/5}
   .xhero-copy{order:2;padding:34px 22px 42px}
   .xhero-h{font-size:clamp(34px,10vw,54px)}
+  .xkit-in{grid-template-columns:1fr;gap:18px}
+  .xkit-media{min-height:250px;order:1}
+  .xkit-copy{order:2}
+  .xkit-h{font-size:clamp(30px,9vw,42px)}
 }
 """
 
@@ -573,6 +603,37 @@ XHERO = """    <header class="xtop">
     <div class="xtrust" aria-label="למה לסמוך על mood">
       <span>כשר פרווה</span><span>מיוצר בישראל</span><span>אחריות 30 יום</span><span>משלוח חינם מעל ₪199</span><span>תמיכה בוואטסאפ</span>
     </div>
+    <section class="xkit" id="kit" aria-label="מארז היכרות · הצעת מייסדים">
+      <div class="xkit-in">
+        <div class="xkit-media reveal">
+          <div class="xkit-glow"></div>
+          <div class="xkit-pouches">
+            <img src="__RELAX__" alt="mood Relax">
+            <img src="__ENERGY__" alt="mood Energy">
+            <img src="__SLEEP__" alt="mood Sleep">
+          </div>
+          <div class="xkit-badge">הצעת השקה</div>
+        </div>
+        <div class="xkit-copy reveal">
+          <div class="xkit-eyebrow">מארז היכרות · הצעת מייסדים</div>
+          <h2 class="xkit-h">כל המצבים.<br>מארז אחד.</h2>
+          <p class="xkit-sub">Energy לבוקר · Relax לערב · Sleep ללילה. שלושתם בהזמנה אחת — הדרך הכי קלה לגלות איזה ריטואל באמת שלכם.</p>
+          <ul class="xkit-list">
+            <li>3 שקיות · 90 קוביות · שלושה חודשי ריטואל</li>
+            <li>טעימה מכל מצב — בלי להתחייב לאחד</li>
+            <li>משלוח חינם · מגיע עד הבית</li>
+          </ul>
+          <div class="xkit-price">
+            <span class="xkit-now">₪189</span>
+            <span class="xkit-was">₪237</span>
+            <span class="xkit-save">חיסכון ₪48</span>
+          </div>
+          <div class="xkit-pay">או עד 3 תשלומים ללא ריבית · Bit · Apple Pay</div>
+          <a class="xkit-cta" href="#join">לשריון מארז המייסדים</a>
+          <div class="xkit-guar"><b>לא התאהבתם? 30 יום, הכסף חזרה.</b> בלי שאלות.</div>
+        </div>
+      </div>
+    </section>
 """
 
 HERO_JS = """  <script>
