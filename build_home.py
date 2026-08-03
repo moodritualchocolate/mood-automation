@@ -224,7 +224,7 @@ CAP_CSS = """
 /* ---- interactive capability modules ---- */
 :root{--accent:var(--energy)}
 .cap{position:relative}
-.cap-label{width:min(1080px,100%);margin:clamp(64px,9vw,110px) auto 0;padding:0 22px;
+.cap-label{width:min(1080px,100%);margin:clamp(40px,6vw,72px) auto 0;padding:0 22px;
   font-size:12px;font-weight:900;letter-spacing:.16em;color:#b06a3a}
 .cap-title{width:min(1080px,100%);margin:10px auto 0;padding:0 22px}
 .cap-title h2{font-size:clamp(30px,5vw,52px);line-height:1.02;letter-spacing:-.045em;font-weight:900;margin:0}
@@ -638,6 +638,20 @@ def build_section(filename: str, is_cinematic: bool) -> str:
         # and true — the 2022 title is a genuine credibility asset, not a claim to hide.
         html = html.replace("<span>זוכה פרסים בינלאומיים</span>",
                             "<span>אלוף השוקולד העולמי 2022</span>")
+    if filename == "product-cards.html":
+        # the approved cards are oversized on mobile — tighten without touching
+        # the pristine approved source
+        html = html.replace("</head>",
+            "<style>@media(max-width:700px){"
+            ".section{min-height:0;padding:26px 0 18px}"
+            ".card{flex:0 0 80vw}"
+            ".visual{height:210px}.unit.main{height:165px}.unit.left,.unit.right{height:118px}"
+            ".unit.left{left:22px}.unit.right{right:22px}"
+            ".content{padding:0 20px 20px}h2{font-size:22px}"
+            ".description{min-height:0;margin-bottom:9px;font-size:13px}"
+            ".monthly{padding:8px 0 12px}.button{height:44px}"
+            ".intro{margin-bottom:18px}h1{font-size:29px}"
+            "}</style></head>")
     return html
 
 
@@ -649,6 +663,9 @@ def main():
     shell = (APP / "index.html").read_text(encoding="utf-8")
     # replace the flat baked hero PNG with the live, bold, interactive hero
     shell = re.sub(r'<section class="hero".*?</section>', XHERO, shell, count=1, flags=re.S)
+    # tighter product-cards iframe on mobile (cards were oversized)
+    shell = shell.replace(".products-frame { height: 844px; }",
+                          ".products-frame { height: 620px; }")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
     shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + "\n  </style>", 1)
@@ -658,7 +675,7 @@ def main():
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
     #   founders · TIMELINE · formula · BUNDLE · close · footer
     shell = shell.replace('    <section id="products"', QUIZ + '    <section id="products"')
-    shell = shell.replace('    <section id="story"', IMMERSIVE + MARQUEE + '    <section id="story"')
+    shell = shell.replace('    <section id="story"', MARQUEE + '    <section id="story"')
     shell = shell.replace('    <section id="formula"', FOUNDERS + TIMELINE + '    <section id="formula"')
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
