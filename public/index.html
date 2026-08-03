@@ -4,7 +4,7 @@
 <body style="margin:0;background:#FBF9F5">
 <!-- ============ MOOD — living 3D formula, clean futuristic layout ============ -->
 <section id="mood-xp" dir="rtl">
-  <div class="xp-ver">BUILD&nbsp;10</div>
+  <div class="xp-ver">BUILD&nbsp;11</div>
   <canvas class="xp-gl"></canvas>
   <div class="xp-vig"></div>
   <div class="xp-ui">
@@ -150,8 +150,14 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const spotTex=(function(){const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
     const gr=g.createRadialGradient(64,64,4,64,64,64);gr.addColorStop(0,"rgba(255,248,236,.9)");gr.addColorStop(.5,"rgba(255,242,222,.32)");gr.addColorStop(1,"rgba(255,240,220,0)");
     g.fillStyle=gr;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);})();
-  const spot=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:spotTex,transparent:true,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending,opacity:0.55}));
-  spot.scale.set(5.6,5.6,1);S.add(spot);
+  const spot=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:spotTex,transparent:true,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending,opacity:0.5}));
+  spot.scale.set(5.2,5.2,1);S.add(spot);
+  // soft CONTACT SHADOW beneath the chocolate → grounds it and makes it pop off the screen (Apple-style)
+  const shadTex=(function(){const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
+    const gr=g.createRadialGradient(64,64,2,64,64,64);gr.addColorStop(0,"rgba(58,36,18,.55)");gr.addColorStop(.55,"rgba(58,36,18,.22)");gr.addColorStop(1,"rgba(58,36,18,0)");
+    g.fillStyle=gr;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);})();
+  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shadTex,transparent:true,depthWrite:false,depthTest:false,blending:THREE.MultiplyBlending,opacity:0.9}));
+  shadow.scale.set(3.6,1.5,1);S.add(shadow);
 
   function extG(shape,ctr){const g=new THREE.ExtrudeGeometry(shape,{depth:0.62,bevelEnabled:true,bevelThickness:0.13,bevelSize:0.12,bevelSegments:5,curveSegments:36});
     let ox=0,oy=0;if(ctr!==false){g.computeBoundingBox();const bb=g.boundingBox;ox=(bb.min.x+bb.max.x)/2;oy=(bb.min.y+bb.max.y)/2;g.translate(-ox,-oy,-(bb.min.z+bb.max.z)/2);}g.userData.ox=ox;g.userData.oy=oy;return g;}
@@ -211,7 +217,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   pg.setAttribute("iAlpha",new THREE.InstancedBufferAttribute(aA,1));
   pg.instanceCount=0;
   const pMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,blending:THREE.NormalBlending,
-    uniforms:{uFocus:{value:14.3},uRange:{value:3.4}},
+    uniforms:{uFocus:{value:14.3},uRange:{value:4.3}},
     vertexShader:`attribute vec3 iPos;attribute vec3 iColor;attribute float iSize;attribute float iAlpha;
       varying vec3 vC;varying float vA;varying float vBlur;varying vec2 vCo;
       uniform float uFocus;uniform float uRange;
@@ -295,9 +301,9 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
 
   function size(){const w=cvs.clientWidth||300,h=cvs.clientHeight||300;const pr=Math.min(devicePixelRatio,2);R.setPixelRatio(pr);R.setSize(w,h,false);
     const aspect=w/h;C.aspect=aspect;const tan=Math.tan(C.fov*Math.PI/360);
-    C.position.z=clamp(2.98/(tan*Math.max(0.34,aspect)),13.5,22.5);   // pull back on narrow screens so the wide orbit never clips
+    C.position.z=clamp(2.86/(tan*Math.max(0.34,aspect)),13.5,23.5);   // pull back on narrow screens so the orbit never clips
     SCENE_Y=C.position.z*0.088;C.updateProjectionMatrix();
-    pMat.uniforms.uFocus.value=C.position.z;spot.position.set(0,SCENE_Y,CHOC_Z-0.9);}
+    pMat.uniforms.uFocus.value=C.position.z;spot.position.set(0,SCENE_Y,CHOC_Z-0.9);shadow.position.set(0,SCENE_Y-1.7,CHOC_Z-0.2);}
   let T=0;
   function loop(ts){T+=0.016;size();
     if(!down){vel*=0.94;drag+=vel;}
@@ -310,10 +316,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     shapeGroup.rotation.y=Math.sin(T*0.38)*0.5+drag*0.5+mx*0.25+spinImp;
     shapeGroup.rotation.x=clamp(-0.04+Math.sin(T*0.3)*0.05-my*0.12,-0.3,0.3);
     shapeGroup.position.y=SCENE_Y+Math.sin(T*0.6)*0.05;
-    // ingredients revolve around the central chocolate on a LARGE near-frontal ring whose inner edge always clears the chocolate silhouette → they never overlap it → clean on every device, no occlusion needed
-    const Phi=T*0.28+drag, RAD=2.42, ORB_Z=-0.55;
+    // ingredients revolve around the central chocolate: the on-screen (x,y) path always clears the chocolate silhouette (so nothing ever overlaps it → clean on every device),
+    // while a LARGE z swing makes them swoop toward & away from the camera → strong, close 3D depth.
+    const Phi=T*0.3+drag, RAD=2.12, VY=1.2, ORB_Z=-0.5, ZAMP=1.95;   // ellipse taller than wide: clears the tall bolt at top, keeps sides close; big ZAMP = close-swooping 3D depth
     for(let i=0;i<count;i++){const c=clouds[i];const a=c.theta+Phi;
-      c.pos.set(RAD*Math.cos(a), SCENE_Y+RAD*Math.sin(a)*0.95, ORB_Z+RAD*Math.sin(a)*0.31);
+      c.pos.set(RAD*Math.cos(a), SCENE_Y+RAD*Math.sin(a)*VY, ORB_Z+ZAMP*Math.cos(a));
       c.ang=Math.sin(T*c.rot+c.ph)*0.5;
       c.asm = phaseMode==='out' ? 1-clamp(el/DUR_OUT,0,1) : (phaseMode==='in'? ease3((el-i*STAG)/DUR_IN) : 1);}
     buildCull();const ve=_vp.elements;
