@@ -105,6 +105,13 @@ body{background:#0c0a07;color:var(--ink);font-family:var(--sans);font-weight:300
 /* ---- the reckoning: dark cold-open that grabs you ---- */
 .reckon{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:radial-gradient(125% 95% at 50% 44%,#181209,#0b0906 72%);padding:0 40px;text-align:center;overflow:hidden;cursor:pointer}
+.reckon .rimg{position:absolute;inset:0;background-size:cover;background-position:center 20%;z-index:1;opacity:0;
+  filter:brightness(.3) saturate(.68) contrast(1.06);transform:scale(1.12);
+  transition:opacity 2.2s ease,filter 3s ease,transform 10s ease;will-change:transform,opacity}
+.reckon .rimg.on{opacity:.5;transform:scale(1.22)}
+.reckon .rimg.warm{filter:brightness(.78) saturate(1.02) contrast(1);opacity:.82}
+.reckon .rdark{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(125% 92% at 50% 44%,rgba(11,9,6,.32),rgba(11,9,6,.9) 80%)}
 .reckon .ember{position:absolute;top:44%;left:50%;width:7px;height:7px;border-radius:50%;background:#eab86a;
   box-shadow:0 0 46px 16px rgba(234,184,106,.55),0 0 120px 40px rgba(234,184,106,.18);
   transform:translate(-50%,-50%) scale(0);opacity:0;transition:transform 3.4s ease,opacity 3.4s ease}
@@ -377,24 +384,26 @@ function sequence(el,p,beats,cls,{onDone}={}){let i=0;
 function Reckoning(){
   const beats=[
     {t:"כמה פעמים היום\nהסתכלת בטלפון?", hold:2800},
-    {t:"90", cls:"big", hold:2000, snd:"soft"},
+    {t:"90", cls:"big", hold:2000, snd:"soft", img:""},
     {t:"פעם כל שש דקות.", cls:"soft", hold:2600, snd:"silence"},
-    {t:"בזמן הזה —", hold:1900},
-    {t:"מישהו סיפר לך משהו.\nלא זכרת מה.", hold:3000},
-    {t:"מישהו חיכה\nשתרים את הראש.", hold:3000},
-    {t:"אמא התקשרה.\nאמרת ׳אחר כך׳.", hold:3200, snd:"silence"},
+    {t:"בזמן הזה —", hold:1900, img:"01_recognition"},
+    {t:"מישהו סיפר לך משהו.\nלא זכרת מה.", hold:3000, img:"02_identification"},
+    {t:"מישהו חיכה\nשתרים את הראש.", hold:3000, img:"01_recognition"},
+    {t:"אמא התקשרה.\nאמרת ׳אחר כך׳.", hold:3200, snd:"silence", img:"03_opportunity"},
     {t:"הרגעים האלה\nלא מחכים.", hold:2800},
     {t:"הם פשוט עוברים.", hold:3000, ember:true},
-    {t:"אבל הרגע הבא —", hold:2200, snd:"swell"},
-    {t:"עוד לא עבר.", cls:"accent", hold:2600, glow:true}
+    {t:"אבל הרגע הבא —", hold:2200, snd:"swell", img:"06a_chose_differently"},
+    {t:"עוד לא עבר.", cls:"accent", hold:2800, glow:true, warm:true}
   ];
   const el=document.createElement("div");el.className="reckon";
-  el.innerHTML=`<div class="glow"></div><div class="ember"></div>
+  el.innerHTML=`<div class="rimg" id="rimg"></div><div class="rdark"></div>
+    <div class="glow"></div><div class="ember"></div>
     <button class="rskip">דלג</button>
     <div class="rline" id="rl"></div>
     <div class="rcta"><button class="btn olive" id="rgo">אני רוצה להיות שם</button></div>`;
   stage.appendChild(el);
-  const rl=el.querySelector("#rl"), ember=el.querySelector(".ember"), glow=el.querySelector(".glow"), cta=el.querySelector(".rcta");
+  const rl=el.querySelector("#rl"), ember=el.querySelector(".ember"), glow=el.querySelector(".glow"),
+        cta=el.querySelector(".rcta"), rimg=el.querySelector("#rimg");
   let i=0,timer=null,ended=false;
   const finish=()=>{if(ended)return;ended=true;clearTimeout(timer);swell&&swell(false);
     el.style.transition="opacity 1s";el.style.opacity="0";setTimeout(()=>{el.remove();Board();},1000);};
@@ -408,6 +417,8 @@ function Reckoning(){
     setTimeout(()=>{
       rl.className="rline"+(b.cls?" "+b.cls:"");rl.textContent=b.t;
       requestAnimationFrame(()=>rl.classList.add("on"));
+      if(b.img!==undefined){ if(b.img===""){rimg.classList.remove("on","warm");}
+        else{rimg.style.backgroundImage=`url('${M.dir}/screens/${b.img}.jpg')`;rimg.classList.add("on");if(b.warm)rimg.classList.add("warm");} }
       if(b.snd)cue(b.snd); if(b.ember)ember.classList.add("on"); if(b.glow)glow.classList.add("on");
       timer=setTimeout(step, b.hold);
     }, i>1?650:200);
