@@ -327,12 +327,14 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         ay+=dyp*1.7*s+Math.sin(ph*5.7)*s*0.55;
         az-=(0.8+Math.abs(az))*1.6*s;}   // scatter recedes BACKWARD so powder never crosses in front of the chocolate
       if(az>1.45)az=1.45;                // keep every particle behind the chocolate
-      aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;
-      // exact-silhouette CPU occlusion (device-independent): particle behind the chocolate footprint → hidden. High-res grid → edge is crisp, no halo.
+      // exact-silhouette CPU occlusion (device-independent): particle behind the chocolate footprint → hidden.
       const cw=ve[3]*ax+ve[7]*ay+ve[11]*az+ve[15];
       const gx=((ve[0]*ax+ve[4]*ay+ve[8]*az+ve[12])/cw*0.5+0.5)*GW|0;
       const gy=((ve[1]*ax+ve[5]*ay+ve[9]*az+ve[13])/cw*0.5+0.5)*GH|0;
-      aA[i]=(gx>=0&&gx<GW&&gy>=0&&gy<GH&&grid[gy*GW+gx])?0:0.92*asm;
+      const hidden=(gx>=0&&gx<GW&&gy>=0&&gy<GH&&grid[gy*GW+gx]);
+      // Hide by pushing the particle far BEHIND the far-plane (frustum-clipped away) — uses the position path, which is proven to update on every device.
+      if(hidden){aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=-500;aA[i]=0;}
+      else{aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;aA[i]=0.92*asm;}
     }
     pg.attributes.iPos.needsUpdate=true;pg.attributes.iAlpha.needsUpdate=true;
     R.render(S,C);
