@@ -565,15 +565,45 @@ XHERO_CSS = """
   .xkit-copy{order:2}
   .xkit-h{font-size:clamp(30px,9vw,42px)}
 }
-/* ALIVE — calm cinematic life (motion-director: intensity 3-4, transform/opacity only) */
-@keyframes kenburns{from{transform:scale(1.05)}to{transform:scale(1.11)}}
-.xh-photo.on{animation:kenburns 17s ease-in-out infinite alternate}
-@keyframes heroRise{to{opacity:1;transform:none}}
-.xhero-eyebrow,.xhero-sub,.xhero-moods,.xhero-cta{opacity:0;transform:translateY(14px);animation:heroRise .6s cubic-bezier(.22,.8,.28,1) forwards}
-.xhero-eyebrow{animation-delay:.06s}.xhero-sub{animation-delay:.2s}.xhero-moods{animation-delay:.34s}.xhero-cta{animation-delay:.48s}
+/* ===== 3D interactive product hero — pouch floats, auto-turns, tilts to pointer ===== */
+.hero3d{position:relative;display:grid;grid-template-columns:1.08fr .92fr;min-height:min(88vh,820px);background:var(--cream);overflow:hidden}
+.h3-stage{position:relative;order:1;display:grid;place-items:center;perspective:1200px;overflow:hidden;
+  background:radial-gradient(58% 56% at 50% 44%, color-mix(in srgb,var(--accent) 26%, #f2e7d6), #ece1cf);transition:background .6s ease}
+.h3-shadow{position:absolute;bottom:12%;width:min(46%,300px);height:36px;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(41,25,10,.32),transparent);filter:blur(6px);animation:h3sh 7s ease-in-out infinite alternate}
+.h3-float{animation:h3float 7s ease-in-out infinite alternate}
+.h3-spin{animation:h3spin 9s ease-in-out infinite alternate;transform-style:preserve-3d}
+.h3-obj{position:relative;height:clamp(300px,48vh,540px);aspect-ratio:3/4;transform-style:preserve-3d;
+  transition:transform .5s cubic-bezier(.22,.8,.28,1);will-change:transform}
+.h3-p{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .5s ease;
+  filter:drop-shadow(0 34px 40px rgba(41,25,10,.34))}
+.h3-p.on{opacity:1}
+.h3-glare{position:absolute;inset:-25%;opacity:0;pointer-events:none;transition:opacity .3s ease;mix-blend-mode:soft-light;
+  background:linear-gradient(115deg,transparent 43%,rgba(255,255,255,.6) 50%,transparent 57%)}
+.h3-hint{position:absolute;bottom:18px;font-size:11px;font-weight:800;letter-spacing:.14em;color:#a89a86}
+.h3-copy{order:2;display:flex;flex-direction:column;justify-content:center;padding:clamp(30px,5vw,84px)}
+.h3-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--accent);margin-bottom:18px;transition:color .5s}
+.h3-h{font-size:clamp(48px,7.2vw,96px);line-height:.92;letter-spacing:-.05em;font-weight:900;color:var(--ink);margin:0}
+.h3-h .xh-mood{color:var(--accent);transition:color .5s}
+.h3-moods{display:flex;gap:8px;margin:32px 0 0;direction:ltr}
+.h3-moods button{padding:9px 18px;border-radius:999px;border:1px solid #d9cdbb;background:transparent;color:#6a6157;font-size:12px;font-weight:900;letter-spacing:.08em;cursor:pointer;transition:.22s}
+.h3-moods button:hover{transform:translateY(-2px)}
+.h3-moods button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.h3-cta{align-self:flex-start;margin:26px 0 0;background:var(--ink);color:#fff;padding:16px 34px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s}
+.h3-cta:hover{transform:translateY(-2px)}
+@keyframes h3float{from{transform:translateY(-12px)}to{transform:translateY(12px)}}
+@keyframes h3spin{from{transform:rotateY(-9deg)}to{transform:rotateY(9deg)}}
+@keyframes h3sh{from{transform:scale(.9);opacity:.5}to{transform:scale(1.08);opacity:.85}}
+@media(max-width:820px){
+  .hero3d{grid-template-columns:1fr;min-height:0}
+  .h3-stage{order:1;min-height:54vh;padding:16px 0}
+  .h3-copy{order:2;padding:28px 22px 40px}
+  .h3-h{font-size:clamp(42px,13vw,66px)}
+  .h3-obj{height:min(48vh,400px)}
+}
 @media(prefers-reduced-motion:reduce){
-  .xh-photo.on{animation:none}
-  .xhero-eyebrow,.xhero-sub,.xhero-moods,.xhero-cta{opacity:1;transform:none;animation:none}
+  .h3-float,.h3-spin,.h3-shadow{animation:none}
+  .h3-obj{transition:none}
 }
 """
 
@@ -585,25 +615,26 @@ XHERO = """    <header class="xtop">
         <a class="xnav-cta" href="#quiz">מה מתאים לי?</a>
       </nav>
     </header>
-    <section class="xhero" id="xhero" style="--accent:var(--energy)" aria-label="mood — ביס אחד והמצב שלך משתנה">
-      <div class="xhero-media">
-        <img class="xh-photo on" data-sku="energy" src="__ELIFE__" alt="אישה עם mood Energy">
-        <img class="xh-photo" data-sku="relax" src="__RLIFE__" alt="אישה עם mood Relax">
-        <img class="xh-photo" data-sku="sleep" src="__SLIFE__" alt="אישה עם mood Sleep">
+    <section class="hero3d" id="xhero" style="--accent:var(--energy)" aria-label="mood — שוקולד פונקציונלי בתלת מימד">
+      <div class="h3-stage" id="h3stage">
+        <div class="h3-shadow"></div>
+        <div class="h3-float"><div class="h3-spin"><div class="h3-obj" id="h3obj">
+          <img class="h3-p on" data-sku="energy" src="__ENERGY__" alt="mood Energy">
+          <img class="h3-p" data-sku="relax" src="__RELAX__" alt="mood Relax">
+          <img class="h3-p" data-sku="sleep" src="__SLEEP__" alt="mood Sleep">
+          <span class="h3-glare"></span>
+        </div></div></div>
+        <div class="h3-hint">הזיזו · געו</div>
       </div>
-      <div class="xhero-copy">
-        <div class="xhero-eyebrow">ריטואל פונקציונלי · בקרוב 12.8</div>
-        <h1 class="xhero-h">ביס אחד.<br>וה־<span class="xh-mood">mood</span> שלך משתנה.</h1>
-        <p class="xhero-sub">שוקולד מריר 70% עם פורמולה טבעית — לאנרגיה, לרוגע, לשינה. בלי סוכר, בלי הנפילה של הקפה.</p>
-        <div class="xhero-moods" role="group" aria-label="בחירת מצב רוח">
+      <div class="h3-copy">
+        <div class="h3-eyebrow">ריטואל פונקציונלי · 12.8</div>
+        <h1 class="h3-h">ביס אחד.<br>מצב <span class="xh-mood">חדש</span>.</h1>
+        <div class="h3-moods" role="group" aria-label="בחירת מצב">
           <button class="on" data-sku="energy">ENERGY</button>
           <button data-sku="relax">RELAX</button>
           <button data-sku="sleep">SLEEP</button>
         </div>
-        <div class="xhero-cta">
-          <a class="xh-primary" href="#quiz">מה מתאים לי?</a>
-          <a class="xh-secondary" href="#products">לכל המוצרים</a>
-        </div>
+        <a class="h3-cta" href="#products">מה מתאים לי?</a>
       </div>
     </section>
 """
@@ -612,14 +643,32 @@ HERO_JS = """  <script>
   (function(){
     var hero=document.getElementById("xhero"); if(!hero)return;
     var HEX={energy:"#e8812c",relax:"#7e9b63",sleep:"#5e7ba8"};
-    var photos=hero.querySelectorAll(".xh-photo");
-    var btns=hero.querySelectorAll(".xhero-moods button");
+    var photos=hero.querySelectorAll(".h3-p");
+    var btns=hero.querySelectorAll(".h3-moods button");
     btns.forEach(function(b){ b.addEventListener("click",function(){
       var sku=b.dataset.sku;
       btns.forEach(function(x){x.classList.toggle("on",x===b);});
       photos.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
       hero.style.setProperty("--accent",HEX[sku]);
     });});
+    // interactive 3D tilt — the pouch turns toward the pointer, glare sweeps
+    var stage=document.getElementById("h3stage"), obj=document.getElementById("h3obj");
+    var glare=obj&&obj.querySelector(".h3-glare");
+    if(stage&&obj&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
+      var raf=0, tx=0, ty=0;
+      function move(cx,cy){
+        var r=stage.getBoundingClientRect();
+        var px=(cx-r.left)/r.width-0.5, py=(cy-r.top)/r.height-0.5;
+        tx=px; ty=py;
+        if(!raf)raf=requestAnimationFrame(apply);
+      }
+      function apply(){ raf=0;
+        obj.style.transform="rotateY("+(tx*22)+"deg) rotateX("+(-ty*18)+"deg)";
+        if(glare){glare.style.transform="translateX("+(tx*90)+"%)"; glare.style.opacity="0.55";}
+      }
+      stage.addEventListener("pointermove",function(e){move(e.clientX,e.clientY);});
+      stage.addEventListener("pointerleave",function(){obj.style.transform=""; if(glare)glare.style.opacity="0";});
+    }
   })();
   </script>
 """
