@@ -4,7 +4,7 @@
 <body style="margin:0;background:#FBF9F5">
 <!-- ============ MOOD — living 3D formula, clean futuristic layout ============ -->
 <section id="mood-xp" dir="rtl">
-  <div class="xp-ver">BUILD&nbsp;12</div>
+  <div class="xp-ver">BUILD&nbsp;13</div>
   <canvas class="xp-gl"></canvas>
   <div class="xp-vig"></div>
   <div class="xp-ui">
@@ -153,11 +153,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const spot=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:spotTex,transparent:true,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending,opacity:0.5}));
   spot.scale.set(5.2,5.2,1);spot.renderOrder=-2;S.add(spot);
   // soft CONTACT SHADOW beneath the chocolate → grounds it and makes it pop off the screen (Apple-style)
-  const shadTex=(function(){const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
-    const gr=g.createRadialGradient(64,64,2,64,64,64);gr.addColorStop(0,"rgba(58,36,18,.55)");gr.addColorStop(.55,"rgba(58,36,18,.22)");gr.addColorStop(1,"rgba(58,36,18,0)");
-    g.fillStyle=gr;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);})();
-  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shadTex,transparent:true,depthWrite:false,depthTest:false,blending:THREE.MultiplyBlending,opacity:0.9}));
-  shadow.scale.set(3.6,1.5,1);shadow.renderOrder=-2;S.add(shadow);
+  const shadTex=(function(){const c=document.createElement("canvas");c.width=c.height=160;const g=c.getContext("2d");
+    const gr=g.createRadialGradient(80,80,2,80,80,80);gr.addColorStop(0,"rgba(60,38,20,.40)");gr.addColorStop(.42,"rgba(60,38,20,.16)");gr.addColorStop(.75,"rgba(60,38,20,.04)");gr.addColorStop(1,"rgba(60,38,20,0)");
+    g.fillStyle=gr;g.fillRect(0,0,160,160);return new THREE.CanvasTexture(c);})();
+  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shadTex,transparent:true,depthWrite:false,depthTest:false,blending:THREE.MultiplyBlending,opacity:0.85}));
+  shadow.scale.set(4.4,1.15,1);shadow.renderOrder=-2;S.add(shadow);
 
   function extG(shape,ctr){const g=new THREE.ExtrudeGeometry(shape,{depth:0.62,bevelEnabled:true,bevelThickness:0.13,bevelSize:0.12,bevelSegments:5,curveSegments:36});
     let ox=0,oy=0;if(ctr!==false){g.computeBoundingBox();const bb=g.boundingBox;ox=(bb.min.x+bb.max.x)/2;oy=(bb.min.y+bb.max.y)/2;g.translate(-ox,-oy,-(bb.min.z+bb.max.z)/2);}g.userData.ox=ox;g.userData.oy=oy;return g;}
@@ -262,7 +262,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       for(let j=0;j<pts.length&&p<MAXP;j++){const s=pts[j];
         P_CLOUD[p]=i;P_LX[p]=s[0]*w;P_LY[p]=s[1]*w;P_LZ[p]=(((j*53)%100)/100-0.5)*w*0.85;
         P_PH[p]=(j*0.618+i)*6.283%6.283;
-        aCol[p*3]=s[2];aCol[p*3+1]=s[3];aCol[p*3+2]=s[4];aSize[p]=0.5+w*0.24;aA[p]=0.92;p++;}
+        // gentle saturation lift so each ingredient's real hue reads distinct (rodiola orange vs green tea vs cocoa-browns) without inventing colours
+        const lum=s[2]*0.32+s[3]*0.55+s[4]*0.13;
+        aCol[p*3]=Math.min(1,lum+(s[2]-lum)*1.42);aCol[p*3+1]=Math.min(1,lum+(s[3]-lum)*1.42);aCol[p*3+2]=Math.min(1,lum+(s[4]-lum)*1.42);
+        aSize[p]=0.5+w*0.24;aA[p]=0.92;p++;}
     });
     activeCount=p;pg.instanceCount=activeCount;
     pg.attributes.iColor.needsUpdate=true;pg.attributes.iSize.needsUpdate=true;pg.attributes.iAlpha.needsUpdate=true;
@@ -274,8 +277,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       let s0=null;function up(ts){s0=s0||ts;const k=clamp((ts-s0-dly)/650,0,1);b.textContent=Math.round(v*ease3(k));if(k<1)requestAnimationFrame(up);}requestAnimationFrame(up);});
   }
   // ---- cinematic choreography state ----
-  let curIdx=null,pendingIdx=null,phaseMode=null,phaseT0=0,spinImp=0;
-  const DUR_IN=0.95,DUR_OUT=0.42,STAG=0.09;
+  let curIdx=null,pendingIdx=null,phaseMode=null,phaseT0=0,spinImp=0,introT0=0;
+  const DUR_IN=1.05,DUR_OUT=0.5,STAG=0.1;
   function applyMood(idx){const m=MOODS[idx];root.style.setProperty("--acc",m.acc);
     ui.name.textContent=m.he;ui.benefit.textContent=m.benefit;ui.pouch.src=POUCHES[MKEY[idx]];
     ui.pills.forEach(p=>p.classList.toggle("on",+p.dataset.m===idx));
@@ -286,8 +289,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     function tu(ts){s0=s0||ts;const k=clamp((ts-s0-150)/820,0,1);ui.total.innerHTML=`<span class="v"><b>${Math.round(total*ease3(k))}</b><i>מ״ג</i></span><span class="k">תמצית צמחים בכל חטיף</span>`;if(k<1)requestAnimationFrame(tu);}requestAnimationFrame(tu);
   }
   function switchMood(idx){if(idx===curIdx&&phaseMode!=='out')return;
-    if(curIdx===null){curIdx=idx;applyMood(idx);phaseMode='in';phaseT0=performance.now();}
-    else{pendingIdx=idx;phaseMode='out';phaseT0=performance.now();spinImp+=1.15;
+    if(curIdx===null){curIdx=idx;applyMood(idx);phaseMode='in';phaseT0=performance.now();introT0=performance.now();}
+    else{pendingIdx=idx;phaseMode='out';phaseT0=performance.now();spinImp+=0.9;
       ui.pills.forEach(p=>p.classList.toggle("on",+p.dataset.m===idx));   // instant tab feedback
       root.style.setProperty("--acc",MOODS[idx].acc);}
   }
@@ -312,11 +315,14 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     const nowms=ts||performance.now();
     if(phaseMode==='out'&&(nowms-phaseT0)/1000>=DUR_OUT){curIdx=pendingIdx;applyMood(curIdx);phaseMode='in';phaseT0=nowms;}
     const el=(nowms-phaseT0)/1000;
-    spinImp*=0.92;
+    spinImp*=0.9;
+    // first-load entrance: the chocolate eases in (scale + settle) while the powders assemble
+    const intro=introT0?clamp((nowms-introT0)/1000/1.0,0,1):1, ei=ease3(intro);
+    shapeGroup.scale.setScalar(0.9*(0.86+0.14*ei));
     // the world (chocolate) stays the stable centre — gently turns, plus a directed turn on switch
-    shapeGroup.rotation.y=Math.sin(T*0.38)*0.5+drag*0.5+mx*0.25+spinImp;
-    shapeGroup.rotation.x=clamp(-0.04+Math.sin(T*0.3)*0.05-my*0.12,-0.3,0.3);
-    shapeGroup.position.y=SCENE_Y+Math.sin(T*0.6)*0.05;
+    shapeGroup.rotation.y=Math.sin(T*0.32)*0.34+drag*0.5+mx*0.22+spinImp+(1-ei)*0.5;
+    shapeGroup.rotation.x=clamp(-0.04+Math.sin(T*0.26)*0.04-my*0.1,-0.3,0.3);
+    shapeGroup.position.y=SCENE_Y+Math.sin(T*0.55)*0.045-(1-ei)*0.5;
     // ingredients revolve around the central chocolate: the on-screen (x,y) path always clears the chocolate silhouette (so nothing ever overlaps it → clean on every device),
     // while a LARGE z swing makes them swoop toward & away from the camera → strong, close 3D depth.
     // close, tilted 3D ring — the powder revolves right around the chocolate and swings BEHIND it (occluded because the chocolate paints over it); clean on every device
