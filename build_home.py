@@ -178,22 +178,14 @@ FOUNDERS = """    <section class="hf" id="founders" aria-label="המייסדים
     </section>
 """
 
-CLOSE = """    <section class="hc" id="join" aria-label="חברי מייסדים · השקה 12.8">
+CLOSE = """    <section class="hc" aria-label="ההשקה של mood — 12.8">
       <img class="hc-bg" src="__CHOC__" alt="">
       <div class="hc-in reveal">
-        <div class="hc-eyebrow">חברי מייסדים · 500 הראשונים</div>
-        <h2 class="hc-h">היו מהראשונים.<br>לתמיד.</h2>
-        <p class="hc-lead">mood יוצא לדרך ב-12.8. חברי המייסדים מקבלים מחיר השקה שנשאר נעול לתמיד, שקית מתנה בהזמנה הראשונה, וגישה מוקדמת יום לפני כולם.</p>
-        <div class="hc-count" id="hcCount" aria-label="ספירה לאחור להשקה">
-          <div><b data-u="d">--</b><span>ימים</span></div><div><b data-u="h">--</b><span>שעות</span></div><div><b data-u="m">--</b><span>דקות</span></div><div><b data-u="s">--</b><span>שניות</span></div>
-        </div>
-        <form class="hc-form" id="joinForm" novalidate>
-          <input type="email" required placeholder="אימייל" aria-label="אימייל">
-          <input type="tel" placeholder="וואטסאפ (לא חובה)" aria-label="וואטסאפ">
-          <button type="submit">שריינו את המקום שלי</button>
-        </form>
-        <div class="hc-note" id="joinNote">בלי ספאם — עדכון אחד, כשנפתחים.</div>
-        <div class="hc-chips"><span>מחיר נעול לתמיד</span><span>שקית מתנה</span><span>גישה מוקדמת</span><span>אחריות 30 יום</span></div>
+        <div class="hc-eyebrow">בקרוב · 12.8</div>
+        <h2 class="hc-h">הריטואל שלך מתחיל<br>ב-12 באוגוסט.</h2>
+        <p class="hc-lead">שלושה מצבי רוח. קובייה אחת ביום. חודש שלם.</p>
+        <a class="hc-cta" href="#products">אולי הגיע הזמן →</a>
+        <div class="hc-chips"><span>70% מריר</span><span>0 סוכר</span><span>כשר פרווה</span><span>30 יחידות</span></div>
       </div>
     </section>
 """
@@ -573,6 +565,16 @@ XHERO_CSS = """
   .xkit-copy{order:2}
   .xkit-h{font-size:clamp(30px,9vw,42px)}
 }
+/* ALIVE — calm cinematic life (motion-director: intensity 3-4, transform/opacity only) */
+@keyframes kenburns{from{transform:scale(1.05)}to{transform:scale(1.11)}}
+.xh-photo.on{animation:kenburns 17s ease-in-out infinite alternate}
+@keyframes heroRise{to{opacity:1;transform:none}}
+.xhero-eyebrow,.xhero-sub,.xhero-moods,.xhero-cta{opacity:0;transform:translateY(14px);animation:heroRise .6s cubic-bezier(.22,.8,.28,1) forwards}
+.xhero-eyebrow{animation-delay:.06s}.xhero-sub{animation-delay:.2s}.xhero-moods{animation-delay:.34s}.xhero-cta{animation-delay:.48s}
+@media(prefers-reduced-motion:reduce){
+  .xh-photo.on{animation:none}
+  .xhero-eyebrow,.xhero-sub,.xhero-moods,.xhero-cta{opacity:1;transform:none;animation:none}
+}
 """
 
 XHERO = """    <header class="xtop">
@@ -593,50 +595,14 @@ XHERO = """    <header class="xtop">
         <div class="xhero-eyebrow">ריטואל פונקציונלי · בקרוב 12.8</div>
         <h1 class="xhero-h">ביס אחד.<br>וה־<span class="xh-mood">mood</span> שלך משתנה.</h1>
         <p class="xhero-sub">שוקולד מריר 70% עם פורמולה טבעית — לאנרגיה, לרוגע, לשינה. בלי סוכר, בלי הנפילה של הקפה.</p>
-        <div class="xhero-claims"><span><b>70%</b> מריר</span><span><b>0</b> סוכר</span><span>~25מ״ג קפאין טבעי</span><span>כשר פרווה</span></div>
         <div class="xhero-moods" role="group" aria-label="בחירת מצב רוח">
           <button class="on" data-sku="energy">ENERGY</button>
           <button data-sku="relax">RELAX</button>
           <button data-sku="sleep">SLEEP</button>
         </div>
         <div class="xhero-cta">
-          <a class="xh-primary" href="#join">להצטרף לחברי המייסדים</a>
-          <a class="xh-secondary" href="#quiz">מה מתאים לי?</a>
-        </div>
-        <div class="xhero-guar">אחריות 30 יום · אוהבים או מקבלים בחזרה · השקה 12.8</div>
-      </div>
-    </section>
-    <div class="xtrust" aria-label="למה לסמוך על mood">
-      <span>כשר פרווה</span><span>מיוצר בישראל</span><span>אחריות 30 יום</span><span>משלוח חינם מעל ₪199</span><span>תמיכה בוואטסאפ</span>
-    </div>
-    <section class="xkit" id="kit" aria-label="מארז היכרות · הצעת מייסדים">
-      <div class="xkit-in">
-        <div class="xkit-media reveal">
-          <div class="xkit-glow"></div>
-          <div class="xkit-pouches">
-            <img src="__RELAX__" alt="mood Relax">
-            <img src="__ENERGY__" alt="mood Energy">
-            <img src="__SLEEP__" alt="mood Sleep">
-          </div>
-          <div class="xkit-badge">הצעת השקה</div>
-        </div>
-        <div class="xkit-copy reveal">
-          <div class="xkit-eyebrow">מארז היכרות · הצעת מייסדים</div>
-          <h2 class="xkit-h">כל המצבים.<br>מארז אחד.</h2>
-          <p class="xkit-sub">Energy לבוקר · Relax לערב · Sleep ללילה. שלושתם בהזמנה אחת — הדרך הכי קלה לגלות איזה ריטואל באמת שלכם.</p>
-          <ul class="xkit-list">
-            <li>3 שקיות · 90 קוביות · שלושה חודשי ריטואל</li>
-            <li>טעימה מכל מצב — בלי להתחייב לאחד</li>
-            <li>משלוח חינם · מגיע עד הבית</li>
-          </ul>
-          <div class="xkit-price">
-            <span class="xkit-now">₪189</span>
-            <span class="xkit-was">₪237</span>
-            <span class="xkit-save">חיסכון ₪48</span>
-          </div>
-          <div class="xkit-pay">או עד 3 תשלומים ללא ריבית · Bit · Apple Pay</div>
-          <a class="xkit-cta" href="#join">לשריון מארז המייסדים</a>
-          <div class="xkit-guar"><b>לא התאהבתם? 30 יום, הכסף חזרה.</b> בלי שאלות.</div>
+          <a class="xh-primary" href="#quiz">מה מתאים לי?</a>
+          <a class="xh-secondary" href="#products">לכל המוצרים</a>
         </div>
       </div>
     </section>
@@ -747,7 +713,7 @@ def main():
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
-    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + JOIN_JS + '</body>')
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
