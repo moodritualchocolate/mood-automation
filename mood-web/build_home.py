@@ -102,8 +102,18 @@ NEW_CSS = """
 .hc-lead{margin:16px auto 0;color:#e5ddd2;font-size:clamp(15px,1.5vw,19px);line-height:1.6;max-width:480px}
 .hc-cta{display:inline-block;margin:34px 0 0;padding:16px 34px;border-radius:999px;background:var(--energy);color:#171714;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s ease,background .2s ease}
 .hc-cta:hover{transform:translateY(-2px);background:#f2902e}
-.hc-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:34px auto 0;direction:rtl}
+.hc-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:30px auto 0;direction:rtl}
 .hc-chips span{font-size:12px;font-weight:700;color:#e5ddd2;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:8px 15px}
+.hc-count{display:flex;justify-content:center;gap:12px;margin:30px 0 0;direction:ltr}
+.hc-count>div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:12px 10px;min-width:64px}
+.hc-count b{display:block;font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;color:#fff;line-height:1}
+.hc-count span{display:block;margin-top:6px;font-size:10px;font-weight:700;color:#c9bfb2;letter-spacing:.06em}
+.hc-form{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:28px auto 0;max-width:520px}
+.hc-form input{flex:1 1 190px;min-width:0;padding:15px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:#fff;font-size:15px;font-family:inherit;text-align:right}
+.hc-form input::placeholder{color:#b3a99c}
+.hc-form button{flex:1 1 100%;padding:16px;border-radius:999px;border:0;background:var(--energy);color:#171714;font-size:15px;font-weight:800;cursor:pointer;transition:transform .2s}
+.hc-form button:hover{transform:translateY(-2px)}
+.hc-note{margin:14px 0 0;font-size:12px;color:#9a9082}
 
 /* Footer */
 .hft{background:#fff;text-align:center;padding:52px 24px 60px;border-top:1px solid #ece6dc}
@@ -168,14 +178,22 @@ FOUNDERS = """    <section class="hf" id="founders" aria-label="המייסדים
     </section>
 """
 
-CLOSE = """    <section class="hc" aria-label="ההשקה של mood — 12.8">
+CLOSE = """    <section class="hc" id="join" aria-label="חברי מייסדים · השקה 12.8">
       <img class="hc-bg" src="__CHOC__" alt="">
       <div class="hc-in reveal">
-        <div class="hc-eyebrow">בקרוב · 12.8</div>
-        <h2 class="hc-h">הריטואל שלך מתחיל<br>ב-12 באוגוסט.</h2>
-        <p class="hc-lead">שלושה מצבי רוח. קובייה אחת ביום. חודש שלם.</p>
-        <a class="hc-cta" href="#products">אולי הגיע הזמן →</a>
-        <div class="hc-chips"><span>70% מריר</span><span>0 סוכר</span><span>כשר פרווה</span><span>30 יחידות</span></div>
+        <div class="hc-eyebrow">חברי מייסדים · 500 הראשונים</div>
+        <h2 class="hc-h">היו מהראשונים.<br>לתמיד.</h2>
+        <p class="hc-lead">mood יוצא לדרך ב-12.8. חברי המייסדים מקבלים מחיר השקה שנשאר נעול לתמיד, שקית מתנה בהזמנה הראשונה, וגישה מוקדמת יום לפני כולם.</p>
+        <div class="hc-count" id="hcCount" aria-label="ספירה לאחור להשקה">
+          <div><b data-u="d">--</b><span>ימים</span></div><div><b data-u="h">--</b><span>שעות</span></div><div><b data-u="m">--</b><span>דקות</span></div><div><b data-u="s">--</b><span>שניות</span></div>
+        </div>
+        <form class="hc-form" id="joinForm" novalidate>
+          <input type="email" required placeholder="אימייל" aria-label="אימייל">
+          <input type="tel" placeholder="וואטסאפ (לא חובה)" aria-label="וואטסאפ">
+          <button type="submit">שריינו את המקום שלי</button>
+        </form>
+        <div class="hc-note" id="joinNote">בלי ספאם — עדכון אחד, כשנפתחים.</div>
+        <div class="hc-chips"><span>מחיר נעול לתמיד</span><span>שקית מתנה</span><span>גישה מוקדמת</span><span>אחריות 30 יום</span></div>
       </div>
     </section>
 """
@@ -505,6 +523,13 @@ XHERO_CSS = """
 .xh-primary:hover{transform:translateY(-2px)}
 .xh-secondary{background:#fff;color:var(--ink);border:1px solid #e2d8c8;padding:16px 26px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s}
 .xh-secondary:hover{transform:translateY(-2px)}
+.xhero-claims{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;direction:rtl}
+.xhero-claims span{font-size:12.5px;font-weight:700;color:#5a5249;background:#fff;border:1px solid #e6dccb;border-radius:999px;padding:7px 13px}
+.xhero-claims b{color:var(--accent);font-weight:900;transition:color .5s}
+.xhero-guar{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
+.xtrust{background:var(--ink);color:#efe7db;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;padding:13px 20px;font-size:13px;font-weight:700;direction:rtl}
+.xtrust span{display:inline-flex;align-items:center;gap:8px}
+.xtrust span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--energy)}
 @media(max-width:820px){
   .xnav-links{display:none}
   .xhero{grid-template-columns:1fr;min-height:0}
@@ -532,17 +557,22 @@ XHERO = """    <header class="xtop">
         <div class="xhero-eyebrow">ריטואל פונקציונלי · בקרוב 12.8</div>
         <h1 class="xhero-h">ביס אחד.<br>וה־<span class="xh-mood">mood</span> שלך משתנה.</h1>
         <p class="xhero-sub">שוקולד מריר 70% עם פורמולה טבעית — לאנרגיה, לרוגע, לשינה. בלי סוכר, בלי הנפילה של הקפה.</p>
+        <div class="xhero-claims"><span><b>70%</b> מריר</span><span><b>0</b> סוכר</span><span>~25מ״ג קפאין טבעי</span><span>כשר פרווה</span></div>
         <div class="xhero-moods" role="group" aria-label="בחירת מצב רוח">
           <button class="on" data-sku="energy">ENERGY</button>
           <button data-sku="relax">RELAX</button>
           <button data-sku="sleep">SLEEP</button>
         </div>
         <div class="xhero-cta">
-          <a class="xh-primary" href="#quiz">מה מתאים לי?</a>
-          <a class="xh-secondary" href="#products">לכל המוצרים</a>
+          <a class="xh-primary" href="#join">להצטרף לחברי המייסדים</a>
+          <a class="xh-secondary" href="#quiz">מה מתאים לי?</a>
         </div>
+        <div class="xhero-guar">אחריות 30 יום · אוהבים או מקבלים בחזרה · השקה 12.8</div>
       </div>
     </section>
+    <div class="xtrust" aria-label="למה לסמוך על mood">
+      <span>כשר פרווה</span><span>מיוצר בישראל</span><span>אחריות 30 יום</span><span>משלוח חינם מעל ₪199</span><span>תמיכה בוואטסאפ</span>
+    </div>
 """
 
 HERO_JS = """  <script>
@@ -557,6 +587,33 @@ HERO_JS = """  <script>
       photos.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
       hero.style.setProperty("--accent",HEX[sku]);
     });});
+  })();
+  </script>
+"""
+
+
+JOIN_JS = """  <script>
+  (function(){
+    var el=document.getElementById("hcCount");
+    if(el){
+      var target=new Date("2026-08-12T00:00:00+03:00").getTime();
+      function tick(){
+        var d=target-Date.now(); if(d<0)d=0;
+        el.querySelector('[data-u=d]').textContent=Math.floor(d/864e5);
+        el.querySelector('[data-u=h]').textContent=Math.floor(d/36e5)%24;
+        el.querySelector('[data-u=m]').textContent=Math.floor(d/6e4)%60;
+        el.querySelector('[data-u=s]').textContent=Math.floor(d/1e3)%60;
+      }
+      tick(); setInterval(tick,1000);
+    }
+    var f=document.getElementById("joinForm"), note=document.getElementById("joinNote");
+    if(f)f.addEventListener("submit",function(e){
+      e.preventDefault();
+      if(!f.querySelector('input[type=email]').value) return;
+      f.style.display="none";
+      note.textContent="נרשמת! נהיה בקשר ב-12.8.";
+      note.style.color="#fff";
+    });
   })();
   </script>
 """
@@ -606,7 +663,7 @@ def main():
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
-    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + '</body>')
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + JOIN_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
