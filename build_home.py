@@ -198,6 +198,279 @@ MOTION_JS = """  <script>
 """
 
 
+# ============================================================================
+# Interactive capability modules (integrated into the home, not a separate demo)
+#   quiz · immersive one-ritual-per-screen · ritual-kit bundle · day timeline
+# ============================================================================
+CAP_CSS = """
+/* ---- interactive capability modules ---- */
+:root{--accent:var(--energy)}
+.cap{position:relative}
+.cap-label{width:min(1080px,100%);margin:34px auto 0;padding:22px 22px 0;
+  font-size:12px;font-weight:900;letter-spacing:.12em;color:#a08a72;border-top:1px solid #e9e2d6}
+.cap-title{width:min(1080px,100%);margin:6px auto 0;padding:0 22px}
+.cap-title h2{font-size:clamp(26px,4vw,42px);line-height:1.04;letter-spacing:-.04em;font-weight:800;margin:0}
+.cap-title p{margin:8px 0 0;color:var(--muted);font-size:15px;line-height:1.55;max-width:520px}
+/* immersive scroll */
+.scroll-wrap{height:260vh;position:relative;margin-top:26px}
+.scroll-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--cream);transition:background-color .9s ease}
+.scroll-glow{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(60% 55% at 50% 42%,color-mix(in srgb,var(--accent) 34%,transparent),transparent 70%);transition:background .9s ease}
+.scroll-inner{position:absolute;inset:0;z-index:2}
+.scroll-stage{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;text-align:center;padding:0 24px;opacity:0;transition:opacity .6s ease;pointer-events:none}
+.scroll-stage.on{opacity:1;pointer-events:auto}
+.scroll-stage>*{max-width:min(560px,86vw)}
+.scroll-pouch{width:auto;height:min(340px,42vh);margin:0 auto 22px;filter:drop-shadow(0 26px 30px rgba(41,31,18,.22));animation:floatp 6s ease-in-out infinite alternate}
+.scroll-kicker{display:inline-block;font-size:12px;font-weight:900;letter-spacing:.14em;color:var(--accent);margin-bottom:10px}
+.scroll-h{font-size:clamp(34px,7vw,64px);color:var(--ink);line-height:1.02;letter-spacing:-.04em;font-weight:800;margin:0}
+.scroll-sub{margin:14px auto 0;color:#4c4841;font-size:clamp(15px,2vw,19px);max-width:360px;line-height:1.5}
+.scroll-dots{position:absolute;z-index:3;bottom:34px;left:0;right:0;display:flex;gap:9px;justify-content:center}
+.scroll-dots i{width:8px;height:8px;border-radius:50%;background:#cbbfae;transition:transform .3s,background .3s}
+.scroll-dots i.on{background:var(--accent);transform:scale(1.5)}
+@keyframes floatp{from{transform:translateY(0)}to{transform:translateY(-16px)}}
+/* quiz */
+.quiz{width:min(760px,100%);margin:30px auto 0;padding:0 22px}
+.quiz-card{background:var(--paper);border:1px solid #e9e2d6;border-radius:28px;padding:clamp(26px,4vw,44px);box-shadow:0 16px 40px rgba(41,32,20,.06);text-align:center}
+.quiz-q h3{font-size:clamp(24px,4vw,34px);margin:0;font-weight:800;letter-spacing:-.03em}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+.quiz-opt{border:1px solid #e9e2d6;background:var(--cream);border-radius:18px;padding:20px 16px;font-size:16px;font-weight:700;color:var(--ink);cursor:pointer;text-align:center;transition:transform .18s,border-color .18s}
+.quiz-opt:hover{transform:translateY(-2px);border-color:var(--sel)}
+.quiz-opt b{display:block;font-size:22px;margin-bottom:5px;color:var(--sel)}
+.quiz-result{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+.quiz-result.on{opacity:1;transform:none}
+.quiz-result .rpouch{width:auto;height:210px;margin:0 auto 16px;filter:drop-shadow(0 20px 24px rgba(41,31,18,.2))}
+.quiz-result .rkick{font-size:12px;font-weight:900;letter-spacing:.16em;color:var(--accent)}
+.quiz-result h3{font-size:34px;margin-top:8px;font-weight:800;letter-spacing:-.03em}
+.quiz-result p{max-width:400px;margin:12px auto 0;color:var(--muted);line-height:1.6;font-size:16px}
+.qbtn{display:inline-block;margin-top:22px;padding:15px 30px;border-radius:999px;background:var(--accent);color:#fff;font-weight:800;font-size:15px;text-decoration:none;border:0;cursor:pointer;transition:transform .18s,filter .18s}
+.qbtn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.qreset{margin-top:14px;display:block;background:none;border:0;color:#9a938a;font-size:13px;font-weight:700;cursor:pointer;width:100%}
+/* bundle */
+.bundle{width:min(760px,100%);margin:30px auto 0;padding:0 22px}
+.brow{display:flex;align-items:center;gap:16px;background:var(--paper);border:1px solid #e9e2d6;border-radius:22px;padding:16px 18px;margin-bottom:12px}
+.brow img{width:72px;height:72px;object-fit:contain;flex:0 0 auto}
+.brow .bmeta{flex:1;min-width:0}
+.brow .bmeta b{display:flex;align-items:center;gap:8px;font-size:17px}
+.brow .bmeta b i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.brow .bmeta span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.stepper{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.stepper button{width:38px;height:38px;border-radius:50%;border:1px solid #e9e2d6;background:var(--cream);font-size:20px;font-weight:800;cursor:pointer;color:var(--ink);line-height:1;transition:background .15s,transform .15s}
+.stepper button:hover{background:#efe7da;transform:translateY(-1px)}
+.stepper .qv{min-width:26px;text-align:center;font-size:19px;font-weight:900;font-variant-numeric:tabular-nums}
+.bbar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--ink);color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -10px 30px rgba(0,0,0,.18);transform:translateY(130%);transition:transform .4s cubic-bezier(.22,.8,.28,1)}
+.bbar.show{transform:none}
+.bbar .binfo b{font-size:20px;font-variant-numeric:tabular-nums}
+.bbar .binfo .was{color:#a49a8d;text-decoration:line-through;font-size:14px;margin-inline-start:8px}
+.bbar .binfo small{display:block;color:#7fbf6b;font-size:12px;font-weight:800;margin-top:2px}
+.bbar .badd{background:var(--energy);color:#171714;padding:14px 26px;border-radius:999px;font-weight:800;font-size:15px;border:0;cursor:pointer;white-space:nowrap;transition:transform .15s}
+.bbar .badd:hover{transform:translateY(-2px)}
+/* day timeline */
+.day{width:min(860px,100%);margin:30px auto 0;padding:0 22px}
+.day-scene{position:relative;border-radius:28px;overflow:hidden;min-height:360px;background:var(--cream);transition:background-color .6s ease;display:grid;place-items:center;padding:34px 22px;text-align:center}
+.day-scene .glow{position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 40%,color-mix(in srgb,var(--accent) 40%,transparent),transparent 72%);transition:background .6s ease}
+.day-inner{position:relative;z-index:2}
+.day-time{font-size:52px;font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums;direction:ltr}
+.day-pouch{width:auto;height:150px;margin:8px auto 12px;filter:drop-shadow(0 20px 22px rgba(41,31,18,.2))}
+.day-kick{font-size:12px;font-weight:900;letter-spacing:.16em;color:var(--accent)}
+.day-line{font-size:clamp(22px,4vw,32px);font-weight:800;margin-top:6px;letter-spacing:-.03em}
+.day-slider{margin:26px 4px 0}
+.day-slider input{width:100%;accent-color:var(--accent);height:6px;cursor:pointer}
+.day-ticks{display:flex;justify-content:space-between;margin-top:8px;color:#9a938a;font-size:12px;font-weight:700;direction:ltr}
+@media(max-width:700px){.quiz-opts{grid-template-columns:1fr}.brow img{width:56px;height:56px}.day-scene{min-height:320px}}
+@media(prefers-reduced-motion:reduce){.scroll-pouch{animation:none}}
+"""
+
+QUIZ = """    <section class="cap" aria-label="Mood Finder">
+      <div class="cap-label">מצאו את הריטואל</div>
+      <div class="cap-title"><h2>שאלה אחת. הריטואל שלך.</h2><p>לא בטוחים איפה להתחיל? ספרו לנו מה מצב הראש — ונתאים לכם רגע.</p></div>
+      <div class="quiz">
+        <div class="quiz-card">
+          <div class="quiz-q" id="quizQ">
+            <h3>מה מצב הראש שלך עכשיו?</h3>
+            <div class="quiz-opts">
+              <button class="quiz-opt" data-sku="energy" style="--sel:var(--energy)"><b>רץ על ריק</b>צריך דלק להמשך היום</button>
+              <button class="quiz-opt" data-sku="relax" style="--sel:var(--relax)"><b>עמוס</b>קשה להוריד הילוך</button>
+              <button class="quiz-opt" data-sku="sleep" style="--sel:var(--sleep)"><b>ער בלילה</b>המוח לא נכבה</button>
+              <button class="quiz-opt" data-sku="energy" style="--sel:var(--energy)"><b>סתם סקרן/ת</b>רוצה להתחיל איפשהו</button>
+            </div>
+          </div>
+          <div class="quiz-result" id="quizR" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+"""
+
+IMMERSIVE = """    <section class="cap" aria-label="שלושת הריטואלים">
+      <div class="cap-label">שלושה מצבים · צבע אחד בכל רגע</div>
+      <div class="cap-title"><h2>מסך שלובש את הריטואל.</h2><p>גללו — כל המסך עובר בין שלושת המצבים. מוצר אחד, צבע אחד, בכל רגע.</p></div>
+      <div class="scroll-wrap" id="scrollWrap">
+        <div class="scroll-sticky" id="scrollSticky">
+          <div class="scroll-glow"></div>
+          <div class="scroll-inner">
+            <div class="scroll-stage" data-i="0" style="--accent:var(--energy)">
+              <img class="scroll-pouch" src="__ENERGY__" alt="mood Energy">
+              <span class="scroll-kicker">ENERGY · בוקר</span>
+              <h2 class="scroll-h">להיכנס לקצב.</h2>
+              <p class="scroll-sub">16:30. במקום עוד קפה — ריטואל שעולה לאט, בלי הנפילה.</p>
+            </div>
+            <div class="scroll-stage" data-i="1" style="--accent:var(--relax)">
+              <img class="scroll-pouch" src="__RELAX__" alt="mood Relax">
+              <span class="scroll-kicker">RELAX · ערב</span>
+              <h2 class="scroll-h">להוריד הילוך.</h2>
+              <p class="scroll-sub">הרעש נכבה. רגע המעבר שבין היום לזמן שלך.</p>
+            </div>
+            <div class="scroll-stage" data-i="2" style="--accent:var(--sleep)">
+              <img class="scroll-pouch" src="__SLEEP__" alt="mood Sleep">
+              <span class="scroll-kicker">SLEEP · לילה</span>
+              <h2 class="scroll-h">להאט באמת.</h2>
+              <p class="scroll-sub">המוח סוף סוף נרדם. לסגור את היום בקצב אחר.</p>
+            </div>
+          </div>
+          <div class="scroll-dots"><i class="on"></i><i></i><i></i></div>
+        </div>
+      </div>
+    </section>
+"""
+
+TIMELINE = """    <section class="cap" aria-label="היום שלך עם mood">
+      <div class="cap-label">ריטואל לכל שעה</div>
+      <div class="cap-title"><h2>איך זה נכנס ליום שלך.</h2><p>גררו לאורך היום — הסצנה, הצבע והמוצר משתנים לפי הרגע.</p></div>
+      <div class="day">
+        <div class="day-scene" id="dayScene" style="--accent:var(--energy)">
+          <div class="glow"></div>
+          <div class="day-inner">
+            <div class="day-time" id="dayTime">08:00</div>
+            <img class="day-pouch" id="dayPouch" src="__ENERGY__" alt="">
+            <div class="day-kick" id="dayKick">ENERGY · בוקר</div>
+            <div class="day-line" id="dayLine">רגע להיכנס לקצב.</div>
+          </div>
+        </div>
+        <div class="day-slider">
+          <input type="range" min="6" max="23" value="8" step="1" id="daySlider" aria-label="שעה ביום">
+          <div class="day-ticks"><span>06:00</span><span>12:00</span><span>18:00</span><span>23:00</span></div>
+        </div>
+      </div>
+    </section>
+"""
+
+BUNDLE = """    <section class="cap" aria-label="בונה ריטואל-קיט">
+      <div class="cap-label">בונה ריטואל-קיט</div>
+      <div class="cap-title"><h2>בונים את היום שלכם.</h2><p>מחיר מתעדכן חי, הנחה עולה עם כל מארז, וה-CTA תמיד איתכם.</p></div>
+      <div class="bundle" id="bundle">
+        <div class="brow" data-sku="energy" style="--c:var(--energy)">
+          <img src="__ENERGY__" alt="Energy">
+          <div class="bmeta"><b><i></i>ENERGY</b><span>לרגעים של תנועה ומיקוד</span></div>
+          <div class="stepper"><button data-d="-1" aria-label="הפחת">−</button><span class="qv">1</span><button data-d="1" aria-label="הוסף">+</button></div>
+        </div>
+        <div class="brow" data-sku="relax" style="--c:var(--relax)">
+          <img src="__RELAX__" alt="Relax">
+          <div class="bmeta"><b><i></i>RELAX</b><span>לרגע להוריד הילוך</span></div>
+          <div class="stepper"><button data-d="-1" aria-label="הפחת">−</button><span class="qv">0</span><button data-d="1" aria-label="הוסף">+</button></div>
+        </div>
+        <div class="brow" data-sku="sleep" style="--c:var(--sleep)">
+          <img src="__SLEEP__" alt="Sleep">
+          <div class="bmeta"><b><i></i>SLEEP</b><span>לרגע לסגור את היום</span></div>
+          <div class="stepper"><button data-d="-1" aria-label="הפחת">−</button><span class="qv">0</span><button data-d="1" aria-label="הוסף">+</button></div>
+        </div>
+      </div>
+      <div class="bbar">
+        <div class="binfo"><b id="bTotal">₪170</b><span class="was" id="bWas" hidden></span><small id="bSave" hidden></small></div>
+        <button class="badd" id="bAdd">הוסיפו לסל · <span id="bBoxes">מארז 1</span></button>
+      </div>
+    </section>
+"""
+
+CAP_JS = """  <script>
+  (function(){
+  var POUCH={energy:"__ENERGY__",relax:"__RELAX__",sleep:"__SLEEP__"};
+  var ACCENT={energy:"var(--energy)",relax:"var(--relax)",sleep:"var(--sleep)"};
+  var HEX={energy:"#e8812c",relax:"#7e9b63",sleep:"#5e7ba8"};
+  /* immersive scroll */
+  (function(){
+    var wrap=document.getElementById("scrollWrap"); if(!wrap)return;
+    var sticky=document.getElementById("scrollSticky");
+    var stages=[].slice.call(document.querySelectorAll(".scroll-stage"));
+    var dots=[].slice.call(document.querySelectorAll(".scroll-dots i"));
+    var cur=-1, ticking=false, HK=["energy","relax","sleep"];
+    function set(i){ if(i===cur)return; cur=i;
+      stages.forEach(function(s,k){s.classList.toggle("on",k===i);});
+      dots.forEach(function(d,k){d.classList.toggle("on",k===i);});
+      sticky.style.setProperty("--accent",ACCENT[HK[i]]);
+      sticky.style.backgroundColor="color-mix(in srgb,"+HEX[HK[i]]+" 8%, var(--cream))";
+    }
+    function upd(){ ticking=false;
+      var r=wrap.getBoundingClientRect(), total=wrap.offsetHeight-window.innerHeight;
+      var p=Math.min(1,Math.max(0,(-r.top)/total));
+      set(Math.min(2,Math.floor(p*2.999)));
+    }
+    addEventListener("scroll",function(){if(!ticking){ticking=true;requestAnimationFrame(upd);}},{passive:true});
+    addEventListener("resize",upd); set(0); upd();
+  })();
+  /* quiz */
+  (function(){
+    var q=document.getElementById("quizQ"), r=document.getElementById("quizR"); if(!q)return;
+    var COPY={
+      energy:{h:"mood ENERGY",p:"לרגעים שצריך בהם יותר תנועה ומיקוד — אנרגיה שעולה לאט, בלי הרעד והנפילה של הקפה.",k:"הריטואל שלך"},
+      relax:{h:"mood RELAX",p:"לרגע המעבר שבין היום לזמן שלך — להוריד הילוך בעדינות, בלי כובד.",k:"הריטואל שלך"},
+      sleep:{h:"mood SLEEP",p:"לרגע שמסמן שהיום נגמר — להאט ולהתכונן ללילה, בלי כבדות בבוקר.",k:"הריטואל שלך"}
+    };
+    q.querySelectorAll(".quiz-opt").forEach(function(b){ b.addEventListener("click",function(){
+      var sku=b.dataset.sku, c=COPY[sku];
+      r.style.setProperty("--accent",ACCENT[sku]);
+      r.innerHTML='<img class="rpouch" src="'+POUCH[sku]+'" alt=""><div class="rkick">'+c.k+'</div><h3>'+c.h+'</h3><p>'+c.p+'</p><button class="qbtn">קחו אותי לריטואל</button><button class="qreset">‹ נסו שוב</button>';
+      q.style.display="none"; r.classList.add("on");
+      r.querySelector(".qreset").addEventListener("click",function(){r.classList.remove("on");r.innerHTML="";q.style.display="";});
+    });});
+  })();
+  /* bundle */
+  (function(){
+    var PRICE=170, qs={energy:1,relax:0,sleep:0};
+    var bundle=document.getElementById("bundle"); if(!bundle)return;
+    var elTotal=document.getElementById("bTotal"), elWas=document.getElementById("bWas"),
+      elSave=document.getElementById("bSave"), elBoxes=document.getElementById("bBoxes");
+    function render(){
+      bundle.querySelectorAll(".brow").forEach(function(row){ row.querySelector(".qv").textContent=qs[row.dataset.sku]; });
+      var boxes=qs.energy+qs.relax+qs.sleep, gross=boxes*PRICE;
+      var rate=boxes>=3?.10:boxes>=2?.05:0, net=Math.round(gross*(1-rate));
+      elTotal.textContent="₪"+net;
+      elBoxes.textContent=boxes===0?"בחרו מארז":("מארז"+(boxes>1?"ים ×"+boxes:" 1"));
+      if(rate>0){elWas.hidden=false;elWas.textContent="₪"+gross;elSave.hidden=false;elSave.textContent="חסכתם ₪"+(gross-net)+" · "+(rate*100)+"% הנחה";}
+      else{elWas.hidden=true;elSave.hidden=true;}
+      document.getElementById("bAdd").disabled=boxes===0;
+    }
+    bundle.addEventListener("click",function(e){
+      var btn=e.target.closest("button[data-d]"); if(!btn)return;
+      var sku=btn.closest(".brow").dataset.sku;
+      qs[sku]=Math.max(0,Math.min(9,qs[sku]+ +btn.dataset.d)); render();
+    });
+    render();
+    var bar=document.querySelector(".bbar");
+    new IntersectionObserver(function(es){es.forEach(function(e){bar.classList.toggle("show",e.isIntersecting);});},
+      {rootMargin:"-30% 0px -20% 0px"}).observe(bundle);
+  })();
+  /* day timeline */
+  (function(){
+    var s=document.getElementById("daySlider"), scene=document.getElementById("dayScene"); if(!s)return;
+    var elT=document.getElementById("dayTime"), elP=document.getElementById("dayPouch"),
+      elK=document.getElementById("dayKick"), elL=document.getElementById("dayLine");
+    var DATA={energy:{k:"ENERGY · בוקר",l:"רגע להיכנס לקצב.",kaft:"ENERGY · צהריים"},
+      relax:{k:"RELAX · ערב",l:"רגע להוריד הילוך."},sleep:{k:"SLEEP · לילה",l:"רגע להאט ולישון."}};
+    function skuFor(h){return h<15?"energy":h<21?"relax":"sleep";}
+    function upd(){
+      var h=+s.value, sku=skuFor(h);
+      elT.textContent=(h<10?"0":"")+h+":00";
+      scene.style.setProperty("--accent",ACCENT[sku]);
+      scene.style.backgroundColor="color-mix(in srgb,"+HEX[sku]+" 9%, var(--cream))";
+      elP.src=POUCH[sku];
+      elK.textContent=(sku==="energy"&&h>=11)?DATA.energy.kaft:DATA[sku].k;
+      elL.textContent=DATA[sku].l;
+    }
+    s.addEventListener("input",upd); upd();
+  })();
+  })();
+  </script>
+"""
+
+
 def build_section(filename: str, is_cinematic: bool) -> str:
     html = (APP / "sections" / filename).read_text(encoding="utf-8")
     html = FONT_LINKS.sub("", html)
@@ -228,18 +501,25 @@ def main():
     shell = (APP / "index.html").read_text(encoding="utf-8")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", NEW_CSS + "\n  </style>", 1)
+    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + "\n  </style>", 1)
     # inline approved hero + formula strip images
     shell = inline_assets(shell)
-    # layer the narrative sections in journey order
-    shell = shell.replace('    <section id="story"', MARQUEE + '    <section id="story"')
-    shell = shell.replace('    <section id="formula"', FOUNDERS + '    <section id="formula"')
-    shell = shell.replace('  </main>', CLOSE + '  </main>\n' + FOOTER)
+    # layer the narrative sections in journey order (Curiosity->...->Purchase):
+    #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
+    #   founders · TIMELINE · formula · BUNDLE · close · footer
+    shell = shell.replace('    <section id="products"', QUIZ + '    <section id="products"')
+    shell = shell.replace('    <section id="story"', IMMERSIVE + MARQUEE + '    <section id="story"')
+    shell = shell.replace('    <section id="formula"', FOUNDERS + TIMELINE + '    <section id="formula"')
+    shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
+    # motion pass + interactive capability modules (inject BEFORE inlining, so the
+    # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
-    # motion pass
-    shell = shell.replace('</body>', MOTION_JS + '</body>')
+    for _m, _f in {"__ENERGY__": "energy.webp", "__RELAX__": "relax.webp",
+                   "__SLEEP__": "sleep.webp"}.items():
+        shell = shell.replace(_m, data_uri(_f))
     # fold the two interactive sections in as srcdoc
     products = escape_srcdoc(build_section("product-cards.html", False))
     cinematic = escape_srcdoc(build_section("cinematic.html", True))
