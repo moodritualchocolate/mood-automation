@@ -220,7 +220,7 @@ footer{border-top:1px solid rgba(80,52,24,.18);text-align:center;padding:50px 24
 const FRAG=`
 precision highp float;
 uniform vec2 uRes; uniform float uTime; uniform vec2 uMouse; uniform float uCast;
-uniform vec3 uAccent; uniform vec3 uBg1; uniform vec3 uBg2; uniform sampler2D uTex; uniform float uSnap; uniform vec2 uLight;
+uniform vec3 uAccent; uniform vec3 uBg1; uniform vec3 uBg2; uniform sampler2D uTex; uniform float uSnap; uniform vec2 uLight; uniform float uStand;
 float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
 float sdRoundBox(vec3 p,vec3 b,float r){vec3 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.)-r;}
 // liquid metaballs
@@ -252,26 +252,30 @@ float emboss(vec3 q){
 }
 float smax(float a,float b,float k){return -smin(-a,-b,k);}
 float mapSquare(vec3 p){
-  float ca=cos(0.13),sa=sin(0.13);                 // fixed tilt so top faces camera
+  float ang=mix(0.13,-1.30,uStand);                // lying (top up) → standing (relief face to camera)
+  float ca=cos(ang),sa=sin(ang);
   vec3 q=vec3(p.x, ca*p.y-sa*p.z, sa*p.y+ca*p.z);
   float d=sdRoundBox(q,bDim,0.045);
   float top=smoothstep(bDim.y-0.07,bDim.y+0.01,q.y);
   d=d-emboss(q)*top;
-  // ---- the BITE: two overlapping bowls scooped from the front-left corner ----
-  float bite=smin(length(q-vec3(-0.86, 0.14, 0.66))-0.44,
-                  length(q-vec3(-0.55, 0.16, 0.60))-0.30, 0.18);
+  // ---- the BITE: two overlapping bowls scooped from a corner of the face ----
+  float bz=mix(0.66,-0.62,uStand);                  // lying: front edge · standing: top edge
+  float bite=smin(length(q-vec3(-0.86, 0.14, bz))-0.44,
+                  length(q-vec3(-0.55, 0.16, bz-0.06))-0.30, 0.18);
   d=smax(d, -bite, 0.06);                            // carve it out, softly
-  // ---- crumbs: a few nuggets that broke off, resting in front of the bite ----
-  d=smin(d, length(q-vec3(-1.02, -0.10, 0.96))-0.085, 0.02);
-  d=smin(d, length(q-vec3(-0.66, -0.12, 1.02))-0.060, 0.02);
-  d=smin(d, length(q-vec3(-1.24, -0.11, 0.72))-0.052, 0.02);
+  // ---- crumbs (only when lying — they rest on the surface in front of the bite) ----
+  if(uStand<0.5){
+    d=smin(d, length(q-vec3(-1.02, -0.10, 0.96))-0.085, 0.02);
+    d=smin(d, length(q-vec3(-0.66, -0.12, 1.02))-0.060, 0.02);
+    d=smin(d, length(q-vec3(-1.24, -0.11, 0.72))-0.052, 0.02);
+  }
   return d;
 }
 mat2 r2(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
 float map(vec3 p){
   p.xz=r2(sin(uTime*0.28)*mix(0.10,0.035,uCast))*p.xz;
   float cc=smoothstep(0.0,1.0,uCast);
-  p.y -= 0.40*(1.0-cc) + 0.04*(1.0-cc)*sin(uTime*0.7);   // molten floats a bit high, then descends into the mold
+  p.y -= 0.52*(1.0-cc) + 0.05*(1.0-cc)*sin(uTime*0.7);   // molten floats high, then drips/descends into the mold
   p.y-=sin(uTime*0.5)*0.035*(0.4+0.6*cc);                // gentle bob, calmer once cast
   if(uCast<0.02) return mapLiquid(p); if(uCast>0.985) return mapSquare(p);
   return mix(mapLiquid(p),mapSquare(p),cc);
@@ -303,9 +307,9 @@ void main(){
   float port=clamp((0.92-uRes.x/uRes.y)/0.5,0.0,1.0);          // 0 desktop → 1 tall phone
   float oa=mix(0.34,-0.05,cz) + 0.03*sin(uTime*0.18);          // orbit sweep + slow living drift
   float dist=mix(4.55,3.62,smoothstep(0.5,1.0,cz))*(1.0+0.46*port); // pull back on portrait so it breathes
-  float hgt=mix(2.28,1.80,cz) + 0.03*sin(uTime*0.33);          // gentle vertical breathe
+  float hgt=mix(2.28, mix(1.80,0.72,uStand), cz) + 0.03*sin(uTime*0.33); // drop to near eye-level for the standing pose
   vec3 ro=vec3(sin(oa)*dist, hgt, cos(oa)*dist);
-  vec3 ta=vec3(0.0,-0.03,0.0);
+  vec3 ta=vec3(0.0, mix(-0.03,0.02,uStand*cz), 0.0);
   vec3 f=normalize(ta-ro),rr=normalize(cross(f,vec3(0,1,0))),u=cross(rr,f);
   vec3 rd=normalize(p.x*rr+p.y*u+mix(1.6,1.42,cz)*f);          // subtle lens push
   // living warm key light — drifts and breathes like candlelight
@@ -489,7 +493,7 @@ void main(){
   let inView=true; try{ new IntersectionObserver(function(es){inView=es[0].isIntersecting;}).observe(document.querySelector('.sticky')); }catch(e){}
   let snapFired=false,snapStart=0,burstFired=false,burstStart=0;
   const s0=document.getElementById('s0'),s1=document.getElementById('s1'),cue=document.getElementById('cue');
-  const SL={res:gl.getUniformLocation(pScene,'uRes'),time:gl.getUniformLocation(pScene,'uTime'),mouse:gl.getUniformLocation(pScene,'uMouse'),cast:gl.getUniformLocation(pScene,'uCast'),acc:gl.getUniformLocation(pScene,'uAccent'),b1:gl.getUniformLocation(pScene,'uBg1'),b2:gl.getUniformLocation(pScene,'uBg2'),texL:gl.getUniformLocation(pScene,'uTex'),snap:gl.getUniformLocation(pScene,'uSnap'),light:gl.getUniformLocation(pScene,'uLight')};
+  const SL={res:gl.getUniformLocation(pScene,'uRes'),time:gl.getUniformLocation(pScene,'uTime'),mouse:gl.getUniformLocation(pScene,'uMouse'),cast:gl.getUniformLocation(pScene,'uCast'),acc:gl.getUniformLocation(pScene,'uAccent'),b1:gl.getUniformLocation(pScene,'uBg1'),b2:gl.getUniformLocation(pScene,'uBg2'),texL:gl.getUniformLocation(pScene,'uTex'),snap:gl.getUniformLocation(pScene,'uSnap'),light:gl.getUniformLocation(pScene,'uLight'),stand:gl.getUniformLocation(pScene,'uStand')};
   const CL={res:gl.getUniformLocation(pComp,'uRes'),scene:gl.getUniformLocation(pComp,'uScene')};
   const t0=performance.now();
   function frame(now){
@@ -508,7 +512,7 @@ void main(){
     if(inView){
       gl.bindFramebuffer(gl.FRAMEBUFFER,fbo); gl.viewport(0,0,FW,FH);
       gl.useProgram(pScene); gl.bindBuffer(gl.ARRAY_BUFFER,buf); bindAttr(pScene);
-      gl.uniform2f(SL.res,FW,FH); gl.uniform1f(SL.time,t); gl.uniform2f(SL.mouse,mx,my); gl.uniform1f(SL.cast,cast); gl.uniform1f(SL.snap,snap); gl.uniform2f(SL.light,lx,ly);
+      gl.uniform2f(SL.res,FW,FH); gl.uniform1f(SL.time,t); gl.uniform2f(SL.mouse,mx,my); gl.uniform1f(SL.cast,cast); gl.uniform1f(SL.snap,snap); gl.uniform2f(SL.light,lx,ly); gl.uniform1f(SL.stand,0.0);
       gl.uniform3fv(SL.acc,m.ac); gl.uniform3fv(SL.b1,m.b1); gl.uniform3fv(SL.b2,m.b2);
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,tex); gl.uniform1i(SL.texL,0);
       gl.drawArrays(gl.TRIANGLES,0,3);
