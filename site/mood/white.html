@@ -71,11 +71,12 @@ void main(){
   float mm=m*m*(3.0-2.0*m);                       // ease
   float t=uTime*0.26;
   vec2 ctr=vec2(0.5,0.52);                        // bar centre
-  // ---- 3D BULGE: swell the centre so the flat bar reads as a rounded molten drop ----
+  // ---- 3D BULGE: swell the centre into a rounded molten dome ----
   vec2 d=puv-ctr; float rr=length(d);
-  float lens=1.0 - mm*0.58*(1.0-smoothstep(0.0,0.62,rr));   // stronger swell = more volume
+  float dome=1.0-smoothstep(0.0,0.66,rr);                   // 1 at centre → 0 at rim
+  float lens=1.0 - mm*0.70*dome;                            // strong central swell = volume
   vec2 buv=ctr + d*lens;
-  float gather=mm*0.10*smoothstep(0.30,0.70,rr);            // pull the outer edges in → rounder blob
+  float gather=mm*0.17*smoothstep(0.26,0.72,rr);            // pull the rim in → rounder blob
   buv+=normalize(d+1e-4)*(-gather);
   // ---- living liquid warp + downward drip ----
   float n1=fbm(buv*3.2+vec2(0.0,t*1.4));
@@ -86,10 +87,14 @@ void main(){
   vec2 duv=buv + warp*mm*0.07 + vec2(mm*0.022*sin(buv.y*12.0+uTime*1.2), drip) + uLight*mm*0.022;
   vec3 c=texture2D(uPhoto,duv).rgb;
   float dark=1.0-clamp((c.r+c.g+c.b)*0.55,0.0,1.0);  // chocolate mask (not the white)
+  // ---- shade the dome for volume: darken the lower rim, lift the crown ----
+  c*=1.0 - mm*0.30*smoothstep(0.30,0.72,rr)*dark;
   // ---- big wet specular that reads as a 3D glossy sphere; drifts with time + tilt ----
-  vec2 sp=ctr+vec2(0.10*sin(t*0.9)+uLight.x*0.22, 0.13+uLight.y*0.18);
-  float spec=smoothstep(0.32,0.0,length((buv-sp)*vec2(1.1,1.35)));
-  c+=vec3(0.95,0.82,0.58)*spec*mm*0.95*dark;
+  vec2 sp=ctr+vec2(0.10*sin(t*0.9)+uLight.x*0.24, 0.15+uLight.y*0.20);
+  float spec=smoothstep(0.30,0.0,length((buv-sp)*vec2(1.05,1.35)));
+  c+=vec3(1.0,0.86,0.60)*spec*mm*1.15*dark;
+  vec2 sp2=ctr+vec2(-0.14+uLight.x*0.2,-0.02);              // second smaller glint
+  c+=vec3(1.0,0.9,0.7)*smoothstep(0.12,0.0,length(buv-sp2))*mm*0.6*dark;
   // ---- flowing rim sheen ----
   float sh=pow(max(0.0,fbm(buv*5.0-vec2(t*1.2))-0.42),1.5)*mm;
   c+=vec3(0.55,0.42,0.30)*sh*1.3*dark;
