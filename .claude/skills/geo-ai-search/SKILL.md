@@ -41,7 +41,7 @@ An LLM answer engine retrieves candidate passages, then synthesizes an answer ci
 
 ## MOOD note
 - Hebrew-market GEO: own the answers to "מה זה שוקולד פונקציונלי?", "תחליף לקפה של אחר הצהריים", "איך נרדמים כשהמוח לא נכבה" — the ritual/coffee-alternative/sleep questions, per SKU (Energy/Relax/Sleep, never Focus on web).
-- Founders (נדב יצחקי, מתיאס דומינגז) and the Reg Max™ formula are entity facts to state explicitly and schema-tag.
+- Founders (נדב יצחקי, מתיאס דומינגז), chocolatier **רונן אפללו — World Chocolate Champion 2022 / אלוף השוקולד העולמי 2022**, and the Reg Max™ formula are entity facts to state explicitly and schema-tag (the 2022 title is a strong, citable authority signal).
 
 ## Anti-patterns
 - Keyword stuffing (classic-SEO thinking — engines ignore it).

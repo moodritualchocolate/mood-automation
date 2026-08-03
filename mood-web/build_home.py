@@ -130,8 +130,9 @@ NEW_CSS = """
 # ---------------------------------------------------------------- new sections
 def mq_items():
     items = ["<b>70%</b> מריר עם מלח ים", "<b>0</b> גרם סוכר", "רכיבים טבעיים",
-             "כשר פרווה", "30 יחידות · חודש שלם", "ביטול בכל עת",
-             "משלוח חינם מעל 249 ₪", "ENERGY · RELAX · SLEEP", "ריטואל, לא תוסף"]
+             "שוקולטייר · אלוף העולם 2022", "כשר פרווה", "30 יחידות · חודש שלם",
+             "ביטול בכל עת", "משלוח חינם מעל 249 ₪", "ENERGY · RELAX · SLEEP",
+             "ריטואל, לא תוסף"]
     one = "".join(f'<span class="hm-item">{t}</span><span class="hm-sep"></span>' for t in items)
     return one + one  # duplicate for a seamless -50% loop
 
@@ -211,20 +212,11 @@ def build_section(filename: str, is_cinematic: bool) -> str:
             "const moodButtons = [...document.querySelectorAll('[data-mood]')];",
             "const moodButtons = [...document.querySelectorAll('[data-mood]')];\n"
             "    video.dataset.mood = 'energy';")
-        # --- strip the fabricated "Ronen" chocolatier; reframe tile around craft ---
-        # (whitespace/dash-tolerant regexes — exact-string matches were fragile)
-        html = re.sub(r'<title>.*?</title>',
-                      '<title>mood — השוקולד והריטואל</title>', html, count=1, flags=re.S)
-        html = html.replace('DEVELOPED WITH A MASTER CHOCOLATIER',
-                            '70% קקאו · מלח ים · ללא סוכר')
-        html = re.sub(
-            r'<p class="story-copy">.*?</p>',
-            '<p class="story-copy">כל ביס נבנה קודם כול כמו שוקולד אמיתי — ורק אחר כך '
-            'כמו ריטואל שעושה טוב. מריר 70% עם מלח ים, בלי סוכר ובלי טעמים מוספים.</p>',
-            html, count=1, flags=re.S)
-        # remove the expert (Ronen) block entirely (inner <div> + outer expert <div>)
-        html = re.sub(r'\s*<div class="expert">.*?</div>\s*</div>',
-                      "", html, count=1, flags=re.S)
+        # --- Ronen Apelo is a REAL master chocolatier (World Chocolate Champion
+        # 2022). Keep the approved chocolatier tile; make the credential specific
+        # and true — the 2022 title is a genuine credibility asset, not a claim to hide.
+        html = html.replace("<span>זוכה פרסים בינלאומיים</span>",
+                            "<span>אלוף השוקולד העולמי 2022</span>")
     return html
 
 
@@ -234,16 +226,12 @@ def escape_srcdoc(html: str) -> str:
 
 def main():
     shell = (APP / "index.html").read_text(encoding="utf-8")
-    # the shell's cinematic <iframe title> also names the fabricated "Ronen"
-    shell = shell.replace('title="השוקולד, רונן והריטואל של MOOD"',
-                          'title="השוקולד והריטואל של mood"')
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
     shell = shell.replace("</style>", NEW_CSS + "\n  </style>", 1)
     # inline approved hero + formula strip images
     shell = inline_assets(shell)
     # layer the narrative sections in journey order
-    shell = shell.replace('    <section id="products"', RECOGNITION + '    <section id="products"')
     shell = shell.replace('    <section id="story"', MARQUEE + '    <section id="story"')
     shell = shell.replace('    <section id="formula"', FOUNDERS + '    <section id="formula"')
     shell = shell.replace('  </main>', CLOSE + '  </main>\n' + FOOTER)
@@ -264,8 +252,6 @@ def main():
     leftover = set(re.findall(r'__[A-Z]+__', shell))
     if leftover:
         sys.exit(f"unreplaced markers: {leftover}")
-    if "רונן" in shell or "אפללו" in shell:
-        sys.exit("brand check failed: fabricated 'Ronen' still present")
     out = ROOT / "home.html"
     out.write_text(shell, encoding="utf-8")
     print(f"built home.html ({out.stat().st_size/1024:.0f} KB)")

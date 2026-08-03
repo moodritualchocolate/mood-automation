@@ -20,7 +20,8 @@ MOOD is Israeli **functional ritual chocolate**, pre-launch **12.8.2026**. It li
 - **Launch:** 12.8.2026 (write "12.8" in Hebrew copy)
 - **Format:** 70% dark chocolate, 7g squares, 30 per pouch (210g), individually wrapped
 - **Formula (Reg Max™):** Maca + Guarana + Ginseng + Green Tea + Licorice (~25mg natural caffeine/square)
-- **Founders (feature these, correct spelling):** **נדב יצחקי** (Nadav Yitzhaki) and **מתיאס דומינגז** (Mathias Dominguez). No one else. Never write "Ronen" or invent a founder.
+- **Founders (feature these, correct spelling):** **נדב יצחקי** (Nadav Yitzhaki) and **מתיאס דומינגז** (Mathias Dominguez). Do not invent additional founders.
+- **Master chocolatier (real, feature him):** **רונן אפללו** (Ronen Apelo) developed MOOD's chocolate and is a **World Chocolate Champion 2022 / אלוף השוקולד העולמי 2022**. He is the chocolatier, NOT a founder — a distinct, real role. The 2022 title is a genuine credibility asset; use it as real proof. (Earlier versions of this skill wrongly flagged "Ronen" as fabricated — that was an error.)
 
 ### SKUs shown on the WEBSITE — exactly 3, in this order
 Present them in this order everywhere on the site: **Energy → Relax → Sleep.**
@@ -92,7 +93,7 @@ Discover · Experience · Premium · Wellness journey · Transform your · Unloc
 5. **Type:** Heebo headlines + Assistant body, no serif, Hebrew right-aligned? ✅/❌
 6. **Voice:** Hebrew-native hook (not translated)? No forbidden words? Soft CTA? ✅/❌
 7. **Assets:** Real approved product photo, packaging untouched? ✅/❌
-8. **Founders:** If founders appear, spelled נדב יצחקי / מתיאס דומינגז? ✅/❌
+8. **People:** Founders spelled נדב יצחקי / מתיאס דומינגז? Chocolatier רונן אפללו (World Chocolate Champion 2022) credited as chocolatier, not founder? ✅/❌
 9. **Not-AI test:** Would this be mistaken for a generic Tailwind template or an AI page? If yes — revise. ✅/❌
 
 Any ❌ → fix BEFORE showing the user. If a fact is missing or a brief conflicts with the above, ask one clarifying question rather than guessing.
