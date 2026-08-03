@@ -220,7 +220,7 @@ footer{border-top:1px solid rgba(80,52,24,.18);text-align:center;padding:50px 24
 const FRAG=`
 precision highp float;
 uniform vec2 uRes; uniform float uTime; uniform vec2 uMouse; uniform float uCast;
-uniform vec3 uAccent; uniform vec3 uBg1; uniform vec3 uBg2; uniform sampler2D uTex; uniform float uSnap; uniform vec2 uLight; uniform float uStand; uniform float uWhite; uniform float uPortrait;
+uniform vec3 uAccent; uniform vec3 uBg1; uniform vec3 uBg2; uniform sampler2D uTex; uniform float uSnap; uniform vec2 uLight; uniform float uStand; uniform float uWhite; uniform float uPortrait; uniform float uMatch;
 float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
 float sdRoundBox(vec3 p,vec3 b,float r){vec3 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.)-r;}
 // liquid metaballs
@@ -257,6 +257,7 @@ float emboss(vec3 q){
 }
 float smax(float a,float b,float k){return -smin(-a,-b,k);}
 float mapSquare(vec3 p){
+  if(uMatch>0.5){ float yw=-0.62; float cy=cos(yw),sy=sin(yw); p.xz=mat2(cy,-sy,sy,cy)*p.xz; } // yaw so the lying bar runs diagonally like the photo
   vec3 q;
   if(uPortrait>0.5){
     q=vec3(p.y, p.z, p.x);                           // stand tall: long axis vertical, relief to camera
@@ -291,9 +292,10 @@ mat2 r2(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
 float map(vec3 p){
   p.xz=r2(sin(uTime*0.28)*mix(0.10,0.035,uCast))*p.xz;
   float cc=smoothstep(0.0,1.0,uCast);
-  p.y -= (0.52+0.34*uStand)*(1.0-cc)*(1.0-0.66*uPortrait) + 0.05*(1.0-cc)*sin(uTime*0.7);   // molten sits centred (portrait), then descends
+  float hero=max(uStand,uMatch);
+  p.y -= (0.52+0.34*hero)*(1.0-cc)*(1.0-0.66*uPortrait) + 0.05*(1.0-cc)*sin(uTime*0.7);   // molten sits centred, then descends
   p.y-=sin(uTime*0.5)*0.035*(0.4+0.6*cc);                // gentle bob, calmer once cast
-  float str=1.0 + 5.0*cc*(1.0-cc)*uStand;                // stretch peaks mid-fall (round at the start)
+  float str=1.0 + 5.0*cc*(1.0-cc)*hero;                  // stretch peaks mid-fall (round at the start)
   vec3 pl=p; pl.y/=str;
   if(uCast<0.02) return mapLiquid(pl)/str; if(uCast>0.985) return mapSquare(p);
   return mix(mapLiquid(pl)/str, mapSquare(p), cc);
