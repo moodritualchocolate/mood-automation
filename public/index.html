@@ -164,63 +164,37 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const boltG=extG(boltShape());shapes.bolt=new THREE.Mesh(boltG,chocMat);
   const moonG=extG(moonShape());shapes.moon=new THREE.Mesh(moonG,chocMat);
   shapes.wave=new THREE.Group();[waveShape(0.46),waveShape(-0.46)].forEach(w=>shapes.wave.add(new THREE.Mesh(extG(w,false),chocMat)));
-  /* ---- device-independent occlusion: rasterize the REAL chocolate silhouette into a small screen grid each frame ---- */
-  function meshData(g){return {pos:g.attributes.position.array, idx:g.index?g.index.array:null, n:g.index?g.index.count:g.attributes.position.count};}
-  const CULLMESH={bolt:[meshData(boltG)],moon:[meshData(moonG)],wave:shapes.wave.children.map(c=>meshData(c.geometry))};
   const CHOC_Z=2.4;   // chocolate sits FORWARD of the orbit → it pops out of the screen and always occludes the powder behind it
   const shapeGroup=new THREE.Group();shapeGroup.scale.setScalar(0.9);shapeGroup.position.z=CHOC_Z;S.add(shapeGroup);
   Object.values(shapes).forEach(o=>{o.visible=false;shapeGroup.add(o);});
-  let curShape=null,curKey=null;function setShape(k){if(curShape)curShape.visible=false;curShape=shapes[k];curShape.visible=true;curKey=k;}
-  // Each frame: project the chocolate mesh triangles to screen and rasterize them into a coverage grid.
-  // Any powder particle whose screen cell is covered is hidden — exact silhouette, correct at every rotation, no halo, zero GPU reliance.
-  const _vp=new THREE.Matrix4(),_mvp=new THREE.Matrix4();
-  const GW=80,GH=150,grid=new Uint8Array(GW*GH),grid2=new Uint8Array(GW*GH);
-  const _px=new Float32Array(20000),_py=new Float32Array(20000); // projected vert screen coords (grid space)
-  function buildCull(){grid.fill(0);const list=CULLMESH[curKey];if(!list)return;
-    shapeGroup.updateMatrixWorld(true);C.updateMatrixWorld(true);
-    _vp.multiplyMatrices(C.projectionMatrix,C.matrixWorldInverse);
-    _mvp.multiplyMatrices(_vp,shapeGroup.matrixWorld);const m=_mvp.elements;
-    for(const md of list){const pos=md.pos,idx=md.idx,VN=pos.length/3;
-      for(let v=0;v<VN;v++){const lx=pos[v*3],ly=pos[v*3+1],lz=pos[v*3+2];
-        const cw=m[3]*lx+m[7]*ly+m[11]*lz+m[15];
-        _px[v]=((m[0]*lx+m[4]*ly+m[8]*lz+m[12])/cw*0.5+0.5)*GW;
-        _py[v]=((m[1]*lx+m[5]*ly+m[9]*lz+m[13])/cw*0.5+0.5)*GH;}
-      const nT=md.n;
-      for(let t=0;t<nT;t+=3){const a=idx?idx[t]:t,b=idx?idx[t+1]:t+1,c=idx?idx[t+2]:t+2;
-        rasterTri(_px[a],_py[a],_px[b],_py[b],_px[c],_py[c]);}}
-    dilate();}
-  function rasterTri(x0,y0,x1,y1,x2,y2){
-    let minx=Math.floor(Math.min(x0,x1,x2)),maxx=Math.ceil(Math.max(x0,x1,x2));
-    let miny=Math.floor(Math.min(y0,y1,y2)),maxy=Math.ceil(Math.max(y0,y1,y2));
-    if(maxx<0||minx>=GW||maxy<0||miny>=GH)return;
-    if(minx<0)minx=0;if(miny<0)miny=0;if(maxx>=GW)maxx=GW-1;if(maxy>=GH)maxy=GH-1;
-    const d=(y1-y2)*(x0-x2)+(x2-x1)*(y0-y2);if(Math.abs(d)<1e-9)return;const id=1/d;
-    for(let gy=miny;gy<=maxy;gy++){const py=gy+0.5;for(let gx=minx;gx<=maxx;gx++){const px=gx+0.5;
-      const w0=((y1-y2)*(px-x2)+(x2-x1)*(py-y2))*id;const w1=((y2-y0)*(px-x2)+(x0-x2)*(py-y2))*id;const w2=1-w0-w1;
-      if(w0>=-0.001&&w1>=-0.001&&w2>=-0.001)grid[gy*GW+gx]=1;}}}
-  function dilate(){grid2.set(grid);// grow coverage by 1 cell so large sprites can't overhang the chocolate edge
-    for(let y=0;y<GH;y++)for(let x=0;x<GW;x++){if(!grid2[y*GW+x])continue;const o=y*GW+x;
-      grid[o]=1;if(x>0)grid[o-1]=1;if(x<GW-1)grid[o+1]=1;if(y>0)grid[o-GW]=1;if(y<GH-1)grid[o+GW]=1;}}
+  let curShape=null;function setShape(k){if(curShape)curShape.visible=false;curShape=shapes[k];curShape.visible=true;}
 
-  /* ---- living powder = 3D particle clouds sampled from the real powder ---- */
+  /* ---- living powder = INSTANCED BILLBOARD QUADS (real geometry → correct depth occlusion on every device incl. iOS; no halo, no dots) ---- */
   const MAXP=9200;
   const aPos=new Float32Array(MAXP*3), aCol=new Float32Array(MAXP*3), aSize=new Float32Array(MAXP), aA=new Float32Array(MAXP);
-  const pg=new THREE.BufferGeometry();
-  pg.setAttribute("position",new THREE.BufferAttribute(aPos,3));
-  pg.setAttribute("pcolor",new THREE.BufferAttribute(aCol,3));
-  pg.setAttribute("psize",new THREE.BufferAttribute(aSize,1));
-  pg.setAttribute("palpha",new THREE.BufferAttribute(aA,1));
+  const pg=new THREE.InstancedBufferGeometry();
+  pg.setAttribute("position",new THREE.BufferAttribute(new Float32Array([-1,-1,0, 1,-1,0, 1,1,0, -1,-1,0, 1,1,0, -1,1,0]),3));
+  pg.setAttribute("iPos",new THREE.InstancedBufferAttribute(aPos,3));
+  pg.setAttribute("iColor",new THREE.InstancedBufferAttribute(aCol,3));
+  pg.setAttribute("iSize",new THREE.InstancedBufferAttribute(aSize,1));
+  pg.setAttribute("iAlpha",new THREE.InstancedBufferAttribute(aA,1));
+  pg.instanceCount=0;
   const pMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,blending:THREE.NormalBlending,
     uniforms:{uFocus:{value:14.3},uRange:{value:3.4}},
-    vertexShader:`attribute vec3 pcolor;attribute float psize;attribute float palpha;varying vec3 vC;varying float vA;varying float vBlur;
+    vertexShader:`attribute vec3 iPos;attribute vec3 iColor;attribute float iSize;attribute float iAlpha;
+      varying vec3 vC;varying float vA;varying float vBlur;varying vec2 vCo;
       uniform float uFocus;uniform float uRange;
-      void main(){vC=pcolor;vA=palpha;vec4 mv=modelViewMatrix*vec4(position,1.0);float vz=-mv.z;
+      void main(){vC=iColor;vA=iAlpha;vCo=position.xy;
+      vec4 mv=modelViewMatrix*vec4(iPos,1.0);float vz=-mv.z;
       vBlur=clamp(abs(vz-uFocus)/uRange,0.0,1.0);
-      gl_PointSize=psize*(82.0/max(0.1,vz))*(1.0+vBlur*1.25);gl_Position=projectionMatrix*mv;}`,
-    fragmentShader:`varying vec3 vC;varying float vA;varying float vBlur;
-      void main(){vec2 d=gl_PointCoord-0.5;float r=length(d);float inner=mix(0.4,0.08,vBlur);
-      float a=smoothstep(0.5,inner,r);gl_FragColor=vec4(vC,a*vA*(1.0-vBlur*0.38));}`});
-  const points=new THREE.Points(pg,pMat);points.frustumCulled=false;S.add(points);
+      float sz=iSize*0.016*(1.0+vBlur*1.25);
+      mv.xy+=position.xy*sz;                       // camera-facing billboard, sized in view space (perspective-correct, depth-correct)
+      gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`varying vec3 vC;varying float vA;varying float vBlur;varying vec2 vCo;
+      void main(){float r=length(vCo);float inner=mix(0.82,0.16,vBlur);
+      float a=smoothstep(1.0,inner,r);if(a<=0.0)discard;
+      gl_FragColor=vec4(vC,a*vA*(1.0-vBlur*0.38));}`});
+  const points=new THREE.Mesh(pg,pMat);points.frustumCulled=false;S.add(points);
 
   const sampleCache={}, IMG={};
   const scratch=document.createElement("canvas"), sctx=scratch.getContext("2d",{willReadFrequently:true});
@@ -252,8 +226,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         P_PH[p]=(j*0.618+i)*6.283%6.283;
         aCol[p*3]=s[2];aCol[p*3+1]=s[3];aCol[p*3+2]=s[4];aSize[p]=0.5+w*0.24;aA[p]=0.92;p++;}
     });
-    activeCount=p;pg.setDrawRange(0,activeCount);
-    pg.attributes.pcolor.needsUpdate=true;pg.attributes.psize.needsUpdate=true;pg.attributes.palpha.needsUpdate=true;
+    activeCount=p;pg.instanceCount=activeCount;
+    pg.attributes.iColor.needsUpdate=true;pg.attributes.iSize.needsUpdate=true;pg.attributes.iAlpha.needsUpdate=true;
     // organized data panel
     ui.list.innerHTML=m.ings.map(it=>`<div class="xp-row"><span class="l"><span class="dot" style="background:${avgColor(it[2])}"></span><span class="nm">${it[0]}</span></span><span class="mg"><b class="v" data-v="${it[1]}">0</b><i>מ״ג</i></span></div>`).join("");
     const rows=[].slice.call(ui.list.querySelectorAll(".xp-row"));
@@ -311,8 +285,6 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       c.pos.set(RAD*Math.cos(a), SCENE_Y+RAD*Math.sin(a)*Math.sin(TILT), ORB_Z+RAD*Math.sin(a)*Math.cos(TILT));
       c.ang=Math.sin(T*c.rot+c.ph)*0.5;
       c.asm = phaseMode==='out' ? 1-clamp(el/DUR_OUT,0,1) : (phaseMode==='in'? ease3((el-i*STAG)/DUR_IN) : 1);}
-    // build the chocolate's on-screen silhouette for this frame
-    buildCull();const ve=_vp.elements;
     // particles: assembled position, but scatter outward + fade when asm<1 (converge = the formula forms)
     for(let i=0;i<activeCount;i++){const c=clouds[P_CLOUD[i]];if(!c)continue;const o=i*3;
       const ph=P_PH[i], br=1+0.05*Math.sin(T*0.9+ph), ca=Math.cos(c.ang), sa=Math.sin(c.ang);
@@ -325,15 +297,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         ax+=ax*1.7*s+Math.cos(ph*4.1)*s*0.55;
         ay+=dyp*1.7*s+Math.sin(ph*5.7)*s*0.55;
         az-=(0.8+Math.abs(az))*1.6*s;}   // scatter recedes BACKWARD so powder never crosses in front of the chocolate
-      if(az>1.45)az=1.45;                // hard depth wall: no particle is ever nearer than the chocolate's back face
-      aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;
-      // hide any particle whose screen cell lands on the chocolate silhouette (it is always behind it) — pure-CPU, device-independent
-      const cw=ve[3]*ax+ve[7]*ay+ve[11]*az+ve[15];
-      const gx=((ve[0]*ax+ve[4]*ay+ve[8]*az+ve[12])/cw*0.5+0.5)*GW|0;
-      const gy=((ve[1]*ax+ve[5]*ay+ve[9]*az+ve[13])/cw*0.5+0.5)*GH|0;
-      aA[i]=(gx>=0&&gx<GW&&gy>=0&&gy<GH&&grid[gy*GW+gx])?0:0.92*asm;
+      if(az>1.45)az=1.45;                // keep every particle behind the chocolate; the GPU depth test does the exact per-pixel occlusion
+      aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;aA[i]=0.92*asm;
     }
-    pg.attributes.position.needsUpdate=true;pg.attributes.palpha.needsUpdate=true;
+    pg.attributes.iPos.needsUpdate=true;pg.attributes.iAlpha.needsUpdate=true;
     R.render(S,C);
     requestAnimationFrame(loop);
   }
