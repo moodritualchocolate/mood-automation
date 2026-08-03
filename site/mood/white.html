@@ -321,8 +321,8 @@ void main(){
     const wt=performance.now(); const t=reduce?0.6:(wt-t0)/1000;
     mx+=(tmx-mx)*0.05; my+=(tmy-my)*0.05; lx+=(tlx-lx)*0.06; ly+=(tly-ly)*0.06;
     const prog = reduce?1.0:progVal();
-    const cast = (FC!==null?FC:(FD!==null?1.0:Math.min(1, prog/0.60)));  // CG fully formed by ~60% scroll
-    const diss = FD!==null?FD:(FC!==null?0.0:Math.max(0,Math.min(1,(prog-0.68)/0.30))); // then dissolve to the real photo
+    const cast = (FC!==null?FC:(FD!==null?1.0:Math.min(1, prog/0.68)));  // CG keeps forming...
+    const diss = FD!==null?FD:(FC!==null?0.0:Math.max(0,Math.min(1,(prog-0.46)/0.42))); // ...and dissolves to the REAL photo at the same time — no CG plateau
     if(inView){
       gl.bindFramebuffer(gl.FRAMEBUFFER,fbo); gl.viewport(0,0,FW,FH);
       gl.useProgram(pScene); gl.bindBuffer(gl.ARRAY_BUFFER,buf); bindAttr(pScene);
