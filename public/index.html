@@ -133,7 +133,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     g.fillStyle=bar;g.fillRect(0,42,512,18);
     const s=g.createRadialGradient(150,50,2,150,50,58);s.addColorStop(0,"rgba(255,251,240,1)");s.addColorStop(1,"rgba(255,250,238,0)");g.fillStyle=s;g.fillRect(0,0,512,256);
     const t=new THREE.CanvasTexture(cv);t.mapping=THREE.EquirectangularReflectionMapping;t.colorSpace=THREE.SRGBColorSpace;return t;})();
-  const chocMat=new THREE.MeshStandardMaterial({color:0x35200f,roughness:0.14,metalness:0.14,envMap:env,envMapIntensity:1.55});
+  const chocMat=new THREE.MeshStandardMaterial({color:0x2c180a,roughness:0.13,metalness:0.13,envMap:env,envMapIntensity:1.6});
   S.add(new THREE.HemisphereLight(0xffffff,0xe7d5ba,0.55));
   const key=new THREE.DirectionalLight(0xffffff,3.0);key.position.set(-4,6,6);S.add(key);
   const fill=new THREE.DirectionalLight(0xffffff,0.85);fill.position.set(4,1.5,5);S.add(fill);
@@ -286,7 +286,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       if(s>0.002){const dyp=ay-SCENE_Y;
         ax+=ax*1.7*s+Math.cos(ph*4.1)*s*0.55;
         ay+=dyp*1.7*s+Math.sin(ph*5.7)*s*0.55;
-        az+=az*1.7*s+Math.cos(ph*3.3)*s*0.55;}
+        az-=(0.8+Math.abs(az))*1.6*s;}   // scatter recedes BACKWARD so powder never crosses in front of the chocolate
+      if(az>1.62)az=1.62;                // hard depth wall: no particle is ever nearer than the chocolate's back face → surface stays perfectly clean
       aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;aA[i]=0.92*asm;
     }
     pg.attributes.position.needsUpdate=true;pg.attributes.palpha.needsUpdate=true;
