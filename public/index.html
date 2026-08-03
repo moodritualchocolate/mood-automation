@@ -4,6 +4,7 @@
 <body style="margin:0;background:#FBF9F5">
 <!-- ============ MOOD — living 3D formula, clean futuristic layout ============ -->
 <section id="mood-xp" dir="rtl">
+  <div class="xp-ver">BUILD&nbsp;9</div>
   <canvas class="xp-gl"></canvas>
   <div class="xp-vig"></div>
   <div class="xp-ui">
@@ -39,6 +40,8 @@
   background:radial-gradient(115% 80% at 50% 12%,#FFFFFF 0%,#FBF9F5 62%,#F5F0E8 100%);
   -webkit-font-smoothing:antialiased;user-select:none;}
 #mood-xp *{box-sizing:border-box;}
+#mood-xp .xp-ver{position:absolute;top:8px;left:8px;z-index:9;font-family:system-ui,sans-serif;font-weight:800;
+  font-size:11px;letter-spacing:.08em;color:#fff;background:#D8703F;padding:4px 9px;border-radius:100px;opacity:.92;}
 #mood-xp .xp-gl{position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:pan-y;cursor:grab;}
 #mood-xp .xp-gl:active{cursor:grabbing;}
 #mood-xp .xp-vig{position:absolute;inset:0;z-index:2;pointer-events:none;
