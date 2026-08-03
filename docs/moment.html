@@ -192,7 +192,10 @@ const MOMENT={
   dir:"assets/moments/presence_phone_conversation_003",
   stems:{recognition:"01_recognition",identification:"02_identification",opportunity:"03_opportunity",exit:"04_exit_to_life",
     return:"05_return",connected:"06a_chose_differently",not_yet:"06b_not_yet",witness_c:"08a_witness_chose_differently",witness_n:"08b_witness_not_yet",continuation:"10_continuation"},
-  recognition:[{t:"מישהו שאתה אוהב מדבר אליך."},{t:"והיד כבר על הטלפון.",accent:true}],
+  recognition:[{t:"מישהו שאתה אוהב\nמדבר אליך."},{t:"ואתה כבר בטלפון.",accent:true}],
+  count_q:"כמה פעמים היום\nהסתכלת בטלפון?", count_opts:["פחות מ-20","בערך 50","יותר מ-90"],
+  count_reveal:[{t:"האמת?"},{t:"בערך 90.",accent:true},{t:"פעם כל שש דקות."}],
+  stakes:[{t:"ובזמן הזה —"},{t:"היא חיכתה\nשתרים את הראש.",accent:true},{t:"הרגע הזה\nלא יחזור בדיוק ככה."}],
   identify_prompt:"זה אתה?", identify:["כן. גם לי","לא ממש"],
   reframe:[{t:"זה לא שאין לך זמן."},{t:"המסך פשוט מבקש עוד שנייה.",accent:true}],
   meaning:"השיחה הזאת\nלא תחזור בדיוק ככה.",
@@ -501,7 +504,7 @@ function Open(){
     <div class="line s show" style="animation-delay:.5s;max-width:24ch">יש רגע אחד שמחכה לך היום.</div>
     <div class="acts show" style="animation-delay:1.1s;max-width:320px"><button class="btn olive" id="enter">להיכנס לרגע</button></div></div>`;
   stage.appendChild(el);requestAnimationFrame(()=>el.classList.add("on"));
-  el.querySelector("#enter").onclick=()=>{buzz();enableGyro();startScore();Reckoning()};
+  el.querySelector("#enter").onclick=()=>{buzz();enableGyro();startScore();activeMission=MISSIONS[0];hist=[Board];go(Recognition)};
 }
 function MiddahIntro(){
   const el=plain(`<div class="open">
@@ -521,7 +524,13 @@ function Wisdom(){
     <div class="acts show" style="animation-delay:1.4s;max-width:320px"><button class="btn olive" id="n">המשך</button></div></div>`);
   el.querySelector("#n").onclick=()=>{buzz();go(Continuation)};
 }
-function Recognition(){const el=frame("recognition",{tap:true});sequence(el,box(el),M.recognition,"l",{onDone:()=>go(Identification)});}
+function Recognition(){const el=frame("recognition",{tap:true});sequence(el,box(el),M.recognition,"l",{onDone:()=>go(PhoneCount)});}
+// interactive: he guesses — then reality lands (makes the number personal, not a passive stat)
+function PhoneCount(){const el=frame("recognition");const p=box(el);addLine(p,M.count_q,"l");
+  setTimeout(()=>{actions(p,M.count_opts.map((o,i)=>`<button class="btn soft" data-i="${i}">${o}</button>`).join(""));
+    p.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>choose(b,p,()=>go(CountReveal)));},900);}
+function CountReveal(){const el=frame("recognition",{tap:true});sequence(el,box(el),M.count_reveal,"l",{onDone:()=>go(Stakes)});}
+function Stakes(){const el=frame("identification",{tap:true});sequence(el,box(el),M.stakes,"l",{onDone:()=>go(Identification)});}
 function Identification(){const el=frame("identification");const p=box(el);addLine(p,M.identify_prompt,"l");
   setTimeout(()=>{actions(p,`<button class="btn soft" data-b="0">${M.identify[0]}</button><button class="btn soft" data-b="1">${M.identify[1]}</button>`);
     p.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>choose(b,p,()=>go(Reframe)));},750);}
