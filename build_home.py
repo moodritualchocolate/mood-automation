@@ -156,7 +156,7 @@ MARQUEE = f"""    <div class="hm" aria-label="למה mood">
     </div>
 """
 
-FOUNDERS = """    <section class="hf" aria-label="המייסדים של mood">
+FOUNDERS = """    <section class="hf" id="founders" aria-label="המייסדים של mood">
       <div class="hf-photo reveal"><img src="__FOUNDERS__" alt="נדב יצחקי ומתיאס דומינגז — מייסדי mood בסדנת השוקולד"></div>
       <div class="hf-copy reveal">
         <div class="hf-eyebrow">מי מאחורי mood</div>
@@ -206,10 +206,10 @@ CAP_CSS = """
 /* ---- interactive capability modules ---- */
 :root{--accent:var(--energy)}
 .cap{position:relative}
-.cap-label{width:min(1080px,100%);margin:34px auto 0;padding:22px 22px 0;
-  font-size:12px;font-weight:900;letter-spacing:.12em;color:#a08a72;border-top:1px solid #e9e2d6}
-.cap-title{width:min(1080px,100%);margin:6px auto 0;padding:0 22px}
-.cap-title h2{font-size:clamp(26px,4vw,42px);line-height:1.04;letter-spacing:-.04em;font-weight:800;margin:0}
+.cap-label{width:min(1080px,100%);margin:clamp(64px,9vw,110px) auto 0;padding:0 22px;
+  font-size:12px;font-weight:900;letter-spacing:.16em;color:#b06a3a}
+.cap-title{width:min(1080px,100%);margin:10px auto 0;padding:0 22px}
+.cap-title h2{font-size:clamp(30px,5vw,52px);line-height:1.02;letter-spacing:-.045em;font-weight:900;margin:0}
 .cap-title p{margin:8px 0 0;color:var(--muted);font-size:15px;line-height:1.55;max-width:520px}
 /* immersive scroll */
 .scroll-wrap{height:260vh;position:relative;margin-top:26px}
@@ -279,7 +279,7 @@ CAP_CSS = """
 @media(prefers-reduced-motion:reduce){.scroll-pouch{animation:none}}
 """
 
-QUIZ = """    <section class="cap" aria-label="Mood Finder">
+QUIZ = """    <section class="cap" id="quiz" aria-label="Mood Finder">
       <div class="cap-label">מצאו את הריטואל</div>
       <div class="cap-title"><h2>שאלה אחת. הריטואל שלך.</h2><p>לא בטוחים איפה להתחיל? ספרו לנו מה מצב הראש — ונתאים לכם רגע.</p></div>
       <div class="quiz">
@@ -471,6 +471,97 @@ CAP_JS = """  <script>
 """
 
 
+# ============================================================================
+# Live, bold hero (replaces the flat baked hero PNG) — real nav + announcement,
+# lifestyle photo that swaps per SKU, live Heebo headline, color-reactive accent
+# ============================================================================
+XHERO_CSS = """
+/* announcement + nav */
+.xannounce{background:var(--ink);color:#f5eee4;text-align:center;font-size:12px;font-weight:700;letter-spacing:.02em;padding:10px 16px}
+.xnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px clamp(18px,4vw,34px);background:rgba(245,238,228,.92);backdrop-filter:blur(10px);border-bottom:1px solid #ece4d6}
+.xnav-links{display:flex;gap:22px}
+.xnav-links a{color:#4c4841;text-decoration:none;font-size:14px;font-weight:700}
+.xnav-links a:hover{color:var(--ink)}
+.xlogo{font-size:26px;font-weight:900;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.xlogo span{position:relative;color:var(--energy)}
+.xlogo span::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:7px;height:7px;border-radius:50%;background:#f5eee4}
+.xnav-cta{background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap}
+/* hero */
+.xhero{position:relative;display:grid;grid-template-columns:1.05fr 1fr;min-height:min(86vh,780px);background:var(--cream);overflow:hidden}
+.xhero-media{position:relative;order:2;overflow:hidden;background:#e7ddcf}
+.xh-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%;opacity:0;transition:opacity .6s ease}
+.xh-photo.on{opacity:1}
+.xhero-copy{order:1;display:flex;flex-direction:column;justify-content:center;padding:clamp(30px,5vw,84px);z-index:2}
+.xhero-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--accent);margin-bottom:20px;transition:color .5s}
+.xhero-h{font-size:clamp(40px,6vw,78px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:var(--ink);margin:0}
+.xhero-h .xh-mood{color:var(--accent);transition:color .5s}
+.xhero-sub{max-width:440px;margin:24px 0 0;color:#4c4841;font-size:clamp(15px,1.4vw,18px);line-height:1.6}
+.xhero-moods{display:flex;gap:8px;margin:32px 0 0;direction:ltr}
+.xhero-moods button{padding:9px 18px;border-radius:999px;border:1px solid #d9cdbb;background:transparent;color:#6a6157;font-size:12px;font-weight:900;letter-spacing:.08em;cursor:pointer;transition:background .22s,color .22s,border-color .22s,transform .22s}
+.xhero-moods button:hover{transform:translateY(-2px)}
+.xhero-moods button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.xhero-cta{display:flex;gap:12px;margin:30px 0 0;flex-wrap:wrap}
+.xh-primary{background:var(--accent);color:#fff;padding:16px 32px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s,background .5s}
+.xh-primary:hover{transform:translateY(-2px)}
+.xh-secondary{background:#fff;color:var(--ink);border:1px solid #e2d8c8;padding:16px 26px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s}
+.xh-secondary:hover{transform:translateY(-2px)}
+@media(max-width:820px){
+  .xnav-links{display:none}
+  .xhero{grid-template-columns:1fr;min-height:0}
+  .xhero-media{order:1;aspect-ratio:4/5}
+  .xhero-copy{order:2;padding:34px 22px 42px}
+  .xhero-h{font-size:clamp(34px,10vw,54px)}
+}
+"""
+
+XHERO = """    <header class="xtop">
+      <div class="xannounce">משלוח חינם בקנייה מעל 249 ₪ · מוקד שירות ישראלי</div>
+      <nav class="xnav" aria-label="ניווט ראשי">
+        <div class="xnav-links"><a href="#products">המוצרים</a><a href="#story">איך זה עובד</a><a href="#founders">הסיפור שלנו</a></div>
+        <a class="xlogo" href="#top" aria-label="mood">mo<span>o</span>d</a>
+        <a class="xnav-cta" href="#quiz">מה מתאים לי?</a>
+      </nav>
+    </header>
+    <section class="xhero" id="xhero" style="--accent:var(--energy)" aria-label="mood — ביס אחד והמצב שלך משתנה">
+      <div class="xhero-media">
+        <img class="xh-photo on" data-sku="energy" src="__ELIFE__" alt="אישה עם mood Energy">
+        <img class="xh-photo" data-sku="relax" src="__RLIFE__" alt="אישה עם mood Relax">
+        <img class="xh-photo" data-sku="sleep" src="__SLIFE__" alt="אישה עם mood Sleep">
+      </div>
+      <div class="xhero-copy">
+        <div class="xhero-eyebrow">ריטואל פונקציונלי · בקרוב 12.8</div>
+        <h1 class="xhero-h">ביס אחד.<br>וה־<span class="xh-mood">mood</span> שלך משתנה.</h1>
+        <p class="xhero-sub">שוקולד מריר 70% עם פורמולה טבעית — לאנרגיה, לרוגע, לשינה. בלי סוכר, בלי הנפילה של הקפה.</p>
+        <div class="xhero-moods" role="group" aria-label="בחירת מצב רוח">
+          <button class="on" data-sku="energy">ENERGY</button>
+          <button data-sku="relax">RELAX</button>
+          <button data-sku="sleep">SLEEP</button>
+        </div>
+        <div class="xhero-cta">
+          <a class="xh-primary" href="#quiz">מה מתאים לי?</a>
+          <a class="xh-secondary" href="#products">לכל המוצרים</a>
+        </div>
+      </div>
+    </section>
+"""
+
+HERO_JS = """  <script>
+  (function(){
+    var hero=document.getElementById("xhero"); if(!hero)return;
+    var HEX={energy:"#e8812c",relax:"#7e9b63",sleep:"#5e7ba8"};
+    var photos=hero.querySelectorAll(".xh-photo");
+    var btns=hero.querySelectorAll(".xhero-moods button");
+    btns.forEach(function(b){ b.addEventListener("click",function(){
+      var sku=b.dataset.sku;
+      btns.forEach(function(x){x.classList.toggle("on",x===b);});
+      photos.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
+      hero.style.setProperty("--accent",HEX[sku]);
+    });});
+  })();
+  </script>
+"""
+
+
 def build_section(filename: str, is_cinematic: bool) -> str:
     html = (APP / "sections" / filename).read_text(encoding="utf-8")
     html = FONT_LINKS.sub("", html)
@@ -499,10 +590,12 @@ def escape_srcdoc(html: str) -> str:
 
 def main():
     shell = (APP / "index.html").read_text(encoding="utf-8")
+    # replace the flat baked hero PNG with the live, bold, interactive hero
+    shell = re.sub(r'<section class="hero".*?</section>', XHERO, shell, count=1, flags=re.S)
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + "\n  </style>", 1)
-    # inline approved hero + formula strip images
+    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + "\n  </style>", 1)
+    # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
@@ -513,12 +606,13 @@ def main():
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
-    shell = shell.replace('</body>', MOTION_JS + CAP_JS + '</body>')
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
     for _m, _f in {"__ENERGY__": "energy.webp", "__RELAX__": "relax.webp",
-                   "__SLEEP__": "sleep.webp"}.items():
+                   "__SLEEP__": "sleep.webp", "__ELIFE__": "energy-lifestyle.jpg",
+                   "__RLIFE__": "relax-lifestyle.jpg", "__SLIFE__": "sleep-lifestyle.jpg"}.items():
         shell = shell.replace(_m, data_uri(_f))
     # fold the two interactive sections in as srcdoc
     products = escape_srcdoc(build_section("product-cards.html", False))
