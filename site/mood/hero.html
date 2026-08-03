@@ -72,14 +72,12 @@ vec3 bDim=vec3(1.13,0.16,0.62);
 float emboss(vec3 q){
   vec2 tuv; float inband=1.0;
   if(uPortrait>0.5){
-    float bv=q.x/0.33;                                  // logo lives in a central band on the tall face
-    inband=1.0-smoothstep(0.9,1.02,abs(bv));
-    tuv=vec2(q.z/bDim.z, bv)*0.5+0.5;                   // width→text axis, aspect matches the landscape art
+    tuv=vec2(q.z/bDim.z, -q.x/bDim.x)*0.5+0.5;          // dedicated portrait relief fills the tall face
   } else {
     tuv=vec2(q.x/bDim.x,q.z/bDim.z)*0.5+0.5;
   }
   float h=texture2D(uTex,tuv).r - 0.5;                  // 0.5 = flat, signed relief
-  return h*0.12*inband;
+  return h*0.12*inband*mix(1.0,1.7,uPortrait);          // deeper relief so the logo reads on the tall bar
 }
 float smax(float a,float b,float k){return -smin(-a,-b,k);}
 float mapSquare(vec3 p){
@@ -154,7 +152,7 @@ void main(){
   float cz=smoothstep(0.0,1.0,uCast);
   float port=clamp((0.92-uRes.x/uRes.y)/0.5,0.0,1.0);          // 0 desktop → 1 tall phone
   float oa=mix(0.34,-0.05,cz) + 0.03*sin(uTime*0.18);          // orbit sweep + slow living drift
-  float dist=mix(4.55,3.62,smoothstep(0.5,1.0,cz))*(1.0+0.46*port)*(1.0+0.62*uPortrait*cz); // pull back only as the tall bar forms
+  float dist=mix(4.55,3.62,smoothstep(0.5,1.0,cz))*(1.0+0.46*port)*(1.0+0.42*uPortrait*cz); // pull back only as the tall bar forms
   float hgt=mix(2.28, mix(1.80,0.72,uStand), cz) + 0.03*sin(uTime*0.33); // drop to near eye-level for the standing pose
   hgt=mix(hgt, mix(0.95,0.28,cz), uPortrait);        // moderate at start (see the living blob), level at the end
   vec3 ro=vec3(sin(oa)*dist, hgt, cos(oa)*dist);
@@ -300,7 +298,8 @@ void main(){
   document.documentElement.style.setProperty('--accent','rgb('+m.ac.map(v=>Math.round(v*255)).join(',')+')');
 
   const cv=document.getElementById('gl');
-  const gl=cv.getContext('webgl')||cv.getContext('experimental-webgl');
+  const glopt={preserveDrawingBuffer:true,antialias:true,alpha:false};
+  const gl=cv.getContext('webgl',glopt)||cv.getContext('experimental-webgl',glopt);
   if(!gl){ document.getElementById('poster').style.display='block'; cv.style.display='none'; return; }
   function sh(t,src){ const x=gl.createShader(t); gl.shaderSource(x,src); gl.compileShader(x);
     if(!gl.getShaderParameter(x,gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(x)); return x; }
@@ -326,7 +325,7 @@ void main(){
     fbo=gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);
     gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,fboTex,0); gl.bindFramebuffer(gl.FRAMEBUFFER,null); }
   const isMob=innerWidth<820||matchMedia('(pointer:coarse)').matches;
-  const qScale=isMob?0.9:Math.min(devicePixelRatio||1,2.0);
+  const qScale=Math.min(devicePixelRatio||1,2.0);
   const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   const LOOP=q.get('loop')!=='0';
   const FC=q.get('c')!==null?parseFloat(q.get('c')):null;   // cast override (testing / static)
@@ -334,7 +333,7 @@ void main(){
   addEventListener('pointermove',function(e){ tmx=(e.clientX/innerWidth-0.5)*2; tmy=-(e.clientY/innerHeight-0.5)*2; tlx=(e.clientX/innerWidth-0.5); tly=-(e.clientY/innerHeight-0.5); });
   function enableGyro(){ addEventListener('deviceorientation',function(e){ if(e.gamma==null)return; tlx=Math.max(-1,Math.min(1,e.gamma/45)); tly=Math.max(-1,Math.min(1,(e.beta-45)/45)); }); }
   if(isMob){ if(typeof DeviceOrientationEvent!=='undefined' && DeviceOrientationEvent.requestPermission){ addEventListener('pointerdown',function once(){ try{DeviceOrientationEvent.requestPermission().then(function(r){if(r==='granted')enableGyro();}).catch(function(){});}catch(e){} removeEventListener('pointerdown',once); }); } else { enableGyro(); } }
-  function resize(){ const w=Math.max(1,Math.round(cv.clientWidth*qScale)), h=Math.max(1,Math.round(cv.clientHeight*qScale)); cv.width=w; cv.height=h; FW=w; FH=h; makeFBO(w,h); }
+  function resize(){ const w=Math.max(1,Math.round(cv.clientWidth*qScale)), h=Math.max(1,Math.round(cv.clientHeight*qScale)); if(w===FW&&h===FH)return; cv.width=w; cv.height=h; FW=w; FH=h; makeFBO(w,h); }
   addEventListener('resize',resize); resize();
   let inView=true; try{ new IntersectionObserver(function(es){inView=es[0].isIntersecting;}).observe(cv); }catch(e){}
   const SL={res:gl.getUniformLocation(pScene,'uRes'),time:gl.getUniformLocation(pScene,'uTime'),mouse:gl.getUniformLocation(pScene,'uMouse'),cast:gl.getUniformLocation(pScene,'uCast'),acc:gl.getUniformLocation(pScene,'uAccent'),b1:gl.getUniformLocation(pScene,'uBg1'),b2:gl.getUniformLocation(pScene,'uBg2'),texL:gl.getUniformLocation(pScene,'uTex'),snap:gl.getUniformLocation(pScene,'uSnap'),light:gl.getUniformLocation(pScene,'uLight'),stand:gl.getUniformLocation(pScene,'uStand')};
