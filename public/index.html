@@ -4,7 +4,7 @@
 <body style="margin:0;background:#FBF9F5">
 <!-- ============ MOOD — living 3D formula, clean futuristic layout ============ -->
 <section id="mood-xp" dir="rtl">
-  <div class="xp-ver">BUILD&nbsp;11</div>
+  <div class="xp-ver">BUILD&nbsp;12</div>
   <canvas class="xp-gl"></canvas>
   <div class="xp-vig"></div>
   <div class="xp-ui">
@@ -141,23 +141,23 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     g.fillStyle=bar;g.fillRect(0,48,512,10);
     const s=g.createRadialGradient(150,53,2,150,53,46);s.addColorStop(0,"rgba(255,250,238,.95)");s.addColorStop(1,"rgba(255,248,234,0)");g.fillStyle=s;g.fillRect(0,0,512,256);
     const t=new THREE.CanvasTexture(cv);t.mapping=THREE.EquirectangularReflectionMapping;t.colorSpace=THREE.SRGBColorSpace;return t;})();
-  const chocMat=new THREE.MeshStandardMaterial({color:0x2a1509,roughness:0.12,metalness:0.12,envMap:env,envMapIntensity:1.7});
-  S.add(new THREE.HemisphereLight(0xffefdc,0x30200f,0.42));
-  const key=new THREE.DirectionalLight(0xfff4e4,2.8);key.position.set(-4,6,6);S.add(key);
-  const fill=new THREE.DirectionalLight(0xffffff,0.55);fill.position.set(4,1.5,5);S.add(fill);
+  const chocMat=new THREE.MeshStandardMaterial({color:0x3d2311,roughness:0.13,metalness:0.12,envMap:env,envMapIntensity:2.05});
+  S.add(new THREE.HemisphereLight(0xffefdc,0x30200f,0.66));
+  const key=new THREE.DirectionalLight(0xfff4e4,3.4);key.position.set(-4,6,6);S.add(key);
+  const fill=new THREE.DirectionalLight(0xffffff,0.72);fill.position.set(4,1.5,5);S.add(fill);
   const rim=new THREE.DirectionalLight(0xffc089,1.7);rim.position.set(4.8,-1,1.2);S.add(rim);
   // soft spotlight glow behind the chocolate so it pops (filmic)
   const spotTex=(function(){const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
     const gr=g.createRadialGradient(64,64,4,64,64,64);gr.addColorStop(0,"rgba(255,248,236,.9)");gr.addColorStop(.5,"rgba(255,242,222,.32)");gr.addColorStop(1,"rgba(255,240,220,0)");
     g.fillStyle=gr;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);})();
   const spot=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:spotTex,transparent:true,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending,opacity:0.5}));
-  spot.scale.set(5.2,5.2,1);S.add(spot);
+  spot.scale.set(5.2,5.2,1);spot.renderOrder=-2;S.add(spot);
   // soft CONTACT SHADOW beneath the chocolate → grounds it and makes it pop off the screen (Apple-style)
   const shadTex=(function(){const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
     const gr=g.createRadialGradient(64,64,2,64,64,64);gr.addColorStop(0,"rgba(58,36,18,.55)");gr.addColorStop(.55,"rgba(58,36,18,.22)");gr.addColorStop(1,"rgba(58,36,18,0)");
     g.fillStyle=gr;g.fillRect(0,0,128,128);return new THREE.CanvasTexture(c);})();
   const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shadTex,transparent:true,depthWrite:false,depthTest:false,blending:THREE.MultiplyBlending,opacity:0.9}));
-  shadow.scale.set(3.6,1.5,1);S.add(shadow);
+  shadow.scale.set(3.6,1.5,1);shadow.renderOrder=-2;S.add(shadow);
 
   function extG(shape,ctr){const g=new THREE.ExtrudeGeometry(shape,{depth:0.62,bevelEnabled:true,bevelThickness:0.13,bevelSize:0.12,bevelSegments:5,curveSegments:36});
     let ox=0,oy=0;if(ctr!==false){g.computeBoundingBox();const bb=g.boundingBox;ox=(bb.min.x+bb.max.x)/2;oy=(bb.min.y+bb.max.y)/2;g.translate(-ox,-oy,-(bb.min.z+bb.max.z)/2);}g.userData.ox=ox;g.userData.oy=oy;return g;}
@@ -176,6 +176,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   const CHOC_Z=2.4;   // chocolate sits FORWARD of the orbit → it pops out of the screen and always occludes the powder behind it
   const shapeGroup=new THREE.Group();shapeGroup.scale.setScalar(0.9);shapeGroup.position.z=CHOC_Z;S.add(shapeGroup);
   Object.values(shapes).forEach(o=>{o.visible=false;shapeGroup.add(o);});
+  shapeGroup.traverse(o=>{if(o.isMesh)o.renderOrder=2;});   // chocolate draws AFTER the powder → paints over anything behind it
   // This iOS device's depth buffer will NOT occlude the transparent powder behind the opaque chocolate (fails for points AND quads).
   // So occlusion is done on the CPU: rasterize the real chocolate mesh silhouette into a high-res screen grid each frame (exact edge → no halo).
   function meshData(g){return {pos:g.attributes.position.array, idx:g.index?g.index.array:null, n:g.index?g.index.count:g.attributes.position.count};}
@@ -231,7 +232,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       void main(){float r=length(vCo);float inner=mix(0.82,0.16,vBlur);
       float a=smoothstep(1.0,inner,r);if(a<=0.0)discard;
       gl_FragColor=vec4(vC,a*vA*(1.0-vBlur*0.38));}`});
-  const points=new THREE.Mesh(pg,pMat);points.frustumCulled=false;S.add(points);
+  const points=new THREE.Mesh(pg,pMat);points.frustumCulled=false;points.renderOrder=0;S.add(points);
 
   const sampleCache={}, IMG={};
   const scratch=document.createElement("canvas"), sctx=scratch.getContext("2d",{willReadFrequently:true});
@@ -254,7 +255,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         P_LZ=new Float32Array(MAXP), P_PH=new Float32Array(MAXP);
   function loadMood(idx){const m=MOODS[idx];const n=m.ings.length;count=n;
     const maxMg=Math.max.apply(null,m.ings.map(x=>x[1]));
-    clouds=m.ings.map((it,i)=>({H:0.44+0.6*Math.sqrt(it[1]/maxMg),ar:IMG[it[2]]||1,ph:i*1.9,
+    clouds=m.ings.map((it,i)=>({H:0.5+0.7*Math.sqrt(it[1]/maxMg),ar:IMG[it[2]]||1,ph:i*1.9,
       theta:i*(Math.PI*2/n),rot:0.16+i*0.05,ang:0,pos:new THREE.Vector3()}));
     let p=0;
     m.ings.forEach((it,i)=>{const pts=sampleCache[it[2]]||[],w=clouds[i].H;
@@ -301,7 +302,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
 
   function size(){const w=cvs.clientWidth||300,h=cvs.clientHeight||300;const pr=Math.min(devicePixelRatio,2);R.setPixelRatio(pr);R.setSize(w,h,false);
     const aspect=w/h;C.aspect=aspect;const tan=Math.tan(C.fov*Math.PI/360);
-    C.position.z=clamp(2.86/(tan*Math.max(0.34,aspect)),13.5,23.5);   // pull back on narrow screens so the orbit never clips
+    C.position.z=clamp(2.62/(tan*Math.max(0.34,aspect)),13.5,22.5);   // pull back on narrow screens so the orbit never clips
     SCENE_Y=C.position.z*0.088;C.updateProjectionMatrix();
     pMat.uniforms.uFocus.value=C.position.z;spot.position.set(0,SCENE_Y,CHOC_Z-0.9);shadow.position.set(0,SCENE_Y-1.7,CHOC_Z-0.2);}
   let T=0;
@@ -318,9 +319,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     shapeGroup.position.y=SCENE_Y+Math.sin(T*0.6)*0.05;
     // ingredients revolve around the central chocolate: the on-screen (x,y) path always clears the chocolate silhouette (so nothing ever overlaps it → clean on every device),
     // while a LARGE z swing makes them swoop toward & away from the camera → strong, close 3D depth.
-    const Phi=T*0.3+drag, RAD=2.12, VY=1.2, ORB_Z=-0.5, ZAMP=1.95;   // ellipse taller than wide: clears the tall bolt at top, keeps sides close; big ZAMP = close-swooping 3D depth
+    // close, tilted 3D ring — the powder revolves right around the chocolate and swings BEHIND it (occluded because the chocolate paints over it); clean on every device
+    const Phi=T*0.3+drag, RAD=1.92, TILT=0.52, ORB_Z=-0.35;
     for(let i=0;i<count;i++){const c=clouds[i];const a=c.theta+Phi;
-      c.pos.set(RAD*Math.cos(a), SCENE_Y+RAD*Math.sin(a)*VY, ORB_Z+ZAMP*Math.cos(a));
+      c.pos.set(RAD*Math.cos(a), SCENE_Y+RAD*Math.sin(a)*Math.sin(TILT), ORB_Z+RAD*Math.sin(a)*Math.cos(TILT));
       c.ang=Math.sin(T*c.rot+c.ph)*0.5;
       c.asm = phaseMode==='out' ? 1-clamp(el/DUR_OUT,0,1) : (phaseMode==='in'? ease3((el-i*STAG)/DUR_IN) : 1);}
     buildCull();const ve=_vp.elements;
@@ -347,7 +349,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       else{aPos[o]=ax;aPos[o+1]=ay;aPos[o+2]=az;aA[i]=0.92*asm;}
     }
     pg.attributes.iPos.needsUpdate=true;pg.attributes.iAlpha.needsUpdate=true;
-    R.render(S,C);
+    R.render(S,C);   // pass 1: full scene (powder behind + chocolate). On some devices powder bleeds over the chocolate.
+    // pass 2: re-draw ONLY the chocolate on top → covers any powder that landed on it. Pure color compositing = device-independent occlusion, no reliance on the powder's depth test.
+    points.visible=false;spot.visible=false;shadow.visible=false;
+    R.autoClear=false;R.clearDepth();R.render(S,C);R.autoClear=true;
+    points.visible=true;spot.visible=true;shadow.visible=true;
     requestAnimationFrame(loop);
   }
 
