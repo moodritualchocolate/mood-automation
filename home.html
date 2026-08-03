@@ -1033,6 +1033,7 @@
       r.style.setProperty("--accent",ACCENT[sku]);
       r.innerHTML='<img class="rpouch" src="'+POUCH[sku]+'" alt=""><div class="rkick">'+c.k+'</div><h3>'+c.h+'</h3><p>'+c.p+'</p><button class="qbtn">קחו אותי לריטואל</button><button class="qreset">‹ נסו שוב</button>';
       q.style.display="none"; r.classList.add("on");
+      try{r.scrollIntoView({behavior:"smooth",block:"center"});}catch(e){}
       r.querySelector(".qbtn").addEventListener("click",function(){ if(window.moodPrefill)window.moodPrefill(sku); });
       r.querySelector(".qreset").addEventListener("click",function(){r.classList.remove("on");r.innerHTML="";q.style.display="";});
     });});
