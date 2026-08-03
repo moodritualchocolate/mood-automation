@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="MOOD — שוקולד פונקציונלי לרגעים של אנרגיה, רוגע ושינה">
+  <title>MOOD — Ritual Chocolate</title>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body { margin: 0; background: #fff; overflow-x: hidden; }
+    body { color: #171714; font-family: Heebo, Arial, sans-serif; }
+    img { display: block; width: 100%; height: auto; }
+    .desktop, .mobile { width: 100%; }
+    .mobile { display: none; }
+    .hero { position: relative; line-height: 0; }
+    .hero-link { position: absolute; z-index: 3; border-radius: 999px; }
+    .hero-products { left: 16.2%; top: 73%; width: 12.5%; height: 7%; }
+    .hero-match { left: 29.2%; top: 73%; width: 18.3%; height: 7%; }
+    .section-frame { display: block; width: 100%; border: 0; background: #fff; overflow: hidden; }
+    .products-frame { height: 900px; }
+    .cinematic-frame { height: 1228px; background: #f3efe9; }
+    .formula { line-height: 0; background: #fff; }
+    .skip-link { position: fixed; z-index: 20; top: 10px; right: 10px; padding: 10px 14px; border-radius: 999px; background: #171714; color: #fff; text-decoration: none; transform: translateY(-80px); transition: transform .2s ease; }
+    .skip-link:focus { transform: translateY(0); }
+    @media (max-width: 700px) {
+      .desktop { display: none; }
+      .mobile { display: block; }
+      .hero-products { left: 8%; top: 80.2%; width: 40%; height: 6.2%; }
+      .hero-match { left: 51%; top: 80.2%; width: 41%; height: 6.2%; }
+      .products-frame { height: 844px; }
+      .cinematic-frame { height: 414px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#products">דלגו למוצרים</a>
+  <main>
+    <section class="hero" aria-label="MOOD — ביס אחד והמצב משתנה">
+      <img class="desktop" src="assets/hero-final-black-desktop.png" alt="MOOD — ביס אחד והמצב שלך משתנה">
+      <img class="mobile" src="assets/hero-final-black-mobile.png" alt="MOOD — ביס אחד והמצב שלך משתנה">
+      <a class="hero-link hero-products" href="#products" aria-label="לכל המוצרים"></a>
+      <a class="hero-link hero-match" href="#products" aria-label="לגלות מה מתאים לי"></a>
+    </section>
+
+    <section id="products" aria-label="בחירת מוצר MOOD">
+      <iframe class="section-frame products-frame" src="sections/product-cards.html" title="בחירת מוצר MOOD" loading="eager"></iframe>
+    </section>
+
+    <section id="story" aria-label="הסיפור של השוקולד של MOOD">
+      <iframe class="section-frame cinematic-frame" src="sections/cinematic.html" title="השוקולד, רונן והריטואל של MOOD" loading="lazy"></iframe>
+    </section>
+
+    <section id="formula" class="formula" aria-label="הפורמולות של MOOD">
+      <img class="desktop" src="assets/formula-selected-all-desktop.png" alt="הפורמולות המאושרות של ENERGY, RELAX ו-SLEEP">
+      <img class="mobile" src="assets/formula-selected-all-mobile.png" alt="הפורמולות המאושרות של ENERGY, RELAX ו-SLEEP">
+    </section>
+  </main>
+</body>
+</html>
