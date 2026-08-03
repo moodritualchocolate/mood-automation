@@ -44,7 +44,7 @@ body{direction:rtl;background:#150E09;overflow:hidden;font-family:'Assistant',se
 const FRAG=`
 precision highp float;
 uniform vec2 uRes; uniform float uTime; uniform vec2 uMouse; uniform float uCast;
-uniform vec3 uAccent; uniform vec3 uBg1; uniform vec3 uBg2; uniform sampler2D uTex; uniform float uSnap; uniform vec2 uLight; uniform float uStand;
+uniform vec3 uAccent; uniform vec3 uBg1; uniform vec3 uBg2; uniform sampler2D uTex; uniform float uSnap; uniform vec2 uLight; uniform float uStand; uniform float uWhite;
 float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
 float sdRoundBox(vec3 p,vec3 b,float r){vec3 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.)-r;}
 // liquid metaballs
@@ -99,7 +99,7 @@ mat2 r2(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
 float map(vec3 p){
   p.xz=r2(sin(uTime*0.28)*mix(0.10,0.035,uCast))*p.xz;
   float cc=smoothstep(0.0,1.0,uCast);
-  p.y -= 0.52*(1.0-cc) + 0.05*(1.0-cc)*sin(uTime*0.7);   // molten floats high, then drips/descends into the mold
+  p.y -= (0.52+0.34*uStand)*(1.0-cc) + 0.05*(1.0-cc)*sin(uTime*0.7);   // molten floats high, then drips/descends into the mold
   p.y-=sin(uTime*0.5)*0.035*(0.4+0.6*cc);                // gentle bob, calmer once cast
   if(uCast<0.02) return mapLiquid(p); if(uCast>0.985) return mapSquare(p);
   return mix(mapLiquid(p),mapSquare(p),cc);
@@ -107,14 +107,18 @@ float map(vec3 p){
 vec3 nrm(vec3 p){vec2 e=vec2(0.002,0.);return normalize(vec3(
   map(p+e.xyy)-map(p-e.xyy),map(p+e.yxy)-map(p-e.yxy),map(p+e.yyx)-map(p-e.yyx)));}
 vec3 sky(vec2 uv){
-  vec3 g=mix(uBg2,uBg1,clamp(uv.y*1.15,0.,1.));
   vec2 sun=vec2(0.50+0.06*sin(uTime*0.06),0.60);
   float glow=smoothstep(0.85,0.0,length((uv-sun)*vec2(1.20,1.0)));
   float breath=0.88+0.14*sin(uTime*0.5);             // the light breathes — alive, not fixed
+  // dark studio backdrop
+  vec3 g=mix(uBg2,uBg1,clamp(uv.y*1.15,0.,1.));
   g+=uAccent*glow*0.11*breath;                       // warm spotlight pool behind the piece
   g+=vec3(0.11,0.085,0.06)*glow*0.52*breath;         // soft studio lift
   g*=1.0-0.12*pow(length(uv-0.5),1.8);               // gentle vignette
-  return g;
+  // clean white backdrop (for embedding on a light site)
+  vec3 w=vec3(0.995,0.992,0.988);
+  w-=0.022*pow(length(uv-0.5),2.0);                  // barely-there light vignette
+  return mix(g, w, uWhite);
 }
 vec3 env(vec3 d){
   vec3 base=mix(vec3(0.03,0.025,0.02), vec3(0.14,0.12,0.10), d.y*0.5+0.5);
@@ -149,13 +153,13 @@ void main(){
     if(tf>0.0 && tf<14.0){
       vec3 fp=ro+rd*tf;
       float near=smoothstep(5.5,0.55,length(fp.xz));           // the surface only exists near the piece
-      vec3 fcol=mix(uBg2,uBg1,0.5);
-      fcol+=uAccent*near*0.05;                                  // warm pool on the surface
-      fcol+=vec3(0.10,0.08,0.06)*near*0.22;                     // soft studio lift
+      vec3 fcol=mix( mix(uBg2,uBg1,0.5), vec3(0.992,0.988,0.982), uWhite );
+      fcol+=uAccent*near*0.05*(1.0-uWhite);                     // warm pool on the surface (dark mode)
+      fcol+=vec3(0.10,0.08,0.06)*near*0.22*(1.0-uWhite);        // soft studio lift (dark mode)
       vec2 sc=L1.xz*floorY/L1.y;                                // where the piece's shadow lands
       float e=length((fp.xz-sc)/mix(vec2(0.95,0.62),vec2(1.40,0.86),clamp(uCast,0.,1.)));
       float shadow=smoothstep(1.5,0.12,e);
-      fcol*=1.0-0.66*shadow;
+      fcol*=1.0-mix(0.66,0.30,uWhite)*shadow;                   // soft grey contact shadow on white
       col=mix(col,fcol,near);
     }
   }
@@ -163,8 +167,8 @@ void main(){
     vec3 n=nrm(pos),V=-rd;
     vec3 L2=normalize(vec3(0.6,0.2,0.5));
     float dif=max(dot(n,L1),0.),dif2=max(dot(n,L2),0.);
-    vec3 choc=vec3(0.165,0.085,0.046);
-    vec3 c=choc*(0.42+1.15*dif)+choc*0.50*dif2;
+    vec3 choc=mix(vec3(0.165,0.085,0.046), vec3(0.105,0.050,0.026), uWhite); // richer/darker 70% on white
+    vec3 c=choc*(0.42+mix(1.15,0.95,uWhite)*dif)+choc*0.50*dif2;
     // wet specular + wide soft glow (fake bloom)
     vec3 H=normalize(L1+V);
     float sp=pow(max(dot(n,H),0.),mix(40.,60.,uCast));
@@ -189,7 +193,7 @@ void main(){
     if(uSnap>0.001){ float sn=sin(uSnap*3.14159);
       float band=smoothstep(0.12,0.0,abs(uv.x-(1.0-uSnap)));
       c+=vec3(1.0,0.92,0.74)*band*sn*0.8; }
-    c=mix(c,sky(uv),smoothstep(3.8,5.6,t)*0.4);
+    c=mix(c,sky(uv),smoothstep(3.8,5.6,t)*0.4*(1.0-0.8*uWhite)); // don't wash edges to white
     col=c;
   }
   float coc=clamp(abs(t-3.4)*0.55,0.0,1.0); if(hit<0.5)coc=0.12;
@@ -197,7 +201,7 @@ void main(){
 }
 `, VERT=`attribute vec2 a;varying vec2 vUv;void main(){vUv=a*0.5+0.5;gl_Position=vec4(a,0.,1.);}`, COMP=`
 precision highp float;
-varying vec2 vUv; uniform vec2 uRes; uniform sampler2D uScene;
+varying vec2 vUv; uniform vec2 uRes; uniform sampler2D uScene; uniform float uWhite;
 vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),0.0,1.0); }
 void main(){
   vec2 px=1.0/uRes; vec4 sc=texture2D(uScene,vUv); float coc=sc.a;
@@ -205,11 +209,14 @@ void main(){
   if(coc>0.05){ vec3 acc=sc.rgb; float w=1.0; float r=coc*1.7;
     for(int i=0;i<8;i++){ float a=float(i)*0.7853982; acc+=texture2D(uScene,vUv+vec2(cos(a),sin(a))*r*px).rgb; w+=1.0; }
     dofc=acc/w; }
+  float thr=mix(0.68,1.30,uWhite);                   // don't bloom the white backdrop
   vec3 bloom=vec3(0.0); float bt=0.0;
   for(int i=0;i<16;i++){ float a=float(i)*0.3926991; float rad=(1.0+mod(float(i),4.0))*2.4;
-    vec3 s2=texture2D(uScene,vUv+vec2(cos(a),sin(a))*rad*px).rgb; bloom+=max(s2-0.68,0.0); bt+=1.0; }
+    vec3 s2=texture2D(uScene,vUv+vec2(cos(a),sin(a))*rad*px).rgb; bloom+=max(s2-thr,0.0); bt+=1.0; }
   bloom/=bt;
-  vec3 col=dofc+bloom*1.7; col=aces(col*1.02);
+  vec3 col=dofc+bloom*mix(1.7,0.9,uWhite);
+  vec3 toned=aces(col*1.02);
+  col=mix(toned, clamp(col,0.0,1.0), uWhite);        // white mode: linear, so white stays white
   gl_FragColor=vec4(col,1.0);
 }
 `, POWV=`
