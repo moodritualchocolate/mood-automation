@@ -584,8 +584,9 @@ STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקו�
 TS_CSS = """
 /* one strong section: the taste + world-champion chocolatier */
 .ts{position:relative;display:grid;grid-template-columns:1fr 1.05fr;align-items:stretch;background:#fff;overflow:hidden;direction:ltr}
-.ts-media{position:relative;order:1;min-height:min(78vh,640px);background:#efe7d9}
+.ts-media{position:relative;order:1;min-height:min(78vh,640px);background:#fff}
 .ts-media img,.ts-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.ts-media::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;box-shadow:inset 0 0 clamp(50px,7vw,110px) clamp(24px,3.4vw,52px) #fff}
 .ts-vid{object-position:center 52%}
 .ts-copy{order:2;direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,5.5vw,88px)}
 .ts-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35}
