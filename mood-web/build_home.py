@@ -606,6 +606,30 @@ XHERO_CSS = """
   .h3-float,.h3-spin,.h3-shadow{animation:none}
   .h3-obj{transition:none}
 }
+/* ===== cinematic brand hero — moody chocolate, slow zoom, light sweep, short hook ===== */
+.cine{position:relative;min-height:min(92vh,880px);overflow:hidden;background:#17100c;display:grid;align-items:center}
+.cine-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;
+  animation:cineZoom 22s ease-in-out infinite alternate;will-change:transform}
+.cine-scrim{position:absolute;inset:0;background:linear-gradient(to left,rgba(18,12,8,.88),rgba(18,12,8,.5) 55%,rgba(18,12,8,.24))}
+.cine-vig{position:absolute;inset:0;background:radial-gradient(120% 100% at 50% 50%,transparent 55%,rgba(10,7,4,.55))}
+.cine-sheen{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
+  background:linear-gradient(115deg,transparent 42%,rgba(255,183,120,.12) 49%,transparent 57%);
+  transform:translateX(-60%);animation:cineSheen 10s ease-in-out infinite}
+.cine-in{position:relative;z-index:2;width:min(1100px,100%);margin:0 auto;padding:0 clamp(24px,6vw,84px);direction:rtl}
+.cine-eyebrow{font-size:12px;font-weight:900;letter-spacing:.24em;color:var(--energy)}
+.cine-h{font-size:clamp(46px,7.6vw,108px);line-height:.96;letter-spacing:-.045em;font-weight:900;color:#f7efe4;margin:16px 0 0;text-shadow:0 2px 40px rgba(0,0,0,.4)}
+.cine-cta{display:inline-block;margin:30px 0 0;background:var(--energy);color:#17100c;padding:16px 36px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s}
+.cine-cta:hover{transform:translateY(-2px)}
+.cine-cue{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:2;font-size:11px;font-weight:800;letter-spacing:.16em;color:#e7dccb;opacity:.75;animation:cueBob 2.2s ease-in-out infinite}
+@keyframes cineZoom{from{transform:scale(1.06)}to{transform:scale(1.17)}}
+@keyframes cineSheen{0%{transform:translateX(-60%)}60%,100%{transform:translateX(160%)}}
+@keyframes cueBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+@media(max-width:820px){
+  .cine{min-height:80vh}
+  .cine-scrim{background:linear-gradient(0deg,rgba(18,12,8,.92),rgba(18,12,8,.4) 70%,rgba(18,12,8,.5))}
+  .cine-h{font-size:clamp(40px,12vw,64px)}
+}
+@media(prefers-reduced-motion:reduce){.cine-bg,.cine-sheen,.cine-cue{animation:none}}
 """
 
 XHERO = """    <header class="xtop">
@@ -616,27 +640,17 @@ XHERO = """    <header class="xtop">
         <a class="xnav-cta" href="#quiz">מה מתאים לי?</a>
       </nav>
     </header>
-    <section class="hero3d" id="xhero" style="--accent:var(--energy)" aria-label="mood — שוקולד פונקציונלי בתלת מימד">
-      <div class="h3-stage" id="h3stage">
-        <div class="h3-shadow"></div>
-        <div class="h3-float"><div class="h3-spin"><div class="h3-obj" id="h3obj">
-          <img class="h3-p on" data-sku="energy" src="__ENERGY__" alt="mood Energy">
-          <img class="h3-p" data-sku="relax" src="__RELAX__" alt="mood Relax">
-          <img class="h3-p" data-sku="sleep" src="__SLEEP__" alt="mood Sleep">
-          <span class="h3-glare"></span>
-        </div></div></div>
-        <div class="h3-hint">הזיזו · געו</div>
+    <section class="cine" id="cine" aria-label="mood — ריטואל פונקציונלי">
+      <img class="cine-bg" src="__CHOC__" alt="">
+      <div class="cine-scrim"></div>
+      <div class="cine-vig"></div>
+      <div class="cine-sheen"></div>
+      <div class="cine-in">
+        <div class="cine-eyebrow">ריטואל פונקציונלי · 12.8</div>
+        <h1 class="cine-h">מצב הרוח שלך.<br>עכשיו יש לו טעם.</h1>
+        <a class="cine-cta" href="#quiz">מה מתאים לי?</a>
       </div>
-      <div class="h3-copy">
-        <div class="h3-eyebrow">ריטואל פונקציונלי · 12.8</div>
-        <h1 class="h3-h">ביס אחד.<br>מצב <span class="xh-mood">חדש</span>.</h1>
-        <div class="h3-moods" role="group" aria-label="בחירת מצב">
-          <button class="on" data-sku="energy">ENERGY</button>
-          <button data-sku="relax">RELAX</button>
-          <button data-sku="sleep">SLEEP</button>
-        </div>
-        <a class="h3-cta" href="#products">מה מתאים לי?</a>
-      </div>
+      <div class="cine-cue" aria-hidden="true">גללו למטה</div>
     </section>
 """
 
