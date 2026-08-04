@@ -420,13 +420,14 @@ FORMULAS_CSS = """
 .fml-h{font-size:clamp(30px,4.4vw,54px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:0}
 .fml-sub{margin:12px 0 0;max-width:420px;color:var(--muted);font-size:clamp(14px,1.3vw,16.5px);line-height:1.6}
 .fml-list{list-style:none;margin:22px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:15px 26px;max-width:480px}
-.fml-list li{min-width:0}
+.fml-list li{min-width:0;text-align:right}
 .fml-list .fi-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .fml-list b{font-size:14.5px;font-weight:800;color:var(--ink);white-space:nowrap}
 .fml-list i{font-style:normal;direction:ltr;font-size:14px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;flex:none}
-.fml-list .fi-bar{height:3px;border-radius:3px;background:#e7ddca;margin:7px 0 5px;position:relative;overflow:hidden}
+.fml-list .fi-bar{height:3px;border-radius:3px;background:#e7ddca;margin:7px 0 6px;position:relative;overflow:hidden}
 .fml-list .fi-bar::before{content:"";position:absolute;top:0;bottom:0;right:0;width:var(--p,0%);background:var(--accent);border-radius:3px;transition:width .5s cubic-bezier(.22,.8,.28,1)}
-.fml-list em{font-style:normal;font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.3}
+.fml-list em{display:block;font-style:normal;font-size:12.5px;font-weight:700;color:#4c4238;line-height:1.3}
+.fml-list em::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-inline-end:6px;vertical-align:middle}
 .fml-note{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
 @media(max-width:820px){
   .fml-body{grid-template-columns:1fr;gap:2px}
@@ -439,7 +440,7 @@ FORMULAS_CSS = """
   .fml-list{max-width:none;grid-template-columns:1fr 1fr;column-gap:20px;row-gap:14px;margin-top:16px}
   .fml-list b{font-size:14px}
   .fml-list i{font-size:13.5px}
-  .fml-list em{font-size:11px}
+  .fml-list em{font-size:11.5px}
   .fml-note{margin-top:14px}
   .fml-tabs button{padding:10px 18px;font-size:13px;letter-spacing:.04em}
 }
