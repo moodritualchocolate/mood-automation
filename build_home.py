@@ -363,25 +363,20 @@ FORMULAS_CSS = """
 FORMULAS_JS = ""
 
 VH_CSS = """
-/* video hero — cream split, real product film + colored 3-mood line */
-.vh{position:relative;direction:ltr;display:grid;grid-template-columns:1.02fr .98fr;min-height:min(88vh,760px);background:var(--cream);overflow:hidden}
-.vh-media{position:relative;order:1;overflow:hidden;background:var(--cream)}
+/* video hero — white, minimal, product film + one sales CTA */
+.vh{position:relative;direction:ltr;display:grid;grid-template-columns:1.02fr .98fr;min-height:min(72vh,600px);background:#fff;overflow:hidden}
+.vh-media{position:relative;order:1;overflow:hidden;background:#fff}
 .vh-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.vh-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to left,var(--cream),rgba(245,238,228,0) 34%)}
-.vh-copy{position:relative;order:2;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:right;direction:rtl;padding:clamp(30px,5vw,86px);z-index:2}
-.vh-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--ink);opacity:.55;margin-bottom:18px}
-.vh-h{font-size:clamp(40px,6vw,80px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:var(--ink);margin:0}
-.vh-moods{margin:24px 0 34px;font-size:clamp(20px,2.4vw,31px);font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:12px;direction:rtl}
-.vh-moods .e{color:#FF6B35}.vh-moods .r{color:#5C8058}.vh-moods .s{color:#4A2C5C}
-.vh-moods b{color:var(--ink);opacity:.22;font-weight:400}
-.vh-cta{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#f6efe4;padding:15px 30px;border-radius:999px;font-size:16px;font-weight:800;text-decoration:none;transition:transform .2s,background .2s}
+.vh-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to left,#fff,rgba(255,255,255,0) 34%)}
+.vh-copy{position:relative;order:2;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:right;direction:rtl;padding:clamp(28px,5vw,86px);z-index:2}
+.vh-h{font-size:clamp(42px,6.4vw,86px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:var(--ink);margin:0 0 34px}
+.vh-cta{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#fff;padding:16px 34px;border-radius:999px;font-size:17px;font-weight:800;text-decoration:none;transition:transform .2s,background .2s}
 .vh-cta:hover{transform:translateY(-2px);background:#FF6B35;color:#1a0f06}
 @media(max-width:860px){
   .vh{grid-template-columns:1fr;min-height:auto}
-  .vh-media{order:1;aspect-ratio:4/3}
-  .vh-fade{background:linear-gradient(0deg,var(--cream),rgba(245,238,228,0) 32%)}
-  .vh-copy{order:2;align-items:center;text-align:center;padding:20px 22px 40px}
-  .vh-moods{justify-content:center;margin:16px 0 26px}
+  .vh-media{order:1;aspect-ratio:16/11}
+  .vh-fade{background:linear-gradient(0deg,#fff,rgba(255,255,255,0) 30%)}
+  .vh-copy{order:2;align-items:center;text-align:center;padding:18px 22px 38px}
 }
 """
 
@@ -571,7 +566,7 @@ CAP_JS = """  <script>
 XHERO_CSS = """
 /* announcement + nav */
 .xannounce{background:var(--ink);color:#f5eee4;text-align:center;font-size:12px;font-weight:700;letter-spacing:.02em;padding:10px 16px}
-.xnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px clamp(18px,4vw,34px);background:rgba(245,238,228,.92);backdrop-filter:blur(10px);border-bottom:1px solid #ece4d6}
+.xnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px clamp(18px,4vw,34px);background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid #eee}
 .xnav-links{display:flex;gap:22px}
 .xnav-links a{color:#4c4841;text-decoration:none;font-size:14px;font-weight:700}
 .xnav-links a:hover{color:var(--ink)}
@@ -726,7 +721,7 @@ XHERO = """    <header class="xtop">
         <a class="xnav-cta" href="#products">מה מתאים לי?</a>
       </nav>
     </header>
-    <section class="vh" id="xhero" aria-label="mood — ריטואל פונקציונלי">
+    <section class="vh" id="xhero" aria-label="mood — שוקולד פונקציונלי">
       <div class="vh-media">
         <video class="vh-vid" autoplay muted loop playsinline preload="metadata" poster="__HEROPOSTER__">
           <source src="__HEROVIDEO__" type="video/mp4">
@@ -734,12 +729,8 @@ XHERO = """    <header class="xtop">
         <div class="vh-fade" aria-hidden="true"></div>
       </div>
       <div class="vh-copy">
-        <div class="vh-eyebrow">ריטואל פונקציונלי · 12.8</div>
-        <h1 class="vh-h">מצב הרוח שלך.<br>עכשיו יש לו טעם.</h1>
-        <div class="vh-moods" aria-label="שלושה מצבים">
-          <span class="e">אנרגיה</span><b>·</b><span class="r">רוגע</span><b>·</b><span class="s">שינה</span>
-        </div>
-        <a class="vh-cta" href="#products">מה מתאים לי?</a>
+        <h1 class="vh-h">שוקולד שמשנה<br>לך את המצב.</h1>
+        <a class="vh-cta" href="#products">הזמינו עכשיו</a>
       </div>
     </section>
 """
