@@ -166,14 +166,23 @@ MARQUEE = f"""    <div class="hm" aria-label="למה mood">
     </div>
 """
 
-FOUNDERS = """    <section class="hf" id="founders" aria-label="המייסדים של mood">
-      <div class="hf-photo reveal"><img src="__FOUNDERS__" alt="נדב יצחקי ומתיאס דומינגז — מייסדי mood בסדנת השוקולד"></div>
-      <div class="hf-copy reveal">
-        <div class="hf-eyebrow">מי מאחורי mood</div>
-        <h2 class="hf-h">התחלנו כי נמאס לנו לבחור.</h2>
-        <p>נדב יצחקי ומתיאס דומינגז רצו דבר אחד פשוט — ריטואל קטן שאפשר לחזור אליו כל יום, בלי לבחור בין קפה לשקט.</p>
-        <p>אז בנינו שוקולד פונקציונלי אמיתי: 70% מריר עם מלח ים, פורמולה טבעית, בלי סוכר. כל קובייה היא רגע אחד ביום שהוא רק שלך.</p>
-        <div class="hf-sign">— נדב ומתיאס · מייסדי mood</div>
+FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמייסדים של mood">
+      <div class="fl-wrap">
+        <figure class="fl-photo reveal">
+          <img src="__FOUNDERS__" alt="נדב יצחקי ומתיאס דומינגז — מייסדי mood בסדנת השוקולד">
+          <span class="fl-tape fl-tape-a" aria-hidden="true"></span>
+          <span class="fl-tape fl-tape-b" aria-hidden="true"></span>
+          <figcaption class="fl-cap">נדב ומתיאס · הסדנה</figcaption>
+        </figure>
+        <div class="fl-paper reveal">
+          <div class="fl-eyebrow">מכתב מהמייסדים</div>
+          <p class="fl-lead">היי, אנחנו נדב ומתיאס.</p>
+          <p>נמאס לנו לבחור כל בוקר בין קפה שמקפיץ אותנו לבין רגע של שקט. רצינו דבר אחד פשוט — ריטואל קטן שאפשר לחזור אליו כל יום, בלי להתנצל עליו.</p>
+          <p>אז ישבנו עם רונן אפללו, אלוף השוקולד העולמי, ובנינו שוקולד פונקציונלי אמיתי: 70% מריר עם מלח ים, פורמולה טבעית, בלי סוכר. כל קובייה היא רגע אחד ביום שהוא רק שלכם.</p>
+          <p class="fl-ps">נשמח שתטעמו. באמת.</p>
+          <div class="fl-sign">נדב ומתיאס</div>
+          <div class="fl-role">מייסדי mood</div>
+        </div>
       </div>
     </section>
 """
@@ -381,7 +390,7 @@ VH_CSS = """
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
-      <div class="ts-media reveal"><img src="__BITE__" alt="בר mood 70% מריר עם ביס — הטעם"></div>
+      <div class="ts-media reveal"><img src="__BITE__" alt="בר mood 70% מריר עם ביס — הטעם"><div class="ts-seal" aria-label="אלוף השוקולד העולמי 2022"><span>אלוף השוקולד העולמי</span><b>2022</b></div></div>
       <div class="ts-copy">
         <div class="ts-eyebrow reveal">פותח עם אלוף העולם</div>
         <h2 class="ts-h reveal">קודם כול,<br>שוקולד אמיתי.</h2>
@@ -420,6 +429,36 @@ TS_CSS = """
   .ts-media{order:1;min-height:auto;aspect-ratio:1/1}
   .ts-copy{order:2;padding:34px 22px 44px}
   .ts-p,.ts-quote{max-width:none}
+}
+.ts-seal{position:absolute;left:22px;bottom:22px;width:120px;height:120px;border-radius:50%;background:#FF6B35;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transform:rotate(-9deg);box-shadow:0 12px 26px rgba(0,0,0,.32);border:2px solid rgba(255,255,255,.85)}
+.ts-seal span{font-size:10px;font-weight:900;letter-spacing:.03em;line-height:1.25;padding:0 14px}
+.ts-seal b{font-size:26px;font-weight:900;line-height:1;margin-top:4px}
+@media(max-width:860px){.ts-seal{width:94px;height:94px;left:16px;bottom:16px}.ts-seal b{font-size:21px}.ts-seal span{font-size:9px}}
+"""
+
+FL_CSS = """
+/* founders — a personal letter beside a pinned workshop photo */
+.fl{background:#efe7d9;padding:clamp(52px,7vw,104px) clamp(20px,5vw,60px);position:relative}
+.fl-wrap{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(28px,4vw,64px);align-items:center}
+.fl-photo{position:relative;margin:0;background:#fff;padding:14px 14px 44px;box-shadow:0 22px 46px rgba(41,25,10,.22);transform:rotate(-3deg);justify-self:center;max-width:330px}
+.fl-photo img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover}
+.fl-cap{position:absolute;left:0;right:0;bottom:15px;text-align:center;font-size:14px;font-weight:800;color:#6a6157}
+.fl-tape{position:absolute;width:104px;height:30px;background:rgba(214,197,168,.55);box-shadow:0 2px 6px rgba(0,0,0,.08);top:-13px}
+.fl-tape-a{left:14px;transform:rotate(-24deg)}
+.fl-tape-b{right:14px;transform:rotate(22deg)}
+.fl-paper{position:relative;background:#fffdf8;border:1px solid #efe4d0;border-radius:3px;padding:clamp(30px,4vw,54px);box-shadow:0 18px 40px rgba(41,25,10,.12);direction:rtl;text-align:right}
+.fl-paper::before{content:"";position:absolute;top:18px;right:32px;bottom:18px;width:1px;background:repeating-linear-gradient(#e7c4bb 0 1px,transparent 1px 27px);opacity:.5}
+.fl-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35;margin-bottom:16px}
+.fl-lead{font-size:clamp(22px,2.4vw,30px);font-weight:900;color:var(--ink);letter-spacing:-.02em;margin:0 0 12px}
+.fl-paper p{color:#4c4841;font-size:clamp(15px,1.35vw,17px);line-height:1.75;margin:0 0 14px;max-width:52ch}
+.fl-ps{font-weight:800;color:var(--ink)}
+.fl-sign{font-size:clamp(30px,3.4vw,42px);font-weight:900;color:var(--ink);transform:rotate(-3deg);display:inline-block;margin:16px 0 0;position:relative}
+.fl-sign::after{content:"";position:absolute;left:-6px;right:-10px;bottom:-7px;height:9px;border-bottom:2.5px solid #FF6B35;border-radius:50%;transform:rotate(-1deg)}
+.fl-role{margin-top:15px;font-size:13px;font-weight:800;letter-spacing:.04em;color:#8a7f70}
+@media(max-width:820px){
+  .fl-wrap{grid-template-columns:1fr;gap:32px}
+  .fl-photo{transform:rotate(-2deg);max-width:270px}
+  .fl-paper::before{right:20px}
 }
 """
 
@@ -873,7 +912,7 @@ def main():
                           ".products-frame { height: 620px; }")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + "\n  </style>", 1)
+    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + "\n  </style>", 1)
     # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
@@ -885,7 +924,7 @@ def main():
     shell = shell.replace('    <section id="story"', FORMULAS + '    <section id="story"')
     # replace the cinematic story with the strong taste + world-champion section
     shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
-    shell = shell.replace('    <section id="formula"', FOUNDERS + TIMELINE + '    <section id="formula"')
+    shell = shell.replace('    <section id="formula"', FOUNDERS + '    <section id="formula"')
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
     # the live FORMULAS (id="formulas") replaces the old static formula image
     shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
