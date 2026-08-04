@@ -494,36 +494,54 @@ FORMULAS_JS = """  <script>
 """
 
 VH_CSS = """
-/* hero — the approved photo + composition, but LIVE copy & prominent CTAs */
-.rh{background:linear-gradient(180deg,#faf6ef 0%,#f2ebdf 100%);overflow:hidden}
-.rh-wrap{position:relative;direction:ltr;max-width:1400px;margin:0 auto;min-height:min(90vh,780px);display:grid;grid-template-columns:1.02fr .98fr;align-items:stretch}
-.rh-copy{direction:rtl;text-align:right;align-self:center;justify-self:end;max-width:600px;padding:clamp(30px,5vw,72px);z-index:2}
-.rh-eyebrow{font-size:clamp(11px,1.1vw,13px);font-weight:800;letter-spacing:.28em;color:#b06a3a;margin:0 0 18px}
-.rh-h{font-size:clamp(42px,6.2vw,82px);line-height:.96;letter-spacing:-.05em;font-weight:900;color:#1c140d;margin:0}
-.rh-h span{color:var(--energy)}
-.rh-sub{margin:22px 0 0 auto;max-width:440px;font-size:clamp(16px,1.45vw,20px);line-height:1.55;color:#5a5148}
-.rh-cta{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:14px;margin:34px 0 0}
+/* hero — cinematic product stage: the bitten mood bar in dramatic light, copy over a low scrim */
+.rh{position:relative;min-height:min(94vh,900px);overflow:hidden;background:#1a0f08;display:flex;flex-direction:column;justify-content:flex-end}
+.rh-bg{position:absolute;inset:0;z-index:0}
+.rh-shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;animation:rhZoom 20s ease-in-out infinite alternate;will-change:transform}
+@keyframes rhZoom{from{transform:scale(1.02)}to{transform:scale(1.09)}}
+.rh-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,11,6,.97) 0%,rgba(20,11,6,.78) 20%,rgba(20,11,6,.32) 40%,rgba(20,11,6,0) 60%),radial-gradient(120% 80% at 78% 30%,transparent,rgba(20,11,6,.35))}
+.rh-prism{position:absolute;top:6%;left:4%;width:min(48%,560px);height:44%;pointer-events:none;mix-blend-mode:screen;filter:blur(16px);opacity:.7;
+  background:linear-gradient(118deg,transparent 38%,rgba(255,120,80,.16),rgba(120,205,180,.13),rgba(150,150,235,.14),transparent 64%);animation:rhShimmer 8s ease-in-out infinite alternate}
+@keyframes rhShimmer{from{opacity:.45;transform:translateX(0)}to{opacity:.85;transform:translateX(22px)}}
+.rh-inner{position:relative;z-index:2;width:100%;max-width:1320px;margin:0 auto;padding:0 clamp(22px,5vw,64px) clamp(44px,7vw,92px)}
+.rh-copy{max-width:620px;direction:rtl;text-align:right}
+.rh-eyebrow{font-size:clamp(11px,1.1vw,13px);font-weight:800;letter-spacing:.3em;color:#eab488;margin:0 0 16px}
+.rh-h{font-size:clamp(44px,6.6vw,92px);line-height:.94;letter-spacing:-.05em;font-weight:900;color:#fbf4ec;margin:0;text-shadow:0 2px 40px rgba(0,0,0,.45)}
+.rh-h span{color:#f0a35e}
+.rh-sub{margin:20px 0 0;max-width:440px;font-size:clamp(16px,1.45vw,20px);line-height:1.55;color:#e8dccd}
+.rh-cta{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:14px;margin:32px 0 0}
 .rh-btn{display:inline-flex;align-items:center;justify-content:center;padding:17px 38px;border-radius:999px;font-size:clamp(15px,1.3vw,17px);font-weight:800;text-decoration:none;white-space:nowrap;transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s ease,background .2s,border-color .2s,color .2s}
-.rh-btn-primary{background:var(--energy);color:#fff;box-shadow:0 16px 34px -10px var(--energy)}
-.rh-btn-primary:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 22px 44px -10px var(--energy)}
+.rh-btn-primary{background:#ee9a4d;color:#20130a;box-shadow:0 18px 40px -12px rgba(238,154,77,.7)}
+.rh-btn-primary:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 24px 50px -12px rgba(238,154,77,.8)}
 .rh-btn-primary:active{transform:translateY(0) scale(.98)}
-.rh-btn-ghost{background:rgba(255,255,255,.72);color:#1c140d;border:1.5px solid rgba(28,20,13,.16);backdrop-filter:blur(4px)}
-.rh-btn-ghost:hover{transform:translateY(-2px);border-color:var(--energy);color:var(--energy)}
+.rh-btn-ghost{background:rgba(255,255,255,.09);color:#fff;border:1.5px solid rgba(255,255,255,.4);backdrop-filter:blur(6px)}
+.rh-btn-ghost:hover{transform:translateY(-2px);border-color:#fff;background:rgba(255,255,255,.16)}
 .rh-btn-ghost:active{transform:translateY(0) scale(.98)}
-.rh-photo{position:relative;align-self:stretch;overflow:hidden;min-height:min(90vh,780px)}
-.rh-photo picture{display:contents}
-.rh-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 30%}
-.rh-photo::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#f2ebdf 0%,rgba(242,235,223,.5) 13%,rgba(242,235,223,0) 34%)}
+.rh-scroll{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:26px;height:42px;border:2px solid rgba(255,255,255,.4);border-radius:14px;z-index:2;display:none}
+.rh-scroll span{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:4px;height:8px;border-radius:2px;background:rgba(255,255,255,.8);animation:rhDot 1.8s ease-in-out infinite}
+@keyframes rhDot{0%,100%{opacity:0;top:8px}50%{opacity:1;top:18px}}
+/* the human moment — the approved prism photo, kept as a cinematic beat */
+.rmt{position:relative;min-height:min(70vh,620px);overflow:hidden;background:#efe7d9;display:flex;align-items:flex-end;direction:rtl}
+.rmt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 26%}
+.rmt::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(28,17,9,.72) 0%,rgba(28,17,9,.15) 34%,transparent 58%)}
+.rmt-in{position:relative;z-index:2;width:100%;max-width:1320px;margin:0 auto;padding:0 clamp(22px,5vw,64px) clamp(38px,6vw,72px)}
+.rmt-t{font-size:clamp(28px,4.2vw,56px);line-height:1.02;letter-spacing:-.035em;font-weight:900;color:#fff;margin:0;text-shadow:0 2px 30px rgba(0,0,0,.4)}
+.rmt-t span{color:#f2b27a}
+@media(min-width:861px){.rh-scroll{display:block}}
 @media(max-width:860px){
-  .rh-wrap{display:flex;flex-direction:column;min-height:0}
-  .rh-photo{order:-1;height:54vh;min-height:330px;width:100%;min-height:330px}
-  .rh-photo img{object-position:center 24%}
-  .rh-photo::before{background:linear-gradient(0deg,#f2ebdf 0%,rgba(242,235,223,0) 46%)}
-  .rh-copy{max-width:none;padding:24px 24px 40px;text-align:center}
-  .rh-eyebrow{margin-bottom:12px}
-  .rh-sub{margin-inline:auto;max-width:340px}
-  .rh-cta{justify-content:center}
+  .rh{min-height:92svh}
+  .rh-shot{object-position:center 42%}
+  .rh-copy{max-width:none;text-align:right}
+  .rh-inner{padding-bottom:44px}
+  .rmt{min-height:64vh}
+  .rmt img{object-position:center 22%}
 }
+"""
+
+MOMENT = """    <section class="rmt" aria-label="הרגע שלך">
+      <picture><source media="(max-width:860px)" srcset="__HEROPHOTO_M__"><img src="__HEROPHOTO__" alt="רגע של mood — אור פריזמה על הפנים"></picture>
+      <div class="rmt-in"><p class="rmt-t">רגע אחד ביום —<br>שהוא <span>רק שלך</span>.</p></div>
+    </section>
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
@@ -1058,7 +1076,11 @@ XHERO = """    <header class="xtop" id="top">
       </nav>
     </header>
     <section class="rh" id="xhero" aria-label="mood — אל תבחרו מוצר, בחרו את הרגע">
-      <div class="rh-wrap">
+      <div class="rh-bg">
+        <img class="rh-shot" src="__CHOCFLOAT__" alt="שוקולד mood — ביס אחד משנה הכל">
+        <span class="rh-prism" aria-hidden="true"></span>
+      </div>
+      <div class="rh-inner">
         <div class="rh-copy">
           <p class="rh-eyebrow">ONE BITE · EVERYTHING CHANGES</p>
           <h1 class="rh-h">אל תבחרו מוצר.<br>בחרו את <span>הרגע</span>.</h1>
@@ -1068,7 +1090,7 @@ XHERO = """    <header class="xtop" id="top">
             <a class="rh-btn rh-btn-ghost" href="#products">למארז היכרות</a>
           </div>
         </div>
-        <div class="rh-photo"><picture><source media="(max-width:860px)" srcset="__HEROPHOTO_M__"><img src="__HEROPHOTO__" alt="רגע של mood — אור פריזמה על הפנים"></picture></div>
+        <a class="rh-scroll" href="#products" aria-label="גללו למטה"><span></span></a>
       </div>
     </section>
 """
@@ -1178,7 +1200,7 @@ def main():
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
     #   founders · TIMELINE · formula · BUNDLE · close · footer
     # trust/credibility bar sits directly under the hero
-    shell = shell.replace('    <section id="products"', MARQUEE + '    <section id="products"')
+    shell = shell.replace('    <section id="products"', MARQUEE + MOMENT + '    <section id="products"')
     # replace the cinematic story with the strong taste + world-champion section
     shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
     # the compact formula selector flows directly into the founders letter (one cream band)
@@ -1195,6 +1217,7 @@ def main():
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__HEROPHOTO__", data_uri("hero-photo.jpg", HOME_ASSETS))
     shell = shell.replace("__HEROPHOTO_M__", data_uri("hero-mobile.jpg", HOME_ASSETS))
+    shell = shell.replace("__CHOCFLOAT__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
     shell = shell.replace("__RONEN__", data_uri("ronen-real.jpg"))
