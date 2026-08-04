@@ -357,19 +357,92 @@ MEET = """    <section class="meet" id="meet" aria-label="הכירו את השו
     </section>
 """
 
-FORMULAS = """    <section class="fml-embed" id="formulas" aria-label="הפורמולות של mood">
-      <iframe class="fml-frame" src="sections/formula.html" title="MOOD — הפורמולה" loading="lazy"></iframe>
+FORMULAS = """    <section class="fml" id="formulas" aria-label="הפורמולות של mood" style="--accent:#FF6B35">
+      <div class="fml-head">
+        <div class="fml-eyebrow">לא ערבוב מקרי · בחרו את ה-mood</div>
+        <div class="fml-tabs" role="tablist" aria-label="בחירת פורמולה">
+          <button class="on" data-sku="energy">ENERGY</button>
+          <button data-sku="relax">RELAX</button>
+          <button data-sku="sleep">SLEEP</button>
+        </div>
+      </div>
+      <div class="fml-body">
+        <div class="fml-media">
+          <div class="fml-ghost" id="fmlGhost" aria-hidden="true">ENERGY</div>
+          <img class="fml-pouch on" data-sku="energy" src="__ENERGY__" alt="שקית mood Energy">
+          <img class="fml-pouch" data-sku="relax" src="__RELAX__" alt="שקית mood Relax">
+          <img class="fml-pouch" data-sku="sleep" src="__SLEEP__" alt="שקית mood Sleep">
+        </div>
+        <div class="fml-copy">
+          <h2 class="fml-h">פחות רשימה.<br>יותר כוונה.</h2>
+          <p class="fml-sub">פורמולה אחרת לכל mood — בתוך יחידה אישית שקל להפוך לחלק מהיום.</p>
+          <ul class="fml-list" id="fmlList"></ul>
+          <div class="fml-note">30 יחידות אישיות · פורמולה מדויקת בכל ביס</div>
+        </div>
+      </div>
     </section>
 """
 
 FORMULAS_CSS = """
-/* embedded self-contained 3D formulas experience (built separately, hosted as-is) */
-.fml-embed{background:var(--cream);width:100%;overflow:hidden}
-.fml-frame{display:block;width:100%;height:min(940px,90vh);border:0}
-@media(max-width:820px){.fml-frame{height:min(760px,88vh)}}
+/* clean formula — tabs on top (clearly buttons), pouch + ingredient list */
+.fml{background:var(--cream);padding:clamp(50px,7vw,96px) clamp(20px,5vw,64px)}
+.fml-head{max-width:1100px;margin:0 auto;text-align:center}
+.fml-eyebrow{font-size:12px;font-weight:900;letter-spacing:.14em;color:var(--accent);transition:color .4s}
+.fml-tabs{display:inline-flex;gap:6px;margin-top:16px;background:#fff;border:1px solid #e9dfce;border-radius:999px;padding:6px}
+.fml-tabs button{padding:11px 28px;border:0;border-radius:999px;background:transparent;color:#6a6157;font-size:13px;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:.2s}
+.fml-tabs button:hover{color:var(--ink)}
+.fml-tabs button.on{background:var(--accent);color:#fff}
+.fml-body{max-width:1040px;margin:clamp(26px,4vw,50px) auto 0;display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(24px,4vw,56px);align-items:center}
+.fml-media{position:relative;display:grid;place-items:center;min-height:min(46vh,380px)}
+.fml-ghost{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(70px,12vw,150px);font-weight:900;letter-spacing:-.04em;color:var(--accent);opacity:.09;pointer-events:none;transition:color .4s}
+.fml-pouch{grid-area:1/1;max-width:min(66%,236px);height:auto;filter:drop-shadow(0 26px 40px rgba(41,25,10,.22));opacity:0;transform:scale(.94);transition:opacity .45s,transform .45s}
+.fml-pouch.on{opacity:1;transform:scale(1)}
+.fml-copy{direction:rtl;text-align:right}
+.fml-h{font-size:clamp(30px,4.4vw,54px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:0}
+.fml-sub{margin:12px 0 0;max-width:420px;color:var(--muted);font-size:clamp(14px,1.3vw,16.5px);line-height:1.6}
+.fml-list{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:12px;max-width:440px}
+.fml-list li{display:flex;justify-content:space-between;align-items:center;gap:14px;border-bottom:1px solid #ece4d6;padding-bottom:11px}
+.fml-list li>div{display:flex;flex-direction:column}
+.fml-list b{font-size:17px;font-weight:800;color:var(--ink)}
+.fml-list span{font-size:12.5px;color:var(--muted);margin-top:2px}
+.fml-list i{font-size:10px;font-weight:800;letter-spacing:.1em;color:#b8ab97;font-style:normal;direction:ltr}
+.fml-note{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
+@media(max-width:820px){
+  .fml-body{grid-template-columns:1fr;gap:18px}
+  .fml-media{min-height:220px;order:1}
+  .fml-copy{order:2;text-align:center}
+  .fml-sub{max-width:none;margin-inline:auto}
+  .fml-list{max-width:none}
+  .fml-list li{justify-content:center;gap:10px}
+  .fml-tabs{max-width:100%}
+  .fml-tabs button{padding:10px 15px;font-size:12px;letter-spacing:.04em}
+}
 """
 
-FORMULAS_JS = ""
+FORMULAS_JS = """  <script>
+  (function(){
+    var sec=document.getElementById("formulas"); if(!sec)return;
+    var DATA={
+      energy:[["מאקה","MACA","תומכת בחיוניות ובאנרגיה"],["גוארנה","GUARANA","תומכת בערנות"],["תה ירוק","GREEN TEA","תומך במיקוד יומיומי"],["ג׳ינסנג","GINSENG","תומך בחיוניות"]],
+      relax:[["מליסה","LEMON BALM","תומכת ברוגע"],["פסיפלורה","PASSION FLOWER","תומכת בהרפיה"],["מאקה","MACA","תומכת באיזון ובחיוניות"],["ולריאן","VALERIAN","תומך ברגיעה"]],
+      sleep:[["ולריאן","VALERIAN","תומך ברגיעה לפני השינה"],["פסיפלורה","PASSION FLOWER","תומכת בהרפיה"],["מליסה","LEMON BALM","תומכת ברוגע"],["ליקוריץ","LICORICE","משלים את התערובת הצמחית"]]
+    };
+    var HEX={energy:"#FF6B35",relax:"#5C8058",sleep:"#5e7ba8"}, LABEL={energy:"ENERGY",relax:"RELAX",sleep:"SLEEP"};
+    var list=sec.querySelector("#fmlList"), ghost=sec.querySelector("#fmlGhost");
+    var pouches=sec.querySelectorAll(".fml-pouch"), tabs=sec.querySelectorAll(".fml-tabs button");
+    function render(sku){
+      list.innerHTML=DATA[sku].map(function(r){return '<li><div><b>'+r[0]+'</b><span>'+r[2]+'</span></div><i>'+r[1]+'</i></li>';}).join('');
+      pouches.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
+      sec.style.setProperty("--accent",HEX[sku]); if(ghost)ghost.textContent=LABEL[sku];
+    }
+    tabs.forEach(function(b){ b.addEventListener("click",function(){
+      tabs.forEach(function(x){x.classList.toggle("on",x===b);});
+      render(b.dataset.sku);
+    });});
+    render("energy");
+  })();
+  </script>
+"""
 
 VH_CSS = """
 /* recommended hero — clean, warm cream panel, big human photo, small product */
@@ -1017,8 +1090,7 @@ def main():
     shell = shell.replace('src="sections/product-cards.html"', f'srcdoc="{products}"')
     # the 3D formulas experience is a finished, self-contained file — host as-is
     # (NO build_section: never touch its internals), fold in as srcdoc
-    formula_xp = escape_srcdoc((ROOT / "sections" / "formula.html").read_text(encoding="utf-8"))
-    shell = shell.replace('src="sections/formula.html"', f'srcdoc="{formula_xp}"')
+    # (formula.html 3D experience moved to the product pages; not embedded on home)
 
     # validate only the outer shell — the srcdoc contents are finished,
     # self-contained sub-documents (three.js may legitimately contain __THREE__)
