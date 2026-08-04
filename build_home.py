@@ -1222,7 +1222,7 @@ def main():
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
     #   founders · TIMELINE · formula · BUNDLE · close · footer
     # trust/credibility bar sits directly under the hero
-    shell = shell.replace('    <section id="products"', MARQUEE + MOODS + '    <section id="products"')
+    shell = shell.replace('    <section id="products"', MARQUEE + '    <section id="products"')
     # replace the cinematic story with the strong taste + world-champion section
     shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
     # the compact formula selector flows directly into the founders letter (one cream band)
