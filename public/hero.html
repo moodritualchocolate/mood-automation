@@ -71,11 +71,12 @@
 #mood-hero.in h1{opacity:1;transform:none;transition-delay:.46s}
 #mood-hero.in .sub{opacity:1;transform:none;transition-delay:.58s}
 #mood-hero.in .cta{opacity:1;transform:none;transition-delay:.70s}
-/* ---- wide screens: product on one side, copy on the other ---- */
+/* ---- wide screens: compact hero band (leaves the next section peeking), product on one side, copy on the other ---- */
 @media(min-width:860px){
-  #mood-hero .stage{left:66%;top:50%;width:min(38vw,430px);}
-  #mood-hero .copy{left:8%;right:auto;bottom:auto;top:50%;transform:translateY(-50%);text-align:right;max-width:40%;}
-  #mood-hero h1{font-size:clamp(42px,4.7vw,68px);}
+  #mood-hero{height:min(92svh,680px);min-height:500px;}
+  #mood-hero .stage{left:67%;top:50%;width:min(30vw,352px);}
+  #mood-hero .copy{left:9%;right:auto;bottom:auto;top:50%;transform:translateY(-50%);text-align:right;max-width:42%;}
+  #mood-hero h1{font-size:clamp(40px,4.2vw,60px);}
   #mood-hero .sub{margin-inline:0;}
 }
 </style>
