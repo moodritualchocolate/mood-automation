@@ -497,6 +497,7 @@ VH_CSS = """
 .rh-btn-ghost:hover{transform:translateY(-2px);border-color:var(--energy);color:var(--energy)}
 .rh-btn-ghost:active{transform:translateY(0) scale(.98)}
 .rh-photo{position:relative;align-self:stretch;overflow:hidden;min-height:min(90vh,780px)}
+.rh-photo picture{display:contents}
 .rh-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 30%}
 .rh-photo::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#f2ebdf 0%,rgba(242,235,223,.5) 13%,rgba(242,235,223,0) 34%)}
 @media(max-width:860px){
@@ -1043,7 +1044,10 @@ XHERO = """    <header class="xtop" id="top">
           </div>
         </div>
         <div class="rh-photo">
-          <img src="__HEROPHOTO__" alt="רגע של mood — אור פריזמה על הפנים">
+          <picture>
+            <source media="(max-width:860px)" srcset="__HEROPHOTO_M__">
+            <img src="__HEROPHOTO__" alt="רגע של mood — אור פריזמה על הפנים">
+          </picture>
         </div>
       </div>
     </section>
@@ -1170,6 +1174,7 @@ def main():
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__HEROPHOTO__", data_uri("hero-photo.jpg", HOME_ASSETS))
+    shell = shell.replace("__HEROPHOTO_M__", data_uri("hero-mobile.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
     shell = shell.replace("__RONEN__", data_uri("ronen-real.jpg"))
