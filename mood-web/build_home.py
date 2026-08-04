@@ -180,8 +180,9 @@ FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמ�
             <figcaption>נדב ומתיאס · הסדנה</figcaption>
           </figure>
           <div class="fl-body">
+            <span class="fl-qm" aria-hidden="true">”</span>
             <p class="fl-lead">היי, אנחנו נדב ומתיאס.</p>
-            <p>לקח לנו שנתיים ואינספור נסיונות. סירבנו להתפשר על פרט אחד — לא על הטעם, לא על הפורמולה, לא על ההרגשה.</p>
+            <p>לקח לנו שנתיים ואינספור נסיונות. <strong>סירבנו להתפשר על פרט אחד</strong> — לא על הטעם, לא על הפורמולה, לא על ההרגשה.</p>
             <p>לקחנו רק את הטוב ביותר, עד שכל קובייה יצאה בדיוק כמו שחלמנו. וזה מרגש אותנו לחלוק אותה איתכם.</p>
             <div class="fl-signs">
               <div class="fl-sig"><span class="fl-sig-name">נדב</span><span class="fl-sig-role">מייסד</span></div>
@@ -530,7 +531,7 @@ STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקו�
       <div class="ts-copy">
         <div class="ts-eyebrow reveal">פותח עם אלוף העולם</div>
         <h2 class="ts-h reveal">קודם כול,<br>שוקולד אמיתי.</h2>
-        <ul class="ts-chips reveal"><li>70% מריר</li><li>מלח ים</li><li>פורמולה טבעית</li><li>בלי סוכר</li></ul>
+        <ul class="ts-chips reveal"><li>70% מריר</li><li>מלח ים</li><li>פורמולה טבעית</li><li>בלי סוכר</li><li>כשר פרווה</li></ul>
         <div class="ts-expert reveal">
           <img src="__RONEN__" alt="רונן אפללו בסדנת השוקולד של mood">
           <div class="ts-expert-t">
@@ -564,8 +565,8 @@ TS_CSS = """
   .ts-media{order:1;min-height:min(90vw,400px);height:min(90vw,400px)}
   .ts-copy{order:2;padding:34px 22px 44px}
   .ts-p,.ts-quote{max-width:none}
-  .ts-chips{flex-wrap:nowrap;gap:6px;justify-content:center}
-  .ts-chips li{padding:7px 9px;font-size:11px;white-space:nowrap}
+  .ts-chips{flex-wrap:nowrap;gap:5px;justify-content:space-between}
+  .ts-chips li{padding:7px 7px;font-size:10px;white-space:nowrap;letter-spacing:-.01em}
 }
 .ts-seal{position:absolute;left:22px;bottom:22px;width:120px;height:120px;border-radius:50%;background:#FF6B35;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transform:rotate(-9deg);box-shadow:0 12px 26px rgba(0,0,0,.32);border:2px solid rgba(255,255,255,.85)}
 .ts-seal span{font-size:10px;font-weight:900;letter-spacing:.03em;line-height:1.25;padding:0 14px}
@@ -582,10 +583,13 @@ FL_CSS = """
 .fl-photo{position:relative;margin:0;min-height:100%;background:#e4dccd}
 .fl-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 24%}
 .fl-photo figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 20px 16px;text-align:center;font-size:12.5px;font-weight:800;color:#fff;background:linear-gradient(0deg,rgba(20,12,6,.6),transparent)}
-.fl-body{padding:clamp(34px,4.6vw,68px);direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center}
+.fl-body{position:relative;overflow:hidden;padding:clamp(34px,4.6vw,68px);direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center}
+.fl-qm{position:absolute;top:clamp(-8px,-.4vw,6px);inset-inline-start:clamp(22px,3.4vw,50px);font-family:Georgia,"Times New Roman",serif;font-size:clamp(92px,11vw,152px);line-height:1;font-weight:700;color:var(--ink);opacity:.06;pointer-events:none;z-index:0}
+.fl-lead,.fl-body p,.fl-signs{position:relative;z-index:1}
 .fl-lead{font-size:clamp(24px,2.7vw,36px);font-weight:900;letter-spacing:-.03em;color:var(--ink);margin:0 0 20px;line-height:1.05}
 .fl-body p{color:#5a5148;font-size:clamp(16px,1.35vw,18.5px);line-height:1.78;margin:0 0 18px;max-width:46ch}
-.fl-signs{display:flex;gap:clamp(34px,5vw,58px);align-items:flex-end;margin:clamp(18px,2.6vw,30px) 0 0}
+.fl-body p strong{font-weight:900;color:var(--ink);box-shadow:inset 0 -.42em 0 rgba(192,127,67,.2)}
+.fl-signs{display:flex;gap:clamp(34px,5vw,58px);align-items:flex-end;margin:clamp(20px,2.8vw,32px) 0 0;padding-top:clamp(18px,2.4vw,26px);border-top:1px solid #f0e7d8}
 .fl-sig{display:flex;flex-direction:column}
 .fl-sig-name{font-size:clamp(28px,3vw,38px);font-weight:900;color:var(--ink);position:relative;display:inline-block;line-height:1.05}
 .fl-sig-name::after{content:"";position:absolute;left:-4px;right:-9px;bottom:-6px;height:7px;border-bottom:2.5px solid #c07f43;border-radius:50%;transform:rotate(-1deg)}
