@@ -490,8 +490,8 @@ VH_CSS = """
 .rh-stat b{display:block;font-size:clamp(20px,2.2vw,27px);font-weight:900;color:var(--ink);line-height:1}
 .rh-stat span{display:block;font-size:12px;color:#8a7f70;margin-top:4px}
 .rh-media{position:relative}
-.rh-chip{position:absolute;bottom:18px;right:18px;background:rgba(255,255,255,.9);backdrop-filter:blur(6px);border-radius:16px;padding:9px 15px;display:flex;align-items:center;gap:10px;box-shadow:0 12px 28px rgba(41,25,10,.18)}
-.rh-chip img{width:30px;height:auto}
+.rh-chip{position:absolute;bottom:24px;right:24px;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:14px;padding:8px 14px;display:flex;align-items:center;gap:9px;white-space:nowrap;box-shadow:0 12px 28px rgba(41,25,10,.18)}
+.rh-chip img{width:24px;height:auto}
 .rh-chip span{font-size:12px;font-weight:900;letter-spacing:.08em;color:var(--ink)}
 @media(max-width:860px){.rh-stats{justify-content:center}.rh-chip{bottom:12px;right:12px;padding:7px 12px}}
 """
