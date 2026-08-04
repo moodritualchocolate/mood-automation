@@ -180,8 +180,8 @@ FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמ�
             <figcaption>נדב ומתיאס · הסדנה</figcaption>
           </figure>
           <p class="fl-lead">היי, אנחנו נדב ומתיאס.</p>
-          <p>נמאס לנו לבחור כל בוקר בין קפה שמקפיץ אותנו לבין רגע של שקט. רצינו דבר אחד פשוט — ריטואל קטן שאפשר לחזור אליו כל יום, בלי להתנצל עליו.</p>
-          <p>אז ישבנו עם רונן אפללו, אלוף השוקולד העולמי, ובנינו שוקולד פונקציונלי אמיתי: 70% מריר עם מלח ים, פורמולה טבעית, בלי סוכר. כל קובייה היא רגע אחד ביום שהוא רק שלכם.</p>
+          <p>נמאסה לנו הבחירה כל בוקר בין קפה שמקפיץ לבין רגע של שקט. רצינו דבר אחד פשוט — ריטואל קטן לחזור אליו כל יום.</p>
+          <p>אז בנינו עם רונן אפללו, אלוף השוקולד העולמי, שוקולד פונקציונלי אמיתי: 70% מריר, בלי סוכר. כל קובייה היא רגע שהוא רק שלכם.</p>
           <p class="fl-ps">נשמח שתטעמו. באמת.</p>
           <div class="fl-signs">
             <div class="fl-sig"><span class="fl-sig-name">נדב</span><span class="fl-sig-role">מייסד mood</span></div>
@@ -420,14 +420,16 @@ FORMULAS_CSS = """
 .fml-list i{font-size:10px;font-weight:800;letter-spacing:.1em;color:#b8ab97;font-style:normal;direction:ltr}
 .fml-note{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
 @media(max-width:820px){
-  .fml-body{grid-template-columns:1fr;gap:18px}
-  .fml-media{min-height:220px;order:1}
+  .fml-body{grid-template-columns:1fr;gap:6px}
+  .fml-media{min-height:170px;order:1}
+  .fml-pouch{max-width:min(40%,150px)}
+  .fml-ghost{font-size:clamp(56px,18vw,110px)}
   .fml-copy{order:2;text-align:center}
   .fml-sub{max-width:none;margin-inline:auto}
   .fml-list{max-width:none}
   .fml-list li{justify-content:center;gap:10px}
   .fml-tabs{max-width:100%}
-  .fml-tabs button{padding:10px 15px;font-size:12px;letter-spacing:.04em}
+  .fml-tabs button{padding:10px 18px;font-size:13px;letter-spacing:.04em}
 }
 """
 
@@ -498,11 +500,13 @@ VH_CSS = """
 .rh-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 30%}
 .rh-photo::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#f2ebdf 0%,rgba(242,235,223,.5) 13%,rgba(242,235,223,0) 34%)}
 @media(max-width:860px){
-  .rh-wrap{grid-template-columns:1fr;min-height:0}
-  .rh-photo{order:1;height:46vh;min-height:300px}
-  .rh-photo::before{background:linear-gradient(0deg,#f2ebdf 0%,rgba(242,235,223,0) 42%)}
-  .rh-copy{order:2;justify-self:stretch;max-width:none;padding:30px 24px 46px;text-align:center}
-  .rh-sub{margin-inline:auto}
+  .rh-wrap{display:flex;flex-direction:column;min-height:0}
+  .rh-photo{order:-1;height:54vh;min-height:330px;width:100%;min-height:330px}
+  .rh-photo img{object-position:center 24%}
+  .rh-photo::before{background:linear-gradient(0deg,#f2ebdf 0%,rgba(242,235,223,0) 46%)}
+  .rh-copy{max-width:none;padding:24px 24px 40px;text-align:center}
+  .rh-eyebrow{margin-bottom:12px}
+  .rh-sub{margin-inline:auto;max-width:340px}
   .rh-cta{justify-content:center}
 }
 """
@@ -512,7 +516,7 @@ STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקו�
       <div class="ts-copy">
         <div class="ts-eyebrow reveal">פותח עם אלוף העולם</div>
         <h2 class="ts-h reveal">קודם כול,<br>שוקולד אמיתי.</h2>
-        <p class="ts-p reveal">70% מריר עם מלח ים ופורמולה טבעית. כל ביס מרגיש קודם כול כמו שוקולד פרימיום — ורק אחר כך כמו ריטואל שעושה טוב. בלי סוכר, בלי פשרות.</p>
+        <p class="ts-p reveal">70% מריר עם מלח ים ופורמולה טבעית. קודם כול שוקולד פרימיום — ורק אחר כך ריטואל. בלי סוכר.</p>
         <ul class="ts-chips reveal"><li>70% מריר</li><li>מלח ים</li><li>פורמולה טבעית</li><li>בלי סוכר</li></ul>
         <div class="ts-expert reveal">
           <img src="__RONEN__" alt="רונן אפללו בסדנת השוקולד של mood">
@@ -558,8 +562,8 @@ FL_CSS = """
 /* founders — one personal letter with the workshop photo tucked inside + two signatures */
 .fl{background:#efe7d9;padding:clamp(30px,4vw,60px) clamp(20px,5vw,60px) clamp(46px,6vw,88px);position:relative}
 .fl-wrap{max-width:770px;margin:0 auto}
-.fl-paper{position:relative;background:#fffdf8;border:1px solid #efe4d0;border-radius:4px;padding:clamp(30px,4.4vw,60px);box-shadow:0 26px 58px rgba(41,25,10,.17);direction:rtl;text-align:right;overflow:hidden}
-.fl-paper::before{content:"";position:absolute;top:20px;right:34px;bottom:20px;width:1px;background:repeating-linear-gradient(#e7c4bb 0 1px,transparent 1px 27px);opacity:.42}
+.fl-paper{position:relative;background:#ffffff;border:1px solid #ece1cd;border-radius:6px;padding:clamp(28px,4.4vw,60px);box-shadow:0 34px 70px rgba(41,25,10,.22);direction:rtl;text-align:right;overflow:hidden}
+.fl-paper::before{content:"";position:absolute;top:20px;right:34px;bottom:20px;width:1px;background:repeating-linear-gradient(#e7c4bb 0 1px,transparent 1px 27px);opacity:.4}
 .fl-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35;margin-bottom:18px}
 .fl-inphoto{float:left;width:min(44%,244px);margin:4px 4px 16px 24px;background:#fff;padding:10px 10px 34px;box-shadow:0 18px 38px rgba(41,25,10,.22);transform:rotate(-3deg);position:relative}
 .fl-inphoto img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:center 18%}
@@ -574,8 +578,14 @@ FL_CSS = """
 .fl-sig-name::after{content:"";position:absolute;left:-6px;right:-10px;bottom:-6px;height:8px;border-bottom:2.5px solid #FF6B35;border-radius:50%;transform:rotate(-1deg)}
 .fl-sig-role{margin-top:13px;font-size:12px;font-weight:800;letter-spacing:.04em;color:#8a7f70}
 @media(max-width:620px){
-  .fl-inphoto{float:none;width:min(72%,240px);margin:0 auto 24px;display:block}
-  .fl-signs{gap:34px}
+  .fl{padding:22px 16px 40px}
+  .fl-paper{padding:26px 22px 30px}
+  .fl-paper::before{display:none}
+  .fl-inphoto{float:none;width:min(70%,230px);margin:0 auto 20px;display:block}
+  .fl-lead{font-size:22px;margin-bottom:14px}
+  .fl-paper p{font-size:16.5px;line-height:1.8;margin-bottom:16px}
+  .fl-signs{gap:40px;justify-content:flex-start;margin-top:20px}
+  .fl-sig-name{font-size:30px}
 }
 """
 
@@ -813,7 +823,7 @@ CAP_JS = """  <script>
 XHERO_CSS = """
 /* announcement + full nav */
 .xannounce{background:var(--ink);color:#f5eee4;text-align:center;font-size:12px;font-weight:700;letter-spacing:.02em;padding:10px 16px}
-.xnav{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px clamp(16px,4vw,34px);background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid #eee;transition:padding .32s cubic-bezier(.22,.8,.28,1),background .32s ease,box-shadow .32s ease,border-color .32s ease}
+.xnav{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px clamp(16px,4vw,34px);background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:padding .32s cubic-bezier(.22,.8,.28,1),background .32s ease,box-shadow .32s ease,border-color .32s ease}
 .xnav.shrink{padding-top:7px;padding-bottom:7px;background:rgba(255,255,255,.82);border-bottom-color:transparent;box-shadow:0 6px 24px rgba(41,25,10,.09)}
 .xnav .xlogo-word,.xnav .xlogo-tag{transition:font-size .32s cubic-bezier(.22,.8,.28,1)}
 .xnav.shrink .xlogo-word{font-size:22px}
@@ -1026,7 +1036,7 @@ XHERO = """    <header class="xtop" id="top">
         <div class="rh-copy">
           <p class="rh-eyebrow">ONE BITE · EVERYTHING CHANGES</p>
           <h1 class="rh-h">אל תבחרו מוצר.<br>בחרו את <span>הרגע</span>.</h1>
-          <p class="rh-sub">שוקולד מריר 70% עם פורמולה טבעית, לכל רגע ביום — אנרגיה בבוקר, רוגע בערב, שינה בלילה. ביס אחד, וההרגשה משתנה.</p>
+          <p class="rh-sub">שוקולד מריר 70% לכל רגע ביום. ביס אחד — וההרגשה משתנה.</p>
           <div class="rh-cta">
             <a class="rh-btn rh-btn-primary" href="#products">לבחירת הרגע</a>
             <a class="rh-btn rh-btn-ghost" href="#products">למארז היכרות</a>
@@ -1105,6 +1115,9 @@ def build_section(filename: str, is_cinematic: bool) -> str:
         html = html.replace("<span>זוכה פרסים בינלאומיים</span>",
                             "<span>אלוף השוקולד העולמי 2022</span>")
     if filename == "product-cards.html":
+        # drop the leftover "build a bundle" link — that flow was removed
+        html = html.replace(
+            '<div class="bundle"><strong>רוצים לשלב בין כמה רגעים?</strong><a href="#">עברו לבניית באנדל</a></div>', "")
         # the approved cards are oversized on mobile — tighten without touching
         # the pristine approved source
         html = html.replace("</head>",
