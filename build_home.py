@@ -419,6 +419,15 @@ FORMULAS_CSS = """
 }
 """
 
+NAV_JS = """  <script>
+  (function(){
+    var n=document.querySelector(".xnav"), b=document.getElementById("xBurger"); if(!n||!b)return;
+    b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});
+    n.querySelectorAll(".xnav-links a").forEach(function(a){a.addEventListener("click",function(){n.classList.remove("open");b.setAttribute("aria-expanded","false");});});
+  })();
+  </script>
+"""
+
 FORMULAS_JS = """  <script>
   (function(){
     var sec=document.getElementById("formulas"); if(!sec)return;
@@ -591,7 +600,7 @@ RV_CSS = """
 .rv-sku::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 2px rgba(255,255,255,.25)}
 .rv-hint{font-size:13px;color:#8a7f70;font-weight:700}
 @media(max-width:860px){
-  .rv-card{flex-basis:78vw;border-radius:18px}
+  .rv-card{flex-basis:min(300px,80vw);border-radius:18px}
   .rv-track{padding:24px 11vw;scroll-padding:0 11vw}
 }
 """
@@ -780,16 +789,44 @@ CAP_JS = """  <script>
 # lifestyle photo that swaps per SKU, live Heebo headline, color-reactive accent
 # ============================================================================
 XHERO_CSS = """
-/* announcement + nav */
+/* announcement + full nav */
 .xannounce{background:var(--ink);color:#f5eee4;text-align:center;font-size:12px;font-weight:700;letter-spacing:.02em;padding:10px 16px}
-.xnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px clamp(18px,4vw,34px);background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid #eee}
-.xnav-links{display:flex;gap:22px}
-.xnav-links a{color:#4c4841;text-decoration:none;font-size:14px;font-weight:700}
-.xnav-links a:hover{color:var(--ink)}
-.xlogo{font-size:26px;font-weight:900;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
-.xlogo span{position:relative;color:var(--energy)}
-.xlogo span::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:7px;height:7px;border-radius:50%;background:#f5eee4}
-.xnav-cta{background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap}
+.xnav{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px clamp(16px,4vw,34px);background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid #eee}
+.xnav-links{display:flex;align-items:center;gap:24px}
+.xnav-links>a,.xnav-top{color:#4c4841;text-decoration:none;font-size:14.5px;font-weight:700;cursor:pointer;background:none;border:0;font-family:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.xnav-links>a:hover,.xnav-top:hover{color:var(--ink)}
+.xnav-drop{position:relative}
+.xcar{width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-3px}
+.xnav-menu{position:absolute;top:calc(100% + 12px);right:0;min-width:236px;background:#fff;border:1px solid #eee;border-radius:16px;box-shadow:0 20px 44px rgba(41,25,10,.14);padding:8px;opacity:0;visibility:hidden;transform:translateY(6px);transition:.18s;z-index:70}
+.xnav-drop:hover .xnav-menu,.xnav-drop:focus-within .xnav-menu{opacity:1;visibility:visible;transform:none}
+.xnav-menu a{display:flex;flex-direction:column;padding:11px 14px;border-radius:10px;text-decoration:none;color:var(--ink)}
+.xnav-menu a:hover{background:#f6f0e6}
+.xnav-menu a b{font-size:14px;font-weight:900;letter-spacing:.04em}
+.xnav-menu a span{font-size:12px;color:#8a7f70;margin-top:1px}
+.xnav-menu .xnav-all{color:var(--energy);font-weight:800}
+.xlogo{display:inline-flex;flex-direction:column;align-items:center;text-decoration:none;line-height:1}
+.xlogo-word{font-size:27px;font-weight:800;letter-spacing:-.045em;color:var(--ink)}
+.xlogo-tag{font-size:8px;font-weight:600;letter-spacing:.32em;color:var(--ink);margin-top:3px;padding-right:.32em}
+.xnav-actions{display:flex;align-items:center;gap:14px}
+.xnav-quiz{color:#4c4841;text-decoration:none;font-size:14px;font-weight:700;white-space:nowrap}
+.xnav-quiz:hover{color:var(--ink)}
+.xnav-cart{position:relative;display:inline-flex;align-items:center;color:var(--ink);text-decoration:none}
+.xnav-cart svg{width:22px;height:22px}
+.xnav-cart b{position:absolute;top:-6px;left:-8px;background:var(--energy);color:#fff;font-size:10px;min-width:16px;height:16px;border-radius:999px;display:grid;place-items:center;padding:0 3px;font-weight:900}
+.xburger{display:none;flex-direction:column;gap:4px;background:none;border:0;cursor:pointer;padding:6px}
+.xburger span{width:22px;height:2px;background:var(--ink);border-radius:2px;transition:.2s}
+@media(max-width:900px){
+  .xburger{display:flex;order:-1}
+  .xnav-quiz{display:none}
+  .xnav-links{position:fixed;top:86px;right:0;left:0;flex-direction:column;align-items:stretch;gap:0;background:#fff;border-bottom:1px solid #eee;padding:6px 20px 18px;box-shadow:0 20px 40px rgba(41,25,10,.12);max-height:0;overflow:hidden;transition:max-height .28s ease;pointer-events:none}
+  .xnav.open .xnav-links{max-height:82vh;pointer-events:auto}
+  .xnav-links>a,.xnav-top{padding:14px 2px;border-bottom:1px solid #f1ece2;width:100%;justify-content:space-between}
+  .xnav-menu{position:static;opacity:1;visibility:visible;transform:none;box-shadow:none;border:0;padding:0 0 8px;min-width:0}
+  .xnav-menu a{padding:10px 12px}
+  .xnav.open .xburger span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+  .xnav.open .xburger span:nth-child(2){opacity:0}
+  .xnav.open .xburger span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+}
 /* hero */
 .xhero{position:relative;display:grid;grid-template-columns:1.05fr 1fr;min-height:min(86vh,780px);background:var(--cream);overflow:hidden}
 .xhero-media{position:relative;order:2;overflow:hidden;background:#e7ddcf}
@@ -843,7 +880,6 @@ XHERO_CSS = """
 .xkit-guar{margin:16px 0 0;font-size:13px;color:#6a6157}
 .xkit-guar b{color:var(--ink);font-weight:800}
 @media(max-width:820px){
-  .xnav-links{display:none}
   .xhero{grid-template-columns:1fr;min-height:0}
   .xhero-media{order:1;aspect-ratio:4/5}
   .xhero-copy{order:2;padding:34px 22px 42px}
@@ -929,12 +965,30 @@ XHERO_CSS = """
 @media(prefers-reduced-motion:reduce){.hb-float,.hb-spin,.hb-particles i{animation:none}.hb-obj{transition:none}}
 """
 
-XHERO = """    <header class="xtop">
-      <div class="xannounce">משלוח חינם בקנייה מעל 249 ₪ · מוקד שירות ישראלי</div>
+XHERO = """    <header class="xtop" id="top">
+      <div class="xannounce">משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי</div>
       <nav class="xnav" aria-label="ניווט ראשי">
-        <div class="xnav-links"><a href="#products">המוצרים</a><a href="#story">השוקולד</a><a href="#founders">הסיפור שלנו</a></div>
-        <a class="xlogo" href="#top" aria-label="mood">mo<span>o</span>d</a>
-        <a class="xnav-cta" href="#products">מה מתאים לי?</a>
+        <button class="xburger" id="xBurger" aria-label="פתיחת תפריט" aria-expanded="false"><span></span><span></span><span></span></button>
+        <div class="xnav-links" id="xLinks">
+          <div class="xnav-drop">
+            <a href="#products" class="xnav-top">המוצרים<i class="xcar" aria-hidden="true"></i></a>
+            <div class="xnav-menu">
+              <a href="#products"><b>ENERGY</b><span>בוקר · אנרגיה ומיקוד</span></a>
+              <a href="#products"><b>RELAX</b><span>ערב · רוגע</span></a>
+              <a href="#products"><b>SLEEP</b><span>לילה · שינה</span></a>
+              <a href="#products" class="xnav-all">כל המוצרים ←</a>
+            </div>
+          </div>
+          <a href="#formulas">הפורמולה</a>
+          <a href="#story">איך זה עובד</a>
+          <a href="#founders">הסיפור שלנו</a>
+          <a href="#reviews">ביקורות</a>
+        </div>
+        <a class="xlogo" href="#top" aria-label="mood — ריטואל שוקולד"><span class="xlogo-word">mood</span><span class="xlogo-tag">RITUAL CHOCOLATE</span></a>
+        <div class="xnav-actions">
+          <a class="xnav-quiz" href="#products">שאלון התאמה</a>
+          <a class="xnav-cart" href="#products" aria-label="עגלת קניות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6.5 8h11l-1 11.5h-9L6.5 8Z"/><path d="M9.2 8a2.8 2.8 0 0 1 5.6 0"/></svg><b>0</b></a>
+        </div>
       </nav>
     </header>
     <section class="rh" id="xhero" aria-label="mood — שוקולד פונקציונלי">
@@ -1052,7 +1106,7 @@ def main():
                           ".products-frame { height: 620px; }")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + RV_CSS + "\n  </style>", 1)
+    shell = shell.replace("</style>", "\nhtml,body{overflow-x:clip}\n" + NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + RV_CSS + "\n  </style>", 1)
     # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
@@ -1070,7 +1124,7 @@ def main():
     shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
-    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + '</body>')
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
