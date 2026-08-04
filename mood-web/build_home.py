@@ -75,14 +75,14 @@ NEW_CSS = """
 .hr-moment p{margin:8px 0 0;font-size:18px;line-height:1.4;font-weight:600;color:var(--ink)}
 
 /* Marquee */
-.hm{background:#E39A57;overflow:hidden;padding:14px 0;direction:ltr;
+.hm{background:#F0C6A0;overflow:hidden;padding:14px 0;direction:ltr;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
   mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
 .hm-track{display:flex;align-items:center;width:max-content;animation:hmScroll 60s linear infinite;will-change:transform}
 .hm:hover .hm-track{animation-play-state:paused}
-.hm-item{color:#3d2412;font-size:13.5px;font-weight:800;white-space:nowrap;padding:0 24px}
-.hm-item b{color:#fff}
-.hm-sep{width:4px;height:4px;border-radius:50%;background:rgba(61,36,18,.4);flex:0 0 auto}
+.hm-item{color:#5a3418;font-size:13.5px;font-weight:800;white-space:nowrap;padding:0 24px}
+.hm-item b{color:#9a4611}
+.hm-sep{width:4px;height:4px;border-radius:50%;background:rgba(90,52,24,.45);flex:0 0 auto}
 @keyframes hmScroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 
 /* Founders */
@@ -215,6 +215,9 @@ MOTION_JS = """  <script>
     // force-play muted autoplay videos — some mobile/in-app browsers ignore the attribute
     function playVids(){document.querySelectorAll('video[autoplay]').forEach(function(v){v.muted=true;var p=v.play&&v.play();if(p&&p.catch)p.catch(function(){});});}
     playVids(); addEventListener('touchstart',playVids,{once:true,passive:true});
+    // auto-fit embedded section iframes to their content -> no blank gap below the cards
+    function fitFrames(){document.querySelectorAll('.section-frame').forEach(function(f){try{var h=f.contentDocument&&f.contentDocument.body&&f.contentDocument.body.scrollHeight;if(h)f.style.height=h+'px';}catch(e){}});}
+    fitFrames(); addEventListener('load',fitFrames); addEventListener('resize',fitFrames); setTimeout(fitFrames,500); setTimeout(fitFrames,1400);
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     // Apple-style staggered reveal: siblings enter one after another
     var io = new IntersectionObserver(function(es){
@@ -406,7 +409,7 @@ FORMULAS_CSS = """
 .fml-tabs{display:inline-flex;gap:6px;margin-top:16px;background:#fff;border:1px solid #e4d7c2;border-radius:999px;padding:6px;box-shadow:0 8px 22px rgba(41,25,10,.08)}
 .fml-tabs button{padding:12px 30px;border:0;border-radius:999px;background:transparent;color:#6a6157;font-size:14px;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:.2s}
 .fml-tabs button:hover{color:var(--ink)}
-.fml-tabs button.on{background:var(--accent);color:#fff;box-shadow:0 6px 16px -4px var(--accent)}
+.fml-tabs button.on{background:var(--accent);color:var(--accent-ink,#fff);box-shadow:0 6px 16px -4px var(--accent)}
 .fml-body{max-width:980px;margin:clamp(20px,3vw,36px) auto 0;display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(20px,3.5vw,48px);align-items:center}
 .fml-media{position:relative;display:grid;place-items:center;min-height:min(38vh,320px)}
 .fml-ghost{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(70px,12vw,150px);font-weight:900;letter-spacing:-.04em;color:var(--accent);opacity:.09;pointer-events:none;transition:color .4s}
@@ -470,13 +473,13 @@ FORMULAS_JS = """  <script>
       relax:[["מליסה","LEMON BALM","תומכת ברוגע"],["פסיפלורה","PASSION FLOWER","תומכת בהרפיה"],["מאקה","MACA","תומכת באיזון ובחיוניות"],["ולריאן","VALERIAN","תומך ברגיעה"]],
       sleep:[["ולריאן","VALERIAN","תומך ברגיעה לפני השינה"],["פסיפלורה","PASSION FLOWER","תומכת בהרפיה"],["מליסה","LEMON BALM","תומכת ברוגע"],["ליקוריץ","LICORICE","משלים את התערובת הצמחית"]]
     };
-    var HEX={energy:"#FF6B35",relax:"#5C8058",sleep:"#5e7ba8"}, LABEL={energy:"ENERGY",relax:"RELAX",sleep:"SLEEP"};
+    var HEX={energy:"#E8A566",relax:"#5C8058",sleep:"#5e7ba8"}, INK={energy:"#5a3418",relax:"#fff",sleep:"#fff"}, LABEL={energy:"ENERGY",relax:"RELAX",sleep:"SLEEP"};
     var list=sec.querySelector("#fmlList"), ghost=sec.querySelector("#fmlGhost");
     var pouches=sec.querySelectorAll(".fml-pouch"), tabs=sec.querySelectorAll(".fml-tabs button");
     function render(sku){
       list.innerHTML=DATA[sku].map(function(r){return '<li><div><b>'+r[0]+'</b><span>'+r[2]+'</span></div><i>'+r[1]+'</i></li>';}).join('');
       pouches.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
-      sec.style.setProperty("--accent",HEX[sku]); if(ghost)ghost.textContent=LABEL[sku];
+      sec.style.setProperty("--accent",HEX[sku]); sec.style.setProperty("--accent-ink",INK[sku]); if(ghost)ghost.textContent=LABEL[sku];
     }
     tabs.forEach(function(b){ b.addEventListener("click",function(){
       tabs.forEach(function(x){x.classList.toggle("on",x===b);});
@@ -548,7 +551,7 @@ TS_CSS = """
 .ts-h{font-size:clamp(34px,4.8vw,64px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
 .ts-p{margin:18px 0 0;max-width:480px;color:var(--muted);font-size:clamp(15px,1.4vw,17.5px);line-height:1.65}
 .ts-chips{list-style:none;display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 0;padding:0}
-.ts-chips li{border:1px solid #e6ddcd;border-radius:999px;padding:8px 15px;font-size:13px;font-weight:800;color:#4c4841;background:#faf6ef}
+.ts-chips li{border:1px solid #cadcb9;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:800;color:#425a30;background:#e8f0dd}
 .ts-expert{display:flex;align-items:center;gap:15px;margin:30px 0 0;padding:16px 0 0;border-top:1px solid #eee}
 .ts-expert>img{width:66px;height:66px;border-radius:50%;object-fit:cover;object-position:center 26%;flex:none;box-shadow:0 6px 16px rgba(41,25,10,.18)}
 .ts-expert-t strong{display:block;font-size:15px;color:var(--ink)}
@@ -865,8 +868,8 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
 @media(max-width:900px){
   .xburger{display:flex;order:-1}
   .xnav-quiz{display:none}
-  .xnav-links{position:fixed;top:86px;right:0;left:0;flex-direction:column;align-items:stretch;gap:0;background:#fff;border-bottom:1px solid #eee;padding:6px 20px 18px;box-shadow:0 20px 40px rgba(41,25,10,.12);max-height:0;overflow:hidden;transition:max-height .28s ease;pointer-events:none}
-  .xnav.open .xnav-links{max-height:82vh;pointer-events:auto}
+  .xnav-links{position:fixed;top:86px;right:0;left:0;flex-direction:column;align-items:stretch;gap:0;background:#fff;border-bottom:0 solid #eee;padding:0 20px;box-shadow:0 20px 40px rgba(41,25,10,.12);max-height:0;overflow:hidden;transition:max-height .28s ease,padding .28s ease;pointer-events:none}
+  .xnav.open .xnav-links{max-height:82vh;padding:6px 20px 18px;border-bottom-width:1px;pointer-events:auto}
   .xnav-links>a,.xnav-top{padding:14px 2px;border-bottom:1px solid #f1ece2;width:100%;justify-content:space-between}
   .xnav-menu{position:static;opacity:1;visibility:visible;transform:none;box-shadow:none;border:0;padding:0 0 8px;min-width:0}
   .xnav-menu a{padding:10px 12px}
@@ -1050,12 +1053,7 @@ XHERO = """    <header class="xtop" id="top">
             <a class="rh-btn rh-btn-ghost" href="#products">למארז היכרות</a>
           </div>
         </div>
-        <div class="rh-photo">
-          <picture>
-            <source media="(max-width:860px)" srcset="__HEROPHOTO_M__">
-            <img src="__HEROPHOTO__" alt="רגע של mood — אור פריזמה על הפנים">
-          </picture>
-        </div>
+        <div class="rh-photo"><picture><source media="(max-width:860px)" srcset="__HEROPHOTO_M__"><img src="__HEROPHOTO__" alt="רגע של mood — אור פריזמה על הפנים"></picture></div>
       </div>
     </section>
 """
