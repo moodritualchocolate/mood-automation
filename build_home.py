@@ -194,16 +194,63 @@ FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמ�
     </section>
 """
 
-CLOSE = """    <section class="hc" aria-label="ההשקה של mood — 12.8">
-      <img class="hc-bg" src="__CHOC__" alt="">
-      <div class="hc-in reveal">
-        <div class="hc-eyebrow">בקרוב · 12.8</div>
-        <h2 class="hc-h">הריטואל שלך מתחיל<br>ב-12 באוגוסט.</h2>
-        <p class="hc-lead">שלושה מצבי רוח. קובייה אחת ביום. חודש שלם.</p>
-        <a class="hc-cta" href="#products">אולי הגיע הזמן →</a>
-        <div class="hc-chips"><span>70% מריר</span><span>0 סוכר</span><span>כשר פרווה</span><span>30 יחידות</span></div>
+CLOSE = """    <section class="rc" id="ritual" aria-label="התחילו את הריטואל של mood" style="--rc:#E8A566;--rc-ink:#5a3418;--rc-tint:#f8f0e4">
+      <div class="rc-in reveal">
+        <div class="rc-eyebrow">הריטואל של mood</div>
+        <h2 class="rc-h">30 יום. קובייה ביום.<br><span>מצב הרוח שבחרתם.</span></h2>
+        <div class="rc-days" id="rcDays" aria-hidden="true"></div>
+        <div class="rc-pick" role="tablist" aria-label="בחרו mood">
+          <button class="on" data-sku="energy">ENERGY</button>
+          <button data-sku="relax">RELAX</button>
+          <button data-sku="sleep">SLEEP</button>
+        </div>
+        <a class="rc-cta" href="#products">מתחילים את הריטואל</a>
+        <p class="rc-guar">לא הרגשתם את ההבדל תוך 30 יום? נחזיר לכם את הכסף.</p>
+        <div class="rc-trust"><span>משלוח חינם</span><span>כשר פרווה</span><span>לעצור מתי שרוצים</span></div>
       </div>
     </section>
+"""
+
+RC_CSS = """
+/* ritual closer — mood-responsive 30-day close */
+.rc{position:relative;background:var(--rc-tint,#f8f0e4);padding:clamp(56px,7.5vw,112px) clamp(20px,5vw,64px);text-align:center;direction:rtl;overflow:hidden;transition:background .5s}
+.rc::before{content:"";position:absolute;top:-32%;left:50%;transform:translateX(-50%);width:min(120%,920px);height:72%;background:radial-gradient(closest-side,var(--rc),transparent 72%);opacity:.16;pointer-events:none;transition:opacity .5s}
+.rc-in{position:relative;z-index:1;max-width:720px;margin:0 auto}
+.rc-eyebrow{font-size:12px;font-weight:900;letter-spacing:.22em;color:var(--rc-ink);opacity:.75}
+.rc-h{font-size:clamp(32px,5vw,60px);line-height:1.02;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
+.rc-h span{color:var(--rc-ink)}
+.rc-days{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:372px;margin:clamp(24px,3vw,34px) auto 0}
+.rc-day{width:12px;height:12px;border-radius:4px;background:var(--rc);transition:background .5s,opacity .5s}
+.rc-pick{display:inline-flex;gap:6px;margin:clamp(26px,3.4vw,38px) 0 0;background:#fff;border:1px solid rgba(41,25,10,.1);border-radius:999px;padding:6px;box-shadow:0 10px 26px -12px rgba(41,25,10,.22)}
+.rc-pick button{padding:12px 26px;border:0;border-radius:999px;background:transparent;color:#6a6157;font-size:14px;font-weight:900;letter-spacing:.05em;cursor:pointer;transition:.2s}
+.rc-pick button:hover{color:var(--ink)}
+.rc-pick button.on{background:var(--rc);color:var(--rc-ink);box-shadow:0 6px 16px -6px var(--rc)}
+.rc-cta{display:block;width:min(360px,100%);margin:clamp(22px,2.8vw,30px) auto 0;padding:18px 28px;border-radius:999px;background:var(--ink);color:#fff;font-size:16px;font-weight:900;text-decoration:none;transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s}
+.rc-cta:hover{transform:translateY(-2px) scale(1.01);box-shadow:0 16px 34px -12px rgba(41,25,10,.5)}
+.rc-cta:active{transform:translateY(0) scale(.99)}
+.rc-guar{margin:16px auto 0;max-width:430px;font-size:14px;font-weight:800;color:var(--ink);line-height:1.5}
+.rc-trust{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:16px auto 0}
+.rc-trust span{font-size:12px;font-weight:800;color:var(--rc-ink);background:rgba(255,255,255,.6);border:1px solid rgba(41,25,10,.08);border-radius:999px;padding:7px 14px}
+@media(max-width:600px){
+  .rc-days{max-width:300px;gap:5px}
+  .rc-day{width:11px;height:11px}
+  .rc-pick button{padding:11px 18px;font-size:13px}
+  .rc-trust span{font-size:11px;padding:6px 12px}
+}
+"""
+
+RITUAL_JS = """  <script>
+  (function(){
+    var sec=document.getElementById("ritual"); if(!sec)return;
+    var days=sec.querySelector("#rcDays");
+    if(days){var h="";for(var i=0;i<30;i++){var o=(0.5+((i*7)%6)*0.09).toFixed(2);h+='<span class="rc-day" style="opacity:'+o+'"></span>';}days.innerHTML=h;}
+    var T={energy:["#E8A566","#5a3418","#f8f0e4"],relax:["#5C8058","#2f4328","#eef3ea"],sleep:["#5e7ba8","#2b3d57","#edf1f7"]};
+    var tabs=sec.querySelectorAll(".rc-pick button");
+    function set(sku){var c=T[sku];sec.style.setProperty("--rc",c[0]);sec.style.setProperty("--rc-ink",c[1]);sec.style.setProperty("--rc-tint",c[2]);}
+    tabs.forEach(function(b){b.addEventListener("click",function(){tabs.forEach(function(x){x.classList.toggle("on",x===b);});set(b.dataset.sku);});});
+    set("energy");
+  })();
+  </script>
 """
 
 FOOTER = """  <footer class="hft">
@@ -1222,7 +1269,7 @@ def main():
                           ".products-frame { height: 620px; }")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", "\nhtml,body{overflow-x:clip}\n" + NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + RV_CSS + "\n  </style>", 1)
+    shell = shell.replace("</style>", "\nhtml,body{overflow-x:clip}\n" + NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + RV_CSS + RC_CSS + "\n  </style>", 1)
     # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
@@ -1239,7 +1286,7 @@ def main():
     shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
-    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + '</body>')
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + RITUAL_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
