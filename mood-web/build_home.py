@@ -380,6 +380,49 @@ VH_CSS = """
 }
 """
 
+STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
+      <div class="ts-media reveal"><img src="__BITE__" alt="בר mood 70% מריר עם ביס — הטעם"></div>
+      <div class="ts-copy">
+        <div class="ts-eyebrow reveal">פותח עם אלוף העולם</div>
+        <h2 class="ts-h reveal">קודם כול,<br>שוקולד אמיתי.</h2>
+        <p class="ts-p reveal">70% מריר עם מלח ים ופורמולה טבעית. כל ביס מרגיש קודם כול כמו שוקולד פרימיום — ורק אחר כך כמו ריטואל שעושה טוב. בלי סוכר, בלי פשרות.</p>
+        <ul class="ts-chips reveal"><li>70% מריר</li><li>מלח ים</li><li>פורמולה טבעית</li><li>בלי סוכר</li></ul>
+        <div class="ts-expert reveal">
+          <img src="__RONEN__" alt="רונן אפללו בסדנת השוקולד של mood">
+          <div class="ts-expert-t">
+            <strong>רונן אפללו · שוקולטייר</strong>
+            <span>אלוף השוקולד העולמי 2022</span>
+            <p class="ts-quote">\u201cרצינו ליצור שוקולד שתרצו לחזור אליו כל יום.\u201d</p>
+          </div>
+        </div>
+      </div>
+    </section>
+"""
+
+TS_CSS = """
+/* one strong section: the taste + world-champion chocolatier */
+.ts{position:relative;display:grid;grid-template-columns:1fr 1.05fr;align-items:stretch;background:#fff;overflow:hidden;direction:ltr}
+.ts-media{position:relative;order:1;min-height:min(78vh,640px);background:#1a0f08}
+.ts-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.ts-copy{order:2;direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,5.5vw,88px)}
+.ts-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35}
+.ts-h{font-size:clamp(34px,4.8vw,64px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
+.ts-p{margin:18px 0 0;max-width:480px;color:var(--muted);font-size:clamp(15px,1.4vw,17.5px);line-height:1.65}
+.ts-chips{list-style:none;display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 0;padding:0}
+.ts-chips li{border:1px solid #e6ddcd;border-radius:999px;padding:8px 15px;font-size:13px;font-weight:800;color:#4c4841;background:#faf6ef}
+.ts-expert{display:flex;align-items:center;gap:15px;margin:30px 0 0;padding:16px 0 0;border-top:1px solid #eee}
+.ts-expert>img{width:66px;height:66px;border-radius:50%;object-fit:cover;object-position:center 26%;flex:none;box-shadow:0 6px 16px rgba(41,25,10,.18)}
+.ts-expert-t strong{display:block;font-size:15px;color:var(--ink)}
+.ts-expert-t span{display:block;font-size:12.5px;font-weight:800;color:#FF6B35;margin-top:2px}
+.ts-quote{margin:8px 0 0;font-size:14px;font-style:italic;color:#6a6157;max-width:360px}
+@media(max-width:860px){
+  .ts{grid-template-columns:1fr}
+  .ts-media{order:1;min-height:auto;aspect-ratio:1/1}
+  .ts-copy{order:2;padding:34px 22px 44px}
+  .ts-p,.ts-quote{max-width:none}
+}
+"""
+
 IMMERSIVE = """    <section class="cap" aria-label="שלושת הריטואלים">
       <div class="cap-label">שלושה מצבים · צבע אחד בכל רגע</div>
       <div class="cap-title"><h2>מסך שלובש את הריטואל.</h2><p>גללו — כל המסך עובר בין שלושת המצבים. מוצר אחד, צבע אחד, בכל רגע.</p></div>
@@ -716,7 +759,7 @@ XHERO_CSS = """
 XHERO = """    <header class="xtop">
       <div class="xannounce">משלוח חינם בקנייה מעל 249 ₪ · מוקד שירות ישראלי</div>
       <nav class="xnav" aria-label="ניווט ראשי">
-        <div class="xnav-links"><a href="#products">המוצרים</a><a href="#story">איך זה עובד</a><a href="#founders">הסיפור שלנו</a></div>
+        <div class="xnav-links"><a href="#products">המוצרים</a><a href="#story">השוקולד</a><a href="#founders">הסיפור שלנו</a></div>
         <a class="xlogo" href="#top" aria-label="mood">mo<span>o</span>d</a>
         <a class="xnav-cta" href="#products">מה מתאים לי?</a>
       </nav>
@@ -830,7 +873,7 @@ def main():
                           ".products-frame { height: 620px; }")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + "\n  </style>", 1)
+    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + "\n  </style>", 1)
     # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
@@ -840,6 +883,8 @@ def main():
     shell = shell.replace('    <section id="products"', MARQUEE + '    <section id="products"')
     # 3D formulas experience sits right below the product cards
     shell = shell.replace('    <section id="story"', FORMULAS + '    <section id="story"')
+    # replace the cinematic story with the strong taste + world-champion section
+    shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
     shell = shell.replace('    <section id="formula"', FOUNDERS + TIMELINE + '    <section id="formula"')
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
     # the live FORMULAS (id="formulas") replaces the old static formula image
@@ -853,6 +898,8 @@ def main():
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__HEROVIDEO__", data_uri("hero.mp4", HOME_ASSETS))
     shell = shell.replace("__HEROPOSTER__", data_uri("hero-poster.jpg", HOME_ASSETS))
+    shell = shell.replace("__BITE__", data_uri("choc-real-bite.jpg", HOME_ASSETS))
+    shell = shell.replace("__RONEN__", data_uri("ronen-real.jpg"))
     shell = shell.replace("__EDISC__", data_uri("energy-disc.jpg", HOME_ASSETS))
     shell = shell.replace("__RDISC__", data_uri("relax-disc.jpg", HOME_ASSETS))
     shell = shell.replace("__SDISC__", data_uri("sleep-disc.jpg", HOME_ASSETS))
@@ -862,9 +909,7 @@ def main():
         shell = shell.replace(_m, data_uri(_f))
     # fold the two interactive sections in as srcdoc
     products = escape_srcdoc(build_section("product-cards.html", False))
-    cinematic = escape_srcdoc(build_section("cinematic.html", True))
     shell = shell.replace('src="sections/product-cards.html"', f'srcdoc="{products}"')
-    shell = shell.replace('src="sections/cinematic.html"', f'srcdoc="{cinematic}"')
     # the 3D formulas experience is a finished, self-contained file — host as-is
     # (NO build_section: never touch its internals), fold in as srcdoc
     formula_xp = escape_srcdoc((ROOT / "sections" / "formula.html").read_text(encoding="utf-8"))
