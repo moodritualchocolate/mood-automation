@@ -173,20 +173,20 @@ MARQUEE = f"""    <div class="hm" aria-label="למה mood">
 
 FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמייסדים של mood">
       <div class="fl-wrap">
-        <figure class="fl-photo reveal">
-          <img src="__FOUNDERS__" alt="נדב יצחקי ומתיאס דומינגז — מייסדי mood בסדנת השוקולד">
-          <span class="fl-tape fl-tape-a" aria-hidden="true"></span>
-          <span class="fl-tape fl-tape-b" aria-hidden="true"></span>
-          <figcaption class="fl-cap">נדב ומתיאס · הסדנה</figcaption>
-        </figure>
         <div class="fl-paper reveal">
           <div class="fl-eyebrow">מכתב מהמייסדים</div>
+          <figure class="fl-inphoto">
+            <img src="__FOUNDERS__" alt="נדב ומתיאס — מייסדי mood בסדנת השוקולד">
+            <figcaption>נדב ומתיאס · הסדנה</figcaption>
+          </figure>
           <p class="fl-lead">היי, אנחנו נדב ומתיאס.</p>
           <p>נמאס לנו לבחור כל בוקר בין קפה שמקפיץ אותנו לבין רגע של שקט. רצינו דבר אחד פשוט — ריטואל קטן שאפשר לחזור אליו כל יום, בלי להתנצל עליו.</p>
           <p>אז ישבנו עם רונן אפללו, אלוף השוקולד העולמי, ובנינו שוקולד פונקציונלי אמיתי: 70% מריר עם מלח ים, פורמולה טבעית, בלי סוכר. כל קובייה היא רגע אחד ביום שהוא רק שלכם.</p>
           <p class="fl-ps">נשמח שתטעמו. באמת.</p>
-          <div class="fl-sign">נדב ומתיאס</div>
-          <div class="fl-role">מייסדי mood</div>
+          <div class="fl-signs">
+            <div class="fl-sig"><span class="fl-sig-name">נדב</span><span class="fl-sig-role">מייסד mood</span></div>
+            <div class="fl-sig"><span class="fl-sig-name">מתיאס</span><span class="fl-sig-role">מייסד mood</span></div>
+          </div>
         </div>
       </div>
     </section>
@@ -397,15 +397,15 @@ FORMULAS = """    <section class="fml" id="formulas" aria-label="הפורמול�
 
 FORMULAS_CSS = """
 /* clean formula — tabs on top (clearly buttons), pouch + ingredient list */
-.fml{background:var(--cream);padding:clamp(50px,7vw,96px) clamp(20px,5vw,64px)}
+.fml{background:#efe7d9;padding:clamp(46px,6vw,84px) clamp(20px,5vw,64px) clamp(24px,3vw,40px)}
 .fml-head{max-width:1100px;margin:0 auto;text-align:center}
 .fml-eyebrow{font-size:12px;font-weight:900;letter-spacing:.14em;color:var(--accent);transition:color .4s}
-.fml-tabs{display:inline-flex;gap:6px;margin-top:16px;background:#fff;border:1px solid #e9dfce;border-radius:999px;padding:6px}
-.fml-tabs button{padding:11px 28px;border:0;border-radius:999px;background:transparent;color:#6a6157;font-size:13px;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:.2s}
+.fml-tabs{display:inline-flex;gap:6px;margin-top:16px;background:#fff;border:1px solid #e4d7c2;border-radius:999px;padding:6px;box-shadow:0 8px 22px rgba(41,25,10,.08)}
+.fml-tabs button{padding:12px 30px;border:0;border-radius:999px;background:transparent;color:#6a6157;font-size:14px;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:.2s}
 .fml-tabs button:hover{color:var(--ink)}
-.fml-tabs button.on{background:var(--accent);color:#fff}
-.fml-body{max-width:1040px;margin:clamp(26px,4vw,50px) auto 0;display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(24px,4vw,56px);align-items:center}
-.fml-media{position:relative;display:grid;place-items:center;min-height:min(46vh,380px)}
+.fml-tabs button.on{background:var(--accent);color:#fff;box-shadow:0 6px 16px -4px var(--accent)}
+.fml-body{max-width:980px;margin:clamp(20px,3vw,36px) auto 0;display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(20px,3.5vw,48px);align-items:center}
+.fml-media{position:relative;display:grid;place-items:center;min-height:min(38vh,320px)}
 .fml-ghost{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(70px,12vw,150px);font-weight:900;letter-spacing:-.04em;color:var(--accent);opacity:.09;pointer-events:none;transition:color .4s}
 .fml-pouch{grid-area:1/1;max-width:min(66%,236px);height:auto;filter:drop-shadow(0 26px 40px rgba(41,25,10,.22));opacity:0;transform:scale(.94);transition:opacity .45s,transform .45s}
 .fml-pouch.on{opacity:1;transform:scale(1)}
@@ -478,11 +478,33 @@ FORMULAS_JS = """  <script>
 """
 
 VH_CSS = """
-/* hero — the approved banner composition, used as-is (no crop/re-typeset) */
-.rh{background:#fff;padding:clamp(14px,2.2vw,28px) clamp(12px,2.2vw,32px) clamp(22px,3vw,42px)}
-.rh-wrap{position:relative;direction:ltr;max-width:1320px;margin:0 auto;border-radius:clamp(20px,2.4vw,34px);overflow:hidden;box-shadow:0 20px 50px rgba(41,25,10,.10)}
-.rh-banner{display:block;width:100%;height:auto}
-.rh-hit{position:absolute;border-radius:999px;cursor:pointer}
+/* hero — the approved photo + composition, but LIVE copy & prominent CTAs */
+.rh{background:linear-gradient(180deg,#faf6ef 0%,#f2ebdf 100%);overflow:hidden}
+.rh-wrap{position:relative;direction:ltr;max-width:1400px;margin:0 auto;min-height:min(90vh,780px);display:grid;grid-template-columns:1.02fr .98fr;align-items:stretch}
+.rh-copy{direction:rtl;text-align:right;align-self:center;justify-self:end;max-width:600px;padding:clamp(30px,5vw,72px);z-index:2}
+.rh-eyebrow{font-size:clamp(11px,1.1vw,13px);font-weight:800;letter-spacing:.28em;color:#b06a3a;margin:0 0 18px}
+.rh-h{font-size:clamp(42px,6.2vw,82px);line-height:.96;letter-spacing:-.05em;font-weight:900;color:#1c140d;margin:0}
+.rh-h span{color:var(--energy)}
+.rh-sub{margin:22px 0 0 auto;max-width:440px;font-size:clamp(16px,1.45vw,20px);line-height:1.55;color:#5a5148}
+.rh-cta{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:14px;margin:34px 0 0}
+.rh-btn{display:inline-flex;align-items:center;justify-content:center;padding:17px 38px;border-radius:999px;font-size:clamp(15px,1.3vw,17px);font-weight:800;text-decoration:none;white-space:nowrap;transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s ease,background .2s,border-color .2s,color .2s}
+.rh-btn-primary{background:var(--energy);color:#fff;box-shadow:0 16px 34px -10px var(--energy)}
+.rh-btn-primary:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 22px 44px -10px var(--energy)}
+.rh-btn-primary:active{transform:translateY(0) scale(.98)}
+.rh-btn-ghost{background:rgba(255,255,255,.72);color:#1c140d;border:1.5px solid rgba(28,20,13,.16);backdrop-filter:blur(4px)}
+.rh-btn-ghost:hover{transform:translateY(-2px);border-color:var(--energy);color:var(--energy)}
+.rh-btn-ghost:active{transform:translateY(0) scale(.98)}
+.rh-photo{position:relative;align-self:stretch;overflow:hidden;min-height:min(90vh,780px)}
+.rh-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:52% 30%}
+.rh-photo::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#f2ebdf 0%,rgba(242,235,223,.5) 13%,rgba(242,235,223,0) 34%)}
+@media(max-width:860px){
+  .rh-wrap{grid-template-columns:1fr;min-height:0}
+  .rh-photo{order:1;height:46vh;min-height:300px}
+  .rh-photo::before{background:linear-gradient(0deg,#f2ebdf 0%,rgba(242,235,223,0) 42%)}
+  .rh-copy{order:2;justify-self:stretch;max-width:none;padding:30px 24px 46px;text-align:center}
+  .rh-sub{margin-inline:auto}
+  .rh-cta{justify-content:center}
+}
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
@@ -533,28 +555,27 @@ TS_CSS = """
 """
 
 FL_CSS = """
-/* founders — a personal letter beside a pinned workshop photo */
-.fl{background:#efe7d9;padding:clamp(52px,7vw,104px) clamp(20px,5vw,60px);position:relative}
-.fl-wrap{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(28px,4vw,64px);align-items:center}
-.fl-photo{position:relative;margin:0;background:#fff;padding:14px 14px 44px;box-shadow:0 22px 46px rgba(41,25,10,.22);transform:rotate(-3deg);justify-self:center;max-width:330px}
-.fl-photo img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover}
-.fl-cap{position:absolute;left:0;right:0;bottom:15px;text-align:center;font-size:14px;font-weight:800;color:#6a6157}
-.fl-tape{position:absolute;width:104px;height:30px;background:rgba(214,197,168,.55);box-shadow:0 2px 6px rgba(0,0,0,.08);top:-13px}
-.fl-tape-a{left:14px;transform:rotate(-24deg)}
-.fl-tape-b{right:14px;transform:rotate(22deg)}
-.fl-paper{position:relative;background:#fffdf8;border:1px solid #efe4d0;border-radius:3px;padding:clamp(30px,4vw,54px);box-shadow:0 18px 40px rgba(41,25,10,.12);direction:rtl;text-align:right}
-.fl-paper::before{content:"";position:absolute;top:18px;right:32px;bottom:18px;width:1px;background:repeating-linear-gradient(#e7c4bb 0 1px,transparent 1px 27px);opacity:.5}
-.fl-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35;margin-bottom:16px}
-.fl-lead{font-size:clamp(22px,2.4vw,30px);font-weight:900;color:var(--ink);letter-spacing:-.02em;margin:0 0 12px}
-.fl-paper p{color:#4c4841;font-size:clamp(15px,1.35vw,17px);line-height:1.75;margin:0 0 14px;max-width:52ch}
+/* founders — one personal letter with the workshop photo tucked inside + two signatures */
+.fl{background:#efe7d9;padding:clamp(30px,4vw,60px) clamp(20px,5vw,60px) clamp(46px,6vw,88px);position:relative}
+.fl-wrap{max-width:770px;margin:0 auto}
+.fl-paper{position:relative;background:#fffdf8;border:1px solid #efe4d0;border-radius:4px;padding:clamp(30px,4.4vw,60px);box-shadow:0 26px 58px rgba(41,25,10,.17);direction:rtl;text-align:right;overflow:hidden}
+.fl-paper::before{content:"";position:absolute;top:20px;right:34px;bottom:20px;width:1px;background:repeating-linear-gradient(#e7c4bb 0 1px,transparent 1px 27px);opacity:.42}
+.fl-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35;margin-bottom:18px}
+.fl-inphoto{float:left;width:min(44%,244px);margin:4px 4px 16px 24px;background:#fff;padding:10px 10px 34px;box-shadow:0 18px 38px rgba(41,25,10,.22);transform:rotate(-3deg);position:relative}
+.fl-inphoto img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:center 18%}
+.fl-inphoto figcaption{position:absolute;left:0;right:0;bottom:11px;text-align:center;font-size:12.5px;font-weight:800;color:#6a6157}
+.fl-inphoto::after{content:"";position:absolute;top:-12px;left:50%;width:98px;height:26px;background:rgba(214,197,168,.55);box-shadow:0 2px 6px rgba(0,0,0,.08);transform:translateX(-50%) rotate(-2deg)}
+.fl-lead{font-size:clamp(21px,2.3vw,29px);font-weight:900;color:var(--ink);letter-spacing:-.02em;margin:0 0 12px}
+.fl-paper p{color:#4c4841;font-size:clamp(15px,1.35vw,17px);line-height:1.75;margin:0 0 14px}
 .fl-ps{font-weight:800;color:var(--ink)}
-.fl-sign{font-size:clamp(30px,3.4vw,42px);font-weight:900;color:var(--ink);transform:rotate(-3deg);display:inline-block;margin:16px 0 0;position:relative}
-.fl-sign::after{content:"";position:absolute;left:-6px;right:-10px;bottom:-7px;height:9px;border-bottom:2.5px solid #FF6B35;border-radius:50%;transform:rotate(-1deg)}
-.fl-role{margin-top:15px;font-size:13px;font-weight:800;letter-spacing:.04em;color:#8a7f70}
-@media(max-width:820px){
-  .fl-wrap{grid-template-columns:1fr;gap:32px}
-  .fl-photo{transform:rotate(-2deg);max-width:270px}
-  .fl-paper::before{right:20px}
+.fl-signs{display:flex;gap:clamp(30px,5vw,58px);align-items:flex-end;margin:24px 0 0;clear:both}
+.fl-sig{display:flex;flex-direction:column}
+.fl-sig-name{font-size:clamp(28px,3.2vw,40px);font-weight:900;color:var(--ink);transform:rotate(-3deg);display:inline-block;position:relative;line-height:1.1}
+.fl-sig-name::after{content:"";position:absolute;left:-6px;right:-10px;bottom:-6px;height:8px;border-bottom:2.5px solid #FF6B35;border-radius:50%;transform:rotate(-1deg)}
+.fl-sig-role{margin-top:13px;font-size:12px;font-weight:800;letter-spacing:.04em;color:#8a7f70}
+@media(max-width:620px){
+  .fl-inphoto{float:none;width:min(72%,240px);margin:0 auto 24px;display:block}
+  .fl-signs{gap:34px}
 }
 """
 
@@ -1002,9 +1023,18 @@ XHERO = """    <header class="xtop" id="top">
     </header>
     <section class="rh" id="xhero" aria-label="mood — אל תבחרו מוצר, בחרו את הרגע">
       <div class="rh-wrap">
-        <img class="rh-banner" src="__HEROBANNER__" alt="MOOD — ביס אחד משנה הכל. אל תבחרו מוצר, בחרו את הרגע.">
-        <a class="rh-hit" style="left:39.3%;top:64%;width:10.6%;height:9%" href="#products" aria-label="לבחירת הרגע"></a>
-        <a class="rh-hit" style="left:25.3%;top:64%;width:12%;height:9%" href="#products" aria-label="למארז היכרות"></a>
+        <div class="rh-copy">
+          <p class="rh-eyebrow">ONE BITE · EVERYTHING CHANGES</p>
+          <h1 class="rh-h">אל תבחרו מוצר.<br>בחרו את <span>הרגע</span>.</h1>
+          <p class="rh-sub">שוקולד מריר 70% עם פורמולה טבעית, לכל רגע ביום — אנרגיה בבוקר, רוגע בערב, שינה בלילה. ביס אחד, וההרגשה משתנה.</p>
+          <div class="rh-cta">
+            <a class="rh-btn rh-btn-primary" href="#products">לבחירת הרגע</a>
+            <a class="rh-btn rh-btn-ghost" href="#products">למארז היכרות</a>
+          </div>
+        </div>
+        <div class="rh-photo">
+          <img src="__HEROPHOTO__" alt="רגע של mood — אור פריזמה על הפנים">
+        </div>
       </div>
     </section>
 """
@@ -1112,11 +1142,10 @@ def main():
     #   founders · TIMELINE · formula · BUNDLE · close · footer
     # trust/credibility bar sits directly under the hero
     shell = shell.replace('    <section id="products"', MARQUEE + '    <section id="products"')
-    # 3D formulas experience sits right below the product cards
-    shell = shell.replace('    <section id="story"', FORMULAS + '    <section id="story"')
     # replace the cinematic story with the strong taste + world-champion section
     shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
-    shell = shell.replace('    <section id="formula"', FOUNDERS + REVIEWS + '    <section id="formula"')
+    # the compact formula selector flows directly into the founders letter (one cream band)
+    shell = shell.replace('    <section id="formula"', FORMULAS + FOUNDERS + REVIEWS + '    <section id="formula"')
     shell = shell.replace('  </main>', CLOSE + '  </main>\n' + FOOTER)
     # the live FORMULAS (id="formulas") replaces the old static formula image
     shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
@@ -1127,7 +1156,7 @@ def main():
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
-    shell = shell.replace("__HEROBANNER__", data_uri("hero-banner.png", HOME_ASSETS))
+    shell = shell.replace("__HEROPHOTO__", data_uri("hero-photo.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
     shell = shell.replace("__RONEN__", data_uri("ronen-real.jpg"))
