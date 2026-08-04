@@ -241,10 +241,32 @@ CAP_CSS = """
 .quiz{width:min(760px,100%);margin:30px auto 0;padding:0 22px}
 .quiz-card{background:var(--paper);border:1px solid #e9e2d6;border-radius:28px;padding:clamp(26px,4vw,44px);box-shadow:0 16px 40px rgba(41,32,20,.06);text-align:center}
 .quiz-q h3{font-size:clamp(24px,4vw,34px);margin:0;font-weight:800;letter-spacing:-.03em}
-.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
-.quiz-opt{border:1px solid #e9e2d6;background:var(--cream);border-radius:18px;padding:20px 16px;font-size:16px;font-weight:700;color:var(--ink);cursor:pointer;text-align:center;transition:transform .18s,border-color .18s}
-.quiz-opt:hover{transform:translateY(-2px);border-color:var(--sel)}
-.quiz-opt b{display:block;font-size:22px;margin-bottom:5px;color:var(--sel)}
+.quiz-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+.quiz-opt{position:relative;overflow:hidden;border:1px solid #e9e2d6;background:var(--cream);border-radius:20px;padding:26px 16px 22px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .2s,border-color .2s,box-shadow .2s}
+.quiz-opt::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--sel)}
+.quiz-opt:hover{transform:translateY(-4px);border-color:var(--sel);box-shadow:0 16px 32px rgba(41,32,20,.12)}
+.qo-disc{width:66px;height:66px;border-radius:50%;object-fit:cover;border:2px solid color-mix(in srgb,var(--sel) 55%,transparent)}
+.qo-time{direction:ltr;font-size:21px;font-weight:900;letter-spacing:-.02em;color:var(--sel);margin-top:2px}
+.quiz-opt b{font-size:19px;font-weight:800;color:var(--ink)}
+.qo-desc{font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.35}
+/* meet the chocolate — dark, cinematic, appetising, real product photography */
+.meet{background:#17100c;color:#f2e7d9;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:clamp(22px,4vw,56px);padding:clamp(50px,7vw,96px) clamp(24px,5vw,70px);overflow:hidden}
+.meet-media{position:relative}
+.meet-img{width:100%;height:auto;border-radius:22px;display:block;box-shadow:0 30px 64px rgba(0,0,0,.55);animation:meetZoom 16s ease-in-out infinite alternate}
+.meet-tag{position:absolute;bottom:16px;right:16px;background:rgba(23,16,12,.72);backdrop-filter:blur(6px);color:#f2e7d9;font-size:12px;font-weight:800;letter-spacing:.04em;padding:9px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14)}
+.meet-copy{direction:rtl}
+.meet-eyebrow{font-size:12px;font-weight:900;letter-spacing:.24em;color:var(--energy)}
+.meet-h{font-size:clamp(34px,4.8vw,64px);line-height:1;letter-spacing:-.045em;font-weight:900;color:#fff;margin:14px 0 0}
+.meet-sub{margin:18px 0 0;max-width:440px;color:#cdbfae;font-size:clamp(15px,1.4vw,18px);line-height:1.6}
+.meet-moods{display:flex;gap:18px;margin:32px 0 0;flex-wrap:wrap}
+.meet-mood{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}
+.meet-mood img{width:74px;height:74px;border-radius:50%;object-fit:cover;border:2px solid color-mix(in srgb,var(--c) 60%,transparent);box-shadow:0 10px 22px rgba(0,0,0,.45);transition:transform .25s}
+.meet-mood:hover img{transform:translateY(-5px) scale(1.06)}
+.meet-mood b{font-size:12px;font-weight:900;letter-spacing:.08em;color:var(--c)}
+.meet-mood span{font-size:11px;color:#a99a86}
+@keyframes meetZoom{from{transform:scale(1)}to{transform:scale(1.04)}}
+@media(max-width:820px){.meet{grid-template-columns:1fr;gap:26px;padding:44px 22px}.meet-media{order:1}.meet-copy{order:2}}
+@media(prefers-reduced-motion:reduce){.meet-img{animation:none}}
 .quiz-result{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
 .quiz-result.on{opacity:1;transform:none}
 .quiz-result .rpouch{width:auto;height:210px;margin:0 auto 16px;filter:drop-shadow(0 20px 24px rgba(41,31,18,.2))}
@@ -297,13 +319,30 @@ QUIZ = """    <section class="cap" id="quiz" aria-label="Mood Finder">
           <div class="quiz-q" id="quizQ">
             <h3>מה מצב הראש שלך עכשיו?</h3>
             <div class="quiz-opts">
-              <button class="quiz-opt" data-sku="energy" style="--sel:var(--energy)"><b>רץ על ריק</b>צריך דלק להמשך היום</button>
-              <button class="quiz-opt" data-sku="relax" style="--sel:var(--relax)"><b>עמוס</b>קשה להוריד הילוך</button>
-              <button class="quiz-opt" data-sku="sleep" style="--sel:var(--sleep)"><b>ער בלילה</b>המוח לא נכבה</button>
-              <button class="quiz-opt" data-sku="energy" style="--sel:var(--energy)"><b>סתם סקרן/ת</b>רוצה להתחיל איפשהו</button>
+              <button class="quiz-opt" data-sku="energy" style="--sel:var(--energy)"><img class="qo-disc" src="__EDISC__" alt=""><span class="qo-time">16:30</span><b>רץ על ריק</b><span class="qo-desc">צריך דלק להמשך היום</span></button>
+              <button class="quiz-opt" data-sku="relax" style="--sel:var(--relax)"><img class="qo-disc" src="__RDISC__" alt=""><span class="qo-time">22:00</span><b>עמוס</b><span class="qo-desc">קשה להוריד הילוך</span></button>
+              <button class="quiz-opt" data-sku="sleep" style="--sel:var(--sleep)"><img class="qo-disc" src="__SDISC__" alt=""><span class="qo-time">03:00</span><b>ער בלילה</b><span class="qo-desc">המוח לא נכבה</span></button>
             </div>
           </div>
           <div class="quiz-result" id="quizR" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+"""
+
+MEET = """    <section class="meet" id="meet" aria-label="הכירו את השוקולד">
+      <div class="meet-media reveal">
+        <img class="meet-img" src="__CHOCMOODS__" alt="שוקולד mood — בר מריר עם שלוש דיסקיות ובהן סמלי שלושת המצבים">
+        <span class="meet-tag">70% מריר · מלח ים</span>
+      </div>
+      <div class="meet-copy reveal">
+        <div class="meet-eyebrow">השוקולד</div>
+        <h2 class="meet-h">ביס אחד.<br>וזה כבר ריטואל.</h2>
+        <p class="meet-sub">שוקולד מריר 70% עם מלח ים ופורמולה טבעית. אותו שוקולד — שלושה מצבים, חתומים בו עצמו.</p>
+        <div class="meet-moods">
+          <div class="meet-mood" style="--c:var(--energy)"><img src="__EDISC__" alt=""><b>ENERGY</b><span>בוקר · צהריים</span></div>
+          <div class="meet-mood" style="--c:var(--relax)"><img src="__RDISC__" alt=""><b>RELAX</b><span>ערב</span></div>
+          <div class="meet-mood" style="--c:var(--sleep)"><img src="__SDISC__" alt=""><b>SLEEP</b><span>לילה</span></div>
         </div>
       </div>
     </section>
@@ -771,7 +810,7 @@ def main():
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
     #   founders · TIMELINE · formula · BUNDLE · close · footer
-    shell = shell.replace('    <section id="products"', QUIZ + '    <section id="products"')
+    shell = shell.replace('    <section id="products"', MEET + QUIZ + '    <section id="products"')
     shell = shell.replace('    <section id="story"', MARQUEE + '    <section id="story"')
     shell = shell.replace('    <section id="formula"', FOUNDERS + TIMELINE + '    <section id="formula"')
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
@@ -781,6 +820,10 @@ def main():
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
+    shell = shell.replace("__CHOCMOODS__", data_uri("choc-real-moods.jpg", HOME_ASSETS))
+    shell = shell.replace("__EDISC__", data_uri("energy-disc.jpg", HOME_ASSETS))
+    shell = shell.replace("__RDISC__", data_uri("relax-disc.jpg", HOME_ASSETS))
+    shell = shell.replace("__SDISC__", data_uri("sleep-disc.jpg", HOME_ASSETS))
     for _m, _f in {"__ENERGY__": "energy.webp", "__RELAX__": "relax.webp",
                    "__SLEEP__": "sleep.webp", "__ELIFE__": "energy-lifestyle.jpg",
                    "__RLIFE__": "relax-lifestyle.jpg", "__SLIFE__": "sleep-lifestyle.jpg"}.items():
