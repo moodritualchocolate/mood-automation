@@ -20,7 +20,7 @@ body{direction:rtl;color:var(--ink);font-family:'Assistant',sans-serif;-webkit-f
 .badge{position:fixed;top:22px;left:clamp(18px,5vw,54px);z-index:40;font-family:'Assistant';font-weight:700;font-size:.62rem;letter-spacing:.24em;color:#9C866A;border:1px solid rgba(160,130,90,.35);border-radius:100px;padding:8px 14px;background:rgba(255,255,255,.35);backdrop-filter:blur(4px)}
 
 /* SPINE HERO — HYBRID stage: cream center -> cocoa falloff */
-.hero{position:relative;height:320svh;background:#EDE1CE}
+.hero{position:relative;height:280svh;background:#EDE1CE}
 .sticky{position:sticky;top:0;height:100svh;overflow:hidden;
   background:radial-gradient(88% 72% at 50% 40%, #F5EDDF 0%, #EADCC5 40%, #7A5638 82%, #2A1B12 100%)}
 /* soft floor shadow that grounds the piece */
@@ -58,9 +58,11 @@ body{direction:rtl;color:var(--ink);font-family:'Assistant',sans-serif;-webkit-f
 .bridge h2{font-family:'FR';font-weight:900;font-size:clamp(1.9rem,5vw,3rem);margin-top:10px} .bridge h2 em{font-style:normal;color:var(--acc)}
 .bridge p{font-family:'FR';font-weight:500;color:var(--soft);max-width:44ch;margin:12px auto 0;line-height:1.6}
 
-/* FORMULA iframe */
-.formula-section{background:var(--cream)}
-.formula-section iframe{display:block;width:100%;height:100svh;min-height:640px;border:0}
+/* FORMULA iframe — bounded card with a cream band around it so touch-scroll can pass it on mobile */
+.formula-section{background:var(--cream);padding:clamp(10px,3vw,30px)}
+.formula-wrap{max-width:1100px;margin:0 auto;border-radius:22px;overflow:hidden;box-shadow:0 44px 90px -54px rgba(60,40,20,.45);background:#0d0b12}
+.formula-section iframe{display:block;width:100%;height:min(84svh,760px);min-height:540px;border:0}
+.formula-more{text-align:center;color:var(--soft);font-family:ui-monospace,monospace;font-size:.62rem;letter-spacing:.2em;padding:16px 0 2px}
 
 /* PACK CARDS */
 .prod{position:relative;padding:clamp(50px,9vw,90px) 0 clamp(30px,6vw,60px);background:var(--cream)}
@@ -133,7 +135,8 @@ footer{background:#120C08;color:#C9B79A;text-align:center;padding:44px 20px;font
 
 <!-- FORMULA (interactive experience) -->
 <section class="formula-section" aria-label="הפורמולה">
-  <iframe src="formula.html" title="mood — הפורמולה" loading="lazy"></iframe>
+  <div class="formula-wrap"><iframe src="formula.html" title="mood — הפורמולה" loading="lazy"></iframe></div>
+  <div class="formula-more">גללו להמשך ↓</div>
 </section>
 
 <!-- PACK CARDS -->
