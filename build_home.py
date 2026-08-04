@@ -372,20 +372,33 @@ FORMULAS_CSS = """
 FORMULAS_JS = ""
 
 VH_CSS = """
-/* video hero — white, minimal, product film + one sales CTA */
-.vh{position:relative;direction:ltr;display:grid;grid-template-columns:1.02fr .98fr;min-height:min(72vh,600px);background:#fff;overflow:hidden}
-.vh-media{position:relative;order:1;overflow:hidden;background:#fff}
-.vh-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.vh-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to left,#fff,rgba(255,255,255,0) 34%)}
-.vh-copy{position:relative;order:2;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:right;direction:rtl;padding:clamp(28px,5vw,86px);z-index:2}
-.vh-h{font-size:clamp(42px,6.4vw,86px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:var(--ink);margin:0 0 34px}
-.vh-cta{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#fff;padding:16px 34px;border-radius:999px;font-size:17px;font-weight:800;text-decoration:none;transition:transform .2s,background .2s}
-.vh-cta:hover{transform:translateY(-2px);background:#FF6B35;color:#1a0f06}
+/* recommended hero — clean, warm cream panel, big human photo, small product */
+.rh{background:#fff;padding:clamp(14px,2.2vw,28px) clamp(12px,2.2vw,32px) clamp(22px,3vw,42px)}
+.rh-panel{position:relative;max-width:1320px;margin:0 auto;background:#f6f0e6;border-radius:clamp(20px,2.4vw,34px);overflow:hidden;display:grid;grid-template-columns:1fr 1.06fr;min-height:min(76vh,640px);direction:ltr}
+.rh-copy{order:1;direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;padding:clamp(30px,4.6vw,72px);z-index:2}
+.rh-h{font-size:clamp(38px,5.6vw,74px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:var(--ink);margin:0}
+.rh-logo{font-weight:900}
+.rh-sub{margin:20px 0 0;max-width:400px;color:#6a6157;font-size:clamp(15px,1.4vw,18px);line-height:1.6}
+.rh-moods{display:flex;direction:ltr;justify-content:flex-end;gap:22px;margin-top:clamp(34px,6vh,74px)}
+.rh-dot{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:.06em;color:#4c4841}
+.rh-dot::before{content:"";width:9px;height:9px;border-radius:50%}
+.rh-dot.e::before{background:#FF6B35}.rh-dot.r::before{background:#5C8058}.rh-dot.s::before{background:#5e7ba8}
+.rh-cta{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+.rh-primary{display:inline-flex;align-items:center;gap:12px;background:var(--ink);color:#fff;padding:13px 16px 13px 26px;border-radius:999px;font-size:16px;font-weight:800;text-decoration:none;transition:transform .2s}
+.rh-primary:hover{transform:translateY(-2px)}
+.rh-arrow{width:30px;height:30px;border-radius:50%;background:#FF6B35;position:relative;flex:none}
+.rh-arrow::after{content:"";position:absolute;top:50%;left:50%;width:9px;height:9px;border-left:2px solid #1a0f06;border-bottom:2px solid #1a0f06;transform:translate(-50%,-50%) rotate(45deg);margin-left:2px}
+.rh-secondary{display:inline-flex;align-items:center;background:#fff;color:var(--ink);padding:13px 26px;border-radius:999px;font-size:16px;font-weight:800;text-decoration:none;border:1px solid #e6ddcd;transition:transform .2s}
+.rh-secondary:hover{transform:translateY(-2px)}
+.rh-media{order:2;position:relative;overflow:hidden;min-height:320px}
+.rh-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%}
 @media(max-width:860px){
-  .vh{grid-template-columns:1fr;min-height:auto}
-  .vh-media{order:1;aspect-ratio:16/11}
-  .vh-fade{background:linear-gradient(0deg,#fff,rgba(255,255,255,0) 30%)}
-  .vh-copy{order:2;align-items:center;text-align:center;padding:18px 22px 38px}
+  .rh-panel{grid-template-columns:1fr;min-height:auto}
+  .rh-media{order:1;aspect-ratio:4/5}
+  .rh-copy{order:2;padding:26px 22px 34px;text-align:center;align-items:center}
+  .rh-sub{max-width:none}
+  .rh-moods{justify-content:center;margin-top:22px}
+  .rh-cta{justify-content:center}
 }
 """
 
@@ -851,16 +864,22 @@ XHERO = """    <header class="xtop">
         <a class="xnav-cta" href="#products">מה מתאים לי?</a>
       </nav>
     </header>
-    <section class="vh" id="xhero" aria-label="mood — שוקולד פונקציונלי">
-      <div class="vh-media">
-        <video class="vh-vid" autoplay muted loop playsinline preload="metadata" poster="__HEROPOSTER__">
-          <source src="__HEROVIDEO__" type="video/mp4">
-        </video>
-        <div class="vh-fade" aria-hidden="true"></div>
-      </div>
-      <div class="vh-copy">
-        <h1 class="vh-h">שוקולד שמשנה<br>לך את המצב.</h1>
-        <a class="vh-cta" href="#products">הזמינו עכשיו</a>
+    <section class="rh" id="xhero" aria-label="mood — שוקולד פונקציונלי">
+      <div class="rh-panel">
+        <div class="rh-copy">
+          <h1 class="rh-h">ביס אחד<br>וה־<span class="rh-logo">mood</span> שלך משתנה</h1>
+          <p class="rh-sub">שוקולד פונקציונלי לאנרגיה כשצריך, פחות רעש בראש ולילה רגוע יותר.</p>
+          <div class="rh-moods">
+            <span class="rh-dot e">ENERGY</span>
+            <span class="rh-dot r">RELAX</span>
+            <span class="rh-dot s">SLEEP</span>
+          </div>
+          <div class="rh-cta">
+            <a class="rh-primary" href="#products">לגלות מה מתאים לי<i class="rh-arrow" aria-hidden="true"></i></a>
+            <a class="rh-secondary" href="#products">לכל המוצרים</a>
+          </div>
+        </div>
+        <div class="rh-media"><img src="__HEROPHOTO__" alt="לקוחה נהנית מקוביית mood — ביס אחד"></div>
       </div>
     </section>
 """
@@ -983,8 +1002,7 @@ def main():
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
-    shell = shell.replace("__HEROVIDEO__", data_uri("hero.mp4", HOME_ASSETS))
-    shell = shell.replace("__HEROPOSTER__", data_uri("hero-poster.jpg", HOME_ASSETS))
+    shell = shell.replace("__HEROPHOTO__", data_uri("hero-photo.jpg", HOME_ASSETS))
     shell = shell.replace("__BITE__", data_uri("choc-real-bite.jpg", HOME_ASSETS))
     shell = shell.replace("__RONEN__", data_uri("ronen-real.jpg"))
     shell = shell.replace("__EDISC__", data_uri("energy-disc.jpg", HOME_ASSETS))
