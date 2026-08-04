@@ -586,8 +586,8 @@ TS_CSS = """
 .ts{position:relative;display:grid;grid-template-columns:1fr 1.05fr;align-items:stretch;background:#fff;overflow:hidden;direction:ltr}
 .ts-media{position:relative;order:1;min-height:min(78vh,640px);background:#efe7d9}
 .ts-media img,.ts-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.ts-vid{animation:tsZoom 22s ease-in-out infinite alternate;will-change:transform;object-position:58% 60%}
-@keyframes tsZoom{from{transform:scale(1.14)}to{transform:scale(1.22)}}
+.ts-vid{animation:tsZoom 24s ease-in-out infinite alternate;will-change:transform;object-position:center 52%}
+@keyframes tsZoom{from{transform:scale(1.02)}to{transform:scale(1.08)}}
 @media(prefers-reduced-motion:reduce){.ts-vid{animation:none}}
 .ts-copy{order:2;direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,5.5vw,88px)}
 .ts-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35}
@@ -911,7 +911,7 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
 .xnav-menu .xnav-all{color:var(--energy);font-weight:800}
 .xlogo{display:inline-flex;flex-direction:column;align-items:center;text-decoration:none;line-height:1}
 .xlogo-word{font-size:27px;font-weight:800;letter-spacing:-.045em;color:var(--ink)}
-.xlogo-tag{font-size:8px;font-weight:600;letter-spacing:.32em;color:var(--ink);margin-top:3px;padding-right:.32em}
+.xlogo-tag{font-size:8px;font-weight:600;letter-spacing:.3em;color:var(--ink);margin-top:4px;white-space:nowrap;text-align:center;padding-inline-start:.3em}
 .xnav-actions{display:flex;align-items:center;gap:14px}
 .xnav-quiz{color:#4c4841;text-decoration:none;font-size:14px;font-weight:700;white-space:nowrap}
 .xnav-quiz:hover{color:var(--ink)}
