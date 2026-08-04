@@ -17,11 +17,15 @@ def _esc_srcdoc(t): return t.replace("&","&amp;").replace('"',"&quot;")
 def formula_xp(sku):
     h = FORMULA_HTML
     idx = MOOD_IDX[sku]
+    # blend the experience into the page: kill its own header, vignette and card look
+    inject = ('<style>html,body{background:transparent!important}'
+              '#mood-xp{background:transparent!important}'
+              '.xp-top{display:none!important}.xp-vig{display:none!important}</style>')
     if idx:
-        init = ('<script>addEventListener("load",function(){setTimeout(function(){'
-                'var p=document.querySelector(\'.xp-pill[data-m=\\"%d\\"]\');if(p)p.click();},350);});</script>') % idx
-        h = h.replace("</body>", init + "</body>")
-    return '<iframe class="fburst-xp" title="\u05d4\u05e4\u05d5\u05e8\u05de\u05d5\u05dc\u05d4 \u05d1\u05ea\u05dc\u05ea-\u05de\u05d9\u05de\u05d3" loading="lazy" srcdoc="%s"></iframe>' % _esc_srcdoc(h)
+        inject += ('<script>addEventListener("load",function(){setTimeout(function(){'
+                   'var p=document.querySelector(\'.xp-pill[data-m=\\"%d\\"]\');if(p)p.click();},350);});</script>') % idx
+    h = h.replace("</body>", inject + "</body>")
+    return '<iframe class="fburst-xp" title="\u05d4\u05e4\u05d5\u05e8\u05de\u05d5\u05dc\u05d4 \u05d1\u05ea\u05dc\u05ea-\u05de\u05d9\u05de\u05d3" loading="lazy" allowtransparency="true" srcdoc="%s"></iframe>' % _esc_srcdoc(h)
 
 
 def data_uri(fname):
