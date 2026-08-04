@@ -645,30 +645,32 @@ XHERO_CSS = """
   .h3-float,.h3-spin,.h3-shadow{animation:none}
   .h3-obj{transition:none}
 }
-/* ===== cinematic brand hero — moody chocolate, slow zoom, light sweep, short hook ===== */
-.cine{position:relative;min-height:min(92vh,880px);overflow:hidden;background:#17100c;display:grid;align-items:center}
-.cine-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;
-  animation:cineZoom 22s ease-in-out infinite alternate;will-change:transform}
-.cine-scrim{position:absolute;inset:0;background:linear-gradient(to left,rgba(18,12,8,.88),rgba(18,12,8,.5) 55%,rgba(18,12,8,.24))}
-.cine-vig{position:absolute;inset:0;background:radial-gradient(120% 100% at 50% 50%,transparent 55%,rgba(10,7,4,.55))}
-.cine-sheen{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;
-  background:linear-gradient(115deg,transparent 42%,rgba(255,183,120,.12) 49%,transparent 57%);
-  transform:translateX(-60%);animation:cineSheen 10s ease-in-out infinite}
-.cine-in{position:relative;z-index:2;width:min(1100px,100%);margin:0 auto;padding:0 clamp(24px,6vw,84px);direction:rtl}
-.cine-eyebrow{font-size:12px;font-weight:900;letter-spacing:.24em;color:var(--energy)}
-.cine-h{font-size:clamp(46px,7.6vw,108px);line-height:.96;letter-spacing:-.045em;font-weight:900;color:#f7efe4;margin:16px 0 0;text-shadow:0 2px 40px rgba(0,0,0,.4)}
-.cine-cta{display:inline-block;margin:30px 0 0;background:var(--energy);color:#17100c;padding:16px 36px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s}
-.cine-cta:hover{transform:translateY(-2px)}
-.cine-cue{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:2;font-size:11px;font-weight:800;letter-spacing:.16em;color:#e7dccb;opacity:.75;animation:cueBob 2.2s ease-in-out infinite}
-@keyframes cineZoom{from{transform:scale(1.06)}to{transform:scale(1.17)}}
-@keyframes cineSheen{0%{transform:translateX(-60%)}60%,100%{transform:translateX(160%)}}
-@keyframes cueBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+/* ===== brand hero — the real chocolate bar rotating in 3D on a warm field ===== */
+.hb{position:relative;display:grid;grid-template-columns:.95fr 1.05fr;align-items:center;min-height:min(90vh,860px);overflow:hidden;
+  background:radial-gradient(72% 82% at 60% 40%,#4b3323,#2b1d12 68%,#1d130c)}
+.hb-copy{order:1;z-index:2;padding:clamp(30px,5vw,84px);direction:rtl}
+.hb-eyebrow{font-size:12px;font-weight:900;letter-spacing:.24em;color:var(--energy)}
+.hb-h{font-size:clamp(44px,6.6vw,98px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:#f7efe4;margin:16px 0 0;text-shadow:0 2px 40px rgba(0,0,0,.4)}
+.hb-cta{display:inline-block;margin:28px 0 0;background:var(--energy);color:#1d130c;padding:16px 36px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s}
+.hb-cta:hover{transform:translateY(-2px)}
+.hb-stage{order:2;position:relative;display:grid;place-items:center;perspective:1500px;min-height:60vh}
+.hb-float{animation:hbFloat 7s ease-in-out infinite alternate}
+.hb-spin{animation:hbSpin 12s ease-in-out infinite alternate;transform-style:preserve-3d}
+.hb-obj{position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.22,.8,.28,1);will-change:transform}
+.hb-obj img{height:clamp(340px,66vh,680px);width:auto;display:block;
+  -webkit-mask-image:radial-gradient(56% 60% at 50% 45%,#000 52%,rgba(0,0,0,0) 82%);
+  mask-image:radial-gradient(56% 60% at 50% 45%,#000 52%,rgba(0,0,0,0) 82%);
+  filter:drop-shadow(0 44px 54px rgba(0,0,0,.55))}
+@keyframes hbFloat{from{transform:translateY(-12px)}to{transform:translateY(12px)}}
+@keyframes hbSpin{from{transform:rotateY(-11deg)}to{transform:rotateY(11deg)}}
 @media(max-width:820px){
-  .cine{min-height:80vh}
-  .cine-scrim{background:linear-gradient(0deg,rgba(18,12,8,.92),rgba(18,12,8,.4) 70%,rgba(18,12,8,.5))}
-  .cine-h{font-size:clamp(40px,12vw,64px)}
+  .hb{grid-template-columns:1fr;min-height:0}
+  .hb-stage{order:1;min-height:50vh;padding-top:14px}
+  .hb-copy{order:2;padding:24px 22px 44px}
+  .hb-h{font-size:clamp(38px,11vw,60px)}
+  .hb-obj img{height:min(54vh,440px)}
 }
-@media(prefers-reduced-motion:reduce){.cine-bg,.cine-sheen,.cine-cue{animation:none}}
+@media(prefers-reduced-motion:reduce){.hb-float,.hb-spin{animation:none}.hb-obj{transition:none}}
 """
 
 XHERO = """    <header class="xtop">
@@ -679,50 +681,34 @@ XHERO = """    <header class="xtop">
         <a class="xnav-cta" href="#quiz">מה מתאים לי?</a>
       </nav>
     </header>
-    <section class="cine" id="cine" aria-label="mood — ריטואל פונקציונלי">
-      <img class="cine-bg" src="__CHOC__" alt="">
-      <div class="cine-scrim"></div>
-      <div class="cine-vig"></div>
-      <div class="cine-sheen"></div>
-      <div class="cine-in">
-        <div class="cine-eyebrow">ריטואל פונקציונלי · 12.8</div>
-        <h1 class="cine-h">מצב הרוח שלך.<br>עכשיו יש לו טעם.</h1>
-        <a class="cine-cta" href="#quiz">מה מתאים לי?</a>
+    <section class="hb" id="xhero" aria-label="mood — ריטואל פונקציונלי">
+      <div class="hb-copy">
+        <div class="hb-eyebrow">ריטואל פונקציונלי · 12.8</div>
+        <h1 class="hb-h">מצב הרוח שלך.<br>עכשיו יש לו טעם.</h1>
+        <a class="hb-cta" href="#quiz">מה מתאים לי?</a>
       </div>
-      <div class="cine-cue" aria-hidden="true">גללו למטה</div>
+      <div class="hb-stage" id="hbStage">
+        <div class="hb-float"><div class="hb-spin"><div class="hb-obj" id="hbObj">
+          <img src="__CHOCBAR__" alt="בר שוקולד mood — ריטואל פונקציונלי">
+        </div></div></div>
+      </div>
     </section>
 """
 
 HERO_JS = """  <script>
   (function(){
-    var hero=document.getElementById("xhero"); if(!hero)return;
-    var HEX={energy:"#e8812c",relax:"#7e9b63",sleep:"#5e7ba8"};
-    var photos=hero.querySelectorAll(".h3-p");
-    var btns=hero.querySelectorAll(".h3-moods button");
-    btns.forEach(function(b){ b.addEventListener("click",function(){
-      var sku=b.dataset.sku;
-      btns.forEach(function(x){x.classList.toggle("on",x===b);});
-      photos.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
-      hero.style.setProperty("--accent",HEX[sku]);
-    });});
-    // interactive 3D tilt — the pouch turns toward the pointer, glare sweeps
-    var stage=document.getElementById("h3stage"), obj=document.getElementById("h3obj");
-    var glare=obj&&obj.querySelector(".h3-glare");
-    if(stage&&obj&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
-      var raf=0, tx=0, ty=0;
-      function move(cx,cy){
-        var r=stage.getBoundingClientRect();
-        var px=(cx-r.left)/r.width-0.5, py=(cy-r.top)/r.height-0.5;
-        tx=px; ty=py;
-        if(!raf)raf=requestAnimationFrame(apply);
-      }
-      function apply(){ raf=0;
-        obj.style.transform="rotateY("+(tx*22)+"deg) rotateX("+(-ty*18)+"deg)";
-        if(glare){glare.style.transform="translateX("+(tx*90)+"%)"; glare.style.opacity="0.55";}
-      }
-      stage.addEventListener("pointermove",function(e){move(e.clientX,e.clientY);});
-      stage.addEventListener("pointerleave",function(){obj.style.transform=""; if(glare)glare.style.opacity="0";});
-    }
+    // the real chocolate bar turns toward the pointer/touch in 3D (over the
+    // slow auto-spin), and settles back when you leave
+    var stage=document.getElementById("hbStage"), obj=document.getElementById("hbObj");
+    if(!stage||!obj||matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+    var raf=0, tx=0, ty=0;
+    function apply(){ raf=0; obj.style.transform="rotateY("+(tx*24)+"deg) rotateX("+(-ty*12)+"deg)"; }
+    stage.addEventListener("pointermove",function(e){
+      var r=stage.getBoundingClientRect();
+      tx=(e.clientX-r.left)/r.width-0.5; ty=(e.clientY-r.top)/r.height-0.5;
+      if(!raf)raf=requestAnimationFrame(apply);
+    });
+    stage.addEventListener("pointerleave",function(){ obj.style.transform=""; });
   })();
   </script>
 """
@@ -810,7 +796,7 @@ def main():
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
     #   founders · TIMELINE · formula · BUNDLE · close · footer
-    shell = shell.replace('    <section id="products"', MEET + QUIZ + '    <section id="products"')
+    shell = shell.replace('    <section id="products"', QUIZ + '    <section id="products"')
     shell = shell.replace('    <section id="story"', MARQUEE + '    <section id="story"')
     shell = shell.replace('    <section id="formula"', FOUNDERS + TIMELINE + '    <section id="formula"')
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
@@ -820,7 +806,7 @@ def main():
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
-    shell = shell.replace("__CHOCMOODS__", data_uri("choc-real-moods.jpg", HOME_ASSETS))
+    shell = shell.replace("__CHOCBAR__", data_uri("choc-real-standing.jpg", HOME_ASSETS))
     shell = shell.replace("__EDISC__", data_uri("energy-disc.jpg", HOME_ASSETS))
     shell = shell.replace("__RDISC__", data_uri("relax-disc.jpg", HOME_ASSETS))
     shell = shell.replace("__SDISC__", data_uri("sleep-disc.jpg", HOME_ASSETS))
