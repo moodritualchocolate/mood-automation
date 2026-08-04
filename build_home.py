@@ -348,6 +348,100 @@ MEET = """    <section class="meet" id="meet" aria-label="הכירו את השו
     </section>
 """
 
+FORMULAS = """    <section class="fml" id="formulas" aria-label="הפורמולות של mood" style="--accent:var(--energy)">
+      <div class="fml-stage" id="fmlStage">
+        <div class="fml-particles" aria-hidden="true">
+          <i style="--x:-40%;--y:-28%;--s:12px;--d:9s;--dl:0s"></i>
+          <i style="--x:38%;--y:-30%;--s:9px;--d:11s;--dl:1.2s"></i>
+          <i style="--x:-34%;--y:32%;--s:11px;--d:10s;--dl:.6s"></i>
+          <i style="--x:40%;--y:30%;--s:14px;--d:12s;--dl:1.8s"></i>
+          <i style="--x:48%;--y:2%;--s:8px;--d:8.5s;--dl:.9s"></i>
+        </div>
+        <div class="fml-float"><div class="fml-spin"><div class="fml-disc" id="fmlDisc">
+          <img class="fml-p on" data-sku="energy" src="__EDISC__" alt="דיסקית שוקולד Energy">
+          <img class="fml-p" data-sku="relax" src="__RDISC__" alt="דיסקית שוקולד Relax">
+          <img class="fml-p" data-sku="sleep" src="__SDISC__" alt="דיסקית שוקולד Sleep">
+        </div></div></div>
+      </div>
+      <div class="fml-copy">
+        <div class="fml-eyebrow">לא ערבוב מקרי</div>
+        <h2 class="fml-h">פחות רשימה.<br>יותר כוונה.</h2>
+        <p class="fml-sub">פורמולה אחרת לכל mood — בתוך קובייה אישית שקל להפוך לחלק מהיום.</p>
+        <div class="fml-moods" role="group" aria-label="בחירת פורמולה">
+          <button class="on" data-sku="energy">ENERGY</button>
+          <button data-sku="relax">RELAX</button>
+          <button data-sku="sleep">SLEEP</button>
+        </div>
+        <ul class="fml-list" id="fmlList"></ul>
+        <div class="fml-note">30 יחידות אישיות · פורמולה מדויקת בכל ביס</div>
+      </div>
+    </section>
+"""
+
+FORMULAS_CSS = """
+/* live rotating formulas section (same 3D tech as the hero) */
+.fml{position:relative;background:var(--cream);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:clamp(24px,4vw,60px);padding:clamp(56px,8vw,104px) clamp(24px,5vw,70px);overflow:hidden}
+.fml-copy{direction:rtl;order:2}
+.fml-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--accent);transition:color .5s}
+.fml-h{font-size:clamp(32px,4.6vw,58px);line-height:1;letter-spacing:-.045em;font-weight:900;color:var(--ink);margin:12px 0 0}
+.fml-sub{margin:14px 0 0;max-width:420px;color:var(--muted);font-size:clamp(15px,1.4vw,17px);line-height:1.6}
+.fml-moods{display:flex;gap:8px;margin:24px 0 0;direction:ltr}
+.fml-moods button{padding:9px 18px;border-radius:999px;border:1px solid #d9cdbb;background:transparent;color:#6a6157;font-size:12px;font-weight:900;letter-spacing:.08em;cursor:pointer;transition:.22s}
+.fml-moods button:hover{transform:translateY(-2px)}
+.fml-moods button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.fml-list{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:13px;max-width:440px}
+.fml-list li{display:flex;justify-content:space-between;align-items:center;gap:14px;border-bottom:1px solid #ece4d6;padding-bottom:12px;direction:rtl}
+.fml-list li>div{display:flex;flex-direction:column}
+.fml-list b{font-size:18px;font-weight:800;color:var(--ink)}
+.fml-list span{font-size:13px;color:var(--muted);margin-top:2px}
+.fml-list i{font-size:10px;font-weight:800;letter-spacing:.12em;color:#b8ab97;font-style:normal;direction:ltr}
+.fml-note{margin:20px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
+.fml-stage{position:relative;order:1;display:grid;place-items:center;perspective:1200px;min-height:min(52vh,440px)}
+.fml-float{animation:fmlFloat 6s ease-in-out infinite alternate;z-index:2}
+.fml-spin{animation:fmlSpin 9s ease-in-out infinite alternate;transform-style:preserve-3d}
+.fml-disc{position:relative;width:clamp(220px,30vw,360px);height:clamp(220px,30vw,360px);transform-style:preserve-3d;transition:transform .5s ease;will-change:transform}
+.fml-p{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:0;transition:opacity .5s ease;
+  border:3px solid color-mix(in srgb,var(--accent) 55%,transparent);box-shadow:0 26px 50px rgba(41,25,10,.28)}
+.fml-p.on{opacity:1}
+.fml-particles{position:absolute;inset:0;z-index:1;pointer-events:none;transform-style:preserve-3d}
+.fml-particles i{position:absolute;top:50%;left:50%;width:var(--s);height:var(--s);border-radius:52% 46% 50% 48%;background:radial-gradient(circle at 34% 28%,#7a5638,#2c1b0f 78%);opacity:.7;box-shadow:0 4px 8px rgba(0,0,0,.3);transform:translate(-50%,-50%) translate(var(--x),var(--y));animation:hbPart var(--d) ease-in-out var(--dl) infinite alternate}
+@keyframes fmlFloat{from{transform:translateY(-9px)}to{transform:translateY(9px)}}
+@keyframes fmlSpin{from{transform:rotateY(-18deg)}to{transform:rotateY(18deg)}}
+@media(max-width:820px){.fml{grid-template-columns:1fr;gap:24px;padding:48px 22px}.fml-stage{min-height:290px}}
+@media(prefers-reduced-motion:reduce){.fml-float,.fml-spin,.fml-particles i{animation:none}.fml-disc{transition:none}}
+"""
+
+FORMULAS_JS = """  <script>
+  (function(){
+    var sec=document.getElementById("formulas"); if(!sec)return;
+    var DATA={
+      energy:[["מאקה","MACA","תומכת בחיוניות ובאנרגיה"],["גוארנה","GUARANA","תומכת בערנות"],["תה ירוק","GREEN TEA","תומך במיקוד יומיומי"],["ג׳ינסנג","GINSENG","תומך בחיוניות"]],
+      relax:[["מליסה","LEMON BALM","תומכת ברוגע"],["פסיפלורה","PASSION FLOWER","תומכת בהרפיה"],["מאקה","MACA","תומכת באיזון ובחיוניות"],["ולריאן","VALERIAN","תומך ברגיעה"]],
+      sleep:[["ולריאן","VALERIAN","תומך ברגיעה לפני השינה"],["פסיפלורה","PASSION FLOWER","תומכת בהרפיה"],["מליסה","LEMON BALM","תומכת ברוגע"],["ליקוריץ","LICORICE","משלים את התערובת הצמחית"]]
+    };
+    var HEX={energy:"#e8812c",relax:"#7e9b63",sleep:"#5e7ba8"};
+    var list=document.getElementById("fmlList"), disc=document.getElementById("fmlDisc"), stage=document.getElementById("fmlStage");
+    var pics=sec.querySelectorAll(".fml-p"), btns=sec.querySelectorAll(".fml-moods button");
+    function render(sku){
+      list.innerHTML=DATA[sku].map(function(r){return '<li><div><b>'+r[0]+'</b><span>'+r[2]+'</span></div><i>'+r[1]+'</i></li>';}).join('');
+      pics.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
+      sec.style.setProperty("--accent",HEX[sku]);
+    }
+    btns.forEach(function(b){ b.addEventListener("click",function(){
+      btns.forEach(function(x){x.classList.toggle("on",x===b);});
+      render(b.dataset.sku);
+    });});
+    render("energy");
+    if(stage&&disc&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
+      var raf=0,tx=0,ty=0;
+      function apply(){raf=0;disc.style.transform="rotateY("+(tx*22)+"deg) rotateX("+(-ty*14)+"deg)";}
+      stage.addEventListener("pointermove",function(e){var r=stage.getBoundingClientRect();tx=(e.clientX-r.left)/r.width-0.5;ty=(e.clientY-r.top)/r.height-0.5;if(!raf)raf=requestAnimationFrame(apply);});
+      stage.addEventListener("pointerleave",function(){disc.style.transform="";});
+    }
+  })();
+  </script>
+"""
+
 IMMERSIVE = """    <section class="cap" aria-label="שלושת הריטואלים">
       <div class="cap-label">שלושה מצבים · צבע אחד בכל רגע</div>
       <div class="cap-title"><h2>מסך שלובש את הריטואל.</h2><p>גללו — כל המסך עובר בין שלושת המצבים. מוצר אחד, צבע אחד, בכל רגע.</p></div>
@@ -808,19 +902,22 @@ def main():
                           ".products-frame { height: 620px; }")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + "\n  </style>", 1)
+    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + "\n  </style>", 1)
     # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
     #   founders · TIMELINE · formula · BUNDLE · close · footer
     shell = shell.replace('    <section id="products"', '    <section id="products"')
-    shell = shell.replace('    <section id="story"', MARQUEE + '    <section id="story"')
+    # live rotating formulas section sits right below the product cards
+    shell = shell.replace('    <section id="story"', FORMULAS + MARQUEE + '    <section id="story"')
     shell = shell.replace('    <section id="formula"', FOUNDERS + TIMELINE + '    <section id="formula"')
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
+    # the live FORMULAS (id="formulas") replaces the old static formula image
+    shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
-    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + '</body>')
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
