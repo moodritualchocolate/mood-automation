@@ -419,12 +419,14 @@ FORMULAS_CSS = """
 .fml-copy{direction:rtl;text-align:right}
 .fml-h{font-size:clamp(30px,4.4vw,54px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:0}
 .fml-sub{margin:12px 0 0;max-width:420px;color:var(--muted);font-size:clamp(14px,1.3vw,16.5px);line-height:1.6}
-.fml-list{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:12px;max-width:440px}
-.fml-list li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid #ece4d6;padding-bottom:11px}
-.fml-list .fi-nm{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;min-width:0}
-.fml-list b{font-size:15.5px;font-weight:800;color:var(--ink);white-space:nowrap}
-.fml-list em{font-style:normal;font-size:12.5px;font-weight:600;color:var(--muted)}
-.fml-list i{font-style:normal;direction:ltr;font-size:16px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;flex:none}
+.fml-list{list-style:none;margin:22px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:15px 26px;max-width:480px}
+.fml-list li{min-width:0}
+.fml-list .fi-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.fml-list b{font-size:14.5px;font-weight:800;color:var(--ink);white-space:nowrap}
+.fml-list i{font-style:normal;direction:ltr;font-size:14px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;flex:none}
+.fml-list .fi-bar{height:3px;border-radius:3px;background:#e7ddca;margin:7px 0 5px;position:relative;overflow:hidden}
+.fml-list .fi-bar::before{content:"";position:absolute;top:0;bottom:0;right:0;width:var(--p,0%);background:var(--accent);border-radius:3px;transition:width .5s cubic-bezier(.22,.8,.28,1)}
+.fml-list em{font-style:normal;font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.3}
 .fml-note{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
 @media(max-width:820px){
   .fml-body{grid-template-columns:1fr;gap:2px}
@@ -434,8 +436,10 @@ FORMULAS_CSS = """
   .fml-copy{order:2;text-align:center}
   .fml-h{font-size:clamp(26px,7vw,34px)}
   .fml-sub{max-width:none;margin:10px auto 0}
-  .fml-list{max-width:none;grid-template-columns:1fr;gap:12px;margin-top:16px}
-  .fml-list b{font-size:15.5px}
+  .fml-list{max-width:none;grid-template-columns:1fr 1fr;column-gap:20px;row-gap:14px;margin-top:16px}
+  .fml-list b{font-size:14px}
+  .fml-list i{font-size:13.5px}
+  .fml-list em{font-size:11px}
   .fml-note{margin-top:14px}
   .fml-tabs button{padding:10px 18px;font-size:13px;letter-spacing:.04em}
 }
@@ -474,7 +478,7 @@ FORMULAS_JS = """  <script>
     var list=sec.querySelector("#fmlList"), ghost=sec.querySelector("#fmlGhost");
     var pouches=sec.querySelectorAll(".fml-pouch"), tabs=sec.querySelectorAll(".fml-tabs button");
     function render(sku){
-      list.innerHTML=DATA[sku].map(function(r){return '<li><span class="fi-nm"><b>'+r[0]+'</b><em>'+r[2]+'</em></span><i>'+r[1]+'%</i></li>';}).join('');
+      list.innerHTML=DATA[sku].map(function(r){return '<li style="--p:'+r[1]+'%"><div class="fi-top"><b>'+r[0]+'</b><i>'+r[1]+'%</i></div><div class="fi-bar"></div><em>'+r[2]+'</em></li>';}).join('');
       pouches.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
       sec.style.setProperty("--accent",HEX[sku]); sec.style.setProperty("--accent-ink",INK[sku]); if(ghost)ghost.textContent=LABEL[sku];
     }
@@ -559,6 +563,8 @@ TS_CSS = """
   .ts-media{order:1;min-height:min(90vw,400px);height:min(90vw,400px)}
   .ts-copy{order:2;padding:34px 22px 44px}
   .ts-p,.ts-quote{max-width:none}
+  .ts-chips{flex-wrap:nowrap;gap:6px;justify-content:center}
+  .ts-chips li{padding:7px 9px;font-size:11px;white-space:nowrap}
 }
 .ts-seal{position:absolute;left:22px;bottom:22px;width:120px;height:120px;border-radius:50%;background:#FF6B35;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transform:rotate(-9deg);box-shadow:0 12px 26px rgba(0,0,0,.32);border:2px solid rgba(255,255,255,.85)}
 .ts-seal span{font-size:10px;font-weight:900;letter-spacing:.03em;line-height:1.25;padding:0 14px}
