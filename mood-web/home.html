@@ -50,6 +50,9 @@ html,body{overflow-x:clip}
   --energy:#e8812c;--relax:#7e9b63;--sleep:#5e7ba8;--dark:#171714}
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.22,.8,.28,1),transform .7s cubic-bezier(.22,.8,.28,1)}
 .reveal.in{opacity:1;transform:none}
+/* media reveals get a subtle scale-in (parallax-lite) */
+.fl-photo.reveal,.meet-media.reveal,.ts-media.reveal{transform:translateY(26px) scale(.966);transition:opacity .9s cubic-bezier(.22,.8,.28,1),transform .9s cubic-bezier(.22,.8,.28,1)}
+.fl-photo.reveal.in,.meet-media.reveal.in,.ts-media.reveal.in{transform:none}
 
 /* Recognition */
 .hr{background:#fff;padding:96px 24px 64px;text-align:center}
@@ -90,8 +93,9 @@ html,body{overflow-x:clip}
 .hc-eyebrow{font-size:12px;letter-spacing:.26em;font-weight:800;color:var(--energy)}
 .hc-h{font-size:clamp(32px,4.6vw,60px);line-height:1.05;letter-spacing:-.04em;font-weight:800;margin:16px 0 0}
 .hc-lead{margin:16px auto 0;color:#e5ddd2;font-size:clamp(15px,1.5vw,19px);line-height:1.6;max-width:480px}
-.hc-cta{display:inline-block;margin:34px 0 0;padding:16px 34px;border-radius:999px;background:var(--energy);color:#171714;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s ease,background .2s ease}
-.hc-cta:hover{transform:translateY(-2px);background:#f2902e}
+.hc-cta{display:inline-block;margin:34px 0 0;padding:16px 34px;border-radius:999px;background:var(--energy);color:#171714;font-size:15px;font-weight:800;text-decoration:none;transition:transform .28s cubic-bezier(.34,1.56,.64,1),background .2s ease,box-shadow .28s ease}
+.hc-cta:hover{transform:translateY(-2px) scale(1.02);background:#f2902e;box-shadow:0 14px 30px -8px var(--energy)}
+.hc-cta:active{transform:translateY(0) scale(.98)}
 .hc-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:30px auto 0;direction:rtl}
 .hc-chips span{font-size:12px;font-weight:700;color:#e5ddd2;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:8px 15px}
 .hc-count{display:flex;justify-content:center;gap:12px;margin:30px 0 0;direction:ltr}
@@ -121,6 +125,7 @@ html,body{overflow-x:clip}
   .hc{padding:80px 20px}
 }
 @media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
   .reveal{opacity:1!important;transform:none!important}
   .hm{-webkit-mask-image:none;mask-image:none}
   .hm-track{animation:none;flex-wrap:wrap;justify-content:center;width:100%;gap:6px 0;padding:0 16px}
@@ -225,7 +230,14 @@ html,body{overflow-x:clip}
 
 /* announcement + full nav */
 .xannounce{background:var(--ink);color:#f5eee4;text-align:center;font-size:12px;font-weight:700;letter-spacing:.02em;padding:10px 16px}
-.xnav{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px clamp(16px,4vw,34px);background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid #eee}
+.xnav{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px clamp(16px,4vw,34px);background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid #eee;transition:padding .32s cubic-bezier(.22,.8,.28,1),background .32s ease,box-shadow .32s ease,border-color .32s ease}
+.xnav.shrink{padding-top:7px;padding-bottom:7px;background:rgba(255,255,255,.82);border-bottom-color:transparent;box-shadow:0 6px 24px rgba(41,25,10,.09)}
+.xnav .xlogo-word,.xnav .xlogo-tag{transition:font-size .32s cubic-bezier(.22,.8,.28,1)}
+.xnav.shrink .xlogo-word{font-size:22px}
+.xnav.shrink .xlogo-tag{font-size:7px}
+/* thin scroll-progress bar (Apple-style) */
+.xprog{position:fixed;top:0;left:0;right:0;height:2.5px;z-index:80;background:var(--energy);transform:scaleX(0);transform-origin:0 50%;will-change:transform}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
 .xnav-links{display:flex;align-items:center;gap:24px}
 .xnav-links>a,.xnav-top{color:#4c4841;text-decoration:none;font-size:14.5px;font-weight:700;cursor:pointer;background:none;border:0;font-family:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .xnav-links>a:hover,.xnav-top:hover{color:var(--ink)}
@@ -761,10 +773,17 @@ html,body{overflow-x:clip}
   <script>
   (function(){
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Apple-style staggered reveal: siblings enter one after another
     var io = new IntersectionObserver(function(es){
       es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { threshold: .18 });
-    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+    }, { threshold: .16, rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el){
+      // per-group stagger based on how many .reveal siblings precede this one
+      var i=0, s=el;
+      while((s=s.previousElementSibling)){ if(s.classList&&s.classList.contains('reveal')) i++; }
+      if(i){ el.style.transitionDelay=Math.min(i*80,340)+'ms'; }
+      io.observe(el);
+    });
   })();
   </script>
   <script>
@@ -907,6 +926,18 @@ html,body{overflow-x:clip}
     var n=document.querySelector(".xnav"), b=document.getElementById("xBurger"); if(!n||!b)return;
     b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});
     n.querySelectorAll(".xnav-links a").forEach(function(a){a.addEventListener("click",function(){n.classList.remove("open");b.setAttribute("aria-expanded","false");});});
+    // ---- Apple-style: condense the nav on scroll + thin scroll-progress bar ----
+    var bar=document.createElement("div"); bar.className="xprog"; document.body.appendChild(bar);
+    var ticking=false;
+    function upd(){
+      var y=window.pageYOffset||document.documentElement.scrollTop;
+      n.classList.toggle("shrink", y>56);
+      var h=document.documentElement.scrollHeight-window.innerHeight;
+      bar.style.transform="scaleX("+(h>0?Math.min(1,y/h):0)+")";
+      ticking=false;
+    }
+    addEventListener("scroll",function(){if(!ticking){ticking=true;requestAnimationFrame(upd);}},{passive:true});
+    upd();
   })();
   </script>
 </body>
