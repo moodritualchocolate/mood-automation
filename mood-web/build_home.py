@@ -362,6 +362,29 @@ FORMULAS_CSS = """
 
 FORMULAS_JS = ""
 
+VH_CSS = """
+/* video hero — cream split, real product film + colored 3-mood line */
+.vh{position:relative;direction:ltr;display:grid;grid-template-columns:1.02fr .98fr;min-height:min(88vh,760px);background:var(--cream);overflow:hidden}
+.vh-media{position:relative;order:1;overflow:hidden;background:var(--cream)}
+.vh-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.vh-fade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to left,var(--cream),rgba(245,238,228,0) 34%)}
+.vh-copy{position:relative;order:2;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:right;direction:rtl;padding:clamp(30px,5vw,86px);z-index:2}
+.vh-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--ink);opacity:.55;margin-bottom:18px}
+.vh-h{font-size:clamp(40px,6vw,80px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:var(--ink);margin:0}
+.vh-moods{margin:24px 0 34px;font-size:clamp(20px,2.4vw,31px);font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:12px;direction:rtl}
+.vh-moods .e{color:#FF6B35}.vh-moods .r{color:#5C8058}.vh-moods .s{color:#4A2C5C}
+.vh-moods b{color:var(--ink);opacity:.22;font-weight:400}
+.vh-cta{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#f6efe4;padding:15px 30px;border-radius:999px;font-size:16px;font-weight:800;text-decoration:none;transition:transform .2s,background .2s}
+.vh-cta:hover{transform:translateY(-2px);background:#FF6B35;color:#1a0f06}
+@media(max-width:860px){
+  .vh{grid-template-columns:1fr;min-height:auto}
+  .vh-media{order:1;aspect-ratio:4/3}
+  .vh-fade{background:linear-gradient(0deg,var(--cream),rgba(245,238,228,0) 32%)}
+  .vh-copy{order:2;align-items:center;text-align:center;padding:20px 22px 40px}
+  .vh-moods{justify-content:center;margin:16px 0 26px}
+}
+"""
+
 IMMERSIVE = """    <section class="cap" aria-label="שלושת הריטואלים">
       <div class="cap-label">שלושה מצבים · צבע אחד בכל רגע</div>
       <div class="cap-title"><h2>מסך שלובש את הריטואל.</h2><p>גללו — כל המסך עובר בין שלושת המצבים. מוצר אחד, צבע אחד, בכל רגע.</p></div>
@@ -700,29 +723,23 @@ XHERO = """    <header class="xtop">
       <nav class="xnav" aria-label="ניווט ראשי">
         <div class="xnav-links"><a href="#products">המוצרים</a><a href="#story">איך זה עובד</a><a href="#founders">הסיפור שלנו</a></div>
         <a class="xlogo" href="#top" aria-label="mood">mo<span>o</span>d</a>
-        <a class="xnav-cta" href="#quiz">מה מתאים לי?</a>
+        <a class="xnav-cta" href="#products">מה מתאים לי?</a>
       </nav>
     </header>
-    <section class="hb" id="xhero" aria-label="mood — ריטואל פונקציונלי">
-      <div class="hb-copy">
-        <div class="hb-eyebrow">ריטואל פונקציונלי · 12.8</div>
-        <h1 class="hb-h">מצב הרוח שלך.<br>עכשיו יש לו טעם.</h1>
-        <a class="hb-cta" href="#quiz">מה מתאים לי?</a>
+    <section class="vh" id="xhero" aria-label="mood — ריטואל פונקציונלי">
+      <div class="vh-media">
+        <video class="vh-vid" autoplay muted loop playsinline preload="metadata" poster="__HEROPOSTER__">
+          <source src="__HEROVIDEO__" type="video/mp4">
+        </video>
+        <div class="vh-fade" aria-hidden="true"></div>
       </div>
-      <div class="hb-stage" id="hbStage">
-        <div class="hb-particles" aria-hidden="true">
-          <i style="--x:-42%;--y:-32%;--s:15px;--d:9s;--dl:0s"></i>
-          <i style="--x:40%;--y:-24%;--s:9px;--d:11s;--dl:1.4s"></i>
-          <i style="--x:-32%;--y:34%;--s:12px;--d:10s;--dl:.7s"></i>
-          <i style="--x:38%;--y:36%;--s:17px;--d:12.5s;--dl:2s"></i>
-          <i style="--x:47%;--y:6%;--s:8px;--d:8.5s;--dl:1s"></i>
-          <i style="--x:-48%;--y:4%;--s:12px;--d:13s;--dl:.4s"></i>
-          <i style="--x:14%;--y:-40%;--s:7px;--d:10.5s;--dl:1.8s"></i>
-          <i style="--x:-14%;--y:42%;--s:10px;--d:11.5s;--dl:.9s"></i>
+      <div class="vh-copy">
+        <div class="vh-eyebrow">ריטואל פונקציונלי · 12.8</div>
+        <h1 class="vh-h">מצב הרוח שלך.<br>עכשיו יש לו טעם.</h1>
+        <div class="vh-moods" aria-label="שלושה מצבים">
+          <span class="e">אנרגיה</span><b>·</b><span class="r">רוגע</span><b>·</b><span class="s">שינה</span>
         </div>
-        <div class="hb-float"><div class="hb-spin"><div class="hb-obj" id="hbObj">
-          <img src="__CHOCBAR__" alt="בר שוקולד mood — ריטואל פונקציונלי, מרחף עם חלקיקי שוקולד">
-        </div></div></div>
+        <a class="vh-cta" href="#products">מה מתאים לי?</a>
       </div>
     </section>
 """
@@ -822,7 +839,7 @@ def main():
                           ".products-frame { height: 620px; }")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + "\n  </style>", 1)
+    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + "\n  </style>", 1)
     # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
@@ -843,6 +860,8 @@ def main():
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
+    shell = shell.replace("__HEROVIDEO__", data_uri("hero.mp4", HOME_ASSETS))
+    shell = shell.replace("__HEROPOSTER__", data_uri("hero-poster.jpg", HOME_ASSETS))
     shell = shell.replace("__EDISC__", data_uri("energy-disc.jpg", HOME_ASSETS))
     shell = shell.replace("__RDISC__", data_uri("relax-disc.jpg", HOME_ASSETS))
     shell = shell.replace("__SDISC__", data_uri("sleep-disc.jpg", HOME_ASSETS))
