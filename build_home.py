@@ -828,9 +828,10 @@ def main():
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
     #   founders · TIMELINE · formula · BUNDLE · close · footer
-    shell = shell.replace('    <section id="products"', '    <section id="products"')
-    # live rotating formulas section sits right below the product cards
-    shell = shell.replace('    <section id="story"', FORMULAS + MARQUEE + '    <section id="story"')
+    # trust/credibility bar sits directly under the hero
+    shell = shell.replace('    <section id="products"', MARQUEE + '    <section id="products"')
+    # 3D formulas experience sits right below the product cards
+    shell = shell.replace('    <section id="story"', FORMULAS + '    <section id="story"')
     shell = shell.replace('    <section id="formula"', FOUNDERS + TIMELINE + '    <section id="formula"')
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
     # the live FORMULAS (id="formulas") replaces the old static formula image
