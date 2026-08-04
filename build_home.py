@@ -973,7 +973,7 @@ def main():
     # replace the cinematic story with the strong taste + world-champion section
     shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
     shell = shell.replace('    <section id="formula"', FOUNDERS + REVIEWS + '    <section id="formula"')
-    shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
+    shell = shell.replace('  </main>', CLOSE + '  </main>\n' + FOOTER)
     # the live FORMULAS (id="formulas") replaces the old static formula image
     shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
