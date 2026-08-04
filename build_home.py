@@ -564,53 +564,53 @@ MOODS = """    <section class="mds" aria-label="שלושה מצבים, שוקו�
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
-      <div class="ts-media reveal"><video class="ts-vid" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="__CHOCBITE__"><source src="__TASTEVID__" type="video/mp4"></video></div>
-      <div class="ts-copy">
+      <div class="ts-inner">
         <div class="ts-eyebrow reveal">פותח עם אלוף העולם</div>
-        <h2 class="ts-h reveal">קודם כול,<br>שוקולד אמיתי.</h2>
+        <h2 class="ts-h reveal">קודם כול, שוקולד אמיתי.</h2>
+        <p class="ts-p reveal">בלוק מריר 70% שנבנה עם אלוף עולם — הבסיס שכל פורמולה נשענת עליו.</p>
         <ul class="ts-chips reveal"><li>70% מריר</li><li>מלח ים</li><li>פורמולה טבעית</li><li>בלי סוכר</li><li>כשר פרווה</li></ul>
-        <div class="ts-expert reveal">
-          <img src="__RONEN__" alt="רונן אפללו בסדנת השוקולד של mood">
-          <div class="ts-expert-t">
-            <strong>רונן אפללו · שוקולטייר</strong>
-            <span>אלוף השוקולד העולמי 2022</span>
-            <p class="ts-quote">\u201cרצינו ליצור שוקולד שתרצו לחזור אליו כל יום.\u201d</p>
-          </div>
+        <div class="ts-media reveal">
+          <video class="ts-vid" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="__CHOCBITE__"><source src="__TASTEVID__" type="video/mp4"></video>
+          <figure class="ts-badge">
+            <img src="__RONEN__" alt="רונן אפללו — שוקולטייר mood">
+            <figcaption>
+              <strong>רונן אפללו</strong>
+              <span>אלוף העולם לשוקולד · 2022</span>
+            </figcaption>
+          </figure>
         </div>
       </div>
     </section>
 """
 
 TS_CSS = """
-/* one strong section: the taste + world-champion chocolatier */
-.ts{position:relative;display:grid;grid-template-columns:1fr 1.05fr;align-items:stretch;background:#fff;overflow:hidden;direction:ltr}
-.ts-media{position:relative;order:1;min-height:min(78vh,640px);background:#fff}
-.ts-media img,.ts-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.ts-media::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;box-shadow:inset 0 0 clamp(50px,7vw,110px) clamp(24px,3.4vw,52px) #fff}
-.ts-vid{object-position:center 52%}
-.ts-copy{order:2;direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,5.5vw,88px)}
+/* one strong section: the taste + world-champion chocolatier — stacked, centered */
+.ts{position:relative;background:#fff;padding:clamp(52px,7vw,108px) clamp(20px,5vw,64px);text-align:center;direction:rtl;overflow:hidden}
+.ts-inner{max-width:1120px;margin:0 auto}
 .ts-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35}
-.ts-h{font-size:clamp(34px,4.8vw,64px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
-.ts-p{margin:18px 0 0;max-width:480px;color:var(--muted);font-size:clamp(15px,1.4vw,17.5px);line-height:1.65}
-.ts-chips{list-style:none;display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 0;padding:0}
+.ts-h{font-size:clamp(34px,5vw,66px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
+.ts-p{margin:16px auto 0;max-width:560px;color:var(--muted);font-size:clamp(15px,1.4vw,17.5px);line-height:1.65}
+.ts-chips{list-style:none;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:24px 0 0;padding:0}
 .ts-chips li{border:1px solid #cadcb9;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:800;color:#425a30;background:#e8f0dd}
-.ts-expert{display:flex;align-items:center;gap:15px;margin:30px 0 0;padding:16px 0 0;border-top:1px solid #eee}
-.ts-expert>img{width:66px;height:66px;border-radius:50%;object-fit:cover;object-position:center 26%;flex:none;box-shadow:0 6px 16px rgba(41,25,10,.18)}
-.ts-expert-t strong{display:block;font-size:15px;color:var(--ink)}
-.ts-expert-t span{display:block;font-size:12.5px;font-weight:800;color:#FF6B35;margin-top:2px}
-.ts-quote{margin:8px 0 0;font-size:14px;font-style:italic;color:#6a6157;max-width:360px}
+.ts-media{position:relative;margin:clamp(30px,4.2vw,54px) auto 0;max-width:1000px;height:min(60vh,560px);border-radius:clamp(16px,2vw,26px);overflow:hidden;background:#efe7d9;box-shadow:0 40px 92px -34px rgba(41,25,10,.5)}
+.ts-media>img,.ts-media>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.ts-vid{object-position:center 52%}
+.ts-media::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(20,12,6,.58),rgba(20,12,6,0) 34%)}
+/* world-champion badge, inside the video */
+.ts-badge{position:absolute;z-index:2;inset-inline-start:clamp(16px,2.4vw,28px);bottom:clamp(16px,2.4vw,26px);margin:0;display:flex;align-items:center;gap:13px;direction:rtl;text-align:right;padding:9px 17px 9px 11px;border-radius:999px;background:rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.3);box-shadow:0 12px 30px rgba(0,0,0,.32)}
+.ts-badge img{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:center 26%;flex:none;border:2px solid rgba(255,255,255,.75)}
+.ts-badge figcaption strong{display:block;font-size:14.5px;font-weight:900;color:#fff;letter-spacing:-.01em}
+.ts-badge figcaption span{display:block;font-size:11.5px;font-weight:800;color:#ffd9b8;margin-top:2px}
 @media(max-width:860px){
-  .ts{grid-template-columns:1fr}
-  .ts-media{order:1;min-height:min(90vw,400px);height:min(90vw,400px)}
-  .ts-copy{order:2;padding:34px 22px 44px}
-  .ts-p,.ts-quote{max-width:none}
-  .ts-chips{flex-wrap:nowrap;gap:5px;justify-content:space-between}
-  .ts-chips li{padding:7px 7px;font-size:10px;white-space:nowrap;letter-spacing:-.01em}
+  .ts-chips{flex-wrap:nowrap;gap:5px;justify-content:center}
+  .ts-chips li{padding:7px 8px;font-size:10px;white-space:nowrap;letter-spacing:-.01em}
+  .ts-p{max-width:none}
+  .ts-media{height:min(66vw,360px);margin-top:26px}
+  .ts-badge{inset-inline-start:12px;bottom:12px;gap:9px;padding:7px 13px 7px 8px}
+  .ts-badge img{width:40px;height:40px}
+  .ts-badge figcaption strong{font-size:12.5px}
+  .ts-badge figcaption span{font-size:10px}
 }
-.ts-seal{position:absolute;left:22px;bottom:22px;width:120px;height:120px;border-radius:50%;background:#FF6B35;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transform:rotate(-9deg);box-shadow:0 12px 26px rgba(0,0,0,.32);border:2px solid rgba(255,255,255,.85)}
-.ts-seal span{font-size:10px;font-weight:900;letter-spacing:.03em;line-height:1.25;padding:0 14px}
-.ts-seal b{font-size:26px;font-weight:900;line-height:1;margin-top:4px}
-@media(max-width:860px){.ts-seal{width:94px;height:94px;left:16px;bottom:16px}.ts-seal b{font-size:21px}.ts-seal span{font-size:9px}}
 """
 
 FL_CSS = """
