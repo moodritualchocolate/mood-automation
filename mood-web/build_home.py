@@ -482,6 +482,18 @@ VH_CSS = """
   .rh-moods{justify-content:center;margin-top:22px}
   .rh-cta{justify-content:center}
 }
+.rh-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:#8a7f70;margin-bottom:16px}
+.rh-stats{display:flex;margin-top:clamp(24px,4vh,42px);direction:rtl}
+.rh-stat{padding:0 clamp(16px,2vw,26px);border-inline-start:1px solid #ded5c5}
+.rh-stat:first-child{padding-inline-start:0}
+.rh-stat:last-child{border-inline-start:0;padding-inline-end:0}
+.rh-stat b{display:block;font-size:clamp(20px,2.2vw,27px);font-weight:900;color:var(--ink);line-height:1}
+.rh-stat span{display:block;font-size:12px;color:#8a7f70;margin-top:4px}
+.rh-media{position:relative}
+.rh-chip{position:absolute;bottom:18px;right:18px;background:rgba(255,255,255,.9);backdrop-filter:blur(6px);border-radius:16px;padding:9px 15px;display:flex;align-items:center;gap:10px;box-shadow:0 12px 28px rgba(41,25,10,.18)}
+.rh-chip img{width:30px;height:auto}
+.rh-chip span{font-size:12px;font-weight:900;letter-spacing:.08em;color:var(--ink)}
+@media(max-width:860px){.rh-stats{justify-content:center}.rh-chip{bottom:12px;right:12px;padding:7px 12px}}
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
@@ -992,22 +1004,26 @@ XHERO = """    <header class="xtop" id="top">
         </div>
       </nav>
     </header>
-    <section class="rh" id="xhero" aria-label="mood — שוקולד פונקציונלי">
+    <section class="rh" id="xhero" aria-label="mood ENERGY — הביס שמתחיל את היום">
       <div class="rh-panel">
         <div class="rh-copy">
-          <h1 class="rh-h">ביס אחד<br>וה־<span class="rh-logo">mood</span> שלך משתנה</h1>
-          <p class="rh-sub">שוקולד פונקציונלי לאנרגיה כשצריך, פחות רעש בראש ולילה רגוע יותר.</p>
-          <div class="rh-moods">
-            <span class="rh-dot e">ENERGY</span>
-            <span class="rh-dot r">RELAX</span>
-            <span class="rh-dot s">SLEEP</span>
-          </div>
+          <div class="rh-eyebrow">ENERGY · MORNING RITUAL</div>
+          <h1 class="rh-h">הביס שמתחיל<br>את היום.</h1>
+          <p class="rh-sub">שוקולד מריר שהוא רגע קטן של כוונה — טעים, אישי, ונכנס בדיוק לחיים.</p>
           <div class="rh-cta">
-            <a class="rh-primary" href="#products">לגלות מה מתאים לי<i class="rh-arrow" aria-hidden="true"></i></a>
-            <a class="rh-secondary" href="#products">לכל המוצרים</a>
+            <a class="rh-primary" href="#products">לבחירת הרגע<i class="rh-arrow" aria-hidden="true"></i></a>
+            <a class="rh-secondary" href="#products">למארז היכרות</a>
+          </div>
+          <div class="rh-stats">
+            <div class="rh-stat"><b>70%</b><span>קקאו</span></div>
+            <div class="rh-stat"><b>30</b><span>ביסים אישיים</span></div>
+            <div class="rh-stat"><b>1</b><span>רגע ביום</span></div>
           </div>
         </div>
-        <div class="rh-media"><img src="__HEROPHOTO__" alt="לקוחה נהנית מקוביית mood — ביס אחד"></div>
+        <div class="rh-media">
+          <img src="__HEROPHOTO__" alt="לקוחה נהנית מקוביית mood — הביס שמתחיל את היום">
+          <div class="rh-chip"><img src="__ENERGY__" alt=""><span>ENERGY</span></div>
+        </div>
       </div>
     </section>
 """
