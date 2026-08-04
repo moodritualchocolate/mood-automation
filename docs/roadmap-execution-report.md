@@ -36,7 +36,7 @@ exact unblock condition.
 
 | # | Item | Done | Remaining |
 |---|---|---|---|
-| 16 | Cognitive layer | `docs/cognitive-layer-audit.md` — full wired/unwired map + phased plan | Phase-2 archive move (dedicated pass · protects the green build) |
+| 16 | Cognitive layer | ✅ **Phase 2 done** — 1244 unwired files (+`src/` +`data/*.ts`) archived to `legacy/`; `lib/` 1034 → **31 files**; `legacy/` excluded from tsc; build + both CI verifiers green; zero deletions. Map: `legacy/README.md` | — |
 | 22 | Landing examples | "Real output per industry" section — genuine corpus hooks for 3 verticals | Swap in LIVE-LLM examples once the key runs |
 | 29 | Image wiring | "✦ AI image prompt" per concept — ready to paste into Midjourney/DALL·E | Direct API image generation (needs a key + spend approval) |
 
