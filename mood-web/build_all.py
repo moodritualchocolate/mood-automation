@@ -17,10 +17,12 @@ def _esc_srcdoc(t): return t.replace("&","&amp;").replace('"',"&quot;")
 def formula_xp(sku):
     h = FORMULA_HTML
     idx = MOOD_IDX[sku]
-    # blend the experience into the page: kill its own header, vignette and card look
+    # blend the experience into the page: match the section background so the
+    # frame disappears, but keep the formula's own composition (header, vignette,
+    # panel) fully intact so it still sits well.
     inject = ('<style>html,body{background:transparent!important}'
               '#mood-xp{background:transparent!important}'
-              '.xp-top{display:none!important}.xp-vig{display:none!important}</style>')
+              '#mood-xp .xp-gl{background:transparent!important}</style>')
     if idx:
         inject += ('<script>addEventListener("load",function(){setTimeout(function(){'
                    'var p=document.querySelector(\'.xp-pill[data-m=\\"%d\\"]\');if(p)p.click();},350);});</script>') % idx
