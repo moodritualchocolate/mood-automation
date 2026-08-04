@@ -419,11 +419,10 @@ FORMULAS_CSS = """
 .fml-h{font-size:clamp(30px,4.4vw,54px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:0}
 .fml-sub{margin:12px 0 0;max-width:420px;color:var(--muted);font-size:clamp(14px,1.3vw,16.5px);line-height:1.6}
 .fml-list{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:12px;max-width:440px}
-.fml-list li{display:flex;justify-content:space-between;align-items:center;gap:14px;border-bottom:1px solid #ece4d6;padding-bottom:11px}
-.fml-list li>div{display:flex;flex-direction:column}
-.fml-list b{font-size:17px;font-weight:800;color:var(--ink)}
-.fml-list span{font-size:12.5px;color:var(--muted);margin-top:2px}
-.fml-list i{font-size:10px;font-weight:800;letter-spacing:.1em;color:#b8ab97;font-style:normal;direction:ltr}
+.fml-list li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid #ece4d6;padding-bottom:11px}
+.fml-list b{font-size:16.5px;font-weight:800;color:var(--ink)}
+.fml-list i{font-style:normal;direction:ltr;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.fml-list i em{font-style:normal;font-size:15px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;margin-inline-end:2px}
 .fml-note{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
 @media(max-width:820px){
   .fml-body{grid-template-columns:1fr;gap:2px}
@@ -433,12 +432,11 @@ FORMULAS_CSS = """
   .fml-copy{order:2;text-align:center}
   .fml-h{font-size:clamp(26px,7vw,34px)}
   .fml-sub{max-width:none;margin:10px auto 0}
-  /* product + ingredients feel like ONE compact block: 2-column facts, no long descriptions */
+  /* product + ingredients feel like ONE compact block: 2-column name + mg */
   .fml-list{max-width:none;grid-template-columns:1fr 1fr;column-gap:clamp(16px,5vw,28px);row-gap:0;margin-top:18px}
   .fml-list li{justify-content:space-between;gap:8px;padding-bottom:9px}
-  .fml-list li>div{flex-direction:row;align-items:baseline;gap:0}
-  .fml-list span{display:none}
   .fml-list b{font-size:14.5px}
+  .fml-list i em{font-size:14px}
   .fml-note{margin-top:14px}
   .fml-tabs button{padding:10px 18px;font-size:13px;letter-spacing:.04em}
 }
@@ -469,15 +467,15 @@ FORMULAS_JS = """  <script>
   (function(){
     var sec=document.getElementById("formulas"); if(!sec)return;
     var DATA={
-      energy:[["מאקה","MACA","תומכת בחיוניות ובאנרגיה"],["גוארנה","GUARANA","תומכת בערנות"],["תה ירוק","GREEN TEA","תומך במיקוד יומיומי"],["ג׳ינסנג","GINSENG","תומך בחיוניות"]],
-      relax:[["מליסה","LEMON BALM","תומכת ברוגע"],["פסיפלורה","PASSION FLOWER","תומכת בהרפיה"],["מאקה","MACA","תומכת באיזון ובחיוניות"],["ולריאן","VALERIAN","תומך ברגיעה"]],
-      sleep:[["ולריאן","VALERIAN","תומך ברגיעה לפני השינה"],["פסיפלורה","PASSION FLOWER","תומכת בהרפיה"],["מליסה","LEMON BALM","תומכת ברוגע"],["ליקוריץ","LICORICE","משלים את התערובת הצמחית"]]
+      energy:[["רודיאלה",660],["תה ירוק",80],["קינמון",40],["ליקוריץ",13],["גוארנה",7]],
+      relax:[["מליסה",266],["פסיפלורה",182],["מאקה",140],["ולריאן",70],["ליקוריץ",42]],
+      sleep:[["מליסה",224],["פסיפלורה",224],["ולריאן",224],["ליקוריץ",56]]
     };
     var HEX={energy:"#E8A566",relax:"#5C8058",sleep:"#5e7ba8"}, INK={energy:"#5a3418",relax:"#fff",sleep:"#fff"}, LABEL={energy:"ENERGY",relax:"RELAX",sleep:"SLEEP"};
     var list=sec.querySelector("#fmlList"), ghost=sec.querySelector("#fmlGhost");
     var pouches=sec.querySelectorAll(".fml-pouch"), tabs=sec.querySelectorAll(".fml-tabs button");
     function render(sku){
-      list.innerHTML=DATA[sku].map(function(r){return '<li><div><b>'+r[0]+'</b><span>'+r[2]+'</span></div><i>'+r[1]+'</i></li>';}).join('');
+      list.innerHTML=DATA[sku].map(function(r){return '<li><b>'+r[0]+'</b><i><em>'+r[1]+'</em> מ״ג</i></li>';}).join('');
       pouches.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
       sec.style.setProperty("--accent",HEX[sku]); sec.style.setProperty("--accent-ink",INK[sku]); if(ghost)ghost.textContent=LABEL[sku];
     }
