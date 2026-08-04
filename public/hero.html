@@ -71,7 +71,8 @@
   #mood-hero .copy{left:7%;right:auto;bottom:auto;top:50%;transform:translateY(-50%);text-align:right;max-width:42%;}
   #mood-hero h1{font-size:clamp(40px,4.6vw,66px);}
 }
-@media(prefers-reduced-motion:reduce){#mood-hero .el,#mood-hero .crumb{animation:none!important;}}
+/* keep a gentle float even when the OS requests reduced motion (brand hero) */
+@media(prefers-reduced-motion:reduce){#mood-hero .el{animation-duration:11s!important;}#mood-hero .crumb{animation-duration:16s!important;}}
 </style>
 
 <script>
