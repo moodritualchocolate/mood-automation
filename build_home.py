@@ -75,15 +75,15 @@ NEW_CSS = """
 .hr-moment p{margin:8px 0 0;font-size:18px;line-height:1.4;font-weight:600;color:var(--ink)}
 
 /* Marquee */
-.hm{background:var(--dark);overflow:hidden;padding:16px 0;direction:ltr;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
-.hm-track{display:flex;align-items:center;width:max-content;animation:hmScroll 34s linear infinite}
+.hm{background:#E39A57;overflow:hidden;padding:14px 0;direction:ltr;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.hm-track{display:flex;align-items:center;width:max-content;animation:hmScroll 60s linear infinite;will-change:transform}
 .hm:hover .hm-track{animation-play-state:paused}
-.hm-item{color:#f5eee4;font-size:14px;font-weight:700;white-space:nowrap;padding:0 22px}
-.hm-item b{color:var(--energy)}
-.hm-sep{width:5px;height:5px;border-radius:50%;background:#5a544c;flex:0 0 auto}
-@keyframes hmScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hm-item{color:#3d2412;font-size:13.5px;font-weight:800;white-space:nowrap;padding:0 24px}
+.hm-item b{color:#fff}
+.hm-sep{width:4px;height:4px;border-radius:50%;background:rgba(61,36,18,.4);flex:0 0 auto}
+@keyframes hmScroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 
 /* Founders */
 .hf{background:var(--cream);display:grid;grid-template-columns:1fr 1fr;align-items:stretch;gap:0}
@@ -180,8 +180,8 @@ FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמ�
             <figcaption>נדב ומתיאס · הסדנה</figcaption>
           </figure>
           <p class="fl-lead">היי, אנחנו נדב ומתיאס.</p>
-          <p>נמאסה לנו הבחירה כל בוקר בין קפה שמקפיץ לבין רגע של שקט. רצינו דבר אחד פשוט — ריטואל קטן לחזור אליו כל יום.</p>
-          <p>אז בנינו עם רונן אפללו, אלוף השוקולד העולמי, שוקולד פונקציונלי אמיתי: 70% מריר, בלי סוכר. כל קובייה היא רגע שהוא רק שלכם.</p>
+          <p>לקח לנו שנתיים ואינספור נסיונות. סירבנו להתפשר על פרט אחד — לא על הטעם, לא על הפורמולה, לא על ההרגשה.</p>
+          <p>לקחנו רק את הטוב ביותר, עד שכל קובייה יצאה בדיוק כמו שחלמנו. וזה מרגש אותנו לחלוק אותה איתכם.</p>
           <p class="fl-ps">נשמח שתטעמו. באמת.</p>
           <div class="fl-signs">
             <div class="fl-sig"><span class="fl-sig-name">נדב</span><span class="fl-sig-role">מייסד mood</span></div>
@@ -212,6 +212,9 @@ FOOTER = """  <footer class="hft">
 
 MOTION_JS = """  <script>
   (function(){
+    // force-play muted autoplay videos — some mobile/in-app browsers ignore the attribute
+    function playVids(){document.querySelectorAll('video[autoplay]').forEach(function(v){v.muted=true;var p=v.play&&v.play();if(p&&p.catch)p.catch(function(){});});}
+    playVids(); addEventListener('touchstart',playVids,{once:true,passive:true});
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     // Apple-style staggered reveal: siblings enter one after another
     var io = new IntersectionObserver(function(es){
@@ -420,15 +423,20 @@ FORMULAS_CSS = """
 .fml-list i{font-size:10px;font-weight:800;letter-spacing:.1em;color:#b8ab97;font-style:normal;direction:ltr}
 .fml-note{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
 @media(max-width:820px){
-  .fml-body{grid-template-columns:1fr;gap:6px}
-  .fml-media{min-height:170px;order:1}
-  .fml-pouch{max-width:min(40%,150px)}
-  .fml-ghost{font-size:clamp(56px,18vw,110px)}
+  .fml-body{grid-template-columns:1fr;gap:2px}
+  .fml-media{min-height:128px;order:1}
+  .fml-pouch{max-width:min(30%,116px)}
+  .fml-ghost{font-size:clamp(46px,15vw,92px)}
   .fml-copy{order:2;text-align:center}
-  .fml-sub{max-width:none;margin-inline:auto}
-  .fml-list{max-width:none}
-  .fml-list li{justify-content:center;gap:10px}
-  .fml-tabs{max-width:100%}
+  .fml-h{font-size:clamp(26px,7vw,34px)}
+  .fml-sub{max-width:none;margin:10px auto 0}
+  /* product + ingredients feel like ONE compact block: 2-column facts, no long descriptions */
+  .fml-list{max-width:none;grid-template-columns:1fr 1fr;column-gap:clamp(16px,5vw,28px);row-gap:0;margin-top:18px}
+  .fml-list li{justify-content:space-between;gap:8px;padding-bottom:9px}
+  .fml-list li>div{flex-direction:row;align-items:baseline;gap:0}
+  .fml-list span{display:none}
+  .fml-list b{font-size:14.5px}
+  .fml-note{margin-top:14px}
   .fml-tabs button{padding:10px 18px;font-size:13px;letter-spacing:.04em}
 }
 """
@@ -513,11 +521,10 @@ VH_CSS = """
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
-      <div class="ts-media reveal"><video class="ts-vid" autoplay muted loop playsinline preload="metadata" poster="__SPINPOSTER__"><source src="__CHOCSPIN__" type="video/mp4"></video><div class="ts-seal" aria-label="אלוף השוקולד העולמי 2022"><span>אלוף השוקולד העולמי</span><b>2022</b></div></div>
+      <div class="ts-media reveal"><video class="ts-vid" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="__SPINPOSTER__"><source src="__CHOCSPIN__" type="video/mp4"></video><div class="ts-seal" aria-label="אלוף השוקולד העולמי 2022"><span>אלוף השוקולד העולמי</span><b>2022</b></div></div>
       <div class="ts-copy">
         <div class="ts-eyebrow reveal">פותח עם אלוף העולם</div>
         <h2 class="ts-h reveal">קודם כול,<br>שוקולד אמיתי.</h2>
-        <p class="ts-p reveal">70% מריר עם מלח ים ופורמולה טבעית. קודם כול שוקולד פרימיום — ורק אחר כך ריטואל. בלי סוכר.</p>
         <ul class="ts-chips reveal"><li>70% מריר</li><li>מלח ים</li><li>פורמולה טבעית</li><li>בלי סוכר</li></ul>
         <div class="ts-expert reveal">
           <img src="__RONEN__" alt="רונן אפללו בסדנת השוקולד של mood">
@@ -566,7 +573,7 @@ FL_CSS = """
 .fl-paper{position:relative;background:#ffffff;border:1px solid #ece1cd;border-radius:6px;padding:clamp(28px,4.4vw,60px);box-shadow:0 34px 70px rgba(41,25,10,.22);direction:rtl;text-align:right;overflow:hidden}
 .fl-paper::before{content:"";position:absolute;top:20px;right:34px;bottom:20px;width:1px;background:repeating-linear-gradient(#e7c4bb 0 1px,transparent 1px 27px);opacity:.4}
 .fl-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35;margin-bottom:18px}
-.fl-inphoto{float:left;width:min(44%,244px);margin:4px 4px 16px 24px;background:#fff;padding:10px 10px 34px;box-shadow:0 18px 38px rgba(41,25,10,.22);transform:rotate(-3deg);position:relative}
+.fl-inphoto{float:left;width:min(37%,196px);margin:4px 4px 14px 22px;background:#fff;padding:9px 9px 30px;box-shadow:0 18px 38px rgba(41,25,10,.22);transform:rotate(-3deg);position:relative}
 .fl-inphoto img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:center 18%}
 .fl-inphoto figcaption{position:absolute;left:0;right:0;bottom:11px;text-align:center;font-size:12.5px;font-weight:800;color:#6a6157}
 .fl-inphoto::after{content:"";position:absolute;top:-12px;left:50%;width:98px;height:26px;background:rgba(214,197,168,.55);box-shadow:0 2px 6px rgba(0,0,0,.08);transform:translateX(-50%) rotate(-2deg)}
@@ -582,7 +589,7 @@ FL_CSS = """
   .fl{padding:22px 16px 40px}
   .fl-paper{padding:26px 22px 30px}
   .fl-paper::before{display:none}
-  .fl-inphoto{float:none;width:min(70%,230px);margin:0 auto 20px;display:block}
+  .fl-inphoto{float:none;width:min(52%,178px);margin:0 auto 16px;display:block}
   .fl-lead{font-size:22px;margin-bottom:14px}
   .fl-paper p{font-size:16.5px;line-height:1.8;margin-bottom:16px}
   .fl-signs{gap:40px;justify-content:flex-start;margin-top:20px}
