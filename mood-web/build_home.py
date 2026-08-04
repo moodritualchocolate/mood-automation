@@ -454,46 +454,11 @@ FORMULAS_JS = """  <script>
 """
 
 VH_CSS = """
-/* recommended hero — clean, warm cream panel, big human photo, small product */
+/* hero — the approved banner composition, used as-is (no crop/re-typeset) */
 .rh{background:#fff;padding:clamp(14px,2.2vw,28px) clamp(12px,2.2vw,32px) clamp(22px,3vw,42px)}
-.rh-panel{position:relative;max-width:1320px;margin:0 auto;background:#f6f0e6;border-radius:clamp(20px,2.4vw,34px);overflow:hidden;display:grid;grid-template-columns:1fr 1.06fr;min-height:min(76vh,640px);direction:ltr}
-.rh-copy{order:1;direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;padding:clamp(30px,4.6vw,72px);z-index:2}
-.rh-h{font-size:clamp(38px,5.6vw,74px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:var(--ink);margin:0}
-.rh-logo{font-weight:900}
-.rh-sub{margin:20px 0 0;max-width:400px;color:#6a6157;font-size:clamp(15px,1.4vw,18px);line-height:1.6}
-.rh-moods{display:flex;direction:ltr;justify-content:flex-end;gap:22px;margin-top:clamp(34px,6vh,74px)}
-.rh-dot{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:.06em;color:#4c4841}
-.rh-dot::before{content:"";width:9px;height:9px;border-radius:50%}
-.rh-dot.e::before{background:#FF6B35}.rh-dot.r::before{background:#5C8058}.rh-dot.s::before{background:#5e7ba8}
-.rh-cta{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
-.rh-primary{display:inline-flex;align-items:center;gap:12px;background:var(--ink);color:#fff;padding:13px 16px 13px 26px;border-radius:999px;font-size:16px;font-weight:800;text-decoration:none;transition:transform .2s}
-.rh-primary:hover{transform:translateY(-2px)}
-.rh-arrow{width:30px;height:30px;border-radius:50%;background:#FF6B35;position:relative;flex:none}
-.rh-arrow::after{content:"";position:absolute;top:50%;left:50%;width:9px;height:9px;border-left:2px solid #1a0f06;border-bottom:2px solid #1a0f06;transform:translate(-50%,-50%) rotate(45deg);margin-left:2px}
-.rh-secondary{display:inline-flex;align-items:center;background:#fff;color:var(--ink);padding:13px 26px;border-radius:999px;font-size:16px;font-weight:800;text-decoration:none;border:1px solid #e6ddcd;transition:transform .2s}
-.rh-secondary:hover{transform:translateY(-2px)}
-.rh-media{order:2;position:relative;overflow:hidden;min-height:320px}
-.rh-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%}
-@media(max-width:860px){
-  .rh-panel{grid-template-columns:1fr;min-height:auto}
-  .rh-media{order:1;aspect-ratio:4/5}
-  .rh-copy{order:2;padding:26px 22px 34px;text-align:center;align-items:center}
-  .rh-sub{max-width:none}
-  .rh-moods{justify-content:center;margin-top:22px}
-  .rh-cta{justify-content:center}
-}
-.rh-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:#8a7f70;margin-bottom:16px}
-.rh-stats{display:flex;margin-top:clamp(24px,4vh,42px);direction:rtl}
-.rh-stat{padding:0 clamp(16px,2vw,26px);border-inline-start:1px solid #ded5c5}
-.rh-stat:first-child{padding-inline-start:0}
-.rh-stat:last-child{border-inline-start:0;padding-inline-end:0}
-.rh-stat b{display:block;font-size:clamp(20px,2.2vw,27px);font-weight:900;color:var(--ink);line-height:1}
-.rh-stat span{display:block;font-size:12px;color:#8a7f70;margin-top:4px}
-.rh-media{position:relative}
-.rh-chip{position:absolute;bottom:24px;right:24px;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:14px;padding:8px 14px;display:flex;align-items:center;gap:9px;white-space:nowrap;box-shadow:0 12px 28px rgba(41,25,10,.18)}
-.rh-chip img{width:24px;height:auto}
-.rh-chip span{font-size:12px;font-weight:900;letter-spacing:.08em;color:var(--ink)}
-@media(max-width:860px){.rh-stats{justify-content:center}.rh-chip{bottom:12px;right:12px;padding:7px 12px}}
+.rh-wrap{position:relative;direction:ltr;max-width:1320px;margin:0 auto;border-radius:clamp(20px,2.4vw,34px);overflow:hidden;box-shadow:0 20px 50px rgba(41,25,10,.10)}
+.rh-banner{display:block;width:100%;height:auto}
+.rh-hit{position:absolute;border-radius:999px;cursor:pointer}
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
@@ -1004,26 +969,11 @@ XHERO = """    <header class="xtop" id="top">
         </div>
       </nav>
     </header>
-    <section class="rh" id="xhero" aria-label="mood ENERGY — הביס שמתחיל את היום">
-      <div class="rh-panel">
-        <div class="rh-copy">
-          <div class="rh-eyebrow">ENERGY · MORNING RITUAL</div>
-          <h1 class="rh-h">הביס שמתחיל<br>את היום.</h1>
-          <p class="rh-sub">שוקולד מריר שהוא רגע קטן של כוונה — טעים, אישי, ונכנס בדיוק לחיים.</p>
-          <div class="rh-cta">
-            <a class="rh-primary" href="#products">לבחירת הרגע<i class="rh-arrow" aria-hidden="true"></i></a>
-            <a class="rh-secondary" href="#products">למארז היכרות</a>
-          </div>
-          <div class="rh-stats">
-            <div class="rh-stat"><b>70%</b><span>קקאו</span></div>
-            <div class="rh-stat"><b>30</b><span>ביסים אישיים</span></div>
-            <div class="rh-stat"><b>1</b><span>רגע ביום</span></div>
-          </div>
-        </div>
-        <div class="rh-media">
-          <img src="__HEROPHOTO__" alt="לקוחה נהנית מקוביית mood — הביס שמתחיל את היום">
-          <div class="rh-chip"><img src="__ENERGY__" alt=""><span>ENERGY</span></div>
-        </div>
+    <section class="rh" id="xhero" aria-label="mood — אל תבחרו מוצר, בחרו את הרגע">
+      <div class="rh-wrap">
+        <img class="rh-banner" src="__HEROBANNER__" alt="MOOD — ביס אחד משנה הכל. אל תבחרו מוצר, בחרו את הרגע.">
+        <a class="rh-hit" style="left:39.3%;top:64%;width:10.6%;height:9%" href="#products" aria-label="לבחירת הרגע"></a>
+        <a class="rh-hit" style="left:25.3%;top:64%;width:12%;height:9%" href="#products" aria-label="למארז היכרות"></a>
       </div>
     </section>
 """
@@ -1146,7 +1096,7 @@ def main():
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
-    shell = shell.replace("__HEROPHOTO__", data_uri("hero-photo.jpg", HOME_ASSETS))
+    shell = shell.replace("__HEROBANNER__", data_uri("hero-banner.png", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
     shell = shell.replace("__RONEN__", data_uri("ronen-real.jpg"))
