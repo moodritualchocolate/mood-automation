@@ -396,6 +396,7 @@ FORMULAS = """    <section class="fml" id="formulas" aria-label="הפורמול�
         <div class="fml-copy">
           <h2 class="fml-h">פחות רשימה.<br>יותר כוונה.</h2>
           <p class="fml-sub">פורמולה אחרת לכל mood — בתוך יחידה אישית שקל להפוך לחלק מהיום.</p>
+          <div class="fml-bar" id="fmlBar" aria-hidden="true"></div>
           <ul class="fml-list" id="fmlList"></ul>
           <div class="fml-note">30 יחידות אישיות · פורמולה מדויקת בכל ביס</div>
         </div>
@@ -420,15 +421,19 @@ FORMULAS_CSS = """
 .fml-copy{direction:rtl;text-align:right}
 .fml-h{font-size:clamp(30px,4.4vw,54px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:0}
 .fml-sub{margin:12px 0 0;max-width:420px;color:var(--muted);font-size:clamp(14px,1.3vw,16.5px);line-height:1.6}
-.fml-list{list-style:none;margin:22px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:15px 26px;max-width:480px}
-.fml-list li{min-width:0;text-align:right}
-.fml-list .fi-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.fml-list b{font-size:14.5px;font-weight:800;color:var(--ink);white-space:nowrap}
-.fml-list i{font-style:normal;direction:ltr;font-size:14px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;flex:none}
-.fml-list .fi-bar{height:3px;border-radius:3px;background:#e7ddca;margin:7px 0 6px;position:relative;overflow:hidden}
-.fml-list .fi-bar::before{content:"";position:absolute;top:0;bottom:0;right:0;width:var(--p,0%);background:var(--accent);border-radius:3px;transition:width .5s cubic-bezier(.22,.8,.28,1)}
-.fml-list em{display:block;font-style:normal;font-size:12.5px;font-weight:700;color:#4c4238;line-height:1.3}
-.fml-list em::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-inline-end:6px;vertical-align:middle}
+/* the recipe, as one composition bar */
+.fml-bar{display:flex;height:clamp(30px,3.6vw,42px);border-radius:999px;overflow:hidden;margin:22px 0 0;max-width:480px;background:#e7ddca;box-shadow:inset 0 0 0 1px rgba(41,25,10,.06),0 12px 26px -16px rgba(41,25,10,.4)}
+.fml-seg{position:relative;height:100%;min-width:2px;background:var(--accent);display:flex;align-items:center;justify-content:center;transition:width .6s cubic-bezier(.22,.8,.28,1),opacity .45s}
+.fml-seg+.fml-seg{box-shadow:inset 1px 0 0 rgba(255,255,255,.55)}
+.fml-seg i{font-style:normal;font-size:11px;font-weight:900;color:var(--accent-ink,#fff);direction:ltr;font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
+/* legend: color-keyed name · % · what it supports */
+.fml-list{list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:14px 26px;max-width:480px}
+.fml-list li{min-width:0;display:grid;grid-template-columns:auto 1fr;column-gap:9px;text-align:right}
+.fi-dot{width:11px;height:11px;border-radius:3px;background:var(--accent);margin-top:4px}
+.fi-t{display:flex;align-items:baseline;gap:7px;min-width:0}
+.fi-t b{font-size:14.5px;font-weight:800;color:var(--ink);white-space:nowrap}
+.fi-t i{font-style:normal;direction:ltr;font-size:13px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums}
+.fml-list em{grid-column:2;display:block;font-style:normal;font-size:12px;font-weight:700;color:#4c4238;line-height:1.3;margin-top:2px}
 .fml-note{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
 @media(max-width:820px){
   .fml-body{grid-template-columns:1fr;gap:2px}
@@ -477,10 +482,13 @@ FORMULAS_JS = """  <script>
       sleep:[["ולריאן",30,"רגיעה עמוקה"],["פסיפלורה",30,"הרפיה"],["מליסה",32,"רוגע"],["ליקריץ",8,"איזון התערובת"]]
     };
     var HEX={energy:"#E8A566",relax:"#5C8058",sleep:"#5e7ba8"}, INK={energy:"#5a3418",relax:"#fff",sleep:"#fff"}, LABEL={energy:"ENERGY",relax:"RELAX",sleep:"SLEEP"};
-    var list=sec.querySelector("#fmlList"), ghost=sec.querySelector("#fmlGhost");
+    var list=sec.querySelector("#fmlList"), ghost=sec.querySelector("#fmlGhost"), bar=sec.querySelector("#fmlBar");
     var pouches=sec.querySelectorAll(".fml-pouch"), tabs=sec.querySelectorAll(".fml-tabs button");
+    function op(i){var v=1-i*0.16; return v<0.36?0.36:v.toFixed(2);}
     function render(sku){
-      list.innerHTML=DATA[sku].map(function(r){return '<li style="--p:'+r[1]+'%"><div class="fi-top"><b>'+r[0]+'</b><i>'+r[1]+'%</i></div><div class="fi-bar"></div><em>'+r[2]+'</em></li>';}).join('');
+      var rows=DATA[sku];
+      if(bar)bar.innerHTML=rows.map(function(r,i){return '<span class="fml-seg" style="width:'+r[1]+'%;opacity:'+op(i)+'">'+(r[1]>=13?'<i>'+r[1]+'%</i>':'')+'</span>';}).join('');
+      list.innerHTML=rows.map(function(r,i){return '<li><span class="fi-dot" style="opacity:'+op(i)+'"></span><div class="fi-t"><b>'+r[0]+'</b><i>'+r[1]+'%</i></div><em>'+r[2]+'</em></li>';}).join('');
       pouches.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
       sec.style.setProperty("--accent",HEX[sku]); sec.style.setProperty("--accent-ink",INK[sku]); if(ghost)ghost.textContent=LABEL[sku];
     }
@@ -585,17 +593,17 @@ STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקו�
 
 TS_CSS = """
 /* one strong section: the taste + world-champion chocolatier — stacked, centered */
-.ts{position:relative;background:#fff;padding:clamp(52px,7vw,108px) clamp(20px,5vw,64px);text-align:center;direction:rtl;overflow:hidden}
+.ts{position:relative;background:linear-gradient(180deg,#fff 0%,#fbf5ed 68%,#f4ebdd 100%);padding:clamp(52px,7vw,108px) clamp(20px,5vw,64px);text-align:center;direction:rtl;overflow:hidden}
 .ts-inner{max-width:1120px;margin:0 auto}
 .ts-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35}
 .ts-h{font-size:clamp(34px,5vw,66px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
 .ts-p{margin:16px auto 0;max-width:560px;color:var(--muted);font-size:clamp(15px,1.4vw,17.5px);line-height:1.65}
 .ts-chips{list-style:none;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:24px 0 0;padding:0}
 .ts-chips li{border:1px solid #cadcb9;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:800;color:#425a30;background:#e8f0dd}
-.ts-media{position:relative;margin:clamp(30px,4.2vw,54px) auto 0;max-width:1000px;height:min(60vh,560px);border-radius:clamp(16px,2vw,26px);overflow:hidden;background:#efe7d9;box-shadow:0 40px 92px -34px rgba(41,25,10,.5)}
+.ts-media{position:relative;margin:clamp(30px,4.2vw,54px) auto 0;max-width:1000px;height:min(56vh,520px);border-radius:clamp(18px,2.2vw,28px);overflow:hidden;background:#efe7d9;box-shadow:0 44px 104px -42px rgba(41,25,10,.6),0 0 110px -24px rgba(196,110,54,.34),0 2px 6px rgba(41,25,10,.14)}
 .ts-media>img,.ts-media>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .ts-vid{object-position:center 52%}
-.ts-media::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(20,12,6,.58),rgba(20,12,6,0) 34%)}
+.ts-media::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(0deg,rgba(20,12,6,.58),rgba(20,12,6,0) 34%),linear-gradient(180deg,rgba(255,255,255,.12),transparent 12%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
 /* world-champion badge, inside the video */
 .ts-badge{position:absolute;z-index:2;inset-inline-start:clamp(16px,2.4vw,28px);bottom:clamp(16px,2.4vw,26px);margin:0;display:flex;align-items:center;gap:13px;direction:rtl;text-align:right;padding:9px 17px 9px 11px;border-radius:999px;background:rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.3);box-shadow:0 12px 30px rgba(0,0,0,.32)}
 .ts-badge img{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:center 26%;flex:none;border:2px solid rgba(255,255,255,.75)}
