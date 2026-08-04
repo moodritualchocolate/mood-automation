@@ -645,32 +645,40 @@ XHERO_CSS = """
   .h3-float,.h3-spin,.h3-shadow{animation:none}
   .h3-obj{transition:none}
 }
-/* ===== brand hero — the real chocolate bar rotating in 3D on a warm field ===== */
+/* ===== brand hero — the real chocolate bar + chocolate particles rotating in 3D ===== */
 .hb{position:relative;display:grid;grid-template-columns:.95fr 1.05fr;align-items:center;min-height:min(90vh,860px);overflow:hidden;
-  background:radial-gradient(72% 82% at 60% 40%,#4b3323,#2b1d12 68%,#1d130c)}
-.hb-copy{order:1;z-index:2;padding:clamp(30px,5vw,84px);direction:rtl}
+  background:radial-gradient(78% 88% at 56% 42%,#5a3d28,#3a2617 64%,#271811)}
+.hb-copy{order:1;z-index:3;padding:clamp(30px,5vw,84px);direction:rtl}
 .hb-eyebrow{font-size:12px;font-weight:900;letter-spacing:.24em;color:var(--energy)}
-.hb-h{font-size:clamp(44px,6.6vw,98px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:#f7efe4;margin:16px 0 0;text-shadow:0 2px 40px rgba(0,0,0,.4)}
-.hb-cta{display:inline-block;margin:28px 0 0;background:var(--energy);color:#1d130c;padding:16px 36px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s}
+.hb-h{font-size:clamp(44px,6.6vw,98px);line-height:.98;letter-spacing:-.045em;font-weight:900;color:#f7efe4;margin:16px 0 0;text-shadow:0 2px 40px rgba(0,0,0,.45)}
+.hb-cta{display:inline-block;margin:28px 0 0;background:var(--energy);color:#271811;padding:16px 36px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .2s}
 .hb-cta:hover{transform:translateY(-2px)}
 .hb-stage{order:2;position:relative;display:grid;place-items:center;perspective:1500px;min-height:60vh}
-.hb-float{animation:hbFloat 7s ease-in-out infinite alternate}
-.hb-spin{animation:hbSpin 12s ease-in-out infinite alternate;transform-style:preserve-3d}
+.hb-float{animation:hbFloat 7s ease-in-out infinite alternate;z-index:2}
+.hb-spin{animation:hbSpin 13s ease-in-out infinite alternate;transform-style:preserve-3d}
 .hb-obj{position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.22,.8,.28,1);will-change:transform}
-.hb-obj img{height:clamp(340px,66vh,680px);width:auto;display:block;
-  -webkit-mask-image:radial-gradient(56% 60% at 50% 45%,#000 52%,rgba(0,0,0,0) 82%);
-  mask-image:radial-gradient(56% 60% at 50% 45%,#000 52%,rgba(0,0,0,0) 82%);
-  filter:drop-shadow(0 44px 54px rgba(0,0,0,.55))}
+.hb-obj img{height:clamp(340px,68vh,700px);width:auto;display:block;
+  -webkit-mask-image:radial-gradient(64% 66% at 50% 47%,#000 62%,rgba(0,0,0,0) 90%);
+  mask-image:radial-gradient(64% 66% at 50% 47%,#000 62%,rgba(0,0,0,0) 90%);
+  filter:drop-shadow(0 44px 54px rgba(0,0,0,.5))}
+/* floating chocolate particles orbiting the bar in 3D */
+.hb-particles{position:absolute;inset:0;z-index:1;pointer-events:none;transform-style:preserve-3d}
+.hb-particles i{position:absolute;top:50%;left:50%;width:var(--s);height:var(--s);border-radius:52% 46% 50% 48%;
+  background:radial-gradient(circle at 34% 28%,#7a5638,#2c1b0f 78%);box-shadow:0 5px 10px rgba(0,0,0,.45);opacity:.9;
+  transform:translate(-50%,-50%) translate(var(--x),var(--y));animation:hbPart var(--d) ease-in-out var(--dl) infinite alternate}
 @keyframes hbFloat{from{transform:translateY(-12px)}to{transform:translateY(12px)}}
 @keyframes hbSpin{from{transform:rotateY(-11deg)}to{transform:rotateY(11deg)}}
+@keyframes hbPart{from{transform:translate(-50%,-50%) translate(var(--x),var(--y)) translateZ(-30px) rotate(0deg)}
+  to{transform:translate(-50%,-50%) translate(calc(var(--x) + 16px),calc(var(--y) - 22px)) translateZ(60px) rotate(50deg)}}
 @media(max-width:820px){
   .hb{grid-template-columns:1fr;min-height:0}
-  .hb-stage{order:1;min-height:50vh;padding-top:14px}
+  .hb-stage{order:1;min-height:52vh;padding-top:14px}
   .hb-copy{order:2;padding:24px 22px 44px}
   .hb-h{font-size:clamp(38px,11vw,60px)}
-  .hb-obj img{height:min(54vh,440px)}
+  .hb-obj img{height:min(56vh,460px)}
+  .hb-particles i{opacity:.7}
 }
-@media(prefers-reduced-motion:reduce){.hb-float,.hb-spin{animation:none}.hb-obj{transition:none}}
+@media(prefers-reduced-motion:reduce){.hb-float,.hb-spin,.hb-particles i{animation:none}.hb-obj{transition:none}}
 """
 
 XHERO = """    <header class="xtop">
@@ -688,8 +696,18 @@ XHERO = """    <header class="xtop">
         <a class="hb-cta" href="#quiz">מה מתאים לי?</a>
       </div>
       <div class="hb-stage" id="hbStage">
+        <div class="hb-particles" aria-hidden="true">
+          <i style="--x:-42%;--y:-32%;--s:15px;--d:9s;--dl:0s"></i>
+          <i style="--x:40%;--y:-24%;--s:9px;--d:11s;--dl:1.4s"></i>
+          <i style="--x:-32%;--y:34%;--s:12px;--d:10s;--dl:.7s"></i>
+          <i style="--x:38%;--y:36%;--s:17px;--d:12.5s;--dl:2s"></i>
+          <i style="--x:47%;--y:6%;--s:8px;--d:8.5s;--dl:1s"></i>
+          <i style="--x:-48%;--y:4%;--s:12px;--d:13s;--dl:.4s"></i>
+          <i style="--x:14%;--y:-40%;--s:7px;--d:10.5s;--dl:1.8s"></i>
+          <i style="--x:-14%;--y:42%;--s:10px;--d:11.5s;--dl:.9s"></i>
+        </div>
         <div class="hb-float"><div class="hb-spin"><div class="hb-obj" id="hbObj">
-          <img src="__CHOCBAR__" alt="בר שוקולד mood — ריטואל פונקציונלי">
+          <img src="__CHOCBAR__" alt="בר שוקולד mood — ריטואל פונקציונלי, מרחף עם חלקיקי שוקולד">
         </div></div></div>
       </div>
     </section>
@@ -796,7 +814,7 @@ def main():
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
     #   founders · TIMELINE · formula · BUNDLE · close · footer
-    shell = shell.replace('    <section id="products"', QUIZ + '    <section id="products"')
+    shell = shell.replace('    <section id="products"', '    <section id="products"')
     shell = shell.replace('    <section id="story"', MARQUEE + '    <section id="story"')
     shell = shell.replace('    <section id="formula"', FOUNDERS + TIMELINE + '    <section id="formula"')
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
@@ -806,7 +824,7 @@ def main():
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
-    shell = shell.replace("__CHOCBAR__", data_uri("choc-real-standing.jpg", HOME_ASSETS))
+    shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__EDISC__", data_uri("energy-disc.jpg", HOME_ASSETS))
     shell = shell.replace("__RDISC__", data_uri("relax-disc.jpg", HOME_ASSETS))
     shell = shell.replace("__SDISC__", data_uri("sleep-disc.jpg", HOME_ASSETS))
