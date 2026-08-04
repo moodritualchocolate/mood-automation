@@ -16,8 +16,8 @@
     .eyebrow{font-size:11px;letter-spacing:.2em;color:#7c766d;font-weight:800;margin-bottom:9px}
     h1{font-size:43px;line-height:1.08;letter-spacing:-.04em;margin:0 0 10px;font-weight:800}
     .intro p{font-size:16px;color:#625e57;margin:0}
-    .cards{width:min(1240px,100%);margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:22px;direction:rtl}
-    .card{--accent:var(--energy);--button-bg:#ddf0d8;--button-border:#9fbc95;--button-hover:#b8d0ae;background:var(--paper);border:1px solid var(--line);border-radius:27px;overflow:hidden;box-shadow:0 12px 34px rgba(41,32,20,.055);direction:rtl}
+    .cards{width:min(1240px,100%);margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;direction:rtl;perspective:1600px}
+    .card{--accent:var(--energy);--button-bg:#ddf0d8;--button-border:#9fbc95;--button-hover:#b8d0ae;position:relative;background:var(--paper);border:1px solid #e7e0d5;border-radius:24px;overflow:hidden;direction:rtl;box-shadow:0 22px 46px rgba(41,32,20,.12),0 4px 10px rgba(41,32,20,.06),inset 0 1px 0 rgba(255,255,255,.9);transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s}.card::after{content:"";position:absolute;inset:0;border-radius:24px;pointer-events:none;z-index:6;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55),inset 0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent)}.card:hover{transform:translateY(-10px) rotateX(3deg);box-shadow:0 40px 80px rgba(41,32,20,.22),0 8px 18px rgba(41,32,20,.09),inset 0 1px 0 rgba(255,255,255,.9)}
     .card.relax{--accent:var(--relax)}.card.sleep{--accent:var(--sleep)}
     .visual{height:322px;position:relative;overflow:hidden;background:#fff}
     .units,.lifestyle{position:absolute;inset:0;transition:opacity .36s ease,transform .55s ease}
@@ -37,8 +37,8 @@
     h2{font-size:27px;line-height:1.08;letter-spacing:-.03em;margin:0 0 8px;font-weight:800}
     .description{font-size:14px;line-height:1.48;color:#615d56;min-height:42px;margin:0 0 14px}
     .monthly{font-size:12px;font-weight:700;color:#494640;padding:10px 0 17px;border-top:1px solid #f0ece5}
-    .button{height:47px;width:100%;border:1px solid var(--button-border);border-radius:999px;background:var(--button-bg);color:var(--ink);text-decoration:none;display:grid;place-items:center;font-size:13.5px;font-weight:800;transition:background .2s ease,border-color .2s ease,transform .2s ease}
-    .card:hover .button,.show-hover .card .button{background:var(--button-hover);border-color:var(--button-hover);transform:translateY(-1px)}
+    .button{position:relative;overflow:hidden;isolation:isolate;height:47px;width:100%;border:1px solid var(--button-border);border-radius:999px;background:var(--button-bg);color:var(--ink);text-decoration:none;display:grid;place-items:center;font-size:13.5px;font-weight:800;transition:color .25s ease,border-color .25s ease}.button::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--accent);transform:translateY(101%);transition:transform .34s cubic-bezier(.2,.7,.2,1)}
+    .card:hover .button,.show-hover .card .button{color:#fff;border-color:var(--accent)}.card:hover .button::before,.show-hover .card .button::before{transform:translateY(0)}
     .bundle{margin:27px auto 0;text-align:center;font-size:14px;color:#5e5a53}.bundle strong{color:var(--ink)}.bundle a{color:var(--ink);font-weight:800;text-underline-offset:4px;margin-right:8px}
     @media(max-width:700px){
       .section{min-height:844px;padding:40px 0 28px}
@@ -47,7 +47,7 @@
       .cards::-webkit-scrollbar{display:none}
       .card{flex:0 0 86vw;scroll-snap-align:center;border-radius:25px;box-shadow:none}
       .visual{height:315px}.unit.main{height:238px}.unit.left,.unit.right{height:170px}.unit.left{left:30px}.unit.right{right:30px}
-      .card:hover .units{opacity:1;transform:none}.card:hover .lifestyle{opacity:0}.card:hover .quantity{opacity:1}
+      .card:hover{transform:none}.card:hover .units{opacity:1;transform:none}.card:hover .lifestyle{opacity:0}
       .content{padding:0 23px 23px}h2{font-size:26px}.monthly{padding-bottom:15px}.bundle{padding:0 25px;margin-top:18px}
     }
   </style>
@@ -64,31 +64,28 @@
         <div class="visual">
           <div class="units"><img class="unit left" src="../assets/energy.webp" alt=""><img class="unit main" src="../assets/energy.webp" alt="MOOD Energy"><img class="unit right" src="../assets/energy.webp" alt=""></div>
           <img class="lifestyle" src="../assets/energy-lifestyle.jpg" alt="אישה מחזיקה MOOD Energy">
-          <div class="quantity">×30</div>
         </div>
-        <div class="content"><div class="label"><i></i>ENERGY · MORNING</div><h2>להיכנס לקצב.</h2><p class="description">לרגעים שצריך בהם יותר תנועה ומיקוד.</p><div class="monthly">30 יחידות אישיות · יחידה אחת ביום · חודש שלם</div><a class="button" href="#">בחרו מארז</a></div>
+        <div class="content"><div class="label"><i></i>ENERGY</div><h2>להיכנס לקצב.</h2><p class="description">לרגעים שצריך בהם יותר תנועה ומיקוד.</p><div class="monthly">30 יחידות אישיות · יחידה אחת ביום · חודש שלם</div><a class="button" href="#">בחרו מארז</a></div>
       </article>
       <article class="card relax">
         <div class="visual">
           <div class="units"><img class="unit left" src="../assets/relax.webp" alt=""><img class="unit main" src="../assets/relax.webp" alt="MOOD Relax"><img class="unit right" src="../assets/relax.webp" alt=""></div>
           <img class="lifestyle" src="../assets/relax-lifestyle.jpg" alt="אישה מחזיקה MOOD Relax">
-          <div class="quantity">×30</div>
         </div>
-        <div class="content"><div class="label"><i></i>RELAX · EVENING</div><h2>להוריד הילוך.</h2><p class="description">לרגע המעבר שבין היום לבין הזמן שלכם.</p><div class="monthly">30 יחידות אישיות · יחידה אחת ביום · חודש שלם</div><a class="button" href="#">בחרו מארז</a></div>
+        <div class="content"><div class="label"><i></i>RELAX</div><h2>להוריד הילוך.</h2><p class="description">לרגע המעבר שבין היום לבין הזמן שלכם.</p><div class="monthly">30 יחידות אישיות · יחידה אחת ביום · חודש שלם</div><a class="button" href="#">בחרו מארז</a></div>
       </article>
       <article class="card sleep">
         <div class="visual">
           <div class="units"><img class="unit left" src="../assets/sleep.webp" alt=""><img class="unit main" src="../assets/sleep.webp" alt="MOOD Sleep"><img class="unit right" src="../assets/sleep.webp" alt=""></div>
           <img class="lifestyle" src="../assets/sleep-lifestyle.jpg" alt="אישה מחזיקה MOOD Sleep">
-          <div class="quantity">×30</div>
         </div>
-        <div class="content"><div class="label"><i></i>SLEEP · NIGHT</div><h2>לסגור את היום.</h2><p class="description">לרגע שמסמן שהגיע הזמן להאט ולהתכונן ללילה.</p><div class="monthly">30 יחידות אישיות · יחידה אחת ביום · חודש שלם</div><a class="button" href="#">בחרו מארז</a></div>
+        <div class="content"><div class="label"><i></i>SLEEP</div><h2>לסגור את היום.</h2><p class="description">לרגע שמסמן שהגיע הזמן להאט ולהתכונן ללילה.</p><div class="monthly">30 יחידות אישיות · יחידה אחת ביום · חודש שלם</div><a class="button" href="#">בחרו מארז</a></div>
       </article>
     </div>
     <div class="bundle"><strong>רוצים לשלב בין כמה רגעים?</strong><a href="#">עברו לבניית באנדל</a></div>
   </section>
 <script>
-  const productPages={energy:'../product-pages/energy.html',relax:'../product-pages/relax.html',sleep:'../product-pages/sleep.html'};
+  const productPages={energy:'energy.html',relax:'relax.html',sleep:'sleep.html'};
   document.querySelectorAll('.card').forEach(card=>{
     const product=Object.keys(productPages).find(key=>card.classList.contains(key));
     const link=card.querySelector('.button');

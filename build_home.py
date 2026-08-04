@@ -983,6 +983,7 @@ XHERO = """    <header class="xtop" id="top">
           <a href="#story">איך זה עובד</a>
           <a href="#founders">הסיפור שלנו</a>
           <a href="#reviews">ביקורות</a>
+          <a href="blog.html">בלוג</a>
         </div>
         <a class="xlogo" href="#top" aria-label="mood — ריטואל שוקולד"><span class="xlogo-word">mood</span><span class="xlogo-tag">RITUAL CHOCOLATE</span></a>
         <div class="xnav-actions">
