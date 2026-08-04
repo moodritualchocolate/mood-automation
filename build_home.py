@@ -173,19 +173,20 @@ MARQUEE = f"""    <div class="hm" aria-label="למה mood">
 
 FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמייסדים של mood">
       <div class="fl-wrap">
-        <div class="fl-paper reveal">
-          <div class="fl-eyebrow">מכתב מהמייסדים</div>
-          <figure class="fl-inphoto">
+        <div class="fl-eyebrow reveal">מכתב מהמייסדים</div>
+        <div class="fl-card reveal">
+          <figure class="fl-photo">
             <img src="__FOUNDERS__" alt="נדב ומתיאס — מייסדי mood בסדנת השוקולד">
             <figcaption>נדב ומתיאס · הסדנה</figcaption>
           </figure>
-          <p class="fl-lead">היי, אנחנו נדב ומתיאס.</p>
-          <p>לקח לנו שנתיים ואינספור נסיונות. סירבנו להתפשר על פרט אחד — לא על הטעם, לא על הפורמולה, לא על ההרגשה.</p>
-          <p>לקחנו רק את הטוב ביותר, עד שכל קובייה יצאה בדיוק כמו שחלמנו. וזה מרגש אותנו לחלוק אותה איתכם.</p>
-          <p class="fl-ps">נשמח שתטעמו. באמת.</p>
-          <div class="fl-signs">
-            <div class="fl-sig"><span class="fl-sig-name">נדב</span><span class="fl-sig-role">מייסד mood</span></div>
-            <div class="fl-sig"><span class="fl-sig-name">מתיאס</span><span class="fl-sig-role">מייסד mood</span></div>
+          <div class="fl-body">
+            <p class="fl-lead">היי, אנחנו נדב ומתיאס.</p>
+            <p>לקח לנו שנתיים ואינספור נסיונות. סירבנו להתפשר על פרט אחד — לא על הטעם, לא על הפורמולה, לא על ההרגשה.</p>
+            <p>לקחנו רק את הטוב ביותר, עד שכל קובייה יצאה בדיוק כמו שחלמנו. וזה מרגש אותנו לחלוק אותה איתכם.</p>
+            <div class="fl-signs">
+              <div class="fl-sig"><span class="fl-sig-name">נדב</span><span class="fl-sig-role">מייסד</span></div>
+              <div class="fl-sig"><span class="fl-sig-name">מתיאס</span><span class="fl-sig-role">מייסד</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -419,10 +420,11 @@ FORMULAS_CSS = """
 .fml-h{font-size:clamp(30px,4.4vw,54px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:0}
 .fml-sub{margin:12px 0 0;max-width:420px;color:var(--muted);font-size:clamp(14px,1.3vw,16.5px);line-height:1.6}
 .fml-list{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:12px;max-width:440px}
-.fml-list li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid #ece4d6;padding-bottom:11px}
-.fml-list b{font-size:16.5px;font-weight:800;color:var(--ink)}
-.fml-list i{font-style:normal;direction:ltr;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
-.fml-list i em{font-style:normal;font-size:15px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;margin-inline-end:2px}
+.fml-list li{border-bottom:1px solid #ece4d6;padding-bottom:12px}
+.fml-list .fi-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.fml-list b{font-size:16px;font-weight:800;color:var(--ink)}
+.fml-list i{font-style:normal;direction:ltr;font-size:15px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums}
+.fml-list span{display:block;margin-top:3px;font-size:12.5px;color:var(--muted);line-height:1.4}
 .fml-note{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
 @media(max-width:820px){
   .fml-body{grid-template-columns:1fr;gap:2px}
@@ -432,11 +434,8 @@ FORMULAS_CSS = """
   .fml-copy{order:2;text-align:center}
   .fml-h{font-size:clamp(26px,7vw,34px)}
   .fml-sub{max-width:none;margin:10px auto 0}
-  /* product + ingredients feel like ONE compact block: 2-column name + mg */
-  .fml-list{max-width:none;grid-template-columns:1fr 1fr;column-gap:clamp(16px,5vw,28px);row-gap:0;margin-top:18px}
-  .fml-list li{justify-content:space-between;gap:8px;padding-bottom:9px}
-  .fml-list b{font-size:14.5px}
-  .fml-list i em{font-size:14px}
+  .fml-list{max-width:none;grid-template-columns:1fr;gap:12px;margin-top:16px}
+  .fml-list b{font-size:15.5px}
   .fml-note{margin-top:14px}
   .fml-tabs button{padding:10px 18px;font-size:13px;letter-spacing:.04em}
 }
@@ -467,15 +466,15 @@ FORMULAS_JS = """  <script>
   (function(){
     var sec=document.getElementById("formulas"); if(!sec)return;
     var DATA={
-      energy:[["רודיאלה",660],["תה ירוק",80],["קינמון",40],["ליקוריץ",13],["גוארנה",7]],
-      relax:[["מליסה",266],["פסיפלורה",182],["מאקה",140],["ולריאן",70],["ליקוריץ",42]],
-      sleep:[["מליסה",224],["פסיפלורה",224],["ולריאן",224],["ליקוריץ",56]]
+      energy:[["מאקה",32,"אנרגיה וחיוניות"],["גוארנה",24,"ערנות ומיקוד"],["תה ירוק",20,"מיקוד יומיומי"],["ג׳ינסנג",16,"חיוניות"],["ליקריץ",8,"איזון התערובת"]],
+      relax:[["מליסה",38,"רוגע"],["פסיפלורה",26,"הרפיה"],["מאקה",20,"איזון וחיוניות"],["ולריאן",10,"רגיעה"],["ליקריץ",6,"איזון התערובת"]],
+      sleep:[["ולריאן",30,"רגיעה עמוקה"],["פסיפלורה",30,"הרפיה"],["מליסה",32,"רוגע"],["ליקריץ",8,"איזון התערובת"]]
     };
     var HEX={energy:"#E8A566",relax:"#5C8058",sleep:"#5e7ba8"}, INK={energy:"#5a3418",relax:"#fff",sleep:"#fff"}, LABEL={energy:"ENERGY",relax:"RELAX",sleep:"SLEEP"};
     var list=sec.querySelector("#fmlList"), ghost=sec.querySelector("#fmlGhost");
     var pouches=sec.querySelectorAll(".fml-pouch"), tabs=sec.querySelectorAll(".fml-tabs button");
     function render(sku){
-      list.innerHTML=DATA[sku].map(function(r){return '<li><b>'+r[0]+'</b><i><em>'+r[1]+'</em> מ״ג</i></li>';}).join('');
+      list.innerHTML=DATA[sku].map(function(r){return '<li><div class="fi-top"><b>'+r[0]+'</b><i>'+r[1]+'%</i></div><span>'+r[2]+'</span></li>';}).join('');
       pouches.forEach(function(p){p.classList.toggle("on",p.dataset.sku===sku);});
       sec.style.setProperty("--accent",HEX[sku]); sec.style.setProperty("--accent-ink",INK[sku]); if(ghost)ghost.textContent=LABEL[sku];
     }
@@ -568,32 +567,30 @@ TS_CSS = """
 """
 
 FL_CSS = """
-/* founders — one personal letter with the workshop photo tucked inside + two signatures */
-.fl{background:#efe7d9;padding:clamp(30px,4vw,60px) clamp(20px,5vw,60px) clamp(46px,6vw,88px);position:relative}
-.fl-wrap{max-width:770px;margin:0 auto}
-.fl-paper{position:relative;background:#ffffff;border:1px solid #ece1cd;border-radius:6px;padding:clamp(28px,4.4vw,60px);box-shadow:0 34px 70px rgba(41,25,10,.22);direction:rtl;text-align:right;overflow:hidden}
-.fl-paper::before{content:"";position:absolute;top:20px;right:34px;bottom:20px;width:1px;background:repeating-linear-gradient(#e7c4bb 0 1px,transparent 1px 27px);opacity:.4}
-.fl-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35;margin-bottom:18px}
-.fl-inphoto{float:left;width:min(37%,196px);margin:4px 4px 14px 22px;background:#fff;padding:9px 9px 30px;box-shadow:0 18px 38px rgba(41,25,10,.22);transform:rotate(-3deg);position:relative}
-.fl-inphoto img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:center 18%}
-.fl-inphoto figcaption{position:absolute;left:0;right:0;bottom:11px;text-align:center;font-size:12.5px;font-weight:800;color:#6a6157}
-.fl-inphoto::after{content:"";position:absolute;top:-12px;left:50%;width:98px;height:26px;background:rgba(214,197,168,.55);box-shadow:0 2px 6px rgba(0,0,0,.08);transform:translateX(-50%) rotate(-2deg)}
-.fl-lead{font-size:clamp(21px,2.3vw,29px);font-weight:900;color:var(--ink);letter-spacing:-.02em;margin:0 0 12px}
-.fl-paper p{color:#4c4841;font-size:clamp(15px,1.35vw,17px);line-height:1.75;margin:0 0 14px}
-.fl-ps{font-weight:800;color:var(--ink)}
-.fl-signs{display:flex;gap:clamp(30px,5vw,58px);align-items:flex-end;margin:24px 0 0;clear:both}
+/* founders — clean editorial card: portrait + letter, refined type, dual signatures */
+.fl{background:#efe7d9;padding:clamp(50px,7vw,104px) clamp(20px,5vw,60px);position:relative}
+.fl-wrap{max-width:1060px;margin:0 auto}
+.fl-eyebrow{text-align:center;font-size:12px;font-weight:900;letter-spacing:.24em;color:#c07f43;margin-bottom:clamp(22px,3.5vw,40px)}
+.fl-card{background:#fff;border-radius:clamp(18px,2.4vw,28px);overflow:hidden;box-shadow:0 44px 100px -34px rgba(41,25,10,.42);display:grid;grid-template-columns:.92fr 1.08fr;align-items:stretch}
+.fl-photo{position:relative;margin:0;min-height:100%;background:#e4dccd}
+.fl-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 24%}
+.fl-photo figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 20px 16px;text-align:center;font-size:12.5px;font-weight:800;color:#fff;background:linear-gradient(0deg,rgba(20,12,6,.6),transparent)}
+.fl-body{padding:clamp(34px,4.6vw,68px);direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center}
+.fl-lead{font-size:clamp(24px,2.7vw,36px);font-weight:900;letter-spacing:-.03em;color:var(--ink);margin:0 0 20px;line-height:1.05}
+.fl-body p{color:#5a5148;font-size:clamp(16px,1.35vw,18.5px);line-height:1.78;margin:0 0 18px;max-width:46ch}
+.fl-signs{display:flex;gap:clamp(34px,5vw,58px);align-items:flex-end;margin:clamp(18px,2.6vw,30px) 0 0}
 .fl-sig{display:flex;flex-direction:column}
-.fl-sig-name{font-size:clamp(28px,3.2vw,40px);font-weight:900;color:var(--ink);transform:rotate(-3deg);display:inline-block;position:relative;line-height:1.1}
-.fl-sig-name::after{content:"";position:absolute;left:-6px;right:-10px;bottom:-6px;height:8px;border-bottom:2.5px solid #FF6B35;border-radius:50%;transform:rotate(-1deg)}
-.fl-sig-role{margin-top:13px;font-size:12px;font-weight:800;letter-spacing:.04em;color:#8a7f70}
-@media(max-width:620px){
-  .fl{padding:22px 16px 40px}
-  .fl-paper{padding:26px 22px 30px}
-  .fl-paper::before{display:none}
-  .fl-inphoto{float:none;width:min(52%,178px);margin:0 auto 16px;display:block}
-  .fl-lead{font-size:22px;margin-bottom:14px}
-  .fl-paper p{font-size:16.5px;line-height:1.8;margin-bottom:16px}
-  .fl-signs{gap:40px;justify-content:flex-start;margin-top:20px}
+.fl-sig-name{font-size:clamp(28px,3vw,38px);font-weight:900;color:var(--ink);position:relative;display:inline-block;line-height:1.05}
+.fl-sig-name::after{content:"";position:absolute;left:-4px;right:-9px;bottom:-6px;height:7px;border-bottom:2.5px solid #c07f43;border-radius:50%;transform:rotate(-1deg)}
+.fl-sig-role{margin-top:13px;font-size:12px;font-weight:800;letter-spacing:.08em;color:#9a8f80}
+@media(max-width:820px){
+  .fl{padding:40px 18px 52px}
+  .fl-card{grid-template-columns:1fr}
+  .fl-photo{min-height:0;aspect-ratio:4/3}
+  .fl-body{padding:30px 24px 34px}
+  .fl-lead{font-size:24px;margin-bottom:16px}
+  .fl-body p{font-size:16.5px;line-height:1.8;margin-bottom:16px}
+  .fl-signs{gap:44px;margin-top:22px}
   .fl-sig-name{font-size:30px}
 }
 """
