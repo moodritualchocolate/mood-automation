@@ -528,6 +528,14 @@ VH_CSS = """
 .rmt-t{font-size:clamp(28px,4.2vw,56px);line-height:1.02;letter-spacing:-.035em;font-weight:900;color:#fff;margin:0;text-shadow:0 2px 30px rgba(0,0,0,.4)}
 .rmt-t span{color:#f2b27a}
 @media(min-width:861px){.rh-scroll{display:block}}
+/* three moods, one chocolate — bright product moment (counterpoint to the dark hero) */
+.mds{position:relative;min-height:min(82vh,780px);overflow:hidden;background:#ece3d4;display:flex;flex-direction:column;justify-content:flex-end;direction:rtl}
+.mds-shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 44%;animation:rhZoom 26s ease-in-out infinite alternate;will-change:transform}
+.mds::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(236,227,212,.96) 0%,rgba(236,227,212,.42) 22%,rgba(236,227,212,0) 46%)}
+.mds-in{position:relative;z-index:2;width:100%;max-width:1320px;margin:0 auto;padding:0 clamp(22px,5vw,64px) clamp(42px,6vw,76px);text-align:right}
+.mds-eyebrow{font-size:clamp(11px,1.1vw,13px);font-weight:900;letter-spacing:.24em;color:#b06a3a;margin:0 0 14px}
+.mds-h{font-size:clamp(36px,5.6vw,74px);line-height:1;letter-spacing:-.045em;font-weight:900;color:#1c140d;margin:0}
+.mds-h span{color:#e08a3e}
 @media(max-width:860px){
   .rh{min-height:92svh}
   .rh-shot{object-position:center 42%}
@@ -535,12 +543,23 @@ VH_CSS = """
   .rh-inner{padding-bottom:44px}
   .rmt{min-height:64vh}
   .rmt img{object-position:center 22%}
+  .mds{min-height:74svh}
+  .mds-shot{object-position:center 46%}
 }
 """
 
 MOMENT = """    <section class="rmt" aria-label="הרגע שלך">
       <picture><source media="(max-width:860px)" srcset="__HEROPHOTO_M__"><img src="__HEROPHOTO__" alt="רגע של mood — אור פריזמה על הפנים"></picture>
       <div class="rmt-in"><p class="rmt-t">רגע אחד ביום —<br>שהוא <span>רק שלך</span>.</p></div>
+    </section>
+"""
+
+MOODS = """    <section class="mds" aria-label="שלושה מצבים, שוקולד אחד">
+      <img class="mds-shot reveal" src="__CHOCMOODS__" alt="שוקולד mood ושלושת המצבים — אנרגיה, רוגע, שינה">
+      <div class="mds-in reveal">
+        <p class="mds-eyebrow">ENERGY · RELAX · SLEEP</p>
+        <h2 class="mds-h">שלושה מצבים.<br>שוקולד <span>אחד</span>.</h2>
+      </div>
     </section>
 """
 
@@ -1203,7 +1222,7 @@ def main():
     #   hero · QUIZ · product cards · IMMERSIVE · marquee · cinematic(Ronen) ·
     #   founders · TIMELINE · formula · BUNDLE · close · footer
     # trust/credibility bar sits directly under the hero
-    shell = shell.replace('    <section id="products"', MARQUEE + '    <section id="products"')
+    shell = shell.replace('    <section id="products"', MARQUEE + MOODS + '    <section id="products"')
     # replace the cinematic story with the strong taste + world-champion section
     shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
     # the compact formula selector flows directly into the founders letter (one cream band)
@@ -1222,6 +1241,7 @@ def main():
     shell = shell.replace("__HEROPHOTO_M__", data_uri("hero-mobile.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCFLOAT__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBITE__", data_uri("choc-real-bite.jpg", HOME_ASSETS))
+    shell = shell.replace("__CHOCMOODS__", data_uri("choc-moods.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
     shell = shell.replace("__RONEN__", data_uri("ronen-real.jpg"))
