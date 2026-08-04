@@ -11,6 +11,19 @@ ROOT = pathlib.Path(__file__).parent
 ASSETS = ROOT / "assets"
 MIME = {".jpg":"image/jpeg",".jpeg":"image/jpeg",".png":"image/png",".webp":"image/webp"}
 
+FORMULA_HTML = (ROOT/"sections"/"formula.html").read_text(encoding="utf-8")
+MOOD_IDX = {"energy":0,"relax":1,"sleep":2}
+def _esc_srcdoc(t): return t.replace("&","&amp;").replace('"',"&quot;")
+def formula_xp(sku):
+    h = FORMULA_HTML
+    idx = MOOD_IDX[sku]
+    if idx:
+        init = ('<script>addEventListener("load",function(){setTimeout(function(){'
+                'var p=document.querySelector(\'.xp-pill[data-m=\\"%d\\"]\');if(p)p.click();},350);});</script>') % idx
+        h = h.replace("</body>", init + "</body>")
+    return '<iframe class="fburst-xp" title="\u05d4\u05e4\u05d5\u05e8\u05de\u05d5\u05dc\u05d4 \u05d1\u05ea\u05dc\u05ea-\u05de\u05d9\u05de\u05d3" loading="lazy" srcdoc="%s"></iframe>' % _esc_srcdoc(h)
+
+
 def data_uri(fname):
     p = ASSETS / fname
     if not p.exists():
@@ -34,7 +47,7 @@ SRC_WHY = """  <section class="why split">
       </div>
     </div>
     <div class="rv fpanel">
-      <div class="fburst"><img src="__FORMULA__" alt="פורמולת ENERGY — רודיולה 660, תה ירוק 80, קינמון 40, ליקוריץ 13, גוארנה 7 מ״ג" loading="lazy" decoding="async"></div>
+      <div class="fburst fburst3d">__FORMULAXP__</div>
     </div>
   </section>"""
 SRC_MOMENTS = """      <div class="mitem rv"><b class="mnum">01</b><div class="minfo"><b>לפני האימון</b><p>אנרגיה נקייה לתנועה, בלי כובד.</p></div></div>
@@ -60,7 +73,7 @@ def why_split(sku, h2, lede, benefits, alt):
       </div>
     </div>
     <div class="rv fpanel">
-      <div class="fburst"><img src="__FORMULA__" alt="{alt}" loading="lazy" decoding="async"></div>
+      <div class="fburst fburst3d">__FORMULAXP__</div>
     </div>
   </section>"""
 
@@ -187,7 +200,9 @@ def main():
         for marker, fname in cfg["images"].items():
             if marker in html:
                 html = html.replace(marker, data_uri(fname))
-        left = re.findall(r"__[A-Z]+__", html)
+        html = html.replace("__FORMULAXP__", formula_xp(sku))
+        checkable = re.sub(r'srcdoc="[^"]*"', '', html)
+        left = re.findall(r"__[A-Z]+__", checkable)
         if left:
             sys.exit(f"[{sku}] unreplaced markers: {set(left)}")
         out = ROOT/f"{sku}.html"
