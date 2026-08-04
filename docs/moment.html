@@ -256,17 +256,37 @@ const MOMENT={
   middah:{name:"נוכחות"},
   memory:"משהו אמיתי ביניכם\nהפך לזיכרון חי."
 };
+// ---- Moment 010 · children · "I'm coming" (razor cut, parent-framed) ----
+const MOMENT_CHILDREN={
+  rgv:"רגע 010", greetName:"",
+  dir:"assets/moments/presence_children_i_am_coming_010",
+  stems:{recognition:"01_recognition",identification:"02_identification",opportunity:"03_opportunity",exit:"04_exit_to_life",
+    return:"05_return",connected:"06a_chose_differently",not_yet:"06b_not_yet",witness_c:"08a_witness_chose_differently",witness_n:"08b_witness_not_yet",continuation:"10_continuation"},
+  mirror:[{t:"הילד שלך קורא לך."},{t:"׳עוד רגע׳, אמרת.",accent:true}],
+  identify:["כן, גם לי","אני בוחר אחרת"],
+  truth:[{t:"הוא לא צריך שעה."},{t:"הוא צריך שתראה אותו.\nעכשיו.",accent:true}],
+  echo:[{t:"יום אחד —"},{t:"הוא יפסיק לקרוא לך.",accent:true}],
+  principle:"להיות שם\nזה להרים את הראש.",
+  opportunity:[{t:"עכשיו הוא עדיין קורא."},{t:"רק עכשיו.",accent:true}],
+  mission:{name:"עשר דקות על הרצפה",lines:["רד אליו לרצפה.","תן לו להוביל."],limit:"10 דקות · 24 שעות",take:"אני לוקח את זה",skip:"לא הפעם"},
+  exit:{lines:["לך אליו."],accent:"עכשיו.",go:"אני קם עכשיו"},
+  return_prompt:"כשהרגע הגיע —\nמה קרה?", branch_c:"בחרתי אחרת", branch_n:"עוד לא",
+  witness_c:["הוא הרגיש שראית אותו."], witness_n:["הבחנת בו.\nזו ההתחלה."],
+  reward_c:"היית שם.", reward_n:"מחר — מוקדם יותר.",
+  middah:{name:"נוכחות"},
+  memory:"רגע אמיתי איתו\nהפך לזיכרון חי."
+};
+const MOMENTS={conversation:MOMENT, children:MOMENT_CHILDREN};
 //======================= MISSION BOARD (real-life presence actions, each bounded) =======================
 // engine:"cine" = the full cinematic moment (has depth art) · "light" = commit → go → return
 const MISSIONS=[
-  {id:"conversation", cat:"שיחה", icon:"i-chat", engine:"cine", tint:"#f4ecd8",
+  {id:"conversation", cat:"שיחה", icon:"i-chat", engine:"cine", momentKey:"conversation", tint:"#f4ecd8",
    title:"שיחה אמיתית", sub:"מישהו מדבר אליך — והיד על הטלפון.", limit:"שיחה אחת"},
+  {id:"children", cat:"הורות", icon:"i-kids", engine:"cine", momentKey:"children", tint:"#eef0dc",
+   title:"הילד שקורא לך", sub:"׳עוד רגע׳ — והרגע חלף.", limit:"10 דקות"},
   {id:"partner", cat:"זוגיות", icon:"i-heart", engine:"light", tint:"#f6e6da",
    title:"להיות עם בן/בת הזוג", sub:"הערב, אחרי שהילדים ישנים.",
    action:"הנח את הטלפון בחדר אחר.\nתן לערב להיות שלכם.", limit:"ערב אחד", witness:"הייתם יחד באמת."},
-  {id:"children", cat:"הורות", icon:"i-kids", engine:"light", tint:"#eef0dc",
-   title:"להיות עם הילדים", sub:"רד לגובה שלהם — בלי מסך.",
-   action:"שב איתם על הרצפה.\nתן להם להוביל את המשחק.", limit:"20 דקות", witness:"הם הרגישו שאתה שם."},
   {id:"parents", cat:"הורים", icon:"i-call", engine:"light", tint:"#f6ecd2",
    title:"להתקשר להורים", sub:"מתי דיברת איתם באמת?",
    action:"תתקשר. אל תמהר לסיים.\nשאל שאלה אחת אמיתית.", limit:"שיחה אחת", witness:"עשית להם את היום."},
@@ -297,7 +317,7 @@ const SHOTS={
 const stage=document.getElementById("stage");
 const svg=id=>`<svg viewBox="0 0 24 24"><use href="#${id}"/></svg>`;
 const buzz=(ms=12)=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
-const M=MOMENT;let branch=null,hist=[],activeMission=null;
+let M=MOMENT;let branch=null,hist=[],activeMission=null;
 const KEY="mood_moments_v1";
 const load=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{steps:0}}catch(e){return{steps:0}}};
 const save=s=>localStorage.setItem(KEY,JSON.stringify(s));
@@ -555,13 +575,15 @@ function Board(){
   </div>`);
   requestAnimationFrame(()=>el.querySelectorAll(".card").forEach(c=>c.classList.add("rise")));
   el.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{buzz();startMission(MISSIONS.find(x=>x.id===b.dataset.m));});
-  el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{buzz();const c=commits().find(x=>x.id===b.dataset.c);if(c){clearBoardTimer();activeCommit=c;activeMission=MISSIONS.find(x=>x.id===c.missionId)||MISSIONS[0];hist=[Board];go(HonestReturn);}});
+  el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{buzz();const c=commits().find(x=>x.id===b.dataset.c);if(c){clearBoardTimer();activeCommit=c;activeMission=MISSIONS.find(x=>x.id===c.missionId)||MISSIONS[0];M=MOMENTS[activeMission.momentKey]||MOMENT;preloadMoment(M);hist=[Board];go(HonestReturn);}});
   const bl=el.querySelector("#booklink"); if(bl) bl.onclick=()=>{buzz();go(BookShelf)};
   // live countdown tick
   if(open.length){ boardTimer=setInterval(()=>{ el.querySelectorAll(".clock").forEach(cl=>{const r=(+cl.dataset.deadline)-Date.now();cl.textContent=fmtRemain(r);cl.classList.toggle("over",r<=0);}); },1000); }
 }
+function preloadMoment(mm){ if(!mm)return; Object.values(mm.stems).forEach(s=>{const i=new Image();i.src=`${mm.dir}/screens/${s}.jpg`;
+  [`${mm.dir}/depth/${s}_bg.jpg`,`${mm.dir}/depth/${s}_fg.png`].forEach(u=>{const i2=new Image();i2.src=u;});}); }
 function startMission(m){ if(!m)return; activeMission=m; hist=[Board]; branch=null; activeCommit=null;
-  if(m.engine==="cine"){ recallWords=lastNotYet(m.id); recallWords?go(SecondChance):go(Mirror); } else LightMission(m); }
+  if(m.engine==="cine"){ M=MOMENTS[m.momentKey]||MOMENT; preloadMoment(M); recallWords=lastNotYet(m.id); recallWords?go(SecondChance):go(Mirror); } else LightMission(m); }
 
 // ---- light mission: recognition → the bounded action → go live → return ----
 function lightBg(t){return `radial-gradient(135% 78% at 50% 28%,${t||'#f7f0dd'},var(--paper) 60%,#e6dcc6)`;}
@@ -609,7 +631,7 @@ function Open(){
     <div class="line s show" style="animation-delay:.5s;max-width:24ch">יש רגע אחד שמחכה לך היום.</div>
     <div class="acts show" style="animation-delay:1.1s;max-width:320px"><button class="btn olive" id="enter">להיכנס לרגע</button></div></div>`;
   stage.appendChild(el);requestAnimationFrame(()=>el.classList.add("on"));
-  el.querySelector("#enter").onclick=()=>{buzz();enableGyro();startScore();activeMission=MISSIONS[0];hist=[Board];activeCommit=null;recallWords=lastNotYet(MISSIONS[0].id);recallWords?go(SecondChance):go(Mirror);};
+  el.querySelector("#enter").onclick=()=>{buzz();enableGyro();startScore();Board();};
 }
 function MiddahIntro(){
   const el=plain(`<div class="open">
