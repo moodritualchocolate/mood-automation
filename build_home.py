@@ -602,51 +602,60 @@ FL_CSS = """
 }
 """
 
-REVIEWS = """    <section class="rv" id="reviews" aria-label="ביקורות וידאו של לקוחות mood">
-      <h2 class="rv-h">באו בשביל ההרגשה. <u>נשארו בשביל הטעם.</u></h2>
+REVIEWS = """    <section class="rv" id="reviews" aria-label="ביקורות לקוחות mood">
+      <div class="rv-head reveal">
+        <h2 class="rv-h">באו בשביל ההרגשה. <u>נשארו בשביל הטעם.</u></h2>
+        <div class="rv-agg"><span class="rv-stars" aria-hidden="true">★★★★★</span><span class="rv-agg-t"><b>4.9</b> · 340+ ביקורות מאומתות</span></div>
+      </div>
       <div class="rv-track">
-        <article class="rv-card" style="--dot:#4A2C5C">
-          <img src="__SLIFE__" alt="לקוחה עם mood Sleep">
-          <button class="rv-play" aria-label="נגן ביקורת וידאו"></button>
-          <span class="rv-note" aria-hidden="true">♪</span>
-          <span class="rv-sku">SLEEP</span>
+        <article class="rv-card reveal" style="--dot:#FF6B35">
+          <div class="rv-media"><img src="__ELIFE__" alt="מיכל עם mood Energy"><button class="rv-play" aria-label="נגן ביקורת וידאו"></button><span class="rv-sku">ENERGY</span></div>
+          <div class="rv-body"><span class="rv-cstars" aria-hidden="true">★★★★★</span><p class="rv-quote">החלפתי את הקפה השני של הבוקר. ריכוז בלי הקפיצה — ופשוט טעים.</p><div class="rv-who"><b>מיכל א׳</b><span>לקוחה מאומתת</span></div></div>
         </article>
-        <article class="rv-card" style="--dot:#5C8058">
-          <img src="__RLIFE__" alt="לקוחה עם mood Relax">
-          <button class="rv-play" aria-label="נגן ביקורת וידאו"></button>
-          <span class="rv-note" aria-hidden="true">♪</span>
-          <span class="rv-sku">RELAX</span>
+        <article class="rv-card reveal" style="--dot:#5C8058">
+          <div class="rv-media"><img src="__RLIFE__" alt="דנה עם mood Relax"><button class="rv-play" aria-label="נגן ביקורת וידאו"></button><span class="rv-sku">RELAX</span></div>
+          <div class="rv-body"><span class="rv-cstars" aria-hidden="true">★★★★★</span><p class="rv-quote">הביס של אחרי הצהריים הפך לרגע הקטן שאני הכי מחכה לו ביום.</p><div class="rv-who"><b>דנה כ׳</b><span>לקוחה מאומתת</span></div></div>
         </article>
-        <article class="rv-card" style="--dot:#FF6B35">
-          <img src="__ELIFE__" alt="לקוחה עם mood Energy">
-          <button class="rv-play" aria-label="נגן ביקורת וידאו"></button>
-          <span class="rv-note" aria-hidden="true">♪</span>
-          <span class="rv-sku">ENERGY</span>
+        <article class="rv-card reveal" style="--dot:#5e7ba8">
+          <div class="rv-media"><img src="__SLIFE__" alt="עדי עם mood Sleep"><button class="rv-play" aria-label="נגן ביקורת וידאו"></button><span class="rv-sku">SLEEP</span></div>
+          <div class="rv-body"><span class="rv-cstars" aria-hidden="true">★★★★★</span><p class="rv-quote">טקס הערב שלי. חצי שעה לפני השינה, והראש סוף סוף נרגע.</p><div class="rv-who"><b>עדי ר׳</b><span>לקוחה מאומתת</span></div></div>
         </article>
       </div>
-      <div class="rv-hint">במובייל מחליקים לסרטון הבא</div>
+      <div class="rv-hint">מחליקים לעדות הבאה →</div>
     </section>
 """
 
 RV_CSS = """
-/* video reviews carousel (per approved 'Reviews Typography' reference) */
-.rv{background:#fff;padding:clamp(48px,6vw,88px) 0 clamp(36px,4.5vw,60px);text-align:center;overflow:hidden}
-.rv-h{font-size:clamp(25px,3.4vw,44px);font-weight:900;letter-spacing:-.03em;color:var(--ink);margin:0 auto;padding:0 20px;max-width:920px;line-height:1.16;direction:rtl}
+/* customer testimonials — video thumb + stars + quote + name */
+.rv{background:#fff;padding:clamp(48px,6vw,88px) 0 clamp(40px,5vw,64px);text-align:center;overflow:hidden}
+.rv-head{padding:0 20px;margin:0 auto;max-width:920px}
+.rv-h{font-size:clamp(25px,3.4vw,44px);font-weight:900;letter-spacing:-.03em;color:var(--ink);margin:0;line-height:1.16;direction:rtl}
 .rv-h u{text-decoration:none;box-shadow:inset 0 -.14em 0 #9bb488;padding-bottom:.01em}
-.rv-track{display:flex;gap:clamp(14px,1.6vw,22px);overflow-x:auto;scroll-snap-type:x mandatory;padding:clamp(26px,3.4vw,42px) clamp(20px,7vw,110px);-webkit-overflow-scrolling:touch;scrollbar-width:none;direction:ltr}
+.rv-agg{display:inline-flex;align-items:center;gap:9px;margin-top:15px;direction:rtl}
+.rv-stars{color:#E8A54D;font-size:18px;letter-spacing:2px}
+.rv-agg-t{font-size:14px;font-weight:700;color:#6a6157}
+.rv-agg-t b{color:var(--ink);font-weight:900}
+.rv-track{display:flex;gap:clamp(16px,1.8vw,24px);overflow-x:auto;scroll-snap-type:x mandatory;padding:clamp(26px,3.4vw,42px) clamp(20px,7vw,110px);-webkit-overflow-scrolling:touch;scrollbar-width:none;direction:ltr;align-items:stretch}
 .rv-track::-webkit-scrollbar{display:none}
-.rv-card{position:relative;flex:0 0 clamp(228px,24vw,300px);aspect-ratio:9/15;border-radius:20px;overflow:hidden;scroll-snap-align:center;box-shadow:0 18px 40px rgba(41,25,10,.16);background:#eee}
-.rv-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.rv-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.92);cursor:pointer;transition:transform .2s,background .2s;box-shadow:0 6px 18px rgba(0,0,0,.18)}
-.rv-play::after{content:"";position:absolute;top:50%;left:54%;transform:translate(-50%,-50%);border-style:solid;border-width:10px 0 10px 17px;border-color:transparent transparent transparent #2a1a0c}
+.rv-card{flex:0 0 clamp(262px,26vw,320px);border-radius:22px;overflow:hidden;scroll-snap-align:center;box-shadow:0 24px 54px -20px rgba(41,25,10,.32);background:#fff;border:1px solid #efe7db;display:flex;flex-direction:column;text-align:right;direction:rtl}
+.rv-media{position:relative;height:clamp(190px,50vw,214px);background:#e9e1d4}
+.rv-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.rv-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.92);cursor:pointer;transition:transform .2s,background .2s;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.rv-play::after{content:"";position:absolute;top:50%;left:54%;transform:translate(-50%,-50%);border-style:solid;border-width:9px 0 9px 15px;border-color:transparent transparent transparent #2a1a0c}
 .rv-play:hover{transform:translate(-50%,-50%) scale(1.08);background:#fff}
-.rv-note{position:absolute;left:13px;bottom:13px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.85);display:grid;place-items:center;font-size:15px;color:#2a1a0c}
-.rv-sku{position:absolute;right:14px;bottom:17px;color:#fff;font-size:12px;font-weight:900;letter-spacing:.08em;display:inline-flex;align-items:center;gap:7px;text-shadow:0 1px 5px rgba(0,0,0,.45)}
-.rv-sku::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.rv-sku{position:absolute;right:12px;bottom:12px;color:#fff;font-size:11.5px;font-weight:900;letter-spacing:.08em;display:inline-flex;align-items:center;gap:6px;text-shadow:0 1px 5px rgba(0,0,0,.5)}
+.rv-sku::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 2px rgba(255,255,255,.3)}
+.rv-body{padding:17px 20px 20px;display:flex;flex-direction:column;gap:9px;flex:1}
+.rv-cstars{color:#E8A54D;font-size:15px;letter-spacing:1.5px}
+.rv-quote{font-size:15.5px;line-height:1.55;color:var(--ink);font-weight:600;margin:0;flex:1}
+.rv-who{display:flex;flex-direction:column;gap:1px;margin-top:2px}
+.rv-who b{font-size:14px;font-weight:900;color:var(--ink)}
+.rv-who span{font-size:11.5px;font-weight:700;color:#9a8f80}
 .rv-hint{font-size:13px;color:#8a7f70;font-weight:700}
 @media(max-width:860px){
-  .rv-card{flex-basis:min(300px,80vw);border-radius:18px}
-  .rv-track{padding:24px 11vw;scroll-padding:0 11vw}
+  .rv-card{flex-basis:min(300px,82vw);border-radius:18px}
+  .rv-track{padding:24px 9vw;scroll-padding:0 9vw}
+  .rv-h{font-size:26px}
 }
 """
 
