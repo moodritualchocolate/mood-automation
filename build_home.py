@@ -564,7 +564,7 @@ MOODS = """    <section class="mds" aria-label="שלושה מצבים, שוקו�
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
-      <div class="ts-media reveal"><img class="ts-vid" src="__CHOCBITE__" alt="שוקולד mood אמיתי — ביס שחושף את המרקם"><div class="ts-seal" aria-label="אלוף השוקולד העולמי 2022"><span>אלוף השוקולד העולמי</span><b>2022</b></div></div>
+      <div class="ts-media reveal"><img class="ts-vid" src="__CHOCBITE__" alt="שוקולד mood אמיתי — ביס שחושף את המרקם"></div>
       <div class="ts-copy">
         <div class="ts-eyebrow reveal">פותח עם אלוף העולם</div>
         <h2 class="ts-h reveal">קודם כול,<br>שוקולד אמיתי.</h2>
@@ -586,8 +586,8 @@ TS_CSS = """
 .ts{position:relative;display:grid;grid-template-columns:1fr 1.05fr;align-items:stretch;background:#fff;overflow:hidden;direction:ltr}
 .ts-media{position:relative;order:1;min-height:min(78vh,640px);background:#efe7d9}
 .ts-media img,.ts-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.ts-vid{animation:tsZoom 22s ease-in-out infinite alternate;will-change:transform}
-@keyframes tsZoom{from{transform:scale(1.02)}to{transform:scale(1.09)}}
+.ts-vid{animation:tsZoom 22s ease-in-out infinite alternate;will-change:transform;object-position:58% 60%}
+@keyframes tsZoom{from{transform:scale(1.14)}to{transform:scale(1.22)}}
 @media(prefers-reduced-motion:reduce){.ts-vid{animation:none}}
 .ts-copy{order:2;direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,5.5vw,88px)}
 .ts-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35}
