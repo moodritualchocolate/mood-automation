@@ -20,9 +20,14 @@ def formula_xp(sku):
     # blend the experience into the page: match the section background so the
     # frame disappears, but keep the formula's own composition (header, vignette,
     # panel) fully intact so it still sits well.
-    inject = ('<style>html,body{background:transparent!important}'
-              '#mood-xp{background:transparent!important}'
+    # also kill the iframe's OWN scroll (fit content to the frame exactly) and
+    # forward wheel/touch to the parent page so there is only one scroll.
+    inject = ('<style>html,body{height:100%!important;margin:0!important;'
+              'overflow:hidden!important;background:transparent!important}'
+              '#mood-xp{background:transparent!important;height:100%!important;min-height:0!important}'
               '#mood-xp .xp-gl{background:transparent!important}</style>')
+    inject += ('<script>addEventListener("wheel",function(e){'
+               'try{parent.scrollBy(0,e.deltaY);}catch(_){}} ,{passive:true});</script>')
     if idx:
         inject += ('<script>addEventListener("load",function(){setTimeout(function(){'
                    'var p=document.querySelector(\'.xp-pill[data-m=\\"%d\\"]\');if(p)p.click();},350);});</script>') % idx
