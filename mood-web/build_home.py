@@ -462,6 +462,54 @@ FL_CSS = """
 }
 """
 
+REVIEWS = """    <section class="rv" id="reviews" aria-label="ביקורות וידאו של לקוחות mood">
+      <h2 class="rv-h">באו בשביל ההרגשה. <u>נשארו בשביל הטעם.</u></h2>
+      <div class="rv-track">
+        <article class="rv-card" style="--dot:#4A2C5C">
+          <img src="__SLIFE__" alt="לקוחה עם mood Sleep">
+          <button class="rv-play" aria-label="נגן ביקורת וידאו"></button>
+          <span class="rv-note" aria-hidden="true">♪</span>
+          <span class="rv-sku">SLEEP</span>
+        </article>
+        <article class="rv-card" style="--dot:#5C8058">
+          <img src="__RLIFE__" alt="לקוחה עם mood Relax">
+          <button class="rv-play" aria-label="נגן ביקורת וידאו"></button>
+          <span class="rv-note" aria-hidden="true">♪</span>
+          <span class="rv-sku">RELAX</span>
+        </article>
+        <article class="rv-card" style="--dot:#FF6B35">
+          <img src="__ELIFE__" alt="לקוחה עם mood Energy">
+          <button class="rv-play" aria-label="נגן ביקורת וידאו"></button>
+          <span class="rv-note" aria-hidden="true">♪</span>
+          <span class="rv-sku">ENERGY</span>
+        </article>
+      </div>
+      <div class="rv-hint">במובייל מחליקים לסרטון הבא</div>
+    </section>
+"""
+
+RV_CSS = """
+/* video reviews carousel (per approved 'Reviews Typography' reference) */
+.rv{background:#fff;padding:clamp(48px,6vw,88px) 0 clamp(36px,4.5vw,60px);text-align:center;overflow:hidden}
+.rv-h{font-size:clamp(25px,3.4vw,44px);font-weight:900;letter-spacing:-.03em;color:var(--ink);margin:0 auto;padding:0 20px;max-width:920px;line-height:1.16;direction:rtl}
+.rv-h u{text-decoration:none;box-shadow:inset 0 -.14em 0 #9bb488;padding-bottom:.01em}
+.rv-track{display:flex;gap:clamp(14px,1.6vw,22px);overflow-x:auto;scroll-snap-type:x mandatory;padding:clamp(26px,3.4vw,42px) clamp(20px,7vw,110px);-webkit-overflow-scrolling:touch;scrollbar-width:none;direction:ltr}
+.rv-track::-webkit-scrollbar{display:none}
+.rv-card{position:relative;flex:0 0 clamp(228px,24vw,300px);aspect-ratio:9/15;border-radius:20px;overflow:hidden;scroll-snap-align:center;box-shadow:0 18px 40px rgba(41,25,10,.16);background:#eee}
+.rv-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.rv-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.92);cursor:pointer;transition:transform .2s,background .2s;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.rv-play::after{content:"";position:absolute;top:50%;left:54%;transform:translate(-50%,-50%);border-style:solid;border-width:10px 0 10px 17px;border-color:transparent transparent transparent #2a1a0c}
+.rv-play:hover{transform:translate(-50%,-50%) scale(1.08);background:#fff}
+.rv-note{position:absolute;left:13px;bottom:13px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.85);display:grid;place-items:center;font-size:15px;color:#2a1a0c}
+.rv-sku{position:absolute;right:14px;bottom:17px;color:#fff;font-size:12px;font-weight:900;letter-spacing:.08em;display:inline-flex;align-items:center;gap:7px;text-shadow:0 1px 5px rgba(0,0,0,.45)}
+.rv-sku::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.rv-hint{font-size:13px;color:#8a7f70;font-weight:700}
+@media(max-width:860px){
+  .rv-card{flex-basis:78vw;border-radius:18px}
+  .rv-track{padding:24px 11vw;scroll-padding:0 11vw}
+}
+"""
+
 IMMERSIVE = """    <section class="cap" aria-label="שלושת הריטואלים">
       <div class="cap-label">שלושה מצבים · צבע אחד בכל רגע</div>
       <div class="cap-title"><h2>מסך שלובש את הריטואל.</h2><p>גללו — כל המסך עובר בין שלושת המצבים. מוצר אחד, צבע אחד, בכל רגע.</p></div>
@@ -912,7 +960,7 @@ def main():
                           ".products-frame { height: 620px; }")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + "\n  </style>", 1)
+    shell = shell.replace("</style>", NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + RV_CSS + "\n  </style>", 1)
     # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
@@ -924,7 +972,7 @@ def main():
     shell = shell.replace('    <section id="story"', FORMULAS + '    <section id="story"')
     # replace the cinematic story with the strong taste + world-champion section
     shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
-    shell = shell.replace('    <section id="formula"', FOUNDERS + '    <section id="formula"')
+    shell = shell.replace('    <section id="formula"', FOUNDERS + REVIEWS + '    <section id="formula"')
     shell = shell.replace('  </main>', BUNDLE + CLOSE + '  </main>\n' + FOOTER)
     # the live FORMULAS (id="formulas") replaces the old static formula image
     shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
