@@ -33,22 +33,13 @@ def data_uri(fname):
 
 # ---- shared source blocks (must match energy.tpl.html exactly) ----
 SRC_ROOT = "  --accent:#D9855E;--accent-ink:#9E5230;--accent-soft:#F4E5D9;\n  --cta:#B85510;--green:#C6D4B8;--green-ink:#3E4A34;"
-SRC_WHY = """  <section class="why split">
-    <div class="rv">
+SRC_WHY = """  <section class="why fx">
+    <div class="rv fx-head">
       <div class="eyebrow">WHY ENERGY</div>
-      <h2 style="margin-top:10px">רגע קטן<br>שמחזיר אתכם לקצב.</h2>
-      <p class="lede" style="margin-top:14px;color:var(--muted)">לא זריקת קפאין — חמישה רכיבים טבעיים, כל אחד עושה את שלו לשחרור אנרגיה איטי ומדויק. הנה מה יש בפנים:</p>
-      <div class="benefits">
-        <div style="--dc:#CF7A3C"><b>רודיולה · 660 מ״ג</b><span>אדפטוגן שמפחית תחושת עייפות ותומך בחוסן ובמיקוד</span></div>
-        <div style="--dc:#7E9153"><b>תה ירוק · 80 מ״ג</b><span>קפאין טבעי עם L־תאנין — ערנות רגועה בלי רעד</span></div>
-        <div style="--dc:#B5763F"><b>קינמון · 40 מ״ג</b><span>תומך באיזון סוכר בדם לאנרגיה יציבה, בלי נפילה</span></div>
-        <div style="--dc:#C99A57"><b>ליקוריץ · 13 מ״ג</b><span>שורש מסורתי לתמיכה בחיוניות לאורך היום</span></div>
-        <div style="--dc:#6E4A30"><b>גוארנה · 7 מ״ג</b><span>שחרור קפאין איטי שמאריך את האפקט</span></div>
-      </div>
+      <h2 style="margin-top:10px">רגע קטן שמחזיר אתכם לקצב.</h2>
+      <p class="lede" style="margin-top:14px;color:var(--muted)">לא זריקת קפאין — חמישה רכיבים טבעיים, כל אחד עושה את שלו לשחרור אנרגיה איטי ומדויק.</p>
     </div>
-    <div class="rv fpanel">
-      <div class="fburst fburst3d">__FORMULAXP__</div>
-    </div>
+    <div class="rv fx-frame">__FORMULAXP__</div>
   </section>"""
 SRC_MOMENTS = """      <div class="mitem rv"><b class="mnum">01</b><div class="minfo"><b>לפני האימון</b><p>אנרגיה נקייה לתנועה, בלי כובד.</p></div></div>
       <div class="mitem rv"><b class="mnum">02</b><div class="minfo"><b>במהלך העבודה</b><p>מיקוד בלי הרעד של אחר הצהריים.</p></div></div>
@@ -62,19 +53,14 @@ SRC_FAQ12 = """      <div class="item open"><button class="q">מה מיוחד ב
 SRC_XSELL = """      <a class="xcard rv" href="#"><div class="th" style="background:#E5ECE1"><img src="__RELAX__" alt="RELAX" loading="lazy"></div><div><div class="eyebrow" style="color:#5E7358"><i style="background:#8FA98C"></i>RELAX · EVENING</div><h3>לכבות את הרעש.</h3><p>לערב שהראש עדיין מהיר בו.</p></div><div class="go" style="color:#5E7358">←</div></a>
       <a class="xcard rv" href="#"><div class="th" style="background:#E1E7F0"><img src="__SLEEP__" alt="SLEEP" loading="lazy"></div><div><div class="eyebrow" style="color:#566B8E"><i style="background:#8AA0C4"></i>SLEEP · NIGHT</div><h3>לעבור למצב לילה.</h3><p>לרגע השקט שלפני השינה.</p></div><div class="go" style="color:#566B8E">←</div></a>"""
 
-def why_split(sku, h2, lede, benefits, alt):
-    return f"""  <section class="why split">
-    <div class="rv">
+def why_split(sku, h2, lede, benefits=None, alt=None):
+    return f"""  <section class="why fx">
+    <div class="rv fx-head">
       <div class="eyebrow">WHY {sku}</div>
       <h2 style="margin-top:10px">{h2}</h2>
       <p class="lede" style="margin-top:14px;color:var(--muted)">{lede}</p>
-      <div class="benefits">
-{benefits}
-      </div>
     </div>
-    <div class="rv fpanel">
-      <div class="fburst fburst3d">__FORMULAXP__</div>
-    </div>
+    <div class="rv fx-frame">__FORMULAXP__</div>
   </section>"""
 
 def xcard(img, thbg, eyec, dotc, kicker, h3, p):

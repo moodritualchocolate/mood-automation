@@ -119,6 +119,10 @@ h2{font-size:clamp(26px,3.6vw,40px)}
 .formula.center{text-align:center}
 .formula .lede{margin:14px auto 0;max-width:46ch;color:var(--muted);font-weight:600;font-size:15.5px}
 .fburst{margin:0 auto;max-width:380px;aspect-ratio:512/800;overflow:hidden}
+.why.fx{padding-top:48px;padding-bottom:48px;text-align:center}
+.fx-head{max-width:640px;margin:0 auto}
+.fx-frame{width:100%;max-width:1120px;margin:clamp(26px,4vw,46px) auto 0;height:min(780px,88vh);border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 18px 46px rgba(41,25,10,.12)}
+.fx-frame .fburst-xp{width:100%;height:100%;border:0;display:block}
 .fpanel .fburst3d{max-width:none;aspect-ratio:auto;width:100%;height:min(660px,82vh);border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 18px 44px rgba(41,25,10,.12)}
 .fburst-xp{width:100%;height:100%;border:0;display:block}
 .fpanel .fburst img{width:100%;height:100%;max-height:none;object-fit:cover;object-position:center;display:block;border-radius:0}
@@ -288,20 +292,13 @@ footer .logo{font-size:20px;color:#F4EEE3;margin-bottom:10px}footer .logo .o2{co
     </div>
   </div>
 
-  <section class="why split">
-    <div class="rv">
+  <section class="why fx">
+    <div class="rv fx-head">
       <div class="eyebrow">WHY SLEEP</div>
       <h2 style="margin-top:10px">רגע לעבור בו<br>למצב לילה.</h2>
       <p class="lede" style="margin-top:14px;color:var(--muted)">לא כדור שינה — ארבעה רכיבים טבעיים, כל אחד עושה את שלו למעבר רך אל השינה. הנה מה יש בפנים:</p>
-      <div class="benefits">
-        <div style="--dc:#7E9153"><b>מליסה · 224 מ״ג</b><span>עלה מרגיע שמכין את הגוף למנוחה</span></div>
-        <div style="--dc:#9A7FB0"><b>פסיפלורה · 224 מ״ג</b><span>משקיטה מחשבות ומרגיעה את המערכת</span></div>
-        <div style="--dc:#5E7BA8"><b>ולריאן · 224 מ״ג</b><span>צמח מסורתי לשינה עמוקה ורציפה</span></div>
-        <div style="--dc:#C99A57"><b>ליקוריץ · 56 מ״ג</b><span>שורש תומך לאיזון</span></div>
-      </div>
     </div>
-    <div class="rv fpanel">
-      <div class="fburst fburst3d"><iframe class="fburst-xp" title="הפורמולה בתלת-מימד" loading="lazy" srcdoc="<!doctype html>
+    <div class="rv fx-frame"><iframe class="fburst-xp" title="הפורמולה בתלת-מימד" loading="lazy" srcdoc="<!doctype html>
 <html lang=&quot;he&quot; dir=&quot;rtl&quot;><head><meta charset=&quot;utf-8&quot;/><meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;/>
 <title>mood — experience</title></head>
 <body style=&quot;margin:0;background:#FBF9F5&quot;>
@@ -674,7 +671,6 @@ function(t,e){&quot;object&quot;==typeof exports&amp;&amp;&quot;undefined&quot;!
 </script>
 <script>addEventListener(&quot;load&quot;,function(){setTimeout(function(){var p=document.querySelector('.xp-pill[data-m=\&quot;2\&quot;]');if(p)p.click();},350);});</script></body></html>
 "></iframe></div>
-    </div>
   </section>
 
   <section class="moments">
