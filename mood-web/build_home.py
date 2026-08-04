@@ -485,7 +485,7 @@ VH_CSS = """
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
-      <div class="ts-media reveal"><img src="__BITE__" alt="בר mood 70% מריר עם ביס — הטעם"><div class="ts-seal" aria-label="אלוף השוקולד העולמי 2022"><span>אלוף השוקולד העולמי</span><b>2022</b></div></div>
+      <div class="ts-media reveal"><video class="ts-vid" autoplay muted loop playsinline preload="metadata" poster="__SPINPOSTER__"><source src="__CHOCSPIN__" type="video/mp4"></video><div class="ts-seal" aria-label="אלוף השוקולד העולמי 2022"><span>אלוף השוקולד העולמי</span><b>2022</b></div></div>
       <div class="ts-copy">
         <div class="ts-eyebrow reveal">פותח עם אלוף העולם</div>
         <h2 class="ts-h reveal">קודם כול,<br>שוקולד אמיתי.</h2>
@@ -506,8 +506,8 @@ STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקו�
 TS_CSS = """
 /* one strong section: the taste + world-champion chocolatier */
 .ts{position:relative;display:grid;grid-template-columns:1fr 1.05fr;align-items:stretch;background:#fff;overflow:hidden;direction:ltr}
-.ts-media{position:relative;order:1;min-height:min(78vh,640px);background:#1a0f08}
-.ts-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.ts-media{position:relative;order:1;min-height:min(78vh,640px);background:#efe7d9}
+.ts-media img,.ts-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .ts-copy{order:2;direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,5.5vw,88px)}
 .ts-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35}
 .ts-h{font-size:clamp(34px,4.8vw,64px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
@@ -1130,7 +1130,8 @@ def main():
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__HEROPHOTO__", data_uri("hero-photo.jpg", HOME_ASSETS))
-    shell = shell.replace("__BITE__", data_uri("choc-real-bite.jpg", HOME_ASSETS))
+    shell = shell.replace("__CHOCSPIN__", data_uri("choc-spin.mp4", HOME_ASSETS))
+    shell = shell.replace("__SPINPOSTER__", data_uri("choc-spin-poster.jpg", HOME_ASSETS))
     shell = shell.replace("__RONEN__", data_uri("ronen-real.jpg"))
     shell = shell.replace("__EDISC__", data_uri("energy-disc.jpg", HOME_ASSETS))
     shell = shell.replace("__RDISC__", data_uri("relax-disc.jpg", HOME_ASSETS))
