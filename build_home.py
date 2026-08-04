@@ -185,8 +185,8 @@ FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמ�
             <p>לקח לנו שנתיים ואינספור נסיונות. <strong>סירבנו להתפשר על פרט אחד</strong> — לא על הטעם, לא על הפורמולה, לא על ההרגשה.</p>
             <p>לקחנו רק את הטוב ביותר, עד שכל קובייה יצאה בדיוק כמו שחלמנו. וזה מרגש אותנו לחלוק אותה איתכם.</p>
             <div class="fl-signs">
-              <div class="fl-sig"><span class="fl-sig-name">נדב</span><span class="fl-sig-role">מייסד</span></div>
-              <div class="fl-sig"><span class="fl-sig-name">מתיאס</span><span class="fl-sig-role">מייסד</span></div>
+              <div class="fl-sig"><span class="fl-sig-name">נדב יצחקי</span><span class="fl-sig-role">מייסד mood</span></div>
+              <div class="fl-sig"><span class="fl-sig-name">מתיאס דומינגז</span><span class="fl-sig-role">מייסד mood</span></div>
             </div>
           </div>
         </div>
@@ -589,9 +589,9 @@ FL_CSS = """
 .fl-lead{font-size:clamp(24px,2.7vw,36px);font-weight:900;letter-spacing:-.03em;color:var(--ink);margin:0 0 20px;line-height:1.05}
 .fl-body p{color:#5a5148;font-size:clamp(16px,1.35vw,18.5px);line-height:1.78;margin:0 0 18px;max-width:46ch}
 .fl-body p strong{font-weight:900;color:var(--ink);box-shadow:inset 0 -.42em 0 rgba(192,127,67,.2)}
-.fl-signs{display:flex;gap:clamp(34px,5vw,58px);align-items:flex-end;margin:clamp(20px,2.8vw,32px) 0 0;padding-top:clamp(18px,2.4vw,26px);border-top:1px solid #f0e7d8}
+.fl-signs{display:flex;flex-wrap:wrap;gap:16px clamp(30px,4vw,50px);align-items:flex-end;margin:clamp(20px,2.8vw,32px) 0 0;padding-top:clamp(18px,2.4vw,26px);border-top:1px solid #f0e7d8}
 .fl-sig{display:flex;flex-direction:column}
-.fl-sig-name{font-size:clamp(28px,3vw,38px);font-weight:900;color:var(--ink);position:relative;display:inline-block;line-height:1.05}
+.fl-sig-name{font-size:clamp(21px,2.2vw,28px);font-weight:900;color:var(--ink);position:relative;display:inline-block;line-height:1.05;white-space:nowrap}
 .fl-sig-name::after{content:"";position:absolute;left:-4px;right:-9px;bottom:-6px;height:7px;border-bottom:2.5px solid #c07f43;border-radius:50%;transform:rotate(-1deg)}
 .fl-sig-role{margin-top:13px;font-size:12px;font-weight:800;letter-spacing:.08em;color:#9a8f80}
 @media(max-width:820px){
@@ -601,8 +601,8 @@ FL_CSS = """
   .fl-body{padding:30px 24px 34px}
   .fl-lead{font-size:24px;margin-bottom:16px}
   .fl-body p{font-size:16.5px;line-height:1.8;margin-bottom:16px}
-  .fl-signs{gap:44px;margin-top:22px}
-  .fl-sig-name{font-size:30px}
+  .fl-signs{gap:14px 36px;margin-top:22px}
+  .fl-sig-name{font-size:22px}
 }
 """
 
