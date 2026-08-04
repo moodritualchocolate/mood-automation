@@ -564,7 +564,7 @@ MOODS = """    <section class="mds" aria-label="שלושה מצבים, שוקו�
 """
 
 STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקולטייר של mood">
-      <div class="ts-media reveal"><img class="ts-vid" src="__CHOCBITE__" alt="שוקולד mood אמיתי — ביס שחושף את המרקם"></div>
+      <div class="ts-media reveal"><video class="ts-vid" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="__CHOCBITE__"><source src="__TASTEVID__" type="video/mp4"></video></div>
       <div class="ts-copy">
         <div class="ts-eyebrow reveal">פותח עם אלוף העולם</div>
         <h2 class="ts-h reveal">קודם כול,<br>שוקולד אמיתי.</h2>
@@ -586,9 +586,7 @@ TS_CSS = """
 .ts{position:relative;display:grid;grid-template-columns:1fr 1.05fr;align-items:stretch;background:#fff;overflow:hidden;direction:ltr}
 .ts-media{position:relative;order:1;min-height:min(78vh,640px);background:#efe7d9}
 .ts-media img,.ts-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.ts-vid{animation:tsZoom 24s ease-in-out infinite alternate;will-change:transform;object-position:center 52%}
-@keyframes tsZoom{from{transform:scale(1.02)}to{transform:scale(1.08)}}
-@media(prefers-reduced-motion:reduce){.ts-vid{animation:none}}
+.ts-vid{object-position:center 52%}
 .ts-copy{order:2;direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,5.5vw,88px)}
 .ts-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:#FF6B35}
 .ts-h{font-size:clamp(34px,4.8vw,64px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
@@ -1241,6 +1239,7 @@ def main():
     shell = shell.replace("__HEROPHOTO_M__", data_uri("hero-mobile.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCFLOAT__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBITE__", data_uri("choc-real-bite.jpg", HOME_ASSETS))
+    shell = shell.replace("__TASTEVID__", data_uri("taste-vid.mp4", HOME_ASSETS))
     shell = shell.replace("__CHOCMOODS__", data_uri("choc-moods.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
