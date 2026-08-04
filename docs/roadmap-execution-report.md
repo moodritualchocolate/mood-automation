@@ -40,6 +40,17 @@ exact unblock condition.
 | 22 | Landing examples | "Real output per industry" section — genuine corpus hooks for 3 verticals | Swap in LIVE-LLM examples once the key runs |
 | 29 | Image wiring | "✦ AI image prompt" per concept — ready to paste into Midjourney/DALL·E | Direct API image generation (needs a key + spend approval) |
 
+## Keyless premium path (unblocks #1/#21 without spend) 🆕
+
+Added a **Claude Cowork task bridge** so the premium generation runs with **no
+API key and no spend** — Claude (in Cowork, on demand or scheduled) fulfills a
+queued task and its output is validated against the exact paid-path contract
+before upgrading the kit (`providerId → cowork`). Verified end-to-end
+(realtor·he): corpus 53-72 → Cowork 84-86, all on-contract. See
+[`docs/cowork-keyless-generation.md`](./cowork-keyless-generation.md).
+`lib/mvpCoworkBridge.ts` · `scripts/cowork-fulfill.ts` · engine enqueue.
+Build + both CI verifiers stay green.
+
 ## Blocked on the operator 🔒
 
 | # | Item | Unblock condition |

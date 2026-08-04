@@ -64,7 +64,10 @@ export interface GenerationRecord {
   ugcScripts: UgcScriptItem[];
   imageConcepts: ImageConceptItem[];
   status: GenerationStatus;
-  providerId: 'stub' | 'openai' | 'anthropic';
+  providerId: 'stub' | 'openai' | 'anthropic' | 'cowork';
+  /** Cowork keyless-premium bridge (roadmap #1/#21 alt): task id + state. */
+  coworkTaskId?: string;
+  coworkStatus?: 'pending' | 'fulfilled' | 'rejected';
   /** Resolved vertical + locale · learning + telemetry keys. */
   verticalId?: string;
   resolvedLocale?: 'he' | 'en';

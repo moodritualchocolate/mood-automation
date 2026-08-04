@@ -23,6 +23,7 @@ import {
   type GenerationRecord,
 } from './mvpGenerationMemory';
 import { mvpGenerate } from './mvpLlmProvider';
+import { coworkEnabled, enqueueCoworkTask } from './mvpCoworkBridge';
 import { ALL_VERTICAL_IDS, type VerticalId } from './verticalIntelligence';
 
 export interface RunMvpGenerationInput {
@@ -151,6 +152,35 @@ export async function runMvpGeneration(
       status: 'ready',
       completedAt: Date.now(),
     });
+
+    // Keyless premium path (roadmap #1/#21 alt): the corpus kit is already
+    // delivered above. When there is no paid key, enqueue a Cowork task so
+    // Claude (via scripts/cowork-fulfill.ts) can upgrade it at zero API cost.
+    // Best-effort — a failure here never affects the delivered corpus kit.
+    if (coworkEnabled()) {
+      try {
+        const task = await enqueueCoworkTask({
+          taskId: `cw-${generationId}`,
+          generationId,
+          brandInputId: brandInput.brandInputId,
+          locale: (output.resolvedLocale || brandInput.locale) as string,
+          verticalId: output.verticalId || '',
+          signals: {
+            artifact: brandInput.artifact,
+            audience: brandInput.audience,
+            emotional: brandInput.emotional,
+          },
+          excludeTexts: excludeTexts ?? [],
+          need: { hooks: 10, oneLiners: 2 },
+        });
+        await genStore.update(generationId, {
+          coworkTaskId: task.taskId,
+          coworkStatus: 'pending',
+        });
+      } catch {
+        /* cowork enqueue is best-effort; the corpus kit already shipped */
+      }
+    }
 
     return { generationId, status: 'ready' };
   } catch (e) {
