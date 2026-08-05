@@ -285,7 +285,7 @@ FOOTER = """  <footer class="ft" aria-label="תחתית האתר">
       </nav>
       <nav class="ft-col" aria-label="מידע ושירות">
         <h4>מידע</h4>
-        <a href="mailto:hello@mood.co.il">יצירת קשר</a>
+        <a href="mailto:hello@mood-chocolate.com">יצירת קשר</a>
         <a href="#faq">משלוחים והחזרות</a>
         <a href="#">תקנון האתר</a>
         <a href="#">מדיניות פרטיות</a>
@@ -1494,6 +1494,7 @@ def main():
     ]
     _org_ld = {"@context": "https://schema.org", "@type": "Organization", "name": "mood",
                "description": "שוקולד מריר 70% פונקציונלי — ריטואל יומי לשלושה רגעים: ENERGY, RELAX, SLEEP.",
+               "url": "https://mood-chocolate.com", "email": "hello@mood-chocolate.com",
                "foundingDate": "2023",
                "founder": [{"@type": "Person", "name": "נדב יצחקי"}, {"@type": "Person", "name": "מתיאס דומינגז"}],
                "sameAs": ["https://www.instagram.com/mood_ritual_chocolate",
