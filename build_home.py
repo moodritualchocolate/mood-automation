@@ -271,8 +271,8 @@ FOOTER = """  <footer class="ft" aria-label="תחתית האתר">
         <p class="ft-tag">שוקולד מריר 70% · ריטואל פונקציונלי</p>
         <p class="ft-mini">שלושה רגעים ביום, שלוש פורמולות. ENERGY · RELAX · SLEEP.</p>
         <div class="ft-social">
-          <a href="#" aria-label="mood באינסטגרם"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></a>
-          <a href="#" aria-label="mood בטיקטוק"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M16.5 3c.3 2.1 1.5 3.6 3.5 3.9v2.5c-1.2.1-2.4-.2-3.5-.8v5.7c0 3.3-2.4 5.7-5.5 5.7S6 20.5 6 17.6c0-2.7 2-4.9 4.9-4.9.3 0 .6 0 .9.1v2.7c-.3-.1-.6-.2-.9-.2-1.3 0-2.3 1-2.3 2.3s1 2.3 2.3 2.3 2.4-1 2.4-2.6V3h2.7z"/></svg></a>
+          <a href="https://www.instagram.com/mood_ritual_chocolate" target="_blank" rel="noopener" aria-label="mood באינסטגרם"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="https://www.tiktok.com/@mood_ritual_chocolate" target="_blank" rel="noopener" aria-label="mood בטיקטוק"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M16.5 3c.3 2.1 1.5 3.6 3.5 3.9v2.5c-1.2.1-2.4-.2-3.5-.8v5.7c0 3.3-2.4 5.7-5.5 5.7S6 20.5 6 17.6c0-2.7 2-4.9 4.9-4.9.3 0 .6 0 .9.1v2.7c-.3-.1-.6-.2-.9-.2-1.3 0-2.3 1-2.3 2.3s1 2.3 2.3 2.3 2.4-1 2.4-2.6V3h2.7z"/></svg></a>
         </div>
       </div>
       <nav class="ft-col" aria-label="ניווט באתר">
@@ -1495,7 +1495,9 @@ def main():
     _org_ld = {"@context": "https://schema.org", "@type": "Organization", "name": "mood",
                "description": "שוקולד מריר 70% פונקציונלי — ריטואל יומי לשלושה רגעים: ENERGY, RELAX, SLEEP.",
                "foundingDate": "2023",
-               "founder": [{"@type": "Person", "name": "נדב יצחקי"}, {"@type": "Person", "name": "מתיאס דומינגז"}]}
+               "founder": [{"@type": "Person", "name": "נדב יצחקי"}, {"@type": "Person", "name": "מתיאס דומינגז"}],
+               "sameAs": ["https://www.instagram.com/mood_ritual_chocolate",
+                          "https://www.tiktok.com/@mood_ritual_chocolate"]}
     _faq_ld = {"@context": "https://schema.org", "@type": "FAQPage",
                "mainEntity": [{"@type": "Question", "name": q,
                                "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in _faq_qa]}
