@@ -293,8 +293,8 @@ FOOTER = """  <footer class="ft" aria-label="תחתית האתר">
       </nav>
       <div class="ft-col ft-launch">
         <h4>משיקים 12.8</h4>
-        <p>הצטרפו לרשימת ההמתנה — גישה ראשונה והטבת השקה.</p>
-        <a class="ft-join" href="#launch">עדכנו אותי<span aria-hidden="true"> ←</span></a>
+        <p>שלושה רגעים ביום, פורמולה לכל אחד — הריטואל שמחכה לכם.</p>
+        <a class="ft-join" href="#club">מועדון החברים<span aria-hidden="true"> ←</span></a>
       </div>
     </div>
     <div class="ft-bar">
@@ -1435,7 +1435,8 @@ def build_section(filename: str, is_cinematic: bool) -> str:
         # the approved cards are oversized on mobile — tighten without touching
         # the pristine approved source
         html = html.replace("</head>",
-            "<style>@media(max-width:700px){"
+            "<style>.section{min-height:0}"  # fit the iframe to the cards — no dead space below
+            "@media(max-width:700px){"
             ".section{min-height:0;padding:26px 0 18px}"
             ".card{flex:0 0 80vw}"
             ".visual{height:210px}.unit.main{height:165px}.unit.left,.unit.right{height:118px}"
@@ -1474,7 +1475,7 @@ def main():
     shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
     # the compact formula selector flows directly into the founders letter (one cream band)
     shell = shell.replace('    <section id="formula"', FORMULAS + FOUNDERS + REVIEWS + '    <section id="formula"')
-    shell = shell.replace('  </main>', FAQ + CLOSE + LAUNCH + '  </main>\n' + TRUST + FOOTER)
+    shell = shell.replace('  </main>', FAQ + CLOSE + '  </main>\n' + TRUST + FOOTER)
 
     # ---- head: brand-correct title/description + Open Graph + JSON-LD (AI-search) ----
     shell = shell.replace("<title>MOOD — Ritual Chocolate</title>",
@@ -1513,7 +1514,7 @@ def main():
     shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
-    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + FOOT_JS + '</body>')
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders-workshop.jpg", HOME_ASSETS))
     shell = shell.replace("__LOGOBLACK__", data_uri("logo-black.png", HOME_ASSETS))
