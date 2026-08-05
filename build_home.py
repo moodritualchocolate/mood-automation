@@ -264,10 +264,11 @@ RITUAL_JS = """  <script>
 """
 
 FOOTER = """  <footer class="ft" aria-label="תחתית האתר">
+    <img class="ft-watermark" src="__LOGOBLACK__" alt="" aria-hidden="true">
     <div class="ft-inner">
       <div class="ft-brand">
-        <div class="ft-logo">mo<span>o</span>d</div>
-        <p class="ft-tag">ריטואל פונקציונלי · שוקולד מריר 70%</p>
+        <img class="ft-logo-img" src="__LOGOBLACK__" alt="mood · ritual chocolate">
+        <p class="ft-tag">שוקולד מריר 70% · ריטואל פונקציונלי</p>
         <p class="ft-mini">שלושה רגעים ביום, שלוש פורמולות. ENERGY · RELAX · SLEEP.</p>
         <div class="ft-social">
           <a href="#" aria-label="mood באינסטגרם"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></a>
@@ -389,27 +390,27 @@ FOOT_CSS = """
 .faq-i summary::after{content:"+";font-size:26px;font-weight:400;color:var(--energy);transition:transform .3s;flex:none;line-height:1}
 .faq-i[open] summary::after{transform:rotate(45deg)}
 .faq-a{padding:0 6px 22px;color:#5a5148;font-size:clamp(14.5px,1.4vw,16.5px);line-height:1.75;max-width:64ch}
-/* ---- real footer ---- */
-.ft{background:#17100c;color:#cdbfae;padding:clamp(44px,5vw,68px) clamp(20px,5vw,60px) 0}
-.ft-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1.3fr;gap:clamp(26px,4vw,50px);text-align:right}
-.ft-logo{font-size:30px;font-weight:900;letter-spacing:-.02em;color:#fff}
-.ft-logo span{position:relative;color:var(--energy)}
-.ft-logo span::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:#17100c}
-.ft-tag{margin:12px 0 0;font-size:13px;font-weight:800;color:#e6d8c7;letter-spacing:.01em}
-.ft-mini{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#9d8f7e;max-width:280px}
+/* ---- real footer: warm-white, subtle logo watermark ---- */
+.ft{position:relative;overflow:hidden;background:#faf5ec;color:#5a5148;border-top:1px solid #ece4d5;padding:clamp(44px,5vw,70px) clamp(20px,5vw,60px) 0}
+.ft-watermark{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:min(1180px,128%);max-width:none;height:auto;opacity:.05;pointer-events:none;user-select:none;z-index:0}
+.ft-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1.3fr;gap:clamp(26px,4vw,50px);text-align:right}
+.ft-logo-img{height:40px;width:auto;display:block}
+.ft-tag{margin:16px 0 0;font-size:13px;font-weight:800;color:var(--ink);letter-spacing:.01em}
+.ft-mini{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#8a7f70;max-width:280px}
 .ft-social{display:flex;gap:12px;margin:18px 0 0}
-.ft-social a{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:#e6d8c7;transition:background .25s,color .25s,transform .25s}
-.ft-social a:hover{background:var(--energy);color:#2a1608;transform:translateY(-2px)}
-.ft-col h4{margin:0 0 14px;font-size:12px;font-weight:900;letter-spacing:.12em;color:#fff}
-.ft-col a{display:block;text-decoration:none;color:#b3a595;font-size:13.5px;font-weight:600;padding:5px 0;transition:color .2s}
+.ft-social a{width:38px;height:38px;border-radius:50%;border:1px solid #ddd2c0;display:grid;place-items:center;color:var(--ink);transition:background .25s,color .25s,transform .25s,border-color .25s}
+.ft-social a:hover{background:var(--ink);color:#faf5ec;border-color:var(--ink);transform:translateY(-2px)}
+.ft-col h4{margin:0 0 14px;font-size:12px;font-weight:900;letter-spacing:.12em;color:var(--ink)}
+.ft-col a{display:block;text-decoration:none;color:#7d7264;font-size:13.5px;font-weight:600;padding:5px 0;transition:color .2s}
 .ft-col a:hover{color:var(--energy)}
-.ft-launch p{margin:0 0 14px;font-size:13px;line-height:1.6;color:#b3a595}
+.ft-launch p{margin:0 0 14px;font-size:13px;line-height:1.6;color:#7d7264}
 .ft-join{display:inline-block;color:var(--energy)!important;font-weight:900!important;font-size:14.5px!important;padding:0!important}
-.ft-bar{max-width:1100px;margin:clamp(34px,4vw,50px) auto 0;border-top:1px solid rgba(255,255,255,.1);padding:20px 0 26px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;font-size:11.5px;font-weight:700;letter-spacing:.02em;color:#8f8170}
+.ft-bar{position:relative;z-index:1;max-width:1100px;margin:clamp(34px,4vw,50px) auto 0;border-top:1px solid #ece4d5;padding:20px 0 26px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;font-size:11.5px;font-weight:700;letter-spacing:.02em;color:#9a8f80}
 @media(max-width:820px){
   .ft-inner{grid-template-columns:1fr 1fr;gap:28px 24px}
   .ft-brand{grid-column:1/-1}
   .ft-bar{justify-content:center;text-align:center}
+  .ft-watermark{width:150%;opacity:.045}
 }
 @media(max-width:640px){
   .tstrip-row{gap:12px 20px}.tstrip-row li{font-size:12.5px}
@@ -1138,9 +1139,8 @@ XHERO_CSS = """
 .xannounce{background:var(--ink);color:#f5eee4;text-align:center;font-size:12px;font-weight:700;letter-spacing:.02em;padding:10px 16px}
 .xnav{position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px clamp(16px,4vw,34px);background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:padding .32s cubic-bezier(.22,.8,.28,1),background .32s ease,box-shadow .32s ease,border-color .32s ease}
 .xnav.shrink{padding-top:7px;padding-bottom:7px;background:rgba(255,255,255,.82);border-bottom-color:transparent;box-shadow:0 6px 24px rgba(41,25,10,.09)}
-.xnav .xlogo-word,.xnav .xlogo-tag{transition:font-size .32s cubic-bezier(.22,.8,.28,1)}
-.xnav.shrink .xlogo-word{font-size:22px}
-.xnav.shrink .xlogo-tag{font-size:7px}
+.xnav .xlogo-img{transition:height .32s cubic-bezier(.22,.8,.28,1)}
+.xnav.shrink .xlogo-img{height:30px}
 /* thin scroll-progress bar (Apple-style) */
 .xprog{position:fixed;top:0;left:0;right:0;height:2.5px;z-index:80;background:var(--energy);transform:scaleX(0);transform-origin:0 50%;will-change:transform}
 html{scroll-behavior:smooth;scroll-padding-top:80px}
@@ -1156,9 +1156,8 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
 .xnav-menu a b{font-size:14px;font-weight:900;letter-spacing:.04em}
 .xnav-menu a span{font-size:12px;color:#8a7f70;margin-top:1px}
 .xnav-menu .xnav-all{color:var(--energy);font-weight:800}
-.xlogo{display:inline-flex;flex-direction:column;align-items:center;text-decoration:none;line-height:1}
-.xlogo-word{font-size:27px;font-weight:800;letter-spacing:-.045em;color:var(--ink)}
-.xlogo-tag{font-size:8px;font-weight:600;letter-spacing:.3em;color:var(--ink);margin-top:4px;white-space:nowrap;text-align:center;padding-inline-start:.3em}
+.xlogo{display:inline-flex;align-items:center;text-decoration:none;line-height:1}
+.xlogo-img{height:38px;width:auto;display:block}
 .xnav-actions{display:flex;align-items:center;gap:14px}
 .xnav-quiz{color:#4c4841;text-decoration:none;font-size:14px;font-weight:700;white-space:nowrap}
 .xnav-quiz:hover{color:var(--ink)}
@@ -1337,7 +1336,7 @@ XHERO = """    <header class="xtop" id="top">
           <a href="#reviews">ביקורות</a>
           <a href="blog.html">בלוג</a>
         </div>
-        <a class="xlogo" href="#top" aria-label="mood — ריטואל שוקולד"><span class="xlogo-word">mood</span><span class="xlogo-tag">RITUAL CHOCOLATE</span></a>
+        <a class="xlogo" href="#top" aria-label="mood — ריטואל שוקולד"><img class="xlogo-img" src="__LOGOBLACK__" alt="mood · ritual chocolate"></a>
         <div class="xnav-actions">
           <a class="xnav-quiz" href="#products">שאלון התאמה</a>
           <a class="xnav-cart" href="#products" aria-label="עגלת קניות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6.5 8h11l-1 11.5h-9L6.5 8Z"/><path d="M9.2 8a2.8 2.8 0 0 1 5.6 0"/></svg><b>0</b></a>
@@ -1517,6 +1516,8 @@ def main():
     shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + FOOT_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders-workshop.jpg", HOME_ASSETS))
+    shell = shell.replace("__LOGOBLACK__", data_uri("logo-black.png", HOME_ASSETS))
+    shell = shell.replace("__LOGOWHITE__", data_uri("logo-white.png", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__HEROPHOTO__", data_uri("hero-photo.jpg", HOME_ASSETS))
