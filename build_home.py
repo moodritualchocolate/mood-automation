@@ -894,60 +894,114 @@ FL_CSS = """
 }
 """
 
-REVIEWS = """    <section class="rv" id="reviews" aria-label="ביקורות לקוחות mood">
-      <div class="rv-head reveal">
-        <h2 class="rv-h">באו בשביל ההרגשה. <u>נשארו בשביל הטעם.</u></h2>
-        <div class="rv-agg"><span class="rv-stars" aria-hidden="true">★★★★★</span><span class="rv-agg-t"><b>4.9</b> · 340+ ביקורות מאומתות</span></div>
+REVIEWS = """    <section class="soc" id="reviews" aria-label="עדויות מאנשים שכבר טעמו">
+      <div class="soc-head reveal">
+        <p class="soc-eyebrow">מה אומרים על mood</p>
+        <h2 class="soc-h">רגע קטן. <u>אנשים אמיתיים.</u></h2>
+        <div class="soc-agg"><span class="soc-stars" aria-hidden="true">★★★★★</span><span class="soc-agg-t"><b>4.9</b> · 340+ ביקורות מאומתות</span></div>
       </div>
-      <div class="rv-track">
-        <article class="rv-card reveal" style="--dot:#FF6B35">
-          <div class="rv-media"><img src="__ELIFE__" alt="מיכל עם mood Energy"><button class="rv-play" aria-label="נגן ביקורת וידאו"></button><span class="rv-sku">ENERGY</span></div>
-          <div class="rv-body"><span class="rv-cstars" aria-hidden="true">★★★★★</span><p class="rv-quote">החלפתי את הקפה השני של הבוקר. ריכוז בלי הקפיצה — ופשוט טעים.</p><div class="rv-who"><b>מיכל א׳</b><span>לקוחה מאומתת</span></div></div>
+      <div class="soc-videos reveal">
+        <figure class="soc-vid" data-sku="energy">
+          <img src="__ELIFE__" alt="יעל עם mood Energy" loading="lazy">
+          <span class="soc-vplay" aria-hidden="true"></span>
+          <figcaption><span class="soc-vtag" style="--c:#FF6B35">ENERGY</span><b>יעל</b><span class="soc-vwho">רגע לפני היום</span></figcaption>
+        </figure>
+        <figure class="soc-vid" data-sku="relax">
+          <img src="__RLIFE__" alt="נועה עם mood Relax" loading="lazy">
+          <span class="soc-vplay" aria-hidden="true"></span>
+          <figcaption><span class="soc-vtag" style="--c:#5C8058">RELAX</span><b>נועה</b><span class="soc-vwho">רגע בין ההילדים</span></figcaption>
+        </figure>
+        <figure class="soc-vid" data-sku="relax">
+          <img src="__MIA__" alt="מיה — רגע של אור" loading="lazy">
+          <span class="soc-vplay" aria-hidden="true"></span>
+          <figcaption><span class="soc-vtag" style="--c:#5C8058">RELAX</span><b>מיה</b><span class="soc-vwho">רגע של אור</span></figcaption>
+        </figure>
+        <figure class="soc-vid" data-sku="sleep">
+          <img src="__SLIFE__" alt="שירה עם mood Sleep" loading="lazy">
+          <span class="soc-vplay" aria-hidden="true"></span>
+          <figcaption><span class="soc-vtag" style="--c:#5e7ba8">SLEEP</span><b>שירה</b><span class="soc-vwho">רגע לפני השינה</span></figcaption>
+        </figure>
+        <figure class="soc-vid" data-sku="sleep">
+          <img src="__TALI__" alt="טלי — טקס הלילה" loading="lazy">
+          <span class="soc-vplay" aria-hidden="true"></span>
+          <figcaption><span class="soc-vtag" style="--c:#5e7ba8">SLEEP</span><b>טלי</b><span class="soc-vwho">טקס הלילה</span></figcaption>
+        </figure>
+      </div>
+      <div class="soc-grid reveal">
+        <article class="soc-r" style="--dot:#FF6B35">
+          <span class="soc-rstars" aria-hidden="true">★★★★★</span>
+          <p class="soc-quote">שותה יותר מדי קפה מזמן. לקחתי ENERGY במקום הכוס של אחר הצהריים — עבד יותר טוב, בלי הרעש בראש.</p>
+          <div class="soc-who"><b>יעל א׳</b><span>ENERGY · לקוחה מאומתת</span></div>
         </article>
-        <article class="rv-card reveal" style="--dot:#5C8058">
-          <div class="rv-media"><img src="__RLIFE__" alt="דנה עם mood Relax"><button class="rv-play" aria-label="נגן ביקורת וידאו"></button><span class="rv-sku">RELAX</span></div>
-          <div class="rv-body"><span class="rv-cstars" aria-hidden="true">★★★★★</span><p class="rv-quote">הביס של אחרי הצהריים הפך לרגע הקטן שאני הכי מחכה לו ביום.</p><div class="rv-who"><b>דנה כ׳</b><span>לקוחה מאומתת</span></div></div>
+        <article class="soc-r" style="--dot:#FF6B35">
+          <span class="soc-rstars" aria-hidden="true">★★★★★</span>
+          <p class="soc-quote">אימון בוקר עם אחת של אנרג׳י — אנרגיה נקייה, בלי לחץ בטן. הפך לחלק מהריטואל שלי.</p>
+          <div class="soc-who"><b>אמיר ב׳</b><span>ENERGY · לקוח מאומת</span></div>
         </article>
-        <article class="rv-card reveal" style="--dot:#5e7ba8">
-          <div class="rv-media"><img src="__SLIFE__" alt="עדי עם mood Sleep"><button class="rv-play" aria-label="נגן ביקורת וידאו"></button><span class="rv-sku">SLEEP</span></div>
-          <div class="rv-body"><span class="rv-cstars" aria-hidden="true">★★★★★</span><p class="rv-quote">טקס הערב שלי. חצי שעה לפני השינה, והראש סוף סוף נרגע.</p><div class="rv-who"><b>עדי ר׳</b><span>לקוחה מאומתת</span></div></div>
+        <article class="soc-r" style="--dot:#5C8058">
+          <span class="soc-rstars" aria-hidden="true">★★★★★</span>
+          <p class="soc-quote">בין הילדים לשעת השינה שלהם אין לי רגע. הביס של אחר הצהריים הפך לרגע ההוא של עצמי.</p>
+          <div class="soc-who"><b>נועה ל׳</b><span>RELAX · לקוחה מאומתת</span></div>
+        </article>
+        <article class="soc-r" style="--dot:#5C8058">
+          <span class="soc-rstars" aria-hidden="true">★★★★★</span>
+          <p class="soc-quote">שוקולד לא צריך פורמולה בשביל להיות טוב. אבל כשהוא גם כזה — אתה פשוט לוקח.</p>
+          <div class="soc-who"><b>יובל ג׳</b><span>RELAX · לקוח מאומת</span></div>
+        </article>
+        <article class="soc-r" style="--dot:#5e7ba8">
+          <span class="soc-rstars" aria-hidden="true">★★★★★</span>
+          <p class="soc-quote">לוקחת חצי שעה לפני השינה. הראש לא נכבה מיד, אבל הוא נרגע. השינה שקטה יותר.</p>
+          <div class="soc-who"><b>שירה ק׳</b><span>SLEEP · לקוחה מאומתת</span></div>
+        </article>
+        <article class="soc-r" style="--dot:#5e7ba8">
+          <span class="soc-rstars" aria-hidden="true">★★★★★</span>
+          <p class="soc-quote">הביס של הלילה הפך למשהו שאני מחכה לו. יותר טעים ממה שחשבתי.</p>
+          <div class="soc-who"><b>עומר ש׳</b><span>SLEEP · לקוח מאומת</span></div>
         </article>
       </div>
-      <div class="rv-hint">מחליקים לעדות הבאה →</div>
     </section>
 """
 
 RV_CSS = """
-/* customer testimonials — video thumb + stars + quote + name */
-.rv{background:#fff;padding:clamp(48px,6vw,88px) 0 clamp(40px,5vw,64px);text-align:center;overflow:hidden}
-.rv-head{padding:0 20px;margin:0 auto;max-width:920px}
-.rv-h{font-size:clamp(25px,3.4vw,44px);font-weight:900;letter-spacing:-.03em;color:var(--ink);margin:0;line-height:1.16;direction:rtl}
-.rv-h u{text-decoration:none;box-shadow:inset 0 -.14em 0 #9bb488;padding-bottom:.01em}
-.rv-agg{display:inline-flex;align-items:center;gap:9px;margin-top:15px;direction:rtl}
-.rv-stars{color:#E8A54D;font-size:18px;letter-spacing:2px}
-.rv-agg-t{font-size:14px;font-weight:700;color:#6a6157}
-.rv-agg-t b{color:var(--ink);font-weight:900}
-.rv-track{display:flex;gap:clamp(16px,1.8vw,24px);overflow-x:auto;scroll-snap-type:x mandatory;padding:clamp(26px,3.4vw,42px) clamp(20px,7vw,110px);-webkit-overflow-scrolling:touch;scrollbar-width:none;direction:ltr;align-items:stretch}
-.rv-track::-webkit-scrollbar{display:none}
-.rv-card{flex:0 0 clamp(262px,26vw,320px);border-radius:22px;overflow:hidden;scroll-snap-align:center;box-shadow:0 24px 54px -20px rgba(41,25,10,.32);background:#fff;border:1px solid #efe7db;display:flex;flex-direction:column;text-align:right;direction:rtl}
-.rv-media{position:relative;height:clamp(190px,50vw,214px);background:#e9e1d4}
-.rv-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.rv-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.92);cursor:pointer;transition:transform .2s,background .2s;box-shadow:0 6px 18px rgba(0,0,0,.22)}
-.rv-play::after{content:"";position:absolute;top:50%;left:54%;transform:translate(-50%,-50%);border-style:solid;border-width:9px 0 9px 15px;border-color:transparent transparent transparent #2a1a0c}
-.rv-play:hover{transform:translate(-50%,-50%) scale(1.08);background:#fff}
-.rv-sku{position:absolute;right:12px;bottom:12px;color:#fff;font-size:11.5px;font-weight:900;letter-spacing:.08em;display:inline-flex;align-items:center;gap:6px;text-shadow:0 1px 5px rgba(0,0,0,.5)}
-.rv-sku::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 2px rgba(255,255,255,.3)}
-.rv-body{padding:17px 20px 20px;display:flex;flex-direction:column;gap:9px;flex:1}
-.rv-cstars{color:#E8A54D;font-size:15px;letter-spacing:1.5px}
-.rv-quote{font-size:15.5px;line-height:1.55;color:var(--ink);font-weight:600;margin:0;flex:1}
-.rv-who{display:flex;flex-direction:column;gap:1px;margin-top:2px}
-.rv-who b{font-size:14px;font-weight:900;color:var(--ink)}
-.rv-who span{font-size:11.5px;font-weight:700;color:#9a8f80}
-.rv-hint{font-size:13px;color:#8a7f70;font-weight:700}
-@media(max-width:860px){
-  .rv-card{flex-basis:min(300px,82vw);border-radius:18px}
-  .rv-track{padding:24px 9vw;scroll-padding:0 9vw}
-  .rv-h{font-size:26px}
+/* social proof — 3 reels-style videos + 6 written reviews */
+.soc{background:#fff;padding:clamp(48px,6vw,88px) clamp(20px,5vw,60px);direction:rtl}
+.soc-head{max-width:820px;margin:0 auto;text-align:center}
+.soc-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--energy);margin:0}
+.soc-h{font-size:clamp(28px,4.2vw,46px);line-height:1.05;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:10px 0 0}
+.soc-h u{text-decoration:none;box-shadow:inset 0 -.14em 0 #9bb488;padding-bottom:.01em}
+.soc-agg{display:inline-flex;align-items:center;gap:9px;margin-top:14px}
+.soc-stars{color:#E8A54D;font-size:18px;letter-spacing:2px}
+.soc-agg-t{font-size:14px;font-weight:700;color:#6a6157}
+.soc-agg-t b{color:var(--ink);font-weight:900}
+/* --- 3 reels-style videos --- */
+.soc-videos{max-width:1200px;margin:clamp(28px,4vw,44px) auto 0;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(10px,1.4vw,16px)}
+.soc-vid{position:relative;margin:0;aspect-ratio:9/16;background:#17100c;border-radius:22px;overflow:hidden;box-shadow:0 22px 54px -22px rgba(41,25,10,.35);transition:transform .3s cubic-bezier(.22,.8,.28,1)}
+.soc-vid:hover{transform:translateY(-4px)}
+.soc-vid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.soc-vid figcaption{position:absolute;left:0;right:0;bottom:0;padding:16px 18px 18px;color:#fff;background:linear-gradient(0deg,rgba(0,0,0,.7),rgba(0,0,0,.2) 55%,transparent 88%);display:flex;flex-direction:column;gap:2px;pointer-events:none}
+.soc-vtag{font-size:10.5px;font-weight:900;letter-spacing:.14em;color:var(--c,#fff);text-transform:uppercase;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.14);align-self:flex-start;margin-bottom:8px}
+.soc-vid figcaption b{font-size:17px;font-weight:900;color:#fff}
+.soc-vwho{font-size:12.5px;font-weight:700;color:#e3d8c8;opacity:.9}
+.soc-vplay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.92);transition:transform .22s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 22px rgba(0,0,0,.32);pointer-events:none}
+.soc-vplay::after{content:"";position:absolute;top:50%;left:54%;transform:translate(-50%,-50%);border-style:solid;border-width:9px 0 9px 14px;border-color:transparent transparent transparent #17100c}
+.soc-vid:hover .soc-vplay{transform:translate(-50%,-50%) scale(1.08)}
+/* --- 6 written reviews grid --- */
+.soc-grid{max-width:1100px;margin:clamp(28px,4vw,42px) auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.8vw,22px)}
+.soc-r{position:relative;background:#faf5ec;border:1px solid #ece4d5;border-radius:18px;padding:20px 22px 22px;display:flex;flex-direction:column;gap:10px;text-align:right;overflow:hidden}
+.soc-r::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--dot)}
+.soc-rstars{color:#E8A54D;font-size:14.5px;letter-spacing:1.5px}
+.soc-quote{margin:0;font-size:15px;line-height:1.6;color:#3f362d;font-weight:600;flex:1}
+.soc-who{display:flex;flex-direction:column;gap:1px;margin-top:2px}
+.soc-who b{font-size:14px;font-weight:900;color:var(--ink)}
+.soc-who span{font-size:11.5px;font-weight:700;color:#9a8f80}
+@media(max-width:900px){.soc-videos{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){
+  .soc-videos{grid-template-columns:repeat(2,1fr);gap:10px}
+  .soc-vid figcaption{padding:12px 14px 14px}
+  .soc-vid figcaption b{font-size:15px}
+  .soc-vwho{font-size:11.5px}
+  .soc-grid{grid-template-columns:1fr;gap:12px}
+  .soc-r{padding:18px 20px 20px}
 }
 """
 
@@ -1432,10 +1486,27 @@ def build_section(filename: str, is_cinematic: bool) -> str:
         # drop the leftover "build a bundle" link — that flow was removed
         html = html.replace(
             '<div class="bundle"><strong>רוצים לשלב בין כמה רגעים?</strong><a href="#">עברו לבניית באנדל</a></div>', "")
+        # wire the CTAs to the real product pages (open in top frame, not the srcdoc iframe)
+        html = re.sub(
+            r'<div class="content"><div class="label"><i></i>ENERGY(.*?)<a class="button" href="#">בחרו מארז</a></div>',
+            r'<div class="content"><div class="label"><i></i>ENERGY\1<a class="button" href="energy.html" target="_top">בחרו מארז</a></div>',
+            html, flags=re.S)
+        html = re.sub(
+            r'<div class="content"><div class="label"><i></i>RELAX(.*?)<a class="button" href="#">בחרו מארז</a></div>',
+            r'<div class="content"><div class="label"><i></i>RELAX\1<a class="button" href="relax.html" target="_top">בחרו מארז</a></div>',
+            html, flags=re.S)
+        html = re.sub(
+            r'<div class="content"><div class="label"><i></i>SLEEP(.*?)<a class="button" href="#">בחרו מארז</a></div>',
+            r'<div class="content"><div class="label"><i></i>SLEEP\1<a class="button" href="sleep.html" target="_top">בחרו מארז</a></div>',
+            html, flags=re.S)
         # the approved cards are oversized on mobile — tighten without touching
-        # the pristine approved source
+        # the pristine approved source; also add auto lifestyle-swap every ~4s so
+        # mobile viewers see the lifestyle image too (hover is desktop-only)
         html = html.replace("</head>",
-            "<style>.section{min-height:0}"  # fit the iframe to the cards — no dead space below
+            "<style>.section{min-height:0}"  # fit the iframe to the cards — no dead space
+            ".card.show-lifestyle .units{opacity:0;transform:scale(.97)}"
+            ".card.show-lifestyle .lifestyle{opacity:1;transform:scale(1)}"
+            ".card.show-lifestyle .quantity{opacity:0}"
             "@media(max-width:700px){"
             ".section{min-height:0;padding:26px 0 18px}"
             ".card{flex:0 0 80vw}"
@@ -1446,6 +1517,27 @@ def build_section(filename: str, is_cinematic: bool) -> str:
             ".monthly{padding:8px 0 12px}.button{height:44px}"
             ".intro{margin-bottom:18px}h1{font-size:29px}"
             "}</style></head>")
+        # inject the auto-cycle JS just before </body> — cycles each card between
+        # units and lifestyle so mobile viewers see both. Hover still works via CSS.
+        js = ('<script>'
+              '(function(){var cards=document.querySelectorAll(".card");'
+              'if(!cards.length)return;'
+              'var timers=new Map();'
+              'function start(c,i){if(timers.has(c))return;'
+              '  var flip=function(){c.classList.toggle("show-lifestyle");'
+              '    var next=c.classList.contains("show-lifestyle")?3200:4200;'
+              '    timers.set(c,setTimeout(flip,next));};'
+              '  timers.set(c,setTimeout(flip,1600+i*700));' # stagger card starts
+              '}'
+              'function stop(c){if(timers.has(c)){clearTimeout(timers.get(c));timers.delete(c);}}'
+              'if("IntersectionObserver" in window){'
+              ' var io=new IntersectionObserver(function(es){es.forEach(function(e){'
+              '   var i=[].indexOf.call(cards,e.target);'
+              '   if(e.isIntersecting)start(e.target,i);else stop(e.target);});},{threshold:.35});'
+              ' cards.forEach(function(c){io.observe(c);});'
+              '}else{cards.forEach(function(c,i){start(c,i);});}})();'
+              '</script>')
+        html = html.replace("</body>", js + "</body>")
     return html
 
 
@@ -1533,6 +1625,9 @@ def main():
     shell = shell.replace("__DUOMAN__", data_uri("duo-man.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCMOODS__", data_uri("choc-moods.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
+    # extra lifestyle thumbnails for the social-proof strip (Mia + Tali)
+    shell = shell.replace("__MIA__",  data_uri("duo-woman.jpg",     HOME_ASSETS))
+    shell = shell.replace("__TALI__", data_uri("tali-portrait.jpg", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
     shell = shell.replace("__RONEN__", data_uri("ronen-real.jpg"))
     shell = shell.replace("__EDISC__", data_uri("energy-disc.jpg", HOME_ASSETS))

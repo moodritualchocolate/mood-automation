@@ -198,6 +198,34 @@ def main():
             if marker in html:
                 html = html.replace(marker, data_uri(fname))
         html = html.replace("__FORMULAXP__", formula_xp(sku))
+        # wire the nav / drawer / x-sell links: the template ships them as
+        # href="#" placeholders; point them at real destinations so all pages
+        # are one connected site
+        NAV_HREFS = [
+            ('<a href="#">בית</a>',              '<a href="home.html">בית</a>'),
+            ('<a href="#">המוצרים</a>',           '<a href="home.html#products">המוצרים</a>'),
+            ('<a href="#">איך זה עובד</a>',      '<a href="home.html#formulas">איך זה עובד</a>'),
+            ('<a href="#">הסיפור שלנו</a>',      '<a href="home.html#founders">הסיפור שלנו</a>'),
+            ('<a href="#">שאלות</a>',            '<a href="home.html#faq">שאלות</a>'),
+            ('<a href="#">שאלות ותשובות</a>',    '<a href="home.html#faq">שאלות ותשובות</a>'),
+            ('<a href="#">חשבון · סל</a>',       '<a href="home.html#club">מועדון החברים</a>'),
+        ]
+        for old, new in NAV_HREFS:
+            html = html.replace(old, new)
+        # swap the CSS-rendered wordmark for the real mood logo (nav + footer)
+        logo_uri = ("data:image/png;base64," +
+                    base64.b64encode((ROOT/"home-assets/logo-black.png").read_bytes()).decode())
+        html = html.replace('<span class="logo">mo<span class="o2">o</span>d</span>',
+                            f'<img class="logo" src="{logo_uri}" alt="mood · ritual chocolate" style="height:34px;width:auto">')
+        html = html.replace('<div class="logo">mo<span class="o2">o</span>d</div>',
+                            f'<img class="logo" src="{logo_uri}" alt="mood · ritual chocolate" style="height:24px;width:auto;display:inline-block;vertical-align:middle;margin-inline-end:8px">')
+        # x-sell cards: on each PDP, point them at the other two SKUs
+        others = [s for s in ("energy","relax","sleep") if s != sku]
+        for other in others:
+            html = html.replace(
+                f'<a class="xcard rv" href="#"><div class="th"',
+                f'<a class="xcard rv" href="{other}.html"><div class="th"',
+                1)
         checkable = re.sub(r'srcdoc="[^"]*"', '', html)
         left = re.findall(r"__[A-Z]+__", checkable)
         if left:
