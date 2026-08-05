@@ -200,7 +200,8 @@ FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמ�
 CLOSE = """    <section class="rc" id="club" aria-label="מועדון החברים של mood">
       <div class="club reveal">
         <div class="club-media">
-          <img src="__CLUBIMG__" alt="הקופסה החודשית של mood — ENERGY · RELAX · SLEEP">
+          <img class="club-ph club-ph-w" src="__DUOWOMAN__" alt="רגע של רוגע עם mood">
+          <img class="club-ph club-ph-m" src="__DUOMAN__" alt="רגע של שמחה עם mood">
           <span class="club-badge">המסלול המשתלם</span>
         </div>
         <div class="club-copy">
@@ -224,8 +225,10 @@ RC_CSS = """
 /* closer — the members club: the best way to keep the ritual going */
 .rc{position:relative;background:#efe7d9;padding:clamp(52px,7vw,104px) clamp(20px,5vw,60px);direction:rtl}
 .club{max-width:1060px;margin:0 auto;background:#fff;border-radius:clamp(20px,2.6vw,30px);overflow:hidden;box-shadow:0 44px 100px -34px rgba(41,25,10,.42);display:grid;grid-template-columns:1fr 1.12fr;align-items:stretch}
-.club-media{position:relative;background:linear-gradient(160deg,#f4e8d7,#e6d4bd);min-height:100%;overflow:hidden}
+.club-media{position:relative;background:#efe7d9;min-height:100%;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .club-media img{width:100%;height:100%;object-fit:cover;display:block}
+.club-ph-w{object-position:center 30%}
+.club-ph-m{object-position:center 34%}
 .club-badge{position:absolute;top:18px;inset-inline-start:18px;background:#2a1a0e;color:#fff;font-size:11px;font-weight:900;letter-spacing:.08em;padding:8px 15px;border-radius:999px;box-shadow:0 10px 22px -8px rgba(0,0,0,.4)}
 .club-copy{padding:clamp(34px,4.6vw,64px);text-align:right;display:flex;flex-direction:column;justify-content:center}
 .club-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:#c07f43}
@@ -690,10 +693,10 @@ FL_CSS = """
 .fl-body{position:relative;overflow:hidden;padding:clamp(34px,4.6vw,68px);direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(180deg,#fffdf9,#fdf6ea)}
 .fl-qm{position:absolute;top:clamp(-14px,-.6vw,2px);inset-inline-start:clamp(22px,3.4vw,50px);font-family:'GveretLevin',cursive;font-size:clamp(96px,12vw,164px);line-height:1;color:#c07f43;opacity:.16;pointer-events:none;z-index:0}
 .fl-lead,.fl-body p,.fl-signs,.fl-closer,.fl-prov{position:relative;z-index:1}
-.fl-lead{font-family:'GveretLevin',cursive;font-size:clamp(28px,3vw,42px);color:#43301f;margin:0 0 16px;line-height:1.2}
-.fl-body p{font-family:'GveretLevin',cursive;color:#4a3826;font-size:clamp(19px,1.7vw,25px);line-height:1.72;margin:0 0 16px;max-width:32ch}
-.fl-body p strong{color:#7a4a1e;box-shadow:inset 0 -.34em 0 rgba(192,127,67,.24)}
-.fl-closer{font-family:'GveretLevin',cursive;color:#4a3826;font-size:clamp(20px,1.8vw,26px);line-height:1.4;margin:0 0 2px}
+.fl-body p.fl-lead{font-family:'GveretLevin',cursive;font-size:clamp(28px,3vw,42px);color:#43301f;margin:0 0 16px;line-height:1.2;max-width:none}
+.fl-body p{font-family:inherit;color:#544a3f;font-size:clamp(16px,1.35vw,18.5px);line-height:1.8;margin:0 0 16px;max-width:44ch}
+.fl-body p strong{font-weight:800;color:#43301f;box-shadow:inset 0 -.4em 0 rgba(192,127,67,.22)}
+.fl-body p.fl-closer{font-family:'GveretLevin',cursive;color:#4a3826;font-size:clamp(20px,1.8vw,26px);line-height:1.4;margin:0 0 2px;max-width:none}
 .fl-prov{margin-top:16px;font-size:11px;font-weight:800;letter-spacing:.16em;color:#b3a795}
 .fl-signs{display:flex;flex-wrap:wrap;gap:14px clamp(30px,4vw,54px);align-items:flex-end;margin:clamp(16px,2.4vw,26px) 0 0;padding-top:clamp(16px,2.2vw,24px);border-top:1px solid #f0e7d8}
 .fl-sig{display:flex;flex-direction:column}
@@ -705,8 +708,8 @@ FL_CSS = """
   .fl-card{grid-template-columns:1fr}
   .fl-photo{min-height:min(86vw,420px);height:min(86vw,420px)}
   .fl-body{padding:32px 26px 34px}
-  .fl-lead{font-size:30px;margin-bottom:14px}
-  .fl-body p{font-size:21px;line-height:1.72;margin-bottom:14px;max-width:none}
+  .fl-body p.fl-lead{font-size:30px;margin-bottom:14px}
+  .fl-body p{font-size:16.5px;line-height:1.8;margin-bottom:14px;max-width:none}
   .fl-signs{gap:12px 40px;margin-top:20px}
   .fl-sig-name{font-size:30px}
 }
@@ -1309,7 +1312,8 @@ def main():
     shell = shell.replace("__CHOCFLOAT__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBITE__", data_uri("choc-real-bite.jpg", HOME_ASSETS))
     shell = shell.replace("__TASTEVID__", data_uri("taste-vid.mp4", HOME_ASSETS))
-    shell = shell.replace("__CLUBIMG__", data_uri("choc-moods.jpg", HOME_ASSETS))
+    shell = shell.replace("__DUOWOMAN__", data_uri("duo-woman.jpg", HOME_ASSETS))
+    shell = shell.replace("__DUOMAN__", data_uri("duo-man.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCMOODS__", data_uri("choc-moods.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
