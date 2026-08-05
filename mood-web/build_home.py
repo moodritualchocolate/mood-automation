@@ -182,60 +182,71 @@ FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמ�
           <div class="fl-body">
             <span class="fl-qm" aria-hidden="true">”</span>
             <p class="fl-lead">היי, אנחנו נדב ומתיאס.</p>
-            <p>לקח לנו שנתיים ואינספור נסיונות. <strong>סירבנו להתפשר על פרט אחד</strong> — לא על הטעם, לא על הפורמולה, לא על ההרגשה.</p>
+            <p>לפני שלוש שנים ישבנו במטבח קטן עם חלום אחד — ריטואל יומי קטן שבאמת עושה טוב. לקח שנתיים ואינספור נסיונות, ו<strong>סירבנו להתפשר על פרט אחד</strong> — לא על הטעם, לא על הפורמולה, לא על ההרגשה.</p>
             <p>לקחנו רק את הטוב ביותר, עד שכל קובייה יצאה בדיוק כמו שחלמנו. וזה מרגש אותנו לחלוק אותה איתכם.</p>
+            <p class="fl-closer">באהבה,</p>
             <div class="fl-signs">
               <div class="fl-sig"><span class="fl-sig-name">נדב יצחקי</span><span class="fl-sig-role">מייסד mood</span></div>
               <div class="fl-sig"><span class="fl-sig-name">מתיאס דומינגז</span><span class="fl-sig-role">מייסד mood</span></div>
             </div>
+            <div class="fl-prov">מאז 2023 · תוצרת ישראל</div>
           </div>
         </div>
       </div>
     </section>
 """
 
-CLOSE = """    <section class="rc" id="ritual" aria-label="התחילו את הריטואל של mood" style="--rc:#E8A566;--rc-ink:#5a3418;--rc-tint:#f8f0e4">
-      <div class="rc-in reveal">
-        <div class="rc-eyebrow">הריטואל של mood</div>
-        <h2 class="rc-h">30 יום. קובייה ביום.<br><span>מצב הרוח שבחרתם.</span></h2>
-        <div class="rc-days" id="rcDays" aria-hidden="true"></div>
-        <div class="rc-pick" role="tablist" aria-label="בחרו mood">
-          <button class="on" data-sku="energy">ENERGY</button>
-          <button data-sku="relax">RELAX</button>
-          <button data-sku="sleep">SLEEP</button>
+CLOSE = """    <section class="rc" id="ritual" aria-label="הרגע של mood">
+      <div class="rc-grid">
+        <div class="rc-copy reveal">
+          <p class="rc-eyebrow">RELAX · רגע של אחר צהריים</p>
+          <h2 class="rc-h">רגע קטן.<br><span>שינוי שמרגישים.</span></h2>
+          <p class="rc-sub">בין כל מה שכבר קרה לכל מה שעוד מחכה — עוצרים לביס אחד, ומורידים הילוך.</p>
+          <div class="rc-cta">
+            <a class="rc-btn rc-btn-primary" href="#products">מתחילים את הריטואל</a>
+            <a class="rc-btn rc-btn-ghost" href="#products">לכל הרגעים</a>
+          </div>
+          <ul class="rc-chips"><li>ביס אחד ביום</li><li>30 יחידות</li><li>טקס אישי</li></ul>
         </div>
-        <a class="rc-cta" href="#products">מתחילים את הריטואל</a>
-        <p class="rc-guar">לא הרגשתם את ההבדל תוך 30 יום? נחזיר לכם את הכסף.</p>
-        <div class="rc-trust"><span>משלוח חינם</span><span>כשר פרווה</span><span>לעצור מתי שרוצים</span></div>
+        <div class="rc-media reveal">
+          <img class="rc-ph rc-ph-w" src="__DUOWOMAN__" alt="רגע של רוגע עם mood">
+          <img class="rc-ph rc-ph-m" src="__DUOMAN__" alt="רגע של שמחה עם mood">
+        </div>
       </div>
     </section>
 """
 
 RC_CSS = """
-/* ritual closer — mood-responsive 30-day close */
-.rc{position:relative;background:var(--rc-tint,#f8f0e4);padding:clamp(56px,7.5vw,112px) clamp(20px,5vw,64px);text-align:center;direction:rtl;overflow:hidden;transition:background .5s}
-.rc::before{content:"";position:absolute;top:-32%;left:50%;transform:translateX(-50%);width:min(120%,920px);height:72%;background:radial-gradient(closest-side,var(--rc),transparent 72%);opacity:.16;pointer-events:none;transition:opacity .5s}
-.rc-in{position:relative;z-index:1;max-width:720px;margin:0 auto}
-.rc-eyebrow{font-size:12px;font-weight:900;letter-spacing:.22em;color:var(--rc-ink);opacity:.75}
-.rc-h{font-size:clamp(32px,5vw,60px);line-height:1.02;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
-.rc-h span{color:var(--rc-ink)}
-.rc-days{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:372px;margin:clamp(24px,3vw,34px) auto 0}
-.rc-day{width:12px;height:12px;border-radius:4px;background:var(--rc);transition:background .5s,opacity .5s}
-.rc-pick{display:inline-flex;gap:6px;margin:clamp(26px,3.4vw,38px) 0 0;background:#fff;border:1px solid rgba(41,25,10,.1);border-radius:999px;padding:6px;box-shadow:0 10px 26px -12px rgba(41,25,10,.22)}
-.rc-pick button{padding:12px 26px;border:0;border-radius:999px;background:transparent;color:#6a6157;font-size:14px;font-weight:900;letter-spacing:.05em;cursor:pointer;transition:.2s}
-.rc-pick button:hover{color:var(--ink)}
-.rc-pick button.on{background:var(--rc);color:var(--rc-ink);box-shadow:0 6px 16px -6px var(--rc)}
-.rc-cta{display:block;width:min(360px,100%);margin:clamp(22px,2.8vw,30px) auto 0;padding:18px 28px;border-radius:999px;background:var(--ink);color:#fff;font-size:16px;font-weight:900;text-decoration:none;transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s}
-.rc-cta:hover{transform:translateY(-2px) scale(1.01);box-shadow:0 16px 34px -12px rgba(41,25,10,.5)}
-.rc-cta:active{transform:translateY(0) scale(.99)}
-.rc-guar{margin:16px auto 0;max-width:430px;font-size:14px;font-weight:800;color:var(--ink);line-height:1.5}
-.rc-trust{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:16px auto 0}
-.rc-trust span{font-size:12px;font-weight:800;color:var(--rc-ink);background:rgba(255,255,255,.6);border:1px solid rgba(41,25,10,.08);border-radius:999px;padding:7px 14px}
-@media(max-width:600px){
-  .rc-days{max-width:300px;gap:5px}
-  .rc-day{width:11px;height:11px}
-  .rc-pick button{padding:11px 18px;font-size:13px}
-  .rc-trust span{font-size:11px;padding:6px 12px}
+/* closer — the RELAX moment, both people, live copy */
+.rc{position:relative;background:#eef3ea;overflow:hidden;direction:rtl}
+.rc-grid{display:grid;grid-template-columns:1fr 1.12fr;align-items:stretch;min-height:min(80vh,680px)}
+.rc-copy{display:flex;flex-direction:column;justify-content:center;text-align:right;padding:clamp(40px,5.5vw,92px);position:relative;z-index:2}
+.rc-eyebrow{font-size:12px;font-weight:900;letter-spacing:.16em;color:#4c7a4a}
+.rc-h{font-size:clamp(34px,4.8vw,64px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
+.rc-h span{color:#4c7a4a}
+.rc-sub{margin:16px 0 0;max-width:430px;color:#5a6a52;font-size:clamp(15px,1.4vw,17.5px);line-height:1.6}
+.rc-cta{display:flex;gap:12px;margin:28px 0 0;flex-wrap:wrap}
+.rc-btn{padding:16px 30px;border-radius:999px;font-size:15px;font-weight:900;text-decoration:none;transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s}
+.rc-btn-primary{background:#9fce8f;color:#22371c;box-shadow:0 14px 28px -10px rgba(120,180,110,.75)}
+.rc-btn-primary:hover{transform:translateY(-2px) scale(1.01)}
+.rc-btn-ghost{background:#fff;color:var(--ink);box-shadow:0 10px 22px -12px rgba(41,25,10,.34)}
+.rc-btn-ghost:hover{transform:translateY(-2px)}
+.rc-chips{list-style:none;display:flex;flex-wrap:wrap;gap:18px;margin:26px 0 0;padding:0}
+.rc-chips li{font-size:12.5px;font-weight:800;color:#4c7a4a;display:flex;align-items:center;gap:7px}
+.rc-chips li::before{content:"";width:7px;height:7px;border-radius:50%;background:#9fce8f}
+.rc-media{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#eef3ea}
+.rc-ph{width:100%;height:100%;object-fit:cover;display:block}
+.rc-ph-w{object-position:center 30%}
+.rc-ph-m{object-position:center 34%}
+.rc-media::after{content:"";position:absolute;top:0;bottom:0;right:0;width:26%;background:linear-gradient(to left,#eef3ea 6%,rgba(238,243,234,0));pointer-events:none;z-index:1}
+@media(max-width:860px){
+  .rc-grid{grid-template-columns:1fr}
+  .rc-media{order:1;min-height:min(58vw,320px);height:min(58vw,320px)}
+  .rc-copy{order:2;text-align:center;align-items:center;padding:34px 22px 44px}
+  .rc-sub{max-width:none}
+  .rc-cta{justify-content:center}
+  .rc-chips{justify-content:center;gap:14px}
+  .rc-media::after{top:auto;bottom:0;right:0;left:0;width:auto;height:22%;background:linear-gradient(to top,#eef3ea 6%,rgba(238,243,234,0))}
 }
 """
 
@@ -647,7 +658,7 @@ TS_CSS = """
 .ts-p{margin:16px auto 0;max-width:560px;color:var(--muted);font-size:clamp(15px,1.4vw,17.5px);line-height:1.65}
 .ts-chips{list-style:none;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:24px 0 0;padding:0}
 .ts-chips li{border:1px solid #cadcb9;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:800;color:#425a30;background:#e8f0dd}
-.ts-media{position:relative;margin:clamp(30px,4.2vw,54px) auto 0;max-width:1000px;height:min(56vh,520px);border-radius:clamp(18px,2.2vw,28px);overflow:hidden;background:#efe7d9;box-shadow:0 44px 104px -42px rgba(41,25,10,.6),0 0 110px -24px rgba(196,110,54,.34),0 2px 6px rgba(41,25,10,.14)}
+.ts-media{position:relative;margin:clamp(30px,4vw,50px) auto 0;max-width:940px;height:min(52vh,470px);border-radius:clamp(18px,2.2vw,26px);overflow:hidden;background:#efe7d9;box-shadow:0 2px 5px rgba(41,25,10,.16),0 26px 50px -26px rgba(41,25,10,.55),0 60px 90px -60px rgba(196,110,54,.4)}
 .ts-media>img,.ts-media>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .ts-vid{object-position:center 52%}
 .ts-media::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(0deg,rgba(20,12,6,.58),rgba(20,12,6,0) 34%),linear-gradient(180deg,rgba(255,255,255,.12),transparent 12%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
@@ -674,12 +685,15 @@ FL_CSS = """
 .fl-wrap{max-width:1060px;margin:0 auto}
 .fl-eyebrow{text-align:center;font-size:12px;font-weight:900;letter-spacing:.24em;color:#c07f43;margin-bottom:clamp(22px,3.5vw,40px)}
 .fl-card{background:#fff;border-radius:clamp(18px,2.4vw,28px);overflow:hidden;box-shadow:0 44px 100px -34px rgba(41,25,10,.42);display:grid;grid-template-columns:.92fr 1.08fr;align-items:stretch}
-.fl-photo{position:relative;margin:0;min-height:100%;background:#e4dccd}
-.fl-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 24%}
-.fl-photo figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 20px 16px;text-align:center;font-size:12.5px;font-weight:800;color:#fff;background:linear-gradient(0deg,rgba(20,12,6,.6),transparent)}
-.fl-body{position:relative;overflow:hidden;padding:clamp(34px,4.6vw,68px);direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center}
+.fl-photo{position:relative;margin:0;min-height:100%;background:#e4dccd;overflow:hidden}
+.fl-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%;filter:saturate(1.06) contrast(1.03)}
+.fl-photo::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(74,42,16,.14),transparent 30%),linear-gradient(0deg,rgba(28,15,6,.6),transparent 46%);box-shadow:inset 0 0 130px rgba(52,28,10,.34)}
+.fl-photo figcaption{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:26px 20px 16px;text-align:center;font-size:12.5px;font-weight:800;letter-spacing:.02em;color:#f6ece0}
+.fl-body{position:relative;overflow:hidden;padding:clamp(34px,4.6vw,68px);direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(180deg,#fffdf9,#fdf6ea)}
 .fl-qm{position:absolute;top:clamp(-8px,-.4vw,6px);inset-inline-start:clamp(22px,3.4vw,50px);font-family:Georgia,"Times New Roman",serif;font-size:clamp(92px,11vw,152px);line-height:1;font-weight:700;color:var(--ink);opacity:.06;pointer-events:none;z-index:0}
-.fl-lead,.fl-body p,.fl-signs{position:relative;z-index:1}
+.fl-lead,.fl-body p,.fl-signs,.fl-closer,.fl-prov{position:relative;z-index:1}
+.fl-closer{color:#5a5148;font-size:clamp(16px,1.35vw,18.5px);line-height:1.6;margin:0 0 4px;font-style:italic}
+.fl-prov{margin-top:14px;font-size:11px;font-weight:800;letter-spacing:.16em;color:#b3a795}
 .fl-lead{font-size:clamp(24px,2.7vw,36px);font-weight:900;letter-spacing:-.03em;color:var(--ink);margin:0 0 20px;line-height:1.05}
 .fl-body p{color:#5a5148;font-size:clamp(16px,1.35vw,18.5px);line-height:1.78;margin:0 0 18px;max-width:46ch}
 .fl-body p strong{font-weight:900;color:var(--ink);box-shadow:inset 0 -.42em 0 rgba(192,127,67,.2)}
@@ -1286,7 +1300,7 @@ def main():
     shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
-    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + RITUAL_JS + '</body>')
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
@@ -1296,6 +1310,8 @@ def main():
     shell = shell.replace("__CHOCFLOAT__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBITE__", data_uri("choc-real-bite.jpg", HOME_ASSETS))
     shell = shell.replace("__TASTEVID__", data_uri("taste-vid.mp4", HOME_ASSETS))
+    shell = shell.replace("__DUOWOMAN__", data_uri("duo-woman.jpg", HOME_ASSETS))
+    shell = shell.replace("__DUOMAN__", data_uri("duo-man.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCMOODS__", data_uri("choc-moods.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
