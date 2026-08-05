@@ -30,7 +30,8 @@ APP = ROOT / "approved"
 ASSETS = APP / "assets"
 HOME_ASSETS = ROOT / "home-assets"
 MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
-        ".webp": "image/webp", ".mp4": "video/mp4", ".gif": "image/gif"}
+        ".webp": "image/webp", ".mp4": "video/mp4", ".gif": "image/gif",
+        ".woff2": "font/woff2"}
 
 FONTS = (ROOT / "fonts-embed.css").read_text(encoding="utf-8")
 
@@ -196,57 +197,52 @@ FOUNDERS = """    <section class="fl" id="founders" aria-label="מכתב מהמ�
     </section>
 """
 
-CLOSE = """    <section class="rc" id="ritual" aria-label="הרגע של mood">
-      <div class="rc-grid">
-        <div class="rc-copy reveal">
-          <p class="rc-eyebrow">RELAX · רגע של אחר צהריים</p>
-          <h2 class="rc-h">רגע קטן.<br><span>שינוי שמרגישים.</span></h2>
-          <p class="rc-sub">בין כל מה שכבר קרה לכל מה שעוד מחכה — עוצרים לביס אחד, ומורידים הילוך.</p>
-          <div class="rc-cta">
-            <a class="rc-btn rc-btn-primary" href="#products">מתחילים את הריטואל</a>
-            <a class="rc-btn rc-btn-ghost" href="#products">לכל הרגעים</a>
-          </div>
-          <ul class="rc-chips"><li>ביס אחד ביום</li><li>30 יחידות</li><li>טקס אישי</li></ul>
+CLOSE = """    <section class="rc" id="club" aria-label="מועדון החברים של mood">
+      <div class="club reveal">
+        <div class="club-media">
+          <img src="__CLUBIMG__" alt="הקופסה החודשית של mood — ENERGY · RELAX · SLEEP">
+          <span class="club-badge">המסלול המשתלם</span>
         </div>
-        <div class="rc-media reveal">
-          <img class="rc-ph rc-ph-w" src="__DUOWOMAN__" alt="רגע של רוגע עם mood">
-          <img class="rc-ph rc-ph-m" src="__DUOMAN__" alt="רגע של שמחה עם mood">
+        <div class="club-copy">
+          <p class="club-eyebrow">מועדון mood</p>
+          <h2 class="club-h">הריטואל שמגיע<br>אליכם כל חודש.</h2>
+          <p class="club-sub">חברי המועדון מקבלים את הקופסה החודשית עד הבית — במחיר חבר קבוע, בלי לחשוב על זה.</p>
+          <ul class="club-benes">
+            <li>מחיר חבר קבוע — חוסכים בכל חודש</li>
+            <li>משלוח חינם, כל חודש</li>
+            <li>גישה ראשונה למהדורות ולטעמים חדשים</li>
+            <li>לדלג, לעצור או לבטל — בקליק</li>
+          </ul>
+          <a class="club-cta" href="#products">הצטרפו למועדון</a>
+          <p class="club-note">בלי התחייבות · מבטלים מתי שרוצים</p>
         </div>
       </div>
     </section>
 """
 
 RC_CSS = """
-/* closer — the RELAX moment, both people, live copy */
-.rc{position:relative;background:#eef3ea;overflow:hidden;direction:rtl}
-.rc-grid{display:grid;grid-template-columns:1fr 1.12fr;align-items:stretch;min-height:min(80vh,680px)}
-.rc-copy{display:flex;flex-direction:column;justify-content:center;text-align:right;padding:clamp(40px,5.5vw,92px);position:relative;z-index:2}
-.rc-eyebrow{font-size:12px;font-weight:900;letter-spacing:.16em;color:#4c7a4a}
-.rc-h{font-size:clamp(34px,4.8vw,64px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:14px 0 0}
-.rc-h span{color:#4c7a4a}
-.rc-sub{margin:16px 0 0;max-width:430px;color:#5a6a52;font-size:clamp(15px,1.4vw,17.5px);line-height:1.6}
-.rc-cta{display:flex;gap:12px;margin:28px 0 0;flex-wrap:wrap}
-.rc-btn{padding:16px 30px;border-radius:999px;font-size:15px;font-weight:900;text-decoration:none;transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s}
-.rc-btn-primary{background:#9fce8f;color:#22371c;box-shadow:0 14px 28px -10px rgba(120,180,110,.75)}
-.rc-btn-primary:hover{transform:translateY(-2px) scale(1.01)}
-.rc-btn-ghost{background:#fff;color:var(--ink);box-shadow:0 10px 22px -12px rgba(41,25,10,.34)}
-.rc-btn-ghost:hover{transform:translateY(-2px)}
-.rc-chips{list-style:none;display:flex;flex-wrap:wrap;gap:18px;margin:26px 0 0;padding:0}
-.rc-chips li{font-size:12.5px;font-weight:800;color:#4c7a4a;display:flex;align-items:center;gap:7px}
-.rc-chips li::before{content:"";width:7px;height:7px;border-radius:50%;background:#9fce8f}
-.rc-media{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#eef3ea}
-.rc-ph{width:100%;height:100%;object-fit:cover;display:block}
-.rc-ph-w{object-position:center 30%}
-.rc-ph-m{object-position:center 34%}
-.rc-media::after{content:"";position:absolute;top:0;bottom:0;right:0;width:26%;background:linear-gradient(to left,#eef3ea 6%,rgba(238,243,234,0));pointer-events:none;z-index:1}
-@media(max-width:860px){
-  .rc-grid{grid-template-columns:1fr}
-  .rc-media{order:1;min-height:min(58vw,320px);height:min(58vw,320px)}
-  .rc-copy{order:2;text-align:center;align-items:center;padding:34px 22px 44px}
-  .rc-sub{max-width:none}
-  .rc-cta{justify-content:center}
-  .rc-chips{justify-content:center;gap:14px}
-  .rc-media::after{top:auto;bottom:0;right:0;left:0;width:auto;height:22%;background:linear-gradient(to top,#eef3ea 6%,rgba(238,243,234,0))}
+/* closer — the members club: the best way to keep the ritual going */
+.rc{position:relative;background:#efe7d9;padding:clamp(52px,7vw,104px) clamp(20px,5vw,60px);direction:rtl}
+.club{max-width:1060px;margin:0 auto;background:#fff;border-radius:clamp(20px,2.6vw,30px);overflow:hidden;box-shadow:0 44px 100px -34px rgba(41,25,10,.42);display:grid;grid-template-columns:1fr 1.12fr;align-items:stretch}
+.club-media{position:relative;background:linear-gradient(160deg,#f4e8d7,#e6d4bd);min-height:100%;overflow:hidden}
+.club-media img{width:100%;height:100%;object-fit:cover;display:block}
+.club-badge{position:absolute;top:18px;inset-inline-start:18px;background:#2a1a0e;color:#fff;font-size:11px;font-weight:900;letter-spacing:.08em;padding:8px 15px;border-radius:999px;box-shadow:0 10px 22px -8px rgba(0,0,0,.4)}
+.club-copy{padding:clamp(34px,4.6vw,64px);text-align:right;display:flex;flex-direction:column;justify-content:center}
+.club-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:#c07f43}
+.club-h{font-size:clamp(30px,4.2vw,52px);line-height:1.02;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:12px 0 0}
+.club-sub{margin:14px 0 0;max-width:440px;color:#6a6157;font-size:clamp(15px,1.35vw,17px);line-height:1.6}
+.club-benes{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:12px}
+.club-benes li{position:relative;padding-inline-start:30px;font-size:14.5px;font-weight:700;color:#3f362d;line-height:1.4}
+.club-benes li::before{content:"✓";position:absolute;inset-inline-start:0;top:-2px;width:21px;height:21px;border-radius:50%;background:#eaf0e2;color:#4c7a4a;font-size:12px;font-weight:900;display:grid;place-items:center}
+.club-cta{display:inline-block;align-self:flex-start;margin:26px 0 0;padding:17px 42px;border-radius:999px;background:var(--ink);color:#fff;font-size:16px;font-weight:900;text-decoration:none;transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s}
+.club-cta:hover{transform:translateY(-2px) scale(1.01);box-shadow:0 16px 34px -12px rgba(41,25,10,.5)}
+.club-note{margin:14px 0 0;font-size:12.5px;font-weight:700;color:#9a8f80}
+@media(max-width:820px){
+  .club{grid-template-columns:1fr}
+  .club-media{order:1;min-height:min(64vw,320px);height:min(64vw,320px)}
+  .club-copy{order:2;padding:32px 24px 40px;text-align:center;align-items:center}
+  .club-benes{text-align:right}
+  .club-cta{align-self:center}
 }
 """
 
@@ -464,48 +460,50 @@ FORMULAS = """    <section class="fml" id="formulas" aria-label="הפורמול�
 
 FORMULAS_CSS = """
 /* clean formula — tabs on top (clearly buttons), pouch + ingredient list */
-.fml{background:#efe7d9;padding:clamp(46px,6vw,84px) clamp(20px,5vw,64px) clamp(24px,3vw,40px)}
+.fml{background:#efe7d9;padding:clamp(40px,5vw,72px) clamp(20px,5vw,64px) clamp(30px,3.4vw,48px)}
 .fml-head{max-width:1100px;margin:0 auto;text-align:center}
 .fml-eyebrow{font-size:12px;font-weight:900;letter-spacing:.14em;color:var(--accent);transition:color .4s}
 .fml-tabs{display:inline-flex;gap:6px;margin-top:16px;background:#fff;border:1px solid #e4d7c2;border-radius:999px;padding:6px;box-shadow:0 8px 22px rgba(41,25,10,.08)}
 .fml-tabs button{padding:12px 30px;border:0;border-radius:999px;background:transparent;color:#6a6157;font-size:14px;font-weight:900;letter-spacing:.06em;cursor:pointer;transition:.2s}
 .fml-tabs button:hover{color:var(--ink)}
 .fml-tabs button.on{background:var(--accent);color:var(--accent-ink,#fff);box-shadow:0 6px 16px -4px var(--accent)}
-.fml-body{max-width:980px;margin:clamp(20px,3vw,36px) auto 0;display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(20px,3.5vw,48px);align-items:center}
-.fml-media{position:relative;display:grid;place-items:center;min-height:min(38vh,320px)}
+.fml-body{max-width:980px;margin:clamp(16px,2.2vw,28px) auto 0;display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(18px,3vw,44px);align-items:center}
+.fml-media{position:relative;display:grid;place-items:center;min-height:min(34vh,300px)}
 .fml-ghost{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(70px,12vw,150px);font-weight:900;letter-spacing:-.04em;color:var(--accent);opacity:.09;pointer-events:none;transition:color .4s}
 .fml-pouch{grid-area:1/1;max-width:min(66%,236px);height:auto;filter:drop-shadow(0 26px 40px rgba(41,25,10,.22));opacity:0;transform:scale(.94);transition:opacity .45s,transform .45s}
 .fml-pouch.on{opacity:1;transform:scale(1)}
 .fml-copy{direction:rtl;text-align:right}
 .fml-h{font-size:clamp(30px,4.4vw,54px);line-height:1;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:0}
-.fml-sub{margin:12px 0 0;max-width:420px;color:var(--muted);font-size:clamp(14px,1.3vw,16.5px);line-height:1.6}
+.fml-sub{margin:10px 0 0;max-width:420px;color:var(--muted);font-size:clamp(14px,1.3vw,16.5px);line-height:1.55}
 /* the recipe, as one composition bar */
-.fml-bar{display:flex;height:clamp(30px,3.6vw,42px);border-radius:999px;overflow:hidden;margin:22px 0 0;max-width:480px;background:#e7ddca;box-shadow:inset 0 0 0 1px rgba(41,25,10,.06),0 12px 26px -16px rgba(41,25,10,.4)}
+.fml-bar{display:flex;height:clamp(32px,3.6vw,44px);border-radius:999px;overflow:hidden;margin:18px 0 0;max-width:480px;background:#e7ddca;box-shadow:inset 0 0 0 1px rgba(41,25,10,.06),0 12px 26px -16px rgba(41,25,10,.4)}
 .fml-seg{position:relative;height:100%;min-width:2px;background:var(--accent);display:flex;align-items:center;justify-content:center;transition:width .6s cubic-bezier(.22,.8,.28,1),opacity .45s}
 .fml-seg+.fml-seg{box-shadow:inset 1px 0 0 rgba(255,255,255,.55)}
 .fml-seg i{font-style:normal;font-size:11px;font-weight:900;color:var(--accent-ink,#fff);direction:ltr;font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
 /* legend: color-keyed name · % · what it supports */
-.fml-list{list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:14px 26px;max-width:480px}
+.fml-list{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;max-width:480px}
 .fml-list li{min-width:0;display:grid;grid-template-columns:auto 1fr;column-gap:9px;text-align:right}
 .fi-dot{width:11px;height:11px;border-radius:3px;background:var(--accent);margin-top:4px}
 .fi-t{display:flex;align-items:baseline;gap:7px;min-width:0}
 .fi-t b{font-size:14.5px;font-weight:800;color:var(--ink);white-space:nowrap}
 .fi-t i{font-style:normal;direction:ltr;font-size:13px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums}
 .fml-list em{grid-column:2;display:block;font-style:normal;font-size:12px;font-weight:700;color:#4c4238;line-height:1.3;margin-top:2px}
-.fml-note{margin:18px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
+.fml-note{margin:16px 0 0;font-size:12.5px;font-weight:700;color:#8a7f70}
 @media(max-width:820px){
-  .fml-body{grid-template-columns:1fr;gap:2px}
-  .fml-media{min-height:128px;order:1}
-  .fml-pouch{max-width:min(30%,116px)}
-  .fml-ghost{font-size:clamp(46px,15vw,92px)}
+  .fml-body{grid-template-columns:1fr;gap:0}
+  .fml-media{min-height:96px;order:1}
+  .fml-pouch{max-width:min(24%,96px)}
+  .fml-ghost{font-size:clamp(40px,13vw,80px)}
   .fml-copy{order:2;text-align:center}
-  .fml-h{font-size:clamp(26px,7vw,34px)}
-  .fml-sub{max-width:none;margin:10px auto 0}
-  .fml-list{max-width:none;grid-template-columns:1fr 1fr;column-gap:20px;row-gap:14px;margin-top:16px}
+  .fml-h{font-size:clamp(25px,6.6vw,32px)}
+  .fml-sub{max-width:none;margin:8px auto 0;font-size:14px}
+  .fml-bar{margin:14px auto 0}
+  .fml-list{max-width:none;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:11px;margin-top:14px}
+  .fml-list li{justify-items:start}
   .fml-list b{font-size:14px}
   .fml-list i{font-size:13.5px}
   .fml-list em{font-size:11.5px}
-  .fml-note{margin-top:14px}
+  .fml-note{margin-top:12px}
   .fml-tabs button{padding:10px 18px;font-size:13px;letter-spacing:.04em}
 }
 """
@@ -686,31 +684,31 @@ FL_CSS = """
 .fl-eyebrow{text-align:center;font-size:12px;font-weight:900;letter-spacing:.24em;color:#c07f43;margin-bottom:clamp(22px,3.5vw,40px)}
 .fl-card{background:#fff;border-radius:clamp(18px,2.4vw,28px);overflow:hidden;box-shadow:0 44px 100px -34px rgba(41,25,10,.42);display:grid;grid-template-columns:.92fr 1.08fr;align-items:stretch}
 .fl-photo{position:relative;margin:0;min-height:100%;background:#e4dccd;overflow:hidden}
-.fl-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%;filter:saturate(1.06) contrast(1.03)}
-.fl-photo::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(74,42,16,.14),transparent 30%),linear-gradient(0deg,rgba(28,15,6,.6),transparent 46%);box-shadow:inset 0 0 130px rgba(52,28,10,.34)}
+.fl-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 32%;filter:saturate(1.04) contrast(1.02)}
+.fl-photo::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,rgba(30,17,7,.42),transparent 34%)}
 .fl-photo figcaption{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:26px 20px 16px;text-align:center;font-size:12.5px;font-weight:800;letter-spacing:.02em;color:#f6ece0}
 .fl-body{position:relative;overflow:hidden;padding:clamp(34px,4.6vw,68px);direction:rtl;text-align:right;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(180deg,#fffdf9,#fdf6ea)}
-.fl-qm{position:absolute;top:clamp(-8px,-.4vw,6px);inset-inline-start:clamp(22px,3.4vw,50px);font-family:Georgia,"Times New Roman",serif;font-size:clamp(92px,11vw,152px);line-height:1;font-weight:700;color:var(--ink);opacity:.06;pointer-events:none;z-index:0}
+.fl-qm{position:absolute;top:clamp(-14px,-.6vw,2px);inset-inline-start:clamp(22px,3.4vw,50px);font-family:'GveretLevin',cursive;font-size:clamp(96px,12vw,164px);line-height:1;color:#c07f43;opacity:.16;pointer-events:none;z-index:0}
 .fl-lead,.fl-body p,.fl-signs,.fl-closer,.fl-prov{position:relative;z-index:1}
-.fl-closer{color:#5a5148;font-size:clamp(16px,1.35vw,18.5px);line-height:1.6;margin:0 0 4px;font-style:italic}
-.fl-prov{margin-top:14px;font-size:11px;font-weight:800;letter-spacing:.16em;color:#b3a795}
-.fl-lead{font-size:clamp(24px,2.7vw,36px);font-weight:900;letter-spacing:-.03em;color:var(--ink);margin:0 0 20px;line-height:1.05}
-.fl-body p{color:#5a5148;font-size:clamp(16px,1.35vw,18.5px);line-height:1.78;margin:0 0 18px;max-width:46ch}
-.fl-body p strong{font-weight:900;color:var(--ink);box-shadow:inset 0 -.42em 0 rgba(192,127,67,.2)}
-.fl-signs{display:flex;flex-wrap:wrap;gap:16px clamp(30px,4vw,50px);align-items:flex-end;margin:clamp(20px,2.8vw,32px) 0 0;padding-top:clamp(18px,2.4vw,26px);border-top:1px solid #f0e7d8}
+.fl-lead{font-family:'GveretLevin',cursive;font-size:clamp(28px,3vw,42px);color:#43301f;margin:0 0 16px;line-height:1.2}
+.fl-body p{font-family:'GveretLevin',cursive;color:#4a3826;font-size:clamp(19px,1.7vw,25px);line-height:1.72;margin:0 0 16px;max-width:32ch}
+.fl-body p strong{color:#7a4a1e;box-shadow:inset 0 -.34em 0 rgba(192,127,67,.24)}
+.fl-closer{font-family:'GveretLevin',cursive;color:#4a3826;font-size:clamp(20px,1.8vw,26px);line-height:1.4;margin:0 0 2px}
+.fl-prov{margin-top:16px;font-size:11px;font-weight:800;letter-spacing:.16em;color:#b3a795}
+.fl-signs{display:flex;flex-wrap:wrap;gap:14px clamp(30px,4vw,54px);align-items:flex-end;margin:clamp(16px,2.4vw,26px) 0 0;padding-top:clamp(16px,2.2vw,24px);border-top:1px solid #f0e7d8}
 .fl-sig{display:flex;flex-direction:column}
-.fl-sig-name{font-size:clamp(21px,2.2vw,28px);font-weight:900;color:var(--ink);position:relative;display:inline-block;line-height:1.05;white-space:nowrap}
-.fl-sig-name::after{content:"";position:absolute;left:-4px;right:-9px;bottom:-6px;height:7px;border-bottom:2.5px solid #c07f43;border-radius:50%;transform:rotate(-1deg)}
-.fl-sig-role{margin-top:13px;font-size:12px;font-weight:800;letter-spacing:.08em;color:#9a8f80}
+.fl-sig-name{font-family:'GveretLevin',cursive;font-size:clamp(28px,3vw,40px);color:#43301f;position:relative;display:inline-block;line-height:1;white-space:nowrap}
+.fl-sig-name::after{content:"";position:absolute;left:-4px;right:-9px;bottom:-7px;height:7px;border-bottom:2.5px solid #c07f43;border-radius:50%;transform:rotate(-1deg)}
+.fl-sig-role{margin-top:12px;font-size:12px;font-weight:800;letter-spacing:.08em;color:#9a8f80}
 @media(max-width:820px){
   .fl{padding:40px 18px 52px}
   .fl-card{grid-template-columns:1fr}
-  .fl-photo{min-height:min(72vw,340px);height:min(72vw,340px)}
-  .fl-body{padding:30px 24px 34px}
-  .fl-lead{font-size:24px;margin-bottom:16px}
-  .fl-body p{font-size:16.5px;line-height:1.8;margin-bottom:16px}
-  .fl-signs{gap:14px 36px;margin-top:22px}
-  .fl-sig-name{font-size:22px}
+  .fl-photo{min-height:min(86vw,420px);height:min(86vw,420px)}
+  .fl-body{padding:32px 26px 34px}
+  .fl-lead{font-size:30px;margin-bottom:14px}
+  .fl-body p{font-size:21px;line-height:1.72;margin-bottom:14px;max-width:none}
+  .fl-signs{gap:12px 40px;margin-top:20px}
+  .fl-sig-name{font-size:30px}
 }
 """
 
@@ -1283,7 +1281,8 @@ def main():
                           ".products-frame { height: 620px; }")
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
-    shell = shell.replace("</style>", "\nhtml,body{overflow-x:clip}\n" + NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + RV_CSS + RC_CSS + "\n  </style>", 1)
+    hand_font = "@font-face{font-family:'GveretLevin';font-style:normal;font-weight:400;font-display:swap;src:url(" + data_uri("gveret-levin.woff2", HOME_ASSETS) + ") format('woff2');}\n"
+    shell = shell.replace("</style>", "\nhtml,body{overflow-x:clip}\n" + hand_font + NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + RV_CSS + RC_CSS + "\n  </style>", 1)
     # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
@@ -1302,7 +1301,7 @@ def main():
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
     shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + '</body>')
     # inline the new-layer assets
-    shell = shell.replace("__FOUNDERS__", data_uri("founders.jpg", HOME_ASSETS))
+    shell = shell.replace("__FOUNDERS__", data_uri("founders-workshop.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBAR__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__HEROPHOTO__", data_uri("hero-photo.jpg", HOME_ASSETS))
@@ -1310,8 +1309,7 @@ def main():
     shell = shell.replace("__CHOCFLOAT__", data_uri("choc-float.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCBITE__", data_uri("choc-real-bite.jpg", HOME_ASSETS))
     shell = shell.replace("__TASTEVID__", data_uri("taste-vid.mp4", HOME_ASSETS))
-    shell = shell.replace("__DUOWOMAN__", data_uri("duo-woman.jpg", HOME_ASSETS))
-    shell = shell.replace("__DUOMAN__", data_uri("duo-man.jpg", HOME_ASSETS))
+    shell = shell.replace("__CLUBIMG__", data_uri("choc-moods.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCMOODS__", data_uri("choc-moods.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOCSPIN__", data_uri("choc-loop.mp4", HOME_ASSETS))
     shell = shell.replace("__SPINPOSTER__", data_uri("choc-loop-poster.jpg", HOME_ASSETS))
