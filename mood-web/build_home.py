@@ -23,7 +23,7 @@ New copy is Hebrew-native, no forbidden words, one SKU colour per element,
 founders spelled correctly — per mood-brand-guardian / conversion-storyteller /
 motion-director.
 """
-import base64, pathlib, re, sys
+import base64, json, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).parent
 APP = ROOT / "approved"
@@ -263,10 +263,188 @@ RITUAL_JS = """  <script>
   </script>
 """
 
-FOOTER = """  <footer class="hft">
-    <div class="hft-logo">mo<span>o</span>d</div>
-    <p>ריטואל פונקציונלי · ENERGY · RELAX · SLEEP · © mood 2026</p>
+FOOTER = """  <footer class="ft" aria-label="תחתית האתר">
+    <div class="ft-inner">
+      <div class="ft-brand">
+        <div class="ft-logo">mo<span>o</span>d</div>
+        <p class="ft-tag">ריטואל פונקציונלי · שוקולד מריר 70%</p>
+        <p class="ft-mini">שלושה רגעים ביום, שלוש פורמולות. ENERGY · RELAX · SLEEP.</p>
+        <div class="ft-social">
+          <a href="#" aria-label="mood באינסטגרם"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" aria-label="mood בטיקטוק"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M16.5 3c.3 2.1 1.5 3.6 3.5 3.9v2.5c-1.2.1-2.4-.2-3.5-.8v5.7c0 3.3-2.4 5.7-5.5 5.7S6 20.5 6 17.6c0-2.7 2-4.9 4.9-4.9.3 0 .6 0 .9.1v2.7c-.3-.1-.6-.2-.9-.2-1.3 0-2.3 1-2.3 2.3s1 2.3 2.3 2.3 2.4-1 2.4-2.6V3h2.7z"/></svg></a>
+        </div>
+      </div>
+      <nav class="ft-col" aria-label="ניווט באתר">
+        <h4>האתר</h4>
+        <a href="#products">הרגעים</a>
+        <a href="#formulas">הפורמולה</a>
+        <a href="#founders">הסיפור שלנו</a>
+        <a href="#faq">שאלות ותשובות</a>
+        <a href="#club">מועדון החברים</a>
+      </nav>
+      <nav class="ft-col" aria-label="מידע ושירות">
+        <h4>מידע</h4>
+        <a href="mailto:hello@mood.co.il">יצירת קשר</a>
+        <a href="#faq">משלוחים והחזרות</a>
+        <a href="#">תקנון האתר</a>
+        <a href="#">מדיניות פרטיות</a>
+        <a href="#">הצהרת נגישות</a>
+      </nav>
+      <div class="ft-col ft-launch">
+        <h4>משיקים 12.8</h4>
+        <p>הצטרפו לרשימת ההמתנה — גישה ראשונה והטבת השקה.</p>
+        <a class="ft-join" href="#launch">עדכנו אותי<span aria-hidden="true"> ←</span></a>
+      </div>
+    </div>
+    <div class="ft-bar">
+      <span>© mood 2026 · תוצרת ישראל</span>
+      <span>כשר פרווה · 0 גרם סוכר · רכיבים טבעיים</span>
+    </div>
   </footer>
+"""
+
+TRUST = """    <section class="tstrip" aria-label="הבטחות mood">
+      <ul class="tstrip-row">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l2.4 1.7 2.9-.2 1 2.7 2.4 1.6-.7 2.9.7 2.9-2.4 1.6-1 2.7-2.9-.2L12 21l-2.4-1.7-2.9.2-1-2.7L3.3 13.4 4 10.5 3.3 7.6 5.7 6l1-2.7 2.9.2z"/><path d="M9 12l2 2 4-4"/></svg><span>כשר פרווה</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg><span>0 גרם סוכר</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M13 2L4.5 13.5H11l-1 8.5 8.5-11.5H12z"/></svg><span>25 מ״ג קפאין טבעי</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21c5-3 8-6.5 8-11a8 8 0 0 0-16 0c0 4.5 3 8 8 11z" transform="scale(1)"/><path d="M12 21c0-6 0-9 4-13"/></svg><span>רכיבים טבעיים</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg><span>משלוח חינם מעל ₪249</span></li>
+      </ul>
+    </section>
+"""
+
+LAUNCH = """    <section class="lnch" id="launch" aria-label="הרשמה לרשימת ההמתנה להשקה">
+      <div class="lnch-card reveal">
+        <p class="lnch-eyebrow">בקרוב · 12.8.2026</p>
+        <h2 class="lnch-h">היו הראשונים לטעום.</h2>
+        <p class="lnch-sub">mood משיק ב-12 באוגוסט. משאירים מייל ומקבלים גישה ראשונה, הטבת השקה וכל העדכונים — בלי ספאם, רק כשיש חדש.</p>
+        <div class="lnch-count" id="lnchCount" dir="ltr" role="timer" aria-label="ספירה לאחור להשקה">
+          <div class="lc-u"><b data-u="d">--</b><i>ימים</i></div>
+          <div class="lc-u"><b data-u="h">--</b><i>שעות</i></div>
+          <div class="lc-u"><b data-u="m">--</b><i>דקות</i></div>
+          <div class="lc-u"><b data-u="s">--</b><i>שניות</i></div>
+        </div>
+        <form class="lnch-form" id="lnchForm" novalidate>
+          <input type="email" id="lnchEmail" name="email" required autocomplete="email" placeholder="האימייל שלכם" aria-label="כתובת אימייל">
+          <button type="submit">עדכנו אותי</button>
+        </form>
+        <p class="lnch-note" id="lnchNote">נרשמים פעם אחת. אנחנו נדאג לשאר.</p>
+      </div>
+    </section>
+"""
+
+FAQ = """    <section class="faq" id="faq" aria-label="שאלות ותשובות נפוצות">
+      <div class="faq-head reveal">
+        <p class="faq-eyebrow">שאלות נפוצות</p>
+        <h2 class="faq-h">כל מה שרציתם לדעת.</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details class="faq-i"><summary>כמה קפאין יש בקובייה אחת?</summary><div class="faq-a">ב-ENERGY יש כ-25 מ״ג קפאין טבעי מגוארנה ותה ירוק — בערך רבע מכוס קפה. אנרגיה נקייה ויציבה, בלי הקפיצה והנפילה. RELAX ו-SLEEP מכוונים להרגעה, בלי בעיטת קפאין.</div></details>
+        <details class="faq-i"><summary>מתי אוכלים כל mood?</summary><div class="faq-a">קובייה אחת ברגע הנכון: ENERGY לבוקר ולצהריים (16:30, במקום עוד קפה), RELAX לערב כשהראש לא נכבה, ו-SLEEP ללילה לפני השינה.</div></details>
+        <details class="faq-i"><summary>כמה קוביות ביום?</summary><div class="faq-a">1–2 קוביות לפי הצורך. כל שקית היא 30 קוביות אישיות, ארוזות בנפרד — חודש שלם של ריטואל.</div></details>
+        <details class="faq-i"><summary>מה יש בפנים? יש סוכר?</summary><div class="faq-a">שוקולד מריר 70% אמיתי עם מלח ים, ופורמולת רכיבים טבעיים — מאקה, גוארנה, ג'ינסנג, תה ירוק וליקוריץ. 0 גרם סוכר.</div></details>
+        <details class="faq-i"><summary>זה כשר? מתאים לטבעונים?</summary><div class="faq-a">כן — כשר פרווה. שוקולד מריר בלי מוצרי חלב, כך שהוא מתאים גם לטבעונים.</div></details>
+        <details class="faq-i"><summary>מתי אפשר לקנות, ואיך?</summary><div class="faq-a">משיקים ב-12.8. נרשמים עכשיו לרשימת ההמתנה ומקבלים גישה ראשונה והטבת השקה. משלוח חינם בהזמנה מעל ₪249.</div></details>
+        <details class="faq-i"><summary>איך עובד מועדון החברים?</summary><div class="faq-a">הקופסה מגיעה עד הבית כל חודש, במחיר חבר קבוע ובמשלוח חינם. אפשר לדלג, לעצור או לבטל בכל עת — בקליק, בלי התחייבות.</div></details>
+      </div>
+    </section>
+"""
+
+FOOT_CSS = """
+/* ---- trust strip ---- */
+.tstrip{background:var(--cream);border-block:1px solid #ece4d5;padding:20px clamp(16px,4vw,40px)}
+.tstrip-row{list-style:none;max-width:1100px;margin:0 auto;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:14px clamp(20px,4vw,48px)}
+.tstrip-row li{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap}
+.tstrip-row svg{width:20px;height:20px;color:var(--energy);flex:none}
+/* ---- launch / waitlist ---- */
+.lnch{background:var(--cream);padding:clamp(40px,6vw,80px) clamp(18px,5vw,60px)}
+.lnch-card{max-width:820px;margin:0 auto;background:#17100c;color:#f4e9db;border-radius:clamp(20px,3vw,32px);padding:clamp(34px,5vw,62px) clamp(24px,5vw,58px);text-align:center;box-shadow:0 44px 100px -40px rgba(23,16,12,.6);position:relative;overflow:hidden}
+.lnch-card::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 60% at 50% 0%,color-mix(in srgb,var(--energy) 26%,transparent),transparent 62%)}
+.lnch-card>*{position:relative}
+.lnch-eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--energy);margin:0}
+.lnch-h{font-size:clamp(30px,5vw,52px);line-height:1.03;letter-spacing:-.04em;font-weight:900;margin:12px 0 0}
+.lnch-sub{margin:14px auto 0;max-width:520px;color:#c9bbaa;font-size:clamp(15px,1.4vw,17px);line-height:1.6}
+.lnch-count{display:flex;justify-content:center;gap:clamp(10px,2.5vw,22px);margin:26px 0 4px}
+.lc-u{min-width:64px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 6px}
+.lc-u b{display:block;font-size:clamp(26px,4vw,38px);font-weight:900;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+.lc-u i{display:block;margin-top:6px;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.06em;color:#9d8f7e}
+.lnch-form{display:flex;gap:10px;max-width:440px;margin:22px auto 0;flex-wrap:wrap}
+.lnch-form input{flex:1;min-width:180px;padding:15px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;font-size:15px;font-family:inherit;text-align:right}
+.lnch-form input::placeholder{color:#9d8f7e}
+.lnch-form input:focus{outline:none;border-color:var(--energy);background:rgba(255,255,255,.1)}
+.lnch-form button{padding:15px 30px;border:0;border-radius:999px;background:var(--energy);color:#2a1608;font-size:15px;font-weight:900;cursor:pointer;transition:transform .25s cubic-bezier(.34,1.56,.64,1),filter .25s}
+.lnch-form button:hover{transform:translateY(-2px) scale(1.02);filter:brightness(1.05)}
+.lnch-note{margin:14px 0 0;font-size:12.5px;font-weight:700;color:#8f8170}
+.lnch-ok{margin:22px auto 0;max-width:460px;font-size:clamp(16px,1.6vw,19px);font-weight:800;color:#fff}
+/* ---- FAQ ---- */
+.faq{background:#fff;padding:clamp(48px,6vw,88px) clamp(18px,5vw,60px)}
+.faq-head{max-width:760px;margin:0 auto;text-align:center}
+.faq-eyebrow{font-size:12px;font-weight:900;letter-spacing:.18em;color:var(--energy);margin:0}
+.faq-h{font-size:clamp(28px,4.4vw,46px);line-height:1.03;letter-spacing:-.04em;font-weight:900;color:var(--ink);margin:10px 0 0}
+.faq-list{max-width:760px;margin:clamp(24px,3.5vw,42px) auto 0;direction:rtl}
+.faq-i{border-bottom:1px solid #ece4d5}
+.faq-i summary{list-style:none;cursor:pointer;padding:20px 6px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:clamp(16px,1.6vw,19px);font-weight:800;color:var(--ink)}
+.faq-i summary::-webkit-details-marker{display:none}
+.faq-i summary::after{content:"+";font-size:26px;font-weight:400;color:var(--energy);transition:transform .3s;flex:none;line-height:1}
+.faq-i[open] summary::after{transform:rotate(45deg)}
+.faq-a{padding:0 6px 22px;color:#5a5148;font-size:clamp(14.5px,1.4vw,16.5px);line-height:1.75;max-width:64ch}
+/* ---- real footer ---- */
+.ft{background:#17100c;color:#cdbfae;padding:clamp(44px,5vw,68px) clamp(20px,5vw,60px) 0}
+.ft-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1.3fr;gap:clamp(26px,4vw,50px);text-align:right}
+.ft-logo{font-size:30px;font-weight:900;letter-spacing:-.02em;color:#fff}
+.ft-logo span{position:relative;color:var(--energy)}
+.ft-logo span::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:#17100c}
+.ft-tag{margin:12px 0 0;font-size:13px;font-weight:800;color:#e6d8c7;letter-spacing:.01em}
+.ft-mini{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:#9d8f7e;max-width:280px}
+.ft-social{display:flex;gap:12px;margin:18px 0 0}
+.ft-social a{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:#e6d8c7;transition:background .25s,color .25s,transform .25s}
+.ft-social a:hover{background:var(--energy);color:#2a1608;transform:translateY(-2px)}
+.ft-col h4{margin:0 0 14px;font-size:12px;font-weight:900;letter-spacing:.12em;color:#fff}
+.ft-col a{display:block;text-decoration:none;color:#b3a595;font-size:13.5px;font-weight:600;padding:5px 0;transition:color .2s}
+.ft-col a:hover{color:var(--energy)}
+.ft-launch p{margin:0 0 14px;font-size:13px;line-height:1.6;color:#b3a595}
+.ft-join{display:inline-block;color:var(--energy)!important;font-weight:900!important;font-size:14.5px!important;padding:0!important}
+.ft-bar{max-width:1100px;margin:clamp(34px,4vw,50px) auto 0;border-top:1px solid rgba(255,255,255,.1);padding:20px 0 26px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;font-size:11.5px;font-weight:700;letter-spacing:.02em;color:#8f8170}
+@media(max-width:820px){
+  .ft-inner{grid-template-columns:1fr 1fr;gap:28px 24px}
+  .ft-brand{grid-column:1/-1}
+  .ft-bar{justify-content:center;text-align:center}
+}
+@media(max-width:640px){
+  .tstrip-row{gap:12px 20px}.tstrip-row li{font-size:12.5px}
+  .lnch-form button{flex:1}
+}
+"""
+
+FOOT_JS = """  <script>
+  (function(){
+    // launch countdown -> 12 Aug 2026, 00:00 Israel time
+    var target = new Date('2026-08-12T00:00:00+03:00').getTime();
+    var box = document.getElementById('lnchCount');
+    function pad(n){return (n<10?'0':'')+n;}
+    function tick(){
+      if(!box) return;
+      var diff = target - Date.now(); if(diff < 0) diff = 0;
+      var d = Math.floor(diff/864e5), h = Math.floor(diff%864e5/36e5),
+          m = Math.floor(diff%36e5/6e4), s = Math.floor(diff%6e4/1e3);
+      var q=function(u){return box.querySelector('[data-u="'+u+'"]');};
+      if(q('d'))q('d').textContent=d; if(q('h'))q('h').textContent=pad(h);
+      if(q('m'))q('m').textContent=pad(m); if(q('s'))q('s').textContent=pad(s);
+    }
+    tick(); setInterval(tick, 1000);
+    // waitlist form — client-side confirmation; wire to your email provider on launch
+    var f = document.getElementById('lnchForm');
+    if(f){ f.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = document.getElementById('lnchEmail');
+      if(!email.value || !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email.value)){ email.focus(); email.style.borderColor='#ff8a8a'; return; }
+      f.style.display='none';
+      var note = document.getElementById('lnchNote');
+      if(note){ note.className='lnch-ok'; note.textContent='תודה! שמרנו לכם מקום — נהיה בקשר לפני 12.8.'; }
+    }); }
+  })();
+  </script>
 """
 
 MOTION_JS = """  <script>
@@ -1285,7 +1463,7 @@ def main():
     # fonts + new layer CSS into the shell head
     shell = shell.replace("<style>", "<style>\n" + FONTS + "\n", 1)
     hand_font = "@font-face{font-family:'GveretLevin';font-style:normal;font-weight:400;font-display:swap;src:url(" + data_uri("gveret-levin.woff2", HOME_ASSETS) + ") format('woff2');}\n"
-    shell = shell.replace("</style>", "\nhtml,body{overflow-x:clip}\n" + hand_font + NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + RV_CSS + RC_CSS + "\n  </style>", 1)
+    shell = shell.replace("</style>", "\nhtml,body{overflow-x:clip}\n" + hand_font + NEW_CSS + CAP_CSS + XHERO_CSS + FORMULAS_CSS + VH_CSS + TS_CSS + FL_CSS + RV_CSS + RC_CSS + FOOT_CSS + "\n  </style>", 1)
     # inline approved formula strip images (hero now uses lifestyle markers)
     shell = inline_assets(shell)
     # layer the narrative sections in journey order (Curiosity->...->Purchase):
@@ -1297,12 +1475,46 @@ def main():
     shell = re.sub(r'    <section id="story"(?! class="fml).*?</section>', STORY, shell, count=1, flags=re.S)
     # the compact formula selector flows directly into the founders letter (one cream band)
     shell = shell.replace('    <section id="formula"', FORMULAS + FOUNDERS + REVIEWS + '    <section id="formula"')
-    shell = shell.replace('  </main>', CLOSE + '  </main>\n' + FOOTER)
+    shell = shell.replace('  </main>', FAQ + CLOSE + LAUNCH + '  </main>\n' + TRUST + FOOTER)
+
+    # ---- head: brand-correct title/description + Open Graph + JSON-LD (AI-search) ----
+    shell = shell.replace("<title>MOOD — Ritual Chocolate</title>",
+                          "<title>mood — ריטואל שוקולד פונקציונלי</title>")
+    shell = shell.replace(
+        'content="MOOD — שוקולד פונקציונלי לרגעים של אנרגיה, רוגע ושינה"',
+        'content="mood — שוקולד מריר 70% פונקציונלי לשלושה רגעים ביום: ENERGY, RELAX, SLEEP. 0 גרם סוכר, קפאין טבעי. משיקים 12.8."')
+    _faq_qa = [
+        ("כמה קפאין יש בקובייה אחת של mood?", "ב-ENERGY יש כ-25 מ״ג קפאין טבעי מגוארנה ותה ירוק — בערך רבע מכוס קפה, לאנרגיה נקייה ויציבה בלי קפיצה ונפילה. RELAX ו-SLEEP מכוונים להרגעה, בלי קפאין."),
+        ("מתי אוכלים כל mood?", "קובייה אחת ברגע הנכון: ENERGY לבוקר ולצהריים, RELAX לערב, ו-SLEEP ללילה לפני השינה."),
+        ("כמה קוביות אפשר לאכול ביום?", "1–2 קוביות לפי הצורך. כל שקית היא 30 קוביות אישיות ארוזות בנפרד — חודש שלם."),
+        ("מה יש בפנים? יש סוכר?", "שוקולד מריר 70% עם מלח ים ופורמולת רכיבים טבעיים — מאקה, גוארנה, ג'ינסנג, תה ירוק וליקוריץ. 0 גרם סוכר."),
+        ("mood כשר? מתאים לטבעונים?", "כן — כשר פרווה. שוקולד מריר בלי מוצרי חלב, מתאים גם לטבעונים."),
+        ("מתי אפשר לקנות ואיך?", "משיקים ב-12.8. נרשמים לרשימת ההמתנה ומקבלים גישה ראשונה והטבת השקה. משלוח חינם מעל ₪249."),
+        ("איך עובד מועדון החברים?", "הקופסה מגיעה עד הבית כל חודש במחיר חבר קבוע ובמשלוח חינם. אפשר לדלג, לעצור או לבטל בכל עת."),
+    ]
+    _org_ld = {"@context": "https://schema.org", "@type": "Organization", "name": "mood",
+               "description": "שוקולד מריר 70% פונקציונלי — ריטואל יומי לשלושה רגעים: ENERGY, RELAX, SLEEP.",
+               "foundingDate": "2023",
+               "founder": [{"@type": "Person", "name": "נדב יצחקי"}, {"@type": "Person", "name": "מתיאס דומינגז"}]}
+    _faq_ld = {"@context": "https://schema.org", "@type": "FAQPage",
+               "mainEntity": [{"@type": "Question", "name": q,
+                               "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in _faq_qa]}
+    head_extra = (
+        '  <meta property="og:type" content="website">\n'
+        '  <meta property="og:site_name" content="mood">\n'
+        '  <meta property="og:locale" content="he_IL">\n'
+        '  <meta property="og:title" content="mood — ריטואל שוקולד פונקציונלי">\n'
+        '  <meta property="og:description" content="שוקולד מריר 70% פונקציונלי לשלושה רגעים: ENERGY · RELAX · SLEEP. משיקים 12.8.">\n'
+        '  <meta name="twitter:card" content="summary_large_image">\n'
+        '  <script type="application/ld+json">' + json.dumps(_org_ld, ensure_ascii=False) + '</script>\n'
+        '  <script type="application/ld+json">' + json.dumps(_faq_ld, ensure_ascii=False) + '</script>\n'
+    )
+    shell = shell.replace("</head>", head_extra + "</head>", 1)
     # the live FORMULAS (id="formulas") replaces the old static formula image
     shell = re.sub(r'    <section id="formula".*?</section>\n', '', shell, count=1, flags=re.S)
     # motion pass + interactive capability modules (inject BEFORE inlining, so the
     # __ENERGY__/__RELAX__/__SLEEP__ markers inside CAP_JS get replaced too)
-    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + '</body>')
+    shell = shell.replace('</body>', MOTION_JS + CAP_JS + HERO_JS + FORMULAS_JS + NAV_JS + FOOT_JS + '</body>')
     # inline the new-layer assets
     shell = shell.replace("__FOUNDERS__", data_uri("founders-workshop.jpg", HOME_ASSETS))
     shell = shell.replace("__CHOC__", data_uri("choc-dark.jpg", HOME_ASSETS))
