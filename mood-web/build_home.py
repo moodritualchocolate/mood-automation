@@ -285,11 +285,11 @@ FOOTER = """  <footer class="ft" aria-label="תחתית האתר">
       </nav>
       <nav class="ft-col" aria-label="מידע ושירות">
         <h4>מידע</h4>
-        <a href="mailto:hello@mood-chocolate.com">יצירת קשר</a>
-        <a href="#faq">משלוחים והחזרות</a>
-        <a href="#">תקנון האתר</a>
-        <a href="#">מדיניות פרטיות</a>
-        <a href="#">הצהרת נגישות</a>
+        <a href="policies.html#contact">יצירת קשר</a>
+        <a href="policies.html#shipping">משלוחים והחזרות</a>
+        <a href="policies.html#terms">תקנון האתר</a>
+        <a href="policies.html#privacy">מדיניות פרטיות</a>
+        <a href="policies.html#accessibility">הצהרת נגישות</a>
       </nav>
       <div class="ft-col ft-launch">
         <h4>משיקים 12.8</h4>
@@ -529,6 +529,11 @@ CAP_CSS = """
 .meet-mood:hover img{transform:translateY(-5px) scale(1.06)}
 .meet-mood b{font-size:12px;font-weight:900;letter-spacing:.08em;color:var(--c)}
 .meet-mood span{font-size:11px;color:#a99a86}
+.meet-metrics{list-style:none;display:flex;margin:26px 0 0;padding:0;color:#f2e7d9}
+.meet-metrics li{padding:0 clamp(14px,2vw,24px);border-inline-start:1px solid rgba(255,255,255,.22);display:flex;flex-direction:column;gap:4px}
+.meet-metrics li:first-child{padding-inline-start:0;border:0}
+.meet-metrics li b{font-family:'DM Sans',Heebo,sans-serif;font-size:clamp(20px,2vw,28px);font-weight:800;line-height:1;letter-spacing:-.02em;color:#fff}
+.meet-metrics li span{font-size:11px;font-weight:700;letter-spacing:.04em;color:#a99a86;text-transform:uppercase}
 @keyframes meetZoom{from{transform:scale(1)}to{transform:scale(1.04)}}
 @media(max-width:820px){.meet{grid-template-columns:1fr;gap:26px;padding:44px 22px}.meet-media{order:1}.meet-copy{order:2}}
 @media(prefers-reduced-motion:reduce){.meet-img{animation:none}}
@@ -604,6 +609,11 @@ MEET = """    <section class="meet" id="meet" aria-label="הכירו את השו
         <div class="meet-eyebrow">השוקולד</div>
         <h2 class="meet-h">ביס אחד.<br>וזה כבר ריטואל.</h2>
         <p class="meet-sub">שוקולד מריר 70% עם מלח ים ופורמולה טבעית. אותו שוקולד — שלושה מצבים, חתומים בו עצמו.</p>
+        <ul class="meet-metrics" aria-label="נתונים על השוקולד">
+          <li><b>70%</b><span>קקאו</span></li>
+          <li><b>49×24×5</b><span>מ״מ · ביס מדוד</span></li>
+          <li><b>30</b><span>יחידות במארז</span></li>
+        </ul>
         <div class="meet-moods">
           <div class="meet-mood" style="--c:var(--energy)"><img src="__EDISC__" alt=""><b>ENERGY</b><span>בוקר · צהריים</span></div>
           <div class="meet-mood" style="--c:var(--relax)"><img src="__RDISC__" alt=""><b>RELAX</b><span>ערב</span></div>
@@ -763,6 +773,12 @@ VH_CSS = """
 .rh-btn-ghost{background:rgba(255,255,255,.09);color:#fff;border:1.5px solid rgba(255,255,255,.4);backdrop-filter:blur(6px)}
 .rh-btn-ghost:hover{transform:translateY(-2px);border-color:#fff;background:rgba(255,255,255,.16)}
 .rh-btn-ghost:active{transform:translateY(0) scale(.98)}
+.rh-stats{list-style:none;display:flex;gap:0;margin:34px 0 0;padding:0;color:#fff}
+.rh-stats li{padding:0 clamp(14px,2vw,24px);border-inline-start:1px solid rgba(255,255,255,.28);display:flex;flex-direction:column;gap:3px}
+.rh-stats li:first-child{padding-inline-start:0;border:0}
+.rh-stats li b{font-family:'DM Sans',Heebo,sans-serif;font-size:clamp(20px,2vw,26px);font-weight:800;line-height:1;letter-spacing:-.02em}
+.rh-stats li span{font-size:11.5px;font-weight:700;letter-spacing:.02em;color:rgba(255,255,255,.72)}
+@media(max-width:640px){.rh-stats{margin-top:26px;justify-content:center}.rh-stats li{padding:0 14px}.rh-stats li b{font-size:19px}}
 .rh-scroll{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:26px;height:42px;border:2px solid rgba(255,255,255,.4);border-radius:14px;z-index:2;display:none}
 .rh-scroll span{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:4px;height:8px;border-radius:2px;background:rgba(255,255,255,.8);animation:rhDot 1.8s ease-in-out infinite}
 @keyframes rhDot{0%,100%{opacity:0;top:8px}50%{opacity:1;top:18px}}
@@ -815,6 +831,11 @@ STORY = """    <section class="ts" id="story" aria-label="הטעם והשוקו�
         <h2 class="ts-h reveal">קודם כול, שוקולד אמיתי.</h2>
         <p class="ts-p reveal">בלוק מריר 70% שנבנה עם אלוף עולם — הבסיס שכל פורמולה נשענת עליו.</p>
         <ul class="ts-chips reveal"><li>70% מריר</li><li>מלח ים</li><li>פורמולה טבעית</li><li>בלי סוכר</li><li>כשר פרווה</li></ul>
+        <ul class="ts-metrics reveal" aria-label="מדדים של הביס">
+          <li><b>70%</b><span>קקאו</span></li>
+          <li><b dir="ltr">49×24×5</b><span>מ״מ · ביס מדוד</span></li>
+          <li><b>30</b><span>יחידות במארז</span></li>
+        </ul>
         <div class="ts-media reveal">
           <video class="ts-vid" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="__CHOCBITE__"><source src="__TASTEVID__" type="video/mp4"></video>
           <figure class="ts-badge">
@@ -838,7 +859,14 @@ TS_CSS = """
 .ts-p{margin:16px auto 0;max-width:560px;color:var(--muted);font-size:clamp(15px,1.4vw,17.5px);line-height:1.65}
 .ts-chips{list-style:none;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:24px 0 0;padding:0}
 .ts-chips li{border:1px solid #cadcb9;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:800;color:#425a30;background:#e8f0dd}
-.ts-media{position:relative;margin:clamp(30px,4vw,50px) auto 0;max-width:940px;height:min(52vh,470px);border-radius:clamp(18px,2.2vw,26px);overflow:hidden;background:#efe7d9;box-shadow:0 2px 5px rgba(41,25,10,.16),0 26px 50px -26px rgba(41,25,10,.55),0 60px 90px -60px rgba(196,110,54,.4)}
+.ts-metrics{list-style:none;display:flex;justify-content:center;margin:clamp(20px,2.6vw,30px) auto 0;padding:0;max-width:640px}
+.ts-metrics li{padding:0 clamp(16px,2.4vw,28px);border-inline-start:1px solid rgba(23,23,20,.18);display:flex;flex-direction:column;gap:4px;align-items:center}
+.ts-metrics li:first-child{padding-inline-start:0;border:0}
+.ts-metrics li b{font-family:'DM Sans',Heebo,sans-serif;font-size:clamp(22px,2.4vw,30px);font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--ink)}
+.ts-metrics li span{font-size:11px;font-weight:800;letter-spacing:.08em;color:#8a7f70;text-transform:uppercase;text-align:center}
+@media(max-width:640px){.ts-metrics li{padding:0 12px}.ts-metrics li b{font-size:20px}.ts-metrics li span{font-size:10px}}
+.ts-media{position:relative;margin:clamp(30px,4vw,50px) auto 0;max-width:940px;height:min(56vh,520px);border-radius:280px 280px 22px 22px;overflow:hidden;background:#efe7d9;box-shadow:0 2px 5px rgba(41,25,10,.16),0 26px 50px -26px rgba(41,25,10,.55),0 60px 90px -60px rgba(196,110,54,.4)}
+@media(max-width:820px){.ts-media{height:min(64vh,420px);border-radius:180px 180px 16px 16px;max-width:none}}
 .ts-media>img,.ts-media>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .ts-vid{object-position:center 52%}
 .ts-media::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(0deg,rgba(20,12,6,.58),rgba(20,12,6,0) 34%),linear-gradient(180deg,rgba(255,255,255,.12),transparent 12%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
@@ -1413,6 +1441,11 @@ XHERO = """    <header class="xtop" id="top">
             <a class="rh-btn rh-btn-primary" href="#products">לבחירת הרגע</a>
             <a class="rh-btn rh-btn-ghost" href="#products">למארז היכרות</a>
           </div>
+          <ul class="rh-stats" aria-label="נתונים על mood">
+            <li><b>★ 4.9</b><span>340+ ביקורות</span></li>
+            <li><b>70%</b><span>שוקולד מריר</span></li>
+            <li><b>30</b><span>ביסים במארז</span></li>
+          </ul>
         </div>
         <a class="rh-scroll" href="#products" aria-label="גללו למטה"><span></span></a>
       </div>
