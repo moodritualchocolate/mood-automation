@@ -1,0 +1,111 @@
+[
+  {
+    "i": 0,
+    "alt": "mood · ritual chocolate",
+    "file": "claude-01-d3d4106af9.png",
+    "w": 640,
+    "h": 247
+  },
+  {
+    "i": 1,
+    "alt": "שוקולד mood — ביס אחד משנה הכל",
+    "file": "claude-02-198f3d5033.jpg",
+    "w": 1120,
+    "h": 1400
+  },
+  {
+    "i": 2,
+    "alt": "רונן אפללו — שוקולטייר mood",
+    "file": "claude-03-6a6dde2a7c.jpg",
+    "w": 590,
+    "h": 1280
+  },
+  {
+    "i": 3,
+    "alt": "שקית mood Energy",
+    "file": "claude-04-86638e6db8.webp",
+    "w": 274,
+    "h": 560
+  },
+  {
+    "i": 4,
+    "alt": "שקית mood Relax",
+    "file": "claude-05-b597c7330f.webp",
+    "w": 274,
+    "h": 560
+  },
+  {
+    "i": 5,
+    "alt": "שקית mood Sleep",
+    "file": "claude-06-f5a2e95580.webp",
+    "w": 275,
+    "h": 560
+  },
+  {
+    "i": 6,
+    "alt": "נדב ומתיאס — מייסדי mood בסדנת השוקולד",
+    "file": "claude-07-b7da002ce1.jpg",
+    "w": 675,
+    "h": 1536
+  },
+  {
+    "i": 7,
+    "alt": "יעל עם mood Energy",
+    "file": "claude-08-942c195fb5.jpg",
+    "w": 1040,
+    "h": 1300
+  },
+  {
+    "i": 8,
+    "alt": "נועה עם mood Relax",
+    "file": "claude-09-7c4a5a1ffc.jpg",
+    "w": 1122,
+    "h": 1402
+  },
+  {
+    "i": 9,
+    "alt": "מיה — רגע של אור",
+    "file": "claude-10-d1ba1a00f5.jpg",
+    "w": 705,
+    "h": 808
+  },
+  {
+    "i": 10,
+    "alt": "שירה עם mood Sleep",
+    "file": "claude-11-0ea0852b44.jpg",
+    "w": 1086,
+    "h": 1448
+  },
+  {
+    "i": 11,
+    "alt": "טלי — טקס הלילה",
+    "file": "claude-12-74a9617b37.jpg",
+    "w": 0,
+    "h": 0
+  },
+  {
+    "i": 12,
+    "alt": "רגע של רוגע עם mood",
+    "file": "claude-10-d1ba1a00f5.jpg",
+    "duplicate": true
+  },
+  {
+    "i": 13,
+    "alt": "רגע של שמחה עם mood",
+    "file": "claude-14-9e7ec00565.jpg",
+    "w": 705,
+    "h": 808
+  },
+  {
+    "i": 14,
+    "alt": "",
+    "file": "claude-01-d3d4106af9.png",
+    "duplicate": true
+  },
+  {
+    "i": 15,
+    "alt": "mood · ritual chocolate",
+    "file": "claude-01-d3d4106af9.png",
+    "duplicate": true
+  }
+]
