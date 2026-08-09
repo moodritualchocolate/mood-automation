@@ -986,8 +986,10 @@ RV_CSS = """
 .soc-vplay::after{content:"";position:absolute;top:50%;left:54%;transform:translate(-50%,-50%);border-style:solid;border-width:9px 0 9px 14px;border-color:transparent transparent transparent #17100c}
 .soc-vid:hover .soc-vplay{transform:translate(-50%,-50%) scale(1.08)}
 /* --- 6 written reviews grid --- */
-.soc-grid{max-width:1100px;margin:clamp(28px,4vw,42px) auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.8vw,22px)}
-.soc-r{position:relative;background:#faf5ec;border:1px solid #ece4d5;border-radius:18px;padding:20px 22px 22px;display:flex;flex-direction:column;gap:10px;text-align:right;overflow:hidden}
+/* written reviews — horizontal scroll strip (RTL swipe) */
+.soc-grid{margin:clamp(28px,4vw,42px) 0 0;display:flex;gap:clamp(14px,1.8vw,20px);overflow-x:auto;scroll-snap-type:x mandatory;padding:6px clamp(20px,5vw,60px) 22px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.soc-grid::-webkit-scrollbar{display:none}
+.soc-r{flex:0 0 clamp(280px,26vw,340px);scroll-snap-align:start;position:relative;background:#faf5ec;border:1px solid #ece4d5;border-radius:18px;padding:22px 24px 24px;display:flex;flex-direction:column;gap:10px;text-align:right;overflow:hidden;min-height:210px}
 .soc-r::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--dot)}
 .soc-rstars{color:#E8A54D;font-size:14.5px;letter-spacing:1.5px}
 .soc-quote{margin:0;font-size:15px;line-height:1.6;color:#3f362d;font-weight:600;flex:1}
@@ -1000,8 +1002,8 @@ RV_CSS = """
   .soc-vid figcaption{padding:12px 14px 14px}
   .soc-vid figcaption b{font-size:15px}
   .soc-vwho{font-size:11.5px}
-  .soc-grid{grid-template-columns:1fr;gap:12px}
-  .soc-r{padding:18px 20px 20px}
+  .soc-r{flex-basis:min(78vw,300px);padding:20px 22px 22px}
+  .soc-grid{padding:6px 22px 22px}
 }
 """
 
