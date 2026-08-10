@@ -207,6 +207,82 @@ footer .fbase{font-size:12px}
 .fwapp svg{width:26px;height:26px}
 @media(max-width:900px){.fwapp{bottom:84px;left:16px;width:48px;height:48px}.fwapp svg{width:22px;height:22px}}
 @media(max-width:900px){.rvq-row{grid-template-columns:1fr;max-width:520px;margin:30px auto 0}}
+
+
+/* ============================================================
+   v38 differentiation overrides — added after the Mayven-tokens
+   so they win by cascade order. Rectangular shape system + warm
+   chocolate/gold palette.
+   ============================================================ */
+:root {
+  --cta: #2c1d16;       /* chocolate primary — was #b8b0e6 lilac */
+  --cta-dark: #1a1109;  /* deeper chocolate hover                */
+  --gold: #c69130;      /* warm brass accent                     */
+  --gold-soft: #e8c880; /* softer gold for hover / medals        */
+  --paper: #fdfaf3;     /* warmer than pure white                */
+  --paper-soft: #f5eee4;/* cream instead of #f7f5ef              */
+}
+body { background: var(--paper); }
+
+/* SHAPE — rectangles with soft corners (chocolate-square echo) */
+.brand { border-radius: 8px !important; padding: 8px 18px !important; }
+.pill  { border-radius: 10px !important; }
+.pill-cta { box-shadow: 0 8px 20px -8px rgba(44,29,22,.4) !important; }
+.tag,
+.pc .tag,
+.tier-tag,
+.bundle-disc,
+.sold,
+.sold-pill,
+.gal-tag,
+.pull { border-radius: 6px !important; }
+.pc, .rvq, .xs, .club { border-radius: 12px !important; }
+.tier { border-radius: 10px !important; }
+.trust-chips .tchip,
+.tchip { border-radius: 4px !important; }
+
+/* COLOR — pill CTAs use chocolate not lilac; stars & rating in gold */
+.pill-cta {
+  background: var(--cta) !important; color: #fdfaf3 !important;
+}
+.pill-cta:hover { background: var(--cta-dark) !important; }
+.pill-out { border-color: var(--cta) !important; color: var(--cta) !important; }
+.pill-out:hover { background: var(--cta) !important; color: #fdfaf3 !important; }
+.pill-dark { background: var(--cta) !important; }
+/* Active tier border chocolate */
+.tier.active { border-color: var(--cta) !important; background: #f9f4ea !important; }
+/* Stars → gold */
+.rvs-num .stars, .buy-rate .stars, .rvq-stars, .pc-stars,
+.stars, [class*="stars"] { color: var(--gold) !important; }
+/* review bars in chocolate */
+.rvs-row .bar i { background: var(--cta) !important; }
+.rvs-row .b { color: var(--cta) !important; }
+/* highlighted pull-quote — keep mint but border-radius reduced (above) */
+
+/* announce bar keeps dark */
+.ann { background: #171009 !important; }
+
+/* hero — video overrides */
+.hero {
+  position: relative !important;
+  min-height: min(88vh, 780px) !important;
+  overflow: hidden !important;
+  background: #1a1109 !important;
+}
+.hero-video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 0; pointer-events: none;
+}
+.hero > img { display: none !important; }  /* replace the static hero img */
+.hero .shade,
+.hero::before {
+  background: linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.55)) !important;
+  z-index: 1 !important;
+}
+.hero-copy, .heroText, .heroStats, .hero-in {
+  position: relative !important; z-index: 2 !important;
+}
+
 </style>
 </head>
 <body>
