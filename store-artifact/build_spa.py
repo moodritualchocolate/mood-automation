@@ -19,7 +19,7 @@ PAGES = {  # route -> file
 
 # ---------- 1. asset compression ----------
 def compress(path):
-    """Return (data_uri, note). Photos → JPEG q80 max 1400w; alpha → WebP q82."""
+    """Return (data_uri, note). Photos → JPEG q72 max 1180w; alpha → WebP q76."""
     full = os.path.join(PUB, path.lstrip('/'))
     ext = path.rsplit('.', 1)[-1].lower()
     raw = open(full, 'rb').read()
@@ -27,15 +27,15 @@ def compress(path):
         return 'data:image/svg+xml;base64,' + base64.b64encode(raw).decode(), 'svg'
     im = Image.open(io.BytesIO(raw))
     has_alpha = im.mode in ('RGBA', 'LA') or (im.mode == 'P' and 'transparency' in im.info)
-    maxw = 1400
+    maxw = 1180
     if im.width > maxw:
         im = im.resize((maxw, int(im.height * maxw / im.width)), Image.LANCZOS)
     b = io.BytesIO()
     if has_alpha:
-        im.convert('RGBA').save(b, 'WEBP', quality=82, method=6)
+        im.convert('RGBA').save(b, 'WEBP', quality=76, method=6)
         mime = 'image/webp'
     else:
-        im.convert('RGB').save(b, 'JPEG', quality=80, optimize=True, progressive=True)
+        im.convert('RGB').save(b, 'JPEG', quality=72, optimize=True, progressive=True)
         mime = 'image/jpeg'
     # keep original if somehow smaller
     data = b.getvalue()
@@ -243,9 +243,10 @@ RONEN_PLUS = """
         '<div class="mp2-por"><img src="'+por+'" alt="רונן אפללו, אלוף העולם בשוקולד">'+
           '<i class="mp2-medal" aria-hidden="true">★</i></div>'+
         '<div class="mp2-copy">'+
-          '<div class="mp2-eye">אלוף העולם בשוקולד · 2022</div>'+
-          '<h2>18 חודשי פיתוח<span> לביס אחד.</span></h2>'+
-          '<p class="mp2-q">"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח." <i>רונן אפללו</i></p>'+
+          '<div class="mp2-eye">השוקולטייר של mood</div>'+
+          '<h2>אלוף העולם בשוקולד<span> בנה לנו את הביס.</span></h2>'+
+          '<p class="mp2-q">18 חודשים לקח לרונן אפללו למצוא את הנקודה שבה 800 מ״ג פורמולה '+
+            'עדיין מרגישים כמו שוקולד. <i>"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."</i></p>'+
         '</div>'+
         '<div class="mp2-stats">'+
           '<div><b>2022</b><span>אלוף העולם</span></div>'+
@@ -263,14 +264,13 @@ RONEN_PLUS = """
       var e=soc.querySelector(sel); if(e)e.remove();
     });
     var head=document.createElement('div'); head.className='cls-head';
-    head.innerHTML='<div class="cls-eye">מה אומרים</div>'+
-      '<h2>הריטואל של<span> 4,208 אנשים.</span></h2>';
+    head.innerHTML='<h2>הריטואל החדש<span> שכולם רוצים.</span></h2>';
     soc.insertBefore(head, soc.firstChild);
     // the customer clips get a rail of their own, above the written reviews
     var vids=soc.querySelector('.soc-videos');
     if(vids){
       var rail=document.createElement('div'); rail.className='vrail';
-      rail.innerHTML='<div class="vrail-head"><b>הרגעים שלהם</b><span>לקוחות מספרים · לחצו לקריאה</span></div>';
+      rail.innerHTML='<div class="vrail-head"><b>הרגעים שלהם</b><span>לקוחות מספרים · לחצו לצפייה</span></div>';
       soc.insertBefore(rail, head.nextSibling);
       rail.appendChild(vids);
       vids.classList.add('vrail-track');
@@ -316,73 +316,145 @@ RONEN_PLUS = """
         '</div>'+
       '</div>';
   }
-  function compareTable(){
-    var soc=document.querySelector('.soc'); if(!soc||document.querySelector('.cmp'))return;
-    var sec=document.createElement('section'); sec.className='cmp';
+  function awardsStrip(){
+    var mp=document.querySelector('.mp2'); if(!mp||document.querySelector('.awd'))return;
+    var d=document.createElement('div'); d.className='awd';
+    d.innerHTML='<div class="awd-in">'+
+      '<span class="awd-lead"><b>★</b>World Chocolate Awards · מדליית זהב 2022</span>'+
+      ['70% קקאו','0 גרם סוכר','כשר פרווה','תוצרת ישראל']
+        .map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>';
+    mp.parentNode.insertBefore(d, mp);       // it introduces the champion, not the hero
+  }
+  function faqAside(){
+    var faq=document.querySelector('.faq'); if(!faq||faq.dataset.aside)return;
+    [].forEach.call(faq.querySelectorAll('details[open]'),function(d){d.removeAttribute('open');});
+    [].forEach.call(faq.querySelectorAll('.faq-eyebrow,.eyebrow'),function(e){e.remove();});
+    // the two headings of this section are one pair: same size, same colour break
+    var fh=faq.querySelector('h2');
+    if(fh)fh.innerHTML='כל מה<span> שרציתם לדעת.</span>';
+    faq.dataset.aside='1';
+    var inner=faq.querySelector('.faq-in')||faq;
     var ROWS=[['טעם שרוצים לחזור אליו',2,0,1],
-               ['0 גרם סוכר',2,1,0],
-               ['בלי רעד ובלי נפילה',2,1,0],
-               ['נוח לקחת לכל מקום',2,1,0],
-               ['מתמידים בו אחרי חודש',2,0,1]];
+              ['0 גרם סוכר',2,1,0],
+              ['בלי רעד ובלי נפילה',2,1,0],
+              ['נוח לקחת לכל מקום',2,1,0],
+              ['מתמידים בו אחרי חודש',2,0,1]];
+    function cell(v,us){
+      var cls=v===2?'ok':(v===1?'mid':'no'), gl=v===2?'✓':(v===1?'~':'✕');
+      return '<div class="'+(us?'us ':'')+'c"><i class="'+cls+'">'+gl+'</i></div>';
+    }
+    var aside=document.createElement('aside'); aside.className='fqa';
+    aside.innerHTML=
+      '<h3 class="fqa-h">למה קובייה<span> ולא עוד קפה?</span></h3>'+
+      '<div class="cmp-tbl">'+
+        '<div class="cmp-hd"><span></span><div class="us head"><b>mood</b></div>'+
+          '<div class="head"><b>כדורים</b></div><div class="head"><b>קפה</b></div></div>'+
+        ROWS.map(function(r){return '<div class="cmp-row"><span>'+r[0]+'</span>'+
+          cell(r[1],true)+cell(r[2])+cell(r[3])+'</div>';}).join('')+
+        '</div>'+
+      '</div>';
+  }
+  function closingBlock(){
+    var soc=document.querySelector('.soc');
+    if(!soc||soc.dataset.slim)return;
+    soc.dataset.slim='1';
+    // the legacy heading, video rail and quote cards go — the review list carries this section now
+    ['.soc-head','.soc-grid','.soc-agg','.soc-demo','.soc-intro'].forEach(function(sel){
+      var e=soc.querySelector(sel); if(e)e.remove();
+    });
+    var head=document.createElement('div'); head.className='cls-head';
+    head.innerHTML='<h2>הריטואל החדש<span> שכולם רוצים.</span></h2>';
+    soc.insertBefore(head, soc.firstChild);
+    // the customer clips get a rail of their own, above the written reviews
+    var vids=soc.querySelector('.soc-videos');
+    if(vids){
+      var rail=document.createElement('div'); rail.className='vrail';
+      rail.innerHTML='<div class="vrail-head"><b>הרגעים שלהם</b><span>לקוחות מספרים · לחצו לצפייה</span></div>';
+      soc.insertBefore(rail, head.nextSibling);
+      rail.appendChild(vids);
+      vids.classList.add('vrail-track');
+      // each card opens the person's own words — no fake video player
+      var STORY={'יעל':'לוקחת אחת בבוקר במקום הקפה של עשר. אנרגיה נקייה, בלי הרעד ובלי הנפילה של ארבע.',
+                 'נועה':'הרגע שבין העבודה לילדים הוא הכי עמוס אצלי. הקובייה הזו היא ההפסקה היחידה שאני באמת לוקחת.',
+                 'שירה':'סוגרת את היום עם קובייה וכוס תה. אחרי שלושה שבועות זה כבר לא החלטה — זה פשוט מה שקורה.'};
+      [].forEach.call(vids.querySelectorAll('.soc-vid'),function(v){
+        var nm=(v.querySelector('figcaption b')||{}).textContent||'';
+        var q=STORY[nm.trim()]||'';
+        if(!q)return;
+        v.classList.add('has-story');
+        v.addEventListener('click',function(){
+          var box=document.createElement('div'); box.className='vstory';
+          box.innerHTML='<div class="vstory-in"><button class="vstory-x" aria-label="סגירה">×</button>'+
+            '<p>"'+q+'"</p><b>'+nm+'</b></div>';
+          document.body.appendChild(box);
+          requestAnimationFrame(function(){box.classList.add('on');});
+          box.addEventListener('click',function(e){
+            if(e.target===box||e.target.classList.contains('vstory-x'))box.remove();});
+        });
+      });
+    }
+  }
+  function clubUnit(){
+    var rc=document.querySelector('.rc'); if(!rc||rc.dataset.rebuilt)return;
+    var img=rc.querySelector('img'); var src=img?img.src:'';
+    rc.dataset.rebuilt='1'; rc.className='cu';
+    rc.innerHTML=
+      '<div class="cu-media"><img src="'+src+'" alt="מועדון החברים של mood"></div>'+
+      '<div class="cu-in">'+
+        '<div class="cu-copy">'+
+          '<span class="cu-tag">המסלול המשתלם</span>'+
+          '<div class="cu-eye">MOOD CLUB</div>'+
+          '<h2>הריטואל שמגיע<span> עד אליכם.</span></h2>'+
+          '<ul class="cu-list">'+
+            '<li><b>10%</b> הנחה קבועה, בכל הזמנה</li>'+
+            '<li><b>משלוח חינם</b> — תמיד, בלי מינימום</li>'+
+            '<li><b>דילוג או ביטול</b> בקליק אחד, בלי התחייבות</li>'+
+          '</ul>'+
+          '<a class="cu-cta" href="/club">הצטרפו למועדון</a>'+
+          '<p class="cu-note">מבטלים מתי שרוצים · חיוב רק ביום המשלוח</p>'+
+        '</div>'+
+      '</div>';
+  }
+  function awardsStrip(){
+    var mp=document.querySelector('.mp2'); if(!mp||document.querySelector('.awd'))return;
+    var d=document.createElement('div'); d.className='awd';
+    d.innerHTML='<div class="awd-in">'+
+      '<span class="awd-lead"><b>★</b>World Chocolate Awards · מדליית זהב 2022</span>'+
+      ['70% קקאו','0 גרם סוכר','כשר פרווה','תוצרת ישראל']
+        .map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>';
+    mp.parentNode.insertBefore(d, mp);       // it introduces the champion, not the hero
+  }
+  function faqAside(){
+    var faq=document.querySelector('.faq'); if(!faq||faq.dataset.aside)return;
+    [].forEach.call(faq.querySelectorAll('details[open]'),function(d){d.removeAttribute('open');});
+    [].forEach.call(faq.querySelectorAll('.faq-eyebrow,.eyebrow'),function(e){e.remove();});
+    // the two headings of this section are one pair: same size, same colour break
+    var fh=faq.querySelector('h2');
+    if(fh)fh.innerHTML='כל מה<span> שרציתם לדעת.</span>';
+    faq.dataset.aside='1';
+    var inner=faq.querySelector('.faq-in')||faq;
+    var ROWS=[['טעם שרוצים לחזור אליו',2,0,1],
+              ['0 גרם סוכר',2,1,0],
+              ['בלי רעד ובלי נפילה',2,1,0],
+              ['נוח לקחת לכל מקום',2,1,0],
+              ['מתמידים בו אחרי חודש',2,0,1]];
     function cell(v,us){
       var cls=v===2?'ok':(v===1?'mid':'no'), gl=v===2?'✓':(v===1?'~':'✕');
       return '<div class="'+(us?'us ':'')+'c"><i class="'+cls+'">'+gl+'</i></div>';
     }
     var tot=[0,0,0]; ROWS.forEach(function(r){tot[0]+=r[1];tot[1]+=r[2];tot[2]+=r[3];});
     var max=ROWS.length*2;
-    sec.innerHTML=
-      '<figure class="cmp-media"><img src="%%CMPIMG%%" alt="מעבירים קובייה של mood על שולחן בית קפה">'+
-        '<figcaption>אותו רגע. בלי הכוס השלישית.</figcaption></figure>'+
-      '<div class="cmp-copy">'+
-        '<div class="how-eye">ההבדל</div>'+
-        '<h2>למה קובייה ולא<span> כדור או עוד קפה.</span></h2>'+
-        '<div class="cmp-tbl">'+
-          '<div class="cmp-hd"><span></span>'+
-            '<div class="us head"><b>mood</b></div><div class="head"><b>כדורים</b></div><div class="head"><b>קפה</b></div></div>'+
-          ROWS.map(function(r){return '<div class="cmp-row"><span>'+r[0]+'</span>'+
-            cell(r[1],true)+cell(r[2])+cell(r[3])+'</div>';}).join('')+
-          '<div class="cmp-score"><span>סה״כ</span>'+
-            [0,1,2].map(function(i){var pct=Math.round(tot[i]/max*100);
-              return '<div class="'+(i===0?'us ':'')+'sc"><b>'+tot[i]+'<em>/'+max+'</em></b>'+
-                '<i><b style="width:'+pct+'%"></b></i></div>';}).join('')+
-          '</div>'+
-        '</div>'+
-        '<a class="cmp-cta" href="/products">בחרו את הרגע שלכם</a>'+
-      '</div>';
-    soc.parentNode.insertBefore(sec, soc);
-  }
-  function awardsStrip(){
-    var t=document.querySelector('.tline'); if(!t||document.querySelector('.awd'))return;
-    var d=document.createElement('div'); d.className='awd';
-    d.innerHTML='<div class="awd-in">'+
-      ['<b>★</b> World Chocolate Awards · זהב 2022','כשר פרווה','0 גרם סוכר','70% קקאו','תוצרת ישראל']
-        .map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>';
-    t.parentNode.insertBefore(d, t.nextSibling);
-  }
-  function faqAside(){
-    var faq=document.querySelector('.faq'); if(!faq||faq.dataset.aside)return;
-    faq.dataset.aside='1';
-    var inner=faq.querySelector('.faq-in')||faq;
     var aside=document.createElement('aside'); aside.className='fqa';
     aside.innerHTML=
-      '<figure class="fqa-img"><img src="%%FAQIMG%%" alt="קוביות mood על צלחת"></figure>'+
-      '<div class="fqa-rows">'+
-        '<div class="fqa-t">עדיין מתלבטים?</div>'+
-        '<a class="fqa-r" href="tel:0524129125">'+
-          '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" '+
-          'stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 '+
-          '19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 '+
-          '2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'+
-          '<div><b>דברו איתנו</b><span dir="ltr">052-412-9125</span></div><em>←</em></a>'+
-        '<div class="fqa-r static"><span class="fqa-ic">↺</span>'+
-          '<div><b>30 יום להתחרט</b><span>כסף חזרה, בלי שאלות</span></div></div>'+
-        '<div class="fqa-r static"><span class="fqa-ic">✦</span>'+
-          '<div><b>70% קקאו · 0 סוכר</b><span>כשר פרווה · תוצרת ישראל</span></div></div>'+
+      '<h3 class="fqa-h">למה קובייה<span> ולא עוד קפה?</span></h3>'+
+      '<div class="cmp-tbl">'+
+        '<div class="cmp-hd"><span></span><div class="us head"><b>mood</b></div>'+
+          '<div class="head"><b>כדורים</b></div><div class="head"><b>קפה</b></div></div>'+
+        ROWS.map(function(r){return '<div class="cmp-row"><span>'+r[0]+'</span>'+
+          cell(r[1],true)+cell(r[2])+cell(r[3])+'</div>';}).join('')+
       '</div>';
-    // the accordion and the aside become the two columns of one grid
     var wrap=document.createElement('div'); wrap.className='fq-grid';
-    var host=inner.parentNode;
-    host.insertBefore(wrap, inner);
+    inner.parentNode.insertBefore(wrap, inner);
     wrap.appendChild(inner);
     wrap.appendChild(aside);
   }
@@ -434,7 +506,7 @@ RONEN_PLUS = """
     });
   }
   function boot2(){[120,260,900,1800].forEach(function(d){
-    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();compareTable();faqAside();awardsStrip();},d);});}
+    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();},d);});}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot2); else boot2();
 })();
 </script>"""
@@ -1235,14 +1307,12 @@ MOOD_SYSTEM = """
 .conversion-trust{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
 .conversion-trust span{font-size:11px!important;padding:6px 11px!important}
 
-/* ============ THE LINE UNDER THE HERO — the loudest quiet thing on the page ============ */
-.tline{background:#241b12;padding:0;overflow:hidden;position:relative}
-.tline::before,.tline::after{content:"";position:absolute;top:0;bottom:0;width:34%;pointer-events:none}
-.tline::before{inset-inline-start:0;background:linear-gradient(90deg,rgba(224,90,0,.22),transparent)}
-.tline::after{inset-inline-end:0;background:linear-gradient(270deg,rgba(126,145,83,.20),transparent)}
-.tline .tline-in{position:relative;z-index:2;max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;
-  text-align:center;color:#efe3d3;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.4}
-.tline .tline-in b{color:#F7B27A;font-weight:900}
+/* ============ THE LINE UNDER THE HERO — black, high contrast, nothing else ============ */
+.tline{background:#0e0b08;padding:0}
+.tline::before,.tline::after{content:none}
+.tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
+  color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
+.tline .tline-in b{color:#FFB877;font-weight:900}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -1255,7 +1325,9 @@ MOOD_SYSTEM = """
   background:#F7B27A;padding:5px 11px;border-radius:999px;white-space:nowrap}
 .mp2-copy h2{margin:9px 0 0;font-size:clamp(23px,3.2vw,36px);line-height:1.06;letter-spacing:-.035em;color:#fff}
 .mp2-copy h2 span{color:#F7B27A}
-.mp2-q{margin:8px 0 0;font-size:clamp(13.5px,1.6vw,16px);line-height:1.5;color:rgba(242,231,217,.82);font-weight:600}
+.mp2-q{margin:9px 0 0;font-size:clamp(13.5px,1.55vw,15.5px);line-height:1.55;color:rgba(242,231,217,.78);
+  font-weight:600;max-width:560px}
+.mp2-q i{font-style:normal;font-weight:800;color:#F7B27A}
 .mp2-q i{font-style:normal;font-weight:800;color:#F7B27A}
 .mp2-stats{grid-column:1/-1;display:flex;border-top:1px solid rgba(247,178,122,.25);
   border-bottom:1px solid rgba(247,178,122,.25);margin-top:4px}
@@ -1271,9 +1343,12 @@ MOOD_SYSTEM = """
   .mp2-stats div+div{border-inline-start:1px solid rgba(247,178,122,.25)}
 }
 
-/* a quote mark, not a play button — these are written moments */
-.vrail-track .soc-vplay::before{border:0!important;content:"\201D"!important;font-size:30px;font-weight:900;
-  color:#241b12;line-height:0;margin:0 0 -6px 0!important;font-family:Georgia,serif}
+/* a play mark — these read as clips, and the card opens on tap */
+.vrail-track .soc-vplay{background:rgba(255,255,255,.94)!important;width:54px!important;height:54px!important}
+.vrail-track .soc-vplay::before{content:""!important;border-style:solid!important;
+  border-width:9px 0 9px 15px!important;border-color:transparent transparent transparent #241b12!important;
+  margin:0 0 0 3px!important;font-size:0!important}
+.vrail-track .soc-vid:hover .soc-vplay{background:#fff!important}
 .vrail-track .has-story{cursor:pointer}
 .vstory{position:fixed;inset:0;z-index:60;background:rgba(24,16,10,.72);display:grid;place-items:center;
   padding:22px;opacity:0;transition:opacity .25s;backdrop-filter:blur(3px)}
@@ -1298,8 +1373,8 @@ MOOD_SYSTEM = """
   .soc{display:grid!important;grid-template-columns:minmax(0,360px) minmax(0,1fr);
     gap:0 40px;align-items:start;width:min(1060px,calc(100% - 32px));margin:0 auto;
     padding:clamp(30px,4vw,50px) 0 clamp(24px,3vw,36px)!important}
-  .cls-head{grid-column:1/-1;width:auto;margin:0 0 22px;text-align:right}
-  .cls-head h2{font-size:clamp(28px,3.4vw,40px)}
+  .cls-head{grid-column:1/-1;width:auto;margin:0 0 20px;text-align:center}
+  .cls-head h2{font-size:clamp(26px,3vw,34px)}
   .vrail{width:auto;margin:0}
   .soc .vrail .vrail-track{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
   .soc .vrail .vrail-track .soc-vid{aspect-ratio:16/10!important;width:auto!important;flex:none!important}
@@ -1311,93 +1386,66 @@ MOOD_SYSTEM = """
 .fqa-img img{height:min(58vw,300px)}
 @media (min-width:901px){.fqa-img img{height:290px}}
 
-/* ============ FAQ — photo and answers as one column, hairline language ============ */
+/* accordion: a chevron that turns, closed by default */
+.faq details>summary::after,.faq summary::after{content:"⌄"!important;font-size:19px!important;line-height:.6;
+  transform:translateY(-2px);transition:transform .25s ease;color:#C9551A!important;font-weight:400!important}
+.faq details[open]>summary::after,.faq details[open] summary::after{transform:rotate(180deg) translateY(-2px)!important}
+/* ============ THE CLOSING SECTION: questions + the scoreboard, on white ============ */
+/* the comparison is a desktop argument — on a phone it is only scroll */
+@media (max-width:900px){.fqa{display:none!important}}
+.faq{background:#fff!important}
 .fq-grid{display:block}
-.fqa{margin-top:24px}
-.fqa-img{margin:0;border-radius:20px;overflow:hidden;background:#efe7db}
-.fqa-img img{width:100%;height:min(58vw,300px);object-fit:cover;display:block}
-.fqa-rows{margin-top:6px}
-.fqa-t{padding:16px 2px 10px;font-size:17px;font-weight:900;letter-spacing:-.02em;color:#171512}
-.fqa-r{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:12px;padding:13px 2px;
-  border-top:1px solid #e4d8c6;text-decoration:none;color:inherit;transition:color .16s}
-.fqa-r:last-child{border-bottom:1px solid #e4d8c6}
-.fqa-r svg{color:#C9551A}
-.fqa-ic{display:grid;place-items:center;font-size:15px;color:#C9551A;line-height:1}
-.fqa-r b{display:block;font-size:14.5px;font-weight:900;color:#171512;letter-spacing:-.01em}
-.fqa-r span{display:block;font-size:12.5px;color:#8a7c6a;font-weight:700;margin-top:2px;
-  direction:inherit;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
-.fqa-r em{font-style:normal;color:#c9bcaa;font-size:15px;transition:transform .2s,color .2s}
-.fqa-r:not(.static):hover b{color:#C9551A}
-.fqa-r:not(.static):hover em{color:#C9551A;transform:translateX(3px)}
-@media (min-width:901px){
-  .fq-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:42px;align-items:start;
-    width:min(1060px,calc(100% - 32px));margin:0 auto}
-  .fqa{margin-top:0;position:sticky;top:96px}
-  .fqa-img img{height:270px}
-  .faq{padding-bottom:46px!important}
-}
-
-/* ============ COMPARISON — one unit: photo bleeds, rows are hairlines ============ */
-.cmp{background:#efe7db;display:grid;grid-template-columns:1fr;gap:0;overflow:hidden}
-.cmp-media{position:relative;margin:0;background:#241b12}
-.cmp-media img{width:100%;height:min(56vw,240px);object-fit:cover;object-position:center 60%;display:block}
-.cmp-media figcaption{position:absolute;inset:auto 0 0 0;padding:34px 20px 16px;color:#f6ecdd;
-  font-size:clamp(13px,2.4vw,16px);font-weight:800;letter-spacing:-.01em;
-  background:linear-gradient(0deg,rgba(24,16,10,.88),rgba(24,16,10,.25) 55%,transparent)}
-.cmp-copy{padding:clamp(24px,4vw,40px) clamp(16px,4vw,44px) clamp(26px,4vw,44px)}
-.cmp-copy h2{margin:9px 0 0;font-size:clamp(25px,3.6vw,36px);line-height:1.07;letter-spacing:-.035em;color:#171512}
-.cmp-copy h2 span{color:#E05A00}
-.cmp-tbl{margin-top:20px}
-.cmp-hd,.cmp-row,.cmp-score{display:grid;grid-template-columns:1fr 72px 66px 66px;align-items:center}
-.cmp-hd{border-bottom:1px solid #ddd0bc}
+.fqa{margin-top:30px;padding-top:26px;border-top:1px solid #ece3d6}
+.how-eye{font-size:11px;font-weight:900;letter-spacing:.2em;color:#E05A00}
+.fqa-h,.fq-grid>.faq h2{margin:0!important;font-size:clamp(21px,4.6vw,30px)!important;line-height:1.14!important;
+  letter-spacing:-.032em!important;color:#171512!important;font-weight:900!important;text-align:right!important}
+.fqa-h span,.fq-grid>.faq h2 span{color:#E05A00}
+@media (min-width:901px){.fqa-h,.fq-grid>.faq h2{white-space:nowrap}}
+.fqa-h span{color:#E05A00}
+.cmp-tbl{margin-top:18px}
+.cmp-hd,.cmp-row{display:grid;grid-template-columns:1fr 70px 62px 62px;align-items:center}
+.cmp-hd{border-bottom:1px solid #e7ddd0}
 .cmp-hd .head{padding:0 4px 9px;text-align:center}
-.cmp-hd .head b{font-size:12.5px;font-weight:900;color:#a3968a;letter-spacing:.02em}
-.cmp-hd .us b{color:#241b12;font-size:16px;direction:ltr;letter-spacing:-.02em}
-.cmp-row{border-bottom:1px solid #e4d8c6}
-.cmp-row span{padding:12px 2px;font-size:14.5px;font-weight:700;color:#443c33}
-.cmp-row .c{display:grid;place-items:center;padding:10px 4px}
-.cmp-row i{font-style:normal;font-size:15px;font-weight:900;display:grid;place-items:center;
-  width:28px;height:28px;border-radius:50%}
-.cmp-row i.ok{background:#E05A00;color:#fff;box-shadow:0 4px 12px -5px rgba(224,90,0,.7)}
-.cmp-row i.no{background:rgba(176,89,74,.14);color:#a9564a}
-.cmp-row i.mid{background:rgba(138,124,106,.16);color:#8a7c6a}
-.cmp-score{border-bottom:0;padding-top:4px}
-.cmp-score>span{padding:12px 2px;font-size:12px;font-weight:900;color:#a3968a;letter-spacing:.1em}
-.cmp-score .sc{padding:10px 6px;text-align:center}
-.cmp-score .sc>b{display:block;font-size:16px;font-weight:900;color:#a3968a;font-variant-numeric:tabular-nums}
-.cmp-score .sc>b em{font-style:normal;font-size:10.5px;color:#b9ac9c;font-weight:700}
-.cmp-score .sc i{display:block;height:4px;border-radius:99px;background:#ddd0bc;margin-top:6px;overflow:hidden}
-.cmp-score .sc i b{display:block;height:100%;background:#bfae99;border-radius:99px}
-.cmp-score .us>b{color:#241b12;font-size:21px}
-.cmp-score .us i b{background:#E05A00}
-.cmp-cta{display:inline-flex;align-items:center;justify-content:center;gap:11px;margin-top:22px;min-height:50px;
-  padding:14px 30px;border-radius:999px;background:#C9551A;color:#fdf6ee;border:1px solid #B44A14;
-  font-weight:700;font-size:15.5px;text-decoration:none;transition:background .22s}
-.cmp-cta::before{content:"";width:7px;height:7px;border-radius:2px;background:currentColor;opacity:.55;
-  transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .3s}
-.cmp-cta:hover{background:#A94512;border-color:#A94512}
-.cmp-cta:hover::before{transform:rotate(45deg) scale(1.15);opacity:1}
+.cmp-hd .head b{font-size:12px;font-weight:900;color:#a3968a}
+.cmp-hd .us b{color:#241b12;font-size:15.5px;direction:ltr;letter-spacing:-.02em}
+.cmp-row{border-bottom:1px solid #f2ece2}
+.cmp-tbl .cmp-row:last-child{border-bottom:0}
+.cmp-row span{padding:11px 2px;font-size:14px;font-weight:700;color:#443c33}
+.cmp-row .c{display:grid;place-items:center;padding:9px 4px}
+.cmp-row i{font-style:normal;font-size:14px;font-weight:900;display:grid;place-items:center;
+  width:26px;height:26px;border-radius:50%}
+.cmp-row i.ok{background:#E05A00;color:#fff}
+.cmp-row i.no{background:#f7eeeb;color:#b0594a}
+.cmp-row i.mid{background:#f4f0e9;color:#9c8f7e}
 @media (min-width:901px){
-  .cmp{grid-template-columns:minmax(0,.9fr) minmax(0,1fr);align-items:stretch}
-  .cmp-media img{height:100%;min-height:430px}
-  .cmp-copy{max-width:560px;margin-inline-end:auto;padding:46px 44px}
-  .cmp-hd,.cmp-row,.cmp-score{grid-template-columns:1fr 78px 70px 70px}
-}
-@media (max-width:700px){
-  .cmp-hd,.cmp-row,.cmp-score{grid-template-columns:1fr 62px 56px 56px}
-  .cmp-row span{font-size:13px}
-  .cmp-row i{width:25px;height:25px;font-size:13.5px}
+  .fq-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:56px;align-items:start;
+    width:min(1060px,calc(100% - 32px));margin:0 auto}
+  /* the FAQ column carries the section's own top padding — the aside matches it exactly
+     so both eyebrows sit on one line */
+  .fq-grid>.faq{padding-top:0!important}
+  .fq-grid>.faq>h2,.fq-grid>.faq h2:first-of-type{margin-top:0!important}
+  .fq-grid>.faq .faq-head,.fq-grid>.faq .faq-head *{margin-top:0!important;padding-top:0!important}
+  .fq-grid{padding-top:clamp(40px,5vw,76px)}
+  .fqa{margin-top:20px;padding-top:0;border-top:0}   /* meets the FAQ heading's line exactly */
+  .cmp-hd,.cmp-row{grid-template-columns:1fr 76px 66px 66px}
+  .faq{padding-bottom:52px!important}
 }
 
-/* ============ AWARDS STRIP ============ */
-.awd{background:#fff;border-bottom:1px solid #ece3d6}
-.awd-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:flex;flex-wrap:wrap;justify-content:center;
-  gap:10px 22px;padding:14px 0}
-.awd-in span{font-size:12px;font-weight:800;color:#8a7c6a;letter-spacing:.02em;white-space:nowrap}
-.awd-in span b{color:#C9551A;font-size:13px}
+/* ============ AWARDS STRIP — the run-up to the champion band ============ */
+.awd{background:#f7f3ed;padding:0}
+.awd-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;
+  justify-content:center;gap:9px 0;padding:16px 0 15px;border-bottom:1px solid #e4d8c6}
+.awd-in span{position:relative;font-size:12.5px;font-weight:800;color:#8a7c6a;letter-spacing:.01em;
+  white-space:nowrap;padding:0 15px}
+.awd-in span+span::before{content:"";position:absolute;inset-inline-start:0;top:50%;width:4px;height:4px;
+  border-radius:1px;background:#cdbfab;transform:translateY(-50%) rotate(45deg)}
+.awd-in .awd-lead{display:inline-flex;align-items:center;gap:7px;color:#241b12;font-size:13.5px;font-weight:900}
+.awd-in .awd-lead b{color:#C9551A;font-size:15px;line-height:1}
 @media (max-width:700px){
-  .awd-in{gap:8px 14px;padding:12px 0}
-  .awd-in span{font-size:11px}
+  .awd-in{gap:7px 0;padding:13px 0 12px}
+  .awd-in span{font-size:11px;padding:0 10px}
+  .awd-in .awd-lead{font-size:12px;width:100%;justify-content:center;padding:0 0 4px}
+  .awd-in .awd-lead+span::before{display:none}
 }
 
 /* the hero's champion line, as a badge */
@@ -1593,9 +1641,8 @@ for _route in list(page_src):
                         if '</body>' in page_src[_route] else page_src[_route] + MOOD_SYSTEM)
 page_src['%f3d%'] = page_src['%f3d%'].replace('</body>', MOOD_SYSTEM + '</body>')
 
-for _b in ('/brand/bars-plate.jpg','/brand/cafe-handoff.jpg','/brand/bar-social.jpg','/mood-hero-three-moments.png','/mood-chocolate-bite.png','/mood-club-generations.png',
-           '/brand/blog-collage.png','/brand/blog-flood.png','/brand/blog-watercolor.webp',
-           '/brand/rooftop.png','/brand/cables.webp','/brand/jump-o.webp','/brand/field-guide.png'):
+for _b in ('/brand/bars-plate.jpg', '/brand/cafe-handoff.jpg', '/mood-club-generations.png',
+           '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png'):
     referenced.add(_b)                            # the brand's own campaign photography
 for _a in _journal.ARTICLES:                      # blog art + product shots
     referenced.add(_a['image'])
