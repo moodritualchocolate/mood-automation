@@ -357,6 +357,74 @@ body { background: var(--paper); }
   .signin-txt { font-size: 12px !important; }
 }
 
+
+
+/* ============================================================
+   v38.2 — hero copy to bottom + CTA color revert (lilac, not brown)
+   ============================================================ */
+
+/* CTAs — bring back Mayven's lilac so buttons don't scream chocolate */
+:root {
+  --cta:      #b8b0e6 !important;   /* was #2c1d16 chocolate */
+  --cta-dark: #5c4fa5 !important;
+}
+.pill-cta {
+  background: var(--cta) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px -6px rgba(92,79,165,.45) !important;
+}
+.pill-cta:hover { background: var(--cta-dark) !important; }
+.pill-out { border-color: var(--ink,#171512) !important; color: var(--ink,#171512) !important; }
+.pill-out:hover { background: var(--ink,#171512) !important; color: #fff !important; }
+.pill-dark { background: var(--ink,#171512) !important; color: #fff !important; }
+.tier.active { border-color: var(--cta-dark) !important; background: #fbfaff !important; }
+.rvs-row .bar i { background: var(--ink,#171512) !important; }
+
+/* HERO — anchor text to the bottom, more air on top */
+.hero {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  padding-bottom: 60px !important;
+}
+.hero-copy, .heroText {
+  text-align: center !important;
+  max-width: 720px !important;
+  padding-inline: 20px !important;
+}
+.heroStats {
+  bottom: 24px !important;
+}
+
+/* On the hero itself (over the dark video) buttons stay light for contrast */
+.hero .pill-cta,
+.hero .heroText .btn.white,
+.hero .btn.white {
+  background: #fdfaf3 !important;
+  color: #171512 !important;
+  box-shadow: 0 6px 18px -6px rgba(0,0,0,.35) !important;
+}
+.hero .pill-cta:hover,
+.hero .btn.white:hover {
+  background: #fff !important;
+  color: #171512 !important;
+}
+.hero .pill-out,
+.hero .textLink {
+  color: #fff !important;
+  border-color: rgba(255,255,255,.7) !important;
+}
+.hero .pill-out:hover { background: #fff !important; color: #171512 !important; }
+
+/* Mobile: extra bottom padding so text sits above the stats row */
+@media (max-width: 900px) {
+  .hero {
+    padding-bottom: 88px !important;
+    align-items: flex-end !important;
+  }
+  .heroStats { bottom: 16px !important; }
+}
+
 </style>
 </head>
 <body>
