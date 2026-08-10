@@ -962,19 +962,13 @@ body.m-open { overflow: hidden; }
 
 /* v49 — mobile hide champstrip, tighter moments, fix z-index, clickable cards */
 
-/* 1. Mobile: hide champion strip entirely (photo of Ronen + text) */
+/* v49r: on mobile, hide only Ronen photo, keep the text bar */
 @media (max-width: 720px) {
-  .champstrip { display: none !important; }
-  /* also hide any second champstrip clone if exists */
+  .champstrip-avatar { display: none !important; }
+  .champstrip-in { justify-content: center !important; }
 }
 
 /* 2. Bring the '3 formulas' section closer to the top */
-#moments { padding-top: 24px !important; }
-#moments .section-head { margin-bottom: 22px !important; }
-@media (max-width: 720px) {
-  #moments { padding-top: 16px !important; }
-  #moments .section-head { margin-bottom: 16px !important; }
-}
 
 /* 3. Fix click-through: nav must sit above ANY sticky overlay */
 header { z-index: 70 !important; position: sticky; top: 0; }
@@ -1043,7 +1037,7 @@ header nav a:hover { color: var(--forest); text-decoration: underline; text-unde
     </div>
 
     <!-- MOMENTS: 3 cards -->
-    <section class="section" id="moments" style="padding-top:24px">
+    <section class="section" id="moments" style="padding-top:64px">
       <div class="section-head" style="margin-bottom:32px">
         <h2 style="margin-bottom:10px">שלושה רגעים.<br><b>שלוש פורמולות.</b></h2>
       </div>
