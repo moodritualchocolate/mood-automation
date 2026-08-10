@@ -307,6 +307,46 @@ body { background: var(--paper); }
 .pc-price-main b { font-size: 22px !important; }
 .pc-price-from { font-size: 11px !important; }
 
+/* v38.3 — slim champion strip (same height family as trust chips row) */
+.champstrip {
+  background: linear-gradient(90deg, #1a1109 0%, #2c1d16 100%);
+  color: #f7ecd8;
+  padding: 14px 4vw;
+  border-top: 1px solid #3a2416;
+  border-bottom: 1px solid #3a2416;
+  direction: rtl;
+}
+.champstrip-in {
+  max-width: 1240px; margin: 0 auto;
+  display: flex; align-items: center; gap: 18px; justify-content: center;
+  flex-wrap: wrap;
+}
+.champstrip-avatar {
+  width: 52px; height: 44px; border-radius: 6px;
+  background: #111 center/cover no-repeat;
+  border: 1.5px solid #c69130;
+  flex: none;
+}
+.champstrip-text {
+  font-family: 'DM Sans', 'Assistant', sans-serif;
+  font-size: 15px; font-weight: 700; letter-spacing: -.2px;
+  color: #fdfaf3;
+}
+.champstrip-text b { color: #ffec5c; font-weight: 800; }
+.champstrip-text .sep { color: #8a7d6a; margin: 0 10px; font-weight: 400; }
+.champstrip-medal {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'DM Sans', sans-serif; font-size: 11.5px; font-weight: 800; letter-spacing: 1.5px;
+  padding: 5px 11px; background: rgba(198,145,48,.18);
+  border: 1px solid rgba(198,145,48,.4); border-radius: 6px;
+  color: #e8c880; text-transform: uppercase;
+}
+@media (max-width: 640px) {
+  .champstrip-in { gap: 12px; }
+  .champstrip-text { font-size: 13.5px; text-align: center; }
+  .champstrip-medal { font-size: 10.5px; padding: 4px 8px; }
+}
+
 /* v38.2 — home polish: hide prices on cards, hide desktop hamburger */
 .pc .pc-price, .pc .pc-price-main, .pc .pc-price-from { display: none !important; }
 .pc .pc-body { padding-bottom: 22px !important; }
@@ -315,66 +355,6 @@ body { background: var(--paper); }
   .hactions button.ic { display: none !important; }
 }
 
-/* v38.2 — champion band (Mayven-style story strip) */
-.champion { padding: 0; margin: 60px 0 20px; background: transparent; }
-.champion-in {
-  max-width: 1320px; margin: 0 auto; padding: 0 4vw;
-  display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; align-items: stretch;
-  background: linear-gradient(180deg, #1a1109, #2c1d16); color: #f7ecd8;
-  border-radius: 18px; overflow: hidden; min-height: 420px;
-  direction: rtl;
-}
-.champion-media {
-  position: relative; overflow: hidden; background: #1a1109;
-}
-.champion-media img {
-  width: 100%; height: 100%; min-height: 380px;
-  object-fit: cover; display: block;
-  filter: brightness(.94) contrast(1.05);
-}
-.champion-copy {
-  padding: 56px 56px; display: flex; flex-direction: column; justify-content: center;
-  text-align: right;
-}
-.champion-kicker {
-  font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px;
-  color: #e8c880; text-transform: uppercase; margin: 0 0 18px;
-  display: inline-flex; gap: 10px; align-items: center;
-}
-.champion-kicker::before {
-  content: ""; display: inline-block; width: 30px; height: 1.5px;
-  background: #c69130; opacity: .8;
-}
-.champion-copy h2 {
-  font-family: 'DM Sans', 'Assistant', sans-serif;
-  font-size: clamp(28px, 3.8vw, 46px); line-height: 1.06; letter-spacing: -1.4px;
-  font-weight: 500; margin: 0 0 20px; color: #fdfaf3;
-}
-.champion-copy h2 b { font-weight: 700; color: #ffec5c; }
-.champion-copy .q {
-  font-family: 'DM Sans', 'Assistant', sans-serif; font-size: 17px; line-height: 1.55;
-  color: #d9c9b3; margin: 0 0 26px; font-style: italic;
-  border-inline-start: 3px solid #c69130; padding-inline-start: 18px;
-}
-.champion-copy .who {
-  display: flex; flex-direction: column; gap: 4px;
-  font-family: 'DM Sans', 'Assistant', sans-serif;
-}
-.champion-copy .who b { color: #fdfaf3; font-size: 16px; font-weight: 800; letter-spacing: -.3px; }
-.champion-copy .who span { color: #8a7d6a; font-size: 13px; font-weight: 600; letter-spacing: .04em; }
-.champion-medals {
-  display: flex; gap: 14px; flex-wrap: wrap; margin: 22px 0 0;
-}
-.champion-medals .m {
-  font-family: 'DM Sans', sans-serif; font-size: 11.5px; font-weight: 800; letter-spacing: 1.4px;
-  padding: 8px 14px; background: rgba(198,145,48,.15); color: #e8c880;
-  border: 1px solid rgba(198,145,48,.35); border-radius: 6px; text-transform: uppercase;
-}
-@media (max-width: 900px) {
-  .champion-in { grid-template-columns: 1fr; border-radius: 14px; }
-  .champion-media img { min-height: 260px; aspect-ratio: 16/10; }
-  .champion-copy { padding: 34px 30px 38px; }
-}
 
 /* v38.1 — hero content bottom-anchored + chocolate/cream CTA buttons on video */
 .hero { min-height: min(88vh, 780px) !important; }
