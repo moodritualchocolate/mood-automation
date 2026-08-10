@@ -86,8 +86,13 @@ BLOCK = """
             list=mine.concat(list.filter(function(v){return v.s!==SKU;}));}
     var avg=(list.reduce(function(a,v){return a+v.r;},0)/list.length).toFixed(1);
     var box=document.createElement('div');box.className='mv-rv';
+    var dist=[5,4,3,2,1].map(function(n){
+      var c=list.filter(function(v){return v.r===n;}).length;
+      return '<div><span>'+n+'</span><i><b style="width:'+Math.round(c/list.length*100)+'%"></b></i><span>'+c+'</span></div>';
+    }).join('');
     box.innerHTML='<div class="mv-rvhead"><b>'+avg+'</b><span class="st" style="color:#E05A00">★★★★★</span>'+
       '<span>מבוסס על '+list.length+' ביקורות</span></div>'+
+      '<div class="mv-dist">'+dist+'</div>'+
       list.slice(0,6).map(card).join('')+
       '<button class="mv-rvmore" type="button">הצגת כל '+list.length+' הביקורות</button>';
     host.appendChild(box);
