@@ -316,36 +316,39 @@ RONEN_PLUS = """
         '</div>'+
       '</div>';
   }
-  function howItWorks(){
-    var anchor=document.querySelector('.tline'); if(!anchor||document.querySelector('.how'))return;
-    var sec=document.createElement('section'); sec.className='how';
-    var STEPS=[
-      ['01','בוחרים רגע','ENERGY לבוקר, RELAX למעבר, SLEEP ללילה. לא צריך את שלושתם — רק את זה שמתאים לכם.','%%HOWA%%'],
-      ['02','קובייה אחת ביום','שוקולד מריר 70% עם 800 מ״ג פורמולה. חצי דקה, בלי מים ובלי לזכור כמה כדורים.','%%HOWB%%'],
-      ['03','המארז מגיע אליכם','30 יחידות עטופות אחת־אחת, כל חודש. מדלגים או מבטלים בקליק.','%%HOWC%%']
-    ];
-    sec.innerHTML='<div class="how-in"><div class="how-head"><div class="how-eye">איך זה עובד</div>'+
-      '<h2>שלושה צעדים.<span> בערך חצי דקה.</span></h2></div><div class="how-grid">'+
-      STEPS.map(function(s){return '<article class="how-c"><div class="how-img"><img src="'+s[3]+'" alt="'+s[1]+'">'+
-        '<b>'+s[0]+'</b></div><h3>'+s[1]+'</h3><p>'+s[2]+'</p></article>';}).join('')+
-      '</div></div>';
-    anchor.parentNode.insertBefore(sec, anchor.nextSibling);
-  }
   function compareTable(){
     var soc=document.querySelector('.soc'); if(!soc||document.querySelector('.cmp'))return;
     var sec=document.createElement('section'); sec.className='cmp';
-    var ROWS=[['טעם שרוצים לחזור אליו','yes','no','mid'],
-               ['0 גרם סוכר','yes','mid','no'],
-               ['בלי רעד ובלי נפילה','yes','mid','no'],
-               ['נוח לקחת בכל מקום','yes','mid','no'],
-               ['מתמידים בו אחרי חודש','yes','no','mid']];
-    function cell(v){return v==='yes'?'<i class="ok">✓</i>':(v==='no'?'<i class="no">✕</i>':'<i class="mid">~</i>');}
-    sec.innerHTML='<div class="cmp-in"><div class="how-eye">ההבדל</div>'+
-      '<h2>למה קובייה ולא<span> כדור או עוד קפה.</span></h2>'+
-      '<div class="cmp-tbl"><div class="cmp-hd"><span></span><b class="us">mood</b><b>כדורים</b><b>קפה</b></div>'+
-      ROWS.map(function(r){return '<div class="cmp-row"><span>'+r[0]+'</span>'+
-        '<div class="us">'+cell(r[1])+'</div><div>'+cell(r[2])+'</div><div>'+cell(r[3])+'</div></div>';}).join('')+
-      '</div></div>';
+    var ROWS=[['טעם שרוצים לחזור אליו',2,0,1],
+               ['0 גרם סוכר',2,1,0],
+               ['בלי רעד ובלי נפילה',2,1,0],
+               ['נוח לקחת לכל מקום',2,1,0],
+               ['מתמידים בו אחרי חודש',2,0,1]];
+    function cell(v,us){
+      var cls=v===2?'ok':(v===1?'mid':'no'), gl=v===2?'✓':(v===1?'~':'✕');
+      return '<div class="'+(us?'us ':'')+'c"><i class="'+cls+'">'+gl+'</i></div>';
+    }
+    var tot=[0,0,0]; ROWS.forEach(function(r){tot[0]+=r[1];tot[1]+=r[2];tot[2]+=r[3];});
+    var max=ROWS.length*2;
+    sec.innerHTML=
+      '<figure class="cmp-media"><img src="%%CMPIMG%%" alt="מעבירים קובייה של mood על שולחן בית קפה">'+
+        '<figcaption>אותו רגע. בלי הכוס השלישית.</figcaption></figure>'+
+      '<div class="cmp-copy">'+
+        '<div class="how-eye">ההבדל</div>'+
+        '<h2>למה קובייה ולא<span> כדור או עוד קפה.</span></h2>'+
+        '<div class="cmp-tbl">'+
+          '<div class="cmp-hd"><span></span>'+
+            '<div class="us head"><b>mood</b></div><div class="head"><b>כדורים</b></div><div class="head"><b>קפה</b></div></div>'+
+          ROWS.map(function(r){return '<div class="cmp-row"><span>'+r[0]+'</span>'+
+            cell(r[1],true)+cell(r[2])+cell(r[3])+'</div>';}).join('')+
+          '<div class="cmp-score"><span>סה״כ</span>'+
+            [0,1,2].map(function(i){var pct=Math.round(tot[i]/max*100);
+              return '<div class="'+(i===0?'us ':'')+'sc"><b>'+tot[i]+'<em>/'+max+'</em></b>'+
+                '<i><b style="width:'+pct+'%"></b></i></div>';}).join('')+
+          '</div>'+
+        '</div>'+
+        '<a class="cmp-cta" href="/products">בחרו את הרגע שלכם</a>'+
+      '</div>';
     soc.parentNode.insertBefore(sec, soc);
   }
   function awardsStrip(){
@@ -355,6 +358,33 @@ RONEN_PLUS = """
       ['<b>★</b> World Chocolate Awards · זהב 2022','כשר פרווה','0 גרם סוכר','70% קקאו','תוצרת ישראל']
         .map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>';
     t.parentNode.insertBefore(d, t.nextSibling);
+  }
+  function faqAside(){
+    var faq=document.querySelector('.faq'); if(!faq||faq.dataset.aside)return;
+    faq.dataset.aside='1';
+    var inner=faq.querySelector('.faq-in')||faq;
+    var aside=document.createElement('aside'); aside.className='fqa';
+    aside.innerHTML=
+      '<figure class="fqa-img"><img src="%%FAQIMG%%" alt="קוביות mood על צלחת"></figure>'+
+      '<div class="fqa-rows">'+
+        '<div class="fqa-t">עדיין מתלבטים?</div>'+
+        '<a class="fqa-r" href="tel:0524129125">'+
+          '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" '+
+          'stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 '+
+          '19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 '+
+          '2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'+
+          '<div><b>דברו איתנו</b><span dir="ltr">052-412-9125</span></div><em>←</em></a>'+
+        '<div class="fqa-r static"><span class="fqa-ic">↺</span>'+
+          '<div><b>30 יום להתחרט</b><span>כסף חזרה, בלי שאלות</span></div></div>'+
+        '<div class="fqa-r static"><span class="fqa-ic">✦</span>'+
+          '<div><b>70% קקאו · 0 סוכר</b><span>כשר פרווה · תוצרת ישראל</span></div></div>'+
+      '</div>';
+    // the accordion and the aside become the two columns of one grid
+    var wrap=document.createElement('div'); wrap.className='fq-grid';
+    var host=inner.parentNode;
+    host.insertBefore(wrap, inner);
+    wrap.appendChild(inner);
+    wrap.appendChild(aside);
   }
   function trustLine(){
     var hm=document.querySelector('.hm');
@@ -404,7 +434,7 @@ RONEN_PLUS = """
     });
   }
   function boot2(){[120,260,900,1800].forEach(function(d){
-    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();howItWorks();compareTable();awardsStrip();},d);});}
+    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();compareTable();faqAside();awardsStrip();},d);});}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot2); else boot2();
 })();
 </script>"""
@@ -1262,45 +1292,101 @@ MOOD_SYSTEM = """
 .mv-dist i{height:6px;border-radius:99px;background:#ece3d6;overflow:hidden;font-style:normal;display:block}
 .mv-dist i b{display:block;height:100%;background:#E05A00;border-radius:99px}
 
-/* ============ HOW IT WORKS ============ */
-.how{background:#f7f3ed;padding:clamp(34px,5vw,64px) 0}
-.how-in{width:min(1060px,calc(100% - 32px));margin:0 auto}
 .how-eye{font-size:11px;font-weight:900;letter-spacing:.2em;color:#E05A00}
-.how-head h2{margin:9px 0 0;font-size:clamp(27px,4.2vw,42px);line-height:1.06;letter-spacing:-.035em;color:#171512}
-.how-head h2 span{color:#E05A00}
-.how-grid{display:grid;gap:18px;margin-top:24px}
-.how-img{position:relative;border-radius:18px;overflow:hidden;background:#efe7db;aspect-ratio:4/3}
-.how-img img{width:100%;height:100%;object-fit:cover;display:block}
-.how-img b{position:absolute;top:12px;inset-inline-start:12px;background:#241b12;color:#F7B27A;
-  font-size:12px;font-weight:900;letter-spacing:.08em;padding:6px 11px;border-radius:999px}
-.how-c h3{margin:13px 0 5px;font-size:19px;font-weight:900;letter-spacing:-.02em;color:#171512}
-.how-c p{margin:0;font-size:14.5px;color:#6b6259;line-height:1.6}
-@media (min-width:901px){.how-grid{grid-template-columns:repeat(3,1fr);gap:28px}}
+/* ============ CLOSING SECTION — two columns on a wide screen ============ */
+@media (min-width:901px){
+  .soc{display:grid!important;grid-template-columns:minmax(0,360px) minmax(0,1fr);
+    gap:0 40px;align-items:start;width:min(1060px,calc(100% - 32px));margin:0 auto;
+    padding:clamp(30px,4vw,50px) 0 clamp(24px,3vw,36px)!important}
+  .cls-head{grid-column:1/-1;width:auto;margin:0 0 22px;text-align:right}
+  .cls-head h2{font-size:clamp(28px,3.4vw,40px)}
+  .vrail{width:auto;margin:0}
+  .soc .vrail .vrail-track{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+  .soc .vrail .vrail-track .soc-vid{aspect-ratio:16/10!important;width:auto!important;flex:none!important}
+  .soc .mv-rv{width:auto;margin:0}
+  .soc .mv-rv .rv1:nth-last-child(-n+1){border-bottom:0}
+}
 
-/* ============ COMPARISON ============ */
-.cmp{background:#efe7db;padding:clamp(30px,4.6vw,58px) 0}
-.cmp-in{width:min(760px,calc(100% - 32px));margin:0 auto}
-.cmp-in h2{margin:9px 0 0;font-size:clamp(25px,3.8vw,38px);line-height:1.07;letter-spacing:-.035em;color:#171512}
-.cmp-in h2 span{color:#E05A00}
-.cmp-tbl{margin-top:20px;background:#fff;border-radius:18px;overflow:hidden;border:1px solid #e2d7c8}
-.cmp-hd,.cmp-row{display:grid;grid-template-columns:1fr 76px 76px 76px;align-items:center}
-.cmp-hd{background:#faf6ef;border-bottom:1px solid #e2d7c8}
-.cmp-hd b{padding:12px 4px;text-align:center;font-size:12.5px;font-weight:900;color:#8a7c6a;letter-spacing:.02em}
-.cmp-hd b.us{color:#241b12;font-size:15px;direction:ltr}
-.cmp-row{border-bottom:1px solid #f0e8db}
-.cmp-row:last-child{border-bottom:0}
-.cmp-row span{padding:13px 15px;font-size:14px;font-weight:700;color:#443c33}
-.cmp-row div{text-align:center;padding:13px 4px}
-.cmp-row .us{background:#fdf6ee}
-.cmp-row i{font-style:normal;font-size:15px;font-weight:900;display:inline-grid;place-items:center;
-  width:26px;height:26px;border-radius:50%}
-.cmp-row i.ok{background:#e6f0e2;color:#3f7a35}
-.cmp-row i.no{background:#f3e7e4;color:#a9564a}
-.cmp-row i.mid{background:#f3ece1;color:#9a8straight}
-.cmp-row i.mid{background:#f3ece1;color:#8a7c6a}
+
+.fqa-img img{height:min(58vw,300px)}
+@media (min-width:901px){.fqa-img img{height:290px}}
+
+/* ============ FAQ — photo and answers as one column, hairline language ============ */
+.fq-grid{display:block}
+.fqa{margin-top:24px}
+.fqa-img{margin:0;border-radius:20px;overflow:hidden;background:#efe7db}
+.fqa-img img{width:100%;height:min(58vw,300px);object-fit:cover;display:block}
+.fqa-rows{margin-top:6px}
+.fqa-t{padding:16px 2px 10px;font-size:17px;font-weight:900;letter-spacing:-.02em;color:#171512}
+.fqa-r{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:12px;padding:13px 2px;
+  border-top:1px solid #e4d8c6;text-decoration:none;color:inherit;transition:color .16s}
+.fqa-r:last-child{border-bottom:1px solid #e4d8c6}
+.fqa-r svg{color:#C9551A}
+.fqa-ic{display:grid;place-items:center;font-size:15px;color:#C9551A;line-height:1}
+.fqa-r b{display:block;font-size:14.5px;font-weight:900;color:#171512;letter-spacing:-.01em}
+.fqa-r span{display:block;font-size:12.5px;color:#8a7c6a;font-weight:700;margin-top:2px;
+  direction:inherit;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.fqa-r em{font-style:normal;color:#c9bcaa;font-size:15px;transition:transform .2s,color .2s}
+.fqa-r:not(.static):hover b{color:#C9551A}
+.fqa-r:not(.static):hover em{color:#C9551A;transform:translateX(3px)}
+@media (min-width:901px){
+  .fq-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:42px;align-items:start;
+    width:min(1060px,calc(100% - 32px));margin:0 auto}
+  .fqa{margin-top:0;position:sticky;top:96px}
+  .fqa-img img{height:270px}
+  .faq{padding-bottom:46px!important}
+}
+
+/* ============ COMPARISON — one unit: photo bleeds, rows are hairlines ============ */
+.cmp{background:#efe7db;display:grid;grid-template-columns:1fr;gap:0;overflow:hidden}
+.cmp-media{position:relative;margin:0;background:#241b12}
+.cmp-media img{width:100%;height:min(56vw,240px);object-fit:cover;object-position:center 60%;display:block}
+.cmp-media figcaption{position:absolute;inset:auto 0 0 0;padding:34px 20px 16px;color:#f6ecdd;
+  font-size:clamp(13px,2.4vw,16px);font-weight:800;letter-spacing:-.01em;
+  background:linear-gradient(0deg,rgba(24,16,10,.88),rgba(24,16,10,.25) 55%,transparent)}
+.cmp-copy{padding:clamp(24px,4vw,40px) clamp(16px,4vw,44px) clamp(26px,4vw,44px)}
+.cmp-copy h2{margin:9px 0 0;font-size:clamp(25px,3.6vw,36px);line-height:1.07;letter-spacing:-.035em;color:#171512}
+.cmp-copy h2 span{color:#E05A00}
+.cmp-tbl{margin-top:20px}
+.cmp-hd,.cmp-row,.cmp-score{display:grid;grid-template-columns:1fr 72px 66px 66px;align-items:center}
+.cmp-hd{border-bottom:1px solid #ddd0bc}
+.cmp-hd .head{padding:0 4px 9px;text-align:center}
+.cmp-hd .head b{font-size:12.5px;font-weight:900;color:#a3968a;letter-spacing:.02em}
+.cmp-hd .us b{color:#241b12;font-size:16px;direction:ltr;letter-spacing:-.02em}
+.cmp-row{border-bottom:1px solid #e4d8c6}
+.cmp-row span{padding:12px 2px;font-size:14.5px;font-weight:700;color:#443c33}
+.cmp-row .c{display:grid;place-items:center;padding:10px 4px}
+.cmp-row i{font-style:normal;font-size:15px;font-weight:900;display:grid;place-items:center;
+  width:28px;height:28px;border-radius:50%}
+.cmp-row i.ok{background:#E05A00;color:#fff;box-shadow:0 4px 12px -5px rgba(224,90,0,.7)}
+.cmp-row i.no{background:rgba(176,89,74,.14);color:#a9564a}
+.cmp-row i.mid{background:rgba(138,124,106,.16);color:#8a7c6a}
+.cmp-score{border-bottom:0;padding-top:4px}
+.cmp-score>span{padding:12px 2px;font-size:12px;font-weight:900;color:#a3968a;letter-spacing:.1em}
+.cmp-score .sc{padding:10px 6px;text-align:center}
+.cmp-score .sc>b{display:block;font-size:16px;font-weight:900;color:#a3968a;font-variant-numeric:tabular-nums}
+.cmp-score .sc>b em{font-style:normal;font-size:10.5px;color:#b9ac9c;font-weight:700}
+.cmp-score .sc i{display:block;height:4px;border-radius:99px;background:#ddd0bc;margin-top:6px;overflow:hidden}
+.cmp-score .sc i b{display:block;height:100%;background:#bfae99;border-radius:99px}
+.cmp-score .us>b{color:#241b12;font-size:21px}
+.cmp-score .us i b{background:#E05A00}
+.cmp-cta{display:inline-flex;align-items:center;justify-content:center;gap:11px;margin-top:22px;min-height:50px;
+  padding:14px 30px;border-radius:999px;background:#C9551A;color:#fdf6ee;border:1px solid #B44A14;
+  font-weight:700;font-size:15.5px;text-decoration:none;transition:background .22s}
+.cmp-cta::before{content:"";width:7px;height:7px;border-radius:2px;background:currentColor;opacity:.55;
+  transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .3s}
+.cmp-cta:hover{background:#A94512;border-color:#A94512}
+.cmp-cta:hover::before{transform:rotate(45deg) scale(1.15);opacity:1}
+@media (min-width:901px){
+  .cmp{grid-template-columns:minmax(0,.9fr) minmax(0,1fr);align-items:stretch}
+  .cmp-media img{height:100%;min-height:430px}
+  .cmp-copy{max-width:560px;margin-inline-end:auto;padding:46px 44px}
+  .cmp-hd,.cmp-row,.cmp-score{grid-template-columns:1fr 78px 70px 70px}
+}
 @media (max-width:700px){
-  .cmp-hd,.cmp-row{grid-template-columns:1fr 56px 56px 56px}
-  .cmp-row span{padding:12px 11px;font-size:13px}
+  .cmp-hd,.cmp-row,.cmp-score{grid-template-columns:1fr 62px 56px 56px}
+  .cmp-row span{font-size:13px}
+  .cmp-row i{width:25px;height:25px;font-size:13.5px}
 }
 
 /* ============ AWARDS STRIP ============ */
@@ -1507,7 +1593,7 @@ for _route in list(page_src):
                         if '</body>' in page_src[_route] else page_src[_route] + MOOD_SYSTEM)
 page_src['%f3d%'] = page_src['%f3d%'].replace('</body>', MOOD_SYSTEM + '</body>')
 
-for _b in ('/mood-hero-three-moments.png','/mood-chocolate-bite.png','/mood-club-generations.png',
+for _b in ('/brand/bars-plate.jpg','/brand/cafe-handoff.jpg','/brand/bar-social.jpg','/mood-hero-three-moments.png','/mood-chocolate-bite.png','/mood-club-generations.png',
            '/brand/blog-collage.png','/brand/blog-flood.png','/brand/blog-watercolor.webp',
            '/brand/rooftop.png','/brand/cables.webp','/brand/jump-o.webp','/brand/field-guide.png'):
     referenced.add(_b)                            # the brand's own campaign photography
@@ -1526,9 +1612,8 @@ for p in sorted(referenced):
         page_src[route] = re.sub(re.escape(p) + r'(\?[A-Za-z0-9=&.]*)?', '%%' + tok + '%%', page_src[route])
 
 # the how-it-works photos resolve to the same tokens the asset pass minted
-for _ph, _path in (('%%HOWA%%', '/mood-hero-three-moments.png'),
-                   ('%%HOWB%%', '/mood-chocolate-bite.png'),
-                   ('%%HOWC%%', '/mood-club-generations.png')):
+for _ph, _path in (('%%FAQIMG%%', '/brand/bars-plate.jpg'),
+                   ('%%CMPIMG%%', '/brand/cafe-handoff.jpg')):
     _t = 'A' + hashlib.md5(_path.encode()).hexdigest()[:10]
     assert _t in ASSETS, 'how-it-works asset missing: ' + _path
     page_src['/'] = page_src['/'].replace(_ph, '%%' + _t + '%%')
