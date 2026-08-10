@@ -1406,4 +1406,15 @@ body.m-open { overflow: hidden; }
 })();
 </script>
 
+
+<script>
+// v51 — make cross-artifact links navigate the top window (out of iframe)
+(function(){
+  document.querySelectorAll('a[href*="claude.ai/code/artifact/"]').forEach(function(a){
+    a.setAttribute('target', '_top');
+    a.setAttribute('rel', 'noopener');
+  });
+})();
+</script>
+
 </body></html>
