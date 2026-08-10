@@ -1408,10 +1408,10 @@ body.m-open { overflow: hidden; }
 
 
 <script>
-// v51 — make cross-artifact links navigate the top window (out of iframe)
+// v52 — sandbox blocks _top; open cross-artifact links in a new tab (allowed by allow-popups)
 (function(){
   document.querySelectorAll('a[href*="claude.ai/code/artifact/"]').forEach(function(a){
-    a.setAttribute('target', '_top');
+    a.setAttribute('target', '_blank');
     a.setAttribute('rel', 'noopener');
   });
 })();
