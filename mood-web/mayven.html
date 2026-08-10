@@ -487,6 +487,189 @@ body { background: var(--paper); }
   .heroStats { bottom: 20px !important; }
 }
 
+
+
+/* ============================================================
+   v38.4 — hero text cleanup + Mayven-style cards
+   ============================================================ */
+
+/* ----- HERO: remove black-box, position mid-lower, cleaner shadow ----- */
+.hero { align-items: center !important; padding-bottom: 60px !important; }
+.hero-copy, .heroText {
+  transform: translateY(6%) !important;  /* slight nudge down from true center */
+  text-shadow: 0 2px 8px rgba(0,0,0,.45) !important;
+}
+.hero-copy::before, .heroText::before {
+  content: none !important;    /* KILL the oval scrim behind the copy */
+  display: none !important;
+}
+.hero::before, .hero .shade {
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,.10) 0%,
+    rgba(0,0,0,.10) 40%,
+    rgba(0,0,0,.55) 100%
+  ) !important;
+}
+@media (max-width: 900px) {
+  .hero {
+    padding-bottom: 60px !important;
+    min-height: min(68vh, 560px) !important;
+  }
+  .hero-copy, .heroText { transform: translateY(4%) !important; }
+}
+
+/* ----- PRODUCT CARDS: Mayven-style, no price on card, full CTA ----- */
+
+/* card frame — softer, floaty */
+.pc, .productCard {
+  border: 1px solid #ece5d5 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 24px -18px rgba(41,25,10,.18) !important;
+  background: #fff !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  transition: transform .28s, box-shadow .28s !important;
+}
+.pc:hover, .productCard:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 22px 44px -22px rgba(41,25,10,.22) !important;
+}
+/* image area larger, gradient softer */
+.pc .pc-media, .productCard .pc-media,
+.pc .cardClean, .productCard .cardClean {
+  aspect-ratio: 1 / 1 !important;
+  background: linear-gradient(160deg, #f5eee4 0%, #ffffff 100%) !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 8% !important;
+}
+.pc .pc-media img, .productCard .pc-media img,
+.pc .cardClean img, .productCard .cardClean img {
+  max-height: 78% !important;
+  width: auto !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 22px 22px rgba(41,25,10,.13)) !important;
+}
+
+/* body: tighter, right-aligned RTL */
+.pc-body, .cardCopy {
+  padding: 18px 20px 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  text-align: right !important;
+  direction: rtl !important;
+}
+.pc-moment, .cardCopy small {
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.4px !important;
+  text-transform: uppercase !important;
+  color: #7a6d5c !important;
+  margin: 0 !important;
+}
+.pc-h, .cardCopy h3 {
+  font-family: 'DM Sans', 'Assistant', sans-serif !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: var(--forest,#254821) !important;
+  letter-spacing: .5px !important;
+  margin: 2px 0 4px !important;
+  line-height: 1 !important;
+}
+.pc-h span, .cardCopy h3 span {
+  display: block !important;
+  margin-top: 4px !important;
+  font-family: Assistant, sans-serif !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  color: #171512 !important;
+  letter-spacing: 0 !important;
+}
+
+/* stars: small, green, with (count) — Mayven look */
+.pc-stars, .cardCopy .stars {
+  color: var(--forest,#254821) !important;
+  font-size: 13px !important;
+  letter-spacing: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 4px 0 6px !important;
+}
+.pc-stars small {
+  color: #7a6d5c !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+}
+
+/* description tighter */
+.pc-line, .cardCopy p {
+  font-size: 13.5px !important;
+  color: #5f5b55 !important;
+  line-height: 1.55 !important;
+  margin: 0 0 14px !important;
+  min-height: auto !important;
+}
+
+/* HIDE the price row completely on the card (Mayven doesn't show price on card) */
+.pc .priceRow, .productCard .priceRow,
+.pc-price, .cardCopy .priceRow {
+  display: none !important;
+}
+
+/* CTA: full width, dark outlined pill (rectangle-ish per our shape system) */
+.pc .cta2, .productCard .cta2 { margin-top: auto !important; }
+.pc .cta2 a, .productCard .cta2 a { display: none !important; }
+.pc .cta2 a.buy, .productCard .cta2 a.buy,
+.pc .pill, .productCard .pill,
+.cardCopy span, .cardCopy a.pill,
+.cardCopy > a:last-child {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  padding: 13px 20px !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: var(--ink,#171512) !important;
+  border: 1.5px solid var(--ink,#171512) !important;
+  font-family: 'DM Sans', 'Assistant', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  letter-spacing: .02em !important;
+  transition: background .2s, color .2s, transform .2s !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  margin-top: auto !important;
+}
+.pc .cta2 a.buy:hover, .productCard .cta2 a.buy:hover,
+.pc .pill:hover, .productCard .pill:hover {
+  background: var(--ink,#171512) !important;
+  color: #fff !important;
+  transform: translateY(-1px) !important;
+}
+/* hide the secondary "כל המארזים" link on the card */
+.pc .cta2 a.more, .productCard .cta2 a.more { display: none !important; }
+
+/* card tag (הכי נמכר etc): rectangle, tighter */
+.pc .tag, .productCard .tag {
+  top: 12px !important;
+  inset-inline-start: 12px !important;
+  padding: 5px 10px !important;
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  letter-spacing: 1px !important;
+}
+
+/* remove the tall min-height */
+.pc, .productCard { min-height: auto !important; }
+
 </style>
 </head>
 <body>
