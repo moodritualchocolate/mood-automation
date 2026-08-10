@@ -309,6 +309,19 @@ body { background: var(--paper); }
   box-shadow: 0 8px 18px -6px rgba(44,29,22,.28) !important;
 }
 
+
+/* v45r — hero slide-up entrance (was lost during merge) */
+@keyframes heroSlideUp { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+.hero .hero-copy .k        { animation: heroSlideUp .8s cubic-bezier(.19,1,.22,1) .1s both; }
+.hero .hero-copy h1        { animation: heroSlideUp .9s cubic-bezier(.19,1,.22,1) .2s both; }
+.hero .hero-copy p         { animation: heroSlideUp .9s cubic-bezier(.19,1,.22,1) .35s both; }
+.hero .hero-copy .hero-cta { animation: heroSlideUp 1s cubic-bezier(.19,1,.22,1) .5s both; }
+.hero-slide { animation: heroSlideUp 1s cubic-bezier(.19,1,.22,1) .5s both !important; }
+@media (prefers-reduced-motion: reduce) {
+  .hero .hero-copy .k, .hero .hero-copy h1, .hero .hero-copy p,
+  .hero .hero-copy .hero-cta, .hero-slide { animation: none !important; }
+}
+
 </style>
 </head>
 <body>
