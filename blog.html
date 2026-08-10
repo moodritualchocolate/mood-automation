@@ -1131,6 +1131,80 @@ main > .section-head p { color: var(--muted) !important; font-size:17px !importa
   .mfoot { padding: 60px 5vw 0; }
 }
 
+
+/* v44 — mobile polish (hero + carousel + sticky-CTA text update) */
+@media (max-width: 720px) {
+  /* Smaller hero on mobile */
+  .hero {
+    min-height: 62vh !important;
+    max-height: 640px;
+  }
+  .hero > img,
+  .hero .hero-video {
+    max-height: 62vh !important;
+  }
+  .hero .hero-copy,
+  .hero .hero-copy {
+    padding: 0 4vw 32px !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    text-align: center !important;
+    height: 62vh !important;
+    max-height: 640px;
+  }
+  .hero .hero-copy .k { margin-bottom: 10px !important; font-size: 10.5px !important; letter-spacing: 2.4px !important; }
+  .hero .hero-copy h1 {
+    font-size: clamp(30px, 8vw, 44px) !important;
+    letter-spacing: -1.4px !important;
+    line-height: .98 !important;
+    margin: 0 0 12px !important;
+    max-width: 90vw;
+  }
+  .hero .hero-copy p {
+    font-size: 13.5px !important;
+    line-height: 1.45 !important;
+    margin: 0 0 18px !important;
+    max-width: 320px !important;
+  }
+  .hero .hero-cta { gap: 10px !important; flex-wrap: wrap; justify-content: center !important; }
+  .hero .hero-cta .pill { padding: 12px 22px !important; font-size: 13.5px !important; }
+
+  /* Product cards horizontal scroll-snap carousel (Mayven-style) */
+  .pgrid {
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    padding: 6px 4vw 20px !important;
+    margin: 0 -4vw !important;
+    max-width: none !important;
+    gap: 14px !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-padding-inline-start: 4vw;
+  }
+  .pgrid::-webkit-scrollbar { display: none; }
+  .pgrid .pc {
+    flex: 0 0 78% !important;
+    max-width: 78%;
+    scroll-snap-align: start;
+  }
+  .pc:first-child { margin-inline-start: 0; }
+
+  /* Product-card body — tighter on mobile */
+  .pc-body { padding: 18px 20px 22px !important; }
+  .pc-h { font-size: 22px !important; }
+  .pc-body .pill-cta { padding: 12px 24px !important; font-size: 13.5px !important; }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+  .hero { min-height: 55vh !important; }
+  .hero .hero-copy { height: 55vh !important; }
+  .hero .hero-copy h1 { font-size: 28px !important; }
+  .pgrid .pc { flex: 0 0 85% !important; max-width: 85%; }
+}
+
 </style>
 </head>
 <body id="top">
