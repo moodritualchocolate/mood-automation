@@ -3,13 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0e0b08">
+<meta name="theme-color" content="#faf6ef">
 <title>mood — ריטואל שוקולד פונקציונלי</title>
-<meta name="description" content="שוקולד מריר 70% פונקציונלי לשלושה רגעים ביום: ENERGY, RELAX, SLEEP. 0 גרם סוכר.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8D%AB%3C/text%3E%3C/svg%3E">
-<style>html,body{margin:0;padding:0;background:#faf6ef}</style>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍫</text></svg>">
 </head>
-<body>
+<body style="margin:0">
 <div dir="rtl" lang="he"><title>mood — ריטואל שוקולד פונקציונלי</title>
 <style>
   html,body{margin:0;padding:0;height:100%;background:#faf6ef}
@@ -2243,6 +2241,25 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
     hm.className='tline';
     hm.innerHTML='<div class="tline-in">מה שחמישה כדורים עושים בבליעה — <b>אנחנו עושים טוב יותר. בביס אחד.</b></div>';
   }
+  function chocReveal(){
+    // the hero sells a moment; this sells the thing itself — nothing else on the page shows the bite
+    var t=document.querySelector('.tline'); if(!t||document.querySelector('.rev'))return;
+    var s=document.createElement('section'); s.className='rev';
+    s.innerHTML='<div class="rev-in">'+
+      '<div class="rev-copy">'+
+        '<h2>כן.<span>זה באמת שוקולד.</span></h2>'+
+        '<p>לא כמוסה, לא גומי, לא אבקה שמערבבים במים. קובייה אחת של 7 גרם — '+
+          'ובתוכה הפורמולה המלאה של הרגע שבחרתם.</p>'+
+        '<div class="rev-spec">'+
+          '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
+          '<div><b>0</b><span>גרם סוכר</span></div>'+
+          '<div><b>7</b><span>גרם לקובייה</span></div>'+
+        '</div>'+
+      '</div>'+
+      '<figure class="rev-media"><img src="%%A3751a94c94%%" alt="קוביית שוקולד mood עם ביס" loading="lazy"></figure>'+
+    '</div>';
+    t.parentNode.insertBefore(s, t.nextSibling);
+  }
   function callIcon(){
     var nav=document.querySelector('.xnav')||document.querySelector('nav');
     if(!nav||nav.querySelector('.mv-call'))return;
@@ -2284,7 +2301,7 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
     });
   }
   function boot2(){[120,260,900,1800].forEach(function(d){
-    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();},d);});}
+    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();chocReveal();},d);});}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot2); else boot2();
 })();
 ⟦/SCRIPT⟧>
@@ -2544,6 +2561,36 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -3382,6 +3429,36 @@ border-radius:999px!important;font-weight:800!important;box-shadow:none!importan
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -4925,6 +5002,36 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -6463,6 +6570,36 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -8003,6 +8140,36 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -8597,6 +8764,36 @@ document.addEventListener('click',function(e){
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -9576,6 +9773,36 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -10087,6 +10314,36 @@ document.addEventListener('click',function(e){
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -10596,6 +10853,36 @@ document.addEventListener('click',function(e){
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -11248,6 +11535,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -11898,6 +12215,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -12550,6 +12897,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -13200,6 +13577,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -13852,6 +14259,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -14502,6 +14939,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -15154,6 +15621,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -15804,6 +16301,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -16456,6 +16983,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -17106,6 +17663,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -17758,6 +18345,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -18408,6 +19025,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -19060,6 +19707,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -19710,6 +20387,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -20362,6 +21069,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -21012,6 +21749,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -21664,6 +22431,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -22314,6 +23111,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -22966,6 +23793,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -23616,6 +24473,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -24268,6 +25155,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -24918,6 +25835,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -25570,6 +26517,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -26220,6 +27197,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -26872,6 +27879,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -27522,6 +28559,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -28174,6 +29241,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -28825,6 +29922,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
+
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -29475,6 +30602,36 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
+.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
+.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
+.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
+  font-weight:900;color:#fff}
+.rev-copy h2 span{display:block;color:#E8873A}
+.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
+  color:#d8c9b8;max-width:38ch}
+.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
+.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
+  border-inline-start:1px solid rgba(247,239,228,.16)}
+.rev-spec div:first-child{border-inline-start:0}
+.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
+/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+  border-radius:22px}
+.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
+.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+@media (max-width:820px){
+  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
+  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
+  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
+  .rev-copy p{max-width:none}
+}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
