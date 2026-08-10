@@ -670,6 +670,138 @@ body { background: var(--paper); }
 /* remove the tall min-height */
 .pc, .productCard { min-height: auto !important; }
 
+
+
+/* ============================================================
+   v38.5 — mobile cards horizontal scroll (Mayven pattern)
+   ============================================================ */
+@media (max-width: 900px) {
+  /* Convert card grid → horizontal scroll strip */
+  .pgrid, .moments .cards, .cards {
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 12px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x mandatory !important;
+    padding: 4px 4vw 20px !important;
+    margin: 0 -4vw !important;
+    scrollbar-width: none !important;
+  }
+  .pgrid::-webkit-scrollbar,
+  .moments .cards::-webkit-scrollbar,
+  .cards::-webkit-scrollbar { display: none !important; }
+
+  /* Each card: fixed ~76vw wide (so ~1.2 cards visible = swipe hint) */
+  .pc, .productCard {
+    flex: 0 0 76vw !important;
+    max-width: 320px !important;
+    scroll-snap-align: start !important;
+    min-height: 0 !important;
+  }
+
+  /* Image area smaller (was 1:1 = huge); switch to 5:4 to reduce dead space */
+  .pc .pc-media, .productCard .pc-media,
+  .pc .cardClean, .productCard .cardClean {
+    aspect-ratio: 5 / 4 !important;
+    padding: 12% !important;
+  }
+  .pc .pc-media img, .productCard .pc-media img,
+  .pc .cardClean img, .productCard .cardClean img {
+    max-height: 100% !important;
+  }
+
+  /* Tighter body copy */
+  .pc-body, .cardCopy {
+    padding: 14px 16px 16px !important;
+    gap: 4px !important;
+  }
+  .pc-h, .cardCopy h3 { font-size: 18px !important; }
+  .pc-h span, .cardCopy h3 span { font-size: 13.5px !important; }
+  .pc-line, .cardCopy p { font-size: 13px !important; margin-bottom: 10px !important; }
+  .pc-stars, .cardCopy .stars { font-size: 12px !important; margin: 2px 0 4px !important; }
+  .pc-stars small { font-size: 11px !important; }
+
+  /* Section title above tighter — no need for a huge airy header */
+  .section, .moments { padding: 40px 0 20px !important; }
+  .section-head { margin-bottom: 20px !important; padding: 0 4vw !important; }
+  .section-head h2 { font-size: 30px !important; margin-bottom: 8px !important; }
+  .section-head p { font-size: 14px !important; }
+
+  /* Swipe hint — subtle dots below the strip */
+  .cards::after,
+  .pgrid::after,
+  .moments .cards::after {
+    content: "" !important;
+    display: none !important;   /* keep visual clean; snap alone is the hint */
+  }
+}
+
+
+
+/* ============================================================
+   v38.6 — cards tighter (fill more, empty less)
+   ============================================================ */
+
+/* Constrain the grid so 3 cards feel proportioned, not stretched */
+.pgrid, .moments .cards {
+  max-width: 980px !important;
+  margin: 0 auto !important;
+  gap: 14px !important;
+}
+
+/* Image area: shorter (5:4 landscape) with the pack filling ~92% */
+.pc .pc-media, .productCard .pc-media,
+.pc .cardClean, .productCard .cardClean {
+  aspect-ratio: 5 / 4 !important;
+  padding: 4% !important;
+  background: linear-gradient(160deg, #f2ebdd 0%, #fbf7ed 100%) !important;
+}
+.pc .pc-media img, .productCard .pc-media img,
+.pc .cardClean img, .productCard .cardClean img {
+  max-height: 100% !important;
+  max-width: 62% !important;   /* pack is portrait; cap width so it doesn't stretch */
+  width: auto !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+/* Body tighter: less top padding, tighter gaps */
+.pc-body, .cardCopy {
+  padding: 16px 18px 18px !important;
+  gap: 4px !important;
+}
+.pc-body p, .cardCopy p { min-height: 0 !important; margin-bottom: 12px !important; }
+
+/* Card overall: no min-height, softer shadow */
+.pc, .productCard {
+  min-height: 0 !important;
+  border-radius: 18px !important;
+}
+
+/* MOBILE: keep the horizontal-scroll, but even tighter */
+@media (max-width: 900px) {
+  .pgrid, .moments .cards, .cards {
+    padding: 4px 4vw 16px !important;
+  }
+  .pc, .productCard {
+    flex: 0 0 72vw !important;
+    max-width: 300px !important;
+    border-radius: 16px !important;
+  }
+  .pc .pc-media, .productCard .pc-media,
+  .pc .cardClean, .productCard .cardClean {
+    aspect-ratio: 6 / 5 !important;
+    padding: 5% !important;
+  }
+  .pc-body, .cardCopy {
+    padding: 14px 16px 16px !important;
+  }
+  .pc-h, .cardCopy h3 { font-size: 17px !important; }
+  .pc-h span, .cardCopy h3 span { font-size: 13px !important; }
+  .pc-line, .cardCopy p { font-size: 12.5px !important; margin-bottom: 10px !important; }
+}
+
 </style>
 </head>
 <body>
