@@ -425,6 +425,68 @@ body { background: var(--paper); }
   .heroStats { bottom: 16px !important; }
 }
 
+
+
+/* ============================================================
+   v38.3 — hero readability pass
+   ============================================================ */
+
+/* stronger dark scrim so text pops over the busy chocolate video */
+.hero::before,
+.hero .shade {
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,.05) 0%,
+    rgba(0,0,0,.15) 35%,
+    rgba(0,0,0,.55) 65%,
+    rgba(0,0,0,.85) 100%
+  ) !important;
+  z-index: 1 !important;
+}
+
+/* also throw a soft dark scrim directly behind the copy for guaranteed contrast */
+.hero-copy, .heroText {
+  position: relative !important;
+  z-index: 2 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.35), 0 6px 24px rgba(0,0,0,.45) !important;
+}
+.hero-copy::before, .heroText::before {
+  content: "";
+  position: absolute;
+  inset: -30px -40px -20px;
+  background: radial-gradient(120% 120% at 50% 60%, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 65%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* headline heavier + slightly bigger on mobile */
+.hero h1, .hero-copy h1 {
+  font-weight: 800 !important;
+  letter-spacing: -2px !important;
+}
+@media (max-width: 900px) {
+  .hero h1, .hero-copy h1 {
+    font-size: clamp(42px, 10.5vw, 70px) !important;
+    line-height: .98 !important;
+  }
+  .hero p, .hero-copy p {
+    font-size: 15px !important;
+  }
+}
+
+/* PUSH copy further down */
+.hero {
+  align-items: flex-end !important;
+  padding-bottom: 90px !important;
+}
+@media (max-width: 900px) {
+  .hero {
+    padding-bottom: 140px !important;   /* clears the stats row + gives room */
+    min-height: min(74vh, 620px) !important;
+  }
+  .heroStats { bottom: 20px !important; }
+}
+
 </style>
 </head>
 <body>
