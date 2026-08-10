@@ -242,7 +242,7 @@ RONEN_PLUS = """
       '<div class="mp2-in">'+
         '<div class="mp2-por"><img src="'+por+'" alt="רונן אפללו, אלוף העולם בשוקולד"></div>'+
         '<div class="mp2-copy">'+
-          '<div class="mp2-eye">אלוף העולם בשוקולד · מדליית זהב 2022</div>'+
+          '<div class="mp2-eye">אלוף העולם בשוקולד · 2022</div>'+
           '<h2>18 חודשי פיתוח<span> לביס אחד.</span></h2>'+
           '<p class="mp2-q">"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח." <i>רונן אפללו</i></p>'+
         '</div>'+
@@ -292,8 +292,7 @@ RONEN_PLUS = """
     if(!hm||hm.dataset.done)return;
     hm.dataset.done='1';
     hm.className='tline';
-    hm.innerHTML='<div class="tline-in">מה שחמישה כדורים עושים בבליעה — <b>אנחנו עושים טוב יותר. בביס אחד.</b>'+
-      '<i>ENERGY · RELAX · SLEEP</i></div>';
+    hm.innerHTML='<div class="tline-in">מה שחמישה כדורים עושים בבליעה — <b>אנחנו עושים טוב יותר. בביס אחד.</b></div>';
   }
   function callIcon(){
     var nav=document.querySelector('.xnav')||document.querySelector('nav');
@@ -318,6 +317,9 @@ RONEN_PLUS = """
       var t=(a.textContent||'').replace(/[\s←→]/g,'');
       L.forEach(function(p){ if(t===p[0].replace(/\s/g,'')) a.setAttribute('href',p[1]); });
     });
+    // the footer tagline mixed hebrew and latin and broke mid-phrase — keep it hebrew
+    var fm=document.querySelector('.ft-mini');
+    if(fm&&/ENERGY/.test(fm.textContent))fm.textContent='שלושה רגעים ביום, שלוש פורמולות — קובייה אחת בכל פעם.';
     // footer launch column: the date is gone, the magazine takes its place
     var lc=document.querySelector('.ft-launch');
     if(lc){
@@ -1142,8 +1144,6 @@ MOOD_SYSTEM = """
 .tline .tline-in{position:relative;z-index:2;max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;
   text-align:center;color:#efe3d3;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.4}
 .tline .tline-in b{color:#F7B27A;font-weight:900}
-.tline .tline-in i{display:block;margin-top:7px;font-style:normal;font-size:clamp(11px,1.5vw,13px);
-  font-weight:800;letter-spacing:.16em;color:rgba(239,227,211,.55)}
 
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
@@ -1152,8 +1152,8 @@ MOOD_SYSTEM = """
 .mp2-por{width:clamp(72px,9vw,110px);height:clamp(72px,9vw,110px);border-radius:50%;overflow:hidden;
   flex:0 0 auto;background:#3a2b1e;border:2px solid rgba(247,178,122,.55)}
 .mp2-por img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
-.mp2-eye{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.16em;color:#241b12;
-  background:#F7B27A;padding:5px 11px;border-radius:999px}
+.mp2-eye{display:inline-block;font-size:clamp(9.5px,1.2vw,11px);font-weight:900;letter-spacing:.1em;color:#241b12;
+  background:#F7B27A;padding:5px 11px;border-radius:999px;white-space:nowrap}
 .mp2-copy h2{margin:9px 0 0;font-size:clamp(23px,3.2vw,36px);line-height:1.06;letter-spacing:-.035em;color:#fff}
 .mp2-copy h2 span{color:#F7B27A}
 .mp2-q{margin:8px 0 0;font-size:clamp(13.5px,1.6vw,16px);line-height:1.5;color:rgba(242,231,217,.82);font-weight:600}
@@ -1216,6 +1216,10 @@ MOOD_SYSTEM = """
 /* floats keep their distance from the buy actions */
 .wa{bottom:172px!important;width:46px!important;height:46px!important;font-size:22px!important}
 @media (min-width:901px){.wa{bottom:26px!important}}
+/* latin product names stay one unbroken LTR run inside hebrew copy */
+.ft-mini,.hf-copy p,.cls-head h2,.bu-txt span{unicode-bidi:plaintext}
+/* the accessibility float keeps out of the way on a phone */
+@media (max-width:700px){#a11yBtn{width:38px!important;height:38px!important;font-size:19px!important;opacity:.9}}
 /* ============ FINISHING PASS — the details that separate good from finished ============ */
 /* one selection colour across the whole site, in brand ink */
 ::selection{background:#f0c6a0;color:#241b12}
