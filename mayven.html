@@ -309,6 +309,34 @@ body { background: var(--paper); }
 .pc-price-main b { font-size: 22px !important; }
 .pc-price-from { font-size: 11px !important; }
 
+/* v38.1 — hero content bottom-anchored + chocolate/cream CTA buttons on video */
+.hero { min-height: min(88vh, 780px) !important; }
+.hero .hero-copy {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  padding: 0 4vw 68px !important;
+  text-align: center !important;
+}
+.hero .hero-copy h1 { font-size: clamp(46px, 7.5vw, 96px) !important; }
+.hero .hero-copy p { max-width: 540px; }
+.hero .hero-cta .pill-cta {
+  background: #f7ecd8 !important; color: #2c1d16 !important;
+  box-shadow: 0 10px 24px -8px rgba(0,0,0,.35) !important;
+}
+.hero .hero-cta .pill-cta:hover { background: #ffffff !important; color: #1a1109 !important; }
+.hero .hero-cta .pill-out {
+  border: 1.5px solid rgba(247,236,216,.65) !important; color: #f7ecd8 !important; background: transparent !important;
+}
+.hero .hero-cta .pill-out:hover { background: #f7ecd8 !important; color: #1a1109 !important; }
+@media(max-width:640px) {
+  .hero .hero-copy { padding-bottom: 42px !important; }
+  .hero .hero-copy .k { margin-bottom: 14px !important; }
+  .hero .hero-copy h1 { margin-bottom: 16px !important; letter-spacing: -1.6px !important; }
+  .hero .hero-copy p { margin-bottom: 22px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -362,10 +390,9 @@ body { background: var(--paper); }
     </section>
 
     <!-- MOMENTS: 3 cards -->
-    <section class="section" id="moments">
-      <div class="section-head">
-        <p class="k">CHOOSE THE MOMENT</p>
-        <h2>שלושה רגעים.<br><b>שלוש פורמולות.</b></h2>
+    <section class="section" id="moments" style="padding-top:64px">
+      <div class="section-head" style="margin-bottom:32px">
+        <h2 style="margin-bottom:10px">שלושה רגעים.<br><b>שלוש פורמולות.</b></h2>
         <p>מבחר קטן. בחירה קלה. ריטואל אחד שקל להתמיד בו.</p>
       </div>
       <div class="pgrid">
