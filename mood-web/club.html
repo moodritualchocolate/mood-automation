@@ -356,6 +356,71 @@ body { background: var(--paper); }
 }
 
 
+
+/* v38.3 — product-card polish (Mayven-tight tiles) */
+.pgrid { gap: 22px !important; }
+.pc {
+  border-radius: 18px !important;
+  border: 1px solid #ece2ce !important;
+  overflow: hidden !important;
+  background: var(--paper) !important;
+  transition: transform .28s cubic-bezier(.19,1,.22,1), box-shadow .28s !important;
+}
+.pc:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 30px 60px -28px rgba(41,25,10,.22) !important;
+}
+.pc-media {
+  aspect-ratio: 1 / 1.08 !important;
+  background: linear-gradient(160deg, var(--pale), #fff) !important;
+  padding: 0 !important;
+}
+.pc-media img.pc-pack {
+  padding: 4% 6% !important;
+  filter: drop-shadow(0 22px 32px rgba(41,25,10,.24)) !important;
+  opacity: 1 !important; transform: scale(1) !important;
+}
+/* CRITICAL — lifestyle overlay must be hidden by default, not visible */
+.pc-media img.pc-life {
+  opacity: 0 !important;
+  transform: scale(1.04) !important;
+  object-fit: cover !important;
+  padding: 0 !important;
+}
+.pc:hover .pc-life { opacity: 1 !important; transform: scale(1) !important; }
+.pc:hover .pc-pack { opacity: 0 !important; transform: scale(.94) !important; }
+
+/* the corner tag pill — consistent size + position on all cards */
+.pc > .tag {
+  position: absolute !important;
+  top: 14px !important; inset-inline-start: 14px !important;
+  z-index: 5;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  font-family: 'DM Sans','Assistant',sans-serif !important;
+  font-size: 11px !important; font-weight: 800 !important; letter-spacing: 1.4px !important;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px -6px rgba(0,0,0,.15);
+}
+
+/* body — a touch more air, tighter kicker, consistent CTA */
+.pc-body { padding: 24px 24px 26px !important; }
+.pc-moment {
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 11px !important; letter-spacing: 2.4px !important;
+  text-transform: uppercase; color: var(--muted) !important;
+  margin-bottom: 6px !important;
+}
+.pc-h { font-size: 26px !important; letter-spacing: -.6px !important; margin-bottom: 4px !important; }
+.pc-h span { display: block; font-size: 15px !important; font-weight: 500 !important; margin-top: 3px !important; color: var(--muted) !important; }
+.pc-stars { color: var(--gold) !important; font-size: 13px !important; margin: 10px 0 16px !important; }
+.pc-stars small { color: var(--muted); margin-inline-start: 6px; font-weight: 500; letter-spacing: 0; }
+.pc-body .pill-cta {
+  width: 100% !important; text-align: center !important;
+  padding: 14px 20px !important; font-size: 14.5px !important;
+  border-radius: 10px !important;
+}
+
 /* v38.1 — hero content bottom-anchored + chocolate/cream CTA buttons on video */
 .hero { min-height: min(88vh, 780px) !important; }
 .hero .hero-copy {
@@ -382,6 +447,215 @@ body { background: var(--paper); }
   .hero .hero-copy .k { margin-bottom: 14px !important; }
   .hero .hero-copy h1 { margin-bottom: 16px !important; letter-spacing: -1.6px !important; }
   .hero .hero-copy p { margin-bottom: 22px !important; }
+}
+
+
+/* v39 — polish pack */
+
+/* Signin bar — Mayven-style: single line, tight, well-aligned in RTL */
+.signin {
+  padding: 12px 4vw !important;
+  gap: 12px !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  min-height: 52px;
+  align-items: center !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+.signin-txt {
+  font-size: 14px !important; font-weight: 600 !important;
+  color: var(--ink) !important; line-height: 1.35 !important;
+  text-align: center !important; flex: none !important;
+}
+.signin-txt br { display: none; }  /* one line only */
+.signin-txt span { color: var(--muted) !important; font-weight: 500; margin-inline-start: 6px; }
+.signin-txt em { color: var(--cta-dark) !important; }
+.signin .pill {
+  padding: 9px 22px !important;
+  font-size: 13.5px !important;
+  border-radius: 8px !important;
+  order: -1;   /* button first in RTL row = left of text */
+  background: var(--mint) !important;
+  color: var(--forest) !important;
+  border: 1px solid rgba(37,72,33,.25) !important;
+  transition: all .18s;
+}
+.signin .pill:hover {
+  background: var(--forest) !important; color: #fff !important;
+  transform: translateY(-1px);
+}
+@media(max-width: 720px) {
+  .signin-txt { font-size: 13px !important; }
+  .signin-txt br { display: block; }
+}
+
+/* Trust chips — Mayven-style: soft mint pills, subtle */
+.tchips { padding: 20px 4vw !important; background: var(--paper) !important; border-bottom: 1px solid var(--line) !important; }
+.tchips ul { gap: 8px 10px !important; }
+.tchip {
+  padding: 9px 18px !important;
+  border-radius: 999px !important;
+  background: var(--mint) !important;
+  border: 1px solid rgba(37,72,33,.15) !important;
+  color: var(--forest) !important;
+  font-family: 'Assistant', sans-serif !important;
+  font-size: 13px !important; font-weight: 700 !important;
+  letter-spacing: -.1px !important;
+  display: inline-flex !important; align-items: center !important; gap: 6px;
+}
+.tchip::before {
+  content: "✓"; font-size: 11px; font-weight: 900;
+  color: var(--gold);
+}
+
+/* Nuclear force-hide the hamburger on desktop */
+@media (min-width: 900px) {
+  header .hactions button.ic,
+  header .hactions button[aria-label="תפריט"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+/* Product cards — remove the empty gap left by pc-moment removal */
+.pc-body .pc-moment { display: none !important; }
+.pc-body { padding-top: 20px !important; }
+
+
+/* v40 — CTA buttons come alive + card text centered like Mayven */
+
+.pill-cta,
+.pc-body .pill-cta,
+.hero .pill-cta {
+  background: linear-gradient(180deg, #3a2416 0%, #1a1109 100%) !important;
+  color: #fdfaf3 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,236,216,.12),
+    inset 0 -1px 0 rgba(0,0,0,.35),
+    0 10px 22px -10px rgba(44,29,22,.55) !important;
+  border: 1px solid rgba(0,0,0,.4) !important;
+  position: relative;
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1),
+              box-shadow .22s ease,
+              background .22s ease !important;
+}
+.pill-cta:hover,
+.pc-body .pill-cta:hover,
+.hero .pill-cta:hover {
+  background: linear-gradient(180deg, #4a2f1c 0%, #251609 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,236,216,.18),
+    inset 0 -1px 0 rgba(0,0,0,.3),
+    0 14px 30px -10px rgba(44,29,22,.65),
+    0 0 0 1px rgba(198,145,48,.35) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Product card text — Mayven style: centered under image, not right-flush */
+.pc-body {
+  text-align: center !important;
+  padding: 22px 22px 26px !important;
+}
+.pc-body .pc-h { text-align: center !important; }
+.pc-stars { justify-content: center !important; display: flex !important; }
+.pc-body .pc-line { text-align: center !important; }
+.pc-body .pill-cta { display: inline-flex !important; width: auto !important; padding: 12px 34px !important; }
+
+/* Slight card breathing room */
+.pc { padding: 0 !important; }
+
+
+/* v41 — LIVE CTA color: warm amber/copper (echoes ENERGY orange + gold accent) */
+.pill-cta,
+.pc-body .pill-cta,
+.hero .pill-cta,
+.blog-cta .pill-cta,
+.jbottom .pill-cta,
+.fcta .pill-cta {
+  background: linear-gradient(180deg, #d4884a 0%, #a45a20 100%) !important;
+  color: #fff8ec !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15) !important;
+  border: 1px solid rgba(90,45,15,.55) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,236,200,.35),
+    inset 0 -2px 0 rgba(0,0,0,.14),
+    0 12px 26px -10px rgba(164,90,32,.55) !important;
+  font-weight: 800 !important;
+  letter-spacing: -.1px !important;
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1),
+              box-shadow .22s ease,
+              background .22s ease !important;
+}
+.pill-cta:hover,
+.pc-body .pill-cta:hover,
+.hero .pill-cta:hover,
+.blog-cta .pill-cta:hover,
+.jbottom .pill-cta:hover,
+.fcta .pill-cta:hover {
+  background: linear-gradient(180deg, #e29a5c 0%, #b16528 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,240,210,.45),
+    inset 0 -2px 0 rgba(0,0,0,.12),
+    0 16px 34px -10px rgba(164,90,32,.6),
+    0 0 0 1px rgba(255,236,92,.3) !important;
+  transform: translateY(-2px) !important;
+}
+/* On the dark chocolate hero, keep the cream pill (readable on dark video) */
+.hero .hero-cta .pill-cta {
+  background: #f7ecd8 !important;
+  color: #2c1d16 !important;
+  border: 1px solid rgba(0,0,0,.15) !important;
+  text-shadow: none !important;
+  box-shadow: 0 10px 24px -8px rgba(0,0,0,.4) !important;
+}
+.hero .hero-cta .pill-cta:hover {
+  background: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 14px 30px -8px rgba(0,0,0,.5), 0 0 0 1px rgba(198,145,48,.35) !important;
+}
+/* Dark-CTA bottom sections keep cream fill for contrast */
+.fcta .pill-cta, .jbottom .pill-cta, .blog-cta .pill-cta {
+  background: #f7ecd8 !important;
+  color: #2c1d16 !important;
+  border: 1px solid rgba(0,0,0,.12) !important;
+  text-shadow: none !important;
+  box-shadow: 0 10px 22px -8px rgba(0,0,0,.4) !important;
+}
+
+
+/* v42 — soft & delicate CTA (per user: יותר עדין ורך) */
+.pill-cta,
+.pc-body .pill-cta,
+.hero .pill-cta,
+.blog-cta .pill-cta,
+.jbottom .pill-cta,
+.fcta .pill-cta {
+  background: #f4e9d4 !important;
+  color: #2c1d16 !important;
+  text-shadow: none !important;
+  border: 1px solid #e0d3ba !important;
+  box-shadow: 0 2px 8px -3px rgba(44,29,22,.18) !important;
+  font-weight: 700 !important;
+  letter-spacing: -.05px !important;
+  transition: background .2s ease, box-shadow .22s ease, transform .18s cubic-bezier(.34,1.56,.64,1) !important;
+}
+.pill-cta:hover,
+.pc-body .pill-cta:hover,
+.hero .pill-cta:hover,
+.blog-cta .pill-cta:hover,
+.jbottom .pill-cta:hover,
+.fcta .pill-cta:hover {
+  background: #ffffff !important;
+  border-color: #cbb894 !important;
+  box-shadow: 0 6px 14px -6px rgba(44,29,22,.22) !important;
+  transform: translateY(-1px) !important;
+}
+/* Hero: same soft cream chip on the dark video */
+.hero .hero-cta .pill-cta {
+  background: #f7ecd8 !important;
+  color: #2c1d16 !important;
+  border: 1px solid rgba(0,0,0,.14) !important;
+  box-shadow: 0 4px 14px -4px rgba(0,0,0,.35) !important;
 }
 
 
@@ -535,6 +809,11 @@ footer .ftl{margin:22px 0 0;font-size:14px;color:#a09a90}
 footer .flinks{margin:28px 0;padding:22px 0;border-top:1px solid #222;border-bottom:1px solid #222;display:flex;flex-wrap:wrap;gap:22px;font-size:13px}
 footer .flinks a:hover{color:#fff}
 footer .fbase{font-size:12px;letter-spacing:.02em}
+
+/* SAFETY OVERRIDES for unified pages — reverse home-only rules */
+.hero > img { display: block !important; opacity: 1 !important; visibility: visible !important; }
+img { max-width: 100%; }
+
 </style>
 </head>
 <body>
