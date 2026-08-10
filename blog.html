@@ -1300,6 +1300,65 @@ body.m-open { overflow: hidden; }
   box-shadow: 0 8px 18px -6px rgba(44,29,22,.28) !important;
 }
 
+
+/* v48 — new trust row, champion strip attached, mobile fixes */
+
+/* remove any old .tchips remnants */
+.tchips { display: none !important; }
+
+/* attach champion strip flush under hero (no top margin) */
+.champstrip { margin-top: 0 !important; border-top: 0 !important; }
+.hero + .champstrip { margin-top: -1px; }
+
+/* mobile champion strip — single-line, no wrap, less scroll */
+@media (max-width: 720px) {
+  .champstrip { padding: 10px 3vw !important; }
+  .champstrip-in {
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .champstrip-in::-webkit-scrollbar { display: none; }
+  .champstrip-text {
+    white-space: nowrap !important;
+    font-size: 12px !important;
+    flex: 1 1 auto;
+  }
+  .champstrip-avatar { width: 42px !important; height: 34px !important; }
+  .champstrip-medal { display: none !important; }
+}
+
+/* new trust row — one line, chocolate/gold accent, matches brand */
+.trust-row {
+  padding: 14px 4vw;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.trust-row-in {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px 14px; flex-wrap: nowrap;
+  direction: rtl;
+  overflow-x: auto; scrollbar-width: none;
+}
+.trust-row-in::-webkit-scrollbar { display: none; }
+.tr-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'DM Sans', 'Assistant', sans-serif;
+  font-size: 13.5px; font-weight: 700; letter-spacing: -.1px;
+  color: var(--forest);
+  white-space: nowrap;
+}
+.tr-item b { color: var(--gold); font-weight: 900; }
+.tr-sep { color: #c9b6a6; font-weight: 400; }
+@media (max-width: 640px) {
+  .trust-row { padding: 12px 3vw; }
+  .trust-row-in { justify-content: flex-start; }
+  .tr-item { font-size: 12.5px; }
+}
+
 </style>
 </head>
 <body id="top">
@@ -2575,9 +2634,9 @@ body.m-open { overflow: hidden; }
     <div class="mfoot-col">
       <h4>קניה</h4>
       <ul>
-        <li><a href="https://claude.ai/code/artifact/0b968fe4-1846-4c3f-b901-3492ff1ef085">ENERGY · בוקר</a></li>
-        <li><a href="https://claude.ai/code/artifact/780cd7b4-0a7f-41f9-8f78-e7c09681920e">RELAX · אחר צהריים</a></li>
-        <li><a href="https://claude.ai/code/artifact/4ebf421c-03a6-4b40-a104-8831ac841aae">SLEEP · לילה</a></li>
+        <li><a href="https://claude.ai/code/artifact/0b968fe4-1846-4c3f-b901-3492ff1ef085">ENERGY</a></li>
+        <li><a href="https://claude.ai/code/artifact/780cd7b4-0a7f-41f9-8f78-e7c09681920e">RELAX</a></li>
+        <li><a href="https://claude.ai/code/artifact/4ebf421c-03a6-4b40-a104-8831ac841aae">SLEEP</a></li>
         <li><a href="https://claude.ai/code/artifact/5cb65ab3-e876-4077-95b4-2fc43cc7af62#moments">כל המוצרים</a></li>
         <li><a href="https://claude.ai/code/artifact/c376fa7e-6169-4870-bc7c-3e27953a4a74">מועדון mood</a></li>
       </ul>
@@ -2656,9 +2715,9 @@ body.m-open { overflow: hidden; }
   <div class="m-menu-in">
     <a class="m-menu-close" onclick="document.getElementById('mMenu').classList.remove('open');document.body.classList.remove('m-open')" aria-label="סגור">✕</a>
     <a href="https://claude.ai/code/artifact/5cb65ab3-e876-4077-95b4-2fc43cc7af62" class="m-menu-link">בית</a>
-    <a href="https://claude.ai/code/artifact/0b968fe4-1846-4c3f-b901-3492ff1ef085" class="m-menu-link">ENERGY · בוקר</a>
-    <a href="https://claude.ai/code/artifact/780cd7b4-0a7f-41f9-8f78-e7c09681920e" class="m-menu-link">RELAX · אחר צהריים</a>
-    <a href="https://claude.ai/code/artifact/4ebf421c-03a6-4b40-a104-8831ac841aae" class="m-menu-link">SLEEP · לילה</a>
+    <a href="https://claude.ai/code/artifact/0b968fe4-1846-4c3f-b901-3492ff1ef085" class="m-menu-link">ENERGY</a>
+    <a href="https://claude.ai/code/artifact/780cd7b4-0a7f-41f9-8f78-e7c09681920e" class="m-menu-link">RELAX</a>
+    <a href="https://claude.ai/code/artifact/4ebf421c-03a6-4b40-a104-8831ac841aae" class="m-menu-link">SLEEP</a>
     <a href="https://claude.ai/code/artifact/c376fa7e-6169-4870-bc7c-3e27953a4a74" class="m-menu-link">מועדון mood</a>
     <a href="https://claude.ai/code/artifact/146abf9a-72ed-4dcb-b969-62f5f16ca73a" class="m-menu-link">Journal · בלוג</a>
     <a href="https://claude.ai/code/artifact/872b2176-dbb6-4e4f-a8d4-6b796d3d6751#contact" class="m-menu-link">יצירת קשר</a>
