@@ -781,6 +781,25 @@ body { background: var(--paper); }
   .pgrid .pc { flex: 0 0 85% !important; max-width: 85%; }
 }
 
+
+/* v45 — hero entrance animation (slide up + fade in on load, Mayven-style) */
+@keyframes heroSlideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero .hero-copy .k        { animation: heroSlideUp .8s cubic-bezier(.19,1,.22,1) .1s both; }
+.hero .hero-copy h1        { animation: heroSlideUp .9s cubic-bezier(.19,1,.22,1) .2s both; }
+.hero .hero-copy p         { animation: heroSlideUp .9s cubic-bezier(.19,1,.22,1) .35s both; }
+.hero .hero-copy .hero-cta { animation: heroSlideUp 1s cubic-bezier(.19,1,.22,1) .5s both; }
+.hero-slide {
+  animation: heroSlideUp 1s cubic-bezier(.19,1,.22,1) .5s both !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero .hero-copy .k, .hero .hero-copy h1, .hero .hero-copy p, .hero .hero-copy .hero-cta, .hero-slide {
+    animation: none !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -812,8 +831,7 @@ body { background: var(--paper); }
         <h1>אנחנו עושים <b>ריטואל</b> אחרת.</h1>
         <p>שוקולד מריר 70% פונקציונלי. ביס אחד ביום — בזמן שהכי צריך.</p>
         <div class="hero-cta">
-          <a class="pill pill-cta" href="#moments">shop now</a>
-          <a class="pill pill-out" href="#ritual">מה זה ריטואל?</a>
+          <a class="pill pill-cta hero-slide" href="#moments">shop now</a>
         </div>
       </div>
     </section>
