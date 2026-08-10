@@ -287,6 +287,76 @@ body { background: var(--paper); }
   position: relative !important; z-index: 2 !important;
 }
 
+
+
+/* ============================================================
+   v38.1 — hero polish (mobile)
+   ============================================================ */
+@media (max-width: 900px) {
+  .hero {
+    min-height: min(64vh, 520px) !important;
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+  .hero h1, .hero-copy h1 {
+    font-size: clamp(38px, 9vw, 60px) !important;
+    line-height: 1 !important;
+    margin: 0 0 14px !important;
+  }
+  .hero p, .hero-copy p {
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+    margin: 0 auto 20px !important;
+  }
+  .hero .kicker {
+    margin: 0 0 12px !important;
+    font-size: 10.5px !important;
+    letter-spacing: 2px !important;
+  }
+  .heroStats {
+    left: 12px !important; right: 12px !important; bottom: 14px !important;
+    font-size: 12px !important;
+    gap: 0 !important;
+  }
+  .heroStats span {
+    padding: 0 10px !important;
+    font-size: 11.5px !important;
+  }
+}
+
+/* signin: hide by default, appear as slim sticky below header once
+   scrolled past the hero. It's now in DOM after the hero, so its
+   natural position is already below. We just make it sticky. */
+.signin {
+  position: sticky !important;
+  top: 66px !important;       /* just under the header (~66px tall) */
+  z-index: 35 !important;
+  transform: translateY(0) !important;
+  padding: 8px 4vw !important;
+  min-height: 42px !important;
+  gap: 10px !important;
+  background: rgba(253, 250, 243, .97) !important;
+  backdrop-filter: blur(8px) !important;
+  border-bottom: 1px solid var(--line, #e3dbd0) !important;
+  transition: box-shadow .25s ease !important;
+  box-shadow: 0 4px 14px -8px rgba(0,0,0,.08);
+}
+.signin .pill {
+  padding: 7px 14px !important;
+  font-size: 12.5px !important;
+  border-radius: 8px !important;
+}
+.signin-txt {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+.signin-txt span { display: none; }  /* hide the sub-line, keep only the main pitch on the sticky */
+@media (max-width: 900px) {
+  .signin { top: 60px !important; padding: 6px 12px !important; min-height: 40px !important; }
+  .signin .pill { padding: 6px 12px !important; font-size: 12px !important; }
+  .signin-txt { font-size: 12px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -307,10 +377,7 @@ body { background: var(--paper); }
       <button class="ic" aria-label="תפריט"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
   </header>
-  <div class="signin">
-    <a class="pill pill-mint" href="#">התחברי</a>
-    <div class="signin-txt">התחברי למועדון ותהני משלוח חינם 🚚<br><span>עדיין לא חברת מועדון? <em>הירשמי עכשיו</em></span></div>
-  </div>
+  
 
   <main id="top">
     <!-- HERO -->
@@ -326,6 +393,10 @@ body { background: var(--paper); }
         </div>
       </div>
     </section>
+<div class="signin">
+    <a class="pill pill-mint" href="#">התחברי</a>
+    <div class="signin-txt">התחברי למועדון ותהני משלוח חינם 🚚<br><span>עדיין לא חברת מועדון? <em>הירשמי עכשיו</em></span></div>
+  </div>
 
     <!-- TRUST CHIPS -->
     <section class="tchips">
