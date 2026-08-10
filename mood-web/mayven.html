@@ -959,6 +959,39 @@ body.m-open { overflow: hidden; }
   .tr-item { font-size: 12.5px; }
 }
 
+
+/* v49 — mobile hide champstrip, tighter moments, fix z-index, clickable cards */
+
+/* 1. Mobile: hide champion strip entirely (photo of Ronen + text) */
+@media (max-width: 720px) {
+  .champstrip { display: none !important; }
+  /* also hide any second champstrip clone if exists */
+}
+
+/* 2. Bring the '3 formulas' section closer to the top */
+#moments { padding-top: 24px !important; }
+#moments .section-head { margin-bottom: 22px !important; }
+@media (max-width: 720px) {
+  #moments { padding-top: 16px !important; }
+  #moments .section-head { margin-bottom: 16px !important; }
+}
+
+/* 3. Fix click-through: nav must sit above ANY sticky overlay */
+header { z-index: 70 !important; position: sticky; top: 0; }
+header nav { position: relative; z-index: 71; }
+header nav a { position: relative; z-index: 72; pointer-events: auto; cursor: pointer; }
+header nav a:hover { color: var(--forest); text-decoration: underline; text-underline-offset: 4px; }
+.ann { z-index: 50 !important; }
+
+/* 4. Make the entire product card clickable via absolute-positioned overlay link */
+.pc { position: relative; }
+.pc-body { position: relative; z-index: 2; }
+.pc-media { position: relative; z-index: 2; }
+.pc-clickable {
+  position: absolute; inset: 0; z-index: 1;
+  border-radius: inherit;
+}
+
 </style>
 </head>
 <body>
@@ -1010,7 +1043,7 @@ body.m-open { overflow: hidden; }
     </div>
 
     <!-- MOMENTS: 3 cards -->
-    <section class="section" id="moments" style="padding-top:64px">
+    <section class="section" id="moments" style="padding-top:24px">
       <div class="section-head" style="margin-bottom:32px">
         <h2 style="margin-bottom:10px">שלושה רגעים.<br><b>שלוש פורמולות.</b></h2>
       </div>
@@ -1297,6 +1330,22 @@ body.m-open { overflow: hidden; }
   });
   menu.addEventListener('click', function(e){
     if (e.target === menu) { menu.classList.remove('open'); document.body.classList.remove('m-open'); }
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  document.querySelectorAll('.pc').forEach(function(card){
+    const cta = card.querySelector('a.pill-cta[href]');
+    if (!cta) return;
+    if (card.querySelector('.pc-clickable')) return;
+    const a = document.createElement('a');
+    a.href = cta.getAttribute('href');
+    a.className = 'pc-clickable';
+    a.setAttribute('aria-label', 'לעמוד המוצר');
+    card.appendChild(a);
   });
 })();
 </script>
