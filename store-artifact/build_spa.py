@@ -1073,38 +1073,14 @@ _NEED = """
 page_src['/products'] = page_src['/products'].replace('</body>', _NEED + '</body>')
 
 # Mayven card skin for the standalone products page (same classes as the embedded cards)
-_CARDSKIN = """
-<style>
-/* editorial cards: the photograph is the card, the type sits on the page itself */
-.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;
-  overflow:visible!important;box-shadow:none!important}
-.card::before,.card::after{display:none!important}
-/* the old hover sheet: a positioned ::before that collapses to a 7px dog-ear */
-.card .button::before,.card .button::after{display:none!important;content:none!important}
-.card.energy{--sku:#F2902E}
-.card.relax{--sku:#91B681}
-.card.sleep{--sku:#779BC6}
-.card .visual{border-radius:18px!important;overflow:hidden!important}
-.card .content{text-align:center!important}
-.card .label,.card .description,.card .monthly{display:none!important}
-.mvname{font-size:22px;font-weight:800;letter-spacing:.055em;color:#1d3226;margin:7px 0 0}
-/* the SKU colour arrives as a 26px rule — the card carries no other colour of its own */
-.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;
-  margin:13px 0 16px!important;padding-top:13px!important;line-height:1.5!important;letter-spacing:0!important}
-.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}
-.card .button{display:inline-block!important;width:auto!important;min-width:172px!important;padding:13px 22px!important;font-size:14.5px!important;line-height:1.2!important;min-height:46px!important}
-.card .units{opacity:0!important;transform:scale(.98)!important}
-.card .lifestyle{opacity:1!important;transform:none!important}
-.card:hover .units{opacity:1!important;transform:none!important}
-.card:hover .lifestyle{opacity:0!important}
-.card .content{background:transparent!important;padding:15px 4px 0!important}
-.mvstars{display:flex;align-items:center;justify-content:center;gap:7px;margin:0;font-weight:600;font-size:12px;color:#8a7c6a}
-.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13px}
-.card .button{background:transparent!important;border:1.4px solid #1d3226!important;color:#1d3226!important;
-border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}
-.card .button:hover{background:#1d3226!important;color:#fff!important}
-@media(max-width:700px){
+# The card skin is applied in two places: this <style> for the standalone
+# products page, and the nested-frame injector further down for the cards
+# embedded in the home page. It is defined once, here, so a change cannot
+# land in one and miss the other.
+CARD_SKIN_CSS = """.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}.card.energy{--sku:#F2902E}.card.relax{--sku:#91B681}.card.sleep{--sku:#779BC6}.card .visual{border-radius:18px!important;overflow:hidden!important}.card::before,.card::after{display:none!important}.card .button::before,.card .button::after{display:none!important;content:none!important}.card .content{text-align:center!important}.card .label,.card .description,.card .monthly{display:none!important}.mvname{font-size:22px;font-weight:800;letter-spacing:.055em;color:#1d3226;margin:7px 0 0}.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;margin:13px 0 16px!important;padding-top:13px!important;line-height:1.5!important;letter-spacing:0!important}.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}.card .button{display:inline-block!important;width:auto!important;min-width:172px!important;padding:13px 22px!important;font-size:14.5px!important;line-height:1.2!important;min-height:46px!important}.card .units{opacity:0!important;transform:scale(.98)!important}.card .lifestyle{opacity:1!important;transform:none!important}.card:hover .units{opacity:1!important;transform:none!important}.card:hover .lifestyle{opacity:0!important}.card .content{background:transparent!important;padding:15px 4px 0!important}.mvstars{display:flex;align-items:center;justify-content:center;gap:7px;margin:0;font-weight:600;font-size:12px;color:#8a7c6a}.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13px}.card .button{background:transparent!important;border:1.4px solid #1d3226!important;color:#1d3226!important;border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}.card .button:hover{background:#1d3226!important;color:#fff!important}@media(max-width:700px){.cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding:4px 14px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cards::-webkit-scrollbar{display:none}.card{flex:0 0 90%!important;scroll-snap-align:center;min-width:0}.mvdots{display:flex;justify-content:center;gap:6px;margin:2px 0 10px}.mvdots i{width:7px;height:7px;border-radius:99px;background:#d8cbb8;transition:all .25s}.mvdots i.on{background:#E05A00;width:18px}}@media(min-width:701px){.mvdots{display:none}}"""
+
+# rules that only the standalone products page needs
+PRODUCTS_PAGE_CSS = """@media(max-width:700px){
   .cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;
     padding:4px 14px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .cards::-webkit-scrollbar{display:none}
@@ -1117,7 +1093,6 @@ border-radius:999px!important;font-weight:700!important;box-shadow:none!importan
   .mvdots i{width:7px;height:7px;border-radius:99px;background:#d8cbb8;transition:all .25s}
   .mvdots i.on{background:#E05A00;width:18px}
 }
-@media(min-width:701px){.mvdots{display:none}}
 .mv-ritband{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:center;max-width:960px;
   margin:26px auto 44px;padding:16px;background:#fff;border:1px solid #ece2d2;border-radius:22px;
   text-decoration:none;box-shadow:0 18px 40px -28px rgba(41,25,10,.4);transition:transform .25s}
@@ -1127,7 +1102,11 @@ border-radius:999px!important;font-weight:700!important;box-shadow:none!importan
 .mv-ritband span{display:block;font-size:13.5px;color:#8a7c6a;margin-top:5px;line-height:1.55}
 .mv-ritband i{font-style:normal;display:inline-block;margin-top:10px;font-weight:900;color:#c14e00;font-size:14.5px}
 @media(max-width:700px){.mv-ritband{margin:4px 16px 34px;grid-template-columns:1fr;gap:14px;padding:14px}
-  .mv-ritband img{height:190px}.mv-ritband b{font-size:17px}}
+  .mv-ritband img{height:190px}.mv-ritband b{font-size:17px}}"""
+
+_CARDSKIN = """
+<style>
+""" + CARD_SKIN_CSS + "\n" + PRODUCTS_PAGE_CSS + """
 </style>
 <script>
 (function(){
@@ -1856,23 +1835,7 @@ document.addEventListener('click',function(e){
 },true);
 // nested srcdoc frames (embedded product cards): forward links to the router + apply the Mayven card skin
 (function(){
-  var CARD_CSS='.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}'+'.card.energy{--sku:#F2902E}.card.relax{--sku:#91B681}.card.sleep{--sku:#779BC6}'+'.card .visual{border-radius:18px!important;overflow:hidden!important}'+'.card::before,.card::after{display:none!important}'+/* the old hover sheet: a positioned ::before that collapses to a 7px dog-ear */'.card .button::before,.card .button::after{display:none!important;content:none!important}'+
-   '.card .content{text-align:center!important}'+
-   '.card .label,.card .description,.card .monthly{display:none!important}'+
-   '.mvname{font-size:22px;font-weight:800;letter-spacing:.055em;color:#1d3226;margin:7px 0 0}'+
-   '.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;margin:13px 0 16px!important;padding-top:13px!important;line-height:1.5!important;letter-spacing:0!important}'+'.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}'+
-   '.card .button{display:inline-block!important;width:auto!important;min-width:172px!important;padding:13px 22px!important;font-size:14.5px!important;line-height:1.2!important;min-height:46px!important}'+
-   '.card .units{opacity:0!important;transform:scale(.98)!important}'+
-   '.card .lifestyle{opacity:1!important;transform:none!important}'+
-   '.card:hover .units{opacity:1!important;transform:none!important}'+
-   '.card:hover .lifestyle{opacity:0!important}'+
-   '.card .content{background:transparent!important;padding:15px 4px 0!important}'+
-   '.mvstars{display:flex;align-items:center;justify-content:center;gap:7px;margin:0;font-weight:600;font-size:12px;color:#8a7c6a}'+
-   '.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13px}'+
-   '.card .button{background:transparent!important;border:1.4px solid #1d3226!important;color:#1d3226!important;'+
-   'border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}'+
-   '.card .button:hover{background:#1d3226!important;color:#fff!important}'+
-   '@media(max-width:700px){'+'.cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;'+'padding:4px 14px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}'+'.cards::-webkit-scrollbar{display:none}'+'.card{flex:0 0 90%!important;scroll-snap-align:center;min-width:0}'+'.mvdots{display:flex;justify-content:center;gap:6px;margin:2px 0 10px}'+'.mvdots i{width:7px;height:7px;border-radius:99px;background:#d8cbb8;transition:all .25s}'+'.mvdots i.on{background:#E05A00;width:18px}'+'}'+'@media(min-width:701px){.mvdots{display:none}}';
+  var CARD_CSS=__CARD_SKIN_CSS__;
   var COUNTS={SLEEP:'(94)',RELAX:'(94)',ENERGY:'(127)'};   // must match each product page
   function skin(d){
     if(d.__moodSkin)return; d.__moodSkin=true;
@@ -1932,6 +1895,9 @@ document.addEventListener('click',function(e){
   setTimeout(scan,1400);
 })();
 </script>"""
+
+NAV_JS = NAV_JS.replace('__CARD_SKIN_CSS__', json.dumps(CARD_SKIN_CSS))
+
 for route in page_src:
     t = page_src[route]
     t = t.replace('</body>', NAV_JS + '</body>') if '</body>' in t else t + NAV_JS
