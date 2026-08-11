@@ -1,6 +1,6 @@
 // Every real button on every route: is the system actually one system?
 const { chromium } = require('playwright-core');
-const F='file:///home/user/mood-automation/store-artifact/deploy/index.html';
+const F='file://'+(process.env.TARGET||'/home/user/mood-automation/store-artifact/deploy/index.html');
 const R=['/','/products','/energy','/relax','/sleep','/ritual','/club','/faq','/policies','/journal'];
 (async()=>{
   const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});

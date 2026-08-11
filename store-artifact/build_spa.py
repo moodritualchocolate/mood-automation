@@ -286,7 +286,7 @@ RONEN_PLUS = """
     var vids=soc.querySelector('.soc-videos');
     if(vids){
       var rail=document.createElement('div'); rail.className='vrail';
-      rail.innerHTML='<div class="vrail-head"><b>הרגעים שלהם</b><span>לקוחות מספרים · לחצו לצפייה</span></div>';
+      rail.innerHTML='<div class="vrail-head"><b>הרגעים שלהם</b><span>לקוחות מספרים · לחצו לקריאה</span></div>';
       soc.insertBefore(rail, head.nextSibling);
       rail.appendChild(vids);
       vids.classList.add('vrail-track');
@@ -1050,7 +1050,7 @@ page_src['/products'] = page_src['/products'].replace('</body>', _NEED + '</body
 # products page, and the nested-frame injector further down for the cards
 # embedded in the home page. It is defined once, here, so a change cannot
 # land in one and miss the other.
-CARD_SKIN_CSS = """.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}.card.energy{--sku:#F2902E}.card.relax{--sku:#91B681}.card.sleep{--sku:#779BC6}.card .visual{border-radius:18px!important;overflow:hidden!important}.card::before,.card::after{display:none!important}.card .button::before,.card .button::after{display:none!important;content:none!important}.card .content{text-align:center!important}.card .label,.card .description,.card .monthly{display:none!important}.mvname{font-size:22px;font-weight:700;letter-spacing:.055em;color:#1d3226;margin:8px 0 0}.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;margin:12px 0 16px!important;padding-top:12px!important;line-height:1.5!important;letter-spacing:0!important}.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}.card .button{display:inline-block!important;width:auto!important;min-width:172px!important;padding:12px 22px!important;font-size:15px!important;line-height:1.2!important;min-height:46px!important}.card .units{opacity:0!important;transform:scale(.98)!important}.card .lifestyle{opacity:1!important;transform:none!important}.card:hover .units{opacity:1!important;transform:none!important}.card:hover .lifestyle{opacity:0!important}.card .content{background:transparent!important;padding:16px 4px 0!important}.mvstars{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font-weight:700;font-size:12px;color:#8a7c6a}.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13.5px}.card .button{background:transparent!important;border:1.4px solid #1d3226!important;color:#1d3226!important;border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}.card .button:hover{background:#1d3226!important;color:#fff!important}@media(max-width:700px){.cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;padding:4px 14px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cards::-webkit-scrollbar{display:none}.card{flex:0 0 90%!important;scroll-snap-align:center;min-width:0}.mvdots{display:flex;justify-content:center;gap:8px;margin:2px 0 10px}.mvdots i{width:7px;height:7px;border-radius:99px;background:#d8cbb8;transition:all .25s}.mvdots i.on{background:#E05A00;width:18px}}@media(min-width:701px){.mvdots{display:none}}"""
+CARD_SKIN_CSS = """.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}.card.energy{--sku:#F2902E}.card.relax{--sku:#91B681}.card.sleep{--sku:#779BC6}.card .visual{border-radius:18px!important;overflow:hidden!important}.card::before,.card::after{display:none!important}.card .button::before,.card .button::after{display:none!important;content:none!important}.card .content{text-align:center!important}.card .label,.card .description,.card .monthly{display:none!important}.mvname{font-size:22px;font-weight:700;letter-spacing:.055em;color:#1d3226;margin:8px 0 0}.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;margin:12px 0 16px!important;padding-top:12px!important;line-height:1.5!important;letter-spacing:0!important}.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}.card .button{display:inline-block!important;width:auto!important;min-width:172px!important;padding:12px 22px!important;font-size:14.5px!important;line-height:1.2!important;min-height:46px!important}.card .units{opacity:0!important;transform:scale(.98)!important}.card .lifestyle{opacity:1!important;transform:none!important}.card:hover .units{opacity:1!important;transform:none!important}.card:hover .lifestyle{opacity:0!important}.card .content{background:transparent!important;padding:16px 4px 0!important}.mvstars{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font-weight:700;font-size:12px;color:#8a7c6a}.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13.5px}.card .button{background:transparent!important;border:1.4px solid #1d3226!important;color:#1d3226!important;border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}.card .button:hover{background:#1d3226!important;color:#fff!important}@media(max-width:700px){.cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;padding:4px 14px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cards::-webkit-scrollbar{display:none}.card{flex:0 0 90%!important;scroll-snap-align:center;min-width:0}.mvdots{display:flex;justify-content:center;gap:8px;margin:2px 0 10px}.mvdots i{width:7px;height:7px;border-radius:99px;background:#d8cbb8;transition:all .25s}.mvdots i.on{background:#E05A00;width:18px}}@media(min-width:701px){.mvdots{display:none}}"""
 
 # rules that only the standalone products page needs
 PRODUCTS_PAGE_CSS = """@media(max-width:700px){
@@ -1161,9 +1161,12 @@ page_src['/ritual'] = ('<!doctype html><html lang="he" dir="rtl"><head><meta cha
  '.stepper{display:flex;align-items:center;gap:16px;border:1px solid #d8cbb8;border-radius:999px;padding:8px 16px}'
  '.stepper button{border:0;background:none;font-size:22px;font-weight:700;cursor:pointer;color:#171512;padding:0 6px}'
  '.stepper b{min-width:20px;text-align:center;font-size:17px}'
- '.atc{flex:1;border:2px solid #b06635;border-radius:999px;background:linear-gradient(180deg,#f9dcbc,#f0c6a0 55%,#eab88b);'
- 'color:#5b2c07;font-weight:900;font-size:15px;padding:16px;cursor:pointer;font-family:inherit;box-shadow:0 6px 0 #E05A00;transition:transform .15s,box-shadow .15s}'
- '.atc:hover{transform:translateY(2px);box-shadow:0 4px 0 #E05A00}'
+ # this page is rendered after MOOD_SYSTEM, so the primary spec is restated
+ # here instead of inherited. It used to be the last peach press-button left
+ # on the site: the same "add to cart" wearing a costume no other page wore.
+ '.atc{flex:1;border:1.4px solid #C9551A;border-radius:999px;background:#C9551A;'
+ 'color:#fdf6ee;font-weight:700;font-size:15px;min-height:52px;padding:16px;cursor:pointer;font-family:inherit;box-shadow:none;transition:background .2s,border-color .2s}'
+ '.atc:hover{background:#A94512;border-color:#A94512}'
  '.ugc-h{margin:32px 0 4px;font-size:22px;font-weight:900}'
  '.ugc-s{color:#8a7c6a;font-size:13.5px;margin:0 0 14px}'
  '.ugc{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:8px}'
@@ -1242,6 +1245,8 @@ if getattr(_reviews, 'PLACEHOLDER', True) or PLACEHOLDER_COUNTS:
     print('!!    - 30 customer reviews (_reviews.py), with stars and a verified label')
     print('!!    - purchase counters: 4,208 / 5,437 / 3,892 on the product pages')
     print('!!      and 2,347 on the bundle page, shown beside the price as fact')
+    print('!!    - the three named customers in the home rail (yael/noa/shira)')
+    print('!!      and the sentences their cards open')
     print('!!  Publishing this presents fabricated numbers as real ones. Replace')
     print('!!  them with attributable figures, or remove them, before going live.')
     print('!' * 74 + '\n')
@@ -1428,11 +1433,13 @@ MOOD_SYSTEM = """
   .mp2-cite::before{inset-inline-start:50%;transform:translateX(-50%)}
 }
 
-/* a play mark — these read as clips, and the card opens on tap */
+/* This wore a play triangle. Nothing behind it is footage — the card opens
+   the person's written words — so the triangle promised a video the site
+   does not have. Same mark as the founder's quote: it opens a quote. */
 .vrail-track .soc-vplay{background:rgba(255,255,255,.94)!important;width:54px!important;height:54px!important}
-.vrail-track .soc-vplay::before{content:""!important;border-style:solid!important;
-  border-width:9px 0 9px 15px!important;border-color:transparent transparent transparent #241b12!important;
-  margin:0 0 0 3px!important;font-size:0!important}
+.vrail-track .soc-vplay::before{content:""!important;border:0!important;
+  width:22px!important;height:16px!important;margin:0!important;font-size:0!important;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 32' fill='%23241b12'%3E%3Cpath d='M0 32V19C0 8.5 7.5 0 18 0v7.5C11.6 7.5 6.5 12.6 6.5 19H18v13H0z'/%3E%3Cpath d='M26 32V19C26 8.5 33.5 0 44 0v7.5c-6.4 0-11.5 5.1-11.5 11.5H44v13H26z'/%3E%3C/svg%3E") no-repeat center/contain!important}
 .vrail-track .soc-vid:hover .soc-vplay{background:#fff!important}
 .vrail-track .has-story{cursor:pointer}
 .vstory{position:fixed;inset:0;z-index:60;background:rgba(24,16,10,.72);display:grid;place-items:center;
@@ -1562,8 +1569,10 @@ MOOD_SYSTEM = """
 .vrail-track .soc-vplay{position:absolute!important;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;
   width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;
   box-shadow:0 10px 26px rgba(0,0,0,.3)}
-.vrail-track .soc-vplay::before{content:"";border-style:solid;border-width:9px 0 9px 14px;
-  border-color:transparent transparent transparent #241b12;margin-inline-start:3px}
+.vrail-track .soc-vplay::before{content:"";width:22px;height:16px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 32' fill='%23241b12'%3E%3Cpath d='M0 32V19C0 8.5 7.5 0 18 0v7.5C11.6 7.5 6.5 12.6 6.5 19H18v13H0z'/%3E%3Cpath d='M26 32V19C26 8.5 33.5 0 44 0v7.5c-6.4 0-11.5 5.1-11.5 11.5H44v13H26z'/%3E%3C/svg%3E") no-repeat center/contain}
+/* the source page draws its own triangle on ::after — that one goes too */
+.vrail-track .soc-vplay::after{content:none!important;display:none!important}
 .vrail-track figcaption{position:absolute;inset:auto 0 0 0;z-index:3;padding:16px 15px 15px;color:#fff;display:block}
 .vrail-track .soc-vtag{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.14em;
   background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px 9px;
@@ -1698,22 +1707,36 @@ img{background-color:#efe7db}
   transform:rotate(45deg) scale(1.15);opacity:1}
 
 /* primary — warm terracotta, softer than the old signal orange */
-.cta,.sb-cta,.qbtn,.rh-btn-primary,#mood-xp .xp-cta,.btn:not(.ghost):not(.light):not(.chip){
+/* .mv-bundle button and .atc are both "add this to the cart". They were
+   wearing the outline's colours at the primary's height, and a leftover
+   peach gradient, respectively — the same verb in three costumes. */
+.cta,.sb-cta,.qbtn,.rh-btn-primary,#mood-xp .xp-cta,.mv-bundle button,.atc,
+.btn:not(.ghost):not(.light):not(.chip){
   background:#C9551A!important;color:#fdf6ee!important;border:1.4px solid #C9551A!important;
-  font-size:15px!important;min-height:52px!important}
+  font-size:15px!important;font-weight:700!important;min-height:52px!important;
+  box-shadow:none!important;text-shadow:none!important}
 .cta:hover,.sb-cta:hover,.qbtn:hover,.rh-btn-primary:hover,#mood-xp .xp-cta:hover,
-.btn:not(.ghost):not(.light):not(.chip):hover{background:#A94512!important;border-color:#A94512!important}
+.mv-bundle button:hover,.atc:hover,
+.btn:not(.ghost):not(.light):not(.chip):hover{background:#A94512!important;border-color:#A94512!important;
+  transform:none!important}
 
 /* secondary — one ink hairline. This block carried a second, warmer hairline at
    1.1px, and sitting later in the stack it outranked the button system: the same
    "בחרו מארז" was ink on the home page and warm grey on /products. */
-.mv-padd,.mv-bundle button,.card .button,.btn.light,.bu-go{
+.mv-padd,.card .button,.btn.light,.bu-go,.mv-rvmore,.fx-more{
   background:transparent!important;color:#1d3226!important;border:1.4px solid #1d3226!important;
   font-size:14.5px!important;font-weight:700!important;min-height:46px!important}
-.mv-padd:hover,.mv-bundle button:hover,.card .button:hover,.btn.light:hover,.bu-go:hover{
+.mv-padd:hover,.card .button:hover,.btn.light:hover,.bu-go:hover,.mv-rvmore:hover,.fx-more:hover{
   background:#1d3226!important;color:#fff!important;border-color:#1d3226!important}
-.rh-btn-ghost,.btn.ghost{background:transparent!important;color:#241b12!important;border:1.1px solid #241b12!important}
-.rh-btn-ghost:hover,.btn.ghost:hover{background:rgba(36,27,18,.06)!important}
+/* the ghost carried its own ink — #241b12 at 1.1px against the system's
+   #1d3226 at 1.4px. Two dark neutrals four percent apart read as a mistake,
+   not a variant: it is the same hairline, so it is the same hairline. */
+.rh-btn-ghost,.btn.ghost{background:transparent!important;color:#1d3226!important;border:1.4px solid #1d3226!important}
+.rh-btn-ghost:hover,.btn.ghost:hover{background:rgba(29,50,38,.06)!important}
+/* the club's closing band is #241b12. One ink for the hairline is the rule,
+   but not at the cost of a button nobody can see: on that ground it inverts. */
+.cta-band .btn.ghost{color:#fff!important;border-color:rgba(255,255,255,.55)!important}
+.cta-band .btn.ghost:hover{background:rgba(255,255,255,.12)!important;border-color:#fff!important}
 
 /* dark — the club, and anything on a photo */
 .club-cta{background:#241b12!important;color:#f6ecdd!important;border:1px solid #241b12!important}
@@ -1792,7 +1815,7 @@ img{background-color:#efe7db}
 .cu-cta:hover{background:#fff!important;border-color:#fff!important}
 /* secondary: hairline ink, identical to the product cards */
 .mv-rvmore{background:transparent!important;color:#1d3226!important;
-  border:1.4px solid #1d3226!important;padding:12px 22px!important;font-size:15px!important;
+  border:1.4px solid #1d3226!important;padding:12px 22px!important;font-size:14.5px!important;
   min-height:46px!important}
 .mv-rvmore:hover{background:#1d3226!important;color:#fff!important}
 @media (max-width:700px){
@@ -2131,7 +2154,9 @@ shell_head = """<title>mood — ריטואל שוקולד פונקציונלי</
     .ct-cont{padding:16px 0}
   }
   .ct-cont{display:block;width:100%;margin:8px 0 0;border:0;background:none;color:#8a7c6a;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:underline}
-  .ct-shop{display:inline-block;margin-top:16px;border:1.4px solid #1d3226;border-radius:999px;background:transparent;color:#1d3226;font-weight:700;font-size:15px;padding:12px 22px;min-height:46px;cursor:pointer;font-family:inherit;box-shadow:none;transition:background .2s,color .2s}
+  /* the drawer lives in the outer shell, which the page system cannot reach,
+     so the secondary spec is restated here rather than inherited: 14.5/46. */
+  .ct-shop{display:inline-block;margin-top:16px;border:1.4px solid #1d3226;border-radius:999px;background:transparent;color:#1d3226;font-weight:700;font-size:14.5px;padding:12px 22px;min-height:46px;cursor:pointer;font-family:inherit;box-shadow:none;transition:background .2s,color .2s}
   .ct-shop:hover{background:#1d3226;color:#fff}
   .ct-coup{display:flex;gap:8px;margin-bottom:8px}
   .ct-coup input{flex:1;min-width:0;border:1px solid #d8cbb8;border-radius:999px;padding:8px 14px;font-size:13.5px;

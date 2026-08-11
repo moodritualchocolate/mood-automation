@@ -11,6 +11,11 @@
 > on the product pages, and 2,347 on the bundle page. They read as order counts
 > and are not.
 >
+> And the three customers in the "הרגעים שלהם" rail on the home page — יעל,
+> נועה and שירה — with the sentences that open when you tap their card. Real
+> photographs, invented people. The card no longer wears a play triangle
+> (nothing behind it is footage), but the words still need to be real or gone.
+>
 > Replace `R` in `_reviews.py` with real, attributable reviews, then set
 > `PLACEHOLDER = False` in that file. The build prints a warning until you do.
 >
