@@ -2540,3 +2540,51 @@ shell = (SHELL_HEAD_META + '<div dir="rtl" lang="he">' + shell_head
          + '\n'.join(tpl_blocks) + _sj + '</div></body></html>')
 open(OUT, 'w', encoding='utf-8').write(shell)
 print('WROTE', OUT, round(len(shell)/1048576, 2), 'MB')
+
+# ---------------------------------------------------------------------------
+# Second output: the same site with the images as files instead of base64.
+#
+# The runtime already resolves %%A<hash>%% through the ASSETS map, so nothing
+# in the page code has to change - only what the map points at. Inlined, the
+# browser must finish downloading every image on the site, including the ones
+# for pages nobody opens, before the first screen is done. As files they load
+# in parallel, cache separately, and the ones below the fold can wait.
+# ---------------------------------------------------------------------------
+import base64 as _b64x, os as _osx, shutil as _shx
+
+DIST = _osx.path.join(_osx.path.dirname(OUT), 'dist')
+_shx.rmtree(DIST, ignore_errors=True)
+_osx.makedirs(_osx.path.join(DIST, 'assets'), exist_ok=True)
+
+_EXT = {'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp',
+        'image/svg+xml': 'svg', 'image/gif': 'gif', 'video/mp4': 'mp4',
+        'video/webm': 'webm', 'font/woff2': 'woff2', 'application/font-woff2': 'woff2'}
+
+_ext_assets, _wrote, _bytes = {}, 0, 0
+for _tok, _val in ASSETS.items():
+    _m = re.match(r'^data:([^;,]+);base64,(.*)$', _val or '', re.S)
+    if not _m:
+        _ext_assets[_tok] = _val          # already a URL or inline svg - leave it
+        continue
+    _mime, _b64 = _m.group(1), _m.group(2)
+    _ext = _EXT.get(_mime)
+    if _ext is None:                       # unknown type stays inline rather than guessed
+        _ext_assets[_tok] = _val
+        continue
+    _raw = _b64x.b64decode(_b64)
+    _name = '%s.%s' % (_tok, _ext)
+    open(_osx.path.join(DIST, 'assets', _name), 'wb').write(_raw)
+    _ext_assets[_tok] = 'assets/' + _name
+    _wrote += 1
+    _bytes += len(_raw)
+
+_shell_ext = (SHELL_HEAD_META + '<div dir="rtl" lang="he">' + shell_head
+              + '\n'.join(tpl_blocks)
+              + shell_js.replace('__ASSETS__', json.dumps(_ext_assets))
+              + '</div></body></html>')
+open(_osx.path.join(DIST, 'index.html'), 'w', encoding='utf-8').write(_shell_ext)
+
+print('WROTE %s/index.html  %s MB  (+%d asset files, %s MB)' % (
+    DIST, round(len(_shell_ext)/1048576, 2), _wrote, round(_bytes/1048576, 2)))
+print('      single-file build is %sx heavier to first paint' % (
+    round(len(shell)/max(len(_shell_ext), 1), 1)))
