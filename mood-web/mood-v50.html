@@ -986,6 +986,43 @@ header nav a:hover { color: var(--forest); text-decoration: underline; text-unde
   border-radius: inherit;
 }
 
+
+/* v53 — NUCLEAR cream CTA (wins over any other rule) */
+body a.pill.pill-cta,
+body button.pill.pill-cta,
+body a.pill-cta,
+body .pill-cta,
+body .hero .pill-cta,
+body .hero-cta .pill-cta,
+body .hero .hero-cta .pill-cta,
+body .pc .pill-cta,
+body .pc-body .pill-cta,
+body .club .pill-cta,
+body .ritual .pill-cta,
+body .fcta .pill-cta,
+body .jbottom .pill-cta,
+body .blog-cta .pill-cta {
+  background: #f4e9d4 !important;
+  background-image: none !important;
+  color: #2c1d16 !important;
+  text-shadow: none !important;
+  border: 1px solid #e0d3ba !important;
+  box-shadow: 0 3px 10px -3px rgba(44,29,22,.22) !important;
+  font-weight: 700 !important;
+}
+body a.pill.pill-cta:hover,
+body .pill-cta:hover,
+body .hero .pill-cta:hover,
+body .pc .pill-cta:hover,
+body .hero .hero-cta .pill-cta:hover {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #2c1d16 !important;
+  border-color: #cbb894 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 18px -6px rgba(44,29,22,.28) !important;
+}
+
 </style>
 </head>
 <body>
@@ -1035,6 +1072,19 @@ header nav a:hover { color: var(--forest); text-decoration: underline; text-unde
         <span class="champstrip-medal">🏆 WORLD CHAMPION</span>
       </div>
     </div>
+
+    <!-- TRUST ROW (single line, below 3 formulas) -->
+    <section class="trust-row" aria-label="הבטחות המותג">
+      <div class="trust-row-in">
+        <span class="tr-item"><b>✓</b> כשר פרווה</span>
+        <span class="tr-sep">·</span>
+        <span class="tr-item"><b>✓</b> 0 גרם סוכר</span>
+        <span class="tr-sep">·</span>
+        <span class="tr-item"><b>✓</b> מיוצר בישראל</span>
+        <span class="tr-sep">·</span>
+        <span class="tr-item"><b>✓</b> רכיבים טבעיים</span>
+      </div>
+    </section>
 
     <!-- MOMENTS: 3 cards -->
     <section class="section" id="moments" style="padding-top:64px">
@@ -1098,18 +1148,7 @@ header nav a:hover { color: var(--forest); text-decoration: underline; text-unde
 </article>
       </div>
     </section>
-    <!-- TRUST ROW (single line, below 3 formulas) -->
-    <section class="trust-row" aria-label="הבטחות המותג">
-      <div class="trust-row-in">
-        <span class="tr-item"><b>✓</b> כשר פרווה</span>
-        <span class="tr-sep">·</span>
-        <span class="tr-item"><b>✓</b> 0 גרם סוכר</span>
-        <span class="tr-sep">·</span>
-        <span class="tr-item"><b>✓</b> מיוצר בישראל</span>
-        <span class="tr-sep">·</span>
-        <span class="tr-item"><b>✓</b> רכיבים טבעיים</span>
-      </div>
-    </section>
+    
 
     
 
