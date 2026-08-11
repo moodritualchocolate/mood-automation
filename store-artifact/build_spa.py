@@ -1364,11 +1364,12 @@ MOOD_SYSTEM = """
    figures now: the photograph runs the full width, and a single strip in the
    awards strip's own cream carries the headline and what he said. */
 .mp2{background:#f7f3ed;padding:0;border:0;color:#171512;position:relative}
-/* height, not aspect-ratio-plus-max-height: with both, the cap shrank the
-   height and the ratio then shrank the width to match, so the photograph
-   stopped short of the page edge */
+/* The frame is shot 16:9 for this slot, so the box takes that ratio and the
+   picture arrives whole. width is declared explicitly: with aspect-ratio and a
+   height cap alone, the cap shrinks the height and the ratio then shrinks the
+   width to match, and the photograph stops short of the page edge. */
 .mp2-shot{margin:0;display:block;overflow:hidden;background:#100c09;
-  width:100%;height:clamp(300px,40vw,560px)}
+  width:100%;aspect-ratio:16/9;max-height:clamp(340px,42vw,600px)}
 .mp2-shot img{width:100%;height:100%;object-fit:cover;object-position:38% 50%;display:block}
 .mp2-strip{background:#f7f3ed}
 .mp2-strip-in{width:min(1060px,calc(100% - 32px));margin:0 auto;
@@ -1866,7 +1867,7 @@ for _route in page_src:
 
 for _b in ('/brand/bars-plate.jpg', '/brand/cafe-handoff.jpg', '/mood-club-generations.png',
            '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png',
-           '/mood-ronen-gloves.jpg', '/mood-fullritual-hands.jpg'):
+           '/mood-ronen-gloves.png', '/mood-fullritual-hands.jpg'):
     referenced.add(_b)                            # the brand's own campaign photography
 for _a in _journal.ARTICLES:                      # blog art + product shots
     referenced.add(_a['image'])
@@ -1888,7 +1889,7 @@ for p in sorted(referenced):
 # render as a broken image.
 for _ph, _path in (('%%FAQIMG%%', '/brand/bars-plate.jpg'),
                    ('%%CMPIMG%%', '/brand/cafe-handoff.jpg'),
-                   ('%%GLOVES%%', '/mood-ronen-gloves.jpg'),
+                   ('%%GLOVES%%', '/mood-ronen-gloves.png'),
                    ('%%REDHANDS%%', '/mood-fullritual-hands.jpg')):
     _t = 'A' + hashlib.md5(_path.encode()).hexdigest()[:10]
     assert _t in ASSETS, 'named photo asset missing: ' + _path
