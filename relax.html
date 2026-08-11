@@ -332,6 +332,11 @@ body { background: var(--paper); }
   .p2a-mom-card { padding: 18px 18px 16px; }
 }
 
+/* Phase 2C.5 — cap hero height on mobile (parity with mayven home) */
+@media (max-width: 720px) {
+  .hero { min-height: min(62vh, 520px) !important; }
+}
+
 </style>
 </head>
 <body>
