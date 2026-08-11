@@ -1758,6 +1758,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -1809,6 +1817,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -1824,12 +1840,76 @@ img{background-color:#efe7db}
   .rh-btn{width:100%!important}
 }
 </style>"""
+
+# ============================================================================
+# MOBILE TRACK
+# ----------------------------------------------------------------------------
+# The phone was getting the desktop composition at a narrower width, which is
+# a different thing from a mobile layout. Two-column grids that have room at
+# 1440 become squeezed strips at 390; metadata written to sit on one line ends
+# up as five items fighting over 350px; and a desktop-only widget (the ratings
+# histogram) survives into a viewport that has no use for it.
+#
+# This layer recomposes those components rather than shrinking them. It is a
+# separate track, not a second build: the site already carries 38 copies of
+# the design system, and a standalone mobile file would make that 76 and
+# double the cost of every future fix.
+# ============================================================================
+MOBILE_SYSTEM = """
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
+}
+</style>"""
+
 for _route in list(page_src):
     if _route == '%f3d%':
         continue
-    page_src[_route] = (page_src[_route].replace('</body>', MOOD_SYSTEM + '</body>')
-                        if '</body>' in page_src[_route] else page_src[_route] + MOOD_SYSTEM)
-page_src['%f3d%'] = page_src['%f3d%'].replace('</body>', MOOD_SYSTEM + '</body>')
+    _inject = MOOD_SYSTEM + MOBILE_SYSTEM
+    page_src[_route] = (page_src[_route].replace('</body>', _inject + '</body>')
+                        if '</body>' in page_src[_route] else page_src[_route] + _inject)
+page_src['%f3d%'] = page_src['%f3d%'].replace('</body>', MOOD_SYSTEM + MOBILE_SYSTEM + '</body>')
 
 _ING_NOTE = {
     '\u05de\u05d0\u05e7\u05d4': '\u05e9\u05d5\u05e8\u05e9 \u05d0\u05e0\u05d3\u05d9, \u05d4\u05de\u05e8\u05db\u05d9\u05d1 \u05d4\u05d2\u05d3\u05d5\u05dc \u05d1\u05ea\u05e2\u05e8\u05d5\u05d1\u05ea',

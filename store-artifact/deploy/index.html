@@ -2838,6 +2838,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -2889,6 +2897,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -2902,6 +2918,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -3792,6 +3854,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -3843,6 +3913,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -3856,6 +3934,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -5545,6 +5669,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -5596,6 +5728,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -5609,6 +5749,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -7291,6 +7477,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -7342,6 +7536,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -7355,6 +7557,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -9037,6 +9285,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -9088,6 +9344,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -9101,6 +9365,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -9765,6 +10075,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -9816,6 +10134,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -9829,6 +10155,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -10876,6 +11248,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -10927,6 +11307,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -10940,6 +11328,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -11520,6 +11954,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -11571,6 +12013,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -11584,6 +12034,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -12163,6 +12659,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -12214,6 +12718,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -12227,6 +12739,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -12947,6 +13505,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -12998,6 +13564,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -13011,6 +13585,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -13731,6 +14351,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -13782,6 +14410,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -13795,6 +14431,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -14515,6 +15197,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -14566,6 +15256,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -14579,6 +15277,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -15299,6 +16043,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -15350,6 +16102,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -15363,6 +16123,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -16083,6 +16889,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -16134,6 +16948,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -16147,6 +16969,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -16867,6 +17735,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -16918,6 +17794,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -16931,6 +17815,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -17651,6 +18581,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -17702,6 +18640,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -17715,6 +18661,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -18435,6 +19427,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -18486,6 +19486,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -18499,6 +19507,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -19219,6 +20273,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -19270,6 +20332,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -19283,6 +20353,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -20003,6 +21119,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -20054,6 +21178,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -20067,6 +21199,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -20787,6 +21965,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -20838,6 +22024,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -20851,6 +22045,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -21571,6 +22811,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -21622,6 +22870,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -21635,6 +22891,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -22355,6 +23657,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -22406,6 +23716,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -22419,6 +23737,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -23139,6 +24503,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -23190,6 +24562,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -23203,6 +24583,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -23923,6 +25349,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -23974,6 +25408,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -23987,6 +25429,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -24707,6 +26195,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -24758,6 +26254,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -24771,6 +26275,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -25491,6 +27041,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -25542,6 +27100,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -25555,6 +27121,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -26275,6 +27887,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -26326,6 +27946,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -26339,6 +27967,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -27059,6 +28733,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -27110,6 +28792,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -27123,6 +28813,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -27843,6 +29579,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -27894,6 +29638,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -27907,6 +29659,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -28627,6 +30425,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -28678,6 +30484,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -28691,6 +30505,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -29411,6 +31271,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -29462,6 +31330,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -29475,6 +31351,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -30195,6 +32117,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -30246,6 +32176,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -30259,6 +32197,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -30979,6 +32963,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -31030,6 +33022,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -31043,6 +33043,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -31763,6 +33809,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -31814,6 +33868,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -31827,6 +33889,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -32547,6 +34655,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -32598,6 +34714,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -32611,6 +34735,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -33331,6 +35501,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -33382,6 +35560,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -33395,6 +35581,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -34115,6 +36347,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -34166,6 +36406,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -34179,6 +36427,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
@@ -34899,6 +37193,14 @@ img{background-color:#efe7db}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
+  /* The marquee's reduced-motion fallback let the track wrap. Stopping the
+     animation is right; turning a 55px strip into a 329px wall of text is
+     not — measured on a 390px viewport. It stays one line and scrolls by
+     hand instead. */
+  .mq-track{flex-wrap:nowrap!important;width:max-content!important;
+    justify-content:flex-start!important;padding:0!important;gap:0!important}
+  .marquee{overflow-x:auto!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .marquee::-webkit-scrollbar{display:none}
 }
 
 /* ============ CHIPS — the third control, and only three ============
@@ -34950,6 +37252,14 @@ img{background-color:#efe7db}
   border:1.4px solid #C9551A!important;padding:16px 30px!important;font-size:15px!important;
   min-height:52px!important}
 .rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* The club band measured exactly one full screen on both viewports — 1440x900
+   and 390x844 — which is a whole screen spent on a sign-up. It keeps its
+   full-bleed footage and stops short of filling the viewport, which also
+   cuts how far the 864px-wide clip has to stretch. */
+@media (min-width:701px){
+  .cu{min-height:72vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(40px,6vh,64px)!important;padding-bottom:clamp(40px,6vh,64px)!important}
+}
 /* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
 .cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
   padding:16px 30px!important;font-size:15px!important;min-height:52px!important}
@@ -34963,6 +37273,52 @@ img{background-color:#efe7db}
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:16px 26px!important;font-size:15px!important}
   .rh-cta{display:block!important}
   .rh-btn{width:100%!important}
+}
+</style>
+<style>
+@media (max-width:700px){
+
+  /* --- pack rows: "l btn" / "r btn" is a desktop table. Stack it. ------- */
+  .pack{grid-template-columns:1fr!important;
+        grid-template-areas:"l" "r" "btn"!important;
+        gap:9px!important;padding:15px 14px 16px!important;align-items:start!important}
+  .pack .l{gap:9px!important}
+  .pack .r{justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important}
+  .mv-prow{width:100%!important}
+  .mv-padd{width:100%!important;min-height:48px!important;font-size:15px!important}
+
+  /* --- the bundle row: thumbnails, words and price were three columns --- */
+  .mv-bundle{grid-template-columns:1fr!important;gap:12px!important;text-align:start!important}
+  .mv-bundle .imgs{justify-content:flex-start!important}
+  .mv-bundle button{width:100%!important}
+
+  /* --- review meta: five spans on one line at 350px. Two lines. -------- */
+  .rvh{display:grid!important;grid-template-columns:auto 1fr!important;
+       gap:4px 8px!important;align-items:center!important}
+  .rvh .st{grid-column:1;grid-row:1}
+  .rvh .nm{grid-column:2;grid-row:1;justify-self:start}
+  .rvh .vf{grid-column:1/-1;grid-row:2;justify-self:start}
+  .rvh .sku,.rvh .ago{grid-row:2;justify-self:start}
+  .rvh .sku{grid-column:auto} .rvh .ago{grid-column:auto}
+
+  /* --- the ratings histogram is a desktop instrument. Three of its five
+         rows read zero on every SKU, so on a phone it spends a screen third
+         to say what the summary line above it already said. ------------- */
+  .bars{display:none!important}
+
+  /* --- the club band was exactly one screen tall, on both viewports ---- */
+  .cu{min-height:62vh!important;height:auto!important}
+  .cu-in{padding-top:clamp(30px,7vh,54px)!important;padding-bottom:clamp(30px,7vh,54px)!important}
+
+  /* --- the WhatsApp bubble sat on top of the quantity stepper --------- */
+  .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 92px)!important;
+      width:44px!important;height:44px!important}
+  body.purchase-sticky-on .wa{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)!important}
+
+  /* --- trust chips wrapped 2 + 2 ragged; give them a real grid -------- */
+  .tchips,.trust,.tr-row{display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important}
+  .tchips>*,.trust>*,.tr-row>*{width:100%!important;justify-content:center!important}
 }
 </style><script>
 document.addEventListener('click',function(e){
