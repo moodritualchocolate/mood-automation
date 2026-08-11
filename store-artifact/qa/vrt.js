@@ -21,7 +21,11 @@ const slug=r=>r==='/'?'home':r.replace(/^\//,'').replace(/\//g,'-');
   for(const [vp,W,H] of VPS){
     const dir=`${ROOT}/${MODE}/${vp}`; fs.mkdirSync(dir,{recursive:true});
     for(const route of routes){
-      const p=await b.newPage({viewport:{width:W,height:H},isMobile:vp==='m',hasTouch:vp==='m'});
+      // reducedMotion pins every transition and animation to its end state, so a
+      // capture taken a moment later is not a different picture. Without it the
+      // product pages reported ~1.7% of pixels changed with nothing changed.
+      const p=await b.newPage({viewport:{width:W,height:H},isMobile:vp==='m',hasTouch:vp==='m',
+                               reducedMotion:'reduce'});
       const errs=[]; p.on('pageerror',e=>errs.push(String(e).slice(0,110)));
       let m={};
       try{
