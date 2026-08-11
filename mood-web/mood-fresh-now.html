@@ -369,6 +369,34 @@ body .pc .pc-price, body .pc .pc-price-main, body .pc .pc-price-from {
   overflow: hidden !important;
 }
 
+
+/* v55 — fix champion strip on mobile (was showing as empty black rectangle) */
+@media (max-width: 720px) {
+  .champstrip {
+    padding: 12px 4vw !important;
+    min-height: auto !important;
+  }
+  .champstrip-avatar { display: none !important; }
+  .champstrip-medal { display: none !important; }
+  .champstrip-in {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    overflow: visible !important;
+    flex-wrap: wrap !important;
+  }
+  .champstrip-text {
+    font-size: 12.5px !important;
+    line-height: 1.4 !important;
+    white-space: normal !important;
+    text-align: center !important;
+    flex: 1 1 100% !important;
+    color: #fdfaf3 !important;
+  }
+  .champstrip-text b { color: #ffec5c !important; }
+}
+
 </style>
 </head>
 <body>
