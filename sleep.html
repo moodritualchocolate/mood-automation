@@ -392,8 +392,23 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
   .mfoot-strip-in { justify-content:center; text-align:center; }
 }
 @media (max-width: 520px) {
-  .mfoot-in { grid-template-columns: 1fr; }
-  .mfoot { padding: 60px 5vw 0; }
+  .mfoot { padding: 44px 5vw 0; }
+  .mfoot-in { grid-template-columns: 1fr; gap: 32px; text-align: center; }
+  .mfoot-brand { text-align: center; }
+  .mfoot-brand .brand { margin: 0 auto; }
+  .mfoot-tag { margin-inline: auto; max-width: 100%; text-align: center; }
+  .mfoot-news-l { text-align: center; }
+  .mfoot-news-row { margin: 0 auto 10px; }
+  .mfoot-brand small { display: block; text-align: center; }
+  .mfoot-col { text-align: center; }
+  .mfoot-col h4 { margin: 0 0 14px; }
+  .mfoot-col li { margin-bottom: 8px; }
+  .mfoot-col ul { margin-bottom: 12px; }
+  .mfoot-social { justify-content: center; margin-top: 8px; }
+  .mfoot-mark { font-size: clamp(140px, 60vw, 260px); letter-spacing: -8px; bottom: -18px; }
+  .mfoot-strip { padding: 18px 0; }
+  .mfoot-strip-in { flex-direction: column; gap: 12px; }
+  .mfoot-legal { justify-content: center; text-align: center; }
 }
 </style>
 </head>
