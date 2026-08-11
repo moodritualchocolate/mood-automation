@@ -265,19 +265,19 @@ RONEN_PLUS = """
         '<div class="mp2-copy">'+
           '<div class="mp2-eye">השוקולטייר של mood</div>'+
           '<h2>בשביל משימה כמעט בלתי אפשרית,<span> צריך אלוף עולם.</span></h2>'+
-          '<p class="mp2-q">הפורמולה הייתה בעיה אחת. לגרום למישהו לרצות עוד ביס הייתה בעיה שנייה. '+
-            '18 חודשים לקח לרונן אפללו למצוא את הנקודה שבה 700 מ״ג פורמולה עדיין מרגישים כמו שוקולד. '+
-            '<i>"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."</i></p>'+
+          '<p class="mp2-q">הפורמולה הייתה בעיה אחת. לגרום למישהו לרצות עוד ביס — בעיה שנייה. '+
+            '18 חודשים לקח לרונן אפללו למצוא את הנקודה שבה 700 מ״ג פורמולה עדיין מרגישים כמו שוקולד.</p>'+
+          '<p class="mp2-quote">"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."</p>'+
           '<div class="mp2-by">'+
             '<span class="mp2-por"><img src="'+por+'" alt="רונן אפללו">'+
               '<i class="mp2-medal" aria-hidden="true">★</i></span>'+
             '<span class="mp2-byt"><b>רונן אפללו</b>'+AWARD+'</span>'+
           '</div>'+
-          '<div class="mp2-stats">'+
-            '<div><b>2022</b><span>הטוב בעולם</span></div>'+
-            '<div><b>18</b><span>חודשי פיתוח</span></div>'+
-            '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
-          '</div>'+
+        '</div>'+
+        '<div class="mp2-stats">'+
+          '<div><b>2022</b><span>הטוב בעולם</span></div>'+
+          '<div><b>18</b><span>חודשי פיתוח</span></div>'+
+          '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
         '</div>'+
       '</div>';
     // the workshop photograph is shot with its right half empty on purpose:
@@ -377,26 +377,8 @@ RONEN_PLUS = """
     hm.className='tline';
     hm.innerHTML='<div class="tline-in">לא עוד משהו לזכור לקחת — <b>משהו שתחכו לאכול.</b></div>';
   }
-  function blueReveal(){
-    // The page shows packaging and lifestyle and never the thing itself. This is
-    // the interruption: the photograph is the section, the words get out of its way.
-    var host=document.querySelector('.mp2'); if(!host||document.querySelector('.blu'))return;
-    var s=document.createElement('section'); s.className='blu';
-    // copy first: in a right-to-left grid the first child takes the right-hand
-    // track, so the words start at the reading edge and the photograph runs off
-    // the left one. With the figure first the two swapped places and widths.
-    s.innerHTML='<div class="blu-in">'+
-      '<div class="blu-copy">'+
-        '<div class="blu-eye">RITUAL CHOCOLATE</div>'+
-        '<h2>כן.<span>זה באמת שוקולד.</span></h2>'+
-        '<p>7 גרם של שוקולד מריר.<br>700 מ״ג של פורמולה.<br>רגע אחד ששייך לכם.</p>'+
-        '<div class="blu-skus"><i>ENERGY</i><i>RELAX</i><i>SLEEP</i></div>'+
-        '<a class="blu-cta" href="/products">בחרו את הרגע שלכם</a>'+
-      '</div>'+
-      '<figure class="blu-shot"><img src="%%BLUE%%" alt="יד מושיטה טבלת שוקולד mood דרך פתח קרוע בלוח כחול" loading="lazy"></figure>'+
-    '</div>';
-    host.parentNode.insertBefore(s, host);      // after the products, before the champion
-  }
+  // The torn-blue photograph had a section of its own here. It is out for now;
+  // the asset stays in store-artifact/photos for whenever it earns a place.
   function callIcon(){
     var nav=document.querySelector('.xnav')||document.querySelector('nav');
     if(!nav||nav.querySelector('.mv-call'))return;
@@ -434,7 +416,7 @@ RONEN_PLUS = """
     // the launch date is gone from the source copy itself; no runtime scrub needed
   }
   function boot2(){[120,260,900,1800].forEach(function(d){
-    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();blueReveal();},d);});}
+    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();},d);});}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot2); else boot2();
 })();
 </script>"""
@@ -1392,48 +1374,6 @@ MOOD_SYSTEM = """
   .fx-more{width:100%}
 }
 
-/* ============ THE BLUE REVEAL — the photograph is the section ============
-   Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
-   in the negative space beside it. The blue is the only colour event on a
-   cream page; nothing else changes colour to match it. */
-.blu{background:#fbf7f1;padding:clamp(32px,5vw,76px) 0}
-/* The photograph reaches the left edge because the grid carries the container
-   gutter on the reading side only — pulling the image out with a negative
-   margin instead slid it under the words. */
-.blu-in{width:100%;margin:0;display:grid;align-items:start;
-  grid-template-columns:minmax(300px,440px) minmax(0,1fr);gap:clamp(24px,4vw,56px);
-  padding-inline-start:max(16px,calc((100vw - 1240px)/2));padding-inline-end:0}
-/* the words start above the photograph's top edge — symmetry was the stiffness */
-.blu-copy{padding-top:clamp(8px,3vw,54px)}
-/* a tear, not a rounded rectangle: no radius, and it is cut by the page edge */
-.blu-shot{margin:0;overflow:hidden;border-radius:0;background:#22315e;aspect-ratio:16/10}
-.blu-shot img{width:100%;height:100%;object-fit:cover;object-position:52% 50%;display:block}
-.blu-eye{font-size:11px;font-weight:700;letter-spacing:.22em;color:#8a7c6a}
-.blu-copy h2{margin:clamp(12px,1.6vw,18px) 0 0;font-size:clamp(32px,4.4vw,52px);line-height:1.02;
-  letter-spacing:-.04em;font-weight:900;color:#171512}
-/* navy belongs to the photograph alone. The headline takes the same accent the
-   hero and every other section already break on. */
-.blu-copy h2 span{display:block;color:#C9551A}
-.blu-copy p{margin:clamp(14px,1.8vw,22px) 0 0;font-size:clamp(15px,1.4vw,17px);line-height:1.75;
-  color:#5f584e;font-weight:500}
-.blu-skus{display:flex;gap:20px;margin-top:clamp(16px,2vw,24px);
-  padding-top:clamp(14px,1.8vw,20px);border-top:1px solid #e6dccd}
-.blu-skus i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.16em;color:#8a7c6a}
-.blu-cta{display:inline-block;margin-top:clamp(18px,2.2vw,26px);background:#171512;color:#fff;
-  border:1.4px solid #171512;border-radius:999px;padding:15px 32px;min-height:52px;
-  font-size:15px;font-weight:700;text-decoration:none;transition:background .2s,border-color .2s}
-.blu-cta:hover{background:#22315e;border-color:#22315e}
-@media (max-width:900px){
-  /* the photograph leads, edge to edge; the line lands directly under it */
-  .blu{padding:0 0 clamp(28px,7vw,40px)}
-  .blu-in{grid-template-columns:1fr;gap:clamp(18px,4vw,24px);padding-inline:16px}
-  .blu-shot{aspect-ratio:4/3;border-radius:0;margin:0 -16px;width:calc(100% + 32px)}
-  .blu-copy{padding-top:0}
-  .blu-copy h2{font-size:clamp(30px,8.6vw,40px)}
-  .blu-copy p{font-size:15px;line-height:1.7}
-  .blu-cta{display:block;text-align:center;width:100%}
-}
-
 /* ============ RONEN — the workshop is the ground ============
    The photograph is framed with its right half deliberately empty, so it runs
    the full width and the words live in that space rather than beside a picture. */
@@ -1443,27 +1383,32 @@ MOOD_SYSTEM = """
 /* the scrim holds only the third the type sits on, and lets go quickly — the
    gloves stay legible instead of sinking under an even wash */
 .mp2::before{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(to left,rgba(16,12,9,.9) 0%,rgba(16,12,9,.86) 26%,rgba(16,12,9,.34) 47%,rgba(16,12,9,0) 68%)}
+  background:linear-gradient(to left,rgba(16,12,9,.72) 0%,rgba(16,12,9,.6) 30%,rgba(16,12,9,.16) 54%,rgba(16,12,9,0) 72%)}
 .mp2-in{width:min(1240px,calc(100% - 32px));margin:0 auto;display:grid;
-  grid-template-columns:minmax(0,.52fr) minmax(0,.48fr);min-height:clamp(380px,42vw,520px);
-  align-items:center;padding:clamp(28px,3.6vw,48px) 0}
+  grid-template-columns:minmax(0,.54fr) minmax(0,.46fr);min-height:clamp(280px,29vw,360px);
+  align-items:center;padding:clamp(22px,2.6vw,32px) 0}
 .mp2-copy{grid-column:1}
+.mp2-quote{margin:10px 0 0;font-size:clamp(14px,1.5vw,17px);line-height:1.5;color:#F7B27A;
+  font-weight:700;letter-spacing:-.01em;max-width:34ch;text-shadow:0 1px 14px rgba(16,12,9,.6)}
 .mp2-eye{display:inline-block;font-size:clamp(9.5px,1.2vw,11px);font-weight:700;letter-spacing:.1em;color:#241b12;
   background:#F7B27A;padding:5px 11px;border-radius:999px;white-space:nowrap}
-.mp2-copy h2{margin:12px 0 0;font-size:clamp(26px,3.6vw,42px);line-height:1.04;letter-spacing:-.035em;color:#fff}
+.mp2-copy h2{margin:10px 0 0;font-size:clamp(24px,3vw,36px);line-height:1.06;letter-spacing:-.035em;color:#fff;
+  text-shadow:0 1px 18px rgba(16,12,9,.55)}
 .mp2-copy h2 span{display:block;color:#F7B27A}
-.mp2-q{margin:12px 0 0;font-size:clamp(13.5px,1.5vw,16px);line-height:1.65;color:rgba(247,239,228,.86);
-  font-weight:500;max-width:46ch}
+.mp2-q{margin:10px 0 0;font-size:clamp(13px,1.35vw,15px);line-height:1.6;color:rgba(247,239,228,.92);
+  font-weight:500;max-width:54ch;text-shadow:0 1px 14px rgba(16,12,9,.6)}
 .mp2-q i{font-style:normal;font-weight:700;color:#F7B27A}
-.mp2-by{display:flex;align-items:center;gap:11px;margin-top:clamp(16px,2vw,22px)}
+.mp2-by{display:flex;align-items:center;gap:11px;margin-top:clamp(12px,1.5vw,16px)}
 .mp2-por{position:relative;width:46px;height:46px;border-radius:50%;overflow:hidden;flex:0 0 auto;
   background:#3a2b1e;border:2px solid rgba(247,178,122,.55);display:block}
 .mp2-por img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
 .mp2-byt{display:block;font-size:12.5px;line-height:1.35;color:rgba(247,239,228,.66);font-weight:600}
 .mp2-byt b{display:block;font-size:14.5px;color:#fff;font-weight:700;letter-spacing:-.01em}
-.mp2-stats{display:flex;border-top:1px solid rgba(247,178,122,.28);
-  border-bottom:1px solid rgba(247,178,122,.28);margin-top:clamp(16px,2vw,22px)}
-.mp2-stats div{flex:1;padding:12px 4px;display:flex;align-items:baseline;justify-content:center;gap:6px}
+/* the numbers span the band instead of stacking inside the column: it uses the
+   width the photograph leaves and takes three rows off the height */
+.mp2-stats{grid-column:1/-1;display:flex;margin-top:clamp(16px,2vw,22px);
+  border-top:1px solid rgba(247,178,122,.28);backdrop-filter:blur(2px)}
+.mp2-stats div{flex:1;padding:9px 4px;display:flex;align-items:baseline;justify-content:center;gap:6px}
 .mp2-stats div+div{border-inline-start:1px solid rgba(247,178,122,.28)}
 .mp2-stats b{font-size:clamp(17px,2.1vw,23px);font-weight:900;color:#F7B27A;letter-spacing:-.03em;line-height:1;
   font-variant-numeric:tabular-nums}
@@ -1471,8 +1416,8 @@ MOOD_SYSTEM = """
 @media (max-width:900px){
   /* on a phone the empty half is off-screen, so the scrim covers the whole frame */
   .mp2{background-position:28% center}
-  .mp2::before{background:linear-gradient(to top,rgba(16,12,9,.95) 0%,rgba(16,12,9,.88) 46%,rgba(16,12,9,.55) 78%,rgba(16,12,9,.35) 100%)}
-  .mp2-in{grid-template-columns:1fr;min-height:clamp(420px,96vw,540px);padding:clamp(120px,34vw,180px) 0 clamp(24px,6vw,32px)}
+  .mp2::before{background:linear-gradient(to top,rgba(16,12,9,.88) 0%,rgba(16,12,9,.74) 48%,rgba(16,12,9,.32) 80%,rgba(16,12,9,.1) 100%)}
+  .mp2-in{grid-template-columns:1fr;min-height:0;padding:clamp(92px,25vw,128px) 0 clamp(20px,5vw,26px)}
   .mp2-copy h2{font-size:clamp(25px,7.2vw,34px)}
   .mp2-q{max-width:none}
 }
@@ -1954,8 +1899,7 @@ for _route in page_src:
 
 for _b in ('/brand/bars-plate.jpg', '/brand/cafe-handoff.jpg', '/mood-club-generations.png',
            '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png',
-           '/mood-ronen-gloves.jpg', '/mood-fullritual-hands.jpg',
-           '/mood-blue-reveal.jpg'):
+           '/mood-ronen-gloves.jpg', '/mood-fullritual-hands.jpg'):
     referenced.add(_b)                            # the brand's own campaign photography
 for _a in _journal.ARTICLES:                      # blog art + product shots
     referenced.add(_a['image'])
@@ -1978,8 +1922,7 @@ for p in sorted(referenced):
 for _ph, _path in (('%%FAQIMG%%', '/brand/bars-plate.jpg'),
                    ('%%CMPIMG%%', '/brand/cafe-handoff.jpg'),
                    ('%%GLOVES%%', '/mood-ronen-gloves.jpg'),
-                   ('%%REDHANDS%%', '/mood-fullritual-hands.jpg'),
-                   ('%%BLUE%%', '/mood-blue-reveal.jpg')):
+                   ('%%REDHANDS%%', '/mood-fullritual-hands.jpg')):
     _t = 'A' + hashlib.md5(_path.encode()).hexdigest()[:10]
     assert _t in ASSETS, 'named photo asset missing: ' + _path
     for _route in page_src:
