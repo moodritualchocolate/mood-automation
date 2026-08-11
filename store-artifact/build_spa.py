@@ -340,7 +340,7 @@ RONEN_PLUS = """
           '<div class="cu-eye">MOOD CLUB</div>'+
           '<h2>הריטואל שמגיע<span> עד אליכם.</span></h2>'+
           '<ul class="cu-list">'+
-            '<li><b>10%</b> הנחה קבועה, בכל הזמנה</li>'+
+            '<li><b>10%</b> הנחה קבועה על כל הזמנה</li>'+
             '<li><b>משלוח חינם</b> בקנייה מעל 249 ₪</li>'+
             '<li><b>דילוג או ביטול</b> בקליק אחד, בלי התחייבות</li>'+
           '</ul>'+
@@ -1195,7 +1195,7 @@ page_src['/ritual'] = ('<!doctype html><html lang="he" dir="rtl"><head><meta cha
  '<img src="/mood-hero-three-moments.png" alt="שלושה חברים עם mood">'
  '</div></div>'
  '<div class="sheet"><div class="in">'
- '<span class="ship">משלוח חינם</span>'
+ '<span class="ship">משלוח חינם · מעל 249 ₪</span>'
  '<h1>THE FULL RITUAL</h1>'
  '<div class="rate"><b>★★★★★</b> · 4.9 · 94 ביקורות</div>'   # matches the product pages
  '<p class="desc">שמנו לך את כל הריטואל במארז אחד — ENERGY לבוקר, RELAX לצהריים ו-SLEEP ללילה. חודש שלם לכל מצב רוח, במחיר משתלם יותר.</p>'
@@ -1895,7 +1895,10 @@ _LAUNCH = [
     ('\u05de\u05e9\u05d9\u05e7\u05d9\u05dd 12.8', ''),
 ]
 
-_TRUTH = _TRUTH + _SHIP_FIX
+_CLUB_FIX = [('10% הנחה קבועה על כל הזמנה, כל חודש, בלי קופונים', '10% הנחה קבועה על כל הזמנה, כל חודש'),
+             ('10% הנחה קבועה, בכל הזמנה', '10% הנחה קבועה על כל הזמנה'),
+             ('המנוי החודשי מגיע אליכם אוטומטית עם 10% הנחה קבועה.', 'המנוי החודשי מגיע אליכם אוטומטית עם 10% הנחה קבועה על כל הזמנה.')]
+_TRUTH = _TRUTH + _SHIP_FIX + _CLUB_FIX
 _truth_hits = {}
 for _route in page_src:
     _s = page_src[_route]
