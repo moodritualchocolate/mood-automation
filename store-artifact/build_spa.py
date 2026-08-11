@@ -2526,9 +2526,17 @@ for _sku, _path in [('ENERGY','/mood-energy-pack.png'),('RELAX','/mood-relax-pac
 # It never showed up in testing because setting a Playwright viewport sets
 # the layout viewport directly, which is precisely what a missing meta tag
 # takes away. Emulation cannot reproduce this; only a device or the tag can.
-SHELL_HEAD_META = ('<meta charset="utf-8">'
-                   '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">')
+# And it had no doctype either, so the shell parsed in quirks mode
+# (document.compatMode === 'BackCompat') while every route document inside
+# srcdoc parsed in standards mode. Quirks mode is where percentage heights and
+# the box model stop behaving, and where viewport handling is least reliable —
+# Chromium is forgiving about it, Safari is not, which is why the emulator
+# looked right and the phone did not.
+SHELL_HEAD_META = ('<!doctype html><html lang="he" dir="rtl"><head>'
+                   '<meta charset="utf-8">'
+                   '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
+                   '</head><body>')
 shell = (SHELL_HEAD_META + '<div dir="rtl" lang="he">' + shell_head
-         + '\n'.join(tpl_blocks) + _sj + '</div>')
+         + '\n'.join(tpl_blocks) + _sj + '</div></body></html>')
 open(OUT, 'w', encoding='utf-8').write(shell)
 print('WROTE', OUT, round(len(shell)/1048576, 2), 'MB')
