@@ -1610,9 +1610,18 @@ MOOD_SYSTEM = """
   .xlogo img,.xlogo-img,.product-logo img{height:19px!important}
 }
 
-/* floats keep their distance from the buy actions */
+/* ============ THE FLOATING LAYER — one dominant action at a time ============
+   On a product page the buy bar is the action. The chat bubble sat above it in
+   the stack (z 60 against 55) and the accessibility button hovered over its
+   left corner, so three things asked for the same thumb at the same moment. */
 .wa{bottom:172px!important;width:46px!important;height:46px!important;font-size:22px!important}
 @media (min-width:901px){.wa{bottom:26px!important}}
+@media (max-width:900px){
+  .stickybar{z-index:70!important}                    /* nothing floats over the buy action */
+  /* while the buy bar is up, chat steps back; it returns the moment it hides */
+  body.purchase-sticky-on .wa{opacity:0!important;visibility:hidden!important;
+    pointer-events:none!important;transition:opacity .2s,visibility .2s}
+}
 /* latin product names stay one unbroken LTR run inside hebrew copy */
 .ft-mini,.hf-copy p,.cls-head h2,.bu-txt span{unicode-bidi:plaintext}
 /* the accessibility float keeps out of the way on a phone */
@@ -2096,7 +2105,9 @@ shell_head = """<title>mood — ריטואל שוקולד פונקציונלי</
   #a11yPanel a{font-size:12px;color:#8a7c6a}
   @media (max-width:700px){
     #buzz{left:10px}
-    #a11yBtn{bottom:92px;width:40px;height:40px;font-size:22px}
+    /* clears the 71px buy bar, plus the home indicator: without the inset the
+       button lands behind the bar on any phone that has one */
+    #a11yBtn{bottom:calc(92px + env(safe-area-inset-bottom));width:40px;height:40px;font-size:22px}
     #a11yPanel{bottom:142px}
   }
   #buzz b{display:block;font-size:12px;color:#171512}
