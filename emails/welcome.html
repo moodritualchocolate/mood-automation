@@ -1,0 +1,155 @@
+<!-- SUBJECT: ברוכה הבאה למסע של MOOD -->
+<!--
+  MOOD — welcome email
+  Sent after newsletter subscription.
+  Placeholders:
+    {{first_name}}   – recipient first name (optional; template gracefully handles empty)
+    {{shop_url}}     – link to the shop / home
+    {{about_url}}    – about page
+    {{club_url}}     – club page
+    {{journal_url}}  – blog / journal
+    {{policies_url}} – policies page
+    {{unsubscribe_url}} – required unsubscribe link
+    {{email_address}}    – recipient email (for footer disclosure)
+-->
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>ברוכה הבאה למסע של MOOD</title>
+<style>
+  body { margin:0; padding:0; background:#f5eee4; }
+  table { border-collapse:collapse; }
+  img { border:0; display:block; outline:none; text-decoration:none; }
+  a { color:#2c1d16; }
+  @media only screen and (max-width:620px) {
+    .container { width:100% !important; }
+    .px { padding-left:20px !important; padding-right:20px !important; }
+    .stack { display:block !important; width:100% !important; }
+    .sku-cell { padding-bottom:16px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#f5eee4;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#171512;direction:rtl;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">ברוכה הבאה למסע של MOOD — שלושה רגעים ביום שהופכים לריטואל. פורמולה נכונה לכל אחד.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5eee4;">
+  <tr>
+    <td align="center" style="padding:32px 12px;">
+      <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:#fdfaf3;border-radius:14px;overflow:hidden;">
+        <!-- Header: chocolate bar with wordmark -->
+        <tr>
+          <td align="center" style="background:#2c1d16;padding:36px 24px;">
+            <div style="font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:44px;letter-spacing:-1px;color:#fdfaf3;line-height:1;">MOOD</div>
+            <div style="font-family:'Assistant',Arial,sans-serif;font-size:14px;color:#c69130;margin-top:8px;letter-spacing:2px;">RITUAL CHOCOLATE</div>
+          </td>
+        </tr>
+        <!-- Welcome body -->
+        <tr>
+          <td class="px" style="padding:36px 40px 8px 40px;text-align:right;">
+            <h1 style="margin:0 0 12px 0;font-family:'DM Sans',Arial,sans-serif;font-size:28px;font-weight:700;color:#171512;line-height:1.25;">ברוכה הבאה, {{first_name}}.</h1>
+            <p style="margin:0 0 14px 0;font-size:16px;line-height:1.7;color:#171512;">
+              נעים להכיר. אצלנו שוקולד הוא לא ממתק, הוא ריטואל.
+              שלושה רגעים ביום שכל אחד מהם מקבל פורמולה נכונה, קובייה בזמן, טעם אמיתי — ואפס גרם סוכר.
+            </p>
+            <p style="margin:0 0 4px 0;font-size:16px;line-height:1.7;color:#171512;">
+              שווה להתחיל מהרגע שכבר עכשיו מבקש שינוי:
+            </p>
+          </td>
+        </tr>
+        <!-- 3 SKU cards -->
+        <tr>
+          <td class="px" style="padding:16px 32px 24px 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td class="stack sku-cell" width="33%" valign="top" style="padding:8px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fdfaf3;border:1px solid #ede4d3;border-radius:12px;">
+                    <tr><td style="padding:0;">
+                      <img src="https://mood-example.com/home-assets/cx/studio-energy.jpg" width="100%" alt="MOOD ENERGY" style="width:100%;height:auto;display:block;border-radius:12px 12px 0 0;">
+                    </td></tr>
+                    <tr><td style="padding:14px 16px 16px 16px;text-align:right;">
+                      <div style="font-family:'DM Sans',Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#ed6d28;">09:00</div>
+                      <div style="font-family:'DM Sans',Arial,sans-serif;font-size:18px;font-weight:700;color:#171512;margin-top:2px;">ENERGY</div>
+                      <div style="font-size:13px;line-height:1.5;color:#5c5045;margin-top:4px;">להיכנס לקצב של הבוקר. בלי רעד.</div>
+                    </td></tr>
+                  </table>
+                </td>
+                <td class="stack sku-cell" width="33%" valign="top" style="padding:8px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fdfaf3;border:1px solid #ede4d3;border-radius:12px;">
+                    <tr><td style="padding:0;">
+                      <img src="https://mood-example.com/home-assets/cx/studio-relax.jpg" width="100%" alt="MOOD RELAX" style="width:100%;height:auto;display:block;border-radius:12px 12px 0 0;">
+                    </td></tr>
+                    <tr><td style="padding:14px 16px 16px 16px;text-align:right;">
+                      <div style="font-family:'DM Sans',Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#687d36;">17:00</div>
+                      <div style="font-family:'DM Sans',Arial,sans-serif;font-size:18px;font-weight:700;color:#171512;margin-top:2px;">RELAX</div>
+                      <div style="font-size:13px;line-height:1.5;color:#5c5045;margin-top:4px;">להוריד הילוך אחרי היום.</div>
+                    </td></tr>
+                  </table>
+                </td>
+                <td class="stack sku-cell" width="33%" valign="top" style="padding:8px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fdfaf3;border:1px solid #ede4d3;border-radius:12px;">
+                    <tr><td style="padding:0;">
+                      <img src="https://mood-example.com/home-assets/cx/studio-sleep.jpg" width="100%" alt="MOOD SLEEP" style="width:100%;height:auto;display:block;border-radius:12px 12px 0 0;">
+                    </td></tr>
+                    <tr><td style="padding:14px 16px 16px 16px;text-align:right;">
+                      <div style="font-family:'DM Sans',Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#58719a;">22:00</div>
+                      <div style="font-family:'DM Sans',Arial,sans-serif;font-size:18px;font-weight:700;color:#171512;margin-top:2px;">SLEEP</div>
+                      <div style="font-size:13px;line-height:1.5;color:#5c5045;margin-top:4px;">לסגור את היום ברוגע.</div>
+                    </td></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Coupon -->
+        <tr>
+          <td class="px" style="padding:8px 40px 8px 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5eee4;border-radius:12px;">
+              <tr>
+                <td align="center" style="padding:22px 24px;text-align:center;">
+                  <div style="font-size:13px;color:#5c5045;letter-spacing:1px;">מתנת היכרות · 10% הנחה</div>
+                  <div style="font-family:'DM Sans',Arial,sans-serif;font-size:32px;font-weight:800;color:#2c1d16;margin-top:6px;letter-spacing:4px;">MOOD10</div>
+                  <div style="font-size:13px;color:#5c5045;margin-top:6px;">קוד לשימוש חד־פעמי בקנייה הראשונה שלך.</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- CTA -->
+        <tr>
+          <td class="px" align="center" style="padding:24px 40px 40px 40px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="border-radius:999px;background:#2c1d16;">
+                  <a href="{{shop_url}}" style="display:inline-block;padding:16px 40px;font-family:'DM Sans',Arial,sans-serif;font-size:16px;font-weight:700;color:#fdfaf3;text-decoration:none;letter-spacing:1px;">לחנות</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Footer -->
+        <tr>
+          <td style="background:#f5eee4;padding:24px 40px;text-align:center;font-size:13px;color:#5c5045;">
+            <div style="margin-bottom:10px;">
+              <a href="{{about_url}}" style="color:#2c1d16;text-decoration:none;margin:0 8px;">אודות</a>
+              ·
+              <a href="{{club_url}}" style="color:#2c1d16;text-decoration:none;margin:0 8px;">מועדון</a>
+              ·
+              <a href="{{journal_url}}" style="color:#2c1d16;text-decoration:none;margin:0 8px;">Journal</a>
+              ·
+              <a href="{{policies_url}}" style="color:#2c1d16;text-decoration:none;margin:0 8px;">תקנון</a>
+            </div>
+            <div style="margin-top:12px;font-size:11px;color:#8a7f70;">
+              קיבלת את המייל הזה כי נרשמת לרשימת התפוצה של MOOD ({{email_address}}).<br>
+              <a href="{{unsubscribe_url}}" style="color:#8a7f70;text-decoration:underline;">להסרה מרשימת התפוצה</a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

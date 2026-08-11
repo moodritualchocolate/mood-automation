@@ -1,0 +1,173 @@
+<!-- SUBJECT: ההזמנה שלך אושרה · #{{order_number}} -->
+<!--
+  MOOD — order confirmation email
+  Sent immediately after a successful purchase.
+  Placeholders:
+    {{first_name}}         – customer first name
+    {{order_number}}       – e.g. "10237"
+    {{order_date}}         – e.g. "11.08.2026"
+    {{order_items}}        – server-side loop should render <tr>…</tr> per line item,
+                             replacing the sample rows below with a real repeat block.
+                             Per row: {{item.name}} × {{item.qty}} · ₪{{item.price}}
+    {{subtotal}}           – e.g. "₪189"
+    {{shipping}}           – e.g. "חינם"  or  "₪29"
+    {{total}}              – e.g. "₪189"
+    {{ship_name}}          – recipient full name
+    {{ship_address_line1}} – street + number
+    {{ship_address_line2}} – city + postcode
+    {{ship_phone}}         – phone
+    {{delivery_window}}    – e.g. "2–4 ימי עסקים"
+    {{tracking_url}}       – optional; if empty leave button hidden by conditional
+    {{about_url}} {{club_url}} {{journal_url}} {{policies_url}}
+    {{unsubscribe_url}} {{email_address}}
+-->
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>ההזמנה שלך אושרה · #{{order_number}}</title>
+<style>
+  body { margin:0; padding:0; background:#f5eee4; }
+  table { border-collapse:collapse; }
+  img { border:0; display:block; outline:none; text-decoration:none; }
+  a { color:#2c1d16; }
+  @media only screen and (max-width:620px) {
+    .container { width:100% !important; }
+    .px { padding-left:20px !important; padding-right:20px !important; }
+    .step { display:block !important; width:100% !important; padding-bottom:16px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#f5eee4;font-family:'Assistant',Arial,Helvetica,sans-serif;color:#171512;direction:rtl;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">קיבלנו את ההזמנה שלך. תודה שהצטרפת לריטואל.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5eee4;">
+  <tr>
+    <td align="center" style="padding:32px 12px;">
+      <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:#fdfaf3;border-radius:14px;overflow:hidden;">
+        <!-- Header -->
+        <tr>
+          <td align="center" style="background:#2c1d16;padding:32px 24px;">
+            <div style="font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:40px;letter-spacing:-1px;color:#fdfaf3;line-height:1;">MOOD</div>
+            <div style="font-family:'Assistant',Arial,sans-serif;font-size:13px;color:#c69130;margin-top:6px;letter-spacing:2px;">ORDER CONFIRMED</div>
+          </td>
+        </tr>
+        <!-- Thanks -->
+        <tr>
+          <td class="px" style="padding:32px 40px 8px 40px;text-align:right;">
+            <h1 style="margin:0 0 8px 0;font-family:'DM Sans',Arial,sans-serif;font-size:26px;font-weight:700;color:#171512;line-height:1.25;">תודה, {{first_name}}!</h1>
+            <p style="margin:0 0 6px 0;font-size:16px;line-height:1.7;color:#171512;">קיבלנו את ההזמנה שלך והיא כבר בטיפול.</p>
+            <p style="margin:0;font-size:14px;color:#5c5045;">
+              הזמנה <strong style="color:#171512;">#{{order_number}}</strong> · {{order_date}}
+            </p>
+          </td>
+        </tr>
+        <!-- Order summary table -->
+        <tr>
+          <td class="px" style="padding:20px 40px 8px 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #ede4d3;border-radius:12px;overflow:hidden;">
+              <tr>
+                <td colspan="3" style="background:#f5eee4;padding:12px 16px;font-family:'DM Sans',Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:#5c5045;text-align:right;">ההזמנה שלך</td>
+              </tr>
+              <!-- {{#each order_items}} -->
+              <tr>
+                <td style="padding:14px 16px;font-size:15px;color:#171512;text-align:right;border-bottom:1px solid #f0e8d9;">{{item.name}}</td>
+                <td width="60" style="padding:14px 8px;font-size:14px;color:#5c5045;text-align:center;border-bottom:1px solid #f0e8d9;">× {{item.qty}}</td>
+                <td width="100" style="padding:14px 16px;font-size:15px;color:#171512;text-align:left;border-bottom:1px solid #f0e8d9;">₪{{item.price}}</td>
+              </tr>
+              <!-- /each  (fallback sample rows for previewing without templating) -->
+              <!--
+              <tr>
+                <td style="padding:14px 16px;font-size:15px;color:#171512;text-align:right;border-bottom:1px solid #f0e8d9;">MOOD ENERGY · מארז 30</td>
+                <td style="padding:14px 8px;font-size:14px;color:#5c5045;text-align:center;border-bottom:1px solid #f0e8d9;">× 1</td>
+                <td style="padding:14px 16px;font-size:15px;color:#171512;text-align:left;border-bottom:1px solid #f0e8d9;">₪89</td>
+              </tr>
+              -->
+              <!-- totals -->
+              <tr>
+                <td colspan="2" style="padding:12px 16px;font-size:14px;color:#5c5045;text-align:right;">סה״כ מוצרים</td>
+                <td style="padding:12px 16px;font-size:14px;color:#171512;text-align:left;">{{subtotal}}</td>
+              </tr>
+              <tr>
+                <td colspan="2" style="padding:0 16px 12px 16px;font-size:14px;color:#5c5045;text-align:right;">משלוח</td>
+                <td style="padding:0 16px 12px 16px;font-size:14px;color:#171512;text-align:left;">{{shipping}}</td>
+              </tr>
+              <tr>
+                <td colspan="2" style="padding:14px 16px;font-family:'DM Sans',Arial,sans-serif;font-size:16px;font-weight:700;color:#171512;text-align:right;background:#f5eee4;">סה״כ לתשלום</td>
+                <td style="padding:14px 16px;font-family:'DM Sans',Arial,sans-serif;font-size:16px;font-weight:700;color:#171512;text-align:left;background:#f5eee4;">{{total}}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Shipping address -->
+        <tr>
+          <td class="px" style="padding:20px 40px 8px 40px;text-align:right;">
+            <div style="font-family:'DM Sans',Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:#5c5045;margin-bottom:8px;">כתובת למשלוח</div>
+            <div style="font-size:15px;line-height:1.6;color:#171512;">
+              {{ship_name}}<br>
+              {{ship_address_line1}}<br>
+              {{ship_address_line2}}<br>
+              {{ship_phone}}
+            </div>
+            <div style="margin-top:10px;font-size:14px;color:#5c5045;">מועד הגעה משוער: <strong style="color:#171512;">{{delivery_window}}</strong></div>
+          </td>
+        </tr>
+        <!-- 3-step timeline -->
+        <tr>
+          <td class="px" style="padding:24px 40px 16px 40px;">
+            <div style="font-family:'DM Sans',Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:#5c5045;text-align:right;margin-bottom:12px;">מה קורה עכשיו</div>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td class="step" width="33%" valign="top" style="padding:12px;background:#f5eee4;border-radius:10px;text-align:center;">
+                  <div style="font-family:'DM Sans',Arial,sans-serif;font-size:22px;font-weight:800;color:#c69130;">1</div>
+                  <div style="font-size:14px;font-weight:700;color:#171512;margin-top:4px;">אריזה</div>
+                  <div style="font-size:12px;color:#5c5045;margin-top:2px;line-height:1.5;">מכינים את ההזמנה בסטודיו שלנו</div>
+                </td>
+                <td width="8"></td>
+                <td class="step" width="33%" valign="top" style="padding:12px;background:#f5eee4;border-radius:10px;text-align:center;">
+                  <div style="font-family:'DM Sans',Arial,sans-serif;font-size:22px;font-weight:800;color:#c69130;">2</div>
+                  <div style="font-size:14px;font-weight:700;color:#171512;margin-top:4px;">יוצא לדרך</div>
+                  <div style="font-size:12px;color:#5c5045;margin-top:2px;line-height:1.5;">נשלח לך מייל עם מספר מעקב</div>
+                </td>
+                <td width="8"></td>
+                <td class="step" width="33%" valign="top" style="padding:12px;background:#f5eee4;border-radius:10px;text-align:center;">
+                  <div style="font-family:'DM Sans',Arial,sans-serif;font-size:22px;font-weight:800;color:#c69130;">3</div>
+                  <div style="font-size:14px;font-weight:700;color:#171512;margin-top:4px;">מגיע אליך</div>
+                  <div style="font-size:12px;color:#5c5045;margin-top:2px;line-height:1.5;">{{delivery_window}}</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Divider -->
+        <tr><td class="px" style="padding:16px 40px 32px 40px;">
+          <div style="height:1px;background:#ede4d3;line-height:1px;font-size:0;">&nbsp;</div>
+          <p style="margin:20px 0 0 0;font-size:14px;color:#5c5045;text-align:right;line-height:1.7;">
+            שאלה? כתבו לנו ל־<a href="mailto:hello@mood-chocolate.com" style="color:#2c1d16;">hello@mood-chocolate.com</a>.
+          </p>
+        </td></tr>
+        <!-- Footer -->
+        <tr>
+          <td style="background:#f5eee4;padding:24px 40px;text-align:center;font-size:13px;color:#5c5045;">
+            <div style="margin-bottom:10px;">
+              <a href="{{about_url}}" style="color:#2c1d16;text-decoration:none;margin:0 8px;">אודות</a>
+              ·
+              <a href="{{club_url}}" style="color:#2c1d16;text-decoration:none;margin:0 8px;">מועדון</a>
+              ·
+              <a href="{{journal_url}}" style="color:#2c1d16;text-decoration:none;margin:0 8px;">Journal</a>
+              ·
+              <a href="{{policies_url}}" style="color:#2c1d16;text-decoration:none;margin:0 8px;">תקנון</a>
+            </div>
+            <div style="margin-top:12px;font-size:11px;color:#8a7f70;">
+              קיבלת את המייל הזה עקב הזמנה שביצעת ב־MOOD ({{email_address}}).<br>
+              <a href="{{unsubscribe_url}}" style="color:#8a7f70;text-decoration:underline;">ניהול העדפות תפוצה</a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
