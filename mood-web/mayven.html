@@ -134,6 +134,15 @@ nav a:hover{opacity:.6}
 .pc .pill{width:100%}
 /* ---------- ritual full-bleed ---------- */
 .ritual{position:relative;min-height:min(78vh,640px);display:grid;place-items:center;overflow:hidden;background:#191714}
+.full-day-band{position:relative;min-height:min(56vh,460px);display:grid;place-items:center;padding:60px 5vw;background:linear-gradient(180deg,#f5eee4 0%,#efe1c5 100%);border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
+.fdb-in{max-width:720px;color:var(--ink)}
+.fdb-in .k{color:var(--gold);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin:0 0 14px;display:inline-block}
+.fdb-in h2{font-family:'DM Sans','Assistant',sans-serif;font-size:clamp(30px,4.5vw,44px);font-weight:400;line-height:1.1;letter-spacing:-1.2px;margin:0 0 16px}
+.fdb-in h2 b{font-weight:700}
+.fdb-in p{font-size:16px;line-height:1.6;color:var(--muted);margin:0 auto 30px;max-width:500px}
+.fdb-cta{background:var(--gold);color:#fff;padding:16px 40px;font-size:15px;letter-spacing:.5px}
+.fdb-cta:hover{background:#a67721}
+@media(max-width:720px){.full-day-band{min-height:min(50vh,420px);padding:44px 5vw}.fdb-in h2{font-size:28px;letter-spacing:-.8px}.fdb-in p{font-size:15px;margin-bottom:24px}}
 .ritual>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%;filter:brightness(.85)}
 .ritual::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.4),rgba(0,0,0,.08) 55%,rgba(0,0,0,.15))}
 .ritual .in{position:relative;z-index:2;color:#fff;text-align:center;max-width:900px;padding:40px 4vw}
@@ -602,6 +611,16 @@ body .pc .pc-price, body .pc .pc-price-main, body .pc .pc-price-from {
     
 
     
+
+    <!-- FULL DAY invitation band -->
+    <section class="full-day-band" aria-label="חבילת התנסות">
+      <div class="fdb-in">
+        <span class="k">START HERE · חבילת התנסות</span>
+        <h2>לא בטוחים איזה MOOD?<br><b>קחו את השלושה.</b></h2>
+        <p>30 יחידות · 10 מכל רגע · חודש שלם של הריטואל, לכל שעה של היום.</p>
+        <a class="pill pill-cta fdb-cta" href="full-day.html">להתחיל עם היום המלא ←</a>
+      </div>
+    </section>
 
     <!-- RITUAL band -->
     <section class="ritual" id="story">
