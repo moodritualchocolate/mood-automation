@@ -242,9 +242,10 @@ RONEN_PLUS = """
       '<div class="mp2-in">'+
         '<div class="mp2-copy">'+
           '<div class="mp2-eye">השוקולטייר של mood</div>'+
-          '<h2>השוקולטייר הטוב בעולם<span> בנה לנו את הביס.</span></h2>'+
-          '<p class="mp2-q">18 חודשים לקח לרונן אפללו למצוא את הנקודה שבה 800 מ״ג פורמולה '+
-            'עדיין מרגישים כמו שוקולד. <i>"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."</i></p>'+
+          '<h2>בשביל משימה כמעט בלתי אפשרית,<span> צריך אלוף עולם.</span></h2>'+
+          '<p class="mp2-q">הפורמולה הייתה בעיה אחת. לגרום למישהו לרצות עוד ביס הייתה בעיה שנייה. '+
+            '18 חודשים לקח לרונן אפללו למצוא את הנקודה שבה 700 מ״ג פורמולה עדיין מרגישים כמו שוקולד. '+
+            '<i>"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."</i></p>'+
           '<div class="mp2-by">'+
             '<span class="mp2-por"><img src="'+por+'" alt="רונן אפללו">'+
               '<i class="mp2-medal" aria-hidden="true">★</i></span>'+
@@ -354,6 +355,23 @@ RONEN_PLUS = """
     hm.className='tline';
     hm.innerHTML='<div class="tline-in">לא עוד משהו לזכור לקחת — <b>משהו שתחכו לאכול.</b></div>';
   }
+  function blueReveal(){
+    // The page shows packaging and lifestyle and never the thing itself. This is
+    // the interruption: the photograph is the section, the words get out of its way.
+    var host=document.querySelector('.mp2'); if(!host||document.querySelector('.blu'))return;
+    var s=document.createElement('section'); s.className='blu';
+    s.innerHTML='<div class="blu-in">'+
+      '<figure class="blu-shot"><img src="%%BLUE%%" alt="יד מושיטה טבלת שוקולד mood דרך פתח קרוע בלוח כחול" loading="lazy"></figure>'+
+      '<div class="blu-copy">'+
+        '<div class="blu-eye">RITUAL CHOCOLATE</div>'+
+        '<h2>כן.<span>זה באמת שוקולד.</span></h2>'+
+        '<p>7 גרם של שוקולד מריר.<br>700 מ״ג של פורמולה.<br>רגע אחד ששייך לכם.</p>'+
+        '<div class="blu-skus"><i>ENERGY</i><i>RELAX</i><i>SLEEP</i></div>'+
+        '<a class="blu-cta" href="/products">בחרו את הרגע שלכם</a>'+
+      '</div>'+
+    '</div>';
+    host.parentNode.insertBefore(s, host);      // after the products, before the champion
+  }
   function callIcon(){
     var nav=document.querySelector('.xnav')||document.querySelector('nav');
     if(!nav||nav.querySelector('.mv-call'))return;
@@ -388,14 +406,10 @@ RONEN_PLUS = """
       if(p)p.textContent='27 כתבות על שינה, אנרגיה ורוגע — בלי הבטחות, עם הסברים.';
       if(j){j.setAttribute('href','/journal');j.innerHTML='לכל הכתבות<span aria-hidden="true"> ←</span>';}
     }
-    // any remaining launch-date copy
-    [].forEach.call(document.querySelectorAll('h4,p,span,a,li'),function(e){
-      if(e.children.length===0 && /משיקים\s*ב?-?\s*12\.8/.test(e.textContent))
-        e.textContent=e.textContent.replace(/משיקים\s*ב?-?\s*12\.8\.?\s*/g,'');
-    });
+    // the launch date is gone from the source copy itself; no runtime scrub needed
   }
   function boot2(){[120,260,900,1800].forEach(function(d){
-    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();},d);});}
+    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();blueReveal();},d);});}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot2); else boot2();
 })();
 </script>"""
@@ -805,7 +819,7 @@ for _r in page_src:
     var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
               'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
-              'קוד MOOD10 — 10% הנחה על ההזמנה הראשונה'];
+              'כשר פרווה · עטופים אחד־אחד · 30 יחידות'];   // a code announced to everyone is not a code
     function arm(){
       var el=document.querySelector('.xannounce')||document.querySelector('.topbar');
       if(!el)return;
@@ -854,7 +868,7 @@ _FAQS = [
  ('מה זה בעצם שוקולד פונקציונלי?', 'שוקולד מריר 70% פרמיום שבתוכו פורמולה מדויקת של רכיבים צמחיים (אדפטוגנים, מיצויים ומינרלים). קודם כול טעים — ואז עושה בדיוק את מה שהוא מבטיח: אנרגיה, רוגע או שינה.'),
  ('כמה קוביות ביום מומלץ?', 'קובייה אחת ביום — זה כל הריטואל. כל מארז חודשי מכיל 30 יחידות אישיות, יחידה אחת ליום.'),
  ('מתי מרגישים את ההשפעה?', 'הרכיבים נספגים בהדרגה — רוב הלקוחות מדווחים על תחושה תוך 20–40 דקות, והאפקט המלא נבנה עם שימוש יומיומי קבוע לאורך שבועיים.'),
- ('יש בזה קפאין?', 'ב-ENERGY יש קפאין טבעי בשחרור איטי (תה ירוק וגוארנה) — בערך כמו חצי כוס קפה, בלי הרעד ובלי הנפילה. RELAX ו-SLEEP נטולי קפאין לחלוטין.'),
+ ('יש בזה קפאין?', 'ב-ENERGY יש קפאין טבעי מגוארנה ומתה ירוק, בשחרור איטי. RELAX ו-SLEEP נטולי קפאין.'),
  ('האם המוצר כשר?', 'כן — כשר פרווה. מיוצר בישראל בסטנדרטים מחמירים של איכות ובקרה.'),
  ('אלרגנים וסוכר?', 'ללא תוספת סוכר. מיוצר במפעל שמעבד גם אגוזים — רגישים לאלרגנים מוזמנים לעיין בסימון שעל האריזה לפני הצריכה.'),
  ('איך עובד המנוי ואיך מבטלים?', 'המנוי החודשי מגיע אליכם אוטומטית עם 10% הנחה קבועה. אפשר לדלג על חודש, להחליף מצב רוח או לבטל בכל רגע — בלי שאלות.'),
@@ -1032,8 +1046,8 @@ _CARDSKIN = """
     if(!document.querySelector('.mv-ritband')){
       var cards=document.querySelector('.cards'); if(!cards)return;
       var band=document.createElement('a'); band.className='mv-ritband'; band.href='/ritual';
-      band.innerHTML='<img src="%%REDHANDS%%" alt="טבלת mood עוברת בין שתי ידיים"><div><b>THE FULL RITUAL 🍫</b>'+
-        '<span>שלושת המצבים · חודש שלם לכל רגע · חוסכים 15%</span>'+
+      band.innerHTML='<img src="%%REDHANDS%%" alt="טבלת mood עוברת בין שתי ידיים"><div><b>THE FULL RITUAL</b>'+
+        '<span>מהבוקר ועד הלילה. ENERGY · RELAX · SLEEP — שלושה רגעים, ריטואל אחד.</span>'+
         '<i>₪433 במקום ₪510 — לעמוד החבילה ←</i></div>';
       cards.insertAdjacentElement('afterend',band);
     }
@@ -1250,6 +1264,38 @@ MOOD_SYSTEM = """
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ THE BLUE REVEAL — the photograph is the section ============
+   Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
+   in the negative space beside it. The blue is the only colour event on a
+   cream page; nothing else changes colour to match it. */
+.blu{background:#fbf7f1;padding:clamp(32px,5vw,76px) 0}
+.blu-in{width:min(1240px,calc(100% - 32px));margin:0 auto;display:grid;
+  grid-template-columns:1.55fr 1fr;gap:clamp(24px,4vw,64px);align-items:center}
+.blu-shot{margin:0;overflow:hidden;border-radius:4px;background:#22315e;aspect-ratio:3/2}
+.blu-shot img{width:100%;height:100%;object-fit:cover;object-position:52% 50%;display:block}
+.blu-eye{font-size:11px;font-weight:700;letter-spacing:.22em;color:#8a7c6a}
+.blu-copy h2{margin:clamp(12px,1.6vw,18px) 0 0;font-size:clamp(32px,4.4vw,52px);line-height:1.02;
+  letter-spacing:-.04em;font-weight:900;color:#171512}
+.blu-copy h2 span{display:block;color:#22315e}
+.blu-copy p{margin:clamp(14px,1.8vw,22px) 0 0;font-size:clamp(15px,1.4vw,17px);line-height:1.75;
+  color:#5f584e;font-weight:500}
+.blu-skus{display:flex;gap:20px;margin-top:clamp(16px,2vw,24px);
+  padding-top:clamp(14px,1.8vw,20px);border-top:1px solid #e6dccd}
+.blu-skus i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.16em;color:#8a7c6a}
+.blu-cta{display:inline-block;margin-top:clamp(18px,2.2vw,26px);background:#22315e;color:#fff;
+  border:1.4px solid #22315e;border-radius:999px;padding:15px 32px;min-height:52px;
+  font-size:15px;font-weight:700;text-decoration:none;transition:background .2s,border-color .2s}
+.blu-cta:hover{background:#171512;border-color:#171512}
+@media (max-width:900px){
+  /* the photograph leads, edge to edge; the line lands directly under it */
+  .blu{padding:0 0 clamp(28px,7vw,40px)}
+  .blu-in{grid-template-columns:1fr;gap:clamp(18px,4vw,24px)}
+  .blu-shot{aspect-ratio:4/3;border-radius:0;margin:0 -16px;width:calc(100% + 32px)}
+  .blu-copy h2{font-size:clamp(30px,8.6vw,40px)}
+  .blu-copy p{font-size:15px;line-height:1.7}
+  .blu-cta{display:block;text-align:center;width:100%}
+}
 
 /* ============ RONEN — the workshop, not an About Us ============ */
 .mp2{background:#241b12;padding:0;border:0;color:#f2e7d9;position:relative;overflow:hidden}
@@ -1643,6 +1689,104 @@ for _route in list(page_src):
                         if '</body>' in page_src[_route] else page_src[_route] + MOOD_SYSTEM)
 page_src['%f3d%'] = page_src['%f3d%'].replace('</body>', MOOD_SYSTEM + '</body>')
 
+# ---------- 1t. canonical product truth ----------
+# Every piece is 7 g, and the functional blend is 10% of it: 700 mg per piece,
+# 30 individually wrapped pieces to a pouch (21 g of blend per pouch). The
+# percentages and milligrams below are the single source of truth and replace
+# every earlier figure that survived in the source pages — the product pages
+# still carried an 800 mg ENERGY built on rodiola and cinnamon, and a 728 mg
+# SLEEP, while the home page already showed this formula. The site contradicted
+# itself about what is inside the same product.
+FORMULA = {
+    'ENERGY': [('\u05de\u05d0\u05e7\u05d4', 32, 224), ('\u05d2\u05d5\u05d0\u05e8\u05e0\u05d4', 24, 168),
+               ('\u05ea\u05d4 \u05d9\u05e8\u05d5\u05e7', 20, 140), ('\u05d2\u05f3\u05d9\u05e0\u05e1\u05e0\u05d2', 16, 112),
+               ('\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5', 8, 56)],
+    'RELAX':  [('\u05de\u05dc\u05d9\u05e1\u05d4', 38, 266), ('\u05e4\u05e1\u05d9\u05e4\u05dc\u05d5\u05e8\u05d4', 26, 182),
+               ('\u05de\u05d0\u05e7\u05d4', 20, 140), ('\u05d5\u05dc\u05e8\u05d9\u05d0\u05df', 10, 70),
+               ('\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5', 6, 42)],
+    'SLEEP':  [('\u05de\u05dc\u05d9\u05e1\u05d4', 32, 224), ('\u05d5\u05dc\u05e8\u05d9\u05d0\u05df', 30, 210),
+               ('\u05e4\u05e1\u05d9\u05e4\u05dc\u05d5\u05e8\u05d4', 30, 210), ('\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5', 8, 56)],
+}
+for _sku, _rows in FORMULA.items():                 # the numbers must close, or the build stops
+    assert sum(r[1] for r in _rows) == 100, _sku + ' percentages do not sum to 100'
+    assert sum(r[2] for r in _rows) == 700, _sku + ' milligrams do not sum to 700'
+
+_ING_NOTE = {
+    '\u05de\u05d0\u05e7\u05d4': '\u05e9\u05d5\u05e8\u05e9 \u05d0\u05e0\u05d3\u05d9, \u05d4\u05de\u05e8\u05db\u05d9\u05d1 \u05d4\u05d2\u05d3\u05d5\u05dc \u05d1\u05ea\u05e2\u05e8\u05d5\u05d1\u05ea',
+    '\u05d2\u05d5\u05d0\u05e8\u05e0\u05d4': '\u05de\u05e7\u05d5\u05e8 \u05d8\u05d1\u05e2\u05d9 \u05dc\u05e7\u05e4\u05d0\u05d9\u05df, \u05d1\u05e9\u05d7\u05e8\u05d5\u05e8 \u05d0\u05d9\u05d8\u05d9',
+    '\u05ea\u05d4 \u05d9\u05e8\u05d5\u05e7': '\u05e7\u05e4\u05d0\u05d9\u05df \u05d8\u05d1\u05e2\u05d9 \u05dc\u05e6\u05d3 L\u05be\u05ea\u05d0\u05e0\u05d9\u05df',
+    '\u05d2\u05f3\u05d9\u05e0\u05e1\u05e0\u05d2': '\u05e9\u05d5\u05e8\u05e9 \u05de\u05e1\u05d5\u05e8\u05ea\u05d9, \u05e0\u05e4\u05d5\u05e5 \u05d1\u05ea\u05e2\u05e8\u05d5\u05d1\u05d5\u05ea \u05d7\u05d9\u05d5\u05e0\u05d9\u05d5\u05ea',
+    '\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5': '\u05e9\u05d5\u05e8\u05e9 \u05e9\u05de\u05d0\u05d6\u05df \u05d0\u05ea \u05d8\u05e2\u05dd \u05d4\u05ea\u05e2\u05e8\u05d5\u05d1\u05ea',
+}
+_ING_DOT = ['#CF7A3C', '#7E9153', '#B5763F', '#C99A57', '#6E4A30']
+
+def _ing_rows(sku):
+    out = []
+    for i, (name, pct, mg) in enumerate(FORMULA[sku]):
+        out.append('<div style="--dc:%s"><b>%s \u00b7 %d \u05de\u05f4\u05d2</b><span>%s</span></div>'
+                   % (_ING_DOT[i % len(_ING_DOT)], name, mg, _ING_NOTE[name]))
+    return '\n        '.join(out)
+
+def _ing_names(sku, last_sep=' \u05d5'):
+    n = [r[0] for r in FORMULA[sku]]
+    return ', '.join(n[:-1]) + last_sep + n[-1]
+
+_OLD_ENERGY_ROWS = (
+    '<div style="--dc:#CF7A3C"><b>\u05e8\u05d5\u05d3\u05d9\u05d5\u05dc\u05d4 \u00b7 660 \u05de\u05f4\u05d2</b>'
+    '<span>\u05d0\u05d3\u05e4\u05d8\u05d5\u05d2\u05df \u05e9\u05de\u05e4\u05d7\u05d9\u05ea \u05ea\u05d7\u05d5\u05e9\u05ea \u05e2\u05d9\u05d9\u05e4\u05d5\u05ea \u05d5\u05ea\u05d5\u05de\u05da \u05d1\u05d7\u05d5\u05e1\u05df \u05d5\u05d1\u05de\u05d9\u05e7\u05d5\u05d3</span></div>')
+
+_TRUTH = [
+    ('ings:[["מליסה",224,"s_mel"],["פסיפלורה",224,"s_pas"],["ולריאן",224,"s_val"],["ליקוריץ",56,"s_lic"]]',
+     'ings:[["מליסה",224,"s_mel"],["ולריאן",210,"s_val"],["פסיפלורה",210,"s_pas"],["ליקריץ",56,"s_lic"]]'),
+
+    ('ings:[["רודיאלה",660,"e_rod"],["תה ירוק",80,"e_gt"],["קינמון",40,"e_cin"],["ליקוריץ",13,"e_lic"],["גוארנה",7,"e_gua"]]',
+     'ings:[["מאקה",224,"r_mac"],["גוארנה",168,"e_gua"],["תה ירוק",140,"e_gt"],["ג׳ינסנג",112,"e_rod"],["ליקריץ",56,"e_lic"]]'),
+
+    ('<div style="--dc:#6E4A30"><b>גוארנה · 7 מ״ג</b><span>שחרור קפאין איטי שמאריך את האפקט</span></div>', ''),   # a row from the superseded formula
+
+    ('<div style="--dc:#C99A57"><b>ליקוריץ · 13 מ״ג</b><span>שורש מסורתי לתמיכה בחיוניות לאורך היום</span></div>', ''),   # a row from the superseded formula
+
+    ('<div style="--dc:#B5763F"><b>קינמון · 40 מ״ג</b><span>תומך באיזון סוכר בדם לאנרגיה יציבה, בלי נפילה</span></div>', ''),   # a row from the superseded formula
+
+    ('<div style="--dc:#7E9153"><b>תה ירוק · 80 מ״ג</b><span>קפאין טבעי עם L־תאנין — ערנות רגועה בלי רעד</span></div>', ''),   # a row from the superseded formula
+
+    # ENERGY: the whole ingredient list was a different formula
+    (_OLD_ENERGY_ROWS, '__ENERGY_ROWS__'),
+    ('800 \u05de\u05f4\u05d2 (\u05e8\u05d5\u05d3\u05d9\u05d5\u05dc\u05d4, \u05ea\u05d4 \u05d9\u05e8\u05d5\u05e7, \u05e7\u05d9\u05e0\u05de\u05d5\u05df, \u05dc\u05d9\u05e7\u05d5\u05e8\u05d9\u05e5, \u05d2\u05d5\u05d0\u05e8\u05e0\u05d4)',
+     '700 \u05de\u05f4\u05d2 (__ENERGY_NAMES__)'),
+    ('800 \u05de\u05f4\u05d2', '700 \u05de\u05f4\u05d2'),
+    # SLEEP
+    ('728 \u05de\u05f4\u05d2: \u05de\u05dc\u05d9\u05e1\u05d4, \u05e4\u05e1\u05d9\u05e4\u05dc\u05d5\u05e8\u05d4, \u05d5\u05dc\u05e8\u05d9\u05d0\u05df \u05d5\u05dc\u05d9\u05e7\u05d5\u05e8\u05d9\u05e5',
+     '700 \u05de\u05f4\u05d2: __SLEEP_NAMES__'),
+    ('728 \u05de\u05f4\u05d2', '700 \u05de\u05f4\u05d2'),
+    # one spelling of the root, everywhere
+    ('\u05dc\u05d9\u05e7\u05d5\u05e8\u05d9\u05e5', '\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5'),
+    # mould dimensions are engineering data, not a reason to buy chocolate
+    ('49\u00d724\u00d75 \u05de\u05f4\u05de', '7 \u05d2\u05e8\u05dd \u05dc\u05d1\u05d9\u05e1'),
+]
+
+_LAUNCH = [
+    ('\u05de\u05e9\u05d9\u05e7\u05d9\u05dd \u05d1-12.8. \u05e0\u05e8\u05e9\u05de\u05d9\u05dd \u05e2\u05db\u05e9\u05d9\u05d5 \u05dc\u05e8\u05e9\u05d9\u05de\u05ea \u05d4\u05d4\u05de\u05ea\u05e0\u05d4 \u05d5\u05de\u05e7\u05d1\u05dc\u05d9\u05dd \u05d2\u05d9\u05e9\u05d4 \u05e8\u05d0\u05e9\u05d5\u05e0\u05d4 \u05d5\u05d4\u05d8\u05d1\u05ea \u05d4\u05e9\u05e7\u05d4. ',
+     '\u05d1\u05d5\u05d7\u05e8\u05d9\u05dd \u05de\u05d0\u05e8\u05d6, \u05de\u05d5\u05e1\u05d9\u05e4\u05d9\u05dd \u05dc\u05e1\u05dc \u05d5\u05de\u05e9\u05dc\u05d9\u05de\u05d9\u05dd \u05d0\u05ea \u05d4\u05d4\u05d6\u05de\u05e0\u05d4. '),
+    ('\u05de\u05e9\u05d9\u05e7\u05d9\u05dd \u05d1-12.8. \u05e0\u05e8\u05e9\u05de\u05d9\u05dd \u05dc\u05e8\u05e9\u05d9\u05de\u05ea \u05d4\u05d4\u05de\u05ea\u05e0\u05d4 \u05d5\u05de\u05e7\u05d1\u05dc\u05d9\u05dd \u05d2\u05d9\u05e9\u05d4 \u05e8\u05d0\u05e9\u05d5\u05e0\u05d4 \u05d5\u05d4\u05d8\u05d1\u05ea \u05d4\u05e9\u05e7\u05d4. ',
+     '\u05d1\u05d5\u05d7\u05e8\u05d9\u05dd \u05de\u05d0\u05e8\u05d6, \u05de\u05d5\u05e1\u05d9\u05e4\u05d9\u05dd \u05dc\u05e1\u05dc \u05d5\u05de\u05e9\u05dc\u05d9\u05de\u05d9\u05dd \u05d0\u05ea \u05d4\u05d4\u05d6\u05de\u05e0\u05d4. '),
+    (' \u05de\u05e9\u05d9\u05e7\u05d9\u05dd 12.8.', ''),
+    ('\u05de\u05e9\u05d9\u05e7\u05d9\u05dd 12.8', ''),
+]
+
+_truth_hits = {}
+for _route in page_src:
+    _s = page_src[_route]
+    for _o, _n in _TRUTH + _LAUNCH:
+        if _o in _s:
+            _truth_hits[_o[:26]] = _truth_hits.get(_o[:26], 0) + _s.count(_o)
+            _s = _s.replace(_o, _n)
+    _s = (_s.replace('__ENERGY_ROWS__', _ing_rows('ENERGY'))
+            .replace('__ENERGY_NAMES__', ', '.join(r[0] for r in FORMULA['ENERGY']))
+            .replace('__SLEEP_NAMES__', _ing_names('SLEEP')))
+    page_src[_route] = _s
+print('canonical truth applied:', sum(_truth_hits.values()), 'replacements')
+
 # ---------- 1z. claim normalisation across the source pages ----------
 # Prices are declared once in the PDP script above and every figure the packs
 # show is derived from them; these rewrite the same numbers where they sit in
@@ -1663,7 +1807,8 @@ for _route in page_src:
 
 for _b in ('/brand/bars-plate.jpg', '/brand/cafe-handoff.jpg', '/mood-club-generations.png',
            '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png',
-           '/mood-ronen-gloves.jpg', '/mood-fullritual-hands.jpg'):
+           '/mood-ronen-gloves.jpg', '/mood-fullritual-hands.jpg',
+           '/mood-blue-reveal.jpg'):
     referenced.add(_b)                            # the brand's own campaign photography
 for _a in _journal.ARTICLES:                      # blog art + product shots
     referenced.add(_a['image'])
@@ -1686,7 +1831,8 @@ for p in sorted(referenced):
 for _ph, _path in (('%%FAQIMG%%', '/brand/bars-plate.jpg'),
                    ('%%CMPIMG%%', '/brand/cafe-handoff.jpg'),
                    ('%%GLOVES%%', '/mood-ronen-gloves.jpg'),
-                   ('%%REDHANDS%%', '/mood-fullritual-hands.jpg')):
+                   ('%%REDHANDS%%', '/mood-fullritual-hands.jpg'),
+                   ('%%BLUE%%', '/mood-blue-reveal.jpg')):
     _t = 'A' + hashlib.md5(_path.encode()).hexdigest()[:10]
     assert _t in ASSETS, 'named photo asset missing: ' + _path
     for _route in page_src:
@@ -1915,7 +2061,6 @@ shell_head = """<title>mood — ריטואל שוקולד פונקציונלי</
     <button class="ct-cont" id="ctCont">← המשך קנייה</button>
   </div>
 </aside>
-<div id="buzz" dir="rtl"><img id="buzzImg" alt=""><div><b id="buzzT"></b><span id="buzzS"></span></div></div>
 <button id="a11yBtn" aria-label="תפריט נגישות" title="נגישות">&#9855;</button>
 <div id="a11yPanel" dir="rtl" role="dialog" aria-label="הגדרות נגישות">
   <b>נגישות</b>
@@ -2102,22 +2247,9 @@ shell_js = """<script>
     });
     a11yApply();
   })();
-  // Fillit-style purchase buzz: rotating recent-order toasts
-  (function(){
-    var DATA=[['דנה','תל אביב','RELAX','מארז חודשיים','הזמינה'],['עומר','חיפה','ENERGY','מארז חודש','הזמין'],
-      ['נועה','רמת גן','SLEEP','מארז חודשיים','הזמינה'],['איתי','ירושלים','ENERGY','מארז שלושה חודשים','הזמין'],
-      ['שירה','הרצליה','RELAX','מארז חודש','הזמינה'],['מאיה','באר שבע','SLEEP','מארז חודשיים','הזמינה']];
-    var el=document.getElementById('buzz'),i=Math.floor(Math.random()*DATA.length);
-    function pop(){
-      var d=DATA[i%DATA.length];i++;
-      document.getElementById('buzzImg').src=ASSETS[PACKIMG[d[2]]]||'';
-      document.getElementById('buzzT').textContent=d[0]+' מ'+d[1]+' '+d[4]+' mood '+d[2];
-      document.getElementById('buzzS').textContent=d[3]+' · לפני '+(3+Math.floor(Math.random()*38))+' דקות';
-      el.classList.add('on');
-      setTimeout(function(){el.classList.remove('on');},5200);
-    }
-    setTimeout(function(){pop();setInterval(pop,26000);},9000);
-  })();
+  // A toast used to pop every 26 seconds claiming a stranger in Haifa had just
+  // ordered — six invented names on a timer. mood does not need social
+  // pressure to sell a bar of chocolate.
   window.addEventListener('message',function(e){
     var d=e.data||{};
     if(d.moodF3D){
