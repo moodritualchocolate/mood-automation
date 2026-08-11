@@ -1,6 +1,23 @@
 # -*- coding: utf-8 -*-
-"""30 placeholder customer reviews (to be swapped for verified ones before launch)
-plus the injector that replaces the store's demo-labelled review blocks."""
+"""Customer reviews + the injector that replaces the store's demo-labelled blocks.
+
+    ###################################################################
+    #  DO NOT PUBLISH THIS SITE WHILE THIS FILE IS UNCHANGED.         #
+    #                                                                 #
+    #  Every one of the 30 reviews in R below is INVENTED. The names, #
+    #  the wording and the star ratings were written to fill a layout #
+    #  and describe no real customer. They render on the live site    #
+    #  with star ratings and a "verified" label, so shipping them as  #
+    #  they stand presents fabricated testimonials as genuine ones —  #
+    #  that is deceptive advertising, not a placeholder problem.      #
+    #                                                                 #
+    #  Replace R with real, attributable reviews before launch, or    #
+    #  set PLACEHOLDER = False only once that has been done.          #
+    ###################################################################
+"""
+
+# Flip to False only when R holds real, attributable customer reviews.
+PLACEHOLDER = True
 import json
 
 R = [

@@ -1039,7 +1039,7 @@ _CARDSKIN = """
   margin:13px 0 16px!important;padding-top:13px!important;line-height:1.5!important;letter-spacing:0!important}
 .card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
   width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}
-.card .button{display:block!important;width:100%!important;padding:11px 14px!important;font-size:14px!important;line-height:1.2!important;min-height:0!important}
+.card .button{display:inline-block!important;width:auto!important;min-width:172px!important;padding:13px 22px!important;font-size:14.5px!important;line-height:1.2!important;min-height:46px!important}
 .card .units{opacity:0!important;transform:scale(.98)!important}
 .card .lifestyle{opacity:1!important;transform:none!important}
 .card:hover .units{opacity:1!important;transform:none!important}
@@ -1047,8 +1047,8 @@ _CARDSKIN = """
 .card .content{background:transparent!important;padding:15px 4px 0!important}
 .mvstars{display:flex;align-items:center;justify-content:center;gap:7px;margin:0;font-weight:600;font-size:12px;color:#8a7c6a}
 .mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13px}
-.card .button{background:transparent!important;border:1.6px solid #1d3226!important;color:#1d3226!important;
-border-radius:999px!important;font-weight:800!important;box-shadow:none!important;transition:background .2s,color .2s!important}
+.card .button{background:transparent!important;border:1.4px solid #1d3226!important;color:#1d3226!important;
+border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}
 .card .button:hover{background:#1d3226!important;color:#fff!important}
 @media(max-width:700px){
   .cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;
@@ -1219,6 +1219,13 @@ _JOURNAL_IDS = _journal.build(page_src)
 # ---------- 1y2. 30 reviews (placeholder copy until verified ones land) ----------
 import _reviews
 _reviews.inject(page_src)
+if getattr(_reviews, 'PLACEHOLDER', True):
+    print('\n' + '!' * 74)
+    print('!!  THE 30 CUSTOMER REVIEWS IN THIS BUILD ARE INVENTED PLACEHOLDERS.')
+    print('!!  They ship with star ratings and a "verified" label. Publishing this')
+    print('!!  build presents fabricated testimonials as real ones. Replace R in')
+    print('!!  _reviews.py with attributable reviews before the site goes live.')
+    print('!' * 74 + '\n')
 
 # ---------- 1z. one button system + a small framed logo, injected into EVERY page ----------
 MOOD_SYSTEM = """
@@ -1638,6 +1645,27 @@ img{background-color:#efe7db}
 .card .button{min-height:46px;padding:12px 26px!important;font-size:14.5px!important}
 .mv-padd{min-height:0;padding:8px 15px!important;font-size:12px!important;font-weight:800!important}
 .mv-stepper{border:1.1px solid #cbbca8!important;background:transparent!important}
+
+/* ============ BUTTONS — one primary, one secondary, one shape ============ */
+.rh-btn-primary,.ct-go,.cu-cta,.mv-rvmore{border-radius:999px!important;font-weight:700!important;
+  letter-spacing:0!important;box-shadow:none!important;
+  transition:background .2s,color .2s,border-color .2s!important}
+/* primary: solid, and the same solid everywhere the ground is light —
+   the checkout button was a ghost, which made the last step of the funnel
+   the quietest button on the page */
+.rh-btn-primary,.ct-go{background:#C9551A!important;color:#fff!important;
+  border:1.4px solid #C9551A!important;padding:15px 30px!important;font-size:15.5px!important;
+  min-height:52px!important}
+.rh-btn-primary:hover,.ct-go:hover{background:#A8430F!important;border-color:#A8430F!important}
+/* primary on the dark club band: inverted, because #C9551A on #241b12 is not a button */
+.cu-cta{background:#F7B27A!important;color:#241b12!important;border:1.4px solid #F7B27A!important;
+  padding:15px 30px!important;font-size:15.5px!important;min-height:52px!important}
+.cu-cta:hover{background:#fff!important;border-color:#fff!important}
+/* secondary: hairline ink, identical to the product cards */
+.mv-rvmore{background:transparent!important;color:#1d3226!important;
+  border:1.4px solid #1d3226!important;padding:13px 22px!important;font-size:14.5px!important;
+  min-height:46px!important}
+.mv-rvmore:hover{background:#1d3226!important;color:#fff!important}
 @media (max-width:700px){
   .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){min-height:52px;padding:15px 26px!important;font-size:15.5px!important}
   .rh-cta{display:block!important}
@@ -1712,7 +1740,7 @@ document.addEventListener('click',function(e){
    '.card .label,.card .description,.card .monthly{display:none!important}'+
    '.mvname{font-size:22px;font-weight:800;letter-spacing:.055em;color:#1d3226;margin:7px 0 0}'+
    '.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;margin:13px 0 16px!important;padding-top:13px!important;line-height:1.5!important;letter-spacing:0!important}'+'.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}'+
-   '.card .button{display:block!important;width:100%!important;padding:11px 14px!important;font-size:14px!important;line-height:1.2!important;min-height:0!important}'+
+   '.card .button{display:inline-block!important;width:auto!important;min-width:172px!important;padding:13px 22px!important;font-size:14.5px!important;line-height:1.2!important;min-height:46px!important}'+
    '.card .units{opacity:0!important;transform:scale(.98)!important}'+
    '.card .lifestyle{opacity:1!important;transform:none!important}'+
    '.card:hover .units{opacity:1!important;transform:none!important}'+
@@ -1720,8 +1748,8 @@ document.addEventListener('click',function(e){
    '.card .content{background:transparent!important;padding:15px 4px 0!important}'+
    '.mvstars{display:flex;align-items:center;justify-content:center;gap:7px;margin:0;font-weight:600;font-size:12px;color:#8a7c6a}'+
    '.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13px}'+
-   '.card .button{background:transparent!important;border:1.6px solid #1d3226!important;color:#1d3226!important;'+
-   'border-radius:999px!important;font-weight:800!important;box-shadow:none!important;transition:background .2s,color .2s!important}'+
+   '.card .button{background:transparent!important;border:1.4px solid #1d3226!important;color:#1d3226!important;'+
+   'border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}'+
    '.card .button:hover{background:#1d3226!important;color:#fff!important}'+
    '@media(max-width:700px){'+'.cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;'+'padding:4px 14px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}'+'.cards::-webkit-scrollbar{display:none}'+'.card{flex:0 0 90%!important;scroll-snap-align:center;min-width:0}'+'.mvdots{display:flex;justify-content:center;gap:6px;margin:2px 0 10px}'+'.mvdots i{width:7px;height:7px;border-radius:99px;background:#d8cbb8;transition:all .25s}'+'.mvdots i.on{background:#E05A00;width:18px}'+'}'+'@media(min-width:701px){.mvdots{display:none}}';
   var COUNTS={SLEEP:'(198)',RELAX:'(214)',ENERGY:'(327)'};
@@ -1839,20 +1867,23 @@ shell_head = """<title>mood — ריטואל שוקולד פונקציונלי</
   .ct-up-row i{font-style:normal;font-size:10.5px;color:#8a7c6a}
   .ct-foot{padding:14px 20px 18px;border-top:1px solid #e9dfd0;background:#fff}
   .ct-tot{display:flex;justify-content:space-between;font-size:15px;font-weight:900;color:#171512;margin-bottom:12px}
-  .ct-go{display:flex;align-items:center;justify-content:center;width:100%;padding:15px;border:0;border-radius:999px;
-    background:linear-gradient(180deg,#f9dcbc,#f0c6a0 55%,#eab88b);color:#5b2c07;font-size:16px;font-weight:900;
-    border:2px solid #b06635;box-shadow:0 6px 0 #E05A00;cursor:pointer;text-decoration:none;font-family:inherit;
-    transition:transform .15s,box-shadow .15s}
-  .ct-go:hover{transform:translateY(2px);box-shadow:0 4px 0 #E05A00}
+  /* the last button in the funnel is the primary button, not a gradient toy with a hard shadow */
+  .ct-go{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;padding:15px 24px;
+    border-radius:999px;background:#C9551A;color:#fff;font-size:15.5px;font-weight:700;
+    border:1.4px solid #C9551A;box-shadow:none;cursor:pointer;text-decoration:none;font-family:inherit;
+    transition:background .2s,border-color .2s}
+  .ct-go:hover{background:#A8430F;border-color:#A8430F}
   .ct-note{margin:9px 0 0;text-align:center;font-size:11px;color:#8a7c6a}
   .ct-cont{display:block;width:100%;margin:8px 0 0;border:0;background:none;color:#8a7c6a;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:underline}
-  .ct-shop{display:inline-block;margin-top:14px;border:2px solid #b06635;border-radius:999px;background:linear-gradient(180deg,#f9dcbc,#f0c6a0 55%,#eab88b);color:#5b2c07;font-weight:900;font-size:14px;padding:11px 22px;cursor:pointer;font-family:inherit;box-shadow:0 5px 0 #E05A00}
+  .ct-shop{display:inline-block;margin-top:14px;border:1.4px solid #1d3226;border-radius:999px;background:transparent;color:#1d3226;font-weight:700;font-size:14.5px;padding:13px 22px;min-height:46px;cursor:pointer;font-family:inherit;box-shadow:none;transition:background .2s,color .2s}
+  .ct-shop:hover{background:#1d3226;color:#fff}
   .ct-coup{display:flex;gap:8px;margin-bottom:10px}
-  .ct-coup input{flex:1;min-width:0;border:1px solid #d8cbb8;border-radius:10px;padding:9px 12px;font-size:13px;
+  .ct-coup input{flex:1;min-width:0;border:1px solid #d8cbb8;border-radius:999px;padding:9px 14px;font-size:13px;
     font-family:inherit;background:#faf6ef;color:#171512;outline:none;direction:rtl}
   .ct-coup input:focus{border-color:#E05A00}
-  .ct-coup button{border:1px solid #b06635;border-radius:10px;background:#f0c6a0;color:#5b2c07;font-weight:800;
-    font-size:13px;padding:9px 16px;cursor:pointer;font-family:inherit}
+  .ct-coup button{border:1.4px solid #1d3226;border-radius:999px;background:transparent;color:#1d3226;font-weight:700;
+    font-size:13.5px;padding:9px 18px;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+  .ct-coup button:hover{background:#1d3226;color:#fff}
   .ct-disc span{color:#1d7a3f!important}
   /* Fillit-style purchase buzz toast */
   #buzz{position:fixed;left:14px;bottom:16px;z-index:39;display:flex;align-items:center;gap:11px;
