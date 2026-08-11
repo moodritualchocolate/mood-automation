@@ -1018,7 +1018,8 @@ _PROD_CHROME = (
     'align-items:center;gap:12px}'
     'header.jh a{text-decoration:none}'
     '.jlogo{display:inline-flex;align-items:center;justify-content:center;padding:4px 10px;'
-    'border:1.4px solid #241b12;border-radius:8px;background:#fff;font-size:19px;font-weight:900;'
+    'border:1.4px solid #241b12;border-radius:8px;background:#fff;color:#241b12;'
+    'text-decoration:none;font-size:20px;font-weight:900;'
     'letter-spacing:-1.3px;line-height:1.15;direction:ltr;unicode-bidi:isolate;min-height:44px}'
     '.jlogo i{font-style:normal;color:#E05A00}'
     '.jback{font-weight:700;font-size:13px;color:#6b5a48;white-space:nowrap;padding-block:11px;'
@@ -1050,7 +1051,7 @@ page_src['/products'] = page_src['/products'].replace('</body>', _NEED + '</body
 # products page, and the nested-frame injector further down for the cards
 # embedded in the home page. It is defined once, here, so a change cannot
 # land in one and miss the other.
-CARD_SKIN_CSS = """.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}.card.energy{--sku:#F2902E}.card.relax{--sku:#91B681}.card.sleep{--sku:#779BC6}.card .visual{border-radius:18px!important;overflow:hidden!important}.card::before,.card::after{display:none!important}.card .button::before,.card .button::after{display:none!important;content:none!important}.card .content{text-align:center!important}.card .label,.card .description,.card .monthly{display:none!important}.mvname{font-size:22px;font-weight:700;letter-spacing:.055em;color:#1d3226;margin:8px 0 0}.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;margin:12px 0 16px!important;padding-top:12px!important;line-height:1.5!important;letter-spacing:0!important}.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}.card .button{display:inline-block!important;width:auto!important;min-width:172px!important;padding:12px 22px!important;font-size:14.5px!important;line-height:1.2!important;min-height:46px!important}.card .units{opacity:0!important;transform:scale(.98)!important}.card .lifestyle{opacity:1!important;transform:none!important}.card:hover .units{opacity:1!important;transform:none!important}.card:hover .lifestyle{opacity:0!important}.card .content{background:transparent!important;padding:16px 4px 0!important}.mvstars{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font-weight:700;font-size:12px;color:#8a7c6a}.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13.5px}.card .button{background:transparent!important;border:1.4px solid #1d3226!important;color:#1d3226!important;border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}.card .button:hover{background:#1d3226!important;color:#fff!important}@media(max-width:700px){.cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;padding:4px 14px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cards::-webkit-scrollbar{display:none}.card{flex:0 0 90%!important;scroll-snap-align:center;min-width:0}.mvdots{display:flex;justify-content:center;gap:8px;margin:2px 0 10px}.mvdots i{width:7px;height:7px;border-radius:99px;background:#d8cbb8;transition:all .25s}.mvdots i.on{background:#E05A00;width:18px}}@media(min-width:701px){.mvdots{display:none}}"""
+CARD_SKIN_CSS = """.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}.card.energy{--sku:#F2902E}.card.relax{--sku:#91B681}.card.sleep{--sku:#779BC6}.card .visual{border-radius:18px!important;overflow:hidden!important}.card::before,.card::after{display:none!important}.card .button::before,.card .button::after{display:none!important;content:none!important}.card .content{text-align:center!important}.card .label,.card .description,.card .monthly{display:none!important}.mvname{font-size:22px;font-weight:700;letter-spacing:.055em;color:#1d3226;margin:8px 0 0}.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;margin:12px 0 16px!important;padding-top:12px!important;line-height:1.5!important;letter-spacing:0!important}.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}.card .button{display:inline-block!important;width:auto!important;min-width:172px!important;padding:12px 22px!important;font-size:14.5px!important;line-height:1.2!important;min-height:46px!important}.card .units{opacity:0!important;transform:scale(.98)!important}.card .lifestyle{opacity:1!important;transform:none!important}.card:hover .units{opacity:1!important;transform:none!important}.card:hover .lifestyle{opacity:0!important}.card .content{background:transparent!important;padding:16px 4px 0!important}.mvstars{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font-weight:700;font-size:12px;color:#7a6c5c}.mvprice{display:flex;align-items:baseline;justify-content:center;gap:7px;margin:0 0 12px}.mvprice b{font-size:21px;font-weight:900;color:#171512;letter-spacing:-.02em}.mvprice span{font-size:12.5px;font-weight:700;color:#7a6c5c}.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13.5px}.card .button{background:transparent!important;border:1.4px solid #1d3226!important;color:#1d3226!important;border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}.card .button:hover{background:#1d3226!important;color:#fff!important}@media(max-width:700px){.cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;padding:4px 14px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cards::-webkit-scrollbar{display:none}.card{flex:0 0 90%!important;scroll-snap-align:center;min-width:0}.mvdots{display:flex;justify-content:center;gap:8px;margin:2px 0 10px}.mvdots i{width:7px;height:7px;border-radius:99px;background:#d8cbb8;transition:all .25s}.mvdots i.on{background:#E05A00;width:18px}}@media(min-width:701px){.mvdots{display:none}}"""
 
 # rules that only the standalone products page needs
 PRODUCTS_PAGE_CSS = """@media(max-width:700px){
@@ -1094,6 +1095,11 @@ _CARDSKIN = """
       if(sku&&!c.querySelector('.mvname')){
         var nm=document.createElement('div'); nm.className='mvname'; nm.textContent=sku;
         row.insertAdjacentElement('afterend',nm);
+      }
+      if(!c.querySelector('.mvprice')){
+        var pr=document.createElement('div'); pr.className='mvprice';
+        pr.innerHTML='<b>\u20aa170</b><span>\u05dc\u05d7\u05d5\u05d3\u05e9 \u00b7 30 \u05d9\u05d7\u05d9\u05d3\u05d5\u05ea</span>';
+        var btn=c.querySelector('.button'); if(btn)c.insertBefore(pr,btn); else c.appendChild(pr);
       }
     });
     if(matchMedia('(max-width:700px)').matches){
@@ -2118,6 +2124,11 @@ document.addEventListener('click',function(e){
       if(sku&&!c.querySelector('.mvname')){
         var nm=d.createElement('div'); nm.className='mvname'; nm.textContent=sku;
         row.insertAdjacentElement('afterend',nm);
+      }
+      if(!c.querySelector('.mvprice')){
+        var pr=d.createElement('div'); pr.className='mvprice';
+        pr.innerHTML='<b>\u20aa170</b><span>\u05dc\u05d7\u05d5\u05d3\u05e9 \u00b7 30 \u05d9\u05d7\u05d9\u05d3\u05d5\u05ea</span>';
+        var btn=c.querySelector('.button'); if(btn)c.insertBefore(pr,btn); else c.appendChild(pr);
       }
     });
     var LIFE=window.__MOODLIFE||{};
