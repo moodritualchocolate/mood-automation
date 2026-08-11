@@ -2585,7 +2585,14 @@ for _tok, _val in ASSETS.items():
 # way, and srcdoc iframes inherit the parent's base, so the route documents
 # resolve correctly too.
 DIST_BASE = '/store/'
-_head_ext = SHELL_HEAD_META.replace('</head>', '<base href="%s"></head>' % DIST_BASE)
+# noindex while _reviews.PLACEHOLDER holds: the build still presents 30
+# invented reviews with star ratings and a "verified" label, and this output
+# is the one that gets mounted on a real domain. Flip PLACEHOLDER to False
+# once the reviews are real and this comes off with it.
+_ROBOTS = ('<meta name="robots" content="noindex,nofollow">'
+           if getattr(_reviews, 'PLACEHOLDER', True) else '')
+_head_ext = SHELL_HEAD_META.replace(
+    '</head>', '<base href="%s">%s</head>' % (DIST_BASE, _ROBOTS))
 
 _shell_ext = (_head_ext + '<div dir="rtl" lang="he">' + shell_head
               + '\n'.join(tpl_blocks)
