@@ -139,8 +139,6 @@ nav a:hover{opacity:.6}
 .ritual .in h2 b{font-weight:700}
 .ritual .in p{font-size:clamp(16px,1.7vw,20px);max-width:600px;margin:0 auto 28px;line-height:1.55}
 /* ---------- offer strip (mint) ---------- */
-.offer{background:var(--mint);color:var(--forest);text-align:center;padding:20px 4vw}
-.offer b{font-weight:800}
 /* ---------- reviews summary (mayven signature) ---------- */
 .rvs{padding:80px 4vw;background:var(--paper-soft)}
 .rvs-in{max-width:640px;margin:0 auto;text-align:center}
@@ -148,13 +146,6 @@ nav a:hover{opacity:.6}
 .rvs-num{display:inline-flex;align-items:baseline;gap:14px;justify-content:center;margin:0 0 8px}
 .rvs-num b{font-family:'DM Sans',sans-serif;font-size:72px;font-weight:700;line-height:1;color:var(--ink);letter-spacing:-3px}
 .rvs-num .stars{color:var(--forest);font-size:24px;letter-spacing:3px}
-.rvs-count{color:var(--muted);font-size:14px;margin:0 0 32px}
-.rvs-bars{max-width:400px;margin:0 auto 34px;display:flex;flex-direction:column;gap:12px}
-.rvs-row{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:12px;font-family:'DM Sans',sans-serif;font-size:13px}
-.rvs-row .b{color:var(--forest);font-size:13px}
-.rvs-row .bar{height:8px;background:#e6e2db;border-radius:999px;overflow:hidden}
-.rvs-row .bar i{display:block;height:100%;background:var(--ink);border-radius:999px}
-.rvs-row .n{color:var(--muted);text-align:right;min-width:40px}
 /* individual quotes row */
 .rvq-row{max-width:1200px;margin:36px auto 0;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 .rvq{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px}
@@ -242,8 +233,6 @@ body { background: var(--paper); }
 .pc .tag,
 .tier-tag,
 .bundle-disc,
-.sold,
-.sold-pill,
 .gal-tag,
 .pull { border-radius: 6px !important; }
 .pc, .rvq, .xs, .club { border-radius: 12px !important; }
@@ -262,8 +251,6 @@ body { background: var(--paper); }
 .rvs-num .stars, .buy-rate .stars, .rvq-stars, .pc-stars,
 .stars, [class*="stars"] { color: var(--gold) !important; }
 /* review bars in chocolate */
-.rvs-row .bar i { background: var(--cta) !important; }
-.rvs-row .b { color: var(--cta) !important; }
 /* highlighted pull-quote — keep mint but border-radius reduced (above) */
 
 /* announce bar keeps dark */
