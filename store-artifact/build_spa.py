@@ -463,26 +463,7 @@ RONEN_PLUS = """
     if(!hm||hm.dataset.done)return;
     hm.dataset.done='1';
     hm.className='tline';
-    hm.innerHTML='<div class="tline-in">מה שחמישה כדורים עושים בבליעה — <b>אנחנו עושים טוב יותר. בביס אחד.</b></div>';
-  }
-  function chocReveal(){
-    // the hero sells a moment; this sells the thing itself — nothing else on the page shows the bite
-    var t=document.querySelector('.tline'); if(!t||document.querySelector('.rev'))return;
-    var s=document.createElement('section'); s.className='rev';
-    s.innerHTML='<div class="rev-in">'+
-      '<div class="rev-copy">'+
-        '<h2>כן.<span>זה באמת שוקולד.</span></h2>'+
-        '<p>לא כמוסה, לא גומי, לא אבקה שמערבבים במים. קובייה אחת של 7 גרם — '+
-          'ובתוכה הפורמולה המלאה של הרגע שבחרתם.</p>'+
-        '<div class="rev-spec">'+
-          '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
-          '<div><b>0</b><span>גרם סוכר</span></div>'+
-          '<div><b>7</b><span>גרם לקובייה</span></div>'+
-        '</div>'+
-      '</div>'+
-      '<figure class="rev-media"><img src="%%BITEIMG%%" alt="קוביית השוקולד של mood" loading="lazy"></figure>'+
-    '</div>';
-    t.parentNode.insertBefore(s, t.nextSibling);
+    hm.innerHTML='<div class="tline-in">לא עוד משהו לזכור לקחת — <b>משהו שתחכו לאכול.</b></div>';
   }
   function callIcon(){
     var nav=document.querySelector('.xnav')||document.querySelector('nav');
@@ -525,7 +506,7 @@ RONEN_PLUS = """
     });
   }
   function boot2(){[120,260,900,1800].forEach(function(d){
-    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();chocReveal();},d);});}
+    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();},d);});}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot2); else boot2();
 })();
 </script>"""
@@ -1333,34 +1314,6 @@ MOOD_SYSTEM = """
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
-/* ============ THE REVEAL — the bite itself, straight after the hero ============ */
-.rev{background:#0e0b08;color:#f7efe4;overflow:hidden;position:relative}
-.rev-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
-  grid-template-columns:.88fr 1.12fr;gap:clamp(20px,3.4vw,46px);padding:clamp(26px,3.4vw,44px) 0}
-.rev-copy h2{margin:0;font-size:clamp(27px,4.3vw,52px);line-height:1.06;letter-spacing:-.035em;
-  font-weight:900;color:#fff}
-.rev-copy h2 span{display:block;color:#E8873A}
-.rev-copy p{margin:clamp(10px,1.3vw,16px) 0 0;font-size:clamp(14px,1.32vw,17.5px);line-height:1.6;
-  color:#d8c9b8;max-width:38ch}
-.rev-spec{display:flex;gap:0;margin-top:clamp(14px,1.9vw,22px);border-top:1px solid rgba(247,239,228,.16)}
-.rev-spec div{flex:1;padding:clamp(10px,1.3vw,15px) 0 0;text-align:center;
-  border-inline-start:1px solid rgba(247,239,228,.16)}
-.rev-spec div:first-child{border-inline-start:0}
-.rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
-  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
-/* near-square frame: the bar stands centred in the salt and fills the height */
-.rev-media{position:relative;overflow:hidden;aspect-ratio:5/4;background:#100c09;margin:0;
-  border-radius:22px}
-.rev-media img{width:100%;height:100%;object-fit:cover;display:block}
-/* no scrim: the photograph is lit warm and the section behind it is near-black already */
-@media (max-width:820px){
-  .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
-  .rev-media{aspect-ratio:4/3;border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
-  .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
-  .rev-copy p{max-width:none}
-}
-
 /* ============ RONEN — a band you cannot skim past ============ */
 .mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
 .mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
@@ -1689,8 +1642,7 @@ for _route in list(page_src):
 page_src['%f3d%'] = page_src['%f3d%'].replace('</body>', MOOD_SYSTEM + '</body>')
 
 for _b in ('/brand/bars-plate.jpg', '/brand/cafe-handoff.jpg', '/mood-club-generations.png',
-           '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png',
-           '/mood-bar-salt.jpg'):
+           '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png'):
     referenced.add(_b)                            # the brand's own campaign photography
 for _a in _journal.ARTICLES:                      # blog art + product shots
     referenced.add(_a['image'])
@@ -1708,8 +1660,7 @@ for p in sorted(referenced):
 
 # the how-it-works photos resolve to the same tokens the asset pass minted
 for _ph, _path in (('%%FAQIMG%%', '/brand/bars-plate.jpg'),
-                   ('%%CMPIMG%%', '/brand/cafe-handoff.jpg'),
-                   ('%%BITEIMG%%', '/mood-bar-salt.jpg')):
+                   ('%%CMPIMG%%', '/brand/cafe-handoff.jpg')):
     _t = 'A' + hashlib.md5(_path.encode()).hexdigest()[:10]
     assert _t in ASSETS, 'how-it-works asset missing: ' + _path
     page_src['/'] = page_src['/'].replace(_ph, '%%' + _t + '%%')
