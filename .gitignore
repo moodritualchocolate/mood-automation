@@ -34,3 +34,4 @@ mood-web/__pycache__/
 # Diagnostic reports (published as Claude artifacts, no need to track)
 /vr-report.html
 /audit-report.html
+/final-state.html
