@@ -243,19 +243,25 @@ RONEN_PLUS = """
     mp.className='mp2';mp.style.setProperty('--shot','url('+shot+')');
     mp.innerHTML=
       '<div class="mp2-in">'+
-        '<div class="mp2-por"><img src="'+por+'" alt="רונן אפללו, "+AWARD+">'+
-          '<i class="mp2-medal" aria-hidden="true">★</i></div>'+
         '<div class="mp2-copy">'+
           '<div class="mp2-eye">השוקולטייר של mood</div>'+
           '<h2>השוקולטייר הטוב בעולם<span> בנה לנו את הביס.</span></h2>'+
           '<p class="mp2-q">18 חודשים לקח לרונן אפללו למצוא את הנקודה שבה 800 מ״ג פורמולה '+
             'עדיין מרגישים כמו שוקולד. <i>"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."</i></p>'+
+          '<div class="mp2-by">'+
+            '<span class="mp2-por"><img src="'+por+'" alt="רונן אפללו">'+
+              '<i class="mp2-medal" aria-hidden="true">★</i></span>'+
+            '<span class="mp2-byt"><b>רונן אפללו</b>'+AWARD+'</span>'+
+          '</div>'+
+          '<div class="mp2-stats">'+
+            '<div><b>2022</b><span>הטוב בעולם</span></div>'+
+            '<div><b>18</b><span>חודשי פיתוח</span></div>'+
+            '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
+          '</div>'+
         '</div>'+
-        '<div class="mp2-stats">'+
-          '<div><b>2022</b><span>הטוב בעולם</span></div>'+
-          '<div><b>18</b><span>חודשי פיתוח</span></div>'+
-          '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
-        '</div>'+
+        '<figure class="mp2-shot">'+
+          '<img src="%%GLOVES%%" alt="טבלת mood עוברת מיד ליד בסדנה" loading="lazy">'+
+        '</figure>'+
       '</div>';
   }
   function closingBlock(){
@@ -1378,33 +1384,38 @@ MOOD_SYSTEM = """
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
-/* ============ RONEN — a band you cannot skim past ============ */
-.mp2{background:#241b12;padding:clamp(20px,2.8vw,30px) 0;border:0;color:#f2e7d9;position:relative}
-.mp2-in{width:min(1060px,calc(100% - 32px));margin:0 auto;display:grid;gap:14px 22px;align-items:center;
-  grid-template-columns:auto 1fr}
-.mp2-por{width:clamp(72px,9vw,110px);height:clamp(72px,9vw,110px);border-radius:50%;overflow:hidden;
-  flex:0 0 auto;background:#3a2b1e;border:2px solid rgba(247,178,122,.55)}
-.mp2-por img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
+/* ============ RONEN — the workshop, not an About Us ============ */
+.mp2{background:#241b12;padding:0;border:0;color:#f2e7d9;position:relative;overflow:hidden}
+.mp2-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
+  grid-template-columns:1fr .92fr;gap:clamp(20px,3.2vw,44px);padding:clamp(24px,3.2vw,40px) 0}
 .mp2-eye{display:inline-block;font-size:clamp(9.5px,1.2vw,11px);font-weight:900;letter-spacing:.1em;color:#241b12;
   background:#F7B27A;padding:5px 11px;border-radius:999px;white-space:nowrap}
-.mp2-copy h2{margin:9px 0 0;font-size:clamp(23px,3.2vw,36px);line-height:1.06;letter-spacing:-.035em;color:#fff}
+.mp2-copy h2{margin:11px 0 0;font-size:clamp(24px,3.4vw,40px);line-height:1.06;letter-spacing:-.035em;color:#fff}
 .mp2-copy h2 span{color:#F7B27A}
-.mp2-q{margin:9px 0 0;font-size:clamp(13.5px,1.55vw,15.5px);line-height:1.55;color:rgba(242,231,217,.78);
-  font-weight:600;max-width:560px}
+.mp2-q{margin:11px 0 0;font-size:clamp(13.5px,1.55vw,16px);line-height:1.6;color:rgba(242,231,217,.8);
+  font-weight:500;max-width:52ch}
 .mp2-q i{font-style:normal;font-weight:800;color:#F7B27A}
-.mp2-q i{font-style:normal;font-weight:800;color:#F7B27A}
-.mp2-stats{grid-column:1/-1;display:flex;border-top:1px solid rgba(247,178,122,.25);
-  border-bottom:1px solid rgba(247,178,122,.25);margin-top:4px}
-.mp2-stats div{flex:1;padding:10px 4px;display:flex;align-items:baseline;justify-content:center;gap:6px}
+/* he signs the quote — the portrait stops being a decorative medallion */
+.mp2-by{display:flex;align-items:center;gap:11px;margin-top:clamp(14px,1.8vw,20px)}
+.mp2-por{position:relative;width:46px;height:46px;border-radius:50%;overflow:hidden;flex:0 0 auto;
+  background:#3a2b1e;border:2px solid rgba(247,178,122,.55);display:block}
+.mp2-por img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
+.mp2-byt{display:block;font-size:12.5px;line-height:1.35;color:rgba(242,231,217,.62);font-weight:600}
+.mp2-byt b{display:block;font-size:14.5px;color:#f7efe4;font-weight:800;letter-spacing:-.01em}
+.mp2-stats{display:flex;border-top:1px solid rgba(247,178,122,.25);
+  border-bottom:1px solid rgba(247,178,122,.25);margin-top:clamp(16px,2vw,22px)}
+.mp2-stats div{flex:1;padding:11px 4px;display:flex;align-items:baseline;justify-content:center;gap:6px}
 .mp2-stats div+div{border-inline-start:1px solid rgba(247,178,122,.25)}
-.mp2-stats b{font-size:clamp(17px,2.1vw,22px);font-weight:900;color:#F7B27A;letter-spacing:-.03em;line-height:1;
+.mp2-stats b{font-size:clamp(17px,2.1vw,23px);font-weight:900;color:#F7B27A;letter-spacing:-.03em;line-height:1;
   font-variant-numeric:tabular-nums}
 .mp2-stats span{font-size:11px;color:rgba(242,231,217,.62);font-weight:700}
-@media (min-width:901px){
-  .mp2-in{grid-template-columns:auto minmax(0,1fr) auto;gap:28px}
-  .mp2-stats{grid-column:auto;border:0;margin:0;flex:0 0 auto}
-  .mp2-stats div{padding:0 18px;flex-direction:column;align-items:center;gap:4px;justify-content:center}
-  .mp2-stats div+div{border-inline-start:1px solid rgba(247,178,122,.25)}
+.mp2-shot{margin:0;position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/2;background:#141010}
+.mp2-shot img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:900px){
+  .mp2-in{grid-template-columns:1fr;gap:16px;padding:0 0 clamp(20px,5vw,26px)}
+  .mp2-shot{order:-1;aspect-ratio:16/10;border-radius:0;margin:0 -16px;width:calc(100% + 32px)}
+  .mp2-copy h2{font-size:clamp(24px,7vw,32px)}
+  .mp2-q{max-width:none}
 }
 
 /* a play mark — these read as clips, and the card opens on tap */
@@ -1745,7 +1756,8 @@ for _route in page_src:
         page_src[_route] = page_src[_route].replace(_o, _n)
 
 for _b in ('/brand/bars-plate.jpg', '/brand/cafe-handoff.jpg', '/mood-club-generations.png',
-           '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png'):
+           '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png',
+           '/mood-ronen-gloves.jpg'):
     referenced.add(_b)                            # the brand's own campaign photography
 for _a in _journal.ARTICLES:                      # blog art + product shots
     referenced.add(_a['image'])
@@ -1763,7 +1775,8 @@ for p in sorted(referenced):
 
 # the how-it-works photos resolve to the same tokens the asset pass minted
 for _ph, _path in (('%%FAQIMG%%', '/brand/bars-plate.jpg'),
-                   ('%%CMPIMG%%', '/brand/cafe-handoff.jpg')):
+                   ('%%CMPIMG%%', '/brand/cafe-handoff.jpg'),
+                   ('%%GLOVES%%', '/mood-ronen-gloves.jpg')):
     _t = 'A' + hashlib.md5(_path.encode()).hexdigest()[:10]
     assert _t in ASSETS, 'how-it-works asset missing: ' + _path
     page_src['/'] = page_src['/'].replace(_ph, '%%' + _t + '%%')
