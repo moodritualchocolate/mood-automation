@@ -29,3 +29,11 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# hyperframes transient snapshots
+video/**/snaps/
+video/**/snapshots/
+
+# hyperframes transient render work dirs
+video/**/renders/work-*/
+video/**/renders/.*hf-transaction*/

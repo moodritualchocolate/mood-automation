@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>mood — ritual chocolate</title>
+<style>
+@font-face{font-family:"Heebo";src:url(data:font/woff2;base64,__HEEBO_LAT__) format("woff2");font-weight:100 900;font-display:block;}
+@font-face{font-family:"Heebo";src:url(data:font/woff2;base64,__HEEBO_HE__) format("woff2");font-weight:100 900;font-display:block;unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F;}
+
+:root{
+  --cream:#F1E7D6; --cream2:#E9DAC3; --paper:#F7EFE2;
+  --choc:#2C1B10; --choc2:#3E2716; --ink:#2A1C12;
+  --orange:#E4611F; --orange2:#FF7A3C; --amber:#C9541F;
+  --energy:#D8703F; --relax:#6E8148; --sleep:#536588;
+  --sage:#6E8148; --dusk:#536588;
+  --muted:#8A7458;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:auto;}
+body{font-family:"Heebo",system-ui,sans-serif;background:var(--cream);color:var(--ink);
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block;}
+#grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+main{position:relative;z-index:2;}
+
+section{position:relative;min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:9vh 7vw;text-align:center;}
+.reveal{opacity:0;transform:translateY(34px);}
+.eyebrow{font-size:clamp(12px,2.6vw,15px);font-weight:700;letter-spacing:.34em;
+  color:var(--amber);text-transform:uppercase;margin-bottom:22px;}
+.kicker{font-size:clamp(13px,2.7vw,16px);font-weight:600;letter-spacing:.06em;color:var(--muted);}
+h1,h2{font-weight:900;line-height:1.0;letter-spacing:-.02em;color:var(--choc);text-wrap:balance;}
+h1{font-size:clamp(58px,15vw,150px);}
+h2{font-size:clamp(42px,9.5vw,92px);}
+p.lead{font-size:clamp(19px,4.2vw,28px);font-weight:400;line-height:1.5;color:#4B3826;
+  max-width:26ch;margin:26px auto 0;text-wrap:balance;}
+.o{color:var(--orange);}
+.wm{font-weight:900;color:var(--choc);direction:ltr;display:inline-flex;align-items:center;line-height:1;}
+.wm .oo{display:inline-block;border-radius:50%;background:var(--orange);position:relative;}
+.wm .oo::after{content:"";position:absolute;left:50%;top:50%;width:30%;height:30%;
+  background:var(--cream);border-radius:50%;transform:translate(-50%,-50%);}
+
+/* HERO */
+#hero{min-height:100vh;}
+#hero .wm{font-size:clamp(64px,17vw,168px);margin-bottom:6px;}
+#hero .wm .oo{width:.62em;height:.62em;margin:0 .05em;}
+#hero .tag{font-weight:800;letter-spacing:.5em;color:var(--amber);
+  font-size:clamp(13px,3.2vw,20px);text-transform:uppercase;margin-top:4px;}
+#hero .pouch{width:min(58vw,330px);margin:5vh auto 0;filter:drop-shadow(0 40px 52px rgba(60,30,10,.22));}
+#hero{position:relative;}
+#heroBar{width:min(80vw,460px);height:50vh;margin:2vh auto 0;display:block;cursor:grab;position:relative;z-index:2;
+  filter:drop-shadow(0 34px 30px rgba(60,35,15,.20));}
+#heroBar:active{cursor:grabbing;}
+#hero::before{content:"";position:absolute;left:50%;top:52%;width:min(72vw,560px);height:56vh;
+  transform:translate(-50%,-50%);pointer-events:none;z-index:1;
+  background:radial-gradient(closest-side, rgba(228,120,60,0.17), rgba(228,120,60,0) 72%);filter:blur(6px);}
+#vignette{position:fixed;inset:0;z-index:5;pointer-events:none;
+  background:radial-gradient(128% 96% at 50% 42%, transparent 56%, rgba(48,28,12,0.13) 100%);}
+#hero .sub{margin-top:2vh;font-weight:500;}
+.scrollcue{position:absolute;bottom:3.4vh;left:50%;transform:translateX(-50%);
+  font-size:12px;letter-spacing:.3em;color:var(--muted);opacity:.7;font-weight:600;}
+.scrollcue::after{content:"";display:block;width:1px;height:34px;margin:12px auto 0;
+  background:linear-gradient(var(--muted),transparent);}
+
+/* RITUAL / the shift */
+#shift h2{max-width:15ch;}
+#shift .bar{width:min(82vw,600px);margin:6vh auto 0;transform-origin:50% 50%;
+  filter:drop-shadow(0 46px 64px rgba(40,20,8,.42));}
+
+/* RANGE — mood-shift made legible with the real trio: Energy -> Relax -> Sleep */
+#range{overflow:hidden;}
+#range .trio{width:min(92vw,760px);margin:6vh auto 0;
+  filter:drop-shadow(0 46px 60px rgba(60,40,20,.20));}
+#range .moods{display:flex;margin:3.4vh auto 0;width:min(760px,92vw);}
+.mood{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 2vw;}
+.mood .he{font-weight:900;font-size:clamp(17px,4.6vw,26px);color:var(--choc);}
+.mood .en{font-weight:800;font-size:clamp(9px,2.4vw,12px);letter-spacing:.26em;
+  text-transform:uppercase;margin-top:5px;}
+.mood.energy .en{color:var(--energy);} .mood.relax .en{color:var(--relax);} .mood.sleep .en{color:var(--sleep);}
+.mood .desc{font-weight:500;font-size:clamp(11px,2.7vw,14px);color:var(--muted);margin-top:8px;line-height:1.4;max-width:16ch;}
+.mood .st{font-weight:700;font-size:clamp(9px,2.2vw,11px);letter-spacing:.14em;margin-top:12px;
+  padding:4px 13px;border-radius:100px;text-transform:uppercase;}
+.mood.energy .st{color:#fff;background:var(--energy);}
+.mood .st.soon{color:var(--muted);background:rgba(60,40,20,.08);}
+#range .track{display:flex;direction:ltr;margin:4vh auto 0;width:min(600px,86vw);height:6px;border-radius:100px;overflow:hidden;}
+#range .track .seg{flex:1;}
+
+/* PRODUCT */
+#product{flex-direction:row;gap:6vw;flex-wrap:wrap;}
+#product .barface{width:min(46vw,300px);
+  filter:drop-shadow(0 30px 50px rgba(40,20,8,.42));}
+#product .copy{max-width:30ch;text-align:right;}
+#product .copy h2{font-size:clamp(34px,7vw,68px);margin-bottom:20px;}
+#product .copy p{font-size:clamp(17px,3.6vw,22px);line-height:1.6;color:#4B3826;font-weight:500;}
+.pill{display:inline-flex;align-items:center;gap:9px;background:rgba(228,97,31,.12);
+  border:1px solid rgba(228,97,31,.28);color:var(--amber);font-weight:700;
+  padding:9px 18px;border-radius:100px;font-size:clamp(13px,3vw,16px);margin:6px 6px 0 0;}
+
+/* FORMULA */
+#formula{background:linear-gradient(180deg,transparent,rgba(44,27,16,.03));--acc:var(--energy);}
+#formula .tabs{display:flex;direction:rtl;gap:8px;justify-content:center;flex-wrap:wrap;margin:3.4vh auto 0;}
+#formula .tab{display:inline-flex;align-items:baseline;gap:7px;font-family:inherit;
+  font-weight:800;font-size:clamp(14px,3.6vw,17px);padding:11px 22px;border-radius:100px;
+  border:1.5px solid rgba(60,40,20,.16);color:var(--muted);background:transparent;cursor:pointer;
+  transition:color .3s,background .3s,border-color .3s,transform .2s;}
+#formula .tab .en{font-size:.66em;font-weight:700;letter-spacing:.14em;opacity:.7;}
+#formula .tab:hover{transform:translateY(-1px);}
+#formula .tab.active{color:#fff;border-color:transparent;box-shadow:0 12px 26px rgba(60,40,20,.16);}
+#formula .fTag{font-size:clamp(13px,2.9vw,16px);font-weight:600;letter-spacing:.04em;
+  color:var(--acc);margin-top:20px;transition:color .4s;}
+#formula .grid{display:grid;grid-template-columns:1fr;gap:14px;
+  width:min(560px,86vw);margin:4vh auto 0;}
+.ing{display:flex;align-items:center;justify-content:space-between;
+  background:var(--paper);border:1px solid rgba(60,40,20,.09);border-radius:16px;
+  padding:18px 22px;box-shadow:0 10px 26px rgba(60,40,20,.05);text-align:right;}
+.ing .n{font-weight:800;font-size:clamp(18px,4.4vw,24px);color:var(--choc);}
+.ing .d{font-weight:500;font-size:clamp(12px,3vw,14px);color:var(--muted);margin-top:3px;}
+.ing .amt{font-weight:900;font-size:clamp(19px,4.6vw,26px);color:var(--acc);
+  white-space:nowrap;margin-right:16px;transition:color .4s;}
+.ing .dot{width:11px;height:11px;border-radius:50%;flex:none;margin-left:14px;background:var(--acc);}
+.ing .tot{font-weight:700;font-size:clamp(11px,2.6vw,12.5px);color:var(--muted);
+  margin-top:5vh;letter-spacing:.02em;}
+#formula .trust{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,2vw,10px);
+  margin:6.5vh auto 0;width:min(680px,92vw);}
+#formula .trust .t{flex:1 1 140px;background:var(--paper);border:1px solid rgba(60,40,20,.08);
+  border-radius:14px;padding:16px 12px;text-align:center;box-shadow:0 8px 22px rgba(60,40,20,.04);}
+#formula .trust .t b{display:block;font-weight:900;font-size:clamp(14px,3.4vw,17px);color:var(--choc);}
+#formula .trust .t span{display:block;font-weight:500;font-size:clamp(11px,2.6vw,12.5px);
+  color:var(--muted);margin-top:4px;line-height:1.3;}
+/* 3D chocolate formula section */
+#f3d{position:relative;width:min(600px,96vw);aspect-ratio:1/1.16;margin:2vh auto 4vh;}
+#formula .tot{margin-top:1vh;position:relative;z-index:1;}
+#barCanvas{position:absolute;left:50%;top:49%;transform:translate(-50%,-50%);width:52%;height:60%;z-index:2;}
+#f3dLines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1;}
+#f3dLines line{stroke:var(--acc);stroke-width:1.5;opacity:.42;}
+#f3dLines circle{fill:var(--acc);}
+#ings3d{position:absolute;inset:0;z-index:3;}
+#ings3d .ig{position:absolute;transform:translate(-50%,-50%);text-align:center;white-space:nowrap;}
+#ings3d .ig .ign{font-weight:900;font-size:clamp(14px,3.3vw,19px);color:var(--choc);}
+#ings3d .ig .igd{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--acc);margin:0 3px 1px 0;vertical-align:middle;}
+#ings3d .ig .iga{font-weight:900;font-size:clamp(13px,3vw,17px);color:var(--acc);margin-top:1px;}
+
+/* ISRAELI */
+#origin h2{max-width:16ch;}
+#origin .lead{max-width:26ch;}
+#origin .flagdot{display:inline-block;width:10px;height:10px;border-radius:50%;
+  background:var(--orange);margin:0 6px;vertical-align:middle;}
+
+/* CTA */
+#cta{gap:0;}
+#cta .wm{font-size:clamp(52px,13vw,120px);}
+#cta .wm .oo{width:.6em;height:.6em;margin:0 .05em;}
+#cta .energy{font-weight:900;letter-spacing:.34em;color:var(--orange);
+  font-size:clamp(30px,8vw,72px);margin-top:10px;direction:ltr;}
+#cta .btn{margin-top:5vh;background:var(--choc);color:var(--cream);font-weight:800;
+  letter-spacing:.04em;font-size:clamp(17px,4vw,22px);padding:19px 52px;border-radius:100px;
+  box-shadow:0 20px 44px rgba(44,27,16,.32);}
+#cta .soon{margin-top:26px;font-weight:700;letter-spacing:.28em;color:var(--muted);
+  font-size:clamp(12px,3vw,15px);text-transform:uppercase;}
+footer{position:relative;z-index:2;text-align:center;padding:40px 0 46px;color:var(--muted);
+  font-size:13px;letter-spacing:.06em;}
+footer .r{font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-size:11px;opacity:.8;}
+@media(max-width:640px){
+  #product{flex-direction:column;}
+  #product .copy{text-align:center;}
+}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div id="grain"></div>
+<div id="vignette"></div>
+<main>
+
+  <section id="hero">
+    <div class="wm reveal" data-d="0"><span>m</span><span>o</span><span class="oo"></span><span>d</span></div>
+    <div class="tag reveal" data-d="1">RITUAL CHOCOLATE</div>
+    <canvas id="heroBar"></canvas>
+    <p class="lead sub reveal" data-d="3">טקס. לא ממתק.<br/>שוקולד מריר עם כוונה.</p>
+    <div class="scrollcue">גלול</div>
+  </section>
+
+  <section id="shift">
+    <div class="eyebrow reveal" data-d="0">הרגע</div>
+    <h2 class="reveal" data-d="1">ביס אחד.<br/>וה־<span class="o" dir="ltr" style="direction:ltr">mood</span> שלך משתנה.</h2>
+    <img class="bar reveal" data-d="2" src="data:image/png;base64,__BARHERO__" alt="mood bar" />
+    <p class="lead reveal" data-d="3">לא&nbsp;סוכר, לא&nbsp;הבטחות&nbsp;ריקות —<br/>שוקולד&nbsp;אמיתי שעובד&nbsp;איתך.</p>
+  </section>
+
+  <section id="product">
+    <img class="barface reveal" data-d="0" src="data:image/png;base64,__BARFACE__" alt="mood energy bar" />
+    <div class="copy">
+      <div class="eyebrow reveal" data-d="1">המוצר</div>
+      <h2 class="reveal" data-d="2">שוקולד מריר,<br/>אמיתי לגמרי.</h2>
+      <p class="reveal" data-d="3">70%&nbsp;קקאו יחיד־מקור. בלי חומרים משמרים, בלי צבעי מאכל — רק קקאו אמיתי ותמצית צמחים פונקציונלית שנטחנת פנימה.</p>
+      <div class="reveal" data-d="4">
+        <span class="pill">70% קקאו</span>
+        <span class="pill">טבעוני</span>
+        <span class="pill">ללא גלוטן</span>
+        <span class="pill">ללא סוכר מזוקק</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="formula">
+    <div class="eyebrow reveal" data-d="0">הפורמולה שלנו · מדויקת · טבעית</div>
+    <h2 class="reveal" data-d="1">מה בפנים —<br/>עד המיליגרם.</h2>
+    <div class="tabs reveal" data-d="2" id="fTabs">
+      <button class="tab active" data-m="0"><span>אנרגיה</span><span class="en">Energy</span></button>
+      <button class="tab" data-m="1"><span>רוגע</span><span class="en">Relax</span></button>
+      <button class="tab" data-m="2"><span>שינה</span><span class="en">Sleep</span></button>
+    </div>
+    <p class="fTag reveal" data-d="3" id="fTag"></p>
+    <div id="f3d" class="reveal" data-d="4">
+      <svg id="f3dLines" preserveAspectRatio="none"></svg>
+      <canvas id="barCanvas"></canvas>
+      <div id="ings3d"></div>
+    </div>
+    <div class="tot" id="fTot"></div>
+    <div class="trust">
+      <div class="t reveal" data-d="8"><b>טבעי</b><span>רכיבים באיכות גבוהה</span></div>
+      <div class="t reveal" data-d="9"><b>מבוסס מחקר</b><span>פורמולה מדויקת</span></div>
+      <div class="t reveal" data-d="10"><b>70% קקאו</b><span>שוקולד פרימיום</span></div>
+      <div class="t reveal" data-d="11"><b>ישראלי</b><span>פותח ומיוצר באהבה</span></div>
+    </div>
+  </section>
+
+  <section id="range">
+    <div class="eyebrow reveal" data-d="0">mood אחד · שלושה מצבים</div>
+    <h2 class="reveal" data-d="1">צבע לכל<br/>מצב־רוח.</h2>
+    <img class="trio" src="data:image/png;base64,__TRIO__" alt="mood energy relax sleep" />
+    <div class="moods" style="direction:ltr">
+      <div class="mood energy reveal" data-d="3"><div class="he">אנרגיה</div><div class="en">Energy</div><div class="desc">למיקוד וחיוניות</div><div class="st">עכשיו</div></div>
+      <div class="mood relax reveal" data-d="4"><div class="he">רוגע</div><div class="en">Relax</div><div class="desc">לאיזון ורוגע</div><div class="st soon">בקרוב</div></div>
+      <div class="mood sleep reveal" data-d="5"><div class="he">שינה</div><div class="en">Sleep</div><div class="desc">עמוקה ומרגיעה</div><div class="st soon">בקרוב</div></div>
+    </div>
+    <div class="track reveal" data-d="6">
+      <div class="seg" style="background:linear-gradient(90deg,#D8703F,#6E8148)"></div>
+      <div class="seg" style="background:linear-gradient(90deg,#6E8148,#536588)"></div>
+    </div>
+  </section>
+
+  <section id="origin">
+    <div class="eyebrow reveal" data-d="0">מאיפה זה בא</div>
+    <h2 class="reveal" data-d="1">נולד בישראל.<span class="flagdot"></span><br/>נבנה סביב טקס.</h2>
+    <p class="lead reveal" data-d="2">התחלנו כי חיפשנו רגע אחד ביום שהוא רק שלנו — כזה שגם עושה טוב לגוף וגם טעים באמת. אז הכנו אותו.</p>
+  </section>
+
+  <section id="cta">
+    <div class="eyebrow reveal" data-d="0">קרוב יותר ממה שנדמה</div>
+    <div class="wm reveal" data-d="1"><span>m</span><span>o</span><span class="oo"></span><span>d</span></div>
+    <div class="energy reveal" data-d="2">ENERGY</div>
+    <div class="btn reveal" data-d="3">שמרו לי מקום</div>
+    <div class="soon reveal" data-d="4">בקרוב · בלינק בביו</div>
+  </section>
+
+</main>
+<footer>
+  <div>mood · ritual chocolate</div>
+  <div class="r" style="margin-top:8px">made in israel</div>
+</footer>
+
+<script>/*__THREE__*/</script>
+<script>/*__GSAP__*/</script>
+<script>/*__SCROLLTRIGGER__*/</script>
+<script>
+(function(){
+  // ================= living warm cacao-dust field =================
+  // A coherent curl-noise flow (divergence-free swirls = real air currents),
+  // warmth rising as the dominant "current", cursor updraft as a cause, and a
+  // feedback-trail buffer so every mote leaves a flowing filament — the cue
+  // that reads as alive, not a generic particle screensaver.
+  const canvas=document.getElementById("bg");
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:false});
+  renderer.setPixelRatio(1);
+  renderer.autoClear=false;
+
+  // ---- compact deterministic 3D simplex noise ----
+  const grad3=new Float32Array([1,1,0,-1,1,0,1,-1,0,-1,-1,0,1,0,1,-1,0,1,1,0,-1,-1,0,-1,0,1,1,0,-1,1,0,1,-1,0,-1,-1]);
+  const perm=new Uint8Array(512);
+  (function(){const tt=new Uint8Array(256);for(let i=0;i<256;i++)tt[i]=i;let s=1357911;
+    for(let i=255;i>0;i--){s=(s*1103515245+12345)&0x7fffffff;const j=s%(i+1);const tmp=tt[i];tt[i]=tt[j];tt[j]=tmp;}
+    for(let i=0;i<512;i++)perm[i]=tt[i&255];})();
+  const F3=1/3, G3=1/6;
+  function snoise(x,y,z){
+    let n0,n1,n2,n3;
+    const s=(x+y+z)*F3, i=Math.floor(x+s), j=Math.floor(y+s), k=Math.floor(z+s);
+    const tt=(i+j+k)*G3, X0=i-tt, Y0=j-tt, Z0=k-tt;
+    const x0=x-X0, y0=y-Y0, z0=z-Z0;
+    let i1,j1,k1,i2,j2,k2;
+    if(x0>=y0){ if(y0>=z0){i1=1;j1=0;k1=0;i2=1;j2=1;k2=0;}
+      else if(x0>=z0){i1=1;j1=0;k1=0;i2=1;j2=0;k2=1;}
+      else {i1=0;j1=0;k1=1;i2=1;j2=0;k2=1;} }
+    else { if(y0<z0){i1=0;j1=0;k1=1;i2=0;j2=1;k2=1;}
+      else if(x0<z0){i1=0;j1=1;k1=0;i2=0;j2=1;k2=1;}
+      else {i1=0;j1=1;k1=0;i2=1;j2=1;k2=0;} }
+    const x1=x0-i1+G3,y1=y0-j1+G3,z1=z0-k1+G3;
+    const x2=x0-i2+2*G3,y2=y0-j2+2*G3,z2=z0-k2+2*G3;
+    const x3=x0-1+3*G3,y3=y0-1+3*G3,z3=z0-1+3*G3;
+    const ii=i&255,jj=j&255,kk=k&255;
+    const gi0=(perm[ii+perm[jj+perm[kk]]]%12)*3;
+    const gi1=(perm[ii+i1+perm[jj+j1+perm[kk+k1]]]%12)*3;
+    const gi2=(perm[ii+i2+perm[jj+j2+perm[kk+k2]]]%12)*3;
+    const gi3=(perm[ii+1+perm[jj+1+perm[kk+1]]]%12)*3;
+    let t0=0.6-x0*x0-y0*y0-z0*z0; if(t0<0)n0=0;else{t0*=t0;n0=t0*t0*(grad3[gi0]*x0+grad3[gi0+1]*y0+grad3[gi0+2]*z0);}
+    let t1=0.6-x1*x1-y1*y1-z1*z1; if(t1<0)n1=0;else{t1*=t1;n1=t1*t1*(grad3[gi1]*x1+grad3[gi1+1]*y1+grad3[gi1+2]*z1);}
+    let t2=0.6-x2*x2-y2*y2-z2*z2; if(t2<0)n2=0;else{t2*=t2;n2=t2*t2*(grad3[gi2]*x2+grad3[gi2+1]*y2+grad3[gi2+2]*z2);}
+    let t3=0.6-x3*x3-y3*y3-z3*z3; if(t3<0)n3=0;else{t3*=t3;n3=t3*t3*(grad3[gi3]*x3+grad3[gi3+1]*y3+grad3[gi3+2]*z3);}
+    return 32*(n0+n1+n2+n3);
+  }
+  // curl of a 3-component simplex potential -> smooth, non-repeating swirls
+  const OX=[0,31.4,-7.1],OY=[0,12.7,45.3],OZ=[0,5.2,19.8];
+  function pot(c,x,y,z){return snoise(x+OX[c],y+OY[c],z+OZ[c]);}
+  const E=0.35, IE=1/(2*E), curlV=[0,0,0];
+  function curl(x,y,z){
+    const dP2dy=(pot(2,x,y+E,z)-pot(2,x,y-E,z))*IE;
+    const dP1dz=(pot(1,x,y,z+E)-pot(1,x,y,z-E))*IE;
+    const dP0dz=(pot(0,x,y,z+E)-pot(0,x,y,z-E))*IE;
+    const dP2dx=(pot(2,x+E,y,z)-pot(2,x-E,y,z))*IE;
+    const dP1dx=(pot(1,x+E,y,z)-pot(1,x-E,y,z))*IE;
+    const dP0dy=(pot(0,x,y+E,z)-pot(0,x,y-E,z))*IE;
+    curlV[0]=dP2dy-dP1dz; curlV[1]=dP0dz-dP2dx; curlV[2]=dP1dx-dP0dy;
+    return curlV;
+  }
+
+  // ---- particle state ----
+  const N=380, BX=23, BY=17, ZN=-7, ZF=2;
+  const P=new Float32Array(N*3), pos=new Float32Array(N*3);
+  const warm=new Float32Array(N), size=new Float32Array(N), band=new Float32Array(N);
+  let sd=98765;
+  const rnd=()=>{sd=(sd*1103515245+12345)&0x7fffffff;return sd/0x7fffffff;};
+  function spawn(i,fromBottom){
+    P[i*3]=(rnd()*2-1)*BX;
+    P[i*3+1]=fromBottom?-BY-rnd()*4:(rnd()*2-1)*BY;
+    P[i*3+2]=ZN+rnd()*(ZF-ZN);
+    const b=rnd(); band[i]=b;
+    size[i]=0.55+b*b*1.5;          // few large near motes, many fine specks
+    warm[i]=0.25+rnd()*0.75;
+  }
+  for(let i=0;i<N;i++) spawn(i,false);
+
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
+  geo.setAttribute("aWarm",new THREE.BufferAttribute(warm,1));
+  geo.setAttribute("aSize",new THREE.BufferAttribute(size,1));
+  geo.setAttribute("aBand",new THREE.BufferAttribute(band,1));
+  const ptsUni={uScrollHue:{value:0}};
+  const ptsMat=new THREE.ShaderMaterial({
+    uniforms:ptsUni, transparent:true, depthTest:false, depthWrite:false, blending:THREE.NormalBlending,
+    vertexShader:`
+      attribute float aWarm; attribute float aSize; attribute float aBand;
+      varying float vWarm; varying float vBand; varying float vMask;
+      void main(){ vWarm=aWarm; vBand=aBand;
+        vec4 mv=modelViewMatrix*vec4(position,1.0);
+        gl_PointSize=aSize*(300.0/-mv.z);
+        vec4 clip=projectionMatrix*mv; gl_Position=clip;
+        vec2 ndc=clip.xy/clip.w;
+        vMask=mix(0.30,1.0,smoothstep(0.20,0.74,length(ndc)));  // calm the reading center
+      }`,
+    fragmentShader:`
+      precision mediump float; uniform float uScrollHue;
+      varying float vWarm; varying float vBand; varying float vMask;
+      void main(){
+        vec2 c=gl_PointCoord-0.5; float d=length(c);
+        if(d>0.5) discard;
+        float soft=smoothstep(0.5,0.04,d);
+        vec3 cocoa=vec3(0.55,0.37,0.20);
+        vec3 amber=vec3(0.87,0.53,0.22);
+        vec3 sage =vec3(0.47,0.53,0.30);
+        vec3 dusk =vec3(0.36,0.44,0.58);   // real Sleep dusty-blue
+        vec3 col=mix(cocoa,amber,vWarm);
+        col=mix(col,sage,clamp(uScrollHue,0.0,1.0)*0.72);
+        col=mix(col,dusk,clamp(uScrollHue-1.0,0.0,1.0)*0.85);
+        float a=soft*(0.09+0.20*vWarm)*(0.4+0.6*vBand)*vMask;
+        gl_FragColor=vec4(col,a);
+      }`
+  });
+  const pScene=new THREE.Scene(); pScene.add(new THREE.Points(geo,ptsMat));
+  const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,100);
+  camera.position.z=14;
+
+  // ---- feedback-trail buffers (half-res, dreamy) ----
+  const SCALE=0.62;
+  function mkRT(){return new THREE.WebGLRenderTarget(Math.round(innerWidth*SCALE),Math.round(innerHeight*SCALE),
+    {minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,depthBuffer:false});}
+  let rtA=mkRT(), rtB=mkRT();
+  const quadVert=`varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }`;
+  const fadeMat=new THREE.ShaderMaterial({
+    uniforms:{uPrev:{value:null},uCreamTop:{value:new THREE.Color()},uCreamBot:{value:new THREE.Color()},
+      uDecay:{value:0.12},uGlow:{value:1},uGlowPos:{value:new THREE.Vector2(0.5,0.62)}},
+    vertexShader:quadVert,
+    fragmentShader:`
+      precision mediump float;
+      uniform sampler2D uPrev; uniform vec3 uCreamTop; uniform vec3 uCreamBot;
+      uniform float uDecay; uniform float uGlow; uniform vec2 uGlowPos; varying vec2 vUv;
+      void main(){
+        vec3 prev=texture2D(uPrev,vUv).rgb;
+        vec3 cream=mix(uCreamBot,uCreamTop,vUv.y);
+        float g=smoothstep(0.78,0.0,distance(vUv,uGlowPos));
+        cream+=vec3(0.045,0.028,0.010)*g*uGlow;               // breathing warm light pool
+        float vig=smoothstep(1.15,0.35,distance(vUv,vec2(0.5)));
+        cream*=mix(0.965,1.0,vig);                            // faint vignette
+        gl_FragColor=vec4(mix(prev,cream,uDecay),1.0);
+      }`
+  });
+  const screenMat=new THREE.ShaderMaterial({
+    uniforms:{uTex:{value:null}}, vertexShader:quadVert,
+    fragmentShader:`precision mediump float; uniform sampler2D uTex; varying vec2 vUv;
+      void main(){ gl_FragColor=vec4(texture2D(uTex,vUv).rgb,1.0); }`
+  });
+  const quadGeo=new THREE.PlaneGeometry(2,2);
+  const fadeScene=new THREE.Scene(); fadeScene.add(new THREE.Mesh(quadGeo,fadeMat));
+  const screenScene=new THREE.Scene(); screenScene.add(new THREE.Mesh(quadGeo,screenMat));
+  const quadCam=new THREE.Camera();
+
+  function resize(){
+    renderer.setSize(innerWidth,innerHeight);
+    camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+    rtA.setSize(Math.round(innerWidth*SCALE),Math.round(innerHeight*SCALE));
+    rtB.setSize(Math.round(innerWidth*SCALE),Math.round(innerHeight*SCALE));
+  }
+  addEventListener("resize",resize); resize();
+
+  // ---- scroll-driven warm cream (amber -> sage -> dusk) ----
+  const topStops=[[0,[0xF7,0xEE,0xDD]],[0.34,[0xF6,0xEC,0xD2]],[0.62,[0xEE,0xEF,0xDE]],[0.85,[0xE7,0xEC,0xF0]],[1,[0xF3,0xEE,0xE6]]];
+  const botStops=[[0,[0xEC,0xDF,0xCA]],[0.34,[0xEE,0xE2,0xC4]],[0.62,[0xE2,0xE6,0xCE]],[0.85,[0xD6,0xDE,0xE8]],[1,[0xE6,0xE3,0xD6]]];
+  const L=(a,b,t)=>a+(b-a)*t;
+  function pick(stops,p){for(let i=0;i<stops.length-1;i++){const[p0,c0]=stops[i],[p1,c1]=stops[i+1];
+    if(p>=p0&&p<=p1){const k=(p-p0)/(p1-p0);return[L(c0[0],c1[0],k)/255,L(c0[1],c1[1],k)/255,L(c0[2],c1[2],k)/255];}}
+    const c=stops[stops.length-1][1];return[c[0]/255,c[1]/255,c[2]/255];}
+
+  // ---- interaction ----
+  let tmx=0,tmy=0,mx=0,my=0,cursorOn=0;
+  addEventListener("pointermove",e=>{tmx=e.clientX/innerWidth-0.5;tmy=e.clientY/innerHeight-0.5;cursorOn=1;},{passive:true});
+
+  let t=0, hue=0, selectedMood=null;   // selectedMood: null=scroll-driven, else 0/1/2
+  function frame(){
+    t+=0.016;
+    const sc=Math.min(1,scrollY/(document.body.scrollHeight-innerHeight||1));
+    mx+=(tmx-mx)*0.05; my+=(tmy-my)*0.05;
+
+    // breathing: the field inhales/exhales its flow strength + a gentle central pull
+    const breath=1+0.20*Math.sin(t*0.42);
+    const inhale=0.14*Math.sin(t*0.30);
+    const flowT=t*0.045;
+    // cursor in world space (approx on z=0 plane)
+    const cwx=mx*20, cwy=-my*14;
+
+    for(let i=0;i<N;i++){
+      const ix=i*3, x=P[ix], y=P[ix+1], z=P[ix+2];
+      const c=curl(x*0.10+flowT, y*0.10, z*0.10+flowT*0.6);
+      const rsp=(0.6+size[i]*0.4);            // bigger motes ride the flow a touch faster
+      let vx=c[0]*1.7*breath*rsp - x*inhale*0.04;
+      let vy=c[1]*1.7*breath*rsp + (0.34+warm[i]*0.5) - y*inhale*0.02; // buoyancy: warmth rises
+      let vz=c[2]*1.2*breath*rsp;
+      // cursor updraft (a cause): lift + gentle outward swirl near the pointer
+      if(cursorOn){
+        const dx=x-cwx, dy=y-cwy, d2=dx*dx+dy*dy+4;
+        const f=5.0/d2;
+        vy+=f*2.0; vx+=(dx/Math.sqrt(d2))*f*1.0 - dy*f*0.35;
+      }
+      P[ix]=x+vx*0.016; P[ix+1]=y+vy*0.016; P[ix+2]=z+vz*0.016;
+      // recycle: risen out the top -> respawn drifting up from below; wrap x/z off-screen
+      if(P[ix+1]>BY+3){ spawn(i,true); }
+      if(P[ix]>BX)P[ix]-=2*BX; else if(P[ix]<-BX)P[ix]+=2*BX;
+      if(P[ix+2]>ZF)P[ix+2]=ZN; else if(P[ix+2]<ZN)P[ix+2]=ZF;
+      pos[ix]=P[ix]; pos[ix+1]=P[ix+1]; pos[ix+2]=P[ix+2];
+    }
+    geo.attributes.position.needsUpdate=true;
+    // mood hue: once a SKU is picked it drives the whole atmosphere; else scroll does
+    const hueTarget=(selectedMood==null)?sc*2:selectedMood;
+    hue+=(hueTarget-hue)*0.06;
+    ptsUni.uScrollHue.value=hue;
+
+    // camera drifts with cursor + scroll (parallax life)
+    camera.position.x=mx*1.7; camera.position.y=-my*1.1 - sc*0.8;
+    camera.lookAt(0,-sc*0.8,0);
+
+    // colours for this scroll position
+    fadeMat.uniforms.uCreamTop.value.setRGB(...pick(topStops,hue/2));
+    fadeMat.uniforms.uCreamBot.value.setRGB(...pick(botStops,hue/2));
+    fadeMat.uniforms.uGlow.value=0.8+0.4*Math.sin(t*0.42);      // light pool breathes
+    fadeMat.uniforms.uGlowPos.value.set(0.5+mx*0.25,0.60-my*0.2);
+
+    // 1) fade previous frame toward cream -> rtB, 2) draw motes over it, 3) show rtB
+    fadeMat.uniforms.uPrev.value=rtA.texture;
+    renderer.setRenderTarget(rtB); renderer.render(fadeScene,quadCam);
+    renderer.render(pScene,camera);
+    renderer.setRenderTarget(null);
+    screenMat.uniforms.uTex.value=rtB.texture;
+    renderer.render(screenScene,quadCam);
+    const tmp=rtA; rtA=rtB; rtB=tmp;
+
+    if(window.__renderHeroBar) window.__renderHeroBar(t, mx, my);
+    if(window.__renderBar) window.__renderBar(t, mx, my);
+    requestAnimationFrame(frame);
+  }
+  // prime both trail buffers to cream so there is no dark warm-up flash on load
+  renderer.setClearColor(0xF3EADD,1.0);
+  renderer.setRenderTarget(rtA); renderer.clear();
+  renderer.setRenderTarget(rtB); renderer.clear();
+  renderer.setRenderTarget(null);
+  frame();
+
+  // ---------- reveals ----------
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll("section").forEach(sec=>{
+    const items=sec.querySelectorAll(".reveal");
+    gsap.to(items,{opacity:1,y:0,duration:0.9,ease:"power3.out",
+      stagger:0.12,
+      scrollTrigger:{trigger:sec,start:"top 72%"}});
+  });
+  // subtle parallax on product images
+  gsap.utils.toArray("#hero .pouch,#shift .bar,#product .barface").forEach(el=>{
+    gsap.to(el,{yPercent:-8,ease:"none",
+      scrollTrigger:{trigger:el,start:"top bottom",end:"bottom top",scrub:0.6}});
+  });
+  // the bite bar turns + settles as you scroll through the shift — a live product beat
+  gsap.fromTo("#shift .bar",{rotate:-9,scale:0.92},{rotate:5,scale:1.02,ease:"none",
+    scrollTrigger:{trigger:"#shift",start:"top bottom",end:"bottom top",scrub:0.8}});
+  // the trio settles in + gentle scroll parallax
+  gsap.from("#range .trio",{scale:0.94,opacity:0,duration:0.9,ease:"power3.out",
+    scrollTrigger:{trigger:"#range",start:"top 85%"}});
+  gsap.to("#range .trio",{yPercent:-6,ease:"none",
+    scrollTrigger:{trigger:"#range",start:"top bottom",end:"bottom top",scrub:0.6}});
+
+  // procedural studio environment -> glossy chocolate reflections (a bright softbox streak)
+  window.__studioEnv=function(){
+    const c=document.createElement("canvas"); c.width=512; c.height=256; const g=c.getContext("2d");
+    const gr=g.createLinearGradient(0,0,0,256);
+    gr.addColorStop(0,"#fff8f0"); gr.addColorStop(0.34,"#efe0cd"); gr.addColorStop(0.60,"#8a6a4d"); gr.addColorStop(1,"#1e110a");
+    g.fillStyle=gr; g.fillRect(0,0,512,256);
+    const s=g.createRadialGradient(180,60,6,180,60,155);
+    s.addColorStop(0,"rgba(255,255,255,0.98)"); s.addColorStop(1,"rgba(255,255,255,0)");
+    g.fillStyle=s; g.fillRect(0,0,512,256);
+    const s2=g.createRadialGradient(400,110,6,400,110,120);
+    s2.addColorStop(0,"rgba(255,220,180,0.5)"); s2.addColorStop(1,"rgba(255,220,180,0)");
+    g.fillStyle=s2; g.fillRect(0,0,512,256);
+    const t=new THREE.CanvasTexture(c); t.mapping=THREE.EquirectangularReflectionMapping; t.colorSpace=THREE.SRGBColorSpace; return t;
+  };
+
+  // ---------- hero: the 3D chocolate is the thesis ----------
+  (function(){
+    const cvs=document.getElementById("heroBar"); if(!cvs) return;
+    const HR=new THREE.WebGLRenderer({canvas:cvs,antialias:true,alpha:true,premultipliedAlpha:false});
+    HR.outputColorSpace=THREE.SRGBColorSpace;
+    const HS=new THREE.Scene();
+    const HC=new THREE.PerspectiveCamera(26,1,0.1,100); HC.position.set(0,0,9.4);
+    const TL=new THREE.TextureLoader();
+    const nrm=TL.load("__BAR_NORMAL__");
+    const env=window.__studioEnv();
+    const face=new THREE.MeshStandardMaterial({color:0x4a2b16,normalMap:nrm,roughness:0.20,metalness:0.05,envMap:env,envMapIntensity:1.15});
+    face.normalScale=new THREE.Vector2(1.35,1.35);
+    const side=new THREE.MeshStandardMaterial({color:0x2a1509,roughness:0.26,metalness:0.05,envMap:env,envMapIntensity:0.7});
+    const bar=new THREE.Mesh(new THREE.BoxGeometry(1.25,2.5,0.24),[side,side,side,side,face,face]); HS.add(bar);
+    HS.add(new THREE.HemisphereLight(0xfff2e2,0x2a1408,0.85));
+    const key=new THREE.DirectionalLight(0xffffff,2.8); key.position.set(-3.4,4.6,4.6); HS.add(key);
+    const rim=new THREE.DirectionalLight(0xffa257,1.9); rim.position.set(4.2,-0.4,1.2); HS.add(rim);
+    const fill=new THREE.DirectionalLight(0xffffff,0.8); fill.position.set(2.6,1.6,5); HS.add(fill);
+    const spec=new THREE.PointLight(0xffffff,2.4,30); spec.position.set(-1.6,2.6,4.5); HS.add(spec);
+    // drag to spin
+    let drag=0,down=false,lastX=0,vel=0;
+    cvs.addEventListener("pointerdown",e=>{down=true;lastX=e.clientX;vel=0;});
+    addEventListener("pointerup",()=>down=false);
+    addEventListener("pointermove",e=>{if(down){const dx=e.clientX-lastX;lastX=e.clientX;vel=dx*0.01;drag+=vel;}});
+    function size(){const w=cvs.clientWidth||300,h=cvs.clientHeight||500;HR.setPixelRatio(Math.min(devicePixelRatio,2));HR.setSize(w,h,false);HC.aspect=w/h;HC.updateProjectionMatrix();}
+    window.__renderHeroBar=function(t,mx,my){
+      size();
+      if(!down){ vel*=0.94; drag+=vel; }
+      const sc=Math.min(1,scrollY/(innerHeight||1));         // scroll progress through hero
+      bar.rotation.y=-0.35+drag+sc*1.4+Math.sin(t*0.28)*0.16+(mx||0)*0.6;
+      bar.rotation.x=-0.06+Math.sin(t*0.34)*0.05-(my||0)*0.35;
+      bar.position.y=Math.sin(t*0.7)*0.05;
+      key.position.x=-3.4+Math.sin(t*0.5)*2;
+      HR.render(HS,HC);
+    };
+  })();
+
+  // ---------- interactive formula switcher ----------
+  // Pick a mood -> the ingredient list, accent, dust field and background wash
+  // all shift in real time. Real formulas from the brand sheet.
+  const MOODS=[
+    {he:"אנרגיה",en:"ENERGY",acc:"#D8703F",tag:"ENERGY · אנרגיה טבעית למיקוד וחיוניות",
+      ings:[["רודיאלה","תמיכה באנרגיה וסיבולת נפשית",660],["תה ירוק","נוגד חמצון, תמיכה במיקוד",80],
+            ["קינמון","תמיכה ברמת סוכר מאוזנת",40],["ליקוריץ","תמיכה ואיזון טבעי",13],
+            ["גוארנה","מקור טבעי לאנרגיה מתמשכת",7]]},
+    {he:"רוגע",en:"RELAX",acc:"#6E8148",tag:"RELAX · הרגעה טבעית לאיזון ורוגע",
+      ings:[["מליסה","הרגעה ואיזון טבעי",266],["פסיפלורה","תמיכה ברוגע ובמצב הרוח",182],
+            ["מאקה","איזון ואנרגיה עדינה",140],["ולריאן","תמיכה בהרפיה",70],
+            ["ליקוריץ","איזון טבעי",42]]},
+    {he:"שינה",en:"SLEEP",acc:"#536588",tag:"SLEEP · שינה טבעית עמוקה ומרגיעה",
+      ings:[["מליסה","הרגעה לקראת שינה",224],["פסיפלורה","תמיכה בשינה רגועה",224],
+            ["ולריאן","תמיכה בשינה עמוקה",224],["ליקוריץ","איזון טבעי",56]]}
+  ];
+  // real-time 3D chocolate bar (WebGL) as the formula hero
+  const barCanvas=document.getElementById("barCanvas");
+  const bR=new THREE.WebGLRenderer({canvas:barCanvas,antialias:true,alpha:true});
+  bR.outputColorSpace=THREE.SRGBColorSpace;
+  const bScene=new THREE.Scene();
+  const bCam=new THREE.PerspectiveCamera(28,1,0.1,100); bCam.position.set(0,0,9);
+  const _TL=new THREE.TextureLoader();
+  const _bnrm=_TL.load("__BAR_NORMAL__");
+  const _benv=window.__studioEnv();
+  const bFace=new THREE.MeshStandardMaterial({color:0x4a2b16,normalMap:_bnrm,roughness:0.22,metalness:0.05,envMap:_benv,envMapIntensity:1.1});
+  bFace.normalScale=new THREE.Vector2(1.3,1.3);
+  const bSide=new THREE.MeshStandardMaterial({color:0x2a1509,roughness:0.26,metalness:0.05,envMap:_benv,envMapIntensity:0.65});
+  const bar=new THREE.Mesh(new THREE.BoxGeometry(1.25,2.5,0.24),[bSide,bSide,bSide,bSide,bFace,bFace]); bScene.add(bar);
+  bScene.add(new THREE.HemisphereLight(0xfff2e2,0x2a1408,0.8));
+  const bKey=new THREE.DirectionalLight(0xffffff,2.6); bKey.position.set(-3.2,4.5,4.5); bScene.add(bKey);
+  const bRim=new THREE.DirectionalLight(0xffa662,1.7); bRim.position.set(4,-0.5,1.2); bScene.add(bRim);
+  const bFill=new THREE.DirectionalLight(0xffffff,0.7); bFill.position.set(2.5,1.5,5); bScene.add(bFill);
+  const _shTex=(()=>{const cv=document.createElement("canvas");cv.width=cv.height=256;const g=cv.getContext("2d");
+    const rg=g.createRadialGradient(128,128,8,128,128,120);rg.addColorStop(0,"rgba(70,42,20,0.34)");rg.addColorStop(1,"rgba(70,42,20,0)");
+    g.fillStyle=rg;g.fillRect(0,0,256,256);return new THREE.CanvasTexture(cv);})();
+  const bSh=new THREE.Mesh(new THREE.PlaneGeometry(3.4,1.4),new THREE.MeshBasicMaterial({map:_shTex,transparent:true,depthWrite:false}));
+  bSh.position.set(0,-1.8,-0.2); bScene.add(bSh);
+  let _rimTgt=new THREE.Color("#D8703F"), _rimCur=new THREE.Color("#D8703F");
+  function sizeBar(){const w=barCanvas.clientWidth||300,h=barCanvas.clientHeight||360;
+    bR.setPixelRatio(Math.min(devicePixelRatio,2)); bR.setSize(w,h,false); bCam.aspect=w/h; bCam.updateProjectionMatrix();}
+  window.__renderBar=function(t,mx,my){
+    sizeBar();
+    const rect=fSec.getBoundingClientRect();
+    const prog=Math.max(0,Math.min(1,1-(rect.top+rect.height*0.35)/innerHeight));
+    bar.rotation.y=-0.55+prog*1.15+Math.sin(t*0.3)*0.14+(mx||0)*0.5;
+    bar.rotation.x=-0.09+Math.sin(t*0.35)*0.05-(my||0)*0.3;
+    _rimCur.lerp(_rimTgt,0.06); bRim.color.copy(_rimCur);
+    bR.render(bScene,bCam);
+  };
+
+  // clean ingredient labels + connectors around the 3D bar, reactive to the switcher
+  const POS5=[[50,6],[9,39],[91,39],[17,84],[83,84]];
+  const POS4=[[50,5],[7,49],[93,49],[50,92]];
+  const fSec=document.getElementById("formula"),
+        fTag=document.getElementById("fTag"), fTot=document.getElementById("fTot"),
+        ings3d=document.getElementById("ings3d"), f3dLines=document.getElementById("f3dLines"),
+        fTabs=Array.from(document.querySelectorAll("#fTabs .tab"));
+  function renderMood(i,lock){
+    const m=MOODS[i];
+    fSec.style.setProperty("--acc",m.acc); _rimTgt.set(m.acc);
+    fTabs.forEach(b=>{const on=+b.dataset.m===i;b.classList.toggle("active",on);
+      b.style.background=on?m.acc:"transparent";});
+    fTag.textContent=m.tag;
+    const total=m.ings.reduce((s,x)=>s+x[2],0);
+    fTot.textContent=`סה״כ תמצית צמחים פונקציונלית: ${total} מ״ג בכל חטיף`;
+    const pos=m.ings.length===4?POS4:POS5;
+    ings3d.innerHTML=m.ings.map((x,j)=>`<div class="ig" style="left:${pos[j][0]}%;top:${pos[j][1]}%">`+
+      `<div class="ign"><span class="igd"></span>${x[0]}</div><div class="iga">${x[2]} מ״ג</div></div>`).join("");
+    f3dLines.innerHTML=pos.map(p=>`<line x1="50%" y1="49%" x2="${p[0]}%" y2="${p[1]}%"></line><circle cx="${p[0]}%" cy="${p[1]}%" r="4"></circle>`).join("");
+    if(lock){
+      gsap.fromTo("#ings3d .ig",{autoAlpha:0,y:8},{autoAlpha:1,y:0,duration:0.45,ease:"power2.out",stagger:0.05});
+      gsap.fromTo("#f3dLines line",{opacity:0},{opacity:0.42,duration:0.5});
+      m.ings.forEach((x,j)=>{const el=ings3d.children[j].querySelector(".iga");const o={v:0};
+        gsap.to(o,{v:x[2],duration:0.8,ease:"power2.out",onUpdate:()=>el.textContent=Math.round(o.v)+" מ״ג"});});
+      selectedMood=i;
+    }
+  }
+  fTabs.forEach(b=>b.addEventListener("click",()=>renderMood(+b.dataset.m,true)));
+  renderMood(0,false);   // default Energy shown; atmosphere stays scroll-driven until a click
+})();
+</script>
+</body>
+</html>

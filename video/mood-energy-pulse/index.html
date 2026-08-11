@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="he">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>mood ENERGY — 3D</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family:"Heebo"; src:url("assets/fonts/heebo-latin.woff2") format("woff2"); font-weight:100 900; font-display:block; }
+      @font-face { font-family:"Heebo"; src:url("assets/fonts/heebo-hebrew.woff2") format("woff2"); font-weight:100 900; font-display:block; unicode-range:U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F; }
+      * { margin:0; padding:0; box-sizing:border-box; }
+      html, body { width:1080px; height:1920px; overflow:hidden; }
+      body { font-family:"Heebo", sans-serif; }
+      #root { position:relative; width:1080px; height:1920px; overflow:hidden;
+        background:radial-gradient(130% 90% at 50% 40%, #241811 0%, #16100A 55%, #0C0805 100%); }
+
+      #glow { position:absolute; left:50%; top:40%; width:1300px; height:1300px; margin-left:-650px; margin-top:-650px;
+        border-radius:50%; opacity:0.25; pointer-events:none; mix-blend-mode:screen;
+        background:radial-gradient(circle, rgba(255,120,50,0.9) 0%, rgba(255,110,40,0) 62%); }
+      #gl { position:absolute; inset:0; width:100%; height:100%; display:block; }
+      #flash { position:absolute; inset:0; background:#FFE0C0; opacity:0; pointer-events:none; mix-blend-mode:screen; }
+
+      .clip { position:absolute; inset:0; direction:rtl; }
+      .head { position:absolute; left:0; right:0; top:1360px; text-align:center; direction:rtl; }
+      .line { font-weight:900; font-size:120px; line-height:1.05; color:#F6ECDE; text-shadow:0 8px 44px rgba(0,0,0,0.6); }
+      .accent { color:#FF7A3C; } .mwm { color:#FF7A3C; font-weight:900; }
+
+      #ings { position:absolute; left:0; right:0; top:1440px; text-align:center; direction:rtl; }
+      .ing { display:inline-block; font-weight:900; font-size:60px; color:#F6ECDE; margin:0 3px; }
+      .ing.o { color:#FF7A3C; }
+
+      #brand { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; padding-bottom:220px; text-align:center; direction:rtl; }
+      .wordmark { display:inline-flex; align-items:center; font-weight:900; color:#F3EAD9; line-height:1; direction:ltr; font-size:120px; }
+      .oo { display:inline-block; width:100px; height:100px; margin:0 6px; border-radius:50%; background:#FF6B35; position:relative; }
+      .oo::after { content:""; position:absolute; left:50%; top:50%; width:26%; height:26%; background:#16100A; border-radius:50%; transform:translate(-50%,-50%); }
+      .energy { font-weight:900; font-size:150px; letter-spacing:16px; color:#FF7A3C; direction:ltr; margin-top:14px; text-shadow:0 10px 40px rgba(255,110,40,0.4); }
+      .kick { font-weight:800; font-size:40px; letter-spacing:5px; color:#E89B6A; margin-top:30px; }
+      .cta { font-weight:800; font-size:46px; color:#16100A; letter-spacing:3px; background:#FF7A3C; padding:16px 46px; border-radius:100px; margin-top:20px; box-shadow:0 18px 50px rgba(255,110,40,0.5); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1080" data-height="1920" data-duration="11">
+
+      <section id="bg" class="clip" data-start="0" data-duration="11" data-track-index="0">
+        <div id="glow"></div>
+        <canvas id="gl"></canvas>
+        <div id="flash"></div>
+      </section>
+
+      <section id="txt1" class="clip" data-start="3.0" data-duration="2.0" data-track-index="1">
+        <div class="head"><div class="line" id="t1">ביס אחד.</div></div>
+      </section>
+      <section id="txt2" class="clip" data-start="5.0" data-duration="1.9" data-track-index="1">
+        <div class="head"><div class="line" id="t2">וזה ה-<span dir="ltr" class="mwm">mood</span> שלך משתנה.</div></div>
+      </section>
+
+      <section id="ingClip" class="clip" data-start="6.9" data-duration="2.0" data-track-index="2">
+        <div id="ings">
+          <span class="ing o" id="i1">רודיאלה</span><span class="ing" id="i2">תה ירוק</span><span class="ing o" id="i3">קינמון</span><span class="ing" id="i4">ליקוריץ</span><span class="ing o" id="i5">גוארנה</span>
+        </div>
+      </section>
+
+      <section id="brandClip" class="clip" data-start="8.7" data-duration="2.3" data-track-index="3">
+        <div id="brand">
+          <div style="display:flex;flex-direction:column;align-items:center">
+            <div class="wordmark" id="wm"><span>m</span><span>o</span><span class="oo"></span><span>d</span></div>
+            <div class="energy" id="en">ENERGY</div>
+            <div class="kick" id="kick">בקרוב</div>
+            <div class="cta" id="cta">בלינק בביו</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script type="module">
+      import * as THREE from "./assets/vendor/three.module.js";
+      const canvas=document.getElementById("gl");
+      const glow=document.getElementById("glow");
+      const renderer=new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+      renderer.setSize(1080,1920,false); renderer.setPixelRatio(1);
+      renderer.outputColorSpace=THREE.SRGBColorSpace;
+      const scene=new THREE.Scene();
+      const camera=new THREE.PerspectiveCamera(32,1080/1920,0.1,100);
+
+      const loader=new THREE.TextureLoader();
+      const albedo=loader.load("./assets/img/bar3d_albedo.jpg"); albedo.colorSpace=THREE.SRGBColorSpace; albedo.anisotropy=8;
+      const normal=loader.load("./assets/img/bar3d_normal.jpg");
+      // studio environment -> glossy chocolate reflections (direct envMap, software-GL safe)
+      const envTex=loader.load("./assets/img/studio_env.jpg");
+      envTex.mapping=THREE.EquirectangularReflectionMapping; envTex.colorSpace=THREE.SRGBColorSpace;
+      const faceMat=new THREE.MeshStandardMaterial({ map:albedo, normalMap:normal, roughness:0.4, metalness:0.0, envMap:envTex, envMapIntensity:0.4, emissive:0xff5a1e, emissiveIntensity:0.0 });
+      faceMat.normalScale=new THREE.Vector2(0.8,0.8);
+      const sideMat=new THREE.MeshStandardMaterial({ color:0x140a05, roughness:0.4, metalness:0.0, envMap:envTex, envMapIntensity:0.4, emissive:0xff5a1e, emissiveIntensity:0.0 });
+      const geo=new THREE.BoxGeometry(1.225,2.5,0.255);
+      // face order: [px,nx,py,ny,pz,nz] -> texture front(pz)+back(nz), dark sides
+      const bar=new THREE.Mesh(geo,[sideMat,sideMat,sideMat,sideMat,faceMat,faceMat]);
+      bar.position.y=0.55; scene.add(bar);
+
+      scene.add(new THREE.HemisphereLight(0xf4ecff,0x120a06,0.18));
+      const key=new THREE.DirectionalLight(0xffffff,1.05); key.position.set(-4,5,4); scene.add(key);
+      const rim=new THREE.DirectionalLight(0xffd6b0,0.45); rim.position.set(5,-1,2); scene.add(rim);
+      const front=new THREE.PointLight(0xff8030,0.35,20); front.position.set(0,0.5,3); scene.add(front);
+
+      const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+      const eo=x=>1-Math.pow(1-clamp(x,0,1),3);
+      const BPS=124/60;
+      function spike(t,c,w){const d=Math.abs(t-c);return d>w?0:Math.pow(1-d/w,2);}
+      function renderAt(t){
+        const beat=Math.pow(1-((t*BPS)%1),3);
+        const ig=spike(t,0.5,0.5);          // intro ignite
+        const ch=spike(t,5.05,0.6);          // the "change" accent
+        // camera push-in then gentle dolly/orbit
+        const cz = t<2.2 ? 9-(9-5.9)*eo(t/2.2) : 5.9 - Math.sin((t-2.2)*0.5)*0.28;
+        camera.position.set(Math.sin(t*0.32)*0.45, 0.35, cz);
+        camera.lookAt(0,0.5,0);
+        // bar: spin-in, oscillate, fast spin at the change
+        let ry = t<2.0 ? -2.5+(-0.35-(-2.5))*eo(t/2.0) : -0.35 + Math.sin((t-2.0)*0.7)*0.5;
+        if(t>5.0 && t<5.62) ry += ((t-5.0)/0.62)*6.283;   // one fast turn on the change
+        bar.rotation.y=ry;
+        bar.rotation.x=-0.14+Math.sin(t*0.5)*0.05;
+        key.position.x=-4+Math.sin(t*1.1)*3.2;
+        // energy charge through the emboss
+        const emi=beat*0.12+ch*0.4+ig*0.22;
+        faceMat.emissiveIntensity=emi; sideMat.emissiveIntensity=emi*0.7;
+        front.intensity=0.6+beat*1.1+ch*3+ig*1.4;
+        // css bloom
+        glow.style.opacity=(0.22+beat*0.34+ch*0.5+ig*0.4).toFixed(3);
+        glow.style.transform=`scale(${(1+beat*0.16+ch*0.2).toFixed(3)})`;
+        renderer.render(scene,camera);
+      }
+      window.addEventListener("hf-seek",(e)=>renderAt(e.detail.time));
+      renderAt(window.__hfThreeTime||0);
+
+      /* ---- 2D overlays via GSAP (also registers the timeline) ---- */
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused:true });
+      const PUNCH="back.out(2.2)";
+      const flash=(at,p)=>tl.fromTo("#flash",{opacity:p},{opacity:0,duration:0.3,ease:"power2.out"},at);
+
+      tl.fromTo("#t1",{scale:1.5,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.32,ease:PUNCH},3.25);
+      tl.to("#t1",{scale:0.7,autoAlpha:0,duration:0.26,ease:"power3.in"},4.7);
+      tl.set("#t1",{autoAlpha:0},5.0);
+      flash(5.05,0.6);
+      tl.fromTo("#t2",{scale:1.4,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.36,ease:PUNCH},5.2);
+      tl.to("#t2",{autoAlpha:0,duration:0.3,ease:"power2.in"},6.6);
+      tl.set("#t2",{autoAlpha:0},6.9);
+
+      tl.fromTo("#ings .ing",{scale:1.6,y:26,autoAlpha:0,transformOrigin:"50% 50%"},
+        {scale:1,y:0,autoAlpha:1,duration:0.3,ease:PUNCH,stagger:0.085},7.05);
+      tl.to("#ings .ing",{autoAlpha:0,duration:0.28,ease:"power2.in",stagger:0.03},8.5);
+      tl.set("#ingClip",{autoAlpha:0},8.7);
+
+      tl.fromTo("#wm",{scale:0.6,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.42,ease:PUNCH},8.75);
+      flash(8.75,0.35);
+      tl.fromTo("#wm .oo",{scale:0.2},{scale:1,duration:0.4,ease:"back.out(3)"},8.95);
+      tl.fromTo("#en",{scale:1.4,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.36,ease:PUNCH},9.05);
+      tl.fromTo("#kick",{y:18,autoAlpha:0},{y:0,autoAlpha:1,duration:0.32,ease:"power3.out"},9.45);
+      tl.fromTo("#cta",{scale:0.6,autoAlpha:0,transformOrigin:"50% 50%"},{scale:1,autoAlpha:1,duration:0.42,ease:PUNCH},9.7);
+
+      window.__timelines["main"]=tl;
+    </script>
+  </body>
+</html>

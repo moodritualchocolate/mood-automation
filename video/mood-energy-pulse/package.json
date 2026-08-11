@@ -1,0 +1,11 @@
+{
+  "name": "mood-energy-story",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.7.85 preview",
+    "check": "npx --yes hyperframes@0.7.85 check",
+    "render": "npx --yes hyperframes@0.7.85 render --no-browser-gpu",
+    "publish": "npx --yes hyperframes@0.7.85 publish"
+  }
+}
