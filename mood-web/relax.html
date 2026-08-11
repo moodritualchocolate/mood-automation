@@ -351,6 +351,50 @@ body { background: var(--paper); }
 
 nav a.nav-fd{color:var(--gold);font-weight:800;position:relative}
 nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:6px;padding:2px 6px;background:var(--gold);color:#fff;border-radius:3px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;vertical-align:middle}
+.mfoot { position: relative; background: #0f0a05; color: #d9c9b3; padding: 80px 4vw 0; overflow: hidden; font-family: 'Assistant',sans-serif; direction: rtl; }
+.mfoot-mark { position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%); font-family:'DM Sans',sans-serif; font-weight:700; font-size: clamp(280px,42vw,640px); letter-spacing:-22px; color: rgba(247,236,216,.05); line-height:1; pointer-events:none; user-select:none; z-index:0; white-space:nowrap; }
+.mfoot-in { position: relative; z-index:1; max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 60px 40px; padding-bottom: 60px; }
+.mfoot-brand .brand { display:inline-flex; padding: 8px 18px; border-radius: 8px; text-decoration:none; }
+.mfoot-tag { color:#a09a90; font-size:14px; line-height:1.6; margin: 20px 0 26px; max-width: 300px; }
+.mfoot-news-l { display:block; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:800; letter-spacing:2.5px; color:#e8c880; text-transform:uppercase; margin: 0 0 12px; }
+.mfoot-news-row { display:flex; gap:8px; background: rgba(247,236,216,.06); border:1px solid rgba(247,236,216,.15); border-radius:10px; padding:4px; max-width:320px; margin:0 0 10px; }
+.mfoot-news-row input { flex:1; background:transparent; border:0; padding:10px 12px; color:#fdfaf3; font:inherit; font-size:14px; outline:none; direction:rtl; }
+.mfoot-news-row input::placeholder { color:#6b625a; }
+.mfoot-news-row button { background:#f7ecd8; color:#1a1109; border:0; border-radius:8px; padding:10px 18px; font:inherit; font-weight:800; font-size:13.5px; cursor:pointer; transition: background .18s; }
+.mfoot-news-row button:hover { background:#fff; }
+.mfoot-brand small { font-size:12px; color:#6b625a; }
+.mfoot-col h4 { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:800; letter-spacing:2.4px; color:#e8c880; text-transform:uppercase; margin: 0 0 20px; }
+.mfoot-col ul { list-style:none; margin:0 0 20px; padding:0; }
+.mfoot-col li { margin: 0 0 10px; }
+.mfoot-col a { color:#d9c9b3; text-decoration:none; font-size:14.5px; transition: color .18s; }
+.mfoot-col a:hover { color:#fdfaf3; text-decoration:underline; text-underline-offset:4px; }
+.mfoot-social { display:flex; gap:10px; margin: 4px 0 0; }
+.mfoot-social a { width:40px; height:40px; border-radius:50%; border:1px solid rgba(247,236,216,.2); color:#d9c9b3; display:grid; place-items:center; transition: all .2s; }
+.mfoot-social a:hover { background:#f7ecd8; border-color:#f7ecd8; color:#1a1109; transform: translateY(-2px); }
+.mfoot-strip { position: relative; z-index:1; border-top:1px solid rgba(247,236,216,.1); padding: 24px 0; }
+.mfoot-strip-in { max-width: 1240px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+.mfoot-pay { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.mfoot-pay .pay { width:44px; height:28px; border-radius:4px; display:grid; place-items:center; font-family:Arial,sans-serif; font-weight:900; font-size:11px; letter-spacing:.5px; color:#fff; background:#1a1f71; }
+.mfoot-pay .pay-mc { background:#fff; position:relative; border:1px solid #ddd; }
+.mfoot-pay .pay-mc span:nth-child(1) { position:absolute; left:8px; top:5px; width:18px; height:18px; background:#eb001b; border-radius:50%; }
+.mfoot-pay .pay-mc span:nth-child(2) { position:absolute; right:8px; top:5px; width:18px; height:18px; background:#f79e1b; border-radius:50%; mix-blend-mode: multiply; }
+.mfoot-pay .pay-amex { background:#016fd0; font-size:10px; }
+.mfoot-pay .pay-apple { background:#000; font-weight:600; font-size:10px; }
+.mfoot-pay .pay-bit { background:#00b4c5; font-weight:900; }
+.mfoot-pay .pay-gpay { background:#fff; border:1px solid #ddd; color:#5f6368; font-weight:600; font-size:9px; }
+.mfoot-legal { color:#6b625a; font-size:12.5px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; letter-spacing:.02em; }
+.mfoot-legal a { color:#a09a90; text-decoration:none; transition: color .18s; }
+.mfoot-legal a:hover { color:#fdfaf3; }
+@media (max-width: 900px) {
+  .mfoot-in { grid-template-columns: 1fr 1fr; gap: 40px 30px; }
+  .mfoot-brand { grid-column: 1 / -1; }
+  .mfoot-mark { font-size: clamp(160px,60vw,380px); letter-spacing:-12px; bottom: -30px; }
+  .mfoot-strip-in { justify-content:center; text-align:center; }
+}
+@media (max-width: 520px) {
+  .mfoot-in { grid-template-columns: 1fr; }
+  .mfoot { padding: 60px 5vw 0; }
+}
 </style>
 </head>
 <body>
