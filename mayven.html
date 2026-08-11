@@ -373,6 +373,92 @@ body .pc .pc-price, body .pc .pc-price-main, body .pc .pc-price-from {
     color: #fdfaf3 !important;
   }
   .champstrip-text b { color: #ffec5c !important; }
+  .hero {
+    min-height: min(62vh, 520px) !important;
+  }
+  .trust-row { padding: 14px 3vw; }
+  .trust-row-in { gap: 4px 8px; font-size: 12.5px; }
+}
+
+/* Phase 2C — baseline styles for champion strip + trust row (previously unstyled) */
+.champstrip {
+  background: var(--cta);
+  color: var(--paper);
+  padding: 14px 4vw;
+}
+.champstrip-in {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+}
+.champstrip-avatar {
+  width: 44px;
+  height: 44px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.champstrip-text {
+  font-family: 'Assistant', sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--paper);
+}
+.champstrip-text b {
+  color: var(--gold);
+  font-weight: 700;
+}
+.champstrip-text .sep {
+  color: rgba(255,255,255,.35);
+  margin: 0 4px;
+}
+.champstrip-medal {
+  background: var(--gold);
+  color: var(--cta);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.trust-row {
+  background: var(--paper);
+  padding: 18px 4vw;
+  border-bottom: 1px solid var(--line);
+}
+.trust-row-in {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-family: 'Assistant', sans-serif;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.tr-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+.tr-item b {
+  color: var(--forest);
+  font-weight: 800;
+}
+.tr-sep {
+  color: var(--muted);
+  opacity: .45;
 }
 
 </style>
