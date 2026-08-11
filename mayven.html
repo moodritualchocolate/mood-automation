@@ -376,8 +376,18 @@ body .pc .pc-price, body .pc .pc-price-main, body .pc .pc-price-from {
   .hero {
     min-height: min(62vh, 520px) !important;
   }
-  .trust-row { padding: 14px 3vw; }
-  .trust-row-in { gap: 4px 8px; font-size: 12.5px; }
+  .trust-row { padding: 12px 2vw; }
+  .trust-row-in {
+    gap: 0 8px;
+    font-size: 11px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .trust-row-in::-webkit-scrollbar { display: none; }
+  .tr-item { flex-shrink: 0; gap: 4px; }
+  .tr-sep { flex-shrink: 0; }
 }
 
 /* Phase 2C — baseline styles for champion strip + trust row (previously unstyled) */
