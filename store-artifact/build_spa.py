@@ -279,10 +279,10 @@ RONEN_PLUS = """
             '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
           '</div>'+
         '</div>'+
-        '<figure class="mp2-shot">'+
-          '<img src="%%GLOVES%%" alt="טבלת mood עוברת מיד ליד בסדנה" loading="lazy">'+
-        '</figure>'+
       '</div>';
+    // the workshop photograph is shot with its right half empty on purpose:
+    // it is the section's ground, not a picture placed beside the words
+    mp.style.setProperty('--shot','url(%%GLOVES%%)');
   }
   // closingBlock, clubUnit, awardsStrip and faqAside were declared twice in
   // this same script, byte for byte. Function declarations hoist, so the
@@ -382,8 +382,10 @@ RONEN_PLUS = """
     // the interruption: the photograph is the section, the words get out of its way.
     var host=document.querySelector('.mp2'); if(!host||document.querySelector('.blu'))return;
     var s=document.createElement('section'); s.className='blu';
+    // copy first: in a right-to-left grid the first child takes the right-hand
+    // track, so the words start at the reading edge and the photograph runs off
+    // the left one. With the figure first the two swapped places and widths.
     s.innerHTML='<div class="blu-in">'+
-      '<figure class="blu-shot"><img src="%%BLUE%%" alt="יד מושיטה טבלת שוקולד mood דרך פתח קרוע בלוח כחול" loading="lazy"></figure>'+
       '<div class="blu-copy">'+
         '<div class="blu-eye">RITUAL CHOCOLATE</div>'+
         '<h2>כן.<span>זה באמת שוקולד.</span></h2>'+
@@ -391,6 +393,7 @@ RONEN_PLUS = """
         '<div class="blu-skus"><i>ENERGY</i><i>RELAX</i><i>SLEEP</i></div>'+
         '<a class="blu-cta" href="/products">בחרו את הרגע שלכם</a>'+
       '</div>'+
+      '<figure class="blu-shot"><img src="%%BLUE%%" alt="יד מושיטה טבלת שוקולד mood דרך פתח קרוע בלוח כחול" loading="lazy"></figure>'+
     '</div>';
     host.parentNode.insertBefore(s, host);      // after the products, before the champion
   }
@@ -1394,64 +1397,83 @@ MOOD_SYSTEM = """
    in the negative space beside it. The blue is the only colour event on a
    cream page; nothing else changes colour to match it. */
 .blu{background:#fbf7f1;padding:clamp(32px,5vw,76px) 0}
-.blu-in{width:min(1240px,calc(100% - 32px));margin:0 auto;display:grid;
-  grid-template-columns:1.55fr 1fr;gap:clamp(24px,4vw,64px);align-items:center}
-.blu-shot{margin:0;overflow:hidden;border-radius:4px;background:#22315e;aspect-ratio:3/2}
+/* The photograph reaches the left edge because the grid carries the container
+   gutter on the reading side only — pulling the image out with a negative
+   margin instead slid it under the words. */
+.blu-in{width:100%;margin:0;display:grid;align-items:start;
+  grid-template-columns:minmax(300px,440px) minmax(0,1fr);gap:clamp(24px,4vw,56px);
+  padding-inline-start:max(16px,calc((100vw - 1240px)/2));padding-inline-end:0}
+/* the words start above the photograph's top edge — symmetry was the stiffness */
+.blu-copy{padding-top:clamp(8px,3vw,54px)}
+/* a tear, not a rounded rectangle: no radius, and it is cut by the page edge */
+.blu-shot{margin:0;overflow:hidden;border-radius:0;background:#22315e;aspect-ratio:16/10}
 .blu-shot img{width:100%;height:100%;object-fit:cover;object-position:52% 50%;display:block}
 .blu-eye{font-size:11px;font-weight:700;letter-spacing:.22em;color:#8a7c6a}
 .blu-copy h2{margin:clamp(12px,1.6vw,18px) 0 0;font-size:clamp(32px,4.4vw,52px);line-height:1.02;
   letter-spacing:-.04em;font-weight:900;color:#171512}
-.blu-copy h2 span{display:block;color:#22315e}
+/* navy belongs to the photograph alone. The headline takes the same accent the
+   hero and every other section already break on. */
+.blu-copy h2 span{display:block;color:#C9551A}
 .blu-copy p{margin:clamp(14px,1.8vw,22px) 0 0;font-size:clamp(15px,1.4vw,17px);line-height:1.75;
   color:#5f584e;font-weight:500}
 .blu-skus{display:flex;gap:20px;margin-top:clamp(16px,2vw,24px);
   padding-top:clamp(14px,1.8vw,20px);border-top:1px solid #e6dccd}
 .blu-skus i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.16em;color:#8a7c6a}
-.blu-cta{display:inline-block;margin-top:clamp(18px,2.2vw,26px);background:#22315e;color:#fff;
-  border:1.4px solid #22315e;border-radius:999px;padding:15px 32px;min-height:52px;
+.blu-cta{display:inline-block;margin-top:clamp(18px,2.2vw,26px);background:#171512;color:#fff;
+  border:1.4px solid #171512;border-radius:999px;padding:15px 32px;min-height:52px;
   font-size:15px;font-weight:700;text-decoration:none;transition:background .2s,border-color .2s}
-.blu-cta:hover{background:#171512;border-color:#171512}
+.blu-cta:hover{background:#22315e;border-color:#22315e}
 @media (max-width:900px){
   /* the photograph leads, edge to edge; the line lands directly under it */
   .blu{padding:0 0 clamp(28px,7vw,40px)}
-  .blu-in{grid-template-columns:1fr;gap:clamp(18px,4vw,24px)}
+  .blu-in{grid-template-columns:1fr;gap:clamp(18px,4vw,24px);padding-inline:16px}
   .blu-shot{aspect-ratio:4/3;border-radius:0;margin:0 -16px;width:calc(100% + 32px)}
+  .blu-copy{padding-top:0}
   .blu-copy h2{font-size:clamp(30px,8.6vw,40px)}
   .blu-copy p{font-size:15px;line-height:1.7}
   .blu-cta{display:block;text-align:center;width:100%}
 }
 
-/* ============ RONEN — the workshop, not an About Us ============ */
-.mp2{background:#241b12;padding:0;border:0;color:#f2e7d9;position:relative;overflow:hidden}
-.mp2-in{width:min(1180px,calc(100% - 32px));margin:0 auto;display:grid;align-items:center;
-  grid-template-columns:1fr .92fr;gap:clamp(20px,3.2vw,44px);padding:clamp(24px,3.2vw,40px) 0}
-.mp2-eye{display:inline-block;font-size:clamp(9.5px,1.2vw,11px);font-weight:900;letter-spacing:.1em;color:#241b12;
-  background:#F7B27A;padding:4px 11px;border-radius:999px;white-space:nowrap}
-.mp2-copy h2{margin:12px 0 0;font-size:clamp(24px,3.4vw,40px);line-height:1.06;letter-spacing:-.035em;color:#fff}
-.mp2-copy h2 span{color:#F7B27A}
-.mp2-q{margin:12px 0 0;font-size:clamp(13.5px,1.55vw,16px);line-height:1.6;color:rgba(242,231,217,.8);
-  font-weight:500;max-width:52ch}
+/* ============ RONEN — the workshop is the ground ============
+   The photograph is framed with its right half deliberately empty, so it runs
+   the full width and the words live in that space rather than beside a picture. */
+.mp2{background:#100c09 var(--shot) no-repeat left center/cover;padding:0;border:0;
+  color:#f7efe4;position:relative;isolation:isolate}
+/* a scrim only where the type sits, so the steel stays steel everywhere else */
+/* the scrim holds only the third the type sits on, and lets go quickly — the
+   gloves stay legible instead of sinking under an even wash */
+.mp2::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(to left,rgba(16,12,9,.9) 0%,rgba(16,12,9,.86) 26%,rgba(16,12,9,.34) 47%,rgba(16,12,9,0) 68%)}
+.mp2-in{width:min(1240px,calc(100% - 32px));margin:0 auto;display:grid;
+  grid-template-columns:minmax(0,.52fr) minmax(0,.48fr);min-height:clamp(380px,42vw,520px);
+  align-items:center;padding:clamp(28px,3.6vw,48px) 0}
+.mp2-copy{grid-column:1}
+.mp2-eye{display:inline-block;font-size:clamp(9.5px,1.2vw,11px);font-weight:700;letter-spacing:.1em;color:#241b12;
+  background:#F7B27A;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.mp2-copy h2{margin:12px 0 0;font-size:clamp(26px,3.6vw,42px);line-height:1.04;letter-spacing:-.035em;color:#fff}
+.mp2-copy h2 span{display:block;color:#F7B27A}
+.mp2-q{margin:12px 0 0;font-size:clamp(13.5px,1.5vw,16px);line-height:1.65;color:rgba(247,239,228,.86);
+  font-weight:500;max-width:46ch}
 .mp2-q i{font-style:normal;font-weight:700;color:#F7B27A}
-/* he signs the quote — the portrait stops being a decorative medallion */
-.mp2-by{display:flex;align-items:center;gap:12px;margin-top:clamp(14px,1.8vw,20px)}
+.mp2-by{display:flex;align-items:center;gap:11px;margin-top:clamp(16px,2vw,22px)}
 .mp2-por{position:relative;width:46px;height:46px;border-radius:50%;overflow:hidden;flex:0 0 auto;
   background:#3a2b1e;border:2px solid rgba(247,178,122,.55);display:block}
 .mp2-por img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
-.mp2-byt{display:block;font-size:12px;line-height:1.35;color:rgba(242,231,217,.62);font-weight:700}
-.mp2-byt b{display:block;font-size:15px;color:#f7efe4;font-weight:700;letter-spacing:-.01em}
-.mp2-stats{display:flex;border-top:1px solid rgba(247,178,122,.25);
-  border-bottom:1px solid rgba(247,178,122,.25);margin-top:clamp(16px,2vw,22px)}
-.mp2-stats div{flex:1;padding:12px 4px;display:flex;align-items:baseline;justify-content:center;gap:8px}
-.mp2-stats div+div{border-inline-start:1px solid rgba(247,178,122,.25)}
+.mp2-byt{display:block;font-size:12.5px;line-height:1.35;color:rgba(247,239,228,.66);font-weight:600}
+.mp2-byt b{display:block;font-size:14.5px;color:#fff;font-weight:700;letter-spacing:-.01em}
+.mp2-stats{display:flex;border-top:1px solid rgba(247,178,122,.28);
+  border-bottom:1px solid rgba(247,178,122,.28);margin-top:clamp(16px,2vw,22px)}
+.mp2-stats div{flex:1;padding:12px 4px;display:flex;align-items:baseline;justify-content:center;gap:6px}
+.mp2-stats div+div{border-inline-start:1px solid rgba(247,178,122,.28)}
 .mp2-stats b{font-size:clamp(17px,2.1vw,23px);font-weight:900;color:#F7B27A;letter-spacing:-.03em;line-height:1;
   font-variant-numeric:tabular-nums}
-.mp2-stats span{font-size:11px;color:rgba(242,231,217,.62);font-weight:700}
-.mp2-shot{margin:0;position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/2;background:#141010}
-.mp2-shot img{width:100%;height:100%;object-fit:cover;display:block}
+.mp2-stats span{font-size:11px;color:rgba(247,239,228,.66);font-weight:700}
 @media (max-width:900px){
-  .mp2-in{grid-template-columns:1fr;gap:16px;padding:0 0 clamp(20px,5vw,26px)}
-  .mp2-shot{order:-1;aspect-ratio:16/10;border-radius:0;margin:0 -16px;width:calc(100% + 32px)}
-  .mp2-copy h2{font-size:clamp(24px,7vw,32px)}
+  /* on a phone the empty half is off-screen, so the scrim covers the whole frame */
+  .mp2{background-position:28% center}
+  .mp2::before{background:linear-gradient(to top,rgba(16,12,9,.95) 0%,rgba(16,12,9,.88) 46%,rgba(16,12,9,.55) 78%,rgba(16,12,9,.35) 100%)}
+  .mp2-in{grid-template-columns:1fr;min-height:clamp(420px,96vw,540px);padding:clamp(120px,34vw,180px) 0 clamp(24px,6vw,32px)}
+  .mp2-copy h2{font-size:clamp(25px,7.2vw,34px)}
   .mp2-q{max-width:none}
 }
 
