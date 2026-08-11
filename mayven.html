@@ -485,6 +485,21 @@ body .pc .pc-price, body .pc .pc-price-main, body .pc .pc-price-from {
   color: var(--muted);
   opacity: .45;
 }
+@media (max-width: 720px) {
+  .trust-row { padding: 12px 2vw; }
+  .trust-row-in {
+    gap: 0 8px;
+    font-size: 11px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .trust-row-in::-webkit-scrollbar { display: none; }
+  .tr-item { flex-shrink: 0; gap: 4px; }
+  .tr-sep { flex-shrink: 0; }
+}
 
 
 
@@ -647,7 +662,7 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
       <div class="pc-price-main"><b>₪420</b><span>· 3 חודשים · ₪4.67 ליחידה</span></div>
       <div class="pc-price-from">מ־₪170 · חודש בודד</div>
     </div>
-    <a class="pill pill-cta" href="https://claude.ai/code/artifact/0b968fe4-1846-4c3f-b901-3492ff1ef085">בחרי מארז</a>
+    <a class="pill pill-cta" href="energy.html">בחרי מארז</a>
   </div>
 </article>
         <article class="pc" data-k="relax" style="--c:#687d36;--pale:#eff3e8">
@@ -665,7 +680,7 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
       <div class="pc-price-main"><b>₪420</b><span>· 3 חודשים · ₪4.67 ליחידה</span></div>
       <div class="pc-price-from">מ־₪170 · חודש בודד</div>
     </div>
-    <a class="pill pill-cta" href="https://claude.ai/code/artifact/780cd7b4-0a7f-41f9-8f78-e7c09681920e">בחרי מארז</a>
+    <a class="pill pill-cta" href="relax.html">בחרי מארז</a>
   </div>
 </article>
         <article class="pc" data-k="sleep" style="--c:#58719a;--pale:#edf2f8">
@@ -683,7 +698,7 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
       <div class="pc-price-main"><b>₪420</b><span>· 3 חודשים · ₪4.67 ליחידה</span></div>
       <div class="pc-price-from">מ־₪170 · חודש בודד</div>
     </div>
-    <a class="pill pill-cta" href="https://claude.ai/code/artifact/4ebf421c-03a6-4b40-a104-8831ac841aae">בחרי מארז</a>
+    <a class="pill pill-cta" href="sleep.html">בחרי מארז</a>
   </div>
 </article>
       </div>
@@ -752,7 +767,7 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
             <li>גישה ראשונה לטעמים חדשים</li>
             <li>ביטול בכל רגע · בלי התחייבות</li>
           </ul>
-          <a class="pill pill-cta" href="https://claude.ai/code/artifact/0b968fe4-1846-4c3f-b901-3492ff1ef085">להצטרף למועדון</a>
+          <a class="pill pill-cta" href="energy.html">להצטרף למועדון</a>
         </div>
       </div>
     </section>
@@ -774,7 +789,7 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
   <div class="mfoot-mark" aria-hidden="true">mood</div>
   <div class="mfoot-in">
     <div class="mfoot-brand">
-      <a class="brand" href="https://claude.ai/code/artifact/5cb65ab3-e876-4077-95b4-2fc43cc7af62" style="background:transparent;border:1.5px solid rgba(247,236,216,.35)"><span style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:-1.2px;font-size:20px;color:#fdfaf3">mood</span></a>
+      <a class="brand" href="#top" style="background:transparent;border:1.5px solid rgba(247,236,216,.35)"><span style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:-1.2px;font-size:20px;color:#fdfaf3">mood</span></a>
       <p class="mfoot-tag">שוקולד פונקציונלי · ריטואל יומי · תוצרת ישראל.<br>שלושה מצבים שהופכים את הבחירה לקלה.</p>
       <div class="mfoot-news">
         <label class="mfoot-news-l">הישארי מעודכנת</label>
@@ -788,30 +803,30 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
     <div class="mfoot-col">
       <h4>קניה</h4>
       <ul>
-        <li><a href="https://claude.ai/code/artifact/0b968fe4-1846-4c3f-b901-3492ff1ef085">ENERGY</a></li>
-        <li><a href="https://claude.ai/code/artifact/780cd7b4-0a7f-41f9-8f78-e7c09681920e">RELAX</a></li>
-        <li><a href="https://claude.ai/code/artifact/4ebf421c-03a6-4b40-a104-8831ac841aae">SLEEP</a></li>
-        <li><a href="https://claude.ai/code/artifact/5cb65ab3-e876-4077-95b4-2fc43cc7af62#moments">כל המוצרים</a></li>
-        <li><a href="https://claude.ai/code/artifact/c376fa7e-6169-4870-bc7c-3e27953a4a74">מועדון mood</a></li>
+        <li><a href="energy.html">ENERGY</a></li>
+        <li><a href="relax.html">RELAX</a></li>
+        <li><a href="sleep.html">SLEEP</a></li>
+        <li><a href="#moments">כל המוצרים</a></li>
+        <li><a href="club.html">מועדון mood</a></li>
       </ul>
     </div>
     <div class="mfoot-col">
       <h4>תמיכה</h4>
       <ul>
-        <li><a href="https://claude.ai/code/artifact/872b2176-dbb6-4e4f-a8d4-6b796d3d6751#shipping">משלוחים</a></li>
-        <li><a href="https://claude.ai/code/artifact/872b2176-dbb6-4e4f-a8d4-6b796d3d6751#returns">החזרות</a></li>
-        <li><a href="https://claude.ai/code/artifact/872b2176-dbb6-4e4f-a8d4-6b796d3d6751#privacy">מדיניות פרטיות</a></li>
-        <li><a href="https://claude.ai/code/artifact/872b2176-dbb6-4e4f-a8d4-6b796d3d6751#terms">תקנון</a></li>
-        <li><a href="https://claude.ai/code/artifact/872b2176-dbb6-4e4f-a8d4-6b796d3d6751#accessibility">הצהרת נגישות</a></li>
+        <li><a href="policies.html#shipping">משלוחים</a></li>
+        <li><a href="policies.html#returns">החזרות</a></li>
+        <li><a href="policies.html#privacy">מדיניות פרטיות</a></li>
+        <li><a href="policies.html#terms">תקנון</a></li>
+        <li><a href="policies.html#accessibility">הצהרת נגישות</a></li>
       </ul>
     </div>
     <div class="mfoot-col">
       <h4>MOOD</h4>
       <ul>
-        <li><a href="https://claude.ai/code/artifact/5cb65ab3-e876-4077-95b4-2fc43cc7af62#ritual">הריטואל</a></li>
-        <li><a href="https://claude.ai/code/artifact/5cb65ab3-e876-4077-95b4-2fc43cc7af62#reviews">ביקורות</a></li>
-        <li><a href="https://claude.ai/code/artifact/146abf9a-72ed-4dcb-b969-62f5f16ca73a">Journal</a></li>
-        <li><a href="https://claude.ai/code/artifact/872b2176-dbb6-4e4f-a8d4-6b796d3d6751#contact">יצירת קשר</a></li>
+        <li><a href="#ritual">הריטואל</a></li>
+        <li><a href="#reviews">ביקורות</a></li>
+        <li><a href="blog.html">Journal</a></li>
+        <li><a href="policies.html#contact">יצירת קשר</a></li>
       </ul>
       <div class="mfoot-social">
         <a href="https://www.instagram.com/mood_ritual_chocolate" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></a>
@@ -844,7 +859,7 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
 
   <div class="smb" role="complementary" aria-label="קנייה מהירה">
     <div class="smb-info"><b>מארז ENERGY · 3 חודשים</b><small>90 ביסים · ₪4.66 ליחידה</small></div>
-    <a class="pill pill-cta" href="https://claude.ai/code/artifact/0b968fe4-1846-4c3f-b901-3492ff1ef085">הוסיפי · ₪420</a>
+    <a class="pill pill-cta" href="energy.html">הוסיפי · ₪420</a>
   </div>
   <a class="fwapp" href="https://wa.me/972536375525" target="_blank" rel="noopener" aria-label="דברו איתנו בוואטסאפ">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.9-2.8-1.5-4-3.4-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 1.8.8 2.5.8 3.4.7.5-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.2zM12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.9-1.5c1.5.8 3.3 1.3 5.1 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
