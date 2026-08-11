@@ -5,6 +5,28 @@
 import re, os, io, base64, json, hashlib
 from PIL import Image
 
+# ---------- 1t. canonical product truth ----------
+# Every piece is 7 g, and the functional blend is 10% of it: 700 mg per piece,
+# 30 individually wrapped pieces to a pouch (21 g of blend per pouch). The
+# percentages and milligrams below are the single source of truth and replace
+# every earlier figure that survived in the source pages — the product pages
+# still carried an 800 mg ENERGY built on rodiola and cinnamon, and a 728 mg
+# SLEEP, while the home page already showed this formula. The site contradicted
+# itself about what is inside the same product.
+FORMULA = {
+    'ENERGY': [('\u05de\u05d0\u05e7\u05d4', 32, 224), ('\u05d2\u05d5\u05d0\u05e8\u05e0\u05d4', 24, 168),
+               ('\u05ea\u05d4 \u05d9\u05e8\u05d5\u05e7', 20, 140), ('\u05d2\u05f3\u05d9\u05e0\u05e1\u05e0\u05d2', 16, 112),
+               ('\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5', 8, 56)],
+    'RELAX':  [('\u05de\u05dc\u05d9\u05e1\u05d4', 38, 266), ('\u05e4\u05e1\u05d9\u05e4\u05dc\u05d5\u05e8\u05d4', 26, 182),
+               ('\u05de\u05d0\u05e7\u05d4', 20, 140), ('\u05d5\u05dc\u05e8\u05d9\u05d0\u05df', 10, 70),
+               ('\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5', 6, 42)],
+    'SLEEP':  [('\u05de\u05dc\u05d9\u05e1\u05d4', 32, 224), ('\u05d5\u05dc\u05e8\u05d9\u05d0\u05df', 30, 210),
+               ('\u05e4\u05e1\u05d9\u05e4\u05dc\u05d5\u05e8\u05d4', 30, 210), ('\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5', 8, 56)],
+}
+for _sku, _rows in FORMULA.items():                 # the numbers must close, or the build stops
+    assert sum(r[1] for r in _rows) == 100, _sku + ' percentages do not sum to 100'
+    assert sum(r[2] for r in _rows) == 700, _sku + ' milligrams do not sum to 700'
+
 PUB = '/tmp/claude-0/-home-user-mood-automation/c8b146d5-7269-5f24-a785-402f620707cd/scratchpad/v42/public'
 OUT = '/tmp/claude-0/-home-user-mood-automation/c8b146d5-7269-5f24-a785-402f620707cd/scratchpad/mood-lp/mood_store.html'
 
@@ -428,6 +450,7 @@ _PDP_DATA = {
  '/sleep':  {'quote': 'פתרון גאוני למי שלא נרדמת. קמה רעננה בלי ערפול.', 'by': 'מיכל', 'bought': '3,892'},
 }
 PDP_SHEET = """
+<script>window.__MOODFORMULA=__FORMULA_JSON__;</script>
 <style>
 /* Codex's legacy add-to-cart toast pokes past the screen edge — our shell cart replaces it */
 .cart-toast{display:none!important}
@@ -547,6 +570,34 @@ PDP_SHEET = """
 <script>
 (function(){
   var D={quote:'__QUOTE__',by:'__BY__',bought:'__BOUGHT__'};
+  function formulaList(){
+    // ENERGY listed five ingredients with their milligrams; RELAX and SLEEP
+    // promised "here is what is inside" and then showed only an animation.
+    // All three now show the same list, generated from one table, and the
+    // milligrams stay behind a toggle so the first thing a shopper meets is
+    // what it contains rather than five numbers at once.
+    var sec=document.querySelector('#formula'); if(!sec||sec.dataset.ing)return;
+    var rows=(window.__MOODFORMULA||{})['__SKU2__']; if(!rows||!rows.length)return;
+    sec.dataset.ing='1';
+    var box=document.createElement('div'); box.className='fx-ing';
+    box.innerHTML='<ul>'+rows.map(function(r){
+        return '<li><b>'+r[0]+'</b><i style="--w:'+r[1]+'%"></i><span>'+r[2]+' מ״ג</span></li>';
+      }).join('')+'</ul>'+
+      '<button type="button" class="fx-more" aria-expanded="false">הכמות המדויקת בכל ביס</button>'+
+      '<p class="fx-note">700 מ״ג פורמולה בכל ביס של 7 גרם · 30 יחידות במארז</p>';
+    var old=sec.querySelector('.benefits');
+    if(old)old.parentNode.replaceChild(box, old);
+    else{
+      var head=sec.querySelector('.fx-head')||sec.firstElementChild;
+      head.parentNode.insertBefore(box, head.nextSibling);
+    }
+    var btn=box.querySelector('.fx-more');
+    btn.addEventListener('click',function(){
+      var on=box.classList.toggle('show');
+      btn.setAttribute('aria-expanded', on?'true':'false');
+      btn.textContent = on ? 'להסתיר את הכמויות' : 'הכמות המדויקת בכל ביס';
+    });
+  }
   function boot(){
     var buy=document.querySelector('.buy'); if(!buy)return;
     // 1) Mayven mobile gallery: horizontal snap strip with edge-peek, built from the thumbs
@@ -725,12 +776,14 @@ PDP_SHEET = """
       if(window.__moodChips)bd.insertAdjacentElement('afterend',window.__moodChips);
     }
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot); else boot();
+  function bootAll(){boot();try{formulaList();}catch(_){}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootAll); else bootAll();
 })();
 </script>"""
 for _r in ('/energy','/relax','/sleep'):
     _d = _PDP_DATA[_r]
     _sheet = (PDP_SHEET.replace('__QUOTE__', _d['quote']).replace('__BY__', _d['by'])
+              .replace('__FORMULA_JSON__', json.dumps(FORMULA, ensure_ascii=False))
               .replace('__BOUGHT__', _d['bought']).replace('__SKU2__', {'/energy':'ENERGY','/relax':'RELAX','/sleep':'SLEEP'}[_r]))
     page_src[_r] = page_src[_r].replace('</body>', _sheet + '</body>')
 
@@ -1148,6 +1201,8 @@ import _journal
 _JOURNAL_IDS = _journal.build(page_src)
 
 # ---------- 1y2. 30 reviews (placeholder copy until verified ones land) ----------
+
+
 AWARD_TEXT = '\u05d4\u05e9\u05d5\u05e7\u05d5\u05dc\u05d8\u05d9\u05d9\u05e8 \u05d4\u05d8\u05d5\u05d1 \u05d1\u05e2\u05d5\u05dc\u05dd \u05dc\u05e9\u05e0\u05ea 2022'
 import _reviews
 _reviews.inject(page_src)
@@ -1264,6 +1319,30 @@ MOOD_SYSTEM = """
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -1688,28 +1767,6 @@ for _route in list(page_src):
     page_src[_route] = (page_src[_route].replace('</body>', MOOD_SYSTEM + '</body>')
                         if '</body>' in page_src[_route] else page_src[_route] + MOOD_SYSTEM)
 page_src['%f3d%'] = page_src['%f3d%'].replace('</body>', MOOD_SYSTEM + '</body>')
-
-# ---------- 1t. canonical product truth ----------
-# Every piece is 7 g, and the functional blend is 10% of it: 700 mg per piece,
-# 30 individually wrapped pieces to a pouch (21 g of blend per pouch). The
-# percentages and milligrams below are the single source of truth and replace
-# every earlier figure that survived in the source pages — the product pages
-# still carried an 800 mg ENERGY built on rodiola and cinnamon, and a 728 mg
-# SLEEP, while the home page already showed this formula. The site contradicted
-# itself about what is inside the same product.
-FORMULA = {
-    'ENERGY': [('\u05de\u05d0\u05e7\u05d4', 32, 224), ('\u05d2\u05d5\u05d0\u05e8\u05e0\u05d4', 24, 168),
-               ('\u05ea\u05d4 \u05d9\u05e8\u05d5\u05e7', 20, 140), ('\u05d2\u05f3\u05d9\u05e0\u05e1\u05e0\u05d2', 16, 112),
-               ('\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5', 8, 56)],
-    'RELAX':  [('\u05de\u05dc\u05d9\u05e1\u05d4', 38, 266), ('\u05e4\u05e1\u05d9\u05e4\u05dc\u05d5\u05e8\u05d4', 26, 182),
-               ('\u05de\u05d0\u05e7\u05d4', 20, 140), ('\u05d5\u05dc\u05e8\u05d9\u05d0\u05df', 10, 70),
-               ('\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5', 6, 42)],
-    'SLEEP':  [('\u05de\u05dc\u05d9\u05e1\u05d4', 32, 224), ('\u05d5\u05dc\u05e8\u05d9\u05d0\u05df', 30, 210),
-               ('\u05e4\u05e1\u05d9\u05e4\u05dc\u05d5\u05e8\u05d4', 30, 210), ('\u05dc\u05d9\u05e7\u05e8\u05d9\u05e5', 8, 56)],
-}
-for _sku, _rows in FORMULA.items():                 # the numbers must close, or the build stops
-    assert sum(r[1] for r in _rows) == 100, _sku + ' percentages do not sum to 100'
-    assert sum(r[2] for r in _rows) == 700, _sku + ' milligrams do not sum to 700'
 
 _ING_NOTE = {
     '\u05de\u05d0\u05e7\u05d4': '\u05e9\u05d5\u05e8\u05e9 \u05d0\u05e0\u05d3\u05d9, \u05d4\u05de\u05e8\u05db\u05d9\u05d1 \u05d4\u05d2\u05d3\u05d5\u05dc \u05d1\u05ea\u05e2\u05e8\u05d5\u05d1\u05ea',

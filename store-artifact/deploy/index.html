@@ -2454,6 +2454,30 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -3355,6 +3379,30 @@ document.addEventListener('click',function(e){
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -4433,6 +4481,7 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 ⟦/SCRIPT⟧>
 
 
+<script>window.__MOODFORMULA={"ENERGY": [["מאקה", 32, 224], ["גוארנה", 24, 168], ["תה ירוק", 20, 140], ["ג׳ינסנג", 16, 112], ["ליקריץ", 8, 56]], "RELAX": [["מליסה", 38, 266], ["פסיפלורה", 26, 182], ["מאקה", 20, 140], ["ולריאן", 10, 70], ["ליקריץ", 6, 42]], "SLEEP": [["מליסה", 32, 224], ["ולריאן", 30, 210], ["פסיפלורה", 30, 210], ["ליקריץ", 8, 56]]};⟦/SCRIPT⟧>
 <style>
 /* Codex's legacy add-to-cart toast pokes past the screen edge — our shell cart replaces it */
 .cart-toast{display:none!important}
@@ -4552,6 +4601,34 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 <script>
 (function(){
   var D={quote:'מחליף לי את הקפה של עשר בבוקר. אנרגיה נקייה, בלי נפילה.',by:'שירה',bought:'4,208'};
+  function formulaList(){
+    // ENERGY listed five ingredients with their milligrams; RELAX and SLEEP
+    // promised "here is what is inside" and then showed only an animation.
+    // All three now show the same list, generated from one table, and the
+    // milligrams stay behind a toggle so the first thing a shopper meets is
+    // what it contains rather than five numbers at once.
+    var sec=document.querySelector('#formula'); if(!sec||sec.dataset.ing)return;
+    var rows=(window.__MOODFORMULA||{})['ENERGY']; if(!rows||!rows.length)return;
+    sec.dataset.ing='1';
+    var box=document.createElement('div'); box.className='fx-ing';
+    box.innerHTML='<ul>'+rows.map(function(r){
+        return '<li><b>'+r[0]+'</b><i style="--w:'+r[1]+'%"></i><span>'+r[2]+' מ״ג</span></li>';
+      }).join('')+'</ul>'+
+      '<button type="button" class="fx-more" aria-expanded="false">הכמות המדויקת בכל ביס</button>'+
+      '<p class="fx-note">700 מ״ג פורמולה בכל ביס של 7 גרם · 30 יחידות במארז</p>';
+    var old=sec.querySelector('.benefits');
+    if(old)old.parentNode.replaceChild(box, old);
+    else{
+      var head=sec.querySelector('.fx-head')||sec.firstElementChild;
+      head.parentNode.insertBefore(box, head.nextSibling);
+    }
+    var btn=box.querySelector('.fx-more');
+    btn.addEventListener('click',function(){
+      var on=box.classList.toggle('show');
+      btn.setAttribute('aria-expanded', on?'true':'false');
+      btn.textContent = on ? 'להסתיר את הכמויות' : 'הכמות המדויקת בכל ביס';
+    });
+  }
   function boot(){
     var buy=document.querySelector('.buy'); if(!buy)return;
     // 1) Mayven mobile gallery: horizontal snap strip with edge-peek, built from the thumbs
@@ -4730,7 +4807,8 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
       if(window.__moodChips)bd.insertAdjacentElement('afterend',window.__moodChips);
     }
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot); else boot();
+  function bootAll(){boot();try{formulaList();}catch(_){}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootAll); else bootAll();
 })();
 ⟦/SCRIPT⟧>
 <script>
@@ -5025,6 +5103,30 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -6096,6 +6198,7 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 ⟦/SCRIPT⟧>
 
 
+<script>window.__MOODFORMULA={"ENERGY": [["מאקה", 32, 224], ["גוארנה", 24, 168], ["תה ירוק", 20, 140], ["ג׳ינסנג", 16, 112], ["ליקריץ", 8, 56]], "RELAX": [["מליסה", 38, 266], ["פסיפלורה", 26, 182], ["מאקה", 20, 140], ["ולריאן", 10, 70], ["ליקריץ", 6, 42]], "SLEEP": [["מליסה", 32, 224], ["ולריאן", 30, 210], ["פסיפלורה", 30, 210], ["ליקריץ", 8, 56]]};⟦/SCRIPT⟧>
 <style>
 /* Codex's legacy add-to-cart toast pokes past the screen edge — our shell cart replaces it */
 .cart-toast{display:none!important}
@@ -6215,6 +6318,34 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 <script>
 (function(){
   var D={quote:'רבע שעה אחרי הקובייה — ואני בן אדם אחר. הריטואל שלי.',by:'נועה',bought:'5,437'};
+  function formulaList(){
+    // ENERGY listed five ingredients with their milligrams; RELAX and SLEEP
+    // promised "here is what is inside" and then showed only an animation.
+    // All three now show the same list, generated from one table, and the
+    // milligrams stay behind a toggle so the first thing a shopper meets is
+    // what it contains rather than five numbers at once.
+    var sec=document.querySelector('#formula'); if(!sec||sec.dataset.ing)return;
+    var rows=(window.__MOODFORMULA||{})['RELAX']; if(!rows||!rows.length)return;
+    sec.dataset.ing='1';
+    var box=document.createElement('div'); box.className='fx-ing';
+    box.innerHTML='<ul>'+rows.map(function(r){
+        return '<li><b>'+r[0]+'</b><i style="--w:'+r[1]+'%"></i><span>'+r[2]+' מ״ג</span></li>';
+      }).join('')+'</ul>'+
+      '<button type="button" class="fx-more" aria-expanded="false">הכמות המדויקת בכל ביס</button>'+
+      '<p class="fx-note">700 מ״ג פורמולה בכל ביס של 7 גרם · 30 יחידות במארז</p>';
+    var old=sec.querySelector('.benefits');
+    if(old)old.parentNode.replaceChild(box, old);
+    else{
+      var head=sec.querySelector('.fx-head')||sec.firstElementChild;
+      head.parentNode.insertBefore(box, head.nextSibling);
+    }
+    var btn=box.querySelector('.fx-more');
+    btn.addEventListener('click',function(){
+      var on=box.classList.toggle('show');
+      btn.setAttribute('aria-expanded', on?'true':'false');
+      btn.textContent = on ? 'להסתיר את הכמויות' : 'הכמות המדויקת בכל ביס';
+    });
+  }
   function boot(){
     var buy=document.querySelector('.buy'); if(!buy)return;
     // 1) Mayven mobile gallery: horizontal snap strip with edge-peek, built from the thumbs
@@ -6393,7 +6524,8 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
       if(window.__moodChips)bd.insertAdjacentElement('afterend',window.__moodChips);
     }
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot); else boot();
+  function bootAll(){boot();try{formulaList();}catch(_){}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootAll); else bootAll();
 })();
 ⟦/SCRIPT⟧>
 <script>
@@ -6688,6 +6820,30 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -7759,6 +7915,7 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 ⟦/SCRIPT⟧>
 
 
+<script>window.__MOODFORMULA={"ENERGY": [["מאקה", 32, 224], ["גוארנה", 24, 168], ["תה ירוק", 20, 140], ["ג׳ינסנג", 16, 112], ["ליקריץ", 8, 56]], "RELAX": [["מליסה", 38, 266], ["פסיפלורה", 26, 182], ["מאקה", 20, 140], ["ולריאן", 10, 70], ["ליקריץ", 6, 42]], "SLEEP": [["מליסה", 32, 224], ["ולריאן", 30, 210], ["פסיפלורה", 30, 210], ["ליקריץ", 8, 56]]};⟦/SCRIPT⟧>
 <style>
 /* Codex's legacy add-to-cart toast pokes past the screen edge — our shell cart replaces it */
 .cart-toast{display:none!important}
@@ -7878,6 +8035,34 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 <script>
 (function(){
   var D={quote:'פתרון גאוני למי שלא נרדמת. קמה רעננה בלי ערפול.',by:'מיכל',bought:'3,892'};
+  function formulaList(){
+    // ENERGY listed five ingredients with their milligrams; RELAX and SLEEP
+    // promised "here is what is inside" and then showed only an animation.
+    // All three now show the same list, generated from one table, and the
+    // milligrams stay behind a toggle so the first thing a shopper meets is
+    // what it contains rather than five numbers at once.
+    var sec=document.querySelector('#formula'); if(!sec||sec.dataset.ing)return;
+    var rows=(window.__MOODFORMULA||{})['SLEEP']; if(!rows||!rows.length)return;
+    sec.dataset.ing='1';
+    var box=document.createElement('div'); box.className='fx-ing';
+    box.innerHTML='<ul>'+rows.map(function(r){
+        return '<li><b>'+r[0]+'</b><i style="--w:'+r[1]+'%"></i><span>'+r[2]+' מ״ג</span></li>';
+      }).join('')+'</ul>'+
+      '<button type="button" class="fx-more" aria-expanded="false">הכמות המדויקת בכל ביס</button>'+
+      '<p class="fx-note">700 מ״ג פורמולה בכל ביס של 7 גרם · 30 יחידות במארז</p>';
+    var old=sec.querySelector('.benefits');
+    if(old)old.parentNode.replaceChild(box, old);
+    else{
+      var head=sec.querySelector('.fx-head')||sec.firstElementChild;
+      head.parentNode.insertBefore(box, head.nextSibling);
+    }
+    var btn=box.querySelector('.fx-more');
+    btn.addEventListener('click',function(){
+      var on=box.classList.toggle('show');
+      btn.setAttribute('aria-expanded', on?'true':'false');
+      btn.textContent = on ? 'להסתיר את הכמויות' : 'הכמות המדויקת בכל ביס';
+    });
+  }
   function boot(){
     var buy=document.querySelector('.buy'); if(!buy)return;
     // 1) Mayven mobile gallery: horizontal snap strip with edge-peek, built from the thumbs
@@ -8056,7 +8241,8 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
       if(window.__moodChips)bd.insertAdjacentElement('afterend',window.__moodChips);
     }
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot); else boot();
+  function bootAll(){boot();try{formulaList();}catch(_){}}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootAll); else bootAll();
 })();
 ⟦/SCRIPT⟧>
 <script>
@@ -8351,6 +8537,30 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -9027,6 +9237,30 @@ document.addEventListener('click',function(e){
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -10087,6 +10321,30 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -10679,6 +10937,30 @@ document.addEventListener('click',function(e){
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -11269,6 +11551,30 @@ document.addEventListener('click',function(e){
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -12002,6 +12308,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -12733,6 +13063,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -13466,6 +13820,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -14197,6 +14575,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -14930,6 +15332,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -15661,6 +16087,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -16394,6 +16844,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -17125,6 +17599,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -17858,6 +18356,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -18589,6 +19111,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -19322,6 +19868,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -20053,6 +20623,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -20786,6 +21380,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -21517,6 +22135,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -22250,6 +22892,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -22981,6 +23647,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -23714,6 +24404,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -24445,6 +25159,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -25178,6 +25916,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -25909,6 +26671,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -26642,6 +27428,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -27373,6 +28183,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -28106,6 +28940,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -28837,6 +29695,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -29570,6 +30452,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -30301,6 +31207,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
@@ -31034,6 +31964,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -31766,6 +32720,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
 
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
+
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
    in the negative space beside it. The blue is the only colour event on a
@@ -32497,6 +33475,30 @@ footer.jf .fl{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin
 .tline .tline-in{max-width:1060px;margin:0 auto;padding:clamp(18px,2.6vw,26px) 22px;text-align:center;
   color:#fbf7f1;font-size:clamp(15px,2.6vw,23px);font-weight:700;letter-spacing:-.015em;line-height:1.42}
 .tline .tline-in b{color:#FFB877;font-weight:900}
+
+/* ============ FORMULA LIST — what it contains first, how much on request ==== */
+.fx-ing{margin:clamp(16px,2vw,22px) 0 0}
+.fx-ing ul{list-style:none;margin:0;padding:0;display:grid;gap:clamp(10px,1.2vw,14px);max-width:560px}
+.fx-ing li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.fx-ing b{font-size:clamp(15px,1.4vw,17px);font-weight:700;color:#171512;white-space:nowrap}
+.fx-ing i{height:6px;border-radius:99px;background:#ece2d2;position:relative;display:block}
+/* the fill has to start at the reading edge — anchored left, it began at the
+   far end of the row from its own label */
+.fx-ing i::before{content:"";position:absolute;top:0;bottom:0;inset-inline-start:0;width:var(--w);
+  border-radius:99px;background:#C9551A}
+.fx-ing span{font-size:13.5px;font-weight:700;color:#8a7c6a;font-variant-numeric:tabular-nums;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
+.fx-ing.show span{opacity:1;visibility:visible}
+.fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.fx-more:hover{background:#1d3226;color:#fff}
+.fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
+@media (max-width:700px){
+  .fx-ing li{grid-template-columns:auto 1fr auto;gap:10px}
+  .fx-ing b{font-size:15px}
+  .fx-more{width:100%}
+}
 
 /* ============ THE BLUE REVEAL — the photograph is the section ============
    Asymmetric, magazine-like: the picture takes roughly 60% and the words sit
