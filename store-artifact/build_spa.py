@@ -338,30 +338,13 @@ RONEN_PLUS = """
     var faq=document.querySelector('.faq'); if(!faq||faq.dataset.aside)return;
     [].forEach.call(faq.querySelectorAll('details[open]'),function(d){d.removeAttribute('open');});
     [].forEach.call(faq.querySelectorAll('.faq-eyebrow,.eyebrow'),function(e){e.remove();});
-    // the two headings of this section are one pair: same size, same colour break
     var fh=faq.querySelector('h2');
     if(fh)fh.innerHTML='כל מה<span> שרציתם לדעת.</span>';
     faq.dataset.aside='1';
-    var inner=faq.querySelector('.faq-in')||faq;
-    var ROWS=[['טעם שרוצים לחזור אליו',2,0,1],
-              ['0 גרם סוכר',2,1,0],
-              ['בלי רעד ובלי נפילה',2,1,0],
-              ['נוח לקחת לכל מקום',2,1,0],
-              ['מתמידים בו אחרי חודש',2,0,1]];
-    function cell(v,us){
-      var cls=v===2?'ok':(v===1?'mid':'no'), gl=v===2?'✓':(v===1?'~':'✕');
-      return '<div class="'+(us?'us ':'')+'c"><i class="'+cls+'">'+gl+'</i></div>';
-    }
-    var aside=document.createElement('aside'); aside.className='fqa';
-    aside.innerHTML=
-      '<h3 class="fqa-h">למה קובייה<span> ולא עוד קפה?</span></h3>'+
-      '<div class="cmp-tbl">'+
-        '<div class="cmp-hd"><span></span><div class="us head"><b>mood</b></div>'+
-          '<div class="head"><b>כדורים</b></div><div class="head"><b>קפה</b></div></div>'+
-        ROWS.map(function(r){return '<div class="cmp-row"><span>'+r[0]+'</span>'+
-          cell(r[1],true)+cell(r[2])+cell(r[3])+'</div>';}).join('')+
-        '</div>'+
-      '</div>';
+    // A mood-vs-pills-vs-coffee scorecard used to sit beside the questions. It
+    // rated five attributes with no study behind any of them, and it scored
+    // black coffee worst on "0 grams of sugar" — which anyone can disprove by
+    // reading a coffee label. The section answers questions now.
   }
   function closingBlock(){
     var soc=document.querySelector('.soc');
@@ -437,35 +420,13 @@ RONEN_PLUS = """
     var faq=document.querySelector('.faq'); if(!faq||faq.dataset.aside)return;
     [].forEach.call(faq.querySelectorAll('details[open]'),function(d){d.removeAttribute('open');});
     [].forEach.call(faq.querySelectorAll('.faq-eyebrow,.eyebrow'),function(e){e.remove();});
-    // the two headings of this section are one pair: same size, same colour break
     var fh=faq.querySelector('h2');
     if(fh)fh.innerHTML='כל מה<span> שרציתם לדעת.</span>';
     faq.dataset.aside='1';
-    var inner=faq.querySelector('.faq-in')||faq;
-    var ROWS=[['טעם שרוצים לחזור אליו',2,0,1],
-              ['0 גרם סוכר',2,1,0],
-              ['בלי רעד ובלי נפילה',2,1,0],
-              ['נוח לקחת לכל מקום',2,1,0],
-              ['מתמידים בו אחרי חודש',2,0,1]];
-    function cell(v,us){
-      var cls=v===2?'ok':(v===1?'mid':'no'), gl=v===2?'✓':(v===1?'~':'✕');
-      return '<div class="'+(us?'us ':'')+'c"><i class="'+cls+'">'+gl+'</i></div>';
-    }
-    var tot=[0,0,0]; ROWS.forEach(function(r){tot[0]+=r[1];tot[1]+=r[2];tot[2]+=r[3];});
-    var max=ROWS.length*2;
-    var aside=document.createElement('aside'); aside.className='fqa';
-    aside.innerHTML=
-      '<h3 class="fqa-h">למה קובייה<span> ולא עוד קפה?</span></h3>'+
-      '<div class="cmp-tbl">'+
-        '<div class="cmp-hd"><span></span><div class="us head"><b>mood</b></div>'+
-          '<div class="head"><b>כדורים</b></div><div class="head"><b>קפה</b></div></div>'+
-        ROWS.map(function(r){return '<div class="cmp-row"><span>'+r[0]+'</span>'+
-          cell(r[1],true)+cell(r[2])+cell(r[3])+'</div>';}).join('')+
-      '</div>';
-    var wrap=document.createElement('div'); wrap.className='fq-grid';
-    inner.parentNode.insertBefore(wrap, inner);
-    wrap.appendChild(inner);
-    wrap.appendChild(aside);
+    // A mood-vs-pills-vs-coffee scorecard used to sit beside the questions. It
+    // rated five attributes with no study behind any of them, and it scored
+    // black coffee worst on "0 grams of sugar" — which anyone can disprove by
+    // reading a coffee label. The section answers questions now.
   }
   function trustLine(){
     var hm=document.querySelector('.hm');
