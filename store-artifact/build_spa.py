@@ -341,7 +341,7 @@ RONEN_PLUS = """
           '<h2>הריטואל שמגיע<span> עד אליכם.</span></h2>'+
           '<ul class="cu-list">'+
             '<li><b>10%</b> הנחה קבועה, בכל הזמנה</li>'+
-            '<li><b>משלוח חינם</b> על הקופסה החודשית</li>'+
+            '<li><b>משלוח חינם</b> בקנייה מעל 249 ₪</li>'+
             '<li><b>דילוג או ביטול</b> בקליק אחד, בלי התחייבות</li>'+
           '</ul>'+
           '<a class="cu-cta" href="/club">הצטרפו למועדון</a>'+
@@ -450,7 +450,8 @@ _PDP_DATA = {
  '/sleep':  {'quote': 'פתרון גאוני למי שלא נרדמת. קמה רעננה בלי ערפול.', 'by': 'מיכל', 'bought': '3,892'},
 }
 PDP_SHEET = """
-<script>window.__MOODFORMULA=__FORMULA_JSON__;</script>
+<script>
+window.__MOODFORMULA=__FORMULA_JSON__;</script>
 <style>
 /* Codex's legacy add-to-cart toast pokes past the screen edge — our shell cart replaces it */
 .cart-toast{display:none!important}
@@ -631,7 +632,7 @@ PDP_SHEET = """
     }
     // 2) sheet order: shipping badge above title, highlighted quote + bought badge after the stars
     if(!buy.querySelector('.mv-ship')){
-      var ship=document.createElement('span');ship.className='mv-ship';ship.textContent='משלוח חינם במארז 3+ חודשים';
+      var ship=document.createElement('span');ship.className='mv-ship';ship.textContent='משלוח חינם בקנייה מעל 249 ₪';
       buy.insertBefore(ship,buy.firstChild);
       var rate=buy.querySelector('.rate')||buy.querySelector('h1');
       var q=document.createElement('div');q.className='mv-quote';
@@ -869,7 +870,7 @@ for _r in page_src:
   },true);
   // rotating announce-bar messages (Mayven keeps the top strip alive)
   (function(){
-    var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
+    var MSGS=['משלוח חינם בקנייה מעל 249 ₪ · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
               'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
               'כשר פרווה · עטופים אחד־אחד · 30 יחידות'];   // a code announced to everyone is not a code
@@ -1238,6 +1239,14 @@ _JOURNAL_IDS = _journal.build(page_src)
 
 # ---------- 1y2. 30 reviews (placeholder copy until verified ones land) ----------
 
+
+# One shipping rule. Four different promises had been live at once: over 249,
+# only on 3+ month packs, always for club members, and free with the club
+# discount. Two of them contradicted each other on a single product page — the
+# badge said 3+ months while the trust row said over 249, and the two-month
+# pack costs 310.
+SHIP_MIN = 249
+SHIP_LINE = '\u05de\u05e9\u05dc\u05d5\u05d7 \u05d7\u05d9\u05e0\u05dd \u05d1\u05e7\u05e0\u05d9\u05d9\u05d4 \u05de\u05e2\u05dc %d \u20aa' % SHIP_MIN
 
 AWARD_TEXT = '\u05d4\u05e9\u05d5\u05e7\u05d5\u05dc\u05d8\u05d9\u05d9\u05e8 \u05d4\u05d8\u05d5\u05d1 \u05d1\u05e2\u05d5\u05dc\u05dd \u05dc\u05e9\u05e0\u05ea 2022'
 import _reviews
@@ -1867,6 +1876,16 @@ _TRUTH = [
     ('49\u00d724\u00d75 \u05de\u05f4\u05de', '7 \u05d2\u05e8\u05dd \u05dc\u05d1\u05d9\u05e1'),
 ]
 
+_SHIP_FIX = [('משלוח חינם בקנייה מעל ₪249',
+     'משלוח חינם בקנייה מעל 249 ₪'), ('משלוח חינם בהזמנה מעל ₪249',
+     'משלוח חינם בקנייה מעל 249 ₪'), ('משלוח חינם מעל ₪249',
+     'משלוח חינם בקנייה מעל 249 ₪'), ('משלוח חינם מעל 249 ₪',
+     'משלוח חינם בקנייה מעל 249 ₪'), ('משלוח חינם — תמיד, גם מתחת ל־249 ₪',
+     'משלוח חינם בקנייה מעל 249 ₪'), ('עם משלוח חינם — ובלי שום התחייבות',
+     'ובלי שום התחייבות'), ('10% הנחה קבועה ומשלוח חינם',
+     '10% הנחה קבועה, בכל הזמנה'), ('משלוח חינם, כל חודש',
+     'משלוח חינם בקנייה מעל 249 ₪')]
+
 _LAUNCH = [
     ('\u05de\u05e9\u05d9\u05e7\u05d9\u05dd \u05d1-12.8. \u05e0\u05e8\u05e9\u05de\u05d9\u05dd \u05e2\u05db\u05e9\u05d9\u05d5 \u05dc\u05e8\u05e9\u05d9\u05de\u05ea \u05d4\u05d4\u05de\u05ea\u05e0\u05d4 \u05d5\u05de\u05e7\u05d1\u05dc\u05d9\u05dd \u05d2\u05d9\u05e9\u05d4 \u05e8\u05d0\u05e9\u05d5\u05e0\u05d4 \u05d5\u05d4\u05d8\u05d1\u05ea \u05d4\u05e9\u05e7\u05d4. ',
      '\u05d1\u05d5\u05d7\u05e8\u05d9\u05dd \u05de\u05d0\u05e8\u05d6, \u05de\u05d5\u05e1\u05d9\u05e4\u05d9\u05dd \u05dc\u05e1\u05dc \u05d5\u05de\u05e9\u05dc\u05d9\u05de\u05d9\u05dd \u05d0\u05ea \u05d4\u05d4\u05d6\u05de\u05e0\u05d4. '),
@@ -1876,6 +1895,7 @@ _LAUNCH = [
     ('\u05de\u05e9\u05d9\u05e7\u05d9\u05dd 12.8', ''),
 ]
 
+_TRUTH = _TRUTH + _SHIP_FIX
 _truth_hits = {}
 for _route in page_src:
     _s = page_src[_route]
