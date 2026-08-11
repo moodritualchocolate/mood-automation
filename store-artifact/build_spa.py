@@ -263,8 +263,8 @@ RONEN_PLUS = """
     mp.innerHTML=
       '<figure class="mp2-shot"><img src="%%GLOVES%%" alt="טבלת mood עוברת מיד ליד בסדנה" loading="lazy"></figure>'+
       '<div class="mp2-strip"><div class="mp2-strip-in">'+
-        '<blockquote class="mp2-quote">אם זה לא היה טעים —<br>לא הייתי מוציא את זה מהמטבח.</blockquote>'+
-        '<cite class="mp2-cite">רונן אפללו<i>'+AWARD+'</i></cite>'+
+        '<blockquote class="mp2-quote">אם זה לא היה טעים —<span>לא הייתי מוציא את זה מהמטבח.</span></blockquote>'+
+        '<cite class="mp2-cite"><b>רונן אפללו</b><i>'+AWARD+'</i></cite>'+
       '</div></div>';
   }
   // closingBlock, clubUnit, awardsStrip and faqAside were declared twice in
@@ -1363,7 +1363,7 @@ MOOD_SYSTEM = """
    the page's own ground rather than dimming the photograph to read type. */
 .mp2{background:#f7f3ed;padding:0;border:0;color:#171512;position:relative}
 .mp2-shot{margin:0;display:block;overflow:hidden;background:#100c09;position:relative;
-  width:100%;height:clamp(320px,30vw,430px)}
+  width:100%;height:clamp(280px,25vw,360px)}
 .mp2-shot img{width:100%;height:100%;object-fit:cover;object-position:34% 50%;display:block}
 .mp2-shot::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to right,rgba(247,243,237,0) 40%,rgba(247,243,237,.72) 70%,
@@ -1374,22 +1374,33 @@ MOOD_SYSTEM = """
   pointer-events:none;z-index:2}
 .mp2-strip-in{width:min(1240px,calc(100% - 32px));margin:0 auto;display:grid;
   justify-items:start;gap:clamp(8px,1.1vw,12px);pointer-events:auto}
-.mp2-quote{margin:0;max-width:19ch;font-size:clamp(19px,2.1vw,27px);line-height:1.3;
-  letter-spacing:-.025em;font-weight:500;color:#171512}
-.mp2-quote::before,.mp2-quote::after{content:'"';color:#C9551A;font-weight:700}
-.mp2-cite{display:block;font-style:normal;font-size:12px;font-weight:700;letter-spacing:.02em;
-  color:#171512}
-.mp2-cite i{display:block;margin-top:3px;font-style:normal;font-size:11px;font-weight:600;
-  letter-spacing:.1em;color:#5f584e}
+/* the quotation mark is set as a mark, not as punctuation: it sits above the
+   line at display size in the brand accent, the way the eyebrows and rules do
+   elsewhere on the page */
+.mp2-quote{position:relative;margin:0;max-width:17ch;font-size:clamp(23px,2.7vw,36px);
+  line-height:1.16;letter-spacing:-.035em;font-weight:700;color:#171512}
+/* the quote takes the move every headline on this site takes: the sentence
+   turns at the dash and the second half turns colour with it. A quotation glyph
+   was tried first and read as two orange ticks fighting the line. */
+.mp2-quote span{display:block;color:#C9551A}
+.mp2-cite{display:grid;gap:3px;font-style:normal;margin-top:clamp(12px,1.3vw,16px);
+  padding-top:clamp(11px,1.2vw,14px);position:relative}
+/* the same hairline the product cards use under a name */
+.mp2-cite::before{content:"";position:absolute;top:0;inset-inline-start:0;width:26px;height:2px;
+  border-radius:2px;background:#C9551A}
+.mp2-cite b{font-size:13.5px;font-weight:700;letter-spacing:-.01em;color:#171512}
+.mp2-cite i{font-style:normal;font-size:11px;font-weight:600;letter-spacing:.1em;color:#5f584e}
 @media (max-width:900px){
   /* the empty half is off-frame on a phone, so the words come back underneath */
-  .mp2-shot{height:auto;aspect-ratio:4/3}
+  .mp2-shot{height:auto;aspect-ratio:5/4}
   .mp2-shot::after{background:none}
   .mp2-strip{position:static!important;inset:auto!important;display:block;background:#f7f3ed}
   .mp2-strip-in{width:min(1060px,calc(100% - 32px));justify-items:center;text-align:center;
     padding:clamp(20px,5vw,26px) 0 clamp(18px,4.5vw,24px);border-bottom:1px solid #e4d8c6;
     gap:clamp(10px,2.6vw,14px)}
-  .mp2-quote{font-size:clamp(19px,5.6vw,25px);max-width:none}
+  .mp2-quote{font-size:clamp(23px,6.6vw,30px);max-width:none}
+  .mp2-cite{justify-items:center}
+  .mp2-cite::before{inset-inline-start:50%;transform:translateX(-50%)}
 }
 
 /* a play mark — these read as clips, and the card opens on tap */
@@ -1540,12 +1551,11 @@ MOOD_SYSTEM = """
   .vrail-head b{font-size:19px}
 }
 
-/* Ronen — the workshop photograph sits behind the band */
-.mp2::before{content:"";position:absolute;inset:0;background-image:var(--shot);background-size:cover;
-  background-position:center 34%;opacity:.16;filter:grayscale(.2)}
-.mp2::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(90deg,rgba(36,27,18,.96) 34%,rgba(36,27,18,.6) 100%)}
-.mp2>*{position:relative;z-index:2}
+/* The band used to be a dark ground with the photograph ghosted behind it at
+   16% under a 96% brown wash. The photograph is the band now, so the wash is
+   gone — it was still painting over the whole section, and on a phone, where
+   the quote strip is static and so outside the stacking order that z-index:2
+   created, the strip was rendering underneath it. */
 .mp2-por{position:relative}
 .mp2-medal{position:absolute;inset-block-end:-4px;inset-inline-end:-4px;z-index:3;width:26px;height:26px;
   border-radius:50%;background:#F7B27A;color:#241b12;font-size:13.5px;font-style:normal;display:grid;
