@@ -1123,7 +1123,7 @@ border-radius:999px!important;font-weight:700!important;box-shadow:none!importan
 </style>
 <script>
 (function(){
-  var COUNTS={SLEEP:'(198)',RELAX:'(214)',ENERGY:'(327)'};
+  var COUNTS={SLEEP:'(94)',RELAX:'(94)',ENERGY:'(127)'};   // must match each product page
   function go(){
     document.querySelectorAll('.card .content').forEach(function(c){
       if(c.querySelector('.mvstars'))return;
@@ -1817,7 +1817,7 @@ document.addEventListener('click',function(e){
    'border-radius:999px!important;font-weight:700!important;box-shadow:none!important;transition:background .2s,color .2s,border-color .2s!important}'+
    '.card .button:hover{background:#1d3226!important;color:#fff!important}'+
    '@media(max-width:700px){'+'.cards{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;'+'padding:4px 14px 10px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}'+'.cards::-webkit-scrollbar{display:none}'+'.card{flex:0 0 90%!important;scroll-snap-align:center;min-width:0}'+'.mvdots{display:flex;justify-content:center;gap:6px;margin:2px 0 10px}'+'.mvdots i{width:7px;height:7px;border-radius:99px;background:#d8cbb8;transition:all .25s}'+'.mvdots i.on{background:#E05A00;width:18px}'+'}'+'@media(min-width:701px){.mvdots{display:none}}';
-  var COUNTS={SLEEP:'(198)',RELAX:'(214)',ENERGY:'(327)'};
+  var COUNTS={SLEEP:'(94)',RELAX:'(94)',ENERGY:'(127)'};   // must match each product page
   function skin(d){
     if(d.__moodSkin)return; d.__moodSkin=true;
     var st=d.createElement('style'); st.textContent=CARD_CSS; d.head.appendChild(st);
