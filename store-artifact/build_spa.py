@@ -263,9 +263,8 @@ RONEN_PLUS = """
     mp.innerHTML=
       '<figure class="mp2-shot"><img src="%%GLOVES%%" alt="טבלת mood עוברת מיד ליד בסדנה" loading="lazy"></figure>'+
       '<div class="mp2-strip"><div class="mp2-strip-in">'+
-        '<h2>בשביל משימה כמעט בלתי אפשרית,<span> צריך אלוף עולם.</span></h2>'+
-        '<p class="mp2-quote">"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."'+
-          '<b>רונן אפללו · '+AWARD+'</b></p>'+
+        '<blockquote class="mp2-quote">אם זה לא היה טעים —<br>לא הייתי מוציא את זה מהמטבח.</blockquote>'+
+        '<cite class="mp2-cite">רונן אפללו<i>'+AWARD+'</i></cite>'+
       '</div></div>';
   }
   // closingBlock, clubUnit, awardsStrip and faqAside were declared twice in
@@ -1373,21 +1372,20 @@ MOOD_SYSTEM = """
 .mp2-shot img{width:100%;height:100%;object-fit:cover;object-position:38% 50%;display:block}
 .mp2-strip{background:#f7f3ed}
 .mp2-strip-in{width:min(1060px,calc(100% - 32px));margin:0 auto;
-  padding:clamp(20px,2.6vw,30px) 0 clamp(18px,2.4vw,28px);border-bottom:1px solid #e4d8c6;
-  display:grid;gap:clamp(10px,1.4vw,16px);justify-items:center;text-align:center}
-/* no measure on the headline: the span already breaks it at the comma, and any
-   ch-based cap wrapped the first line before it got there */
-.mp2-strip h2{margin:0;font-size:clamp(20px,2.4vw,30px);line-height:1.14;letter-spacing:-.03em;
-  font-weight:900;color:#171512}
-.mp2-strip h2 span{color:#C9551A}
-.mp2-quote{margin:0;font-size:clamp(13.5px,1.4vw,16px);line-height:1.6;color:#5f584e;
-  font-weight:500;max-width:46ch}
-.mp2-quote b{display:block;margin-top:7px;font-size:11.5px;font-weight:700;letter-spacing:.02em;
-  color:#8a7c6a}
+  padding:clamp(26px,3.2vw,40px) 0 clamp(22px,2.8vw,34px);border-bottom:1px solid #e4d8c6;
+  display:grid;gap:clamp(12px,1.6vw,18px);justify-items:center;text-align:center}
+/* one sentence, set to be read: the quotation marks hang outside the measure so
+   the words themselves stay optically centred */
+.mp2-quote{margin:0;position:relative;font-size:clamp(19px,2.3vw,29px);line-height:1.34;
+  letter-spacing:-.025em;font-weight:500;color:#171512;max-width:none}
+.mp2-quote::before,.mp2-quote::after{content:'"';color:#C9551A;font-weight:700}
+.mp2-cite{display:block;font-style:normal;font-size:12px;font-weight:700;letter-spacing:.02em;
+  color:#171512}
+.mp2-cite i{display:block;margin-top:3px;font-style:normal;font-size:11px;font-weight:600;
+  letter-spacing:.1em;color:#8a7c6a}
 @media (max-width:900px){
   .mp2-shot{height:auto;aspect-ratio:4/3}
-  .mp2-strip h2{font-size:clamp(21px,6.2vw,28px)}
-  .mp2-quote{max-width:none}
+  .mp2-quote{font-size:clamp(19px,5.6vw,25px);max-width:none}
 }
 
 /* a play mark — these read as clips, and the card opens on tap */
