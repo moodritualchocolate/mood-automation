@@ -264,7 +264,7 @@ RONEN_PLUS = """
       '<figure class="mp2-shot"><img src="%%GLOVES%%" alt="טבלת mood עוברת מיד ליד בסדנה" loading="lazy"></figure>'+
       '<div class="mp2-strip"><div class="mp2-strip-in">'+
         '<blockquote class="mp2-quote">אם זה לא היה טעים —<span>לא הייתי מוציא את זה מהמטבח.</span></blockquote>'+
-        '<cite class="mp2-cite"><b>רונן אפללו</b><i>'+AWARD+'</i></cite>'+
+        
       '</div></div>';
   }
   // closingBlock, clubUnit, awardsStrip and faqAside were declared twice in
@@ -1378,11 +1378,16 @@ MOOD_SYSTEM = """
    line at display size in the brand accent, the way the eyebrows and rules do
    elsewhere on the page */
 .mp2-quote{position:relative;margin:0;max-width:17ch;font-size:clamp(23px,2.7vw,36px);
-  line-height:1.16;letter-spacing:-.035em;font-weight:700;color:#171512}
-/* the quote takes the move every headline on this site takes: the sentence
-   turns at the dash and the second half turns colour with it. A quotation glyph
-   was tried first and read as two orange ticks fighting the line. */
+  line-height:1.16;letter-spacing:-.035em;font-weight:700;color:#171512;
+  padding-top:clamp(34px,3.4vw,46px)}
 .mp2-quote span{display:block;color:#C9551A}
+/* The mark is drawn, not typed. Heebo has no curly quotation mark and rendered
+   a missing-glyph box; the straight one is two narrow ticks; and a serif
+   fallback only works if that face happens to be installed. An SVG always
+   draws. */
+.mp2-quote::before{content:"";position:absolute;top:0;inset-inline-start:0;
+  width:clamp(38px,3.6vw,52px);height:clamp(28px,2.6vw,38px);
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 32' fill='%23C9551A'%3E%3Cpath d='M0 32V19C0 8.5 7.5 0 18 0v7.5C11.6 7.5 6.5 12.6 6.5 19H18v13H0z'/%3E%3Cpath d='M26 32V19C26 8.5 33.5 0 44 0v7.5c-6.4 0-11.5 5.1-11.5 11.5H44v13H26z'/%3E%3C/svg%3E") no-repeat left top/contain;pointer-events:none}
 .mp2-cite{display:grid;gap:3px;font-style:normal;margin-top:clamp(12px,1.3vw,16px);
   padding-top:clamp(11px,1.2vw,14px);position:relative}
 /* the same hairline the product cards use under a name */
@@ -1398,7 +1403,8 @@ MOOD_SYSTEM = """
   .mp2-strip-in{width:min(1060px,calc(100% - 32px));justify-items:center;text-align:center;
     padding:clamp(20px,5vw,26px) 0 clamp(18px,4.5vw,24px);border-bottom:1px solid #e4d8c6;
     gap:clamp(10px,2.6vw,14px)}
-  .mp2-quote{font-size:clamp(23px,6.6vw,30px);max-width:none}
+  .mp2-quote{font-size:clamp(23px,6.6vw,30px);max-width:none;padding-top:44px}
+  .mp2-quote::before{inset-inline-start:50%;transform:translateX(-50%);width:42px;height:31px}
   .mp2-cite{justify-items:center}
   .mp2-cite::before{inset-inline-start:50%;transform:translateX(-50%)}
 }
