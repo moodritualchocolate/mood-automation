@@ -1346,7 +1346,7 @@ MOOD_SYSTEM = """
   white-space:nowrap;opacity:0;visibility:hidden;transition:opacity .2s}
 .fx-ing.show span{opacity:1;visibility:visible}
 .fx-more{margin-top:clamp(14px,1.8vw,20px);background:transparent;border:1.4px solid #1d3226;
-  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:44px;font-size:13.5px;
+  color:#1d3226;border-radius:999px;padding:11px 22px;min-height:46px;font-size:14.5px;
   font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
 .fx-more:hover{background:#1d3226;color:#fff}
 .fx-note{margin:12px 0 0;font-size:12px;color:#8a7c6a;line-height:1.6}
@@ -1664,7 +1664,8 @@ img{background-color:#efe7db}
 
 /* primary — warm terracotta, softer than the old signal orange */
 .cta,.sb-cta,.qbtn,.rh-btn-primary,#mood-xp .xp-cta,.btn:not(.ghost):not(.light):not(.chip){
-  background:#C9551A!important;color:#fdf6ee!important;border:1.4px solid #C9551A!important}
+  background:#C9551A!important;color:#fdf6ee!important;border:1.4px solid #C9551A!important;
+  font-size:15px!important;min-height:52px!important}
 .cta:hover,.sb-cta:hover,.qbtn:hover,.rh-btn-primary:hover,#mood-xp .xp-cta:hover,
 .btn:not(.ghost):not(.light):not(.chip):hover{background:#A94512!important;border-color:#A94512!important}
 
@@ -1686,7 +1687,7 @@ img{background-color:#efe7db}
 /* sizing — lighter than before: less height, more air inside */
 .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){
   min-height:50px;padding:16px 30px!important;font-size:15px!important}
-.card .button{min-height:46px;padding:12px 26px!important;font-size:15px!important}
+.card .button{min-height:46px!important;padding:12px 26px!important;font-size:14.5px!important}
 /* this line held the pack buttons at 32px and 12px on desktop, under every
    other rule that tried to make them buy buttons */
 .mv-padd{min-height:46px!important;padding:11px 20px!important;font-size:14.5px!important;font-weight:700!important}
@@ -1700,6 +1701,14 @@ img{background-color:#efe7db}
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .mv-ritband:hover{transform:none!important}
 }
+
+/* ============ CHIPS — the third control, and only three ============
+   Journal filters were 12.5px/800 at 32px tall; the products finder was
+   13.5px/700 at 38px. Same control, two sizes. */
+.jchip,.jf-chip,.needrow a,.need a,.chip{
+  background:#fff!important;border:1.4px solid #e3dbd0!important;border-radius:999px!important;
+  font-size:13px!important;font-weight:700!important;min-height:38px!important;
+  display:inline-flex!important;align-items:center!important;padding:8px 16px!important}
 
 /* ============ TOUCH TARGETS — 44px on anything a thumb has to hit ============
    Icons keep their drawn size; only the hit area grows, so nothing shifts. */
