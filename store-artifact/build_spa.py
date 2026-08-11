@@ -1311,8 +1311,7 @@ MOOD_SYSTEM = """
 .bu-price b{display:block;font-size:17px;font-weight:900;color:#171512;font-variant-numeric:tabular-nums}
 .bu-price s{font-size:11px;color:#a3988b;font-weight:700}
 .bu-go{display:flex!important;align-items:center;justify-content:center;gap:12px;width:100%;min-height:48px;
-  padding:12px 20px!important;border-radius:999px!important;background:transparent!important;color:#241b12!important;
-  border:1.1px solid #cbbca8!important;font-weight:700!important;font-size:13.5px!important;cursor:pointer;
+  padding:12px 20px!important;border-radius:999px!important;cursor:pointer;
   font-family:inherit;transition:background .22s,border-color .22s}
 .bu-go::before{content:"";width:7px;height:7px;border-radius:2px;background:currentColor;opacity:.55;
   transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .3s}
@@ -1665,15 +1664,18 @@ img{background-color:#efe7db}
 
 /* primary — warm terracotta, softer than the old signal orange */
 .cta,.sb-cta,.qbtn,.rh-btn-primary,#mood-xp .xp-cta,.btn:not(.ghost):not(.light):not(.chip){
-  background:#C9551A!important;color:#fdf6ee!important;border:1px solid #B44A14!important}
+  background:#C9551A!important;color:#fdf6ee!important;border:1.4px solid #C9551A!important}
 .cta:hover,.sb-cta:hover,.qbtn:hover,.rh-btn-primary:hover,#mood-xp .xp-cta:hover,
 .btn:not(.ghost):not(.light):not(.chip):hover{background:#A94512!important;border-color:#A94512!important}
 
-/* secondary — chocolate hairline on cream. This is the quiet one, used most. */
-.mv-padd,.mv-bundle button,.card .button,.btn.light{
-  background:transparent!important;color:#241b12!important;border:1.1px solid #cbbca8!important}
-.mv-padd:hover,.mv-bundle button:hover,.card .button:hover,.btn.light:hover{
-  background:#fff!important;border-color:#241b12!important}
+/* secondary — one ink hairline. This block carried a second, warmer hairline at
+   1.1px, and sitting later in the stack it outranked the button system: the same
+   "בחרו מארז" was ink on the home page and warm grey on /products. */
+.mv-padd,.mv-bundle button,.card .button,.btn.light,.bu-go{
+  background:transparent!important;color:#1d3226!important;border:1.4px solid #1d3226!important;
+  font-size:14.5px!important;font-weight:700!important;min-height:46px!important}
+.mv-padd:hover,.mv-bundle button:hover,.card .button:hover,.btn.light:hover,.bu-go:hover{
+  background:#1d3226!important;color:#fff!important;border-color:#1d3226!important}
 .rh-btn-ghost,.btn.ghost{background:transparent!important;color:#241b12!important;border:1.1px solid #241b12!important}
 .rh-btn-ghost:hover,.btn.ghost:hover{background:rgba(36,27,18,.06)!important}
 
@@ -1685,8 +1687,10 @@ img{background-color:#efe7db}
 .cta,.qbtn,.rh-btn,.club-cta,.mv-bundle button,.btn:not(.chip){
   min-height:50px;padding:16px 30px!important;font-size:15px!important}
 .card .button{min-height:46px;padding:12px 26px!important;font-size:15px!important}
-.mv-padd{min-height:0;padding:8px 15px!important;font-size:12px!important;font-weight:700!important}
-.mv-stepper{border:1.1px solid #cbbca8!important;background:transparent!important}
+/* this line held the pack buttons at 32px and 12px on desktop, under every
+   other rule that tried to make them buy buttons */
+.mv-padd{min-height:46px!important;padding:11px 20px!important;font-size:14.5px!important;font-weight:700!important}
+.mv-stepper{border:1.4px solid #1d3226!important;background:transparent!important}
 
 /* ============ MOTION — everything this system adds, damped on request ======
    The source pages already honour prefers-reduced-motion; the transitions and
@@ -2076,8 +2080,10 @@ shell_head = """<title>mood — ריטואל שוקולד פונקציונלי</
   .ct-coup input{flex:1;min-width:0;border:1px solid #d8cbb8;border-radius:999px;padding:8px 14px;font-size:13.5px;
     font-family:inherit;background:#faf6ef;color:#171512;outline:none;direction:rtl}
   .ct-coup input:focus{border-color:#E05A00}
+  /* a secondary button at every width, not only on phones */
   .ct-coup button{border:1.4px solid #1d3226;border-radius:999px;background:transparent;color:#1d3226;font-weight:700;
-    font-size:13.5px;padding:8px 18px;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+    font-size:14.5px;padding:11px 20px;min-height:46px;cursor:pointer;font-family:inherit;
+    transition:background .2s,color .2s}
   .ct-coup button:hover{background:#1d3226;color:#fff}
   .ct-disc span{color:#1d7a3f!important}
   /* Fillit-style purchase buzz toast */
