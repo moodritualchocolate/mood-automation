@@ -1704,6 +1704,36 @@ img{background-color:#efe7db}
 .mv-padd{min-height:0;padding:8px 15px!important;font-size:12px!important;font-weight:800!important}
 .mv-stepper{border:1.1px solid #cbbca8!important;background:transparent!important}
 
+/* ============ TOUCH TARGETS — 44px on anything a thumb has to hit ============
+   Icons keep their drawn size; only the hit area grows, so nothing shifts. */
+@media (max-width:700px){
+  .xburger,.ham,.mv-call,.xnav-cart,.ct-x,nav.drawer .close,.jtel{
+    min-width:44px!important;min-height:44px!important;
+    display:inline-flex!important;align-items:center!important;justify-content:center!important}
+  /* the per-pack add button was 32px tall — it is a buy button */
+  .mv-padd{min-height:44px!important;padding:11px 18px!important}
+  .mv-stepper button{min-width:40px!important;min-height:40px!important}
+  /* gallery dots stay 8px to the eye and become 24px to the thumb.
+     content-box is load-bearing: these spans set width/height with
+     border-box, which would swallow the padding instead of growing. */
+  .gal .dots span{box-sizing:content-box!important;padding:8px!important;margin:-8px!important;
+    background-clip:content-box!important}
+  .gal .dots{gap:10px!important}
+  /* text links that sit alone in a row get a thumb-sized band */
+  /* links stacked in a column must stay block — inline-block lets two short
+     ones share a line, which is how the footer ran two labels together */
+  .ft-col a,.footer-col a{display:block!important;padding-block:14px!important}
+  .rate a,.jback,.back,.jf .fl a,.narrow .note a,.xnav-drawer a,.drawer a{
+    display:inline-block;padding-block:11px!important}
+  .jlogo,.product-logo,.xlogo{display:inline-flex!important;align-items:center!important;min-height:44px!important}
+  .ft-social a{min-width:44px!important;min-height:44px!important;
+    display:inline-flex!important;align-items:center!important;justify-content:center!important}
+  .xnav-all{min-height:44px!important;display:flex!important;align-items:center!important}
+  .ct-coup button{min-height:44px!important}
+  /* pack sizes are information, not a label */
+  .pack .l span{font-size:11.5px!important}
+}
+
 /* ============ BUTTONS — one primary, one secondary, one shape ============ */
 .rh-btn-primary,.ct-go,.cu-cta,.mv-rvmore{border-radius:999px!important;font-weight:700!important;
   letter-spacing:0!important;box-shadow:none!important;
@@ -1952,6 +1982,12 @@ shell_head = """<title>mood — ריטואל שוקולד פונקציונלי</
     transition:background .2s,border-color .2s}
   .ct-go:hover{background:#A8430F;border-color:#A8430F}
   .ct-note{margin:9px 0 0;text-align:center;font-size:11px;color:#8a7c6a}
+  /* the drawer is styled here, not in the page system, so its thumb targets are too */
+  @media (max-width:700px){
+    .ct-x{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+    .ct-coup button{min-height:44px}
+    .ct-cont{padding:14px 0}
+  }
   .ct-cont{display:block;width:100%;margin:8px 0 0;border:0;background:none;color:#8a7c6a;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:underline}
   .ct-shop{display:inline-block;margin-top:14px;border:1.4px solid #1d3226;border-radius:999px;background:transparent;color:#1d3226;font-weight:700;font-size:14.5px;padding:13px 22px;min-height:46px;cursor:pointer;font-family:inherit;box-shadow:none;transition:background .2s,color .2s}
   .ct-shop:hover{background:#1d3226;color:#fff}
