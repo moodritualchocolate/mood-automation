@@ -1357,34 +1357,39 @@ MOOD_SYSTEM = """
   .fx-more{width:100%}
 }
 
-/* ============ RONEN — the photograph, and one line under it ============
-   Every earlier version put words on or beside the picture and spent the
-   section arguing with it. There is no paragraph, no byline block and no
-   figures now: the photograph runs the full width, and a single strip in the
-   awards strip's own cream carries the headline and what he said. */
+/* ============ RONEN — the quote sits in the empty half of the frame ============
+   The frame is shot with its right side empty, so the words go there instead of
+   under the picture: half the scroll, and the photograph still runs full width.
+   The wash that carries them is cream, not black — it lifts the steel toward
+   the page's own ground rather than dimming the photograph to read type. */
 .mp2{background:#f7f3ed;padding:0;border:0;color:#171512;position:relative}
-/* The frame is shot 16:9 for this slot, so the box takes that ratio and the
-   picture arrives whole. width is declared explicitly: with aspect-ratio and a
-   height cap alone, the cap shrinks the height and the ratio then shrinks the
-   width to match, and the photograph stops short of the page edge. */
-.mp2-shot{margin:0;display:block;overflow:hidden;background:#100c09;
-  width:100%;aspect-ratio:16/9;max-height:clamp(340px,42vw,600px)}
-.mp2-shot img{width:100%;height:100%;object-fit:cover;object-position:38% 50%;display:block}
-.mp2-strip{background:#f7f3ed}
-.mp2-strip-in{width:min(1060px,calc(100% - 32px));margin:0 auto;
-  padding:clamp(26px,3.2vw,40px) 0 clamp(22px,2.8vw,34px);border-bottom:1px solid #e4d8c6;
-  display:grid;gap:clamp(12px,1.6vw,18px);justify-items:center;text-align:center}
-/* one sentence, set to be read: the quotation marks hang outside the measure so
-   the words themselves stay optically centred */
-.mp2-quote{margin:0;position:relative;font-size:clamp(19px,2.3vw,29px);line-height:1.34;
-  letter-spacing:-.025em;font-weight:500;color:#171512;max-width:none}
+.mp2-shot{margin:0;display:block;overflow:hidden;background:#100c09;position:relative;
+  width:100%;height:clamp(320px,30vw,430px)}
+.mp2-shot img{width:100%;height:100%;object-fit:cover;object-position:34% 50%;display:block}
+.mp2-shot::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to right,rgba(247,243,237,0) 40%,rgba(247,243,237,.72) 70%,
+    rgba(247,243,237,.93) 100%)}
+/* a later rule in this stack resets position on section children, so the
+   overlay states its own */
+.mp2-strip{position:absolute!important;inset:0!important;display:grid;align-items:center;
+  pointer-events:none;z-index:2}
+.mp2-strip-in{width:min(1240px,calc(100% - 32px));margin:0 auto;display:grid;
+  justify-items:start;gap:clamp(8px,1.1vw,12px);pointer-events:auto}
+.mp2-quote{margin:0;max-width:19ch;font-size:clamp(19px,2.1vw,27px);line-height:1.3;
+  letter-spacing:-.025em;font-weight:500;color:#171512}
 .mp2-quote::before,.mp2-quote::after{content:'"';color:#C9551A;font-weight:700}
 .mp2-cite{display:block;font-style:normal;font-size:12px;font-weight:700;letter-spacing:.02em;
   color:#171512}
 .mp2-cite i{display:block;margin-top:3px;font-style:normal;font-size:11px;font-weight:600;
-  letter-spacing:.1em;color:#8a7c6a}
+  letter-spacing:.1em;color:#5f584e}
 @media (max-width:900px){
+  /* the empty half is off-frame on a phone, so the words come back underneath */
   .mp2-shot{height:auto;aspect-ratio:4/3}
+  .mp2-shot::after{background:none}
+  .mp2-strip{position:static!important;inset:auto!important;display:block;background:#f7f3ed}
+  .mp2-strip-in{width:min(1060px,calc(100% - 32px));justify-items:center;text-align:center;
+    padding:clamp(20px,5vw,26px) 0 clamp(18px,4.5vw,24px);border-bottom:1px solid #e4d8c6;
+    gap:clamp(10px,2.6vw,14px)}
   .mp2-quote{font-size:clamp(19px,5.6vw,25px);max-width:none}
 }
 
