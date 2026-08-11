@@ -261,26 +261,12 @@ RONEN_PLUS = """
     mp.dataset.rebuilt='1';
     mp.className='mp2';mp.style.setProperty('--shot','url('+shot+')');
     mp.innerHTML=
-      '<div class="mp2-in">'+
-        '<div class="mp2-copy">'+
-          '<div class="mp2-eye">השוקולטייר של mood</div>'+
-          '<h2>בשביל משימה כמעט בלתי אפשרית,<span> צריך אלוף עולם.</span></h2>'+
-          '<p class="mp2-q">הפורמולה הייתה בעיה אחת. לגרום למישהו לרצות עוד ביס — בעיה שנייה. '+
-            '18 חודשים לקח לרונן אפללו למצוא את הנקודה שבה 700 מ״ג פורמולה עדיין מרגישים כמו שוקולד.</p>'+
-          '<p class="mp2-quote">"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."</p>'+
-          '<div class="mp2-by">'+
-            '<span class="mp2-por"><img src="'+por+'" alt="רונן אפללו">'+
-              '<i class="mp2-medal" aria-hidden="true">★</i></span>'+
-            '<span class="mp2-byt"><b>רונן אפללו</b>'+AWARD+'</span>'+
-          '</div>'+
-          '<div class="mp2-stats">'+
-            '<div><b>2022</b><span>הטוב בעולם</span></div>'+
-            '<div><b>18</b><span>חודשי פיתוח</span></div>'+
-            '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
-          '</div>'+
-        '</div>'+
-        '<figure class="mp2-shot"><img src="%%GLOVES%%" alt="טבלת mood עוברת מיד ליד בסדנה" loading="lazy"></figure>'+
-      '</div>';
+      '<figure class="mp2-shot"><img src="%%GLOVES%%" alt="טבלת mood עוברת מיד ליד בסדנה" loading="lazy"></figure>'+
+      '<div class="mp2-strip"><div class="mp2-strip-in">'+
+        '<h2>בשביל משימה כמעט בלתי אפשרית,<span> צריך אלוף עולם.</span></h2>'+
+        '<p class="mp2-quote">"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."'+
+          '<b>רונן אפללו · '+AWARD+'</b></p>'+
+      '</div></div>';
   }
   // closingBlock, clubUnit, awardsStrip and faqAside were declared twice in
   // this same script, byte for byte. Function declarations hoist, so the
@@ -1372,46 +1358,35 @@ MOOD_SYSTEM = """
   .fx-more{width:100%}
 }
 
-/* ============ RONEN — the photograph gets its own half, uncovered ============
-   Running the type over the picture meant darkening the picture to read the
-   type. The photograph is worth more than that: it holds one half at full
-   strength, the words hold the other on solid ground, and nothing overlays
-   anything. */
-.mp2{background:#171210;padding:0;border:0;color:#f7efe4;position:relative}
-.mp2-in{width:100%;margin:0;display:grid;align-items:stretch;
-  grid-template-columns:minmax(320px,44%) minmax(0,1fr);
-  padding-inline-start:max(16px,calc((100vw - 1240px)/2));padding-inline-end:0}
-.mp2-copy{align-self:center;padding:clamp(24px,3vw,38px) 0}
-.mp2-shot{margin:0;overflow:hidden;background:#100c09;min-height:clamp(260px,26vw,340px)}
+/* ============ RONEN — the photograph, and one line under it ============
+   Every earlier version put words on or beside the picture and spent the
+   section arguing with it. There is no paragraph, no byline block and no
+   figures now: the photograph runs the full width, and a single strip in the
+   awards strip's own cream carries the headline and what he said. */
+.mp2{background:#f7f3ed;padding:0;border:0;color:#171512;position:relative}
+/* height, not aspect-ratio-plus-max-height: with both, the cap shrank the
+   height and the ratio then shrank the width to match, so the photograph
+   stopped short of the page edge */
+.mp2-shot{margin:0;display:block;overflow:hidden;background:#100c09;
+  width:100%;height:clamp(300px,40vw,560px)}
 .mp2-shot img{width:100%;height:100%;object-fit:cover;object-position:38% 50%;display:block}
-.mp2-eye{display:inline-block;font-size:clamp(9.5px,1.2vw,11px);font-weight:700;letter-spacing:.1em;color:#241b12;
-  background:#F7B27A;padding:5px 11px;border-radius:999px;white-space:nowrap}
-.mp2-copy h2{margin:10px 0 0;font-size:clamp(24px,2.9vw,35px);line-height:1.06;letter-spacing:-.035em;color:#fff}
-.mp2-copy h2 span{display:block;color:#F7B27A}
-.mp2-q{margin:10px 0 0;font-size:clamp(13px,1.3vw,14.5px);line-height:1.6;color:rgba(247,239,228,.8);
-  font-weight:500;max-width:50ch}
-.mp2-quote{margin:9px 0 0;font-size:clamp(14px,1.45vw,16.5px);line-height:1.5;color:#F7B27A;
-  font-weight:700;letter-spacing:-.01em;max-width:36ch}
-.mp2-by{display:flex;align-items:center;gap:11px;margin-top:clamp(12px,1.5vw,16px)}
-.mp2-por{position:relative;width:44px;height:44px;border-radius:50%;overflow:hidden;flex:0 0 auto;
-  background:#3a2b1e;border:2px solid rgba(247,178,122,.55);display:block}
-.mp2-por img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
-.mp2-byt{display:block;font-size:12.5px;line-height:1.35;color:rgba(247,239,228,.6);font-weight:600}
-.mp2-byt b{display:block;font-size:14.5px;color:#fff;font-weight:700;letter-spacing:-.01em}
-.mp2-stats{display:flex;margin-top:clamp(12px,1.5vw,16px);border-top:1px solid rgba(247,178,122,.26);
-  max-width:520px}
-.mp2-stats div{flex:1;padding:9px 4px;display:flex;align-items:baseline;justify-content:center;gap:6px}
-.mp2-stats div+div{border-inline-start:1px solid rgba(247,178,122,.26)}
-.mp2-stats b{font-size:clamp(16px,1.9vw,21px);font-weight:900;color:#F7B27A;letter-spacing:-.03em;line-height:1;
-  font-variant-numeric:tabular-nums}
-.mp2-stats span{font-size:11px;color:rgba(247,239,228,.6);font-weight:700}
+.mp2-strip{background:#f7f3ed}
+.mp2-strip-in{width:min(1060px,calc(100% - 32px));margin:0 auto;
+  padding:clamp(20px,2.6vw,30px) 0 clamp(18px,2.4vw,28px);border-bottom:1px solid #e4d8c6;
+  display:grid;gap:clamp(10px,1.4vw,16px);justify-items:center;text-align:center}
+/* no measure on the headline: the span already breaks it at the comma, and any
+   ch-based cap wrapped the first line before it got there */
+.mp2-strip h2{margin:0;font-size:clamp(20px,2.4vw,30px);line-height:1.14;letter-spacing:-.03em;
+  font-weight:900;color:#171512}
+.mp2-strip h2 span{color:#C9551A}
+.mp2-quote{margin:0;font-size:clamp(13.5px,1.4vw,16px);line-height:1.6;color:#5f584e;
+  font-weight:500;max-width:46ch}
+.mp2-quote b{display:block;margin-top:7px;font-size:11.5px;font-weight:700;letter-spacing:.02em;
+  color:#8a7c6a}
 @media (max-width:900px){
-  .mp2-in{grid-template-columns:1fr;padding-inline:16px}
-  .mp2-shot{order:-1;margin:0 -16px;width:calc(100% + 32px);aspect-ratio:16/9;min-height:0}
-  .mp2-copy{padding:clamp(18px,5vw,24px) 0 clamp(20px,5vw,26px)}
-  .mp2-copy h2{font-size:clamp(24px,7vw,32px)}
-  .mp2-q,.mp2-quote{max-width:none}
-  .mp2-stats{max-width:none}
+  .mp2-shot{height:auto;aspect-ratio:4/3}
+  .mp2-strip h2{font-size:clamp(21px,6.2vw,28px)}
+  .mp2-quote{max-width:none}
 }
 
 /* a play mark — these read as clips, and the card opens on tap */
