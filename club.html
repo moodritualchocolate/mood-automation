@@ -243,11 +243,8 @@ body { background: var(--paper); }
 .trust-chips .tchip,
 .tchip { border-radius: 4px !important; }
 
-/* COLOR — pill CTAs use chocolate not lilac; stars & rating in gold */
-.pill-cta {
-  background: var(--cta) !important; color: #fdfaf3 !important;
-}
-.pill-cta:hover { background: var(--cta-dark) !important; }
+/* COLOR — pill CTAs use chocolate not lilac; stars & rating in gold
+   (base .pill-cta color/hover removed — v47 cream CTA block below wins) */
 .pill-out { border-color: var(--cta) !important; color: var(--cta) !important; }
 .pill-out:hover { background: var(--cta) !important; color: #fdfaf3 !important; }
 .pill-dark { background: var(--cta) !important; }
@@ -452,61 +449,12 @@ body { background: var(--paper); }
 
 /* v39 — polish pack */
 
-/* Signin bar — Mayven-style: single line, tight, well-aligned in RTL */
-.signin {
-  padding: 12px 4vw !important;
-  gap: 12px !important;
-  justify-content: center !important;
-  flex-wrap: wrap !important;
-  min-height: 52px;
-  align-items: center !important;
-  border-bottom: 1px solid var(--line) !important;
-}
-.signin-txt {
-  font-size: 14px !important; font-weight: 600 !important;
-  color: var(--ink) !important; line-height: 1.35 !important;
-  text-align: center !important; flex: none !important;
-}
-.signin-txt br { display: none; }  /* one line only */
-.signin-txt span { color: var(--muted) !important; font-weight: 500; margin-inline-start: 6px; }
-.signin-txt em { color: var(--cta-dark) !important; }
-.signin .pill {
-  padding: 9px 22px !important;
-  font-size: 13.5px !important;
-  border-radius: 8px !important;
-  order: -1;   /* button first in RTL row = left of text */
-  background: var(--mint) !important;
-  color: var(--forest) !important;
-  border: 1px solid rgba(37,72,33,.25) !important;
-  transition: all .18s;
-}
-.signin .pill:hover {
-  background: var(--forest) !important; color: #fff !important;
-  transform: translateY(-1px);
-}
-@media(max-width: 720px) {
-  .signin-txt { font-size: 13px !important; }
-  .signin-txt br { display: block; }
-}
+/* v39 signin-bar styling removed — .signin is display:none via v46, so all
+   descendant styling is unreachable dead code. */
 
 /* Trust chips — Mayven-style: soft mint pills, subtle */
-.tchips { padding: 20px 4vw !important; background: var(--paper) !important; border-bottom: 1px solid var(--line) !important; }
-.tchips ul { gap: 8px 10px !important; }
-.tchip {
-  padding: 9px 18px !important;
-  border-radius: 999px !important;
-  background: var(--mint) !important;
-  border: 1px solid rgba(37,72,33,.15) !important;
-  color: var(--forest) !important;
-  font-family: 'Assistant', sans-serif !important;
-  font-size: 13px !important; font-weight: 700 !important;
-  letter-spacing: -.1px !important;
-  display: inline-flex !important; align-items: center !important; gap: 6px;
-}
-.tchip::before {
-  content: "✓"; font-size: 11px; font-weight: 900;
-  color: var(--gold);
-}
+/* v39 tchips block removed — .tchips is display:none via v48 and no .tchips
+   or .tchip elements exist in the HTML anyway; dead code. */
 
 /* Nuclear force-hide the hamburger on desktop */
 @media (min-width: 900px) {
@@ -522,34 +470,8 @@ body { background: var(--paper); }
 .pc-body { padding-top: 20px !important; }
 
 
-/* v40 — CTA buttons come alive + card text centered like Mayven */
-
-.pill-cta,
-.pc-body .pill-cta,
-.hero .pill-cta {
-  background: linear-gradient(180deg, #3a2416 0%, #1a1109 100%) !important;
-  color: #fdfaf3 !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,236,216,.12),
-    inset 0 -1px 0 rgba(0,0,0,.35),
-    0 10px 22px -10px rgba(44,29,22,.55) !important;
-  border: 1px solid rgba(0,0,0,.4) !important;
-  position: relative;
-  transition: transform .18s cubic-bezier(.34,1.56,.64,1),
-              box-shadow .22s ease,
-              background .22s ease !important;
-}
-.pill-cta:hover,
-.pc-body .pill-cta:hover,
-.hero .pill-cta:hover {
-  background: linear-gradient(180deg, #4a2f1c 0%, #251609 100%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,236,216,.18),
-    inset 0 -1px 0 rgba(0,0,0,.3),
-    0 14px 30px -10px rgba(44,29,22,.65),
-    0 0 0 1px rgba(198,145,48,.35) !important;
-  transform: translateY(-2px) !important;
-}
+/* v40 — CTA colors removed (fully superseded by v42/v47 cream CTA below);
+   only the product-card text alignment rules remain */
 
 /* Product card text — Mayven style: centered under image, not right-flush */
 .pc-body {
@@ -565,62 +487,7 @@ body { background: var(--paper); }
 .pc { padding: 0 !important; }
 
 
-/* v41 — LIVE CTA color: warm amber/copper (echoes ENERGY orange + gold accent) */
-.pill-cta,
-.pc-body .pill-cta,
-.hero .pill-cta,
-.blog-cta .pill-cta,
-.jbottom .pill-cta,
-.fcta .pill-cta {
-  background: linear-gradient(180deg, #d4884a 0%, #a45a20 100%) !important;
-  color: #fff8ec !important;
-  text-shadow: 0 1px 0 rgba(0,0,0,.15) !important;
-  border: 1px solid rgba(90,45,15,.55) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,236,200,.35),
-    inset 0 -2px 0 rgba(0,0,0,.14),
-    0 12px 26px -10px rgba(164,90,32,.55) !important;
-  font-weight: 800 !important;
-  letter-spacing: -.1px !important;
-  transition: transform .18s cubic-bezier(.34,1.56,.64,1),
-              box-shadow .22s ease,
-              background .22s ease !important;
-}
-.pill-cta:hover,
-.pc-body .pill-cta:hover,
-.hero .pill-cta:hover,
-.blog-cta .pill-cta:hover,
-.jbottom .pill-cta:hover,
-.fcta .pill-cta:hover {
-  background: linear-gradient(180deg, #e29a5c 0%, #b16528 100%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255,240,210,.45),
-    inset 0 -2px 0 rgba(0,0,0,.12),
-    0 16px 34px -10px rgba(164,90,32,.6),
-    0 0 0 1px rgba(255,236,92,.3) !important;
-  transform: translateY(-2px) !important;
-}
-/* On the dark chocolate hero, keep the cream pill (readable on dark video) */
-.hero .hero-cta .pill-cta {
-  background: #f7ecd8 !important;
-  color: #2c1d16 !important;
-  border: 1px solid rgba(0,0,0,.15) !important;
-  text-shadow: none !important;
-  box-shadow: 0 10px 24px -8px rgba(0,0,0,.4) !important;
-}
-.hero .hero-cta .pill-cta:hover {
-  background: #ffffff !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 14px 30px -8px rgba(0,0,0,.5), 0 0 0 1px rgba(198,145,48,.35) !important;
-}
-/* Dark-CTA bottom sections keep cream fill for contrast */
-.fcta .pill-cta, .jbottom .pill-cta, .blog-cta .pill-cta {
-  background: #f7ecd8 !important;
-  color: #2c1d16 !important;
-  border: 1px solid rgba(0,0,0,.12) !important;
-  text-shadow: none !important;
-  box-shadow: 0 10px 22px -8px rgba(0,0,0,.4) !important;
-}
+/* v41 — CTA color layer removed (fully superseded by v42 and v47 below) */
 
 
 /* v42 — soft & delicate CTA (per user: יותר עדין ורך) */

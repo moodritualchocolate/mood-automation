@@ -245,11 +245,8 @@ body { background: var(--paper); }
 .trust-chips .tchip,
 .tchip { border-radius: 4px !important; }
 
-/* COLOR — pill CTAs use chocolate not lilac; stars & rating in gold */
-.pill-cta {
-  background: var(--cta) !important; color: #fdfaf3 !important;
-}
-.pill-cta:hover { background: var(--cta-dark) !important; }
+/* COLOR — pill CTAs use chocolate not lilac; stars & rating in gold
+   (base .pill-cta color/hover removed — v53 nuclear cream block below wins) */
 .pill-out { border-color: var(--cta) !important; color: var(--cta) !important; }
 .pill-out:hover { background: var(--cta) !important; color: #fdfaf3 !important; }
 .pill-dark { background: var(--cta) !important; }
@@ -288,26 +285,7 @@ body { background: var(--paper); }
 }
 
 
-/* v47r — restore cream CTA everywhere (was lost during merge) */
-.pill-cta, .pc-body .pill-cta, .hero .pill-cta, .hero-cta .pill-cta,
-.hero .hero-cta .pill-cta, .blog-cta .pill-cta, .jbottom .pill-cta,
-.fcta .pill-cta, .club .pill-cta, .ritual .pill-cta {
-  background: #f4e9d4 !important;
-  color: #2c1d16 !important;
-  text-shadow: none !important;
-  border: 1px solid #e0d3ba !important;
-  box-shadow: 0 3px 10px -3px rgba(44,29,22,.22) !important;
-  font-weight: 700 !important;
-}
-.pill-cta:hover, .pc-body .pill-cta:hover, .hero .pill-cta:hover,
-.hero-cta .pill-cta:hover, .hero .hero-cta .pill-cta:hover,
-.blog-cta .pill-cta:hover, .jbottom .pill-cta:hover, .fcta .pill-cta:hover,
-.club .pill-cta:hover, .ritual .pill-cta:hover {
-  background: #ffffff !important;
-  border-color: #cbb894 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 8px 18px -6px rgba(44,29,22,.28) !important;
-}
+/* v47r removed — fully superseded by v53 below (same rules, higher specificity) */
 
 
 /* v45r — hero slide-up entrance (was lost during merge) */
