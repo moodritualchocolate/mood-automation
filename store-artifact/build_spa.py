@@ -1021,6 +1021,42 @@ _NEED = """
   color:#171512;text-decoration:none;transition:border-color .2s,transform .2s,box-shadow .2s}
 .needrow a:hover{border-color:#E05A00;transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(224,90,0,.5)}
 </style>"""
+# products.html was authored as a fragment to be embedded in the home page, so
+# as a standalone route it had no header and no footer: anyone landing on
+# /products directly had no way to reach the rest of the site. It gets the same
+# secondary header and footer the club and the magazine already use.
+_PROD_CHROME = (
+    '<style>'
+    'header.jh{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);'
+    'border-bottom:1px solid #e7ddd0;padding:10px 5vw;display:flex;justify-content:space-between;'
+    'align-items:center;gap:12px}'
+    'header.jh a{text-decoration:none}'
+    '.jlogo{display:inline-flex;align-items:center;justify-content:center;padding:4px 10px;'
+    'border:1.4px solid #241b12;border-radius:8px;background:#fff;font-size:19px;font-weight:900;'
+    'letter-spacing:-1.3px;line-height:1.15;direction:ltr;unicode-bidi:isolate;min-height:44px}'
+    '.jlogo i{font-style:normal;color:#E05A00}'
+    '.jback{font-weight:700;font-size:13px;color:#6b5a48;white-space:nowrap;padding-block:11px;'
+    'display:inline-block}'
+    'footer.jf{margin-top:clamp(32px,5vw,64px);padding:28px 5vw calc(28px + env(safe-area-inset-bottom));'
+    'border-top:1px solid #e7ddd0;text-align:center;font-size:12px;color:#8a7c6a;line-height:1.9}'
+    'footer.jf .fl{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;margin-bottom:10px}'
+    'footer.jf .fl a{color:#171512;font-weight:700;font-size:13px;text-decoration:none;'
+    'display:inline-block;padding-block:11px}'
+    '</style>')
+_PROD_HEAD = ('<header class="jh"><a class="jlogo" dir="ltr" href="/">mo<i>o</i>d</a>'
+              '<a class="jback" href="/">\u05d7\u05d6\u05e8\u05d4 \u05dc\u05d0\u05ea\u05e8 \u2190</a></header>')
+_PROD_FOOT = ('<footer class="jf"><div class="fl">'
+              '<a href="/energy">ENERGY</a><a href="/relax">RELAX</a><a href="/sleep">SLEEP</a>'
+              '<a href="/ritual">THE FULL RITUAL</a><a href="/club">\u05de\u05d5\u05e2\u05d3\u05d5\u05df \u05d4\u05d7\u05d1\u05e8\u05d9\u05dd</a>'
+              '<a href="/faq">\u05e9\u05d0\u05dc\u05d5\u05ea \u05d5\u05ea\u05e9\u05d5\u05d1\u05d5\u05ea</a>'
+              '<a href="/policies">\u05de\u05d3\u05d9\u05e0\u05d9\u05d5\u05ea</a></div>'
+              '\u00a9 mood 2026 \u00b7 Ritual Chocolate</footer>')
+page_src['/products'] = (page_src['/products']
+                         .replace('</head>', _PROD_CHROME + '</head>')
+                         .replace('<body>', '<body>' + _PROD_HEAD, 1)
+                         .replace('</body>', _PROD_FOOT + '</body>'))
+assert 'class="jh"' in page_src['/products'], 'products chrome did not attach'
+
 page_src['/products'] = page_src['/products'].replace('</body>', _NEED + '</body>')
 
 # Mayven card skin for the standalone products page (same classes as the embedded cards)
