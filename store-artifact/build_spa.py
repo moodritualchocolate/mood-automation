@@ -480,7 +480,7 @@ RONEN_PLUS = """
           '<div><b>7</b><span>גרם לקובייה</span></div>'+
         '</div>'+
       '</div>'+
-      '<figure class="rev-media"><img src="%%BITEIMG%%" alt="קוביית שוקולד mood עם ביס" loading="lazy"></figure>'+
+      '<figure class="rev-media"><img src="%%BITEIMG%%" alt="קוביית השוקולד של mood" loading="lazy"></figure>'+
     '</div>';
     t.parentNode.insertBefore(s, t.nextSibling);
   }
@@ -1349,16 +1349,14 @@ MOOD_SYSTEM = """
 .rev-spec b{display:block;font-size:clamp(16px,2vw,24px);font-weight:900;color:#fff;
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .rev-spec span{display:block;margin-top:3px;font-size:clamp(10px,1.05vw,12px);color:#a89680;letter-spacing:.02em}
-/* the frame matches the photograph's own ratio — the bite is the point, nothing gets cropped */
-.rev-media{position:relative;overflow:hidden;aspect-ratio:1791/878;background:#100c09;margin:0;
+/* near-square frame: the bar stands centred in the salt and fills the height */
+.rev-media{position:relative;overflow:hidden;aspect-ratio:5/4;background:#100c09;margin:0;
   border-radius:22px}
 .rev-media img{width:100%;height:100%;object-fit:cover;display:block}
-.rev-media::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(to left,rgba(14,11,8,.5) 0%,rgba(14,11,8,0) 30%)}
+/* no scrim: the photograph is lit warm and the section behind it is near-black already */
 @media (max-width:820px){
   .rev-in{grid-template-columns:1fr;gap:16px;padding:clamp(20px,5vw,26px) 0 clamp(22px,5.4vw,28px)}
-  .rev-media{border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
-  .rev-media::after{background:linear-gradient(to top,rgba(14,11,8,.55) 0%,rgba(14,11,8,0) 48%)}
+  .rev-media{aspect-ratio:4/3;border-radius:0;order:-1;margin-left:-16px;margin-right:-16px}
   .rev-copy h2{font-size:clamp(26px,7.6vw,34px)}
   .rev-copy p{max-width:none}
 }
@@ -1692,7 +1690,7 @@ page_src['%f3d%'] = page_src['%f3d%'].replace('</body>', MOOD_SYSTEM + '</body>'
 
 for _b in ('/brand/bars-plate.jpg', '/brand/cafe-handoff.jpg', '/mood-club-generations.png',
            '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png',
-           '/mood-chocolate-bite.png'):
+           '/mood-bar-salt.jpg'):
     referenced.add(_b)                            # the brand's own campaign photography
 for _a in _journal.ARTICLES:                      # blog art + product shots
     referenced.add(_a['image'])
@@ -1711,7 +1709,7 @@ for p in sorted(referenced):
 # the how-it-works photos resolve to the same tokens the asset pass minted
 for _ph, _path in (('%%FAQIMG%%', '/brand/bars-plate.jpg'),
                    ('%%CMPIMG%%', '/brand/cafe-handoff.jpg'),
-                   ('%%BITEIMG%%', '/mood-chocolate-bite.png')):
+                   ('%%BITEIMG%%', '/mood-bar-salt.jpg')):
     _t = 'A' + hashlib.md5(_path.encode()).hexdigest()[:10]
     assert _t in ASSETS, 'how-it-works asset missing: ' + _path
     page_src['/'] = page_src['/'].replace(_ph, '%%' + _t + '%%')
