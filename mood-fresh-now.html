@@ -359,6 +359,16 @@ body .hero .hero-cta .pill-cta:hover {
   box-shadow: 0 8px 18px -6px rgba(44,29,22,.28) !important;
 }
 
+
+/* v54 — hide product-card prices on home (like Mayven has no prices there) */
+.pc .pc-price, .pc .pc-price-main, .pc .pc-price-from,
+body .pc .pc-price, body .pc .pc-price-main, body .pc .pc-price-from {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
 </style>
 </head>
 <body>
