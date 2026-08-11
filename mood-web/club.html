@@ -13,8 +13,12 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="description" content="חברי מועדון mood מקבלים את הריטואל היומי עד הבית במחיר חבר קבוע, מדלגים או מבטלים בכל רגע.">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap');
 
 /* === HOME BASE CSS (start) === */
 
@@ -1137,6 +1141,54 @@ section.faq { background: var(--paper); }
 .mfoot a { transition: color .25s ease; }
 .mfoot-col a:hover, .mfoot-legal a:hover, .mfoot-social a:hover { color: var(--gold) !important; }
 
+/* ============================================================
+   AUDIT LIFT WAVE 4 — Heebo real · motion reveals · founder block
+   ============================================================ */
+.hero-copy h1, .hero h1, .hero-tri, .hero-tri span,
+.section-head h2, .rvs h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2,
+.pc .price, .tier .price, .buy-price, .pc-price-main b, .pc-price-main {
+  font-family: 'Heebo','DM Sans','Assistant',sans-serif !important;
+}
+.hero-copy h1, .hero h1, .hero-tri, .hero-tri span,
+.section-head h2, .rvs h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2 {
+  font-weight: 800 !important;
+}
+.pc .price, .tier .price, .buy-price, .pc-price-main b { font-weight: 800 !important; }
+
+/* Motion reveal */
+h2:not(.hero-tri), .section-head, .founder, article:not(.pc) {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .8s cubic-bezier(.19,1,.22,1), transform .8s cubic-bezier(.19,1,.22,1);
+}
+h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
+  opacity: 1 !important; transform: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  h2, .section-head, .founder, article { opacity:1 !important; transform:none !important; transition:none !important; }
+}
+
+/* Founders block */
+.founders { padding: 80px 4vw; background: var(--paper); }
+.founders .in { max-width: 1080px; margin: 0 auto; }
+.founders h2 {
+  font-family: 'Heebo','DM Sans',sans-serif; font-weight: 800;
+  font-size: clamp(30px,4vw,48px); line-height: 1.05; letter-spacing: -1px;
+  margin: 12px 0 40px;
+}
+.founders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.founder { margin: 0; }
+.founder img { width: 100%; height: auto; border-radius: 12px; display: block; aspect-ratio: 4/5; object-fit: cover; }
+.founder figcaption { padding-top: 18px; }
+.founder strong { font-family: 'Heebo',sans-serif; font-weight: 800; font-size: 20px; display: block; }
+.founder span { color: var(--muted, #7a716a); font-size: 14px; display: block; margin-top: 2px; }
+.founder p {
+  font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 400;
+  font-size: 17px; line-height: 1.4; margin: 14px 0 0; color: var(--ink);
+}
+@media (max-width: 720px) {
+  .founders-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
 </style>
 </head>
 <body>
@@ -1172,6 +1224,32 @@ section.faq { background: var(--paper); }
         <span>הריטואל שמגיע אליכם</span>
         <span>משלוח חינם קבוע</span>
         <span>ביטול בקליק</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDERS -->
+  <section class="founders" aria-labelledby="founders-h">
+    <div class="in">
+      <p class="k k-editorial"><span class="en">who's behind it</span><span class="he">מי מאחורי mood</span></p>
+      <h2 id="founders-h">שני חברים שהחליטו שהמערכת שבורה.</h2>
+      <div class="founders-grid">
+        <figure class="founder">
+          <img src="home-assets/cx/mood-ronen-master-chocolatier.jpg" alt="נדב יצחקי — מייסד mood" loading="lazy" width="320" height="400">
+          <figcaption>
+            <strong>נדב יצחקי</strong>
+            <span>מייסד שותף · לשעבר יזם ריטואל טבעי</span>
+            <p>"ניסיתי הכל — קפאין, אדפטוגנים, טכניקות. שום דבר לא היה טעים מספיק כדי להיכנס ליום־יום."</p>
+          </figcaption>
+        </figure>
+        <figure class="founder">
+          <img src="home-assets/cx/studio-family.jpg" alt="מתיאס דומינגז — מייסד mood" loading="lazy" width="320" height="400">
+          <figcaption>
+            <strong>מתיאס דומינגז</strong>
+            <span>מייסד שותף · תזונאי־ספורט</span>
+            <p>"הפורמולה חייבת לעבוד לפני שהיא נכנסת לפה. אבל השוקולד חייב להיות מרגש."</p>
+          </figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -1458,6 +1536,22 @@ section.faq { background: var(--paper); }
     a.setAttribute('target', '_blank');
     a.setAttribute('rel', 'noopener');
   });
+})();
+</script>
+
+<script>
+// AUDIT LIFT WAVE 4 — reveal-on-scroll observer
+(() => {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const selectors = 'h2, .section-head, .founder, article, .pc, .rvq, .fq, .ritual, .club, .p2a-formula, .fdb-ritual';
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll(selectors).forEach(el => el.classList.add('in-view'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); } });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll(selectors).forEach(el => io.observe(el));
 })();
 </script>
 
