@@ -78,13 +78,15 @@ nav a:hover{opacity:.6}
 /* ---------- hero ---------- */
 .hero{position:relative;overflow:hidden;background:var(--paper-soft)}
 .hero>img{width:100%;height:min(78vh,720px);object-fit:cover;object-position:center 45%;display:block;filter:brightness(.85)}
-.hero-copy{position:absolute;inset:0;display:grid;place-items:end center;text-align:center;padding:20px 4vw 64px;color:#fff}
+.hero-copy{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding:20px 4vw 9%;color:#fff}
+.hero-copy .hero-cta{margin-top:min(72px,7vh)}
 .hero-copy .k{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;margin-bottom:22px;opacity:.9}
 .hero-copy h1{font-family:'DM Sans','Assistant',sans-serif;font-weight:400;font-size:clamp(52px,9vw,120px);line-height:.98;letter-spacing:-3px;margin:0 0 24px;max-width:1000px}
 .hero-copy h1 b{font-weight:700}
 .hero-copy p{font-size:clamp(15px,1.6vw,18px);margin:0 auto 32px;max-width:520px;line-height:1.5;font-weight:500;opacity:.95}
 .hero-cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.hero-cta .pill{padding:15px 34px;font-size:15px}
+.hero-cta .pill{padding:16px 40px;font-size:16px}
+@media(min-width:900px){.hero-cta .pill{padding:22px 62px;font-size:18px;letter-spacing:.4px;min-width:220px}}
 .hero-cta .pill-cta{background:#eeff54;color:#1e3212}
 .hero-cta .pill-cta:hover{background:#deee42}
 .hero-cta .pill-out{border-color:#fff;color:#fff}
