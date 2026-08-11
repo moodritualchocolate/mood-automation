@@ -316,7 +316,11 @@ RONEN_PLUS = """
     var img=rc.querySelector('img'); var src=img?img.src:'';
     rc.dataset.rebuilt='1'; rc.className='cu';
     rc.innerHTML=
-      '<div class="cu-media"><img src="'+src+'" alt="מועדון החברים של mood"></div>'+
+      '<div class="cu-media"><video class="cu-vid" playsinline muted loop preload="none" '+
+        'poster="%%A0f0f0f0f0d%%" aria-label="חברי מועדון mood מחזיקים את המוצר">'+
+        '<source src="%%A0f0f0f0f0e%%" type="video/webm">'+
+        '<source src="%%A0f0f0f0f0c%%" type="video/mp4">'+
+        '</video></div>'+
       '<div class="cu-in">'+
         '<div class="cu-copy">'+
           '<span class="cu-tag">המסלול המשתלם</span>'+
@@ -362,6 +366,19 @@ RONEN_PLUS = """
   }
   // The torn-blue photograph had a section of its own here. It is out for now;
   // the asset stays in store-artifact/photos for whenever it earns a place.
+  function clubClip(){
+    var v=document.querySelector('.cu-vid'); if(!v||v.dataset.armed)return;
+    v.dataset.armed='1';
+    // a silent loop is still motion: if the visitor asks for less, the poster stays
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+    if(!window.IntersectionObserver){return;}
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ v.play&&v.play().catch(function(){}); }
+        else { v.pause&&v.pause(); }
+      });
+    },{threshold:.35}).observe(v);
+  }
   function callIcon(){
     var nav=document.querySelector('.xnav')||document.querySelector('nav');
     if(!nav||nav.querySelector('.mv-call'))return;
@@ -399,7 +416,7 @@ RONEN_PLUS = """
     // the launch date is gone from the source copy itself; no runtime scrub needed
   }
   function boot2(){[120,260,900,1800].forEach(function(d){
-    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();},d);});}
+    setTimeout(function(){arm();hebrewEyebrow();heroPitch();wireLinks();ronenBand();trustLine();callIcon();closingBlock();clubUnit();faqAside();awardsStrip();clubClip();},d);});}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot2); else boot2();
 })();
 </script>"""
@@ -1356,6 +1373,8 @@ MOOD_SYSTEM = """
   .fx-more{width:100%}
 }
 
+.cu-media video{width:100%;height:100%;object-fit:cover;display:block}
+
 /* ============ RONEN — the quote sits in the empty half of the frame ============
    The frame is shot with its right side empty, so the words go there instead of
    under the picture: half the scroll, and the photograph still runs full width.
@@ -1951,6 +1970,19 @@ for s, n in list(inline_counts.items()):
 print('deduped shared inline blobs:', sum(1 for s, n in inline_counts.items() if n >= 2))
 # shared lineup asset (products banner + ritual gallery)
 ASSETS['A0f0f0f0f0f'] = _LINEUP
+# the club clip: trimmed before its end lockup, silent, 768px, 114 KB
+import base64 as _b64
+_CLUBDIR = '/tmp/claude-0/-home-user-mood-automation/c8b146d5-7269-5f24-a785-402f620707cd/scratchpad/vid'
+ASSETS['A0f0f0f0f0c'] = 'data:video/mp4;base64,' + _b64.b64encode(
+    open(_CLUBDIR + '/club.mp4', 'rb').read()).decode()
+# VP9 alongside H.264: the two together cover every current browser, and the
+# open one is the half of the pair this environment can actually play, so the
+# clip is verifiable here instead of taken on trust
+ASSETS['A0f0f0f0f0e'] = 'data:video/webm;base64,' + _b64.b64encode(
+    open(_CLUBDIR + '/club.webm', 'rb').read()).decode()
+ASSETS['A0f0f0f0f0d'] = 'data:image/jpeg;base64,' + _b64.b64encode(
+    open(_CLUBDIR + '/club-poster.jpg', 'rb').read()).decode()
+print('club clip inlined: %.0f KB' % (len(ASSETS['A0f0f0f0f0c']) / 1024))
 page_src['/ritual'] = page_src['/ritual'].replace(_LINEUP, '%%A0f0f0f0f0f%%')
 
 # ---------- 3. nav-intercept + page prep ----------
