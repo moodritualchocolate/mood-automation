@@ -404,6 +404,10 @@ page_src['/'] = t
 
 # ---------- 1c. PDP: faithful Mayven mobile — swipe gallery w/ edge-peek + sheet over image,
 #             quote highlight, bought-count badge, per-pack ATC rows, full-ritual bundle ----------
+# The 'bought' figures below, and the 2,347 on the bundle page, are invented —
+# same standing as the reviews in _reviews.py. They render beside the price as
+# plain fact. Replace them with real order counts or remove them before launch.
+PLACEHOLDER_COUNTS = True
 _PDP_DATA = {
  '/energy': {'quote': 'מחליף לי את הקפה של עשר בבוקר. אנרגיה נקייה, בלי נפילה.', 'by': 'שירה', 'bought': '4,208'},
  '/relax':  {'quote': 'רבע שעה אחרי הקובייה — ואני בן אדם אחר. הריטואל שלי.', 'by': 'נועה', 'bought': '5,437'},
@@ -1089,7 +1093,7 @@ page_src['/ritual'] = ('<!doctype html><html lang="he" dir="rtl"><head><meta cha
  '<div class="sheet"><div class="in">'
  '<span class="ship">משלוח חינם</span>'
  '<h1>THE FULL RITUAL</h1>'
- '<div class="rate"><b>★★★★★</b> · 4.9 · 214 ביקורות</div>'
+ '<div class="rate"><b>★★★★★</b> · 4.9 · 94 ביקורות</div>'   # matches the product pages
  '<p class="desc">שמנו לך את כל הריטואל במארז אחד — ENERGY לבוקר, RELAX לצהריים ו-SLEEP ללילה. חודש שלם לכל מצב רוח, במחיר משתלם יותר.</p>'
  '<span class="bought">2,347 נקנו בחודש האחרון</span>'
  '<div class="chips"><span>✓ מיוצר בישראל</span><span>✓ רכיבים טבעיים</span><span>✓ כשר פרווה</span><span>✓ ללא תוספת סוכר</span></div>'
@@ -1133,12 +1137,14 @@ _JOURNAL_IDS = _journal.build(page_src)
 AWARD_TEXT = '\u05d4\u05e9\u05d5\u05e7\u05d5\u05dc\u05d8\u05d9\u05d9\u05e8 \u05d4\u05d8\u05d5\u05d1 \u05d1\u05e2\u05d5\u05dc\u05dd \u05dc\u05e9\u05e0\u05ea 2022'
 import _reviews
 _reviews.inject(page_src)
-if getattr(_reviews, 'PLACEHOLDER', True):
+if getattr(_reviews, 'PLACEHOLDER', True) or PLACEHOLDER_COUNTS:
     print('\n' + '!' * 74)
-    print('!!  THE 30 CUSTOMER REVIEWS IN THIS BUILD ARE INVENTED PLACEHOLDERS.')
-    print('!!  They ship with star ratings and a "verified" label. Publishing this')
-    print('!!  build presents fabricated testimonials as real ones. Replace R in')
-    print('!!  _reviews.py with attributable reviews before the site goes live.')
+    print('!!  THIS BUILD SHIPS INVENTED SOCIAL PROOF.')
+    print('!!    - 30 customer reviews (_reviews.py), with stars and a verified label')
+    print('!!    - purchase counters: 4,208 / 5,437 / 3,892 on the product pages')
+    print('!!      and 2,347 on the bundle page, shown beside the price as fact')
+    print('!!  Publishing this presents fabricated numbers as real ones. Replace')
+    print('!!  them with attributable figures, or remove them, before going live.')
     print('!' * 74 + '\n')
 
 # ---------- 1z. one button system + a small framed logo, injected into EVERY page ----------

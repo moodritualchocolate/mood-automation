@@ -7,11 +7,16 @@
 > They render with star ratings and a "verified" label, so publishing this build as
 > it stands presents fabricated testimonials as genuine customer reviews.
 >
+> Also invented: the purchase counters — 4,208 / 5,437 / 3,892 beside the price
+> on the product pages, and 2,347 on the bundle page. They read as order counts
+> and are not.
+>
 > Replace `R` in `_reviews.py` with real, attributable reviews, then set
 > `PLACEHOLDER = False` in that file. The build prints a warning until you do.
 >
-> This is the only thing blocking launch. Everything else in the build is real:
-> the photography, the pricing, the formulas and the founder's story.
+> Invented social proof is the only thing blocking launch. Everything else in
+> the build is real: the photography, the pricing, the formulas and the
+> founder's story.
 
 `mood-store.html` is the whole site in one self-contained file: 40 routes, all images,
 fonts and scripts inlined. Open it in any browser, or upload it anywhere — it has no
