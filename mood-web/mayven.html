@@ -84,15 +84,15 @@ nav a:hover{opacity:.6}
 /* ---------- hero ---------- */
 .hero{position:relative;overflow:hidden;background:var(--paper-soft)}
 .hero>img{width:100%;height:min(78vh,720px);object-fit:cover;object-position:center 45%;display:block;filter:brightness(.85)}
-.hero-copy{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding:20px 4vw 9%;color:#fff}
-.hero-copy .hero-cta{margin-top:min(72px,7vh)}
-.hero-copy .k{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;margin-bottom:22px;opacity:.9}
-.hero-copy h1{font-family:'DM Sans','Assistant',sans-serif;font-weight:400;font-size:clamp(52px,9vw,120px);line-height:.98;letter-spacing:-3px;margin:0 0 24px;max-width:1000px}
-.hero-copy h1 b{font-weight:700}
-.hero-copy p{font-size:clamp(15px,1.6vw,18px);margin:0 auto 32px;max-width:520px;line-height:1.5;font-weight:500;opacity:.95}
+.hero-copy{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding:20px 4vw 5%;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.4)}
+.hero-copy .hero-cta{margin-top:min(48px,5vh)}
+.hero-copy .k{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;margin-bottom:22px;opacity:.95}
+.hero-copy h1{font-family:'DM Sans','Assistant',sans-serif;font-weight:700;font-size:clamp(48px,8vw,104px);line-height:.98;letter-spacing:-2.5px;margin:0 0 22px;max-width:1000px}
+.hero-copy h1 b{font-weight:800}
+.hero-copy p{font-size:clamp(15px,1.6vw,18px);margin:0 auto 28px;max-width:540px;line-height:1.5;font-weight:600;opacity:1}
 .hero-cta{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.hero-cta .pill{padding:16px 40px;font-size:16px}
-@media(min-width:900px){.hero-cta .pill{padding:22px 62px;font-size:18px;letter-spacing:.4px;min-width:220px}}
+.hero-cta .pill{padding:18px 44px;font-size:16px;font-weight:800;text-shadow:none;box-shadow:0 12px 28px -8px rgba(0,0,0,.4)}
+@media(min-width:900px){.hero-cta .pill{padding:24px 72px;font-size:20px;letter-spacing:.4px;min-width:260px}}
 .hero-cta .pill-cta{background:#eeff54;color:#1e3212}
 .hero-cta .pill-cta:hover{background:#deee42}
 .hero-cta .pill-out{border-color:#fff;color:#fff}
@@ -278,7 +278,7 @@ body { background: var(--paper); }
 /* hero — video overrides */
 .hero {
   position: relative !important;
-  min-height: min(88vh, 780px) !important;
+  min-height: min(70vh, 620px) !important;
   overflow: hidden !important;
   background: #1a1109 !important;
 }
@@ -386,11 +386,11 @@ body .pc .pc-price, body .pc .pc-price-main, body .pc .pc-price-from {
   }
   .champstrip-text b { color: #ffec5c !important; }
   .hero {
-    min-height: min(62vh, 520px) !important;
+    min-height: min(56vh, 460px) !important;
   }
-  .hero-copy { padding-bottom: 24px !important; }
-  .hero-copy .hero-cta { margin-top: min(48px, 5vh) !important; }
-  .hero-cta .pill { padding: 13px 32px !important; font-size: 14px !important; }
+  .hero-copy { padding-bottom: 20px !important; }
+  .hero-copy .hero-cta { margin-top: min(32px, 4vh) !important; }
+  .hero-cta .pill { padding: 16px 38px !important; font-size: 15px !important; font-weight: 800 !important; }
   .trust-row { padding: 12px 2vw; }
   .trust-row-in {
     gap: 0 8px;
