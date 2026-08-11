@@ -1023,20 +1023,30 @@ page_src['/products'] = page_src['/products'].replace('</body>', _NEED + '</body
 # Mayven card skin for the standalone products page (same classes as the embedded cards)
 _CARDSKIN = """
 <style>
-.card{border:0!important;outline:0!important;background:#f4f3f1!important;border-radius:24px!important;overflow:hidden!important;box-shadow:none!important}
+/* editorial cards: the photograph is the card, the type sits on the page itself */
+.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;
+  overflow:visible!important;box-shadow:none!important}
 .card::before,.card::after{display:none!important}
+.card.energy{--sku:#F2902E}
+.card.relax{--sku:#91B681}
+.card.sleep{--sku:#779BC6}
+.card .visual{border-radius:18px!important;overflow:hidden!important}
 .card .content{text-align:center!important}
 .card .label,.card .description,.card .monthly{display:none!important}
-.mvname{font-size:23px;font-weight:800;letter-spacing:.05em;color:#1d3226;margin:2px 0 4px}
-.card .content h2{font-size:15px!important;font-weight:600!important;color:#5e574f!important;margin:0 0 14px!important;line-height:1.5!important;letter-spacing:0!important}
+.mvname{font-size:22px;font-weight:800;letter-spacing:.055em;color:#1d3226;margin:7px 0 0}
+/* the SKU colour arrives as a 26px rule — the card carries no other colour of its own */
+.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;
+  margin:13px 0 16px!important;padding-top:13px!important;line-height:1.5!important;letter-spacing:0!important}
+.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}
 .card .button{display:block!important;width:100%!important;padding:11px 14px!important;font-size:14px!important;line-height:1.2!important;min-height:0!important}
 .card .units{opacity:0!important;transform:scale(.98)!important}
 .card .lifestyle{opacity:1!important;transform:none!important}
 .card:hover .units{opacity:1!important;transform:none!important}
 .card:hover .lifestyle{opacity:0!important}
-.card .content{background:#f4f3f1!important;padding:16px 18px 20px!important}
-.mvstars{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 4px;font-weight:700;font-size:13px;color:#33413a}
-.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:15px}
+.card .content{background:transparent!important;padding:15px 4px 0!important}
+.mvstars{display:flex;align-items:center;justify-content:center;gap:7px;margin:0;font-weight:600;font-size:12px;color:#8a7c6a}
+.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13px}
 .card .button{background:transparent!important;border:1.6px solid #1d3226!important;color:#1d3226!important;
 border-radius:999px!important;font-weight:800!important;box-shadow:none!important;transition:background .2s,color .2s!important}
 .card .button:hover{background:#1d3226!important;color:#fff!important}
@@ -1697,19 +1707,19 @@ document.addEventListener('click',function(e){
 },true);
 // nested srcdoc frames (embedded product cards): forward links to the router + apply the Mayven card skin
 (function(){
-  var CARD_CSS='.card{border:0!important;outline:0!important;background:#f4f3f1!important;border-radius:24px!important;overflow:hidden!important;box-shadow:none!important}'+'.card::before,.card::after{display:none!important}'+
+  var CARD_CSS='.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}'+'.card.energy{--sku:#F2902E}.card.relax{--sku:#91B681}.card.sleep{--sku:#779BC6}'+'.card .visual{border-radius:18px!important;overflow:hidden!important}'+'.card::before,.card::after{display:none!important}'+
    '.card .content{text-align:center!important}'+
    '.card .label,.card .description,.card .monthly{display:none!important}'+
-   '.mvname{font-size:23px;font-weight:800;letter-spacing:.05em;color:#1d3226;margin:2px 0 4px}'+
-   '.card .content h2{font-size:15px!important;font-weight:600!important;color:#5e574f!important;margin:0 0 14px!important;line-height:1.5!important;letter-spacing:0!important}'+
+   '.mvname{font-size:22px;font-weight:800;letter-spacing:.055em;color:#1d3226;margin:7px 0 0}'+
+   '.card .content h2{position:relative;font-size:15px!important;font-weight:500!important;color:#6b6459!important;margin:13px 0 16px!important;padding-top:13px!important;line-height:1.5!important;letter-spacing:0!important}'+'.card .content h2::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2px;border-radius:2px;background:var(--sku,#d8cbb8)}'+
    '.card .button{display:block!important;width:100%!important;padding:11px 14px!important;font-size:14px!important;line-height:1.2!important;min-height:0!important}'+
    '.card .units{opacity:0!important;transform:scale(.98)!important}'+
    '.card .lifestyle{opacity:1!important;transform:none!important}'+
    '.card:hover .units{opacity:1!important;transform:none!important}'+
    '.card:hover .lifestyle{opacity:0!important}'+
-   '.card .content{background:#f4f3f1!important;padding:16px 18px 20px!important}'+
-   '.mvstars{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 4px;font-weight:700;font-size:13px;color:#33413a}'+
-   '.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:15px}'+
+   '.card .content{background:transparent!important;padding:15px 4px 0!important}'+
+   '.mvstars{display:flex;align-items:center;justify-content:center;gap:7px;margin:0;font-weight:600;font-size:12px;color:#8a7c6a}'+
+   '.mvstars b{color:#2e4633;letter-spacing:2.5px;font-size:13px}'+
    '.card .button{background:transparent!important;border:1.6px solid #1d3226!important;color:#1d3226!important;'+
    'border-radius:999px!important;font-weight:800!important;box-shadow:none!important;transition:background .2s,color .2s!important}'+
    '.card .button:hover{background:#1d3226!important;color:#fff!important}'+
