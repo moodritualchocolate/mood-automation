@@ -48,7 +48,13 @@ const slug=r=>r==='/'?'home':r.replace(/^\//,'').replace(/\//g,'-');
           });
           return {broken:[...d.images].filter(i=>i.complete&&i.naturalWidth===0).length,
                   overflow:d.documentElement.scrollWidth>d.documentElement.clientWidth+1,
-                  tapSmall:tap};
+                  tapSmall:tap,
+                  // The shell shipped without a viewport meta, so a phone laid it
+                  // out at its 980px fallback and every max-width:700px rule sat
+                  // dead. The net never saw it: the baseline had the same bug, so
+                  // the diff was clean. Compare against the width we ASKED for,
+                  // not against last time.
+                  layoutW:document.documentElement.clientWidth};
         });
         await p.setViewportSize({width:W,height:Math.min(Math.max(docH,H),16000)});
         await p.waitForTimeout(1400);
@@ -67,4 +73,17 @@ const slug=r=>r==='/'?'home':r.replace(/^\//,'').replace(/\//g,'-');
   const bad=Object.entries(report).filter(([k,v])=>v.error||v.js||v.broken||v.overflow);
   console.log(`\n${MODE}: ${Object.keys(report).length} captures`);
   console.log(bad.length?('PROBLEMS:\n'+bad.map(([k,v])=>'  '+k+' '+JSON.stringify(v)).join('\n')):'no errors, no broken images, no overflow');
+  // absolute check, not a diff: does the page lay out at the width we asked for?
+  const wrongW=Object.entries(report).filter(([k,v])=>{
+    const want=k.startsWith('m ')?390:1440;
+    return v.layoutW && Math.abs(v.layoutW-want)>2;
+  });
+  if(wrongW.length){
+    const [k,v]=wrongW[0];
+    console.log(`\n!! VIEWPORT: ${wrongW.length} captures laid out at the wrong width`+
+      ` (e.g. ${k} → ${v.layoutW}px). A missing <meta name="viewport"> on the OUTER`+
+      ` document makes phones use a ~980px fallback and kills every mobile rule.`);
+  } else {
+    console.log('viewport: every capture laid out at its requested width');
+  }
 })();

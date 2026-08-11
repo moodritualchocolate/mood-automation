@@ -2516,6 +2516,19 @@ shell_js = shell_js.replace('__JROUTES__', ''.join(",'/journal/%s':'pgjournal_%s
 _sj = shell_js.replace('__ASSETS__', assets_json)
 for _sku, _path in [('ENERGY','/mood-energy-pack.png'),('RELAX','/mood-relax-pack.png'),('SLEEP','/mood-sleep-pack.png')]:
     _sj = _sj.replace('__TOK_%s__' % _sku, 'A' + hashlib.md5(_path.encode()).hexdigest()[:10])
-shell = ('<div dir="rtl" lang="he">' + shell_head + '\n'.join(tpl_blocks) + _sj + '</div>')
+# The outer document had no <head> and therefore no viewport meta. Every
+# route document inside srcdoc carried one, but those are iframes: their
+# viewport is the size of the box the shell gives them, not the device. So a
+# real phone laid the shell out at its ~980px fallback width and scaled the
+# whole thing down — the site rendered as a shrunken desktop and not one
+# `@media (max-width:700px)` rule in the file ever matched.
+#
+# It never showed up in testing because setting a Playwright viewport sets
+# the layout viewport directly, which is precisely what a missing meta tag
+# takes away. Emulation cannot reproduce this; only a device or the tag can.
+SHELL_HEAD_META = ('<meta charset="utf-8">'
+                   '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">')
+shell = (SHELL_HEAD_META + '<div dir="rtl" lang="he">' + shell_head
+         + '\n'.join(tpl_blocks) + _sj + '</div>')
 open(OUT, 'w', encoding='utf-8').write(shell)
 print('WROTE', OUT, round(len(shell)/1048576, 2), 'MB')
