@@ -1079,6 +1079,8 @@ _CARDSKIN = """
 .card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;
   overflow:visible!important;box-shadow:none!important}
 .card::before,.card::after{display:none!important}
+/* the old hover sheet: a positioned ::before that collapses to a 7px dog-ear */
+.card .button::before,.card .button::after{display:none!important;content:none!important}
 .card.energy{--sku:#F2902E}
 .card.relax{--sku:#91B681}
 .card.sleep{--sku:#779BC6}
@@ -1116,16 +1118,16 @@ border-radius:999px!important;font-weight:700!important;box-shadow:none!importan
   .mvdots i.on{background:#E05A00;width:18px}
 }
 @media(min-width:701px){.mvdots{display:none}}
-.mv-ritband{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;max-width:900px;
-  margin:26px auto 44px;padding:14px 18px;background:#fff;border:1px solid #ece2d2;border-radius:22px;
+.mv-ritband{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:center;max-width:960px;
+  margin:26px auto 44px;padding:16px;background:#fff;border:1px solid #ece2d2;border-radius:22px;
   text-decoration:none;box-shadow:0 18px 40px -28px rgba(41,25,10,.4);transition:transform .25s}
 .mv-ritband:hover{transform:translateY(-3px)}
-.mv-ritband img{width:150px;height:100px;object-fit:cover;border-radius:14px}
-.mv-ritband b{font-size:18px;color:#171512;display:block}
-.mv-ritband span{display:block;font-size:13px;color:#8a7c6a;margin-top:3px;line-height:1.5}
-.mv-ritband i{font-style:normal;display:inline-block;margin-top:8px;font-weight:900;color:#c14e00;font-size:14px}
-@media(max-width:700px){.mv-ritband{margin:4px 16px 34px;grid-template-columns:104px 1fr;padding:12px 14px}
-  .mv-ritband img{width:104px;height:78px}.mv-ritband b{font-size:15.5px}}
+.mv-ritband img{width:100%;height:200px;object-fit:cover;border-radius:16px;display:block}
+.mv-ritband b{font-size:20px;color:#171512;display:block;letter-spacing:-.02em}
+.mv-ritband span{display:block;font-size:13.5px;color:#8a7c6a;margin-top:5px;line-height:1.55}
+.mv-ritband i{font-style:normal;display:inline-block;margin-top:10px;font-weight:900;color:#c14e00;font-size:14.5px}
+@media(max-width:700px){.mv-ritband{margin:4px 16px 34px;grid-template-columns:1fr;gap:14px;padding:14px}
+  .mv-ritband img{height:190px}.mv-ritband b{font-size:17px}}
 </style>
 <script>
 (function(){
@@ -1167,7 +1169,7 @@ border-radius:999px!important;font-weight:700!important;box-shadow:none!importan
     if(!document.querySelector('.mv-ritband')){
       var cards=document.querySelector('.cards'); if(!cards)return;
       var band=document.createElement('a'); band.className='mv-ritband'; band.href='/ritual';
-      band.innerHTML='<img src="%%A0f0f0f0f0f%%" alt="החבילה המלאה"><div><b>THE FULL RITUAL 🍫</b>'+
+      band.innerHTML='<img src="%%REDHANDS%%" alt="טבלת mood עוברת בין שתי ידיים"><div><b>THE FULL RITUAL 🍫</b>'+
         '<span>שלושת המצבים · חודש שלם לכל רגע · חוסכים 15%</span>'+
         '<i>₪433 במקום ₪510 — לעמוד החבילה ←</i></div>';
       cards.insertAdjacentElement('afterend',band);
@@ -1787,7 +1789,7 @@ for _route in page_src:
 
 for _b in ('/brand/bars-plate.jpg', '/brand/cafe-handoff.jpg', '/mood-club-generations.png',
            '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png',
-           '/mood-ronen-gloves.jpg'):
+           '/mood-ronen-gloves.jpg', '/mood-fullritual-hands.jpg'):
     referenced.add(_b)                            # the brand's own campaign photography
 for _a in _journal.ARTICLES:                      # blog art + product shots
     referenced.add(_a['image'])
@@ -1803,13 +1805,24 @@ for p in sorted(referenced):
     for route in page_src:
         page_src[route] = re.sub(re.escape(p) + r'(\?[A-Za-z0-9=&.]*)?', '%%' + tok + '%%', page_src[route])
 
-# the how-it-works photos resolve to the same tokens the asset pass minted
+# Named photo placeholders resolve to the tokens the asset pass minted.
+# This runs over every route, not just the home page: a placeholder used on
+# any other route would otherwise survive into the output as literal text and
+# render as a broken image.
 for _ph, _path in (('%%FAQIMG%%', '/brand/bars-plate.jpg'),
                    ('%%CMPIMG%%', '/brand/cafe-handoff.jpg'),
-                   ('%%GLOVES%%', '/mood-ronen-gloves.jpg')):
+                   ('%%GLOVES%%', '/mood-ronen-gloves.jpg'),
+                   ('%%REDHANDS%%', '/mood-fullritual-hands.jpg')):
     _t = 'A' + hashlib.md5(_path.encode()).hexdigest()[:10]
-    assert _t in ASSETS, 'how-it-works asset missing: ' + _path
-    page_src['/'] = page_src['/'].replace(_ph, '%%' + _t + '%%')
+    assert _t in ASSETS, 'named photo asset missing: ' + _path
+    for _route in page_src:
+        page_src[_route] = page_src[_route].replace(_ph, '%%' + _t + '%%')
+
+# nothing may ship with an unresolved placeholder in it
+for _route, _html in page_src.items():
+    # asset tokens (%%A1234567890%% / %%D...%%) are resolved by the runtime, not here
+    _left = re.findall(r'%%(?![AD][0-9a-f]{10}%%)[A-Z][A-Z0-9_]{2,}%%', _html)
+    assert not _left, 'unresolved placeholder %s on route %s' % (sorted(set(_left)), _route)
 
 # ---------- 2. dedupe inline data uris (fonts etc.) shared across pages ----------
 inline_counts = {}
@@ -1843,7 +1856,7 @@ document.addEventListener('click',function(e){
 },true);
 // nested srcdoc frames (embedded product cards): forward links to the router + apply the Mayven card skin
 (function(){
-  var CARD_CSS='.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}'+'.card.energy{--sku:#F2902E}.card.relax{--sku:#91B681}.card.sleep{--sku:#779BC6}'+'.card .visual{border-radius:18px!important;overflow:hidden!important}'+'.card::before,.card::after{display:none!important}'+
+  var CARD_CSS='.card{border:0!important;outline:0!important;background:transparent!important;border-radius:0!important;overflow:visible!important;box-shadow:none!important}'+'.card.energy{--sku:#F2902E}.card.relax{--sku:#91B681}.card.sleep{--sku:#779BC6}'+'.card .visual{border-radius:18px!important;overflow:hidden!important}'+'.card::before,.card::after{display:none!important}'+/* the old hover sheet: a positioned ::before that collapses to a 7px dog-ear */'.card .button::before,.card .button::after{display:none!important;content:none!important}'+
    '.card .content{text-align:center!important}'+
    '.card .label,.card .description,.card .monthly{display:none!important}'+
    '.mvname{font-size:22px;font-weight:800;letter-spacing:.055em;color:#1d3226;margin:7px 0 0}'+
