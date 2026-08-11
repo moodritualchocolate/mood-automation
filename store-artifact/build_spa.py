@@ -2578,7 +2578,16 @@ for _tok, _val in ASSETS.items():
     _wrote += 1
     _bytes += len(_raw)
 
-_shell_ext = (SHELL_HEAD_META + '<div dir="rtl" lang="he">' + shell_head
+# Where the extracted build gets mounted. The asset paths are relative, and a
+# relative path resolves against the DOCUMENT's URL: served at /store/ it
+# resolves to /store/assets/x.jpg, but served at /store — no trailing slash —
+# it resolves to /assets/x.jpg and every image 404s. A <base> pins it either
+# way, and srcdoc iframes inherit the parent's base, so the route documents
+# resolve correctly too.
+DIST_BASE = '/store/'
+_head_ext = SHELL_HEAD_META.replace('</head>', '<base href="%s"></head>' % DIST_BASE)
+
+_shell_ext = (_head_ext + '<div dir="rtl" lang="he">' + shell_head
               + '\n'.join(tpl_blocks)
               + shell_js.replace('__ASSETS__', json.dumps(_ext_assets))
               + '</div></body></html>')
