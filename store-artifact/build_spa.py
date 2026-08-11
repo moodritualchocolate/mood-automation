@@ -217,14 +217,17 @@ RONEN_PLUS = """
     },{threshold:.4});
     io.observe(bs[0]);
   }
+  // Ronen's award was written five different ways across the site, two of them
+  // naming different competitions. One wording, one place to change it.
+  var AWARD='השוקולטייר הטוב בעולם לשנת 2022';
   function hebrewEyebrow(){
     var e=document.querySelector('.master-proof__eyebrow');
-    if(e)e.textContent='רונן אפללו · אלוף העולם בשוקולד 2022';
+    if(e)e.textContent='רונן אפללו · '+AWARD;
   }
   function heroPitch(){
     var eb=document.querySelector('.rh-eyebrow'), h=document.querySelector('.rh-h'),
         sub=document.querySelector('.rh-sub'), b1=document.querySelector('.rh-btn-primary');
-    if(eb){eb.innerHTML='<b>פותח עם אלוף העולם בשוקולד</b>';eb.classList.add('rh-badge');}
+    if(eb){eb.innerHTML='<b>פותח עם השוקולטייר הטוב בעולם</b>';eb.classList.add('rh-badge');}
     if(h)h.innerHTML='קובייה אחת ביום.<br><span>וזה כל הריטואל.</span>';
     if(sub)sub.remove();                       // the hero pulls you down the page, it doesn't explain
     if(b1)b1.textContent='בחרו את הרגע שלכם';
@@ -240,16 +243,16 @@ RONEN_PLUS = """
     mp.className='mp2';mp.style.setProperty('--shot','url('+shot+')');
     mp.innerHTML=
       '<div class="mp2-in">'+
-        '<div class="mp2-por"><img src="'+por+'" alt="רונן אפללו, אלוף העולם בשוקולד">'+
+        '<div class="mp2-por"><img src="'+por+'" alt="רונן אפללו, "+AWARD+">'+
           '<i class="mp2-medal" aria-hidden="true">★</i></div>'+
         '<div class="mp2-copy">'+
           '<div class="mp2-eye">השוקולטייר של mood</div>'+
-          '<h2>אלוף העולם בשוקולד<span> בנה לנו את הביס.</span></h2>'+
+          '<h2>השוקולטייר הטוב בעולם<span> בנה לנו את הביס.</span></h2>'+
           '<p class="mp2-q">18 חודשים לקח לרונן אפללו למצוא את הנקודה שבה 800 מ״ג פורמולה '+
             'עדיין מרגישים כמו שוקולד. <i>"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."</i></p>'+
         '</div>'+
         '<div class="mp2-stats">'+
-          '<div><b>2022</b><span>אלוף העולם</span></div>'+
+          '<div><b>2022</b><span>הטוב בעולם</span></div>'+
           '<div><b>18</b><span>חודשי פיתוח</span></div>'+
           '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
         '</div>'+
@@ -320,7 +323,7 @@ RONEN_PLUS = """
     var mp=document.querySelector('.mp2'); if(!mp||document.querySelector('.awd'))return;
     var d=document.createElement('div'); d.className='awd';
     d.innerHTML='<div class="awd-in">'+
-      '<span class="awd-lead"><b>★</b>World Chocolate Awards · מדליית זהב 2022</span>'+
+      '<span class="awd-lead"><b>★</b>רונן אפללו · השוקולטייר הטוב בעולם לשנת 2022</span>'+
       ['70% קקאו','0 גרם סוכר','כשר פרווה','תוצרת ישראל']
         .map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>';
     mp.parentNode.insertBefore(d, mp);       // it introduces the champion, not the hero
@@ -419,7 +422,7 @@ RONEN_PLUS = """
     var mp=document.querySelector('.mp2'); if(!mp||document.querySelector('.awd'))return;
     var d=document.createElement('div'); d.className='awd';
     d.innerHTML='<div class="awd-in">'+
-      '<span class="awd-lead"><b>★</b>World Chocolate Awards · מדליית זהב 2022</span>'+
+      '<span class="awd-lead"><b>★</b>רונן אפללו · השוקולטייר הטוב בעולם לשנת 2022</span>'+
       ['70% קקאו','0 גרם סוכר','כשר פרווה','תוצרת ישראל']
         .map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>';
     mp.parentNode.insertBefore(d, mp);       // it introduces the champion, not the hero
@@ -684,14 +687,16 @@ PDP_SHEET = """
     }
     // 3) per-pack quick-add buttons (Mayven tier rows)
     var packs=document.querySelectorAll('.packs>*');
-    var PR=[{plan:'חודש · 30 יחידות',price:170},{plan:'חודשיים · 60 יחידות',price:305},{plan:'שלושה חודשים · 90 יחידות',price:413}];
+    var PR=[{plan:'חודש · 30 יחידות',price:170},{plan:'חודשיים · 60 יחידות',price:310},{plan:'שלושה חודשים · 90 יחידות',price:420}];
     packs.forEach&&packs.forEach(function(p,i){
       if(p.querySelector('.mv-padd')||!PR[i])return;
       var row=document.createElement('div');row.className='mv-prow';
       var b=document.createElement('button');b.className='mv-padd';b.type='button';
       b.textContent='הוסיפו לסל · ₪'+PR[i].price;
       b.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();
-        try{parent.postMessage({moodCart:{action:'add',item:{sku:'__SKU2__',plan:PR[i].plan,price:PR[i].price,qty:1}}},'*');}catch(_){}});
+        var sh=window.__moodShownPrice?window.__moodShownPrice(p):0;
+        var price=sh||PR[i].price;
+        try{parent.postMessage({moodCart:{action:'add',item:{sku:'__SKU2__',plan:PR[i].plan,price:price,qty:1}}},'*');}catch(_){}});
       row.appendChild(b);p.appendChild(row);
     });
     // 3b) qty stepper beside the main CTA
@@ -745,12 +750,53 @@ PDP_SHEET = """
       (ctaEl.parentNode.classList.contains('mv-qtyrow')?ctaEl.parentNode:ctaEl).insertAdjacentElement('afterend',g);
     }
     // per-unit price is derived, never hand-written — it follows whatever the row costs
+    // One price list. The page's own paint() reads data-base and applies the 10%
+    // subscription discount when that toggle is on, so the corrected prices go
+    // into data-base and everything downstream — pack price, main CTA, sticky
+    // bar, free-shipping progress — follows from there. The per-unit figure and
+    // the row buttons then sync to whatever price is actually on screen, so the
+    // cart can never be handed a number the customer was not shown.
     (function(){
       var UNITS=[30,60,90];
-      document.querySelectorAll('.packs>*').forEach(function(p,i){
-        var pu=p.querySelector('.pu'); if(!pu||!UNITS[i]||!PR[i])return;
-        pu.textContent='₪'+(PR[i].price/UNITS[i]).toFixed(2)+' ליח׳';
-      });
+      var rows=[].slice.call(document.querySelectorAll('#packs .pack'));
+      if(!rows.length)rows=[].slice.call(document.querySelectorAll('.packs>*'));
+      rows.forEach(function(p,i){ if(PR[i])p.dataset.base=PR[i].price; });
+      function shown(p){
+        var pp=p.querySelector('.pp');
+        var v=pp?parseFloat((pp.textContent||'').replace(/[^0-9.]/g,'')):0;
+        return v>0?v:0;
+      }
+      // sync() writes inside the node the observer watches, so it must never
+      // re-enter and must never write a value that is already there — either
+      // one turns this into an endless mutation loop that pins the tab.
+      var busy=false;
+      function put(el,txt){ if(el&&el.textContent!==txt)el.textContent=txt; }
+      function sync(){
+        if(busy)return; busy=true;
+        try{
+          rows.forEach(function(p,i){
+            var price=shown(p)||(PR[i]&&PR[i].price)||0; if(!price)return;
+            if(UNITS[i])put(p.querySelector('.pu'),'₪'+(price/UNITS[i]).toFixed(2)+' ליח׳');
+            put(p.querySelector('.mv-padd'),'הוסיפו לסל · ₪'+price);
+          });
+        } finally { busy=false; }
+      }
+      // The subscription toggle shipped switched on, so the price on screen was
+      // always the 10% member price and the list price was never shown. The
+      // discount stays available; it is now something the customer opts into.
+      var sc=document.getElementById('subcheck');
+      if(sc&&sc.checked){
+        sc.checked=false;
+        try{sc.dispatchEvent(new Event('change',{bubbles:true}));}
+        catch(_){ if(sc.click)sc.click(); }
+      }
+      var cur=document.querySelector('#packs .pack[aria-checked=true]')||rows[0];
+      if(cur&&cur.click)cur.click();          // force a repaint with the new bases
+      sync();
+      var box=document.getElementById('packs')||document.querySelector('.packs');
+      if(box&&window.MutationObserver)
+        new MutationObserver(sync).observe(box,{subtree:true,childList:true,characterData:true});
+      window.__moodShownPrice=shown;
     })();
     var pay=document.querySelector('.pay');
     if(pay&&!pay.querySelector('.mv-pay')){
@@ -830,7 +876,7 @@ for _r in page_src:
 <script>
 (function(){
   var SKU='__SKU__';
-  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:305},2:{plan:'שלושה חודשים · 90 יחידות',price:413}};
+  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:310},2:{plan:'שלושה חודשים · 90 יחידות',price:420}};
   function send(m){try{parent.postMessage(m,'*');}catch(_){}}
   function pickPack(){
     var packs=document.querySelectorAll('.packs [role=radio],.packs input,.packs label,.packs>*');
@@ -868,7 +914,7 @@ for _r in page_src:
   (function(){
     var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
-              'פותח עם אלוף העולם בשוקולד · רונן אפללו',
+              'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
               'קוד MOOD10 — 10% הנחה על ההזמנה הראשונה'];
     function arm(){
       var el=document.querySelector('.xannounce')||document.querySelector('.topbar');
@@ -1217,6 +1263,7 @@ import _journal
 _JOURNAL_IDS = _journal.build(page_src)
 
 # ---------- 1y2. 30 reviews (placeholder copy until verified ones land) ----------
+AWARD_TEXT = '\u05d4\u05e9\u05d5\u05e7\u05d5\u05dc\u05d8\u05d9\u05d9\u05e8 \u05d4\u05d8\u05d5\u05d1 \u05d1\u05e2\u05d5\u05dc\u05dd \u05dc\u05e9\u05e0\u05ea 2022'
 import _reviews
 _reviews.inject(page_src)
 if getattr(_reviews, 'PLACEHOLDER', True):
@@ -1678,6 +1725,24 @@ for _route in list(page_src):
     page_src[_route] = (page_src[_route].replace('</body>', MOOD_SYSTEM + '</body>')
                         if '</body>' in page_src[_route] else page_src[_route] + MOOD_SYSTEM)
 page_src['%f3d%'] = page_src['%f3d%'].replace('</body>', MOOD_SYSTEM + '</body>')
+
+# ---------- 1z. claim normalisation across the source pages ----------
+# Prices are declared once in the PDP script above and every figure the packs
+# show is derived from them; these rewrite the same numbers where they sit in
+# the source pages as plain text, so nothing on the site contradicts the list.
+_CLAIM_FIX = [
+    ('\u20aa305', '\u20aa310'), ('\u20aa413', '\u20aa420'),
+    ('\u20aa5.08', '\u20aa5.17'), ('\u20aa4.59', '\u20aa4.67'),
+    # five phrasings, two of them naming different competitions, become one
+    ('\u05e9\u05d5\u05e7\u05d5\u05dc\u05d8\u05d9\u05d9\u05e8 \u05d6\u05d5\u05db\u05d4 \u05d4\u05de\u05e7\u05d5\u05dd \u05d4\u05e8\u05d0\u05e9\u05d5\u05df \u05d1\u05e2\u05d5\u05dc\u05dd (GOLD, International Chocolate Awards 2022)', AWARD_TEXT),
+    ('\u05e9\u05d5\u05e7\u05d5\u05dc\u05d8\u05d9\u05d9\u05e8 \u05d6\u05d5\u05db\u05d4 GOLD \u00b7 Chocolate Awards 2022', AWARD_TEXT),
+    ('\u05e9\u05d5\u05e7\u05d5\u05dc\u05d8\u05d9\u05d9\u05e8 \u05d6\u05d5\u05db\u05d4 \u05d6\u05d4\u05d1 \u05e2\u05d5\u05dc\u05de\u05d9', AWARD_TEXT),
+    ('\u05e9\u05d5\u05e7\u05d5\u05dc\u05d8\u05d9\u05d9\u05e8 \u00b7 \u05d0\u05dc\u05d5\u05e3 \u05d4\u05e2\u05d5\u05dc\u05dd 2022', AWARD_TEXT),
+    ('\u05d0\u05dc\u05d5\u05e3 \u05d4\u05e2\u05d5\u05dc\u05dd \u05dc\u05e9\u05d5\u05e7\u05d5\u05dc\u05d3 \u00b7 2022', AWARD_TEXT),
+]
+for _route in page_src:
+    for _o, _n in _CLAIM_FIX:
+        page_src[_route] = page_src[_route].replace(_o, _n)
 
 for _b in ('/brand/bars-plate.jpg', '/brand/cafe-handoff.jpg', '/mood-club-generations.png',
            '/brand/blog-collage.png', '/brand/rooftop.png', '/brand/jump-o.webp', '/brand/field-guide.png'):

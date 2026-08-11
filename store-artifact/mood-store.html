@@ -1292,7 +1292,7 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
 
 
     <div class="hm" aria-label="למה mood">
-      <div class="hm-track"><span class="hm-item"><b>70%</b> מריר עם מלח ים</span><span class="hm-sep"></span><span class="hm-item"><b>0</b> גרם סוכר</span><span class="hm-sep"></span><span class="hm-item">רכיבים טבעיים</span><span class="hm-sep"></span><span class="hm-item">שוקולטייר · אלוף העולם 2022</span><span class="hm-sep"></span><span class="hm-item">כשר פרווה</span><span class="hm-sep"></span><span class="hm-item">30 יחידות · חודש שלם</span><span class="hm-sep"></span><span class="hm-item">ביטול בכל עת</span><span class="hm-sep"></span><span class="hm-item">משלוח חינם מעל 249 ₪</span><span class="hm-sep"></span><span class="hm-item">ENERGY · RELAX · SLEEP</span><span class="hm-sep"></span><span class="hm-item">ריטואל, לא תוסף</span><span class="hm-sep"></span><span class="hm-item"><b>70%</b> מריר עם מלח ים</span><span class="hm-sep"></span><span class="hm-item"><b>0</b> גרם סוכר</span><span class="hm-sep"></span><span class="hm-item">רכיבים טבעיים</span><span class="hm-sep"></span><span class="hm-item">שוקולטייר · אלוף העולם 2022</span><span class="hm-sep"></span><span class="hm-item">כשר פרווה</span><span class="hm-sep"></span><span class="hm-item">30 יחידות · חודש שלם</span><span class="hm-sep"></span><span class="hm-item">ביטול בכל עת</span><span class="hm-sep"></span><span class="hm-item">משלוח חינם מעל 249 ₪</span><span class="hm-sep"></span><span class="hm-item">ENERGY · RELAX · SLEEP</span><span class="hm-sep"></span><span class="hm-item">ריטואל, לא תוסף</span><span class="hm-sep"></span></div>
+      <div class="hm-track"><span class="hm-item"><b>70%</b> מריר עם מלח ים</span><span class="hm-sep"></span><span class="hm-item"><b>0</b> גרם סוכר</span><span class="hm-sep"></span><span class="hm-item">רכיבים טבעיים</span><span class="hm-sep"></span><span class="hm-item">השוקולטייר הטוב בעולם לשנת 2022</span><span class="hm-sep"></span><span class="hm-item">כשר פרווה</span><span class="hm-sep"></span><span class="hm-item">30 יחידות · חודש שלם</span><span class="hm-sep"></span><span class="hm-item">ביטול בכל עת</span><span class="hm-sep"></span><span class="hm-item">משלוח חינם מעל 249 ₪</span><span class="hm-sep"></span><span class="hm-item">ENERGY · RELAX · SLEEP</span><span class="hm-sep"></span><span class="hm-item">ריטואל, לא תוסף</span><span class="hm-sep"></span><span class="hm-item"><b>70%</b> מריר עם מלח ים</span><span class="hm-sep"></span><span class="hm-item"><b>0</b> גרם סוכר</span><span class="hm-sep"></span><span class="hm-item">רכיבים טבעיים</span><span class="hm-sep"></span><span class="hm-item">השוקולטייר הטוב בעולם לשנת 2022</span><span class="hm-sep"></span><span class="hm-item">כשר פרווה</span><span class="hm-sep"></span><span class="hm-item">30 יחידות · חודש שלם</span><span class="hm-sep"></span><span class="hm-item">ביטול בכל עת</span><span class="hm-sep"></span><span class="hm-item">משלוח חינם מעל 249 ₪</span><span class="hm-sep"></span><span class="hm-item">ENERGY · RELAX · SLEEP</span><span class="hm-sep"></span><span class="hm-item">ריטואל, לא תוסף</span><span class="hm-sep"></span></div>
     </div>
     <section id="products" aria-label="בחירת מוצר MOOD">
       <iframe class="section-frame products-frame" srcdoc="&lt;!doctype html&gt;
@@ -1405,7 +1405,7 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
         <div class="master-proof__caption"><span>70% שוקולד מריר</span><span>49×24×5 מ״מ</span><span>30 יחידות</span></div>
         <figure class="master-proof__ronen">
           <img src="%%Aabae5eda9f%%" alt="רונן אפללו — השוקולטייר של mood">
-          <figcaption><strong>רונן אפללו</strong><span>אלוף העולם לשוקולד · 2022</span></figcaption>
+          <figcaption><strong>רונן אפללו</strong><span>השוקולטייר הטוב בעולם לשנת 2022</span></figcaption>
         </figure>
       </div>
       <div class="master-proof__content reveal" style="transition-delay:80ms">
@@ -1986,14 +1986,17 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
     },{threshold:.4});
     io.observe(bs[0]);
   }
+  // Ronen's award was written five different ways across the site, two of them
+  // naming different competitions. One wording, one place to change it.
+  var AWARD='השוקולטייר הטוב בעולם לשנת 2022';
   function hebrewEyebrow(){
     var e=document.querySelector('.master-proof__eyebrow');
-    if(e)e.textContent='רונן אפללו · אלוף העולם בשוקולד 2022';
+    if(e)e.textContent='רונן אפללו · '+AWARD;
   }
   function heroPitch(){
     var eb=document.querySelector('.rh-eyebrow'), h=document.querySelector('.rh-h'),
         sub=document.querySelector('.rh-sub'), b1=document.querySelector('.rh-btn-primary');
-    if(eb){eb.innerHTML='<b>פותח עם אלוף העולם בשוקולד</b>';eb.classList.add('rh-badge');}
+    if(eb){eb.innerHTML='<b>פותח עם השוקולטייר הטוב בעולם</b>';eb.classList.add('rh-badge');}
     if(h)h.innerHTML='קובייה אחת ביום.<br><span>וזה כל הריטואל.</span>';
     if(sub)sub.remove();                       // the hero pulls you down the page, it doesn't explain
     if(b1)b1.textContent='בחרו את הרגע שלכם';
@@ -2009,16 +2012,16 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
     mp.className='mp2';mp.style.setProperty('--shot','url('+shot+')');
     mp.innerHTML=
       '<div class="mp2-in">'+
-        '<div class="mp2-por"><img src="'+por+'" alt="רונן אפללו, אלוף העולם בשוקולד">'+
+        '<div class="mp2-por"><img src="'+por+'" alt="רונן אפללו, "+AWARD+">'+
           '<i class="mp2-medal" aria-hidden="true">★</i></div>'+
         '<div class="mp2-copy">'+
           '<div class="mp2-eye">השוקולטייר של mood</div>'+
-          '<h2>אלוף העולם בשוקולד<span> בנה לנו את הביס.</span></h2>'+
+          '<h2>השוקולטייר הטוב בעולם<span> בנה לנו את הביס.</span></h2>'+
           '<p class="mp2-q">18 חודשים לקח לרונן אפללו למצוא את הנקודה שבה 800 מ״ג פורמולה '+
             'עדיין מרגישים כמו שוקולד. <i>"אם זה לא היה טעים — לא הייתי מוציא את זה מהמטבח."</i></p>'+
         '</div>'+
         '<div class="mp2-stats">'+
-          '<div><b>2022</b><span>אלוף העולם</span></div>'+
+          '<div><b>2022</b><span>הטוב בעולם</span></div>'+
           '<div><b>18</b><span>חודשי פיתוח</span></div>'+
           '<div><b>70%</b><span>קקאו פרימיום</span></div>'+
         '</div>'+
@@ -2089,7 +2092,7 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
     var mp=document.querySelector('.mp2'); if(!mp||document.querySelector('.awd'))return;
     var d=document.createElement('div'); d.className='awd';
     d.innerHTML='<div class="awd-in">'+
-      '<span class="awd-lead"><b>★</b>World Chocolate Awards · מדליית זהב 2022</span>'+
+      '<span class="awd-lead"><b>★</b>רונן אפללו · השוקולטייר הטוב בעולם לשנת 2022</span>'+
       ['70% קקאו','0 גרם סוכר','כשר פרווה','תוצרת ישראל']
         .map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>';
     mp.parentNode.insertBefore(d, mp);       // it introduces the champion, not the hero
@@ -2188,7 +2191,7 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
     var mp=document.querySelector('.mp2'); if(!mp||document.querySelector('.awd'))return;
     var d=document.createElement('div'); d.className='awd';
     d.innerHTML='<div class="awd-in">'+
-      '<span class="awd-lead"><b>★</b>World Chocolate Awards · מדליית זהב 2022</span>'+
+      '<span class="awd-lead"><b>★</b>רונן אפללו · השוקולטייר הטוב בעולם לשנת 2022</span>'+
       ['70% קקאו','0 גרם סוכר','כשר פרווה','תוצרת ישראל']
         .map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>';
     mp.parentNode.insertBefore(d, mp);       // it introduces the champion, not the hero
@@ -2282,7 +2285,7 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
 <script>
 (function(){
   var SKU='';
-  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:305},2:{plan:'שלושה חודשים · 90 יחידות',price:413}};
+  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:310},2:{plan:'שלושה חודשים · 90 יחידות',price:420}};
   function send(m){try{parent.postMessage(m,'*');}catch(_){}}
   function pickPack(){
     var packs=document.querySelectorAll('.packs [role=radio],.packs input,.packs label,.packs>*');
@@ -2320,7 +2323,7 @@ html{scroll-behavior:smooth;scroll-padding-top:80px}
   (function(){
     var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
-              'פותח עם אלוף העולם בשוקולד · רונן אפללו',
+              'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
               'קוד MOOD10 — 10% הנחה על ההזמנה הראשונה'];
     function arm(){
       var el=document.querySelector('.xannounce')||document.querySelector('.topbar');
@@ -3103,7 +3106,7 @@ document.addEventListener('click',function(e){
 <script>
 (function(){
   var SKU='';
-  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:305},2:{plan:'שלושה חודשים · 90 יחידות',price:413}};
+  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:310},2:{plan:'שלושה חודשים · 90 יחידות',price:420}};
   function send(m){try{parent.postMessage(m,'*');}catch(_){}}
   function pickPack(){
     var packs=document.querySelectorAll('.packs [role=radio],.packs input,.packs label,.packs>*');
@@ -3141,7 +3144,7 @@ document.addEventListener('click',function(e){
   (function(){
     var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
-              'פותח עם אלוף העולם בשוקולד · רונן אפללו',
+              'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
               'קוד MOOD10 — 10% הנחה על ההזמנה הראשונה'];
     function arm(){
       var el=document.querySelector('.xannounce')||document.querySelector('.topbar');
@@ -4164,10 +4167,10 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <div class="packlabel">בחרו את מארז הריטואל</div>
       <div class="packs" role="radiogroup" aria-label="בחירת מארז" id="packs">
         <div class="pack" role="radio" tabindex="0" aria-checked="false" data-base="189" data-name="חודש"><div class="l"><b>חודש</b><span>30 יחידות</span></div><div class="r"><div class="price"><b class="mono pp">₪170</b><span class="mono pu">₪5.67 ליח׳</span></div></div></div>
-        <div class="pack" role="radio" tabindex="0" aria-checked="true" data-base="309" data-name="חודשיים"><div class="l"><b>חודשיים</b><span>60 יחידות</span></div><div class="r"><span class="tag">הכי נבחר</span><div class="price"><b class="mono pp">₪305</b><span class="mono pu">₪5.08 ליח׳</span></div></div></div>
-        <div class="pack" role="radio" tabindex="0" aria-checked="false" data-base="459" data-name="שלושה חודשים"><div class="l"><b>שלושה חודשים</b><span>90 יחידות</span></div><div class="r"><span class="tag">הכי משתלם</span><div class="price"><b class="mono pp">₪413</b><span class="mono pu">₪4.59 ליח׳</span></div></div></div>
+        <div class="pack" role="radio" tabindex="0" aria-checked="true" data-base="309" data-name="חודשיים"><div class="l"><b>חודשיים</b><span>60 יחידות</span></div><div class="r"><span class="tag">הכי נבחר</span><div class="price"><b class="mono pp">₪310</b><span class="mono pu">₪5.17 ליח׳</span></div></div></div>
+        <div class="pack" role="radio" tabindex="0" aria-checked="false" data-base="459" data-name="שלושה חודשים"><div class="l"><b>שלושה חודשים</b><span>90 יחידות</span></div><div class="r"><span class="tag">הכי משתלם</span><div class="price"><b class="mono pp">₪420</b><span class="mono pu">₪4.67 ליח׳</span></div></div></div>
       </div>
-      <button class="cta" id="cta">הוסיפו לסל · <span class="mono" id="ctaprice">₪305</span></button>
+      <button class="cta" id="cta">הוסיפו לסל · <span class="mono" id="ctaprice">₪310</span></button>
       <div class="shipbar" id="shipbar">זכית ב<b>משלוח חינם</b> 🎉</div>
       <label class="suboptin on" id="suboptin">
         <input type="checkbox" id="subcheck" checked="">
@@ -4195,7 +4198,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <span class="mq-item">כשר פרווה</span><span class="mq-sep"></span>
       <span class="mq-item">ביטול בכל עת</span><span class="mq-sep"></span>
       <span class="mq-item">משלוח חינם מעל 249 ₪</span><span class="mq-sep"></span>
-      <span class="mq-item">שוקולטייר זוכה זהב עולמי</span><span class="mq-sep"></span>
+      <span class="mq-item">השוקולטייר הטוב בעולם לשנת 2022</span><span class="mq-sep"></span>
       <span class="mq-item" aria-hidden="true">אנרגיה בלי הנפילה של הקפה</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true"><b>800 מ״ג</b> פורמולה</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true"><b>5</b> רכיבים טבעיים</span><span class="mq-sep" aria-hidden="true"></span>
@@ -4204,7 +4207,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <span class="mq-item" aria-hidden="true">כשר פרווה</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">ביטול בכל עת</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">משלוח חינם מעל 249 ₪</span><span class="mq-sep" aria-hidden="true"></span>
-      <span class="mq-item" aria-hidden="true">שוקולטייר זוכה זהב עולמי</span><span class="mq-sep" aria-hidden="true"></span>
+      <span class="mq-item" aria-hidden="true">השוקולטייר הטוב בעולם לשנת 2022</span><span class="mq-sep" aria-hidden="true"></span>
     </div>
   </div>
 
@@ -4242,7 +4245,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <div class="eyebrow">THE CHOCOLATE</div>
       <h2 style="margin-top:10px">הפורמולה עושה את העבודה.<br>השוקולד הופך אותה לריטואל.</h2>
       <p>שוקולד מריר פרמיום 70% קקאו עם מלח ים, ללא סוכר ובלי טעמים מוספים — פותח בישראל, לא כדור ולא תוסף. חצי דקה לעצמך, כל יום.</p>
-      <div class="ron">פותח עם רונן אפללו · שוקולטייר זוכה GOLD · Chocolate Awards 2022</div>
+      <div class="ron">פותח עם רונן אפללו · השוקולטייר הטוב בעולם לשנת 2022</div>
     </div>
   </div></section>
 
@@ -4273,7 +4276,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <div class="item"><button class="q">כמה קפאין יש בריבוע?<span class="pm">+</span></button><div class="panel"><p>קפאין טבעי עדין — פחות מרבע כוס קפה בקוביה. בלי הרעד ובלי הנפילה.</p></div></div>
       <div class="item"><button class="q">מתי לוקחים?<span class="pm">+</span></button><div class="panel"><p>ריבוע אחד ביום — ב־16:30 במקום הקפה השלישי, לפני איסופים, או בבוקר.</p></div></div>
       <div class="item"><button class="q">האם זה כשר?<span class="pm">+</span></button><div class="panel"><p>כן — כשר פרווה. 30 ריבועים של 7 גרם, עטופים אחד־אחד.</p></div></div>
-      <div class="item"><button class="q">מי מייצר את השוקולד?<span class="pm">+</span></button><div class="panel"><p>פותח במיוחד עבור mood עם רונן אפללו, שוקולטייר זוכה המקום הראשון בעולם (GOLD, International Chocolate Awards 2022).</p></div></div>
+      <div class="item"><button class="q">מי מייצר את השוקולד?<span class="pm">+</span></button><div class="panel"><p>פותח במיוחד עבור mood עם רונן אפללו, השוקולטייר הטוב בעולם לשנת 2022.</p></div></div>
     </div>
   </section>
 
@@ -4299,7 +4302,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
     <img class="sb-thumb" src="%%Ae5f591b09e%%" alt="mood ENERGY">
     <div class="sb-txt"><b>ENERGY</b><small id="stickynote">3 חודשים · <b>חוסכים 10%</b></small></div>
   </div>
-  <button class="sb-cta">הוספה לסל · <span class="mono" id="stickyp">₪305</span></button>
+  <button class="sb-cta">הוספה לסל · <span class="mono" id="stickyp">₪310</span></button>
 </div>
 
 <script>
@@ -4581,14 +4584,16 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
     }
     // 3) per-pack quick-add buttons (Mayven tier rows)
     var packs=document.querySelectorAll('.packs>*');
-    var PR=[{plan:'חודש · 30 יחידות',price:170},{plan:'חודשיים · 60 יחידות',price:305},{plan:'שלושה חודשים · 90 יחידות',price:413}];
+    var PR=[{plan:'חודש · 30 יחידות',price:170},{plan:'חודשיים · 60 יחידות',price:310},{plan:'שלושה חודשים · 90 יחידות',price:420}];
     packs.forEach&&packs.forEach(function(p,i){
       if(p.querySelector('.mv-padd')||!PR[i])return;
       var row=document.createElement('div');row.className='mv-prow';
       var b=document.createElement('button');b.className='mv-padd';b.type='button';
       b.textContent='הוסיפו לסל · ₪'+PR[i].price;
       b.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();
-        try{parent.postMessage({moodCart:{action:'add',item:{sku:'ENERGY',plan:PR[i].plan,price:PR[i].price,qty:1}}},'*');}catch(_){}});
+        var sh=window.__moodShownPrice?window.__moodShownPrice(p):0;
+        var price=sh||PR[i].price;
+        try{parent.postMessage({moodCart:{action:'add',item:{sku:'ENERGY',plan:PR[i].plan,price:price,qty:1}}},'*');}catch(_){}});
       row.appendChild(b);p.appendChild(row);
     });
     // 3b) qty stepper beside the main CTA
@@ -4642,12 +4647,53 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
       (ctaEl.parentNode.classList.contains('mv-qtyrow')?ctaEl.parentNode:ctaEl).insertAdjacentElement('afterend',g);
     }
     // per-unit price is derived, never hand-written — it follows whatever the row costs
+    // One price list. The page's own paint() reads data-base and applies the 10%
+    // subscription discount when that toggle is on, so the corrected prices go
+    // into data-base and everything downstream — pack price, main CTA, sticky
+    // bar, free-shipping progress — follows from there. The per-unit figure and
+    // the row buttons then sync to whatever price is actually on screen, so the
+    // cart can never be handed a number the customer was not shown.
     (function(){
       var UNITS=[30,60,90];
-      document.querySelectorAll('.packs>*').forEach(function(p,i){
-        var pu=p.querySelector('.pu'); if(!pu||!UNITS[i]||!PR[i])return;
-        pu.textContent='₪'+(PR[i].price/UNITS[i]).toFixed(2)+' ליח׳';
-      });
+      var rows=[].slice.call(document.querySelectorAll('#packs .pack'));
+      if(!rows.length)rows=[].slice.call(document.querySelectorAll('.packs>*'));
+      rows.forEach(function(p,i){ if(PR[i])p.dataset.base=PR[i].price; });
+      function shown(p){
+        var pp=p.querySelector('.pp');
+        var v=pp?parseFloat((pp.textContent||'').replace(/[^0-9.]/g,'')):0;
+        return v>0?v:0;
+      }
+      // sync() writes inside the node the observer watches, so it must never
+      // re-enter and must never write a value that is already there — either
+      // one turns this into an endless mutation loop that pins the tab.
+      var busy=false;
+      function put(el,txt){ if(el&&el.textContent!==txt)el.textContent=txt; }
+      function sync(){
+        if(busy)return; busy=true;
+        try{
+          rows.forEach(function(p,i){
+            var price=shown(p)||(PR[i]&&PR[i].price)||0; if(!price)return;
+            if(UNITS[i])put(p.querySelector('.pu'),'₪'+(price/UNITS[i]).toFixed(2)+' ליח׳');
+            put(p.querySelector('.mv-padd'),'הוסיפו לסל · ₪'+price);
+          });
+        } finally { busy=false; }
+      }
+      // The subscription toggle shipped switched on, so the price on screen was
+      // always the 10% member price and the list price was never shown. The
+      // discount stays available; it is now something the customer opts into.
+      var sc=document.getElementById('subcheck');
+      if(sc&&sc.checked){
+        sc.checked=false;
+        try{sc.dispatchEvent(new Event('change',{bubbles:true}));}
+        catch(_){ if(sc.click)sc.click(); }
+      }
+      var cur=document.querySelector('#packs .pack[aria-checked=true]')||rows[0];
+      if(cur&&cur.click)cur.click();          // force a repaint with the new bases
+      sync();
+      var box=document.getElementById('packs')||document.querySelector('.packs');
+      if(box&&window.MutationObserver)
+        new MutationObserver(sync).observe(box,{subtree:true,childList:true,characterData:true});
+      window.__moodShownPrice=shown;
     })();
     var pay=document.querySelector('.pay');
     if(pay&&!pay.querySelector('.mv-pay')){
@@ -4692,7 +4738,7 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 <script>
 (function(){
   var SKU='ENERGY';
-  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:305},2:{plan:'שלושה חודשים · 90 יחידות',price:413}};
+  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:310},2:{plan:'שלושה חודשים · 90 יחידות',price:420}};
   function send(m){try{parent.postMessage(m,'*');}catch(_){}}
   function pickPack(){
     var packs=document.querySelectorAll('.packs [role=radio],.packs input,.packs label,.packs>*');
@@ -4730,7 +4776,7 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
   (function(){
     var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
-              'פותח עם אלוף העולם בשוקולד · רונן אפללו',
+              'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
               'קוד MOOD10 — 10% הנחה על ההזמנה הראשונה'];
     function arm(){
       var el=document.querySelector('.xannounce')||document.querySelector('.topbar');
@@ -5733,10 +5779,10 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <div class="packlabel">בחרו את מארז הריטואל</div>
       <div class="packs" role="radiogroup" aria-label="בחירת מארז" id="packs">
         <div class="pack" role="radio" tabindex="0" aria-checked="false" data-base="189" data-name="חודש"><div class="l"><b>חודש</b><span>30 יחידות</span></div><div class="r"><div class="price"><b class="mono pp">₪170</b><span class="mono pu">₪5.67 ליח׳</span></div></div></div>
-        <div class="pack" role="radio" tabindex="0" aria-checked="true" data-base="309" data-name="חודשיים"><div class="l"><b>חודשיים</b><span>60 יחידות</span></div><div class="r"><span class="tag">הכי נבחר</span><div class="price"><b class="mono pp">₪305</b><span class="mono pu">₪5.08 ליח׳</span></div></div></div>
-        <div class="pack" role="radio" tabindex="0" aria-checked="false" data-base="459" data-name="שלושה חודשים"><div class="l"><b>שלושה חודשים</b><span>90 יחידות</span></div><div class="r"><span class="tag">הכי משתלם</span><div class="price"><b class="mono pp">₪413</b><span class="mono pu">₪4.59 ליח׳</span></div></div></div>
+        <div class="pack" role="radio" tabindex="0" aria-checked="true" data-base="309" data-name="חודשיים"><div class="l"><b>חודשיים</b><span>60 יחידות</span></div><div class="r"><span class="tag">הכי נבחר</span><div class="price"><b class="mono pp">₪310</b><span class="mono pu">₪5.17 ליח׳</span></div></div></div>
+        <div class="pack" role="radio" tabindex="0" aria-checked="false" data-base="459" data-name="שלושה חודשים"><div class="l"><b>שלושה חודשים</b><span>90 יחידות</span></div><div class="r"><span class="tag">הכי משתלם</span><div class="price"><b class="mono pp">₪420</b><span class="mono pu">₪4.67 ליח׳</span></div></div></div>
       </div>
-      <button class="cta" id="cta">הוסיפו לסל · <span class="mono" id="ctaprice">₪305</span></button>
+      <button class="cta" id="cta">הוסיפו לסל · <span class="mono" id="ctaprice">₪310</span></button>
       <div class="shipbar" id="shipbar">זכית ב<b>משלוח חינם</b> 🎉</div>
       <label class="suboptin on" id="suboptin">
         <input type="checkbox" id="subcheck" checked="">
@@ -5764,7 +5810,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <span class="mq-item">כשר פרווה</span><span class="mq-sep"></span>
       <span class="mq-item">ביטול בכל עת</span><span class="mq-sep"></span>
       <span class="mq-item">משלוח חינם מעל 249 ₪</span><span class="mq-sep"></span>
-      <span class="mq-item">שוקולטייר זוכה זהב עולמי</span><span class="mq-sep"></span>
+      <span class="mq-item">השוקולטייר הטוב בעולם לשנת 2022</span><span class="mq-sep"></span>
       <span class="mq-item" aria-hidden="true">הרפיה עדינה בסוף היום</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true"><b>700 מ״ג</b> פורמולה</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true"><b>5</b> רכיבים טבעיים</span><span class="mq-sep" aria-hidden="true"></span>
@@ -5773,7 +5819,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <span class="mq-item" aria-hidden="true">כשר פרווה</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">ביטול בכל עת</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">משלוח חינם מעל 249 ₪</span><span class="mq-sep" aria-hidden="true"></span>
-      <span class="mq-item" aria-hidden="true">שוקולטייר זוכה זהב עולמי</span><span class="mq-sep" aria-hidden="true"></span>
+      <span class="mq-item" aria-hidden="true">השוקולטייר הטוב בעולם לשנת 2022</span><span class="mq-sep" aria-hidden="true"></span>
     </div>
   </div>
 
@@ -5802,7 +5848,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <div class="eyebrow">THE CHOCOLATE</div>
       <h2 style="margin-top:10px">הפורמולה עושה את העבודה.<br>השוקולד הופך אותה לריטואל.</h2>
       <p>שוקולד מריר פרמיום 70% קקאו עם מלח ים, ללא סוכר ובלי טעמים מוספים — פותח בישראל, לא כדור ולא תוסף. חצי דקה לעצמך, כל יום.</p>
-      <div class="ron">פותח עם רונן אפללו · שוקולטייר זוכה GOLD · Chocolate Awards 2022</div>
+      <div class="ron">פותח עם רונן אפללו · השוקולטייר הטוב בעולם לשנת 2022</div>
     </div>
   </div></section>
 
@@ -5833,7 +5879,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <div class="item"><button class="q">האם זה מרדים או מטשטש?<span class="pm">+</span></button><div class="panel"><p>לא. RELAX מרגיע בעדינות ומוריד הילוך — בלי טשטוש ובלי כבדות בבוקר.</p></div></div>
       <div class="item"><button class="q">מתי לוקחים?<span class="pm">+</span></button><div class="panel"><p>ריבוע אחד בערב — אחרי יום ארוך, לפני שמתמקמים על הספה, או בדרך למיטה.</p></div></div>
       <div class="item"><button class="q">האם זה כשר?<span class="pm">+</span></button><div class="panel"><p>כן — כשר פרווה. 30 ריבועים של 7 גרם, עטופים אחד־אחד.</p></div></div>
-      <div class="item"><button class="q">מי מייצר את השוקולד?<span class="pm">+</span></button><div class="panel"><p>פותח במיוחד עבור mood עם רונן אפללו, שוקולטייר זוכה המקום הראשון בעולם (GOLD, International Chocolate Awards 2022).</p></div></div>
+      <div class="item"><button class="q">מי מייצר את השוקולד?<span class="pm">+</span></button><div class="panel"><p>פותח במיוחד עבור mood עם רונן אפללו, השוקולטייר הטוב בעולם לשנת 2022.</p></div></div>
     </div>
   </section>
 
@@ -5859,7 +5905,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
     <img class="sb-thumb" src="%%A410f6f9eda%%" alt="mood RELAX">
     <div class="sb-txt"><b>RELAX</b><small id="stickynote">3 חודשים · <b>חוסכים 10%</b></small></div>
   </div>
-  <button class="sb-cta">הוספה לסל · <span class="mono" id="stickyp">₪305</span></button>
+  <button class="sb-cta">הוספה לסל · <span class="mono" id="stickyp">₪310</span></button>
 </div>
 
 <script>
@@ -6141,14 +6187,16 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
     }
     // 3) per-pack quick-add buttons (Mayven tier rows)
     var packs=document.querySelectorAll('.packs>*');
-    var PR=[{plan:'חודש · 30 יחידות',price:170},{plan:'חודשיים · 60 יחידות',price:305},{plan:'שלושה חודשים · 90 יחידות',price:413}];
+    var PR=[{plan:'חודש · 30 יחידות',price:170},{plan:'חודשיים · 60 יחידות',price:310},{plan:'שלושה חודשים · 90 יחידות',price:420}];
     packs.forEach&&packs.forEach(function(p,i){
       if(p.querySelector('.mv-padd')||!PR[i])return;
       var row=document.createElement('div');row.className='mv-prow';
       var b=document.createElement('button');b.className='mv-padd';b.type='button';
       b.textContent='הוסיפו לסל · ₪'+PR[i].price;
       b.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();
-        try{parent.postMessage({moodCart:{action:'add',item:{sku:'RELAX',plan:PR[i].plan,price:PR[i].price,qty:1}}},'*');}catch(_){}});
+        var sh=window.__moodShownPrice?window.__moodShownPrice(p):0;
+        var price=sh||PR[i].price;
+        try{parent.postMessage({moodCart:{action:'add',item:{sku:'RELAX',plan:PR[i].plan,price:price,qty:1}}},'*');}catch(_){}});
       row.appendChild(b);p.appendChild(row);
     });
     // 3b) qty stepper beside the main CTA
@@ -6202,12 +6250,53 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
       (ctaEl.parentNode.classList.contains('mv-qtyrow')?ctaEl.parentNode:ctaEl).insertAdjacentElement('afterend',g);
     }
     // per-unit price is derived, never hand-written — it follows whatever the row costs
+    // One price list. The page's own paint() reads data-base and applies the 10%
+    // subscription discount when that toggle is on, so the corrected prices go
+    // into data-base and everything downstream — pack price, main CTA, sticky
+    // bar, free-shipping progress — follows from there. The per-unit figure and
+    // the row buttons then sync to whatever price is actually on screen, so the
+    // cart can never be handed a number the customer was not shown.
     (function(){
       var UNITS=[30,60,90];
-      document.querySelectorAll('.packs>*').forEach(function(p,i){
-        var pu=p.querySelector('.pu'); if(!pu||!UNITS[i]||!PR[i])return;
-        pu.textContent='₪'+(PR[i].price/UNITS[i]).toFixed(2)+' ליח׳';
-      });
+      var rows=[].slice.call(document.querySelectorAll('#packs .pack'));
+      if(!rows.length)rows=[].slice.call(document.querySelectorAll('.packs>*'));
+      rows.forEach(function(p,i){ if(PR[i])p.dataset.base=PR[i].price; });
+      function shown(p){
+        var pp=p.querySelector('.pp');
+        var v=pp?parseFloat((pp.textContent||'').replace(/[^0-9.]/g,'')):0;
+        return v>0?v:0;
+      }
+      // sync() writes inside the node the observer watches, so it must never
+      // re-enter and must never write a value that is already there — either
+      // one turns this into an endless mutation loop that pins the tab.
+      var busy=false;
+      function put(el,txt){ if(el&&el.textContent!==txt)el.textContent=txt; }
+      function sync(){
+        if(busy)return; busy=true;
+        try{
+          rows.forEach(function(p,i){
+            var price=shown(p)||(PR[i]&&PR[i].price)||0; if(!price)return;
+            if(UNITS[i])put(p.querySelector('.pu'),'₪'+(price/UNITS[i]).toFixed(2)+' ליח׳');
+            put(p.querySelector('.mv-padd'),'הוסיפו לסל · ₪'+price);
+          });
+        } finally { busy=false; }
+      }
+      // The subscription toggle shipped switched on, so the price on screen was
+      // always the 10% member price and the list price was never shown. The
+      // discount stays available; it is now something the customer opts into.
+      var sc=document.getElementById('subcheck');
+      if(sc&&sc.checked){
+        sc.checked=false;
+        try{sc.dispatchEvent(new Event('change',{bubbles:true}));}
+        catch(_){ if(sc.click)sc.click(); }
+      }
+      var cur=document.querySelector('#packs .pack[aria-checked=true]')||rows[0];
+      if(cur&&cur.click)cur.click();          // force a repaint with the new bases
+      sync();
+      var box=document.getElementById('packs')||document.querySelector('.packs');
+      if(box&&window.MutationObserver)
+        new MutationObserver(sync).observe(box,{subtree:true,childList:true,characterData:true});
+      window.__moodShownPrice=shown;
     })();
     var pay=document.querySelector('.pay');
     if(pay&&!pay.querySelector('.mv-pay')){
@@ -6252,7 +6341,7 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 <script>
 (function(){
   var SKU='RELAX';
-  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:305},2:{plan:'שלושה חודשים · 90 יחידות',price:413}};
+  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:310},2:{plan:'שלושה חודשים · 90 יחידות',price:420}};
   function send(m){try{parent.postMessage(m,'*');}catch(_){}}
   function pickPack(){
     var packs=document.querySelectorAll('.packs [role=radio],.packs input,.packs label,.packs>*');
@@ -6290,7 +6379,7 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
   (function(){
     var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
-              'פותח עם אלוף העולם בשוקולד · רונן אפללו',
+              'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
               'קוד MOOD10 — 10% הנחה על ההזמנה הראשונה'];
     function arm(){
       var el=document.querySelector('.xannounce')||document.querySelector('.topbar');
@@ -7293,10 +7382,10 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <div class="packlabel">בחרו את מארז הריטואל</div>
       <div class="packs" role="radiogroup" aria-label="בחירת מארז" id="packs">
         <div class="pack" role="radio" tabindex="0" aria-checked="false" data-base="189" data-name="חודש"><div class="l"><b>חודש</b><span>30 יחידות</span></div><div class="r"><div class="price"><b class="mono pp">₪170</b><span class="mono pu">₪5.67 ליח׳</span></div></div></div>
-        <div class="pack" role="radio" tabindex="0" aria-checked="true" data-base="309" data-name="חודשיים"><div class="l"><b>חודשיים</b><span>60 יחידות</span></div><div class="r"><span class="tag">הכי נבחר</span><div class="price"><b class="mono pp">₪305</b><span class="mono pu">₪5.08 ליח׳</span></div></div></div>
-        <div class="pack" role="radio" tabindex="0" aria-checked="false" data-base="459" data-name="שלושה חודשים"><div class="l"><b>שלושה חודשים</b><span>90 יחידות</span></div><div class="r"><span class="tag">הכי משתלם</span><div class="price"><b class="mono pp">₪413</b><span class="mono pu">₪4.59 ליח׳</span></div></div></div>
+        <div class="pack" role="radio" tabindex="0" aria-checked="true" data-base="309" data-name="חודשיים"><div class="l"><b>חודשיים</b><span>60 יחידות</span></div><div class="r"><span class="tag">הכי נבחר</span><div class="price"><b class="mono pp">₪310</b><span class="mono pu">₪5.17 ליח׳</span></div></div></div>
+        <div class="pack" role="radio" tabindex="0" aria-checked="false" data-base="459" data-name="שלושה חודשים"><div class="l"><b>שלושה חודשים</b><span>90 יחידות</span></div><div class="r"><span class="tag">הכי משתלם</span><div class="price"><b class="mono pp">₪420</b><span class="mono pu">₪4.67 ליח׳</span></div></div></div>
       </div>
-      <button class="cta" id="cta">הוסיפו לסל · <span class="mono" id="ctaprice">₪305</span></button>
+      <button class="cta" id="cta">הוסיפו לסל · <span class="mono" id="ctaprice">₪310</span></button>
       <div class="shipbar" id="shipbar">זכית ב<b>משלוח חינם</b> 🎉</div>
       <label class="suboptin on" id="suboptin">
         <input type="checkbox" id="subcheck" checked="">
@@ -7324,7 +7413,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <span class="mq-item">כשר פרווה</span><span class="mq-sep"></span>
       <span class="mq-item">ביטול בכל עת</span><span class="mq-sep"></span>
       <span class="mq-item">משלוח חינם מעל 249 ₪</span><span class="mq-sep"></span>
-      <span class="mq-item">שוקולטייר זוכה זהב עולמי</span><span class="mq-sep"></span>
+      <span class="mq-item">השוקולטייר הטוב בעולם לשנת 2022</span><span class="mq-sep"></span>
       <span class="mq-item" aria-hidden="true">רוטינת לילה רגועה</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true"><b>728 מ״ג</b> פורמולה</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true"><b>4</b> רכיבים טבעיים</span><span class="mq-sep" aria-hidden="true"></span>
@@ -7333,7 +7422,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <span class="mq-item" aria-hidden="true">כשר פרווה</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">ביטול בכל עת</span><span class="mq-sep" aria-hidden="true"></span>
       <span class="mq-item" aria-hidden="true">משלוח חינם מעל 249 ₪</span><span class="mq-sep" aria-hidden="true"></span>
-      <span class="mq-item" aria-hidden="true">שוקולטייר זוכה זהב עולמי</span><span class="mq-sep" aria-hidden="true"></span>
+      <span class="mq-item" aria-hidden="true">השוקולטייר הטוב בעולם לשנת 2022</span><span class="mq-sep" aria-hidden="true"></span>
     </div>
   </div>
 
@@ -7362,7 +7451,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <div class="eyebrow">THE CHOCOLATE</div>
       <h2 style="margin-top:10px">הפורמולה עושה את העבודה.<br>השוקולד הופך אותה לריטואל.</h2>
       <p>שוקולד מריר פרמיום 70% קקאו עם מלח ים, ללא סוכר ובלי טעמים מוספים — פותח בישראל, לא כדור ולא תוסף. חצי דקה לעצמך, כל יום.</p>
-      <div class="ron">פותח עם רונן אפללו · שוקולטייר זוכה GOLD · Chocolate Awards 2022</div>
+      <div class="ron">פותח עם רונן אפללו · השוקולטייר הטוב בעולם לשנת 2022</div>
     </div>
   </div></section>
 
@@ -7393,7 +7482,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
       <div class="item"><button class="q">האם זה מרדים או מטשטש?<span class="pm">+</span></button><div class="panel"><p>SLEEP אינו תרופה ואינו מיועד לטשטש. הוא נבנה כריטואל ערב רגוע, בלי תחושת כבדות בבוקר.</p></div></div>
       <div class="item"><button class="q">מתי לוקחים?<span class="pm">+</span></button><div class="panel"><p>ריבוע אחד כשעה לפני השינה, כחלק מרוטינה קבועה של הורדת קצב וכיבוי מסכים.</p></div></div>
       <div class="item"><button class="q">האם זה כשר?<span class="pm">+</span></button><div class="panel"><p>כן — כשר פרווה. 30 ריבועים של 7 גרם, עטופים אחד־אחד.</p></div></div>
-      <div class="item"><button class="q">מי מייצר את השוקולד?<span class="pm">+</span></button><div class="panel"><p>פותח במיוחד עבור mood עם רונן אפללו, שוקולטייר זוכה המקום הראשון בעולם (GOLD, International Chocolate Awards 2022).</p></div></div>
+      <div class="item"><button class="q">מי מייצר את השוקולד?<span class="pm">+</span></button><div class="panel"><p>פותח במיוחד עבור mood עם רונן אפללו, השוקולטייר הטוב בעולם לשנת 2022.</p></div></div>
     </div>
   </section>
 
@@ -7419,7 +7508,7 @@ nav>.product-logo img{display:block;width:auto;height:34px;max-width:116px;objec
     <img class="sb-thumb" src="%%Ac106f8838b%%" alt="mood SLEEP">
     <div class="sb-txt"><b>SLEEP</b><small id="stickynote">3 חודשים · <b>חוסכים 10%</b></small></div>
   </div>
-  <button class="sb-cta">הוספה לסל · <span class="mono" id="stickyp">₪305</span></button>
+  <button class="sb-cta">הוספה לסל · <span class="mono" id="stickyp">₪310</span></button>
 </div>
 
 <script>
@@ -7701,14 +7790,16 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
     }
     // 3) per-pack quick-add buttons (Mayven tier rows)
     var packs=document.querySelectorAll('.packs>*');
-    var PR=[{plan:'חודש · 30 יחידות',price:170},{plan:'חודשיים · 60 יחידות',price:305},{plan:'שלושה חודשים · 90 יחידות',price:413}];
+    var PR=[{plan:'חודש · 30 יחידות',price:170},{plan:'חודשיים · 60 יחידות',price:310},{plan:'שלושה חודשים · 90 יחידות',price:420}];
     packs.forEach&&packs.forEach(function(p,i){
       if(p.querySelector('.mv-padd')||!PR[i])return;
       var row=document.createElement('div');row.className='mv-prow';
       var b=document.createElement('button');b.className='mv-padd';b.type='button';
       b.textContent='הוסיפו לסל · ₪'+PR[i].price;
       b.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();
-        try{parent.postMessage({moodCart:{action:'add',item:{sku:'SLEEP',plan:PR[i].plan,price:PR[i].price,qty:1}}},'*');}catch(_){}});
+        var sh=window.__moodShownPrice?window.__moodShownPrice(p):0;
+        var price=sh||PR[i].price;
+        try{parent.postMessage({moodCart:{action:'add',item:{sku:'SLEEP',plan:PR[i].plan,price:price,qty:1}}},'*');}catch(_){}});
       row.appendChild(b);p.appendChild(row);
     });
     // 3b) qty stepper beside the main CTA
@@ -7762,12 +7853,53 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
       (ctaEl.parentNode.classList.contains('mv-qtyrow')?ctaEl.parentNode:ctaEl).insertAdjacentElement('afterend',g);
     }
     // per-unit price is derived, never hand-written — it follows whatever the row costs
+    // One price list. The page's own paint() reads data-base and applies the 10%
+    // subscription discount when that toggle is on, so the corrected prices go
+    // into data-base and everything downstream — pack price, main CTA, sticky
+    // bar, free-shipping progress — follows from there. The per-unit figure and
+    // the row buttons then sync to whatever price is actually on screen, so the
+    // cart can never be handed a number the customer was not shown.
     (function(){
       var UNITS=[30,60,90];
-      document.querySelectorAll('.packs>*').forEach(function(p,i){
-        var pu=p.querySelector('.pu'); if(!pu||!UNITS[i]||!PR[i])return;
-        pu.textContent='₪'+(PR[i].price/UNITS[i]).toFixed(2)+' ליח׳';
-      });
+      var rows=[].slice.call(document.querySelectorAll('#packs .pack'));
+      if(!rows.length)rows=[].slice.call(document.querySelectorAll('.packs>*'));
+      rows.forEach(function(p,i){ if(PR[i])p.dataset.base=PR[i].price; });
+      function shown(p){
+        var pp=p.querySelector('.pp');
+        var v=pp?parseFloat((pp.textContent||'').replace(/[^0-9.]/g,'')):0;
+        return v>0?v:0;
+      }
+      // sync() writes inside the node the observer watches, so it must never
+      // re-enter and must never write a value that is already there — either
+      // one turns this into an endless mutation loop that pins the tab.
+      var busy=false;
+      function put(el,txt){ if(el&&el.textContent!==txt)el.textContent=txt; }
+      function sync(){
+        if(busy)return; busy=true;
+        try{
+          rows.forEach(function(p,i){
+            var price=shown(p)||(PR[i]&&PR[i].price)||0; if(!price)return;
+            if(UNITS[i])put(p.querySelector('.pu'),'₪'+(price/UNITS[i]).toFixed(2)+' ליח׳');
+            put(p.querySelector('.mv-padd'),'הוסיפו לסל · ₪'+price);
+          });
+        } finally { busy=false; }
+      }
+      // The subscription toggle shipped switched on, so the price on screen was
+      // always the 10% member price and the list price was never shown. The
+      // discount stays available; it is now something the customer opts into.
+      var sc=document.getElementById('subcheck');
+      if(sc&&sc.checked){
+        sc.checked=false;
+        try{sc.dispatchEvent(new Event('change',{bubbles:true}));}
+        catch(_){ if(sc.click)sc.click(); }
+      }
+      var cur=document.querySelector('#packs .pack[aria-checked=true]')||rows[0];
+      if(cur&&cur.click)cur.click();          // force a repaint with the new bases
+      sync();
+      var box=document.getElementById('packs')||document.querySelector('.packs');
+      if(box&&window.MutationObserver)
+        new MutationObserver(sync).observe(box,{subtree:true,childList:true,characterData:true});
+      window.__moodShownPrice=shown;
     })();
     var pay=document.querySelector('.pay');
     if(pay&&!pay.querySelector('.mv-pay')){
@@ -7812,7 +7944,7 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 <script>
 (function(){
   var SKU='SLEEP';
-  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:305},2:{plan:'שלושה חודשים · 90 יחידות',price:413}};
+  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:310},2:{plan:'שלושה חודשים · 90 יחידות',price:420}};
   function send(m){try{parent.postMessage(m,'*');}catch(_){}}
   function pickPack(){
     var packs=document.querySelectorAll('.packs [role=radio],.packs input,.packs label,.packs>*');
@@ -7850,7 +7982,7 @@ var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
   (function(){
     var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
-              'פותח עם אלוף העולם בשוקולד · רונן אפללו',
+              'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
               'קוד MOOD10 — 10% הנחה על ההזמנה הראשונה'];
     function arm(){
       var el=document.querySelector('.xannounce')||document.querySelector('.topbar');
@@ -8521,7 +8653,7 @@ document.addEventListener('click',function(e){
 <script>
 (function(){
   var SKU='';
-  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:305},2:{plan:'שלושה חודשים · 90 יחידות',price:413}};
+  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:310},2:{plan:'שלושה חודשים · 90 יחידות',price:420}};
   function send(m){try{parent.postMessage(m,'*');}catch(_){}}
   function pickPack(){
     var packs=document.querySelectorAll('.packs [role=radio],.packs input,.packs label,.packs>*');
@@ -8559,7 +8691,7 @@ document.addEventListener('click',function(e){
   (function(){
     var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
-              'פותח עם אלוף העולם בשוקולד · רונן אפללו',
+              'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
               'קוד MOOD10 — 10% הנחה על ההזמנה הראשונה'];
     function arm(){
       var el=document.querySelector('.xannounce')||document.querySelector('.topbar');
@@ -9520,7 +9652,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
 <script>
 (function(){
   var SKU='';
-  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:305},2:{plan:'שלושה חודשים · 90 יחידות',price:413}};
+  var FALLBACK={0:{plan:'חודש · 30 יחידות',price:170},1:{plan:'חודשיים · 60 יחידות',price:310},2:{plan:'שלושה חודשים · 90 יחידות',price:420}};
   function send(m){try{parent.postMessage(m,'*');}catch(_){}}
   function pickPack(){
     var packs=document.querySelectorAll('.packs [role=radio],.packs input,.packs label,.packs>*');
@@ -9558,7 +9690,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   (function(){
     var MSGS=['משלוח חינם בקנייה מעל ₪249 · מוקד שירות ישראלי',
               'כשר פרווה · 0 גרם סוכר · 70% קקאו',
-              'פותח עם אלוף העולם בשוקולד · רונן אפללו',
+              'פותח עם השוקולטייר הטוב בעולם · רונן אפללו',
               'קוד MOOD10 — 10% הנחה על ההזמנה הראשונה'];
     function arm(){
       var el=document.querySelector('.xannounce')||document.querySelector('.topbar');
