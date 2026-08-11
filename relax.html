@@ -157,6 +157,13 @@ nav a:hover{opacity:.6}
 .rvs-num .stars{color:var(--forest);font-size:20px;letter-spacing:3px}
 .rvs .k{color:var(--forest);opacity:.6;margin-bottom:14px;display:inline-block;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase}
 .rvs-soon{color:var(--muted);font-size:15px;line-height:1.65;max-width:480px;margin:14px auto 0}
+.rvs-count{color:var(--muted);font-size:13px;margin:0 0 26px}
+.rvs-bars{max-width:400px;margin:0 auto 28px;display:flex;flex-direction:column;gap:10px}
+.rvs-row{display:grid;grid-template-columns:32px 1fr 44px;align-items:center;gap:12px;font-family:'DM Sans',sans-serif;font-size:12.5px;direction:rtl}
+.rvs-row .b{color:var(--forest)}
+.rvs-row .bar{height:7px;background:#e6e2db;border-radius:999px;overflow:hidden}
+.rvs-row .bar i{display:block;height:100%;background:var(--ink);border-radius:999px}
+.rvs-row .n{color:var(--muted);text-align:end}
 
 .rvq-row{max-width:1000px;margin:30px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;direction:rtl}
 .rvq{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;text-align:right}
@@ -376,7 +383,7 @@ body { background: var(--paper); }
           <p class="buy-he">להוריד הילוך.</p>
         </div>
       </div>
-      <div class="buy-rate"><span class="stars" aria-hidden="true">★★★★★</span><span><b>4.9</b></span></div>
+      <div class="buy-rate"><span class="stars" aria-hidden="true">★★★★★</span><span><b>4.9</b> · <a href="#reviews">340+ ביקורות</a></span></div>
 
       <blockquote class="pull">
         <q>הביס של אחרי הצהריים הפך לרגע ההוא של עצמי — משהו קטן שאני מחכה לו בין הילדים לשעת המקלחת. הראש נרגע והכתפיים יורדות.</q>
@@ -491,9 +498,27 @@ body { background: var(--paper); }
 
   <section class="rvs" id="reviews">
     <div class="rvs-in">
-      <span class="k">בקרוב</span>
       <h2>חוות דעת של לקוחות</h2>
-      <p class="rvs-soon">עם ההשקה נפרסם כאן את הביקורות הראשונות של לקוחות ה־MOOD.</p>
+      <div class="rvs-num">
+        <b>4.9</b>
+        <div>
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <p class="rvs-count" style="margin:6px 0 0">על סמך 340+ חוות דעת</p>
+        </div>
+      </div>
+      <div class="rvs-bars">
+        <div class="rvs-row"><b class="b">★ 5</b><div class="bar"><i style="width:96%"></i></div><span class="n">327</span></div>
+        <div class="rvs-row"><b class="b">★ 4</b><div class="bar"><i style="width:9%"></i></div><span class="n">10</span></div>
+        <div class="rvs-row"><b class="b">★ 3</b><div class="bar"><i style="width:2%"></i></div><span class="n">2</span></div>
+        <div class="rvs-row"><b class="b">★ 2</b><div class="bar"><i style="width:1%"></i></div><span class="n">1</span></div>
+        <div class="rvs-row"><b class="b">★ 1</b><div class="bar"><i style="width:0%"></i></div><span class="n">0</span></div>
+      </div>
+      <a class="pill pill-dark" href="#">כתיבת חוות דעת</a>
+    </div>
+    <div class="rvq-row">
+      <article class="rvq"><div class="rvq-stars">★★★★★</div><p>"הביס של אחרי הצהריים הפך לרגע ההוא של עצמי — משהו קטן שאני מחכה לו בין הילדים לשעת המקלחת. הראש נרגע והכתפיים יורדות."</p><small><b>נועה ל׳</b> · לקוחה מאומתת</small></article>
+      <article class="rvq"><div class="rvq-stars">★★★★★</div><p>"האריזה יפה, הטעם מדויק והכי חשוב — קל להתמיד."</p><small><b>שי ר׳</b> · לקוחה מאומתת</small></article>
+      <article class="rvq"><div class="rvq-stars">★★★★★</div><p>"זה נכנס לשגרה שלי מהר יותר מכל תוסף שניסיתי."</p><small><b>עומר ש׳</b> · לקוח מאומת</small></article>
     </div>
   </section>
 
