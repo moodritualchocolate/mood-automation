@@ -154,19 +154,7 @@ nav a:hover{opacity:.6}
 .ing-list strong{font-size:15px;font-weight:800;color:var(--ink)}
 .ing-list span{color:var(--muted);font-size:13.5px}
 .ing-list em{color:var(--forest);font-family:'DM Sans',sans-serif;font-style:normal;font-size:14px;font-weight:800;text-align:end}
-
-.rvs{padding:60px 4vw;background:var(--paper-soft)}
-.rvs-in{max-width:640px;margin:0 auto;text-align:center;direction:rtl}
-.rvs h2{font-family:'DM Sans','Assistant',sans-serif;font-size:30px;font-weight:600;letter-spacing:-1px;margin:0 0 24px}
-.rvs-num{display:inline-flex;align-items:baseline;gap:14px;justify-content:center;margin:0 0 8px;direction:ltr}
-.rvs-num b{font-family:'DM Sans',sans-serif;font-size:60px;font-weight:700;line-height:1;color:var(--ink);letter-spacing:-2px}
 .rvs-num .stars{color:var(--forest);font-size:20px;letter-spacing:3px}
-.rvq-row{max-width:1000px;margin:30px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;direction:rtl}
-.rvq{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;text-align:right}
-.rvq-stars{color:var(--forest);letter-spacing:2px;font-size:13px}
-.rvq p{margin:0;font-size:13.5px;line-height:1.55;color:var(--ink);flex:1}
-.rvq small{color:var(--muted);font-size:11.5px}
-.rvq small b{font-weight:800;color:var(--ink)}
 
 .xsell{padding:60px 4vw}
 .xsell-in{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:16px;direction:rtl}
@@ -240,7 +228,7 @@ body { background: var(--paper); }
 .bundle-disc,
 .gal-tag,
 .pull { border-radius: 6px !important; }
-.pc, .rvq, .xs, .club { border-radius: 12px !important; }
+.pc, .xs, .club{ border-radius: 12px !important; }
 .tier { border-radius: 10px !important; }
 .trust-chips .tchip,
 .tchip { border-radius: 4px !important; }
@@ -256,8 +244,7 @@ body { background: var(--paper); }
 /* Active tier border chocolate */
 .tier.active { border-color: var(--cta) !important; background: #f9f4ea !important; }
 /* Stars → gold */
-.rvs-num .stars, .buy-rate .stars, .rvq-stars, .pc-stars,
-.stars, [class*="stars"] { color: var(--gold) !important; }
+.rvs-num .stars, .buy-rate .stars, .pc-stars, .stars, [class*="stars"]{ color: var(--gold) !important; }
 /* review bars in chocolate */
 /* highlighted pull-quote — keep mint but border-radius reduced (above) */
 
@@ -459,21 +446,6 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
 .ritual .in .k.k-editorial { margin-bottom: 22px; }
 .ritual .in .k.k-editorial span:last-child { color: #f8ffde !important; opacity: .5 !important; }
 
-.rvq p {
-  font-family: 'Fraunces', Georgia, serif !important;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -.3px;
-}
-.rvq small, .rvq small b { font-family: 'Assistant', sans-serif !important; font-style: normal !important; }
-
-.pc-price-main b {
-  font-family: 'Fraunces', 'DM Sans', serif !important;
-  font-variation-settings: "opsz" 24, "wght" 500;
-  font-weight: 500 !important;
-  letter-spacing: -.5px;
-}
-
 /* ---- 2. Micro-interactions ---- */
 @media (min-width: 900px) {
   .pc {
@@ -519,7 +491,6 @@ button:focus-visible, a.pill:focus-visible, .hero-cta a:focus-visible {
 
 /* ---- 3. Color rhythm ---- */
 section.section#formulas { background: var(--paper-soft); }
-section.rvs { background: var(--paper) !important; }
 section.club { background: var(--paper-soft) !important; background-image: none !important; }
 section.faq { background: var(--paper); }
 
@@ -566,7 +537,7 @@ section.faq { background: var(--paper); }
   .rvq.featured p { font-size: 1.15em; line-height: 1.55; opacity: 1; }
 }
 @media (max-width: 899px) {
-  .rvq p, .rvq.featured p { font-size: 1em; }
+  .rvq.featured p{ font-size: 1em; }
 }
 
 /* ---- 6. Footer polish ---- */
@@ -577,19 +548,15 @@ section.faq { background: var(--paper); }
 /* ============================================================
    AUDIT LIFT WAVE 4 — Heebo real · motion reveals · Ken Burns gallery
    ============================================================ */
-.hero-copy h1, .hero h1, .hero-tri, .hero-tri span,
-.section-head h2, .rvs h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2,
-.pc .price, .tier .price, .buy-price, .pc-price-main b, .pc-price-main {
+.hero-copy h1, .hero h1, .section-head h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2, .pc .price, .tier .price, .buy-price{
   font-family: 'Heebo','DM Sans','Assistant',sans-serif !important;
 }
-.hero-copy h1, .hero h1, .hero-tri, .hero-tri span,
-.section-head h2, .rvs h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2 {
+.hero-copy h1, .hero h1, .section-head h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2{
   font-weight: 800 !important;
 }
-.pc .price, .tier .price, .buy-price, .pc-price-main b { font-weight: 800 !important; }
+.pc .price, .tier .price, .buy-price{ font-weight: 800 !important; }
 
-/* Motion reveal */
-h2:not(.hero-tri), .section-head, .founder, article:not(.pc) {
+.section-head, .founder, article:not(.pc){
   opacity: 0; transform: translateY(18px);
   transition: opacity .8s cubic-bezier(.19,1,.22,1), transform .8s cubic-bezier(.19,1,.22,1);
 }

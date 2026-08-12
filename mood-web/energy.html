@@ -164,7 +164,6 @@ nav a:hover{opacity:.6}
 .rvs-num b{font-family:'DM Sans',sans-serif;font-size:60px;font-weight:700;line-height:1;color:var(--ink);letter-spacing:-2px}
 .rvs-num .stars{color:var(--forest);font-size:20px;letter-spacing:3px}
 .rvs .k{color:var(--forest);opacity:.6;margin-bottom:14px;display:inline-block;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase}
-.rvs-soon{color:var(--muted);font-size:15px;line-height:1.65;max-width:480px;margin:14px auto 0}
 .rvs-count{color:var(--muted);font-size:13px;margin:0 0 26px}
 .rvs-bars{max-width:400px;margin:0 auto 28px;display:flex;flex-direction:column;gap:10px}
 .rvs-row{display:grid;grid-template-columns:32px 1fr 44px;align-items:center;gap:12px;font-family:'DM Sans',sans-serif;font-size:12.5px;direction:rtl}
@@ -474,13 +473,6 @@ nav a.nav-fd::after{content:"·חדש";display:inline-block;margin-inline-start:
 }
 .rvq small, .rvq small b { font-family: 'Assistant', sans-serif !important; font-style: normal !important; }
 
-.pc-price-main b {
-  font-family: 'Fraunces', 'DM Sans', serif !important;
-  font-variation-settings: "opsz" 24, "wght" 500;
-  font-weight: 500 !important;
-  letter-spacing: -.5px;
-}
-
 /* ---- 2. Micro-interactions ---- */
 @media (min-width: 900px) {
   .pc {
@@ -584,19 +576,15 @@ section.faq { background: var(--paper); }
 /* ============================================================
    AUDIT LIFT WAVE 4 — Heebo real · motion reveals · Ken Burns gallery
    ============================================================ */
-.hero-copy h1, .hero h1, .hero-tri, .hero-tri span,
-.section-head h2, .rvs h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2,
-.pc .price, .tier .price, .buy-price, .pc-price-main b, .pc-price-main {
+.hero-copy h1, .hero h1, .section-head h2, .rvs h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2, .pc .price, .tier .price, .buy-price{
   font-family: 'Heebo','DM Sans','Assistant',sans-serif !important;
 }
-.hero-copy h1, .hero h1, .hero-tri, .hero-tri span,
-.section-head h2, .rvs h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2 {
+.hero-copy h1, .hero h1, .section-head h2, .rvs h2, .club h2, .club-copy h2, .faq h2, .ritual h2, .ritual .in h2, .founders h2{
   font-weight: 800 !important;
 }
-.pc .price, .tier .price, .buy-price, .pc-price-main b { font-weight: 800 !important; }
+.pc .price, .tier .price, .buy-price{ font-weight: 800 !important; }
 
-/* Motion reveal */
-h2:not(.hero-tri), .section-head, .founder, article:not(.pc) {
+.section-head, .founder, article:not(.pc){
   opacity: 0; transform: translateY(18px);
   transition: opacity .8s cubic-bezier(.19,1,.22,1), transform .8s cubic-bezier(.19,1,.22,1);
 }
