@@ -861,6 +861,27 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
 .tb-title { font-family: 'Heebo','Assistant',sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -0.5px; color: #8b6a2f; margin: 0; display: inline-flex; align-items: center; gap: 20px; }
 .tb-title::before, .tb-title::after { content: ""; display: inline-block; width: clamp(60px, 8vw, 120px); height: 1px; background: #b98d3d; }
 .tb-year { font-weight: 600; }
+/* WAVE 7i — gold shimmer on trust bar title when in view */
+.tb-title-text {
+  background: linear-gradient(90deg, #8b6a2f 0%, #8b6a2f 42%, #f4d47a 50%, #8b6a2f 58%, #8b6a2f 100%);
+  background-size: 260% 100%;
+  background-position: 130% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.tb-title-text.shine {
+  animation: tbShine 1.8s cubic-bezier(.19,1,.22,1) forwards;
+}
+@keyframes tbShine {
+  0%   { background-position: 130% 0; }
+  100% { background-position: -30% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tb-title-text { background: none; color: #8b6a2f; -webkit-text-fill-color: currentColor; }
+  .tb-title-text.shine { animation: none; }
+}
 .tb-sub { color: #8b6a2f; font-size: clamp(13px, 1.3vw, 16px); font-weight: 400; margin: 0; display: inline-flex; flex-wrap: nowrap; gap: 8px; align-items: center; }
 .tb-sub .tb-sep { opacity: .5; }
 @media (max-width: 640px) {
@@ -1007,7 +1028,7 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
     <!-- TRUST BAR (Wave 5a — Nadav spec) -->
     <section class="tb" aria-label="אלוף עולם בשוקולד 2022">
       <div class="tb-in">
-        <h2 class="tb-title">אלוף עולם בשוקולד <span class="tb-year">2022</span></h2>
+        <h2 class="tb-title"><span class="tb-title-text">אלוף עולם בשוקולד <span class="tb-year">2022</span></span></h2>
         <p class="tb-sub"><span>70% קקאו</span><span class="tb-sep">|</span><span>0 סוכר</span><span class="tb-sep">·</span><span>כשר פרווה</span><span class="tb-sep">·</span><span>תוצרת ישראל</span></p>
       </div>
     </section>
@@ -1359,6 +1380,23 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
       pc.classList.toggle('tap-life');
     });
   });
+})();
+
+/* Wave 7i — gold shimmer on trust-bar title when it enters view */
+(() => {
+  const el = document.querySelector('.tb-title-text');
+  if (!el || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        // small delay so the shimmer fires just after the section settles
+        setTimeout(() => e.target.classList.add('shine'), 180);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.55 });
+  io.observe(el);
 })();
 
 /* Wave 7e — product carousel dots (mobile snap indicator) */
