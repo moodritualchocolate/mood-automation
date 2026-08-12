@@ -672,12 +672,42 @@ body { overflow-x: hidden; max-width: 100vw; }
   .ann-t-box span { font-size: 8px; margin-top: 3px; }
   .ann-t-colon { font-size: 12px; padding-bottom: 9px; }
 }
+
+/* Wave 7w — dark thin ann bar with rotating value-prop messages */
+.ann { background: #171512 !important; color: #f4e9db !important; padding: 7px 20px !important; border-bottom: none !important; font-size: 13px; }
+.ann-in { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: nowrap; }
+.ann-rot { position: relative; flex: 1; min-width: 0; height: 20px; overflow: hidden; }
+.ann-rot-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-start; direction: rtl; font-family: 'Heebo','Assistant',sans-serif; font-size: 13px; font-weight: 500; color: #f4e9db; letter-spacing: -.1px; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; transform: translateY(8px); transition: opacity .55s cubic-bezier(.19,1,.22,1), transform .55s cubic-bezier(.19,1,.22,1); pointer-events: none; }
+.ann-rot-msg b { color: #d4b46b; font-weight: 800; }
+.ann-rot-msg.on { opacity: 1; transform: translateY(0); }
+.ann-timer { display: inline-flex; gap: 3px; align-items: center; direction: ltr; flex: none; }
+.ann-t-box { display: inline-flex; flex-direction: column; align-items: center; min-width: 24px; line-height: 1; }
+.ann-t-box b { color: #d4b46b !important; font-family: 'Heebo','DM Sans',sans-serif !important; font-weight: 800; font-size: 14px; letter-spacing: -.4px; line-height: 1; font-variant-numeric: tabular-nums; }
+.ann-t-box span { color: #f4e9db !important; opacity: .5; font-family: 'Heebo','Assistant',sans-serif; font-size: 8px; letter-spacing: .3px; margin-top: 3px; font-weight: 500; text-transform: none; }
+.ann-t-colon { color: #d4b46b !important; opacity: .5; font-size: 12px; font-weight: 700; padding-bottom: 8px; margin: 0 -1px; }
+.ann-fd, .ann-tel { display: none !important; }
+@media (max-width: 720px) {
+  .ann { padding: 6px 12px !important; }
+  .ann-in { gap: 10px; }
+  .ann-rot { height: 18px; }
+  .ann-rot-msg { font-size: 11.5px; }
+  .ann-timer { gap: 1px; }
+  .ann-t-box { min-width: 18px; }
+  .ann-t-box b { font-size: 12px; }
+  .ann-t-box span { font-size: 7px; margin-top: 2px; }
+  .ann-t-colon { font-size: 10px; padding-bottom: 6px; }
+}
 </style>
 </head>
 <body>
   <div class="ann">
     <div class="ann-in">
-      <span class="ann-text"><b>30% הנחה לנרשמים</b> <span class="ann-sep">·</span> משלוח חינם</span>
+      <div class="ann-rot" aria-live="polite" aria-atomic="true">
+        <span class="ann-rot-msg on"><b>30% הנחה לנרשמים</b></span>
+        <span class="ann-rot-msg">משלוחים מהירים לכל הארץ · <b>משלוח בקירור עד הבית</b></span>
+        <span class="ann-rot-msg"><b>אלפי לקוחות מרוצים</b> · דירוג ממוצע 4.9 ★</span>
+        <span class="ann-rot-msg">משלוח חינם בהזמנה מעל <b>₪249</b></span>
+      </div>
       <div class="ann-timer" id="annTimer" data-launch="2026-09-15T00:00:00+03:00" role="timer" aria-label="ספירה לאחור להשקה">
         <div class="ann-t-box"><b>--</b><span>ימים</span></div>
         <span class="ann-t-colon" aria-hidden="true">:</span>
@@ -1079,6 +1109,19 @@ body { overflow-x: hidden; max-width: 100vw; }
     boxes[3].textContent = pad(s);
   }
   tick(); setInterval(tick, 1000);
+})();
+</script>
+<script>
+/* Wave 7w — rotate ann value-prop messages */
+(function(){
+  var msgs = document.querySelectorAll('.ann-rot-msg');
+  if (msgs.length < 2) return;
+  var i = 0;
+  setInterval(function(){
+    msgs[i].classList.remove('on');
+    i = (i + 1) % msgs.length;
+    msgs[i].classList.add('on');
+  }, 3800);
 })();
 </script>
 </body></html>
