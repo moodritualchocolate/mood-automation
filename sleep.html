@@ -743,6 +743,20 @@ body { overflow-x: hidden; max-width: 100vw; }
   .ann-t-box span { font-size: 7px; margin-top: 2px; }
   .ann-t-colon { font-size: 10px; padding-bottom: 6px; }
 }
+
+/* Wave 7x — premium ann bar: centered, slow, no timer */
+.ann { background: #171512 !important; color: #f4e9db !important; padding: 9px 20px !important; border-bottom: none !important; }
+.ann-in { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
+.ann-rot { position: relative; height: 18px; min-width: 260px; max-width: 100%; }
+.ann-rot-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; direction: rtl; font-family: 'Heebo','Assistant',sans-serif; font-size: 13.5px; font-weight: 500; color: #f4e9db; letter-spacing: -.1px; line-height: 1; white-space: nowrap; opacity: 0; transform: none; transition: opacity 1.1s cubic-bezier(.4,0,.2,1); pointer-events: none; text-align: center; }
+.ann-rot-msg b { color: #d4b46b; font-weight: 800; letter-spacing: -.2px; }
+.ann-rot-msg.on { opacity: 1; }
+.ann-timer, .ann-fd, .ann-tel { display: none !important; }
+@media (max-width: 720px) {
+  .ann { padding: 7px 12px !important; }
+  .ann-rot { height: 16px; min-width: 0; }
+  .ann-rot-msg { font-size: 11.5px; }
+}
 </style>
 </head>
 <body>
@@ -753,15 +767,6 @@ body { overflow-x: hidden; max-width: 100vw; }
         <span class="ann-rot-msg">משלוחים מהירים לכל הארץ · <b>משלוח בקירור עד הבית</b></span>
         <span class="ann-rot-msg"><b>אלפי לקוחות מרוצים</b> · דירוג ממוצע 4.9 ★</span>
         <span class="ann-rot-msg">משלוח חינם בהזמנה מעל <b>₪249</b></span>
-      </div>
-      <div class="ann-timer" id="annTimer" data-launch="2026-09-15T00:00:00+03:00" role="timer" aria-label="ספירה לאחור להשקה">
-        <div class="ann-t-box"><b>--</b><span>ימים</span></div>
-        <span class="ann-t-colon" aria-hidden="true">:</span>
-        <div class="ann-t-box"><b>--</b><span>שעות</span></div>
-        <span class="ann-t-colon" aria-hidden="true">:</span>
-        <div class="ann-t-box"><b>--</b><span>דקות</span></div>
-        <span class="ann-t-colon" aria-hidden="true">:</span>
-        <div class="ann-t-box"><b>--</b><span>שניות</span></div>
       </div>
     </div>
   </div>
@@ -1155,29 +1160,6 @@ body { overflow-x: hidden; max-width: 100vw; }
 </script>
 
 <script>
-/* Wave 7r — countdown timer */
-(function(){
-  var el = document.getElementById('annTimer');
-  if (!el) return;
-  var target = new Date(el.dataset.launch).getTime();
-  if (isNaN(target)) return;
-  var boxes = el.querySelectorAll('.ann-t-box b');
-  function pad(n){ return String(n).padStart(2,'0'); }
-  function tick(){
-    var diff = Math.max(0, target - Date.now());
-    var d = Math.floor(diff / 86400000);
-    var h = Math.floor((diff % 86400000) / 3600000);
-    var m = Math.floor((diff % 3600000) / 60000);
-    var s = Math.floor((diff % 60000) / 1000);
-    boxes[0].textContent = pad(d);
-    boxes[1].textContent = pad(h);
-    boxes[2].textContent = pad(m);
-    boxes[3].textContent = pad(s);
-  }
-  tick(); setInterval(tick, 1000);
-})();
-</script>
-<script>
 (function(){
   var el=document.querySelector('.ronen-shine');
   if(!el) return;
@@ -1192,7 +1174,7 @@ body { overflow-x: hidden; max-width: 100vw; }
 })();
 </script>
 <script>
-/* Wave 7w — rotate ann value-prop messages */
+/* Wave 7x — slow, calm rotation */
 (function(){
   var msgs = document.querySelectorAll('.ann-rot-msg');
   if (msgs.length < 2) return;
@@ -1201,7 +1183,7 @@ body { overflow-x: hidden; max-width: 100vw; }
     msgs[i].classList.remove('on');
     i = (i + 1) % msgs.length;
     msgs[i].classList.add('on');
-  }, 3800);
+  }, 5500);
 })();
 </script>
 </body></html>
