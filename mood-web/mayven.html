@@ -806,6 +806,24 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
   color: #1a1a1a !important;
   text-shadow: none !important;
   max-width: 900px;
+  background: linear-gradient(90deg, #1a1a1a 0%, #1a1a1a 40%, #d4b46b 50%, #1a1a1a 60%, #1a1a1a 100%);
+  background-size: 260% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: heroShine 4s cubic-bezier(.22,.61,.36,1) 2.4s 1 forwards;
+}
+@keyframes heroShine {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -30% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero .hero-h1-en {
+    background: none !important;
+    -webkit-text-fill-color: #1a1a1a !important;
+    animation: none !important;
+  }
 }
 .hero .hero-cta { margin: 0 !important; }
 .hero .hero-cta .pill.pill-cta {
