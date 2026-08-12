@@ -118,6 +118,7 @@ nav a:hover{opacity:.6}
 .section-head p{color:var(--muted);font-size:17px;margin:0 auto;max-width:520px}
 /* ---------- product cards row ---------- */
 .pgrid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pgrid-dots{display:none}
 .pc{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;transition:transform .28s,box-shadow .28s}
 .pc:hover{transform:translateY(-4px);box-shadow:0 26px 60px -22px rgba(41,25,10,.16)}
 .pc .tag{position:absolute;top:16px;inset-inline-start:16px;z-index:5;padding:6px 12px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:800;color:var(--ink);letter-spacing:1px;text-transform:uppercase}
@@ -199,10 +200,13 @@ footer .fbase{font-size:12px;letter-spacing:.02em}
 .fwapp svg{width:26px;height:26px}
 @media(max-width:900px){.fwapp{bottom:84px;left:16px;width:44px;height:44px}.fwapp svg{width:22px;height:22px}}
 /* ---------- responsive ---------- */
-@media(max-width:900px){
-  .pgrid{display:flex;grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;max-width:none;margin:0;padding:4px 20px 20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+@media(max-width:767px){
+  .pgrid{display:flex;grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;max-width:none;margin:0;padding:4px 20px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .pgrid::-webkit-scrollbar{display:none}
-  .pgrid .pc{flex:0 0 82%;scroll-snap-align:start;min-width:0}
+  .pgrid .pc{flex:0 0 82%;scroll-snap-align:center;min-width:0}
+  .pgrid-dots{display:flex;justify-content:center;gap:8px;padding:0 0 8px}
+  .pgrid-dots .dot{width:8px;height:8px;border-radius:999px;background:#e3dbd0;border:none;padding:0;cursor:pointer;transition:background .3s,transform .3s}
+  .pgrid-dots .dot.on{background:#171512;transform:scale(1.15)}
   .rvq-row{grid-template-columns:1fr;max-width:520px;margin:36px auto 0}
   .section{padding:60px 4vw}
   .signin{gap:12px}
@@ -778,10 +782,10 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
   height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: center !important;
+  justify-content: flex-end !important;
   align-items: center !important;
   text-align: center !important;
-  padding: 0 40px !important;
+  padding: 0 40px 8vh !important;
   color: #1a1a1a !important;
   text-shadow: none !important;
   opacity: 0;
@@ -834,7 +838,7 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
 
 @media (max-width: 899px) {
   .hero { height: 78svh !important; min-height: 460px !important; max-height: 640px !important; }
-  .hero .hero-copy.hero-center { padding: 0 28px !important; }
+  .hero .hero-copy.hero-center { padding: 0 28px 6vh !important; }
   .hero .hero-h1-en {
     font-size: clamp(2.1rem, 8vw, 2.8rem) !important;
     line-height: 1.15 !important;
@@ -1046,6 +1050,11 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
           <div class="pc-rate"><span class="pc-stars" aria-hidden="true">★★★★★</span><span class="pc-num">128 ביקורות</span></div>
           <a class="pc-cta" href="sleep.html">קנו עכשיו</a>
         </article>
+      </div>
+      <div class="pgrid-dots" role="tablist" aria-label="ניווט מוצרים">
+        <button class="dot on" data-i="0" aria-label="ENERGY"></button>
+        <button class="dot" data-i="1" aria-label="RELAX"></button>
+        <button class="dot" data-i="2" aria-label="SLEEP"></button>
       </div>
     </section>
 
@@ -1354,6 +1363,41 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
       pc.classList.toggle('tap-life');
     });
   });
+})();
+
+/* Wave 7e — product carousel dots (mobile snap indicator) */
+(() => {
+  const grid = document.querySelector('.pgrid.pgrid-w5');
+  const dots = document.querySelectorAll('.pgrid-dots .dot');
+  if (!grid || !dots.length) return;
+  const cards = grid.querySelectorAll('.pc');
+
+  // Click dot → scroll to that card
+  dots.forEach((d, i) => {
+    d.addEventListener('click', () => {
+      const card = cards[i];
+      if (card) card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    });
+  });
+
+  // Update active dot on scroll (mobile only — dots hidden by CSS on desktop)
+  let raf = null;
+  grid.addEventListener('scroll', () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = null;
+      const gridRect = grid.getBoundingClientRect();
+      const gridCenterX = gridRect.left + gridRect.width / 2;
+      let closestI = 0;
+      let closestDist = Infinity;
+      cards.forEach((c, i) => {
+        const r = c.getBoundingClientRect();
+        const dist = Math.abs(r.left + r.width / 2 - gridCenterX);
+        if (dist < closestDist) { closestDist = dist; closestI = i; }
+      });
+      dots.forEach((d, i) => d.classList.toggle('on', i === closestI));
+    });
+  }, { passive: true });
 })();
 </script>
 </body></html>
