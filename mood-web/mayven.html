@@ -864,10 +864,26 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
   transform: translateY(-1px);
 }
 @media (max-width: 767px) {
+  /* Wave 7hh — mathematically centered hero copy (kills RTL offset) */
   .hero .hero-copy.hero-center {
-    width: 86% !important;
-    max-width: 430px;
-    padding-bottom: 58px !important;
+    position: absolute !important;
+    inset: auto !important;                 /* undo the inherited inset:0 */
+    left: 50% !important;
+    right: auto !important;
+    bottom: 58px !important;
+    top: auto !important;
+    transform: translateX(-50%) !important;
+    width: min(86%, 430px) !important;
+    max-width: 430px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    direction: ltr !important;              /* English content — no RTL drift */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
     gap: 18px !important;
   }
   .hero .hero-copy.hero-center .hero-title {
@@ -875,8 +891,19 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
     line-height: 0.94 !important;
     letter-spacing: -0.045em !important;
     font-weight: 600 !important;
-    width: 100%;
-    max-width: 430px;
+    width: 100% !important;
+    max-width: 430px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  .hero .hero-copy.hero-center .hero-title span {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
   }
   .hero .hero-copy.hero-center .hero-title::before {
     width: 118%;
@@ -888,7 +915,8 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
     min-width: 215px;
     padding: 13px 26px;
     font-size: 17px;
-    margin-top: 0 !important;
+    margin: 0 auto !important;
+    align-self: center !important;
   }
 }
 .hero .hero-cta { margin: 0 !important; }
