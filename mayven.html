@@ -1028,6 +1028,30 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
 /* Kill unwanted horizontal page scroll on all devices */
 html { overflow-x: hidden; }
 body { overflow-x: hidden; max-width: 100vw; }
+
+/* Wave 7u — ann bar refined (Mayven-clean) */
+.ann { background: #eeff54 !important; color: #1e3212 !important; padding: 10px 20px !important; }
+.ann-in { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: nowrap; }
+.ann-text { font-family: 'Heebo','Assistant',sans-serif !important; font-size: 14px; font-weight: 600; color: #1e3212 !important; letter-spacing: -.15px; white-space: nowrap; line-height: 1; }
+.ann-text b { color: #1e3212 !important; font-weight: 800; }
+.ann-text .ann-sep { opacity: .5; margin: 0 4px; font-weight: 500; }
+.ann-timer { display: inline-flex; gap: 4px; align-items: center; direction: ltr; }
+.ann-t-box { display: inline-flex; flex-direction: column; align-items: center; min-width: 30px; line-height: 1; }
+.ann-t-box b { color: #1e3212 !important; font-family: 'Heebo','DM Sans',sans-serif !important; font-weight: 800; font-size: 18px; letter-spacing: -.5px; line-height: 1; font-variant-numeric: tabular-nums; }
+.ann-t-box span { color: #1e3212 !important; opacity: .55; font-family: 'Heebo','Assistant',sans-serif; font-size: 9px; letter-spacing: .2px; margin-top: 4px; font-weight: 500; text-transform: none; }
+.ann-t-colon { color: #1e3212 !important; opacity: .35; font-size: 15px; font-weight: 700; padding-bottom: 12px; margin: 0 -2px; }
+.ann-fd, .ann-tel { display: none !important; }
+@media (max-width: 720px) {
+  .ann { padding: 8px 12px !important; }
+  .ann-in { gap: 10px; justify-content: center; }
+  .ann-text { font-size: 11.5px; letter-spacing: -.2px; }
+  .ann-text .ann-sep { margin: 0 3px; }
+  .ann-timer { gap: 2px; }
+  .ann-t-box { min-width: 22px; }
+  .ann-t-box b { font-size: 14px; }
+  .ann-t-box span { font-size: 8px; margin-top: 3px; }
+  .ann-t-colon { font-size: 12px; padding-bottom: 9px; }
+}
 </style>
 </head>
 <body>
@@ -1043,7 +1067,6 @@ body { overflow-x: hidden; max-width: 100vw; }
         <span class="ann-t-colon" aria-hidden="true">:</span>
         <div class="ann-t-box"><b>--</b><span>שניות</span></div>
       </div>
-      <a href="tel:+972524129125" class="ann-tel" aria-label="התקשרו אלינו"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 4h4l2 5-3 2c1.5 2.5 3 4 5.5 5.5l2-3 5 2v4c0 1-1 2-2 2-9.5 0-15.5-6-15.5-15.5 0-1 1-2 2-2z"/></svg></a>
     </div>
   </div>
   <header>
