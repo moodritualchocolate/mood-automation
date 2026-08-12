@@ -925,7 +925,8 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
 .mom-tile { position: relative; border: none; padding: 0; background: none; cursor: pointer; aspect-ratio: 9/16; border-radius: 14px; overflow: hidden; transform: scale(.85); opacity: .55; transition: transform .5s cubic-bezier(.19,1,.22,1), opacity .5s; }
 .mom-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .mom-tile.mom-active { transform: scale(1.05); opacity: 1; z-index: 2; box-shadow: 0 20px 60px -20px rgba(41,25,10,.35); }
-.mom-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,.9); color: #171512; width: 56px; height: 56px; border-radius: 999px; display: grid; place-items: center; font-size: 22px; padding-right: 3px; pointer-events: none; }
+.mom-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,.92); color: #171512; width: 56px; height: 56px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; pointer-events: none; }
+.mom-play svg { display: block; width: 20px; height: 20px; margin-inline-start: 2px; }
 @media (max-width: 900px) {
   .moments-strip { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 62%; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 19%; scrollbar-width: none; }
   .moments-strip::-webkit-scrollbar { display: none; }
@@ -1141,7 +1142,7 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
         <div class="moments-strip" role="region" aria-label="Video moments">
           <button class="mom-tile" data-i="0" aria-label="רגע 1"><img height="356" width="200" decoding="async" src="home-assets/cx/mood-energy-lifestyle-new.jpg" alt="" loading="lazy"></button>
           <button class="mom-tile" data-i="1" aria-label="רגע 2"><img height="356" width="200" decoding="async" src="home-assets/cx/mood-energy-moment.jpg" alt="" loading="lazy"></button>
-          <button class="mom-tile mom-active" data-i="2" aria-label="רגע 3 (מוצג)"><img height="356" width="200" decoding="async" src="home-assets/cx/mood-hero-three-moments.jpg" alt="" loading="lazy"><span class="mom-play" aria-hidden="true">&#9654;</span></button>
+          <button class="mom-tile mom-active" data-i="2" aria-label="רגע 3 (מוצג)"><img height="356" width="200" decoding="async" src="home-assets/cx/mood-hero-three-moments.jpg" alt="" loading="lazy"><span class="mom-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.55.83l10-6.5a1 1 0 0 0 0-1.66l-10-6.5A1 1 0 0 0 8 5.5z"/></svg></span></button>
           <button class="mom-tile" data-i="3" aria-label="רגע 4"><img height="356" width="200" decoding="async" src="home-assets/cx/mood-relax-lifestyle-new.jpg" alt="" loading="lazy"></button>
           <button class="mom-tile" data-i="4" aria-label="רגע 5"><img height="356" width="200" decoding="async" src="home-assets/cx/mood-sleep-lifestyle-new.jpg" alt="" loading="lazy"></button>
         </div>
@@ -1188,7 +1189,6 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
           </ul>
           <div class="club-actions">
             <a class="club-cta" href="club.html">הצטרפו למועדון</a>
-            <p class="club-note">בלי התחייבות</p>
           </div>
         </div>
       </div>
@@ -1400,7 +1400,7 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
         const play = document.createElement('span');
         play.className = 'mom-play';
         play.setAttribute('aria-hidden', 'true');
-        play.textContent = '\u25B6';
+        play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.55.83l10-6.5a1 1 0 0 0 0-1.66l-10-6.5A1 1 0 0 0 8 5.5z"/></svg>';
         t.appendChild(play);
       }
       if (window.matchMedia('(max-width: 900px)').matches) {
