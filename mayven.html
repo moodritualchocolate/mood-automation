@@ -986,6 +986,8 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
 /* =========================================================================
    END WAVE 5
    ========================================================================= */
+
+.pc.pc-w5 .pc-media-link { display: block; width: 100%; text-decoration: none; color: inherit; }
 </style>
 </head>
 <body>
@@ -996,8 +998,8 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
       <a href="#formulas">מוצרים</a>
       <a href="full-day.html" class="nav-fd">היום המלא</a>
       <a href="#story">הסיפור</a>
-      <a href="club.html">MOOD Club</a>
-      <a href="blog.html">Journal</a>
+      <a href="club.html">mood Club</a>
+      <a href="blog.html">בלוג</a>
     </nav>
     <div class="hactions">
       <a class="ic" href="#" aria-label="חשבון"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 4-7 8-7s8 2.5 8 7"/></svg></a>
@@ -1042,30 +1044,30 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
       </div>
       <div class="pgrid pgrid-w5">
         <article class="pc pc-w5" style="--c:#f0a37e;">
-          <div class="pc-media">
+          <a class="pc-media-link" href="energy.html" aria-label="עמוד המוצר"><div class="pc-media">
             <img height="400" width="300" decoding="async" loading="lazy" class="pc-pack" src="home-assets/cx/mood-pouch-energy.jpg" alt="ENERGY אריזה">
             <img height="400" width="300" decoding="async" class="pc-life" src="home-assets/cx/mood-energy-lifestyle-new.jpg" alt="" loading="lazy">
-          </div>
+          </div></a>
           <h3 class="pc-name">ENERGY</h3>
           <p class="pc-sub">אנרגיה וחיוניות</p>
           <div class="pc-rate"><span class="pc-stars" aria-hidden="true">★★★★★</span><span class="pc-num">128 ביקורות</span></div>
           <a class="pc-cta" href="energy.html">קנו עכשיו</a>
         </article>
         <article class="pc pc-w5" style="--c:#b4c19b;">
-          <div class="pc-media">
+          <a class="pc-media-link" href="relax.html" aria-label="עמוד המוצר"><div class="pc-media">
             <img height="400" width="300" decoding="async" loading="lazy" class="pc-pack" src="home-assets/cx/mood-pouch-relax.jpg" alt="RELAX אריזה">
             <img height="400" width="300" decoding="async" class="pc-life" src="home-assets/cx/mood-relax-lifestyle-new.jpg" alt="" loading="lazy">
-          </div>
+          </div></a>
           <h3 class="pc-name">RELAX</h3>
           <p class="pc-sub">הרפיה ושלווה</p>
           <div class="pc-rate"><span class="pc-stars" aria-hidden="true">★★★★★</span><span class="pc-num">128 ביקורות</span></div>
           <a class="pc-cta" href="relax.html">קנו עכשיו</a>
         </article>
         <article class="pc pc-w5" style="--c:#a6b5cf;">
-          <div class="pc-media">
+          <a class="pc-media-link" href="sleep.html" aria-label="עמוד המוצר"><div class="pc-media">
             <img height="400" width="300" decoding="async" loading="lazy" class="pc-pack" src="home-assets/cx/mood-pouch-sleep.jpg" alt="SLEEP אריזה">
             <img height="400" width="300" decoding="async" class="pc-life" src="home-assets/cx/mood-sleep-lifestyle-new.jpg" alt="" loading="lazy">
-          </div>
+          </div></a>
           <h3 class="pc-name">SLEEP</h3>
           <p class="pc-sub">שינה עמוקה</p>
           <div class="pc-rate"><span class="pc-stars" aria-hidden="true">★★★★★</span><span class="pc-num">128 ביקורות</span></div>
@@ -1158,8 +1160,7 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
     <!-- FAQ (Wave 5b — Nadav spec) -->
     <section class="faq faq-w5" id="faq">
       <div class="faq-in">
-        <p class="faq-eye">שאלות נפוצות</p>
-        <h2 class="faq-h">כל מה שרציתם לדעת.</h2>
+                <h2 class="faq-h">כל מה שרציתם לדעת.</h2>
         <details class="faq-item"><summary>כמה קפאין יש בקובייה אחת?</summary><div>ב-ENERGY יש כ־<b>25 מ״ג</b> קפאין טבעי מגוארנה ותה ירוק — בערך רבע מכוס קפה. RELAX ו-SLEEP בלי בעיטת קפאין.</div></details>
         <details class="faq-item"><summary>מתי אוכלים כל mood?</summary><div>ENERGY בוקר/צהריים (16:30) · RELAX ערב · SLEEP לפני השינה.</div></details>
         <details class="faq-item"><summary>כמה קוביות ביום?</summary><div>1–2. שקית = 30 קוביות אישיות.</div></details>
@@ -1212,7 +1213,7 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
       <ul>
         <li><a href="#ritual">הריטואל</a></li>
         <li><a href="#reviews">ביקורות</a></li>
-        <li><a href="blog.html">Journal</a></li>
+        <li><a href="blog.html">בלוג</a></li>
         <li><a href="policies.html#contact">יצירת קשר</a></li>
       </ul>
       <div class="mfoot-social">
@@ -1281,8 +1282,8 @@ section.faq.faq-w5 { background: var(--paper) !important; padding: 60px 24px !im
     <a class="m-menu-close" onclick="document.getElementById('mMenu').classList.remove('open');document.body.classList.remove('m-open')" aria-label="סגור">✕</a>
     <a href="#formulas" class="m-menu-link">מוצרים</a>
     <a href="#story" class="m-menu-link">הסיפור</a>
-    <a href="club.html" class="m-menu-link">MOOD Club</a>
-    <a href="blog.html" class="m-menu-link">Journal</a>
+    <a href="club.html" class="m-menu-link">mood Club</a>
+    <a href="blog.html" class="m-menu-link">בלוג</a>
     <div class="m-menu-social">
       <a href="https://www.instagram.com/mood_ritual_chocolate" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></a>
       <a href="https://www.tiktok.com/@mood_ritual_chocolate" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M16.5 3c.3 2.1 1.5 3.6 3.5 3.9v2.5c-1.2.1-2.4-.2-3.5-.8v5.7c0 3.3-2.4 5.7-5.5 5.7S6 20.5 6 17.6c0-2.7 2-4.9 4.9-4.9.3 0 .6 0 .9.1v2.7c-.3-.1-.6-.2-.9-.2-1.3 0-2.3 1-2.3 2.3s1 2.3 2.3 2.3 2.4-1 2.4-2.6V3h2.7z"/></svg></a>
