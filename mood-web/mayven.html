@@ -962,7 +962,7 @@ section.club.club-w5 { background: var(--paper) !important; background-image: no
 .club-w5 .club-wrap { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-items: stretch; border-radius: 20px; overflow: hidden; background: #fdfaf3; box-shadow: 0 12px 40px -20px rgba(41,25,10,.15); }
 .club-w5 .club-media { position: relative; }
 .club-w5 .club-media img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 480px; }
-.club-w5 .club-green { position: absolute; bottom: 0; left: 0; right: 0; background: #cfe3b3; color: #254821; padding: 14px 20px; font-family:'Heebo',sans-serif; font-weight: 600; font-size: 15px; text-align: center; }
+.club-w5 .club-green { position: absolute; bottom: 0; left: 0; right: 0; background: #cfe3b3; color: #254821; padding: 0; height: 48px; display: flex; align-items: center; justify-content: center; font-family:'Heebo',sans-serif; font-weight: 600; font-size: 15px; text-align: center; line-height: 1; }
 .club-w5 .club-body { padding: 44px 40px 36px; display: flex; flex-direction: column; text-align: right; direction: rtl; }
 .club-w5 .club-topline { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 12px; flex-wrap: wrap; }
 .club-w5 .club-badge { display: inline-block; background: #f5eab7; color: #6b5416; padding: 5px 14px; border-radius: 999px; font-family:'Heebo',sans-serif; font-weight: 600; font-size: 13px; }
@@ -972,9 +972,9 @@ section.club.club-w5 { background: var(--paper) !important; background-image: no
 .club-w5 .club-benefits { list-style: none; padding: 0; margin: 0 0 32px; display: grid; gap: 12px; font-family:'Heebo','Assistant',sans-serif; font-size: 17px; color: #171512; }
 .club-w5 .club-benefits li { position: relative; padding-right: 26px; }
 .club-w5 .club-benefits li::before { content: "✓"; position: absolute; right: 0; top: 0; color: #254821; font-weight: 700; }
-.club-w5 .club-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: auto; }
-.club-w5 .club-cta { padding: 16px 40px; background: #f0a37e; color: #171512; font-family:'Heebo',sans-serif; font-weight: 700; font-size: 15px; border-radius: 999px; text-decoration: none; transition: filter .3s, transform .3s; display: inline-block; }
-.club-w5 .club-cta:hover { filter: brightness(.94); transform: translateY(-1px); }
+.club-w5 .club-actions { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: auto; }
+.club-w5 .club-cta { padding: 0 40px; height: 48px; background: #f0a37e; color: #171512; font-family:'Heebo',sans-serif; font-weight: 700; font-size: 15px; border-radius: 999px; text-decoration: none; transition: background .3s ease, color .3s ease, transform .3s ease; display: inline-flex; align-items: center; justify-content: center; line-height: 1; border: 1px solid transparent; }
+.club-w5 .club-cta:hover { background: #ffffff; color: #171512; border-color: #f0a37e; transform: translateY(-1px); }
 .club-w5 .club-note { color: #5f5b55; font-size: 13px; margin: 0; }
 @media (max-width: 900px) {
   section.club.club-w5 { padding: 32px 16px !important; }
@@ -982,7 +982,7 @@ section.club.club-w5 { background: var(--paper) !important; background-image: no
   .club-w5 .club-media img { min-height: 300px; }
   .club-w5 .club-body { padding: 28px 22px; }
   .club-w5 .club-h { font-size: 28px; }
-  .club-w5 .club-cta { width: 100%; text-align: center; padding: 14px 22px; }
+  .club-w5 .club-cta { width: 100%; padding: 0 22px; height: 46px; }
   .club-w5 .club-actions { flex-direction: column; align-items: stretch; }
   .club-w5 .club-note { text-align: center; }
 }
