@@ -864,28 +864,31 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
   transform: translateY(-1px);
 }
 @media (max-width: 767px) {
+  .hero .hero-copy.hero-center {
+    width: 86% !important;
+    max-width: 430px;
+    padding-bottom: 58px !important;
+    gap: 18px !important;
+  }
   .hero .hero-copy.hero-center .hero-title {
-    font-size: clamp(42px, 12.2vw, 58px) !important;
-    line-height: 0.98 !important;
-    letter-spacing: -0.04em !important;
+    font-size: clamp(40px, 10.8vw, 46px) !important;
+    line-height: 0.94 !important;
+    letter-spacing: -0.045em !important;
+    font-weight: 600 !important;
+    width: 100%;
+    max-width: 430px;
   }
   .hero .hero-copy.hero-center .hero-title::before {
-    width: 125%;
-    height: 142%;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(248, 239, 225, 0.68) 0%,
-      rgba(248, 239, 225, 0.46) 40%,
-      rgba(248, 239, 225, 0.16) 70%,
-      rgba(248, 239, 225, 0) 100%
-    );
+    width: 118%;
+    height: 125%;
+    opacity: 0.70;
     filter: blur(16px);
   }
   .hero .hero-copy.hero-center .hero-shop-cta {
-    min-width: 230px;
-    padding: 15px 28px;
-    font-size: 18px;
-    margin-top: 20px;
+    min-width: 215px;
+    padding: 13px 26px;
+    font-size: 17px;
+    margin-top: 0 !important;
   }
 }
 .hero .hero-cta { margin: 0 !important; }
