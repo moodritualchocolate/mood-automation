@@ -1221,6 +1221,277 @@ body[data-page="full-day"] .smb { display: none !important; }
 }
 /* WAVE10-CSS-END */
 
+
+/* WAVE10-CSS-START — scoped to #mood-purchase-selector, no leakage */
+#mood-purchase-selector, #mood-purchase-selector *,
+#mood-purchase-selector *::before, #mood-purchase-selector *::after {
+  box-sizing: border-box;
+}
+#mood-purchase-selector {
+  direction: rtl;
+  font-family: 'Heebo','Assistant',sans-serif;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 8px 16px 108px;
+  color: #171512;
+  text-align: right;
+  scroll-margin-top: 96px;
+  --mood-ps-accent: #2c1d16;
+  --mood-ps-cream: #fbf7ef;
+  --mood-ps-cream-2: #f6efe3;
+  --mood-ps-line: #e6ddc9;
+  --mood-ps-ink: #171512;
+  --mood-ps-muted: #7a6a5c;
+}
+#mood-purchase-selector .mood-ps-trust {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px;
+  background: #f4ecdd;
+  border: 1px solid #e6d9be;
+  border-radius: 999px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 13px; font-weight: 500;
+  color: #2c1d16;
+  margin: 0 auto 16px;
+  line-height: 1.35;
+}
+#mood-purchase-selector .mood-ps-trust svg { flex: none; color: #6f5a3a; }
+#mood-purchase-selector .mood-ps-trust b { font-weight: 700; }
+
+#mood-purchase-selector .mood-ps-cards {
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+#mood-purchase-selector .mood-ps-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr minmax(90px, 118px);
+  align-items: center;
+  column-gap: 14px;
+  padding: 14px 18px;
+  background: var(--mood-ps-cream);
+  border: 1px solid var(--mood-ps-line);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+  min-height: 116px;
+}
+#mood-purchase-selector .mood-ps-card:hover { border-color: #cfc3a8; }
+
+#mood-purchase-selector .mood-ps-card input[type="radio"] {
+  position: absolute; opacity: 0; pointer-events: none; margin: 0;
+}
+
+#mood-purchase-selector .mood-ps-radio {
+  display: inline-block; width: 20px; height: 20px;
+  border: 1.5px solid #b8ac93;
+  border-radius: 50%;
+  background: #fff;
+  position: relative;
+  flex: none;
+  transition: border-color .18s ease, background .18s ease;
+}
+#mood-purchase-selector .mood-ps-radio-dot {
+  position: absolute; inset: 3px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background .18s ease;
+}
+#mood-purchase-selector .mood-ps-card.selected .mood-ps-radio {
+  border-color: var(--mood-ps-ink);
+  background: #fff;
+}
+#mood-purchase-selector .mood-ps-card.selected .mood-ps-radio-dot {
+  background: var(--mood-ps-ink);
+}
+
+#mood-purchase-selector .mood-ps-copy {
+  display: flex; flex-direction: column; gap: 4px; min-width: 0;
+  text-align: start;
+}
+#mood-purchase-selector .mood-ps-title {
+  font-family: 'Heebo',sans-serif;
+  font-size: 18px; font-weight: 700; margin: 0;
+  color: var(--mood-ps-ink); letter-spacing: -.2px;
+}
+#mood-purchase-selector .mood-ps-price-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: 2px;
+}
+#mood-purchase-selector .mood-ps-price {
+  font-family: 'Fraunces', serif;
+  font-size: 24px; font-weight: 500;
+  color: var(--mood-ps-ink); letter-spacing: -.5px; line-height: 1;
+}
+#mood-purchase-selector .mood-ps-benefit {
+  font-family: 'Heebo',sans-serif;
+  font-size: 12.5px; font-weight: 400;
+  color: var(--mood-ps-muted);
+  margin: 4px 0 0;
+  line-height: 1.35;
+}
+
+#mood-purchase-selector .mood-ps-chip {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+#mood-purchase-selector .mood-ps-chip-best {
+  background: #efe2ce; color: #563b1d;
+}
+#mood-purchase-selector .mood-ps-chip-save {
+  background: var(--mood-ps-ink); color: #fff;
+}
+
+#mood-purchase-selector .mood-ps-media {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 92px;
+}
+#mood-purchase-selector .mood-ps-pouch {
+  display: block;
+  width: auto; height: auto;
+  max-height: 96px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 14px rgba(41, 25, 10, 0.14));
+}
+#mood-purchase-selector .mood-ps-pouch.pouch-1x { width: clamp(70px, 22vw, 88px); }
+#mood-purchase-selector .mood-ps-pouch.pouch-2x { width: clamp(96px, 30vw, 112px); }
+#mood-purchase-selector .mood-ps-pouch.pouch-3x { width: clamp(108px, 34vw, 128px); }
+
+#mood-purchase-selector .mood-ps-card.selected {
+  border: 1.5px solid var(--mood-ps-ink);
+  background: var(--mood-ps-cream);
+  padding: 13.5px 17.5px;
+  box-shadow: 0 8px 24px -18px rgba(41, 25, 10, 0.35);
+}
+
+#mood-purchase-selector .mood-ps-sticky {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 120;
+  padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: transparent;
+  pointer-events: none;
+}
+#mood-purchase-selector .mood-ps-cta {
+  pointer-events: auto;
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px;
+  width: 100%; max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 22px;
+  background: #2c1d16;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 15.5px; font-weight: 700;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+  box-shadow: 0 12px 34px -14px rgba(41, 25, 10, 0.55);
+  transition: transform .12s ease, background .18s ease;
+}
+#mood-purchase-selector .mood-ps-cta:hover { background: #1c110b; }
+#mood-purchase-selector .mood-ps-cta:active { transform: translateY(1px); }
+#mood-purchase-selector .mood-ps-cta-price {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: -.3px;
+}
+
+/* Desktop >=768px: cards become a horizontal 3-column row inside the widget.
+   Internal layout flips to a vertical column: pouch center-top, then a 1px
+   separator, then title / price / benefit centered, radio pinned top-end. */
+@media (min-width: 768px) {
+  #mood-purchase-selector {
+    max-width: 1200px;
+    padding: 8px 24px 32px;
+  }
+  #mood-purchase-selector .mood-ps-cards {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 16px;
+  }
+  #mood-purchase-selector .mood-ps-card {
+    flex: 1 1 0;
+    grid-template-columns: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 24px 20px 22px;
+    min-height: 340px;
+    column-gap: 0;
+    row-gap: 0;
+  }
+  #mood-purchase-selector .mood-ps-card.selected {
+    padding: 23.5px 19.5px 21.5px;
+  }
+  #mood-purchase-selector .mood-ps-card .mood-ps-radio {
+    position: absolute;
+    top: 16px;
+    inset-inline-end: 16px;
+  }
+  #mood-purchase-selector .mood-ps-media {
+    order: 1;
+    width: 100%;
+    min-height: 150px;
+    padding-bottom: 18px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #ece3d0;
+  }
+  #mood-purchase-selector .mood-ps-copy {
+    order: 2;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    gap: 6px;
+  }
+  #mood-purchase-selector .mood-ps-price-row {
+    justify-content: center;
+    margin-top: 4px;
+  }
+  #mood-purchase-selector .mood-ps-title { font-size: 20px; }
+  #mood-purchase-selector .mood-ps-price { font-size: 28px; }
+  #mood-purchase-selector .mood-ps-benefit {
+    font-size: 12.5px;
+    margin-top: 8px;
+    min-height: 34px;
+  }
+  #mood-purchase-selector .mood-ps-pouch {
+    max-height: 150px;
+    filter: drop-shadow(0 10px 18px rgba(41, 25, 10, 0.13));
+  }
+  #mood-purchase-selector .mood-ps-pouch.pouch-1x { width: clamp(88px, 11vw, 128px); }
+  #mood-purchase-selector .mood-ps-pouch.pouch-2x { width: clamp(120px, 14vw, 162px); }
+  #mood-purchase-selector .mood-ps-pouch.pouch-3x { width: clamp(140px, 16vw, 188px); }
+  #mood-purchase-selector .mood-ps-sticky {
+    position: static;
+    padding: 24px 0 0;
+    pointer-events: auto;
+  }
+  #mood-purchase-selector .mood-ps-cta { max-width: 480px; }
+}
+
+/* Hide the site-wide sticky bar since the widget provides its own */
+body[data-page="energy"] .smb,
+body[data-page="relax"] .smb,
+body[data-page="sleep"] .smb,
+body[data-page="full-day"] .smb { display: none !important; }
+@media (max-width: 900px) {
+  body[data-page="energy"],
+  body[data-page="relax"],
+  body[data-page="sleep"],
+  body[data-page="full-day"] { padding-bottom: 0 !important; }
+}
+/* WAVE10-CSS-END */
+
 </style>
 </head>
 <body data-page="full-day">
@@ -1612,6 +1883,7 @@ body[data-page="full-day"] .smb { display: none !important; }
   document.querySelectorAll(selectors).forEach(el => io.observe(el));
 })();
 </script>
+
 
 
 
