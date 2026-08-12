@@ -612,6 +612,37 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
 @keyframes kenBurnsSlide { 0%{transform:scale(1);} 100%{transform:scale(1.06);} }
 @media (prefers-reduced-motion: reduce) { .gal .slide.on { animation: none !important; } }
 
+/* ==========================================================================
+   WAVE 6 — Match new brand language (sleep)
+   ========================================================================== */
+/* Trust Bar (parity with mayven) */
+.tb { background: #fbf7f1; padding: clamp(38px, 6vw, 68px) 24px; text-align: center; position: relative; }
+.tb-in { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.tb-title { font-family: 'Heebo','Assistant',sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -0.5px; color: #8b6a2f; margin: 0; display: inline-flex; align-items: center; gap: 20px; }
+.tb-title::before, .tb-title::after { content: ""; display: inline-block; width: clamp(60px, 8vw, 120px); height: 1px; background: #b98d3d; }
+.tb-year { font-weight: 600; }
+.tb-sub { color: #8b6a2f; font-size: clamp(13px, 1.3vw, 16px); font-weight: 400; margin: 0; display: inline-flex; flex-wrap: nowrap; gap: 8px; align-items: center; }
+.tb-sub .tb-sep { opacity: .5; }
+@media (max-width: 640px) {
+  .tb { padding: 32px 20px; }
+  .tb-title::before, .tb-title::after { width: 30px; }
+  .tb-title { gap: 10px; font-size: 22px; letter-spacing: -0.3px; }
+  .tb-sub { font-size: 11px; gap: 5px; letter-spacing: -0.2px; flex-wrap: wrap; justify-content: center; }
+}
+/* SKU-scoped CTA color (sleep soft blue) */
+.pill-cta, .buy-btn, .tier .cta, .tier-cta, .cta-primary { background: #a6b5cf !important; color: #171512 !important; }
+.pill-cta:hover, .buy-btn:hover, .tier .cta:hover, .tier-cta:hover, .cta-primary:hover { background: #93a4c2 !important; }
+/* Tier ladder polish */
+.tier { border-radius: 18px !important; background: #fbf7f1 !important; border: 1px solid #e3dbd0 !important; padding: 18px 20px !important; box-shadow: 0 4px 14px -10px rgba(41,25,10,.10) !important; }
+.tier.active { border: 2px solid #a6b5cf !important; background: #fbf7f1 !important; padding: 17px 19px !important; }
+.tier-tag { font-family: 'Heebo','Assistant',sans-serif !important; font-weight: 700 !important; background: #a6b5cf !important; color: #171512 !important; padding: 4px 10px !important; letter-spacing: 0 !important; text-transform: none !important; font-size: 11px !important; }
+.tier-price b { font-family: 'Fraunces', serif !important; font-weight: 500 !important; font-size: 26px !important; letter-spacing: -.5px !important; }
+/* Ronen typography */
+.p2a-ronen-text { font-family: 'Heebo','Assistant',sans-serif !important; font-weight: 500 !important; color: #171512 !important; }
+.p2a-ronen-text b { font-weight: 800 !important; color: #171512 !important; }
+/* Footer gold hairline */
+footer { border-top: 1px solid rgba(198,145,48,.2) !important; }
+
 </style>
 </head>
 <body>
@@ -708,6 +739,14 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
       <ul class="trust-chips">
         <li><span class="tchip">כשר פרווה</span></li><li><span class="tchip">0 גרם סוכר</span></li><li><span class="tchip">רכיבים טבעיים</span></li><li><span class="tchip">מיוצר בישראל</span></li>
       </ul>
+    </div>
+  </section>
+
+  <!-- WAVE 6: TRUST BAR -->
+  <section class="tb" aria-label="אלוף השוקולד העולמי 2022">
+    <div class="tb-in">
+      <h2 class="tb-title">אלוף השוקולד העולמי <span class="tb-year">2022</span></h2>
+      <p class="tb-sub"><span>מגנזיום ומליסה</span><span class="tb-sep">|</span><span>0 סוכר</span><span class="tb-sep">·</span><span>כשר פרווה</span><span class="tb-sep">·</span><span>תוצרת ישראל</span></p>
     </div>
   </section>
 
