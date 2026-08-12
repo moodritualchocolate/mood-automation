@@ -1245,7 +1245,7 @@ header .hactions-end { justify-content: flex-end; }
   <main id="top">
     <!-- HERO -->
     <section class="hero">
-      <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="home-assets/cx/hero-poster-desktop.jpg">
+      <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true" poster="home-assets/cx/hero-poster-desktop.jpg">
         <source src="home-assets/cx/hero-mobile.mp4" media="(max-width: 899px)" type="video/mp4">
         <source src="home-assets/cx/hero-desktop.mp4" type="video/mp4">
       </video>
@@ -1662,6 +1662,36 @@ header .hactions-end { justify-content: flex-end; }
       dots.forEach((d, i) => d.classList.toggle('on', i === closestI));
     });
   }, { passive: true });
+})();
+</script>
+<script>
+/* Wave 7kk — hero video reliability watchdog (never intentionally pauses; only resumes if paused unexpectedly) */
+(function(){
+  var heroVideo = document.querySelector('.hero-video');
+  if (!heroVideo) return;
+  heroVideo.muted = true;
+  heroVideo.defaultMuted = true;
+  heroVideo.loop = true;
+  heroVideo.playsInline = true;
+  function ensureHeroPlayback(){
+    if (heroVideo.paused && !document.hidden) {
+      var p = heroVideo.play();
+      if (p && p.catch) p.catch(function(){});
+    }
+  }
+  heroVideo.addEventListener('ended', function(){
+    heroVideo.currentTime = 0;
+    var p = heroVideo.play();
+    if (p && p.catch) p.catch(function(){});
+  });
+  heroVideo.addEventListener('pause', function(){
+    if (!document.hidden) requestAnimationFrame(ensureHeroPlayback);
+  });
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) ensureHeroPlayback();
+  });
+  window.addEventListener('pageshow', ensureHeroPlayback);
+  ensureHeroPlayback();
 })();
 </script>
 <script>
