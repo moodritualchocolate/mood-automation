@@ -723,9 +723,58 @@ header .hactions-end { justify-content: flex-end; }
   header { padding: 10px 4vw !important; min-height: 54px; }
   header .brand-logo { height: 22px; }
 }
+
+/* Wave 8 — tier v2 (pouch visuals, ₪ savings, quiet selected state) */
+.tier.tier-w8 { --tier-accent: #171512; position: relative; display: flex; flex-direction: column; padding: 16px 12px 18px; background: #fbf7f1; border: 1px solid #e3dbd0; border-radius: 16px; cursor: pointer; transition: border-color .28s ease, background .28s ease, box-shadow .28s ease; overflow: hidden; box-shadow: none !important; }
+.tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 20px; }
+.tier.tier-w8 input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+.tier.tier-w8:hover { border-color: color-mix(in oklab, var(--tier-accent) 40%, #e3dbd0) !important; }
+.tier.tier-w8.active { border: 1.5px solid var(--tier-accent) !important; background: color-mix(in oklab, var(--tier-accent) 5%, #fbf7f1) !important; padding: 15.5px 11.5px 17.5px; }
+.tier.tier-w8 .tier-check { position: absolute; top: 10px; inset-inline-end: 10px; width: 20px; height: 20px; border-radius: 999px; display: grid; place-items: center; font-size: 12px; color: #fff; background: var(--tier-accent); opacity: 0; transform: scale(.6); transition: opacity .25s, transform .25s; font-family: 'Heebo',sans-serif; font-weight: 800; }
+.tier.tier-w8.active .tier-check { opacity: 1; transform: scale(1); }
+.tier-media { position: relative; height: 118px; display: flex; align-items: flex-end; justify-content: center; margin: 8px 0 12px; }
+.tier-media img.tp { position: absolute; bottom: 0; height: 118px; width: auto; object-fit: contain; transform-origin: bottom center; filter: drop-shadow(0 6px 10px rgba(41,25,10,.10)); transition: transform .35s cubic-bezier(.19,1,.22,1), opacity .35s; }
+.tier-media.tier-media-mixed { align-items: center; justify-content: center; }
+.tier-media.tier-media-mixed .tp-mix { position: relative; height: 100px; margin: 0 -6px; transform: none; filter: drop-shadow(0 6px 10px rgba(41,25,10,.10)); object-fit: contain; transition: transform .35s cubic-bezier(.19,1,.22,1); }
+.tier.tier-w8[data-days="60"] .tier-media-mixed .tp-mix { transform: scale(1.06); }
+.tier.tier-w8[data-days="90"] .tier-media-mixed .tp-mix { transform: scale(1.12); }
+.tier-body { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
+.tier-h-row { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
+.tier-h-main { font-family: 'Heebo',sans-serif; font-size: 16px; font-weight: 700; color: #171512; line-height: 1; }
+.tier-badge { display: inline-block; font-family: 'Heebo',sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0; padding: 2px 6px; border-radius: 4px; background: var(--tier-accent); color: #fff; }
+.tier-h-sub { font-family: 'Heebo','Assistant',sans-serif; font-size: 12px; color: #5f5b55; margin: 0; line-height: 1.3; }
+.tier-h-mix { font-family: 'Heebo','Assistant',sans-serif; font-size: 10.5px; color: #7a746c; margin: 2px 0 0; line-height: 1.3; unicode-bidi: isolate; letter-spacing: .2px; }
+.tier-price-row { display: inline-flex; align-items: baseline; gap: 6px; margin-top: 6px; }
+.tier-price-main { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500; color: #171512; letter-spacing: -.4px; }
+.tier-price-perm { font-family: 'Heebo','Assistant',sans-serif; font-size: 11px; color: #5f5b55; }
+.tier-save-money { display: inline-block; margin-top: 4px; font-family: 'Heebo',sans-serif; font-size: 11.5px; font-weight: 700; color: #254821; background: rgba(217, 240, 209, .8); padding: 3px 9px; border-radius: 999px; }
+.tier.tier-w8 .tier-cta, .tier.tier-w8 .pill-cta { display: none !important; }
+@media (max-width: 640px) {
+  .tiers { gap: 8px; }
+  .tier.tier-w8 { padding: 12px 8px 14px; border-radius: 14px; }
+  .tier.tier-w8.active { padding: 11.5px 7.5px 13.5px; }
+  .tier-media { height: 92px; margin: 4px 0 8px; }
+  .tier-media img.tp { height: 92px; }
+  .tier-media.tier-media-mixed .tp-mix { height: 78px; margin: 0 -4px; }
+  .tier-h-main { font-size: 14px; }
+  .tier-h-sub { font-size: 10.5px; }
+  .tier-h-mix { font-size: 9.5px; }
+  .tier-price-main { font-size: 20px; }
+  .tier-price-perm { font-size: 9.5px; }
+  .tier-save-money { font-size: 10px; padding: 2px 7px; }
+}
+/* Wave 8 — quiet tchip + guarantee */
+.trust-chips .tchip { border-color: #cfc9be !important; color: #5f5b55 !important; font-size: 11px !important; font-weight: 600 !important; padding: 4px 10px !important; }
+.trust-chips .tchip::before { content: '✓'; margin-inline-end: 6px; opacity: .7; font-size: 10px; font-weight: 700; }
+/* Wave 8 — sticky mobile buy bar v2 */
+.smb-w8 .smb-title { font-family:'Heebo',sans-serif; font-size:13px; font-weight:700; color:#171512; line-height:1.1; display:block; }
+.smb-w8 .smb-sub { display:block; font-family:'Heebo','Assistant',sans-serif; font-size:11px; color:#5f5b55; margin-top:2px; unicode-bidi:isolate; }
+.smb-w8 .smb-price { display:inline-flex; align-items:center; }
+.smb-w8 .smb-price b { font-family:'Fraunces',serif; font-size:18px; font-weight:500; color:#171512; padding: 0 8px; }
+.smb-w8 .smb-cta { min-width: 120px; }
 </style>
 </head>
-<body>
+<body data-product-name="היום המלא">
   <div class="ann">
     <div class="ann-in">
       <div class="ann-rot" aria-live="polite" aria-atomic="true">
@@ -777,36 +826,65 @@ header .hactions-end { justify-content: flex-end; }
 
       <p class="story">היום שלנו לא בנוי מרגע אחד — יש בו בוקר, יש בו צהריים ויש בו לילה. היום המלא הוא חבילת ההתנסות של MOOD: 10 יחידות ENERGY לרגע שהיום מתחיל, 10 יחידות RELAX לרגע שצריך להוריד הילוך, ו־10 יחידות SLEEP לרגע שסוגרים את היום. חודש שלם של הריטואל, כל שלושת הרגעים ביד אחת.</p>
 
-<div class="guarantee" style="display:flex;align-items:center;gap:8px;padding:12px 14px;background:#f7f5ef;border-radius:8px;margin:0 0 14px;font-size:13px;font-weight:700;color:#254821;direction:rtl">
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" style="flex:none"><path d="M12 3l2.4 1.7 2.9-.2 1 2.7 2.4 1.6-.7 2.9.7 2.9-2.4 1.6-1 2.7-2.9-.2L12 21l-2.4-1.7-2.9.2-1-2.7L3.3 13.4 4 10.5 3.3 7.6 5.7 6l1-2.7 2.9.2z"/><path d="M9 12l2 2 4-4"/></svg>
-  <span>לא אהבתם? <b>כסף חזרה תוך 30 יום</b> · שירות לקוחות ישראלי</span>
+<div class="guarantee" style="display:flex;align-items:center;gap:8px;padding:10px 0;margin:0 0 14px;font-size:12.5px;font-weight:600;color:#5f5b55;direction:rtl">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" style="flex:none;opacity:.7"><path d="M12 3l2.4 1.7 2.9-.2 1 2.7 2.4 1.6-.7 2.9.7 2.9-2.4 1.6-1 2.7-2.9-.2L12 21l-2.4-1.7-2.9.2-1-2.7L3.3 13.4 4 10.5 3.3 7.6 5.7 6l1-2.7 2.9.2z"/><path d="M9 12l2 2 4-4"/></svg>
+  <span>לא אהבתם? <b style="color:#171512;font-weight:700">כסף חזרה תוך 30 יום</b> · שירות לקוחות ישראלי</span>
 </div><div class="tiers" id="tiers">
-        <label class="tier active" data-idx="0">
+<label class="tier tier-w8 active" data-idx="0" data-days="30" data-units="30" data-price="170" data-permo="170" data-save="0">
   <input type="radio" name="tier" value="0" checked>
-  <div class="tier-copy">
-    <div class="tier-h"><strong>חודש בודד</strong><span class="tier-tag" style="background:#c8e5f0">מומלץ</span></div>
-    <div class="tier-sub"><span>30 יחידות · 10 מכל רגע</span></div>
+  <div class="tier-media tier-media-mixed" aria-hidden="true">
+    <img class="tp tp-mix" src="home-assets/cx/mood-pouch-energy.jpg" alt="">
+    <img class="tp tp-mix" src="home-assets/cx/mood-pouch-relax.jpg" alt="" aria-hidden="true">
+    <img class="tp tp-mix" src="home-assets/cx/mood-pouch-sleep.jpg" alt="" aria-hidden="true">
   </div>
-  <div class="tier-price"><b>₪170</b></div>
-  <a class="pill pill-cta tier-cta" href="#tiers">לחבילת ההתנסות · ₪170</a>
+  <div class="tier-body">
+    <div class="tier-h-row"><strong class="tier-h-main">30 יום</strong></div>
+    <p class="tier-h-sub">30 יחידות · לתקופה של חודש</p>
+    <p class="tier-h-mix">10 ENERGY · 10 RELAX · 10 SLEEP</p>
+    <div class="tier-price-row">
+      <b class="tier-price-main">&#8362;170</b>
+      <span class="tier-price-perm">&#8362;170 / חודש</span>
+    </div>
+    <span class="tier-check" aria-hidden="true">&#10003;</span>
+  </div>
 </label>
-        <label class="tier " data-idx="1">
-  <input type="radio" name="tier" value="1" >
-  <div class="tier-copy">
-    <div class="tier-h"><strong>חודשיים</strong><span class="tier-save">חסכון של 9%</span></div>
-    <div class="tier-sub"><span>60 יחידות · 20 מכל רגע</span></div>
+<label class="tier tier-w8" data-idx="1" data-days="60" data-units="60" data-price="310" data-permo="155" data-save="30">
+  <input type="radio" name="tier" value="1">
+  <div class="tier-media tier-media-mixed" aria-hidden="true">
+    <img class="tp tp-mix" src="home-assets/cx/mood-pouch-energy.jpg" alt="">
+    <img class="tp tp-mix" src="home-assets/cx/mood-pouch-relax.jpg" alt="" aria-hidden="true">
+    <img class="tp tp-mix" src="home-assets/cx/mood-pouch-sleep.jpg" alt="" aria-hidden="true">
   </div>
-  <div class="tier-price"><b>₪310</b></div>
-  <a class="pill pill-cta tier-cta" href="#tiers">הוסיפי לסל</a>
+  <div class="tier-body">
+    <div class="tier-h-row"><strong class="tier-h-main">60 יום</strong></div>
+    <p class="tier-h-sub">60 יחידות · לתקופה של חודשיים</p>
+    <p class="tier-h-mix">20 ENERGY · 20 RELAX · 20 SLEEP</p>
+    <div class="tier-price-row">
+      <b class="tier-price-main">&#8362;310</b>
+      <span class="tier-price-perm">&#8362;155 / חודש</span>
+    </div>
+    <span class="tier-save-money">חוסכים &#8362;30</span>
+    <span class="tier-check" aria-hidden="true">&#10003;</span>
+  </div>
 </label>
-        <label class="tier " data-idx="2">
-  <input type="radio" name="tier" value="2" >
-  <div class="tier-copy">
-    <div class="tier-h"><strong>3 חודשים</strong><span class="tier-tag" style="background:#ffec5c">הכי משתלם</span><span class="tier-save">חסכון של 18%</span></div>
-    <div class="tier-sub"><span>90 יחידות · 30 מכל רגע</span></div>
+<label class="tier tier-w8" data-idx="2" data-days="90" data-units="90" data-price="420" data-permo="140" data-save="90">
+  <input type="radio" name="tier" value="2">
+  <div class="tier-media tier-media-mixed" aria-hidden="true">
+    <img class="tp tp-mix" src="home-assets/cx/mood-pouch-energy.jpg" alt="">
+    <img class="tp tp-mix" src="home-assets/cx/mood-pouch-relax.jpg" alt="" aria-hidden="true">
+    <img class="tp tp-mix" src="home-assets/cx/mood-pouch-sleep.jpg" alt="" aria-hidden="true">
   </div>
-  <div class="tier-price"><b>₪420</b></div>
-  <a class="pill pill-cta tier-cta" href="#tiers">הוסיפי לסל</a>
+  <div class="tier-body">
+    <div class="tier-h-row"><strong class="tier-h-main">90 יום</strong><span class="tier-badge">הכי משתלם</span></div>
+    <p class="tier-h-sub">90 יחידות · לתקופה של 3 חודשים</p>
+    <p class="tier-h-mix">30 ENERGY · 30 RELAX · 30 SLEEP</p>
+    <div class="tier-price-row">
+      <b class="tier-price-main">&#8362;420</b>
+      <span class="tier-price-perm">&#8362;140 / חודש</span>
+    </div>
+    <span class="tier-save-money">חוסכים &#8362;90</span>
+    <span class="tier-check" aria-hidden="true">&#10003;</span>
+  </div>
 </label>
       </div>
 
@@ -993,9 +1071,13 @@ header .hactions-end { justify-content: flex-end; }
   </div>
 </footer>
 
-  <div class="smb" role="complementary" aria-label="קנייה מהירה">
-    <div class="smb-info"><b>היום המלא · חודש בודד</b><small>30 יחידות · 10 מכל רגע</small></div>
-    <a class="pill pill-cta" href="#tiers">לחבילת ההתנסות · ₪170</a>
+  <div class="smb smb-w8" role="complementary" aria-label="קנייה מהירה">
+    <div class="smb-info">
+      <b class="smb-title">היום המלא · 30 יום</b>
+      <small class="smb-sub">10 ENERGY · 10 RELAX · 10 SLEEP</small>
+    </div>
+    <div class="smb-price"><b>&#8362;170</b></div>
+    <a class="pill pill-cta smb-cta" href="#tiers">להוסיף לסל</a>
   </div>
 
 <script>
@@ -1030,15 +1112,35 @@ header .hactions-end { justify-content: flex-end; }
   }, {passive:true});
   auto();
 
-  // tier picker
-  var tiers = document.querySelectorAll('.tier');
-  tiers.forEach(function(t){
-    t.addEventListener('click', function(){
-      tiers.forEach(function(x){x.classList.remove('active');});
-      t.classList.add('active');
-      var input = t.querySelector('input'); if (input) input.checked = true;
+  // Wave 8 — tier picker + sticky bar sync
+  var tiers = document.querySelectorAll('.tier.tier-w8');
+  var smbTitle = document.querySelector('.smb-w8 .smb-title');
+  var smbSub = document.querySelector('.smb-w8 .smb-sub');
+  var smbPrice = document.querySelector('.smb-w8 .smb-price b');
+  var PRODUCT_NAME = document.body.dataset.productName || 'המוצר';
+  function selectTier(t){
+    tiers.forEach(function(x){ x.classList.remove('active'); var r=x.querySelector('input[type="radio"]'); if(r) r.checked=false; });
+    t.classList.add('active');
+    var r = t.querySelector('input[type="radio"]'); if (r) r.checked = true;
+    if (!smbTitle) return;
+    var days = t.dataset.days;
+    var price = t.dataset.price;
+    var mix = t.querySelector('.tier-h-mix');
+    var sub = t.querySelector('.tier-h-sub');
+    smbTitle.textContent = PRODUCT_NAME + ' · ' + days + ' יום';
+    smbSub.textContent = (mix && !mix.hasAttribute('hidden')) ? mix.textContent : (sub ? sub.textContent.split('·')[0].trim() : '');
+    smbPrice.textContent = '₪' + price;
+  }
+  if (tiers.length) {
+    tiers.forEach(function(t){
+      t.addEventListener('click', function(){ selectTier(t); });
+      t.addEventListener('keydown', function(e){
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); selectTier(t); }
+      });
     });
-  });
+    var active = document.querySelector('.tier.tier-w8.active') || tiers[0];
+    if (active) selectTier(active);
+  }
 })();
 </script>
 
