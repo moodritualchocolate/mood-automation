@@ -796,33 +796,96 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.hero .hero-h1-en {
+.hero .hero-h1-en { display: none !important; }
+/* Wave 7ff — final hero title spec (deep chocolate + cream halo only) */
+.hero .hero-copy.hero-center .hero-title {
+  position: relative !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  color: #211710 !important;
+  -webkit-text-fill-color: #211710 !important;
+  background: none !important;
   font-family: 'DM Sans', system-ui, -apple-system, "Segoe UI", sans-serif !important;
-  font-weight: 550 !important;
-  font-size: clamp(2.8rem, 5.5vw, 4.8rem) !important;
-  line-height: 1.1 !important;
-  letter-spacing: -0.03em !important;
-  margin: 0 0 32px !important;
-  color: #1a1a1a !important;
+  font-size: clamp(44px, 5.6vw, 84px) !important;
+  line-height: 0.94 !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.045em !important;
+  text-wrap: balance;
+  isolation: isolate;
+  animation: none !important;
   text-shadow: none !important;
-  max-width: 900px;
-  background: linear-gradient(90deg, #1a1a1a 0%, #1a1a1a 40%, #d4b46b 50%, #1a1a1a 60%, #1a1a1a 100%);
-  background-size: 260% 100%;
-  background-position: 100% 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: heroShine 4s cubic-bezier(.22,.61,.36,1) 2.4s 1 forwards;
 }
-@keyframes heroShine {
-  0%   { background-position: 100% 0; }
-  100% { background-position: -30% 0; }
+.hero .hero-copy.hero-center .hero-title::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 50%;
+  width: 118%;
+  height: 135%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(248, 239, 225, 0.74) 0%,
+    rgba(248, 239, 225, 0.52) 38%,
+    rgba(248, 239, 225, 0.20) 66%,
+    rgba(248, 239, 225, 0) 100%
+  );
+  filter: blur(18px);
+  pointer-events: none;
 }
-@media (prefers-reduced-motion: reduce) {
-  .hero .hero-h1-en {
-    background: none !important;
-    -webkit-text-fill-color: #1a1a1a !important;
-    animation: none !important;
+.hero .hero-copy.hero-center .hero-title span {
+  display: block;
+}
+.hero .hero-copy.hero-center .hero-shop-cta {
+  min-width: 260px;
+  padding: 17px 34px;
+  border: 1.5px solid #211710 !important;
+  border-radius: 999px;
+  background: rgba(248, 239, 225, 0.62) !important;
+  color: #211710 !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  text-decoration: none !important;
+  transition: transform 220ms ease, background 220ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 24px;
+  box-shadow: none !important;
+}
+.hero .hero-copy.hero-center .hero-shop-cta:hover {
+  background: rgba(248, 239, 225, 0.78) !important;
+  transform: translateY(-1px);
+}
+@media (max-width: 767px) {
+  .hero .hero-copy.hero-center .hero-title {
+    font-size: clamp(42px, 12.2vw, 58px) !important;
+    line-height: 0.98 !important;
+    letter-spacing: -0.04em !important;
+  }
+  .hero .hero-copy.hero-center .hero-title::before {
+    width: 125%;
+    height: 142%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(248, 239, 225, 0.68) 0%,
+      rgba(248, 239, 225, 0.46) 40%,
+      rgba(248, 239, 225, 0.16) 70%,
+      rgba(248, 239, 225, 0) 100%
+    );
+    filter: blur(16px);
+  }
+  .hero .hero-copy.hero-center .hero-shop-cta {
+    min-width: 230px;
+    padding: 15px 28px;
+    font-size: 18px;
+    margin-top: 20px;
   }
 }
 .hero .hero-cta { margin: 0 !important; }
@@ -1155,10 +1218,11 @@ header .hactions-end { justify-content: flex-end; }
         <source src="home-assets/cx/hero-desktop.mp4" type="video/mp4">
       </video>
       <div class="hero-copy hero-center">
-        <h1 class="hero-h1-en" dir="ltr" lang="en">Small Piece. Real Impact.</h1>
-        <div class="hero-cta">
-          <a class="pill pill-cta hero-slide" href="#formulas">Shop now</a>
-        </div>
+        <h1 class="hero-title" dir="ltr" lang="en">
+          <span>Small piece.</span>
+          <span>Real impact.</span>
+        </h1>
+        <a class="hero-shop-cta" href="#formulas">Shop now</a>
       </div>
     </section>
 
