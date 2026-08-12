@@ -245,7 +245,7 @@ footer .fbase{font-size:12px}
 body { background: var(--paper); }
 
 /* SHAPE — rectangles with soft corners (chocolate-square echo) */
-.brand { border-radius: 8px !important; padding: 8px 18px !important; }
+.brand { border-radius: 0 !important; padding: 0 !important; border: none !important; background: transparent !important; }
 .pill  { border-radius: 10px !important; }
 .pill-cta { box-shadow: 0 8px 20px -8px rgba(44,29,22,.4) !important; }
 .tag,
@@ -366,7 +366,7 @@ nav a.nav-fd::after{content:none !important;display:none !important}
 .mfoot { position: relative; background: #0f0a05; color: #d9c9b3; padding: 80px 4vw 0; overflow: hidden; font-family: 'Assistant',sans-serif; direction: rtl; }
 .mfoot-mark { position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%); font-family:'DM Sans',sans-serif; font-weight:700; font-size: clamp(280px,42vw,640px); letter-spacing:-22px; color: rgba(247,236,216,.05); line-height:1; pointer-events:none; user-select:none; z-index:0; white-space:nowrap; }
 .mfoot-in { position: relative; z-index:1; max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 60px 40px; padding-bottom: 60px; }
-.mfoot-brand .brand { display:inline-flex; padding: 8px 18px; border-radius: 8px; text-decoration:none; }
+.mfoot-brand .brand { display:inline-flex; padding: 0; border-radius: 0; text-decoration:none; border: none; background: transparent; }
 .mfoot-tag { color:#a09a90; font-size:14px; line-height:1.6; margin: 20px 0 26px; max-width: 300px; }
 .mfoot-news-l { display:block; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:800; letter-spacing:2.5px; color:#e8c880; text-transform:uppercase; margin: 0 0 12px; }
 .mfoot-news-row { display:flex; gap:8px; background: rgba(247,236,216,.06); border:1px solid rgba(247,236,216,.15); border-radius:10px; padding:4px; max-width:320px; margin:0 0 10px; }
