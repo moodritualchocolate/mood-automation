@@ -1109,6 +1109,18 @@ body { overflow-x: hidden; max-width: 100vw; }
   .ann-rot { height: 16px; min-width: 0; }
   .ann-rot-msg { font-size: 11.5px; }
 }
+
+/* Wave 7ee — Goom-style header: hamburger+account | logo center | search+bag */
+header nav { display: none !important; }
+header .brand { position: absolute; left: 50%; transform: translateX(-50%); }
+header { position: sticky; top: 0; padding: 12px 4vw !important; min-height: 60px; display: flex; align-items: center; justify-content: space-between; }
+header .hactions { display: flex; gap: 8px; align-items: center; }
+header .hactions-start { justify-content: flex-start; }
+header .hactions-end { justify-content: flex-end; }
+@media (max-width: 640px) {
+  header { padding: 10px 4vw !important; min-height: 54px; }
+  header .brand-logo { height: 22px; }
+}
 </style>
 </head>
 <body>
@@ -1123,18 +1135,14 @@ body { overflow-x: hidden; max-width: 100vw; }
     </div>
   </div>
   <header>
-    <a class="brand" href="#top"><img class="brand-logo" src="home-assets/logo-mood-400.png" alt="mood" width="88" height="30" loading="eager" decoding="sync"></a>
-    <nav>
-      <a href="#formulas">מוצרים</a>
-      <a href="full-day.html" class="nav-fd">היום המלא</a>
-      <a href="#story">הסיפור</a>
-      <a href="club.html">mood Club</a>
-      <a href="blog.html">בלוג</a>
-    </nav>
-    <div class="hactions">
+    <div class="hactions hactions-start">
+      <button class="ic" aria-label="תפריט" onclick="document.getElementById('mMenu').classList.add('on');document.getElementById('mScrim').classList.add('on')"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <a class="ic" href="#" aria-label="חשבון"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 4-7 8-7s8 2.5 8 7"/></svg></a>
+    </div>
+    <a class="brand" href="mayven.html" aria-label="mood — דף הבית"><img class="brand-logo" src="home-assets/logo-mood-400.png" alt="mood" width="88" height="30" loading="eager" decoding="sync"></a>
+    <div class="hactions hactions-end">
+      <button class="ic" aria-label="חיפוש"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
       <a class="ic bag" href="#" aria-label="סל"><svg viewBox="0 0 24 24"><path d="M6.5 8h11l-1 12h-9L6.5 8Z"/><path d="M9.2 8a2.8 2.8 0 0 1 5.6 0"/></svg><b>0</b></a>
-      <button class="ic" aria-label="תפריט"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
   </header>
   
