@@ -632,6 +632,24 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
 /* Footer gold hairline */
 footer { border-top: 1px solid rgba(198,145,48,.2) !important; }
 
+
+/* WAVE 7f — compact moments bar (replaces p2a-mom stacked cards) */
+.mtimes { padding: 22px 4vw; background: color-mix(in srgb, var(--p2a-accent) 6%, var(--paper)); direction: rtl; }
+.mtimes-in { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.mtimes-k { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin: 0; }
+.mtimes-chips { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.mtimes-chip { display: inline-flex; align-items: baseline; gap: 8px; }
+.mtimes-t { font-family: 'DM Sans', sans-serif; font-size: 20px; font-weight: 700; color: var(--cta); letter-spacing: -0.5px; }
+.mtimes-l { font-family: 'Assistant', sans-serif; font-size: 14.5px; color: var(--ink); font-weight: 500; }
+.mtimes-sep { color: var(--p2a-accent); font-size: 18px; opacity: .5; padding: 0 2px; }
+@media (max-width: 600px) {
+  .mtimes { padding: 18px 4vw; }
+  .mtimes-chips { gap: 10px; }
+  .mtimes-t { font-size: 17px; }
+  .mtimes-l { font-size: 13px; }
+  .mtimes-sep { font-size: 15px; }
+}
+
 </style>
 </head>
 <body>
@@ -774,20 +792,15 @@ footer { border-top: 1px solid rgba(198,145,48,.2) !important; }
     </div>
   </section>
 
-  <section class="p2a-mom" aria-label="מתי לוקחים">
-    <div class="p2a-mom-in">
-      <div class="p2a-mom-head">
-        <p class="p2a-mom-k">מתי לוקחים</p>
-        <h2 class="p2a-mom-h">רגעים לאורך היום</h2>
-        <p class="p2a-mom-sub">רמז קטן, לא מרשם</p>
-      </div>
-      <div class="p2a-mom-grid">
-        <div class="p2a-mom-card"><p class="p2a-mom-time">9:00</p><p class="p2a-mom-label">לפני פגישה</p></div>
-        <div class="p2a-mom-card"><p class="p2a-mom-time">14:00</p><p class="p2a-mom-label">אחרי צהריים</p></div>
-        <div class="p2a-mom-card"><p class="p2a-mom-time">16:00</p><p class="p2a-mom-label">לפני אימון</p></div>
+  <section class="mtimes" aria-label="מתי לוקחים">
+    <div class="mtimes-in">
+      <span class="mtimes-k">מתי לוקחים</span>
+      <div class="mtimes-chips">
+        <div class="mtimes-chip"><b class="mtimes-t">9:00</b><span class="mtimes-l">לפני פגישה</span></div><span class="mtimes-sep" aria-hidden="true">·</span><div class="mtimes-chip"><b class="mtimes-t">14:00</b><span class="mtimes-l">אחרי צהריים</span></div><span class="mtimes-sep" aria-hidden="true">·</span><div class="mtimes-chip"><b class="mtimes-t">16:00</b><span class="mtimes-l">לפני אימון</span></div>
       </div>
     </div>
   </section>
+
 
 
 
