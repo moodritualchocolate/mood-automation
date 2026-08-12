@@ -980,6 +980,356 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
   .hero .hero-sub-he { font-size: 16px !important; margin-bottom: 22px !important; }
   .hero .hero-cta .pill.pill-cta { padding: 14px 32px !important; font-size: 14px !important; }
 }
+
+/* WAVE 9 — purchase section rebuild (mobile-first) */
+.tiers { display: flex; flex-direction: column; gap: 12px; margin: 0 0 18px; }
+.tier {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr minmax(96px, 128px) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--paper, #fdfaf3);
+  border: 1.25px solid #e6ddd0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+  min-height: 110px;
+}
+.tier:hover { border-color: #cfc3b1; }
+.tier input { position: absolute; opacity: 0; pointer-events: none; }
+.tier-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; text-align: start; }
+.tier-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tier-h strong {
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-size: 17px; font-weight: 800; color: var(--ink, #171512);
+  letter-spacing: -0.2px;
+}
+.tier-tag {
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-size: 10.5px; font-weight: 700;
+  color: var(--ink, #171512); background: #ecead9;
+  padding: 3px 9px; border-radius: 999px;
+  letter-spacing: 0; text-transform: none;
+}
+.tier-sub {
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-size: 12.5px; color: #7a6a5c; font-weight: 500;
+}
+.tier-media {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 88px;
+}
+.tier-pouch {
+  display: block;
+  max-height: 96px; width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(41, 25, 10, 0.10));
+}
+.tier-pouch.pouch-1x { width: clamp(64px, 22vw, 88px); }
+.tier-pouch.pouch-2x { width: clamp(96px, 30vw, 118px); }
+.tier-pouch.pouch-3x { width: clamp(112px, 34vw, 138px); }
+.tier-price {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 3px; text-align: end; min-width: 74px;
+}
+.tier-price b {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 500; color: var(--ink, #171512);
+  letter-spacing: -0.6px; line-height: 1;
+}
+.tier-per {
+  font-family: 'Heebo',sans-serif;
+  font-size: 11.5px; color: #7a6a5c; font-weight: 500;
+}
+.tier-save {
+  font-family: 'Heebo',sans-serif;
+  font-size: 11px; font-weight: 700;
+  background: #ecead9; color: #3d3d22;
+  padding: 3px 8px; border-radius: 999px;
+  letter-spacing: 0;
+}
+
+/* Selected state — thin SKU-tinted border + small SKU check dot */
+.tier.active {
+  border: 1.5px solid #2c1d16;
+  background: #fbf7ef;
+  padding: 13.75px 15.75px;
+  box-shadow: 0 6px 22px -14px rgba(41, 25, 10, 0.18);
+}
+.tier.active::before {
+  content: "";
+  position: absolute;
+  top: 10px; inset-inline-end: 10px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #2c1d16;
+  box-shadow: inset 0 0 0 3px #fbf7ef, inset 0 0 0 4.5px #2c1d16;
+}
+
+@media (min-width: 700px) {
+  .tier { grid-template-columns: 1fr minmax(120px, 160px) auto; padding: 16px 20px; min-height: 130px; }
+  .tier-h strong { font-size: 19px; }
+  .tier-sub { font-size: 13.5px; }
+  .tier-pouch { max-height: 128px; }
+  .tier-pouch.pouch-1x { width: clamp(80px, 8vw, 108px); }
+  .tier-pouch.pouch-2x { width: clamp(118px, 12vw, 148px); }
+  .tier-pouch.pouch-3x { width: clamp(140px, 14vw, 172px); }
+  .tier-price b { font-size: 30px; }
+}
+
+/* Hide any legacy in-card CTA that may exist in other overrides */
+.tier .tier-cta { display: none !important; }
+
+/* Trust chips — keep quiet + neutral */
+.trust-chips { margin-top: 14px; }
+
+/* WAVE 9 — mobile drawer (missing since Wave 7). All 5 pages. */
+.m-menu {
+  position: fixed; inset: 0;
+  background: rgba(23, 21, 18, 0.45);
+  z-index: 200;
+  display: none;
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+.m-menu.open { display: block; opacity: 1; }
+.m-menu-in {
+  position: absolute; top: 0; inset-inline-start: 0;
+  width: min(84vw, 340px); height: 100%;
+  background: var(--paper, #fdfaf3);
+  padding: 68px 26px 32px;
+  display: flex; flex-direction: column; gap: 6px;
+  transform: translateX(-100%);
+  transition: transform .28s cubic-bezier(.2,.7,.2,1);
+  box-shadow: 8px 0 32px rgba(23, 21, 18, 0.18);
+  overflow-y: auto;
+}
+.m-menu[dir="rtl"] .m-menu-in,
+html[dir="rtl"] .m-menu .m-menu-in {
+  inset-inline-start: auto; inset-inline-end: 0;
+  transform: translateX(100%);
+  box-shadow: -8px 0 32px rgba(23, 21, 18, 0.18);
+}
+.m-menu.open .m-menu-in { transform: translateX(0); }
+.m-menu-close {
+  position: absolute; top: 18px; inset-inline-end: 20px;
+  font-size: 22px; color: var(--ink, #171512);
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  cursor: pointer; text-decoration: none;
+  border-radius: 50%;
+}
+.m-menu-close:hover { background: rgba(23,21,18,0.06); }
+.m-menu-link {
+  padding: 14px 4px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--ink, #171512);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(23,21,18,0.08);
+}
+.m-menu-link:hover { color: #2c1d16; }
+.m-menu-social {
+  display: flex; gap: 14px; margin-top: 20px;
+  color: var(--ink, #171512);
+}
+.m-menu-social a { color: inherit; text-decoration: none; }
+body.m-open { overflow: hidden; }
+
+/* WAVE 9 — scroll bug fix (retained) */
+html { overflow-x: clip !important; overflow-y: auto !important; }
+body { overflow-x: clip !important; max-width: none !important; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* WAVE9-START */
+/* WAVE 9 — purchase section rebuild (mobile-first) */
+.tiers { display: flex; flex-direction: column; gap: 12px; margin: 0 0 18px; }
+.tier {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr minmax(96px, 128px) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--paper, #fdfaf3);
+  border: 1.25px solid #e6ddd0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+  min-height: 110px;
+}
+.tier:hover { border-color: #cfc3b1; }
+.tier input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.tier-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; text-align: start; }
+.tier-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tier-h strong {
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-size: 17px; font-weight: 800; color: var(--ink, #171512);
+  letter-spacing: -0.2px;
+}
+.tier-tag {
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-size: 10.5px; font-weight: 700;
+  color: var(--ink, #171512); background: #ecead9;
+  padding: 3px 9px; border-radius: 999px;
+  letter-spacing: 0; text-transform: none;
+}
+.tier-sub {
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-size: 12.5px; color: #7a6a5c; font-weight: 500;
+}
+.tier-media {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 88px;
+}
+.tier-pouch {
+  display: block;
+  max-height: 96px; width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(41, 25, 10, 0.10));
+}
+.tier-pouch.pouch-1x { width: clamp(64px, 22vw, 88px); }
+.tier-pouch.pouch-2x { width: clamp(96px, 30vw, 118px); }
+.tier-pouch.pouch-3x { width: clamp(112px, 34vw, 138px); }
+.tier-price {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 3px; text-align: end; min-width: 74px;
+}
+.tier-price b {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 500; color: var(--ink, #171512);
+  letter-spacing: -0.6px; line-height: 1;
+}
+.tier-per {
+  font-family: 'Heebo',sans-serif;
+  font-size: 11.5px; color: #7a6a5c; font-weight: 500;
+}
+.tier-save {
+  font-family: 'Heebo',sans-serif;
+  font-size: 11px; font-weight: 700;
+  background: #ecead9; color: #3d3d22;
+  padding: 3px 8px; border-radius: 999px;
+  letter-spacing: 0;
+}
+
+/* Selected state — thin SKU-tinted border + small SKU check dot */
+.tier.active {
+  border: 1.5px solid #2c1d16;
+  background: #fbf7ef;
+  padding: 13.75px 15.75px;
+  box-shadow: 0 6px 22px -14px rgba(41, 25, 10, 0.18);
+}
+.tier.active::before {
+  content: "";
+  position: absolute;
+  top: 10px; inset-inline-end: 10px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #2c1d16;
+  box-shadow: inset 0 0 0 3px #fbf7ef, inset 0 0 0 4.5px #2c1d16;
+}
+
+@media (min-width: 700px) {
+  .tier { grid-template-columns: 1fr minmax(120px, 160px) auto; padding: 16px 20px; min-height: 130px; }
+  .tier-h strong { font-size: 19px; }
+  .tier-sub { font-size: 13.5px; }
+  .tier-pouch { max-height: 128px; }
+  .tier-pouch.pouch-1x { width: clamp(80px, 8vw, 108px); }
+  .tier-pouch.pouch-2x { width: clamp(118px, 12vw, 148px); }
+  .tier-pouch.pouch-3x { width: clamp(140px, 14vw, 172px); }
+  .tier-price b { font-size: 30px; }
+}
+
+/* Full-day-only tuning: stack the 3 SKU lines so no bidi wrap issues */
+body[data-page="full-day"] .tier-sub { display: flex; flex-direction: column; gap: 2px; font-size: 12px; letter-spacing: -0.1px; line-height: 1.25; }
+body[data-page="full-day"] .tier-sub .fd-line { white-space: nowrap; }
+body[data-page="full-day"] .tier-pouch { max-height: 92px; border-radius: 8px; }
+body[data-page="full-day"] .tier-pouch.pouch-1x,
+body[data-page="full-day"] .tier-pouch.pouch-2x,
+body[data-page="full-day"] .tier-pouch.pouch-3x { width: clamp(96px, 28vw, 118px); height: 92px; object-fit: cover; }
+@media (min-width: 700px) {
+  body[data-page="full-day"] .tier-pouch { max-height: 128px; }
+  body[data-page="full-day"] .tier-pouch.pouch-1x,
+  body[data-page="full-day"] .tier-pouch.pouch-2x,
+  body[data-page="full-day"] .tier-pouch.pouch-3x { width: clamp(140px, 13vw, 176px); height: 128px; }
+}
+
+/* Hide any legacy in-card CTA that may exist in other overrides */
+.tier .tier-cta { display: none !important; }
+
+/* Trust chips — keep quiet + neutral */
+.trust-chips { margin-top: 14px; }
+
+/* WAVE 9 — mobile drawer (missing since Wave 7). All 5 pages. */
+.m-menu {
+  position: fixed; inset: 0;
+  background: rgba(23, 21, 18, 0.45);
+  z-index: 200;
+  display: none;
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+.m-menu.open { display: block; opacity: 1; }
+.m-menu-in {
+  position: absolute; top: 0; left: 0;
+  width: min(84vw, 340px); height: 100%;
+  background: var(--paper, #fdfaf3);
+  padding: 68px 26px 32px;
+  display: flex; flex-direction: column; gap: 6px;
+  transform: translateX(-100%);
+  transition: transform .28s cubic-bezier(.2,.7,.2,1);
+  box-shadow: 8px 0 32px rgba(23, 21, 18, 0.18);
+  overflow-y: auto;
+}
+html[dir="rtl"] .m-menu .m-menu-in {
+  left: auto; right: 0;
+  transform: translateX(100%);
+  box-shadow: -8px 0 32px rgba(23, 21, 18, 0.18);
+}
+.m-menu.open .m-menu-in,
+html[dir="rtl"] .m-menu.open .m-menu-in { transform: translateX(0) !important; }
+.m-menu-close {
+  position: absolute; top: 18px; inset-inline-end: 20px;
+  font-size: 22px; color: var(--ink, #171512);
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  cursor: pointer; text-decoration: none;
+  border-radius: 50%;
+}
+.m-menu-close:hover { background: rgba(23,21,18,0.06); }
+.m-menu-link {
+  padding: 14px 4px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--ink, #171512);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(23,21,18,0.08);
+}
+.m-menu-link:hover { color: #2c1d16; }
+.m-menu-social {
+  display: flex; gap: 14px; margin-top: 20px;
+  color: var(--ink, #171512);
+}
+.m-menu-social a { color: inherit; text-decoration: none; }
+body.m-open { overflow: hidden; }
+
+/* WAVE 9 — scroll bug fix (retained) */
+html { overflow-x: clip !important; overflow-y: auto !important; }
+body { overflow-x: clip !important; max-width: none !important; }
+/* WAVE9-END */
+
 </style>
 </head>
 <body>
@@ -1298,10 +1648,11 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
 })();
 </script>
 
-<div class="m-menu" id="mMenu" role="dialog" aria-hidden="true">
+<div class="m-menu" id="mMenu" role="dialog" aria-hidden="true" aria-label="תפריט">
   <div class="m-menu-in">
-    <a class="m-menu-close" onclick="document.getElementById('mMenu').classList.remove('open');document.body.classList.remove('m-open')" aria-label="סגור">✕</a>
+    <a href="#" class="m-menu-close" aria-label="סגור">✕</a>
     <a href="#formulas" class="m-menu-link">מוצרים</a>
+    <a href="full-day.html" class="m-menu-link">היום המלא</a>
     <a href="#story" class="m-menu-link">הסיפור</a>
     <a href="club.html" class="m-menu-link">MOOD Club</a>
     <a href="blog.html" class="m-menu-link">Journal</a>
@@ -1311,22 +1662,12 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
     </div>
   </div>
 </div>
+</div>
+</div>
+</div>
+</div>
 
-<script>
-(function() {
-  const btn = document.querySelector('header .hactions button.ic[aria-label="תפריט"]');
-  const menu = document.getElementById('mMenu');
-  if (!btn || !menu) return;
-  btn.addEventListener('click', function(e){
-    e.preventDefault();
-    menu.classList.add('open');
-    document.body.classList.add('m-open');
-  });
-  menu.addEventListener('click', function(e){
-    if (e.target === menu) { menu.classList.remove('open'); document.body.classList.remove('m-open'); }
-  });
-})();
-</script>
+
 
 
 <script>
@@ -1370,4 +1711,69 @@ h2.in-view, .section-head.in-view, .founder.in-view, article.in-view {
 })();
 </script>
 
+
+
+
+
+
+
+
+
+<script>
+(function(){
+  // sticky mobile bar sync
+  var tiers = document.querySelectorAll('.tier');
+  var smb   = document.querySelector('.smb');
+  if (smb && tiers.length){
+    var info  = smb.querySelector('.smb-info');
+    var cta   = smb.querySelector('a.pill');
+    var brand = smb.getAttribute('data-brand') || '';
+    function sync(t){
+      if (!t) return;
+      var name  = t.getAttribute('data-name')  || '';
+      var sub   = t.getAttribute('data-sub')   || '';
+      var price = t.getAttribute('data-price') || '';
+      if (info) info.innerHTML = '<b>' + (brand ? brand + ' · ' : '') + name + '</b><small>' + sub + '</small>';
+      if (cta && price) cta.textContent = 'הוסיפי · ₪' + price;
+    }
+    function selectTier(t){
+      if (!t) return;
+      tiers.forEach(function(x){
+        x.classList.toggle('active', x === t);
+        var i = x.querySelector('input[name=tier]');
+        if (i) i.checked = (x === t);
+      });
+      sync(t);
+    }
+    // Delegate click on the .tiers container so we survive any DOM re-rendering
+    var wrap = document.getElementById('tiers') || tiers[0].parentNode;
+    if (wrap) wrap.addEventListener('click', function(e){
+      var t = e.target && e.target.closest ? e.target.closest('.tier') : null;
+      if (!t || !wrap.contains(t)) return;
+      selectTier(t);
+    });
+    // Keep native input change events too, in case JS is disabled or an
+    // assistive tech triggers change without a click
+    tiers.forEach(function(t){
+      var inp = t.querySelector('input[name=tier]');
+      if (inp) inp.addEventListener('change', function(){ if (inp.checked) selectTier(t); });
+    });
+    sync(document.querySelector('.tier.active') || tiers[0]);
+  }
+
+  // mobile drawer wire-up (works on all pages that include mMenu + hamburger)
+  var btn  = document.querySelector('header .hactions button.ic[aria-label="תפריט"]');
+  var menu = document.getElementById('mMenu');
+  if (btn && menu){
+    var closeBtn = menu.querySelector('.m-menu-close');
+    function open(){ menu.classList.add('open'); menu.setAttribute('aria-hidden','false'); document.body.classList.add('m-open'); }
+    function close(){ menu.classList.remove('open'); menu.setAttribute('aria-hidden','true'); document.body.classList.remove('m-open'); }
+    btn.addEventListener('click', function(e){ e.preventDefault(); open(); });
+    menu.addEventListener('click', function(e){ if (e.target === menu) close(); });
+    if (closeBtn) closeBtn.addEventListener('click', function(e){ e.preventDefault(); close(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && menu.classList.contains('open')) close(); });
+    menu.querySelectorAll('a[href]').forEach(function(a){ a.addEventListener('click', close); });
+  }
+})();
+</script>
 </body></html>
