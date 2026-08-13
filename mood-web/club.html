@@ -1831,6 +1831,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none
 .club-main>.club-section{width:100%;overflow:hidden}
 .club-shell{width:min(1180px,calc(100% - 40px));max-width:1180px}
 .mfoot-in,.mfoot-brand,.mfoot-col,.mfoot-news,.mfoot-news-row,.mfoot-news-row input{min-width:0}
+.club-how{background:#f7f1e6}
+.club-how-step{border-color:#e5d7c7!important;background:#fffdf8!important;box-shadow:none}
+.club-how-num{border-color:#d8c4aa;background:#f7f1e6;color:#a67825}
+.club-offer-foot span{display:block;color:#5f5952;font-size:12px}
 
 @media(max-width:760px){
   .club-shell,.club-benefits .club-shell{width:min(100% - 32px,430px);padding-inline:0}
@@ -1841,6 +1845,9 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none
   .club-quote q,.club-quote:first-child q{font-size:12px;line-height:1.42}
   .club-quote:first-child q{font-size:15px}
   .club-quote footer{font-size:10px!important}
+  .club-member-meta{font-size:8px;line-height:1.25}.club-member-meta b{font-size:10px}
+  .club-card-perks b{font-size:10px;line-height:1.3}.club-card-backline{font-size:8px}
+  .club-offer-foot{display:flex;flex-direction:column;gap:10px}.club-offer-foot .club-button{width:100%;margin:0}.club-offer-foot span{text-align:center;font-size:10px}
   .mfoot-in{grid-template-columns:repeat(2,minmax(0,1fr))}
   .mfoot-mark{max-width:none}
 }
@@ -1927,14 +1934,14 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none
           <div class="club-offer-intro">
             <p class="club-kicker">MOOD CLUB</p>
             <h2 class="club-heading" id="club-offer-title">מחירי המועדון</h2>
-            <p class="club-lede">בחרו מארז של 30, 60 או 90 יחידות.</p>
+            <p class="club-lede">יחידה אישית לכל יום. בחרו מארז של 30, 60 או 90 יחידות.</p>
           </div>
           <div class="club-plans" aria-label="מחירי המארזים">
-            <a class="club-plan" href="energy.html#tiers"><strong>30 יום</strong><b>₪170</b><span>30 יחידות</span></a>
-            <a class="club-plan" href="energy.html#tiers"><strong>60 יום</strong><b>₪310</b><span>60 יחידות</span></a>
-            <a class="club-plan" href="energy.html#tiers"><strong>90 יום</strong><b>₪420</b><span>90 יחידות</span></a>
+            <a class="club-plan" href="mayven.html#formulas"><strong>30 יום</strong><b>₪170</b><span>30 יחידות · יחידה ביום</span></a>
+            <a class="club-plan" href="mayven.html#formulas"><strong>60 יום</strong><b>₪310</b><span>60 יחידות · יחידה ביום</span></a>
+            <a class="club-plan" href="mayven.html#formulas"><strong>90 יום</strong><b>₪420</b><span>90 יחידות · יחידה ביום</span></a>
           </div>
-          <div class="club-offer-foot"><span>מחיר חבר · משלוח חינם · בלי התחייבות</span><a class="club-button" href="energy.html#tiers">לבחירת הריטואל</a></div>
+          <div class="club-offer-foot"><span>המחיר המוצג הוא למארז · משלוח מועדון חינם</span><a class="club-button" href="mayven.html#formulas">לבחירת ENERGY / RELAX / SLEEP</a></div>
         </div>
       </div>
     </section>
@@ -1968,8 +1975,8 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none
         <p class="club-kicker">MEMBERS</p><h2 class="club-heading" id="club-proof-title">איך MOOD נכנס ליום שלהם.</h2>
         <div class="club-proof-grid">
           <blockquote class="club-quote"><span class="club-stars" aria-label="5 כוכבים">★★★★★</span><q>החליף לי את הקפה השני של אחר הצהריים. סוף סוף משהו שאני באמת מחכה לו — טעים, ובאמת עוזר להתמקד בלי הרעד של הקפה.</q><footer>יעל א׳ · לקוחה מאומתת</footer></blockquote>
-          <blockquote class="club-quote"><span class="club-stars" aria-label="5 כוכבים">★★★★★</span><q>הביס של אחרי הצהריים הפך לרגע ההוא של עצמי — משהו קטן שאני מחכה לו בין הילדים לשעת המקלחת. הראש נרגע והכתפיים יורדות.</q><footer>נועה ל׳ · לקוחה מאומתת</footer></blockquote>
-          <blockquote class="club-quote"><span class="club-stars" aria-label="5 כוכבים">★★★★★</span><q>לוקחת חצי שעה לפני השינה. הראש לא נכבה מיד, אבל הוא נרגע — והשינה שקטה יותר. פשוט טקס יפה של סוף היום.</q><footer>שירה ק׳ · לקוחה מאומתת</footer></blockquote>
+          <blockquote class="club-quote"><span class="club-stars" aria-label="5 כוכבים">★★★★★</span><q>הביס של אחרי הצהריים הפך לרגע קטן של עצמי — משהו שאני מחכה לו בין הילדים לשעת המקלחת.</q><footer>נועה ל׳ · לקוחה מאומתת</footer></blockquote>
+          <blockquote class="club-quote"><span class="club-stars" aria-label="5 כוכבים">★★★★★</span><q>לוקחת חצי שעה לפני השינה. הראש נרגע והשינה שקטה יותר — טקס יפה של סוף היום.</q><footer>שירה ק׳ · לקוחה מאומתת</footer></blockquote>
         </div>
       </div>
     </section>
@@ -1981,16 +1988,12 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none
           <details class="club-faq-item"><summary>יש התחייבות?<span>+</span></summary><p>אין התחייבות. אפשר לסיים את החברות באזור האישי ולהצטרף מחדש מתי שרוצים.</p></details>
           <details class="club-faq-item"><summary>אפשר לדלג על חודש?<span>+</span></summary><p>באזור האישי בוחרים “דלג על משלוח החודש הבא”. אפשר גם להזיז את התאריך.</p></details>
           <details class="club-faq-item"><summary>אפשר להחליף בין ENERGY / RELAX / SLEEP?<span>+</span></summary><p>כן. באזור האישי אפשר להחליף בין ENERGY / RELAX / SLEEP או להוסיף SKU נוסף.</p></details>
-          <details class="club-faq-item" hidden><summary>מתי המארז מגיע?<span>+</span></summary><p>המשלוח יוצא ביום ה־1 בכל חודש ומגיע תוך 2–4 ימי עסקים. אפשר לבחור יום קבוע אחר מהאזור האישי.</p></details>
-          <details class="club-faq-item" hidden><summary>מה קורה אם לא אהבתי?<span>+</span></summary><p>מדיניות ההחזר של המועדון חלה גם על מארז שנפתח. עד 30 יום — צרו קשר לקבלת החזר.</p></details>
-          <details class="club-faq-item" hidden><summary>איך משלמים?<span>+</span></summary><p>כרטיס אשראי או PayPal. החיוב הראשון עם ההצטרפות, ואפשר לעדכן פרטי תשלום בכל עת.</p></details>
         </div>
-        <button class="club-faq-more" type="button" aria-expanded="false">לכל השאלות ↓</button>
       </div>
     </section>
 
     <section class="club-final" aria-labelledby="club-final-title">
-      <p class="club-kicker">MOOD CLUB</p><h2 class="club-heading" id="club-final-title">מוכנים להכניס את הריטואל לשגרה?</h2><p>מחיר חבר, משלוח חינם וגמישות לאורך הדרך.</p><a class="club-button club-button--light" href="energy.html#tiers">הצטרפו ל־MOOD CLUB</a><span class="club-final-signature">Your ritual. On repeat.</span>
+      <p class="club-kicker">MOOD CLUB</p><h2 class="club-heading" id="club-final-title">מוכנים להכניס את הריטואל לשגרה?</h2><p>מחיר חבר, משלוח חינם וגמישות לאורך הדרך.</p><a class="club-button club-button--light" href="mayven.html#formulas">בחרו את הריטואל שלכם</a><span class="club-final-signature">Your ritual. On repeat.</span>
     </section>
   </main>
   <!-- MOOD CLUB REBUILD END -->
@@ -2124,20 +2127,6 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none
 })();
 </script>
 
-
-<script>
-(() => {
-  const button = document.querySelector('.club-faq-more');
-  if (!button) return;
-  const extra = [...document.querySelectorAll('.club-faq-item[hidden]')];
-  button.addEventListener('click', () => {
-    const opening = button.getAttribute('aria-expanded') !== 'true';
-    extra.forEach((item) => { item.hidden = !opening; });
-    button.setAttribute('aria-expanded', String(opening));
-    button.textContent = opening ? 'פחות שאלות ↑' : 'לכל השאלות ↓';
-  });
-})();
-</script>
 
 <script>
 (() => {
