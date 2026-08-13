@@ -1916,6 +1916,84 @@ body { overflow-x: clip !important; max-width: none !important; }
 
 /* WAVE19-END */
 
+
+/* WAVE20-START — trial strip + play polish */
+
+/* A. Trial-pack strip: full-width sage strip attached to image bottom.
+   Overrides the Wave 18 white floating pill. */
+.club-w5 .club-media {
+  position: relative !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  isolation: isolate;
+}
+.club-w5 .club-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.club-w5 .club-green {
+  position: relative !important;
+  inset: auto !important;
+  bottom: auto !important;
+  right: auto !important;
+  left: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+  background: #cfe3b3 !important;
+  color: #2f5228 !important;
+  font-family: 'Heebo','Assistant',sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  padding: 0 !important;
+  height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: none !important;
+  border-bottom-left-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+  text-align: center !important;
+  line-height: 1 !important;
+}
+@media (max-width: 899px) {
+  .club-w5 .club-green { height: 44px !important; font-size: 13.5px !important; }
+}
+
+/* B. Media Play button — larger, cleaner, higher-contrast */
+.moments-strip .mom-play {
+  background: rgba(255, 255, 255, 0.94) !important;
+  color: #171512 !important;
+  width: 62px !important;
+  height: 62px !important;
+  box-shadow: 0 10px 26px -12px rgba(23, 21, 18, 0.45),
+              0 0 0 4px rgba(255, 255, 255, 0.15) !important;
+  pointer-events: none !important; /* tap on the button element itself */
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+.moments-strip .mom-play svg {
+  width: 22px !important;
+  height: 22px !important;
+  margin-inline-start: 3px !important;
+}
+/* When the video is playing, hide the play overlay */
+.moments-strip .mom-tile.mom-playing .mom-play { opacity: 0 !important; }
+.moments-strip .mom-tile video.mom-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+/* WAVE20-END */
+
 </style>
 </head>
 <body>
@@ -2554,5 +2632,44 @@ body { overflow-x: clip !important; max-width: none !important; }
   }
 })();
 /* WAVE19-JS-END */
+</script>
+
+<script>
+/* WAVE20-JS-START — media Play interaction */
+(function(){
+  var strip = document.querySelector('.moments-strip');
+  if (!strip) return;
+  // Only the tile whose img is `mood-hero-three-moments.jpg` gets a real video.
+  var videoTile = strip.querySelector('.mom-tile .mom-play');
+  if (!videoTile) return;
+  var tile = videoTile.closest('.mom-tile');
+  if (!tile) return;
+
+  tile.addEventListener('click', function(e){
+    // ignore if this is triggered by a swipe (small movement) — we let the
+    // native click fire only on genuine taps
+    if (tile.classList.contains('mom-playing')) return;
+    // Only play if the tile is the currently centered one — avoids
+    // accidental plays during horizontal drags
+    var isActive = tile.classList.contains('mom-active');
+    if (!isActive) return;
+
+    // Inject a <video> that plays inline
+    var v = document.createElement('video');
+    v.className = 'mom-video';
+    v.src = 'home-assets/cx/hero-mobile.mp4';
+    v.autoplay = true;
+    v.playsInline = true;
+    v.setAttribute('playsinline', '');
+    v.setAttribute('webkit-playsinline', '');
+    v.muted = true; // required for autoplay on iOS
+    v.controls = true;
+    tile.appendChild(v);
+    tile.classList.add('mom-playing');
+    v.addEventListener('ended', function(){ tile.classList.remove('mom-playing'); v.remove(); });
+    e.preventDefault();
+  });
+})();
+/* WAVE20-JS-END */
 </script>
 </body></html>

@@ -6687,6 +6687,35 @@ body[data-page="full-day"] #formula {
 }
 /* WAVE16-END */
 
+
+/* WAVE20-START — global header consistency */
+/* Product pages: strip the leftover pill outline around the header logo
+   so it matches mayven exactly. Scope tightly to header .brand only. */
+body[data-page="energy"] header .brand,
+body[data-page="relax"] header .brand,
+body[data-page="sleep"] header .brand,
+body[data-page="full-day"] header .brand {
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+body[data-page="energy"] header .brand img,
+body[data-page="relax"] header .brand img,
+body[data-page="sleep"] header .brand img,
+body[data-page="full-day"] header .brand img,
+body[data-page="energy"] header .brand-logo,
+body[data-page="relax"] header .brand-logo,
+body[data-page="sleep"] header .brand-logo,
+body[data-page="full-day"] header .brand-logo {
+  height: 24px !important;
+  width: auto !important;
+  max-width: none !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+/* WAVE20-END */
+
 </style>
 </head>
 <body data-page="full-day">
