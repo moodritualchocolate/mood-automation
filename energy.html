@@ -6469,6 +6469,160 @@ body[data-page="full-day"] .mtimes .mtimes-in {
 
 /* WAVE10-CSS-END */
 
+
+/* WAVE14-START */
+/* --- מתי לוקחים: further compression (20-25%) --- */
+body[data-page="energy"] .mtimes .mtimes-in,
+body[data-page="relax"] .mtimes .mtimes-in,
+body[data-page="sleep"] .mtimes .mtimes-in,
+body[data-page="full-day"] .mtimes .mtimes-in {
+  padding: 4px 20px 12px !important;
+}
+body[data-page="energy"] .mtimes .mtimes-chip,
+body[data-page="relax"] .mtimes .mtimes-chip,
+body[data-page="sleep"] .mtimes .mtimes-chip,
+body[data-page="full-day"] .mtimes .mtimes-chip {
+  padding: 6px 0 !important;
+  min-height: 30px !important;
+}
+body[data-page="energy"] .mtimes .mtimes-chips,
+body[data-page="relax"] .mtimes .mtimes-chips,
+body[data-page="sleep"] .mtimes .mtimes-chips,
+body[data-page="full-day"] .mtimes .mtimes-chips {
+  margin-top: 6px !important;
+  gap: 0 !important;
+}
+body[data-page="energy"] .mtimes .mtimes-k,
+body[data-page="relax"] .mtimes .mtimes-k,
+body[data-page="sleep"] .mtimes .mtimes-k,
+body[data-page="full-day"] .mtimes .mtimes-k {
+  margin: 0 !important;
+}
+
+/* --- Reviews summary compact editorial block (spec 3) --- */
+body[data-page="energy"] .rvs,
+body[data-page="relax"] .rvs,
+body[data-page="sleep"] .rvs,
+body[data-page="full-day"] .rvs {
+  background: #f7f0e2 !important;
+  padding: 22px 16px 24px !important;
+  border-top: 1px solid rgba(122, 106, 92, 0.14) !important;
+  border-bottom: 1px solid rgba(122, 106, 92, 0.14) !important;
+}
+body[data-page="energy"] .rvs .rvs-in,
+body[data-page="relax"] .rvs .rvs-in,
+body[data-page="sleep"] .rvs .rvs-in,
+body[data-page="full-day"] .rvs .rvs-in {
+  max-width: 640px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+/* Kill the giant "חוות דעת של לקוחות" heading — the number + stars
+   already announce the section. */
+body[data-page="energy"] .rvs .rvs-in > h2,
+body[data-page="relax"] .rvs .rvs-in > h2,
+body[data-page="sleep"] .rvs .rvs-in > h2,
+body[data-page="full-day"] .rvs .rvs-in > h2 { display: none !important; }
+/* .rvs-num: 4.9 + stars on one line, count below, editorial */
+body[data-page="energy"] .rvs .rvs-num,
+body[data-page="relax"] .rvs .rvs-num,
+body[data-page="sleep"] .rvs .rvs-num,
+body[data-page="full-day"] .rvs .rvs-num {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+}
+body[data-page="energy"] .rvs .rvs-num > *:not(.rvs-count):not(.stars),
+body[data-page="relax"] .rvs .rvs-num > *:not(.rvs-count):not(.stars),
+body[data-page="sleep"] .rvs .rvs-num > *:not(.rvs-count):not(.stars),
+body[data-page="full-day"] .rvs .rvs-num > *:not(.rvs-count):not(.stars) {
+  font-family: 'Heebo','Assistant',sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 22px !important;
+  color: #2c1d16 !important;
+  letter-spacing: -0.4px !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+}
+body[data-page="energy"] .rvs .rvs-num .stars,
+body[data-page="relax"] .rvs .rvs-num .stars,
+body[data-page="sleep"] .rvs .rvs-num .stars,
+body[data-page="full-day"] .rvs .rvs-num .stars {
+  font-size: 15px !important;
+  letter-spacing: 2px !important;
+}
+body[data-page="energy"] .rvs .rvs-count,
+body[data-page="relax"] .rvs .rvs-count,
+body[data-page="sleep"] .rvs .rvs-count,
+body[data-page="full-day"] .rvs .rvs-count {
+  font-family: 'Heebo','Assistant',sans-serif !important;
+  font-size: 12.5px !important;
+  color: #7a6a5c !important;
+  margin: 0 !important;
+}
+/* Editorial subline appended after the count via ::after */
+body[data-page="energy"] .rvs .rvs-count::after,
+body[data-page="relax"] .rvs .rvs-count::after,
+body[data-page="sleep"] .rvs .rvs-count::after,
+body[data-page="full-day"] .rvs .rvs-count::after {
+  content: "\A לקוחות אמיתיים. רגעים אמיתיים.";
+  white-space: pre;
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 12.5px;
+  color: #4a3f36;
+  margin-top: 4px;
+  letter-spacing: 0;
+}
+/* Slim rating-distribution bars */
+body[data-page="energy"] .rvs .rvs-row,
+body[data-page="relax"] .rvs .rvs-row,
+body[data-page="sleep"] .rvs .rvs-row,
+body[data-page="full-day"] .rvs .rvs-row {
+  grid-template-columns: 24px 1fr 32px !important;
+  gap: 8px !important;
+  font-size: 11.5px !important;
+  padding: 3px 0 !important;
+  color: #7a6a5c !important;
+}
+body[data-page="energy"] .rvs .rvs-row .b,
+body[data-page="relax"] .rvs .rvs-row .b,
+body[data-page="sleep"] .rvs .rvs-row .b,
+body[data-page="full-day"] .rvs .rvs-row .b { font-weight: 600 !important; }
+body[data-page="energy"] .rvs .rvs-row .bar,
+body[data-page="relax"] .rvs .rvs-row .bar,
+body[data-page="sleep"] .rvs .rvs-row .bar,
+body[data-page="full-day"] .rvs .rvs-row .bar {
+  height: 4px !important;
+  background: rgba(122, 106, 92, 0.18) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+}
+body[data-page="energy"] .rvs .rvs-row .bar i,
+body[data-page="relax"] .rvs .rvs-row .bar i,
+body[data-page="sleep"] .rvs .rvs-row .bar i,
+body[data-page="full-day"] .rvs .rvs-row .bar i {
+  display: block !important;
+  height: 100% !important;
+  background: #2c1d16 !important;
+  border-radius: 999px !important;
+}
+/* Distribution container tight */
+body[data-page="energy"] .rvs .rvs-in > div:has(.rvs-row),
+body[data-page="relax"] .rvs .rvs-in > div:has(.rvs-row),
+body[data-page="sleep"] .rvs .rvs-in > div:has(.rvs-row),
+body[data-page="full-day"] .rvs .rvs-in > div:has(.rvs-row) {
+  max-width: 320px !important;
+  margin: 8px auto 12px !important;
+}
+/* WAVE14-END */
+
 </style>
 </head>
 <body data-page="energy">
@@ -6561,7 +6715,7 @@ body[data-page="full-day"] .mtimes .mtimes-in {
         </div>
         <div class="mood-ps-price-stack">
           <strong class="mood-ps-price">₪310</strong>
-          <span class="mood-ps-monthly">₪155 לחודש · <span class="mood-ps-save">חוסכים ₪30</span></span>
+          <span class="mood-ps-monthly"><span class="mood-ps-save">חוסכים ₪30</span></span>
           
         </div>
       </label>
@@ -6580,7 +6734,7 @@ body[data-page="full-day"] .mtimes .mtimes-in {
         </div>
         <div class="mood-ps-price-stack">
           <strong class="mood-ps-price">₪420</strong>
-          <span class="mood-ps-monthly">₪140 לחודש · <span class="mood-ps-save">חוסכים ₪90</span></span>
+          <span class="mood-ps-monthly"><span class="mood-ps-save">חוסכים ₪90</span></span>
           
         </div>
       </label>
