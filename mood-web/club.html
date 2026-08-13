@@ -1670,6 +1670,32 @@ header .brand img {
   .club-faq{text-align:start}.club-faq-list{text-align:start}
 }
 
+/* Final club structure — quiet, image-led membership page */
+.club-hero{height:450px;display:grid;grid-template-columns:.86fr 1.14fr;background:#f2f3f5;overflow:hidden}
+.club-hero-copy{order:1;width:auto;padding:44px clamp(32px,5vw,78px);display:flex;align-items:center;justify-content:center;text-align:center;color:#17130f;background:#f2f3f5}
+.club-hero-copy .club-kicker{margin:0 0 14px;color:#a67825}
+.club-hero-copy h1{margin:0;font:800 clamp(44px,5vw,68px)/.92 'DM Sans','Heebo',sans-serif;letter-spacing:-.065em;direction:ltr}
+.club-hero-copy p{max-width:380px;margin:20px auto 0;color:#615a52;font-size:15px;line-height:1.55}
+.club-hero-copy .club-button{margin-top:22px;border-radius:4px;min-height:44px;padding-inline:28px;background:#fff;color:#17130f;border:1px solid #ded8d0;box-shadow:0 5px 14px rgba(35,27,19,.05)}
+.club-hero-copy>span{margin-top:16px;color:#8a8177;font:700 10px/1 'DM Sans',sans-serif;letter-spacing:.16em;direction:ltr}
+.club-hero-media{order:2;position:relative;inset:auto;width:auto;height:450px;aspect-ratio:auto;margin:0}
+.club-hero-media img{object-fit:cover;object-position:center}
+
+.club-benefits{padding:20px 0;background:#fffdf8;border:0}
+.club-benefits .club-shell{width:min(100% - 32px,1080px)}
+.club-benefits-run{min-height:0;gap:10px}
+.club-benefit{min-height:54px;border:1px solid #e3dcd3;border-radius:999px;background:#fff;box-shadow:0 5px 13px rgba(35,27,19,.04);font-size:12px}
+.club-benefit::after{display:none}.club-benefit::before{content:"";width:6px;height:6px;margin-inline-end:9px;border-radius:50%;background:#c89539}
+
+@media(max-width:760px){
+  .club-hero{height:auto;display:grid;grid-template-columns:1fr;background:#f2f3f5}
+  .club-hero-media{order:1;height:205px}.club-hero-media img{object-position:center}
+  .club-hero-copy{order:2;padding:16px 18px 17px}
+  .club-hero-copy .club-kicker{margin-bottom:9px}.club-hero-copy h1{font-size:36px;line-height:.94}.club-hero-copy p{margin-top:11px;font-size:12px}.club-hero-copy .club-button{min-height:38px;margin-top:14px;padding-inline:22px;font-size:11px}.club-hero-copy>span{margin-top:11px;font-size:8px}
+  .club-hero-copy>span{display:none}
+  .club-benefits{padding:14px 0}.club-benefits .club-shell{width:100%;padding-inline:16px}.club-benefits-run{gap:8px}.club-benefit{min-width:148px;min-height:46px;font-size:10px}.club-benefit::before{width:5px;height:5px}
+}
+
 </style>
 </head>
 <body>
@@ -1696,11 +1722,14 @@ header .brand img {
   <!-- MOOD CLUB REBUILD START -->
   <main class="club-main" id="main-content">
     <section class="club-hero" aria-label="MOOD CLUB — Your ritual. On repeat.">
-      <div class="club-hero-media"><img src="approved/assets/club-hero.webp" alt="MOOD CLUB — ENERGY, RELAX ו־SLEEP" fetchpriority="high"></div>
-      <div class="club-hero-action">
-        <div><strong>הריטואל שלכם. בכל יום.</strong><span>מחיר חבר, משלוח חינם ומדלגים מתי שרוצים.</span></div>
+      <div class="club-hero-copy">
+        <p class="club-kicker">MOOD CLUB</p>
+        <h1>Your ritual.<br>On repeat.</h1>
+        <p>מחיר חבר, משלוח חינם ומדלגים מתי שרוצים.</p>
         <a class="club-button" href="#club-offer">הצטרפו למועדון</a>
+        <span>ENERGY · RELAX · SLEEP</span>
       </div>
+      <div class="club-hero-media"><img src="approved/assets/club-hero-lifestyle.webp" alt="חברי MOOD CLUB עם RELAX" fetchpriority="high"></div>
     </section>
 
     <section class="club-benefits" aria-label="הטבות המועדון">
