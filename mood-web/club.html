@@ -1825,6 +1825,35 @@ header .brand img {
   .club-hero-reel{order:2;height:auto;padding:6px;border-radius:21px}.club-hero-reel-frame{border-radius:15px}.club-hero-reel::before{top:-14px;left:13px;padding:7px 11px;font-size:8px}.club-hero-reel .club-video-toggle{left:10px;bottom:10px;width:36px;height:36px}.club-hero-reel .club-mood-orbit{inset:auto 8px -20px;transform:none;width:auto}.club-hero-reel .club-mood-chip{padding:8px 4px;border-width:3px;font-size:8px}
 }
 
+/* Layout audit — fixed gutters and vertical-only page movement */
+html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
+.club-main{width:100%;max-width:100%;overflow-x:hidden;touch-action:pan-y pinch-zoom}
+.club-main>.club-section{width:100%;overflow:hidden}
+.club-shell{width:min(1180px,calc(100% - 40px));max-width:1180px}
+.mfoot-in,.mfoot-brand,.mfoot-col,.mfoot-news,.mfoot-news-row,.mfoot-news-row input{min-width:0}
+
+@media(max-width:760px){
+  .club-shell,.club-benefits .club-shell{width:min(100% - 32px,430px);padding-inline:0}
+  .club-hero{padding-inline:16px}
+  .club-proof-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0 0;padding:0;overflow:visible;touch-action:pan-y pinch-zoom}
+  .club-quote,.club-quote:first-child{min-width:0;max-width:100%;width:auto;flex:none;padding:14px}
+  .club-quote:first-child{grid-column:1/-1;padding:18px}
+  .club-quote q,.club-quote:first-child q{font-size:12px;line-height:1.42}
+  .club-quote:first-child q{font-size:15px}
+  .club-quote footer{font-size:10px!important}
+  .mfoot-in{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mfoot-mark{max-width:none}
+}
+
+@media(max-width:340px){
+  .club-shell,.club-benefits .club-shell{width:calc(100% - 24px)}
+  .club-hero{padding-inline:12px}
+  .club-benefits-run{gap:24px 5px}.club-benefit{flex-basis:calc(33.333% - 4px)}
+  .club-plan,.club-plan:nth-child(1),.club-plan:nth-child(2),.club-plan:nth-child(3){padding-inline:3px}
+  .club-plan b{font-size:25px}
+  .mfoot{padding-inline:12px}.mfoot-in{gap:28px 14px}
+}
+
 </style>
 </head>
 <body>
