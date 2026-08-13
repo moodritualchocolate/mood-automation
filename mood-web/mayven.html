@@ -2065,137 +2065,23 @@ body { overflow-x: clip !important; max-width: none !important; }
 
 
 
-/* WAVE22-START — hero hover + credibility 3-line + axis lock + desktop header */
-
-/* 1. Hero SHOP NOW — subtle warm hover on desktop only (no dark fill). */
-@media (hover: hover) and (pointer: fine) {
-  .hero .hero-copy.hero-center .hero-shop-cta {
-    transition:
-      background-color 200ms ease,
-      border-color 200ms ease,
-      box-shadow 200ms ease,
-      transform 200ms ease !important;
-  }
-  .hero .hero-copy.hero-center .hero-shop-cta:hover {
-    background-color: rgba(53, 35, 26, 0.05) !important;
-    border-color: rgba(25, 20, 17, 0.65) !important;
-    box-shadow: 0 4px 14px rgba(40, 25, 18, 0.05) !important;
-    transform: translateY(-1px) !important;
-  }
-  .hero .hero-copy.hero-center .hero-shop-cta:active {
-    transform: translateY(0) scale(0.985) !important;
-    transition: transform 90ms ease !important;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero .hero-copy.hero-center .hero-shop-cta,
-  .hero .hero-copy.hero-center .hero-shop-cta:hover,
-  .hero .hero-copy.hero-center .hero-shop-cta:active {
-    transform: none !important;
-    transition: background-color 200ms ease, border-color 200ms ease !important;
-  }
-}
-
-/* 2. Credibility strip — 3-line hierarchy inside SAME compact footprint. */
-.tb .tb-cred {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  text-align: center;
-  max-width: 900px;
-  margin: 0 auto;
-}
-.tb .tb-cred-story {
-  font-family: 'Heebo','Assistant',sans-serif;
-  font-weight: 600;
-  font-size: clamp(14.5px, 1.5vw, 18px);
-  line-height: 1.35;
-  color: #2c1d16;
-  letter-spacing: -0.1px;
-  margin: 0;
-}
-.tb .tb-cred-auth {
-  font-family: 'Heebo','Assistant',sans-serif;
-  font-weight: 500;
-  font-size: clamp(12.5px, 1.25vw, 15px);
-  line-height: 1.35;
-  color: #8b6a2f;
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
-.tb .tb-cred-auth::before,
-.tb .tb-cred-auth::after {
-  content: "";
-  display: inline-block;
-  width: clamp(28px, 3.6vw, 60px);
-  height: 1px;
-  background: #b98d3d;
-  opacity: .65;
-}
-.tb .tb-cred-proof {
-  font-family: 'Heebo','Assistant',sans-serif;
-  font-weight: 400;
-  font-size: clamp(11.5px, 1.15vw, 13.5px);
-  line-height: 1.4;
-  color: #6a5040;
-  margin: 0;
-  letter-spacing: 0;
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px 8px;
-}
-.tb .tb-cred-proof .tb-sep {
-  opacity: .45;
-  color: inherit;
-}
-@media (max-width: 640px) {
-  .tb { padding: 14px 18px !important; }
-  .tb .tb-cred { gap: 5px; }
-  .tb .tb-cred-story { font-size: 13.5px; letter-spacing: -0.15px; }
-  .tb .tb-cred-auth { font-size: 11.5px; gap: 8px; }
-  .tb .tb-cred-auth::before,
-  .tb .tb-cred-auth::after { width: 20px; }
-  .tb .tb-cred-proof { font-size: 10.75px; gap: 4px 6px; letter-spacing: -0.15px; }
-}
-/* Hide the legacy .tb-title/.tb-sub when the new .tb-cred is present */
-.tb .tb-cred ~ .tb-title,
-.tb .tb-title:has(+ .tb-cred),
-.tb .tb-cred + .tb-sub,
-.tb .tb-cred + .tb-title,
-.tb .tb-cred-legacy { display: none !important; }
-
-/* 3. Axis lock reinforcement — vertical touches always pass to page. */
-.pgrid.pgrid-w5,
-.moments-strip,
-.moments .rev-cards {
-  touch-action: pan-x !important;
-  overscroll-behavior: contain !important;
-  overflow-y: hidden !important;
-}
-
-/* 4. Video Play button — sits on active center card only. */
-.moments-strip .mom-tile .mom-play { opacity: 0; transition: opacity 220ms ease; }
-.moments-strip .mom-tile.mom-active .mom-play { opacity: 1; }
-.moments-strip .mom-tile.mom-playing .mom-play { opacity: 0 !important; }
-
-/* WAVE22-END */
 
 
-/* WAVE23-START — hero copy trim, mobile hierarchy, credibility recolor, header revert */
 
-/* 1. Desktop headline: ~10% smaller than Wave 21. */
+
+
+
+
+
+
+
+/* Preserved Wave 23 non-header CSS */
 .hero .hero-copy.hero-center .hero-title {
   font-size: clamp(34px, 3vw, 52px) !important;
   max-width: 400px !important;
   line-height: 0.96 !important;
   letter-spacing: -0.025em !important;
 }
-
-/* 2. Two-line hierarchy — "Chocolate" strong, "made to do more" ~22% smaller. */
 .hero .hero-copy.hero-center .hero-title span:first-child {
   font-size: 1em !important;
   font-weight: 750 !important;
@@ -2208,8 +2094,6 @@ body { overflow-x: clip !important; max-width: none !important; }
   margin-top: 4px !important;
   opacity: 0.96 !important;
 }
-
-/* 3. Mobile: keep confident scale; enforce hierarchy. */
 @media (max-width: 767px) {
   .hero .hero-copy.hero-center .hero-title {
     font-size: clamp(40px, 12vw, 54px) !important;
@@ -2226,18 +2110,12 @@ body { overflow-x: clip !important; max-width: none !important; }
     font-weight: 620 !important;
     margin-top: 4px !important;
   }
-}
-
-/* 4. Mobile hero: give the chocolate ~12% more visual presence via scale + focus. */
-@media (max-width: 767px) {
   .hero .hero-video {
     transform: scale(1.12) !important;
     transform-origin: center 42% !important;
     object-position: center 42% !important;
   }
 }
-
-/* 5. Hero CTA hover — slightly stronger warm transparent tint. */
 @media (hover: hover) and (pointer: fine) {
   .hero .hero-copy.hero-center .hero-shop-cta:hover {
     background-color: rgba(45, 28, 20, 0.10) !important;
@@ -2246,16 +2124,12 @@ body { overflow-x: clip !important; max-width: none !important; }
     transform: translateY(-1px) !important;
   }
 }
-
-/* 6. Credibility strip — line 1 lighter weight (bridge, not second headline). */
 .tb .tb-cred-story {
   font-weight: 500 !important;
   color: #2c1d16 !important;
   font-size: clamp(13.5px, 1.35vw, 16.5px) !important;
   letter-spacing: -0.1px !important;
 }
-
-/* 7. Credibility strip — Ronen award line: restore gold + shimmer. */
 .tb .tb-cred-auth {
   color: #8b6a2f !important;
   font-weight: 500 !important;
@@ -2289,8 +2163,6 @@ body { overflow-x: clip !important; max-width: none !important; }
     animation: none;
   }
 }
-
-/* 8. Credibility strip — proof line kept quiet & compact. */
 .tb .tb-cred-proof {
   color: #6a5040 !important;
   font-weight: 400 !important;
@@ -2302,43 +2174,136 @@ body { overflow-x: clip !important; max-width: none !important; }
   .tb .tb-cred-auth { font-size: 11px !important; }
   .tb .tb-cred-proof { font-size: 10.75px !important; }
 }
+/* end */
 
-/* 9. HEADER — revert Wave 22 desktop enlargement. Restore Wave 7ee compact
-      proportions everywhere. Selector uses `header:not(.mfoot)` to stay scoped
-      to the site header, not the footer's decorative brand-strip. */
-header {
-  padding: 12px 4vw !important;
-  min-height: 60px !important;
+/* WAVE24-START — desktop header real responsive state (root-cause fix) */
+
+/* Neutralize the Wave 7ee blanket nav-hide. */
+header nav { display: none; }
+
+/* --------- MOBILE (<1024px): keep the approved mobile look --------- */
+@media (max-width: 1023.98px) {
+  header nav { display: none !important; }
+  /* mobile hamburger + account stay visible (existing markup) */
 }
-header .brand-logo,
-header > a.brand > img {
-  height: 24px !important;
-  width: auto !important;
-}
-header .hactions { gap: 8px !important; }
-header .hactions .ic {
-  width: 34px !important;
-  height: 34px !important;
-}
-header .hactions .ic svg {
-  width: 19px !important;
-  height: 19px !important;
-  stroke-width: 1.7 !important;
-}
-@media (max-width: 640px) {
-  header { padding: 10px 4vw !important; min-height: 54px !important; }
-  header .brand-logo,
-  header > a.brand > img { height: 22px !important; }
-}
+
+/* --------- DESKTOP (>=1024px): genuine desktop nav --------- */
 @media (min-width: 1024px) {
-  header { padding: 14px 4vw !important; min-height: 64px !important; }
+  /* Slim announcement bar (28–30px). */
+  .ann {
+    padding: 6px 4vw !important;
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+    letter-spacing: 0.02em !important;
+  }
+  .ann-in, .ann-rot, .ann-rot-msg { line-height: 1.35 !important; }
+
+  /* Header shell — thin, centered content up to 1280px. */
+  header {
+    padding: 0 max(32px, calc((100vw - 1280px) / 2)) !important;
+    min-height: 60px !important;
+    height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 40 !important;
+  }
+
+  /* Show the horizontal nav in the left slot. body[data-page] selectors on
+     product pages hide nav — match/exceed their specificity here. */
+  header nav,
+  body[data-page="energy"] header nav,
+  body[data-page="relax"] header nav,
+  body[data-page="sleep"] header nav,
+  body[data-page="full-day"] header nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 26px !important;
+    font-family: 'Heebo','Assistant',sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em !important;
+  }
+  header nav a {
+    color: var(--ink, #171512) !important;
+    text-decoration: none !important;
+    padding: 4px 0 !important;
+    transition: opacity 180ms ease, color 180ms ease !important;
+  }
+  header nav a:hover { opacity: 0.7 !important; }
+  header nav a.nav-fd { font-weight: 700 !important; }
+
+  /* Hide mobile hamburger + account (first .hactions cluster). */
+  header .hactions:not(.hactions-end) {
+    display: none !important;
+  }
+
+  /* Right cluster — clean, no circles, quiet icons. */
+  header .hactions.hactions-end {
+    gap: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  header .hactions.hactions-end .ic {
+    width: auto !important;
+    height: auto !important;
+    padding: 6px !important;
+    border: 0 !important;
+    outline: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--ink, #171512) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+  }
+  header .hactions.hactions-end button.ic { -webkit-appearance: none !important; appearance: none !important; }
+  header .hactions.hactions-end .ic:hover {
+    background: transparent !important;
+    opacity: 0.65 !important;
+  }
+  header .hactions.hactions-end .ic svg {
+    width: 20px !important;
+    height: 20px !important;
+    stroke-width: 1.6 !important;
+  }
+  header .hactions.hactions-end .bag b {
+    top: -4px !important;
+    left: -6px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+  }
+
+  /* Logo — compact, centered, no growth. */
+  header .brand {
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+  }
   header .brand-logo,
-  header > a.brand > img { height: 26px !important; }
-  header .hactions { gap: 12px !important; }
-  header .hactions .ic { width: 36px !important; height: 36px !important; }
-  header .hactions .ic svg { width: 20px !important; height: 20px !important; }
+  header > a.brand > img {
+    height: 24px !important;
+    width: auto !important;
+    object-fit: contain !important;
+  }
 }
-/* WAVE23-END */
+
+/* --------- LARGE DESKTOP (>=1440px): tiny breathing room only --------- */
+@media (min-width: 1440px) {
+  header {
+    padding: 0 max(48px, calc((100vw - 1360px) / 2)) !important;
+  }
+  header nav { gap: 30px !important; font-size: 14px !important; }
+}
+/* WAVE24-END */
 
 </style>
 </head>
@@ -2354,6 +2319,13 @@ header .hactions .ic svg {
     </div>
   </div>
   <header>
+    <nav>
+      <a href="mayven.html#formulas">מוצרים</a>
+      <a href="full-day.html" class="nav-fd">היום המלא</a>
+      <a href="mayven.html#story">הסיפור</a>
+      <a href="club.html">MOOD Club</a>
+      <a href="blog.html">Journal</a>
+    </nav>
     <div class="hactions hactions-start">
       <button class="ic" aria-label="תפריט"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <a class="ic" href="#" aria-label="חשבון"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 4-7 8-7s8 2.5 8 7"/></svg></a>
