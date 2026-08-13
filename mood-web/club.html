@@ -1579,6 +1579,97 @@ header .brand img {
 }
 @media(prefers-reduced-motion:reduce){.club-card-stage[data-auto-spin="true"] .club-card-3d{animation:none}}
 
+/* MOOD CLUB — visual polish pass */
+.club-hero-action{border:0;background:#f8f2e8;box-shadow:0 1px 0 rgba(38,28,18,.12)}
+.club-hero-action strong{color:#18324f}.club-hero-action span{color:#766e64}
+.club-hero-action .club-button{border-radius:999px;background:#17130f;box-shadow:none}
+
+.club-benefits{background:#f8f2e8;color:#17130f;border-block:1px solid rgba(166,120,37,.2)}
+.club-benefits .club-shell{width:min(100% - 32px,1180px);max-width:1180px;overflow:visible}
+.club-benefits-run{min-width:0;display:grid;grid-template-columns:repeat(4,1fr);animation:none}
+.club-benefit{position:relative;justify-content:center;padding:0 16px;font-size:12px;color:#312b25}
+.club-benefit::after{content:"";position:absolute;inset-inline-end:0;width:4px;height:4px;border-radius:50%;background:#c89539}
+.club-benefit:last-child::after{display:none}
+
+.club-moments-layout{grid-template-columns:.56fr 1.44fr}.club-reel{transform:translateY(-5px) rotate(.7deg)}
+.club-mood-chip{opacity:.58;filter:saturate(.72);transition:opacity .3s ease,transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease,filter .3s ease}
+.club-mood-chip:nth-child(1),.club-mood-chip:nth-child(2),.club-mood-chip:nth-child(3){transform:none}
+.club-mood-chip.is-active{opacity:1;filter:saturate(1);transform:translateY(-6px) scale(1.06);box-shadow:0 13px 28px rgba(6,15,24,.28)}
+
+.club-offer-card{grid-template-columns:minmax(230px,.48fr) minmax(0,1.52fr);gap:28px;border-radius:24px}
+.club-plans{gap:0;overflow:hidden;border-radius:20px;background:#f1e8da}
+.club-plan,.club-plan:nth-child(1),.club-plan:nth-child(2),.club-plan:nth-child(3){min-height:112px;border-radius:0;transform:none;box-shadow:none}
+.club-plan+.club-plan{border-inline-start:1px solid rgba(23,19,15,.14)}
+.club-plan:hover{transform:none;filter:brightness(.97);box-shadow:inset 0 -4px 0 rgba(23,19,15,.16)}
+.club-offer-foot{padding-top:16px}
+
+.club-how-grid{gap:10px}.club-how-grid::before{display:none}
+.club-how-step{min-height:108px;border-radius:22px!important;align-items:flex-start;text-align:start;overflow:hidden}
+.club-how-num{position:absolute;inset-inline-end:14px;inset-block-start:8px;color:rgba(23,19,15,.12);font-size:46px;font-weight:900;letter-spacing:-.08em}
+.club-how-step h3,.club-how-step p{position:relative;z-index:1}.club-how-step h3{margin-top:0}
+.club-how-step:nth-child(1),.club-how-step:nth-child(2),.club-how-step:nth-child(3){transform:none}
+
+@keyframes clubCardShine{0%,34%{transform:translateX(-180%) skewX(-18deg);opacity:0}45%{opacity:.42}58%,100%{transform:translateX(240%) skewX(-18deg);opacity:0}}
+.club-card-stage[data-auto-spin="true"] .club-card-3d{animation-duration:11s}
+.club-member-card--front::before{content:"";position:absolute;z-index:3;inset:-30% auto -30% -45%;width:28%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.48),transparent);transform:translateX(-180%) skewX(-18deg);animation:clubCardShine 5.5s ease-in-out infinite;pointer-events:none}
+.club-card-stage[data-auto-spin="true"] .club-member-card{box-shadow:0 24px 60px rgba(9,24,41,.24)}
+
+.club-proof-grid{grid-template-columns:1.5fr .78fr;grid-template-rows:1fr 1fr;gap:12px}
+.club-quote:first-child{grid-row:1/3;display:flex;flex-direction:column;justify-content:center;transform:none}
+.club-quote:nth-child(2),.club-quote:nth-child(3){margin:0;transform:none}
+.club-faq-list{max-width:820px}.club-faq .club-heading{font-size:42px}
+.club-final{isolation:isolate}.club-final::before,.club-final::after{z-index:-1}.club-final .club-heading{font-weight:800!important}
+
+@media(min-width:761px){
+  .club-hero-action{min-height:58px}.club-benefits .club-shell,.club-benefits-run{min-height:52px}
+  .club-moments{padding-top:56px}.club-reel{margin-inline-start:-18px}
+  .club-offer{padding:38px 0}.club-how{padding:34px 0}.club-identity{padding:36px 0}.club-proof{padding:36px 0}.club-faq{padding:36px 0}
+}
+
+@media(max-width:760px){
+  .club-hero-action{min-height:50px;justify-content:center;padding:7px 14px}.club-hero-action>div{display:none}.club-hero-action .club-button{width:min(230px,100%);min-height:36px;text-align:center}
+  .club-benefits .club-shell{width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-inline:contain;touch-action:pan-x pinch-zoom}.club-benefits .club-shell::-webkit-scrollbar{display:none}
+  .club-benefits-run{display:flex;min-width:max-content;min-height:42px}.club-benefit{min-width:132px;padding-inline:18px;font-size:10px}.club-benefit::after{display:block}
+  .club-moments-layout{grid-template-columns:1fr}.club-reel{transform:rotate(.4deg)}.club-mood-chip.is-active{transform:translateY(-4px) scale(1.04)}
+  .club-offer-card{grid-template-columns:1fr;gap:9px}.club-plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}.club-plan,.club-plan:nth-child(1),.club-plan:nth-child(2),.club-plan:nth-child(3){min-height:82px;border-radius:0}.club-plan strong{font-size:10px}.club-plan b{font-size:18px}.club-plan span{font-size:8px}
+  .club-how-grid{gap:5px}.club-how-step{min-height:84px;border-radius:13px!important;align-items:flex-start;text-align:start;padding:10px 7px}.club-how-num{inset-inline-end:6px;inset-block-start:4px;font-size:30px}.club-how-step h3{max-width:80%;font-size:13px}.club-how-step:nth-child(3) h3{font-size:11px}.club-how-step p{font-size:8px}
+  .club-identity-grid{grid-template-columns:.82fr 1.18fr}.club-card-stage,.club-card-3d{height:148px;min-height:148px}.club-identity{padding:27px 0}
+  .club-proof-grid{display:flex;grid-template:none}.club-quote,.club-quote:first-child{display:block;flex:0 0 calc(100vw - 72px);padding:15px}.club-quote:nth-child(2),.club-quote:nth-child(3){margin:0}.club-proof{padding:27px 0}
+  .club-faq{padding:25px 0}.club-faq .club-heading{font-size:27px}.club-final{padding:36px 14px}.club-final::before,.club-final::after{width:170px;height:170px}
+}
+
+@media(prefers-reduced-motion:reduce){.club-member-card--front::before{animation:none}.club-mood-chip{transition:none}}
+
+/* Fillit-inspired clarity, translated into MOOD */
+.club-offer{background:#f6f3ed}.club-offer-card{background:#fffdf8;border:1px solid #e8dfd2;box-shadow:0 12px 34px rgba(45,34,23,.045)}
+.club-how{background:#fffdf8;color:#17130f;text-align:center;border-top:1px solid #eee6dc}
+.club-how .club-kicker{color:#a67825}.club-how .club-heading{max-width:none}
+.club-how-grid{margin-top:34px}
+.club-how-step{align-items:center;text-align:center;background:#fff!important;border:1px solid #e1d8cd!important;box-shadow:0 8px 18px rgba(35,27,19,.05);overflow:visible}
+.club-how-num{inset:auto;top:-17px;right:50%;transform:translateX(50%);width:34px;height:34px;display:grid;place-items:center;border:1px solid #ddd3c7;border-radius:50%;background:#fff;color:#a67825;font-size:11px;letter-spacing:0}
+.club-how-step h3{margin-top:8px}.club-how-step p{color:#746b61}
+.club-how-step:nth-child(1){border-bottom:3px solid #ed9870!important}.club-how-step:nth-child(2){border-bottom:3px solid #a9b996!important}.club-how-step:nth-child(3){border-bottom:3px solid #9fb2d1!important}
+
+.club-identity{background:#f3f4f6}.club-identity::before{color:rgba(24,50,79,.025)}
+.club-proof{background:#f8f5ef;color:#17130f;text-align:center;border-top:1px solid #ebe2d7}
+.club-proof .club-kicker{color:#a67825}.club-proof-grid{text-align:start}
+.club-quote,.club-quote:first-child{border:1px solid #e1d8cd;background:#fff;border-radius:20px;box-shadow:0 8px 22px rgba(35,27,19,.045)}
+.club-quote:first-child{box-shadow:0 12px 30px rgba(35,27,19,.06)}
+.club-faq{text-align:center;background:#fffdf8}.club-faq-list{text-align:start}.club-faq-more{border-bottom:1px solid currentColor}
+
+@media(min-width:761px){
+  .club-offer-card{padding:26px 30px}.club-how{padding:44px 0 34px}.club-how-step{min-height:94px;padding:20px 16px}.club-how-step h3{font-size:21px}
+  .club-proof{padding:38px 0}.club-proof-grid{grid-template-columns:1.42fr .82fr}.club-quote:first-child{padding:24px}.club-quote:nth-child(2),.club-quote:nth-child(3){padding:15px}.club-quote q,.club-quote:first-child q{font-size:14px;line-height:1.42}.club-quote:first-child q{font-size:17px}
+  .club-faq .club-heading{font-size:40px}.club-faq-list{margin-top:18px}
+}
+
+@media(max-width:760px){
+  .club-offer{background:#f6f3ed}.club-offer-card{border-radius:18px}
+  .club-how{padding:35px 0 24px}.club-how-grid{margin-top:26px;gap:6px}.club-how-step{min-height:82px;padding:13px 5px 9px;border-radius:16px!important}.club-how-num{top:-13px;width:26px;height:26px;font-size:9px}.club-how-step h3{margin-top:5px;font-size:13px}.club-how-step:nth-child(3) h3{font-size:11px}.club-how-step p{font-size:8px}
+  .club-proof{text-align:start}.club-proof .club-heading{font-size:29px}.club-proof-grid{margin-top:14px}.club-quote,.club-quote:first-child{border-radius:18px;box-shadow:0 7px 18px rgba(35,27,19,.05)}
+  .club-faq{text-align:start}.club-faq-list{text-align:start}
+}
+
 </style>
 </head>
 <body>
@@ -1614,8 +1705,7 @@ header .brand img {
 
     <section class="club-benefits" aria-label="הטבות המועדון">
       <div class="club-shell">
-        <div class="club-benefits-run" aria-hidden="true">
-          <div class="club-benefit">מחיר חבר</div><div class="club-benefit">משלוח חינם</div><div class="club-benefit">מדלגים מתי שרוצים</div><div class="club-benefit">בלי התחייבות</div>
+        <div class="club-benefits-run">
           <div class="club-benefit">מחיר חבר</div><div class="club-benefit">משלוח חינם</div><div class="club-benefit">מדלגים מתי שרוצים</div><div class="club-benefit">בלי התחייבות</div>
         </div>
       </div>
@@ -1896,6 +1986,7 @@ header .brand img {
 (() => {
   const video = document.querySelector('.club-ritual-video');
   const button = document.querySelector('.club-video-toggle');
+  const moodChips = [...document.querySelectorAll('.club-mood-chip')];
   if (!video || !button) return;
   const sync = () => {
     const paused = video.paused;
@@ -1903,9 +1994,17 @@ header .brand img {
     button.setAttribute('aria-label', paused ? 'הפעלת הסרטון' : 'השהיית הסרטון');
   };
   button.addEventListener('click', () => video.paused ? video.play() : video.pause());
+  const syncMood = () => {
+    if (!moodChips.length || !Number.isFinite(video.duration) || video.duration <= 0) return;
+    const activeIndex = Math.min(moodChips.length - 1, Math.floor((video.currentTime / video.duration) * moodChips.length));
+    moodChips.forEach((chip, index) => chip.classList.toggle('is-active', index === activeIndex));
+  };
   video.addEventListener('play', sync);
   video.addEventListener('pause', sync);
+  video.addEventListener('loadedmetadata', syncMood);
+  video.addEventListener('timeupdate', syncMood);
   sync();
+  moodChips[0]?.classList.add('is-active');
 })();
 </script>
 </body></html>
