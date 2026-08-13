@@ -2182,39 +2182,163 @@ body { overflow-x: clip !important; max-width: none !important; }
 .moments-strip .mom-tile.mom-active .mom-play { opacity: 1; }
 .moments-strip .mom-tile.mom-playing .mom-play { opacity: 0 !important; }
 
-/* 5. DESKTOP HEADER — genuine desktop proportions at ≥1024px. */
-@media (min-width: 1024px) {
-  header {
-    padding: 18px 40px !important;
-    min-height: 76px !important;
-  }
-  header .brand-logo,
-  header .brand img {
-    height: 28px !important;
-    width: auto !important;
-  }
-  header .hactions { gap: 18px !important; }
-  header .hactions .ic {
-    width: 40px !important;
-    height: 40px !important;
-  }
-  header .hactions .ic svg {
-    width: 22px !important;
-    height: 22px !important;
-    stroke-width: 1.6 !important;
-  }
-  header .hactions .bag b {
-    min-width: 18px !important;
-    height: 18px !important;
-    font-size: 10.5px !important;
-  }
-}
-@media (min-width: 1440px) {
-  header { padding: 20px 56px !important; min-height: 80px !important; }
-  header .brand-logo, header .brand img { height: 30px !important; }
+/* WAVE22-END */
+
+
+/* WAVE23-START — hero copy trim, mobile hierarchy, credibility recolor, header revert */
+
+/* 1. Desktop headline: ~10% smaller than Wave 21. */
+.hero .hero-copy.hero-center .hero-title {
+  font-size: clamp(34px, 3vw, 52px) !important;
+  max-width: 400px !important;
+  line-height: 0.96 !important;
+  letter-spacing: -0.025em !important;
 }
 
-/* WAVE22-END */
+/* 2. Two-line hierarchy — "Chocolate" strong, "made to do more" ~22% smaller. */
+.hero .hero-copy.hero-center .hero-title span:first-child {
+  font-size: 1em !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.03em !important;
+}
+.hero .hero-copy.hero-center .hero-title span:last-child {
+  font-size: 0.78em !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.018em !important;
+  margin-top: 4px !important;
+  opacity: 0.96 !important;
+}
+
+/* 3. Mobile: keep confident scale; enforce hierarchy. */
+@media (max-width: 767px) {
+  .hero .hero-copy.hero-center .hero-title {
+    font-size: clamp(40px, 12vw, 54px) !important;
+    line-height: 0.94 !important;
+    letter-spacing: -0.03em !important;
+    max-width: 100% !important;
+  }
+  .hero .hero-copy.hero-center .hero-title span:first-child {
+    font-weight: 780 !important;
+    letter-spacing: -0.035em !important;
+  }
+  .hero .hero-copy.hero-center .hero-title span:last-child {
+    font-size: 0.76em !important;
+    font-weight: 620 !important;
+    margin-top: 4px !important;
+  }
+}
+
+/* 4. Mobile hero: give the chocolate ~12% more visual presence via scale + focus. */
+@media (max-width: 767px) {
+  .hero .hero-video {
+    transform: scale(1.12) !important;
+    transform-origin: center 42% !important;
+    object-position: center 42% !important;
+  }
+}
+
+/* 5. Hero CTA hover — slightly stronger warm transparent tint. */
+@media (hover: hover) and (pointer: fine) {
+  .hero .hero-copy.hero-center .hero-shop-cta:hover {
+    background-color: rgba(45, 28, 20, 0.10) !important;
+    border-color: rgba(30, 20, 15, 0.75) !important;
+    box-shadow: 0 4px 14px rgba(40, 25, 18, 0.06) !important;
+    transform: translateY(-1px) !important;
+  }
+}
+
+/* 6. Credibility strip — line 1 lighter weight (bridge, not second headline). */
+.tb .tb-cred-story {
+  font-weight: 500 !important;
+  color: #2c1d16 !important;
+  font-size: clamp(13.5px, 1.35vw, 16.5px) !important;
+  letter-spacing: -0.1px !important;
+}
+
+/* 7. Credibility strip — Ronen award line: restore gold + shimmer. */
+.tb .tb-cred-auth {
+  color: #8b6a2f !important;
+  font-weight: 500 !important;
+  font-size: clamp(12px, 1.2vw, 14.5px) !important;
+}
+.tb .tb-cred-auth::before,
+.tb .tb-cred-auth::after {
+  background: #b98d3d !important;
+  opacity: 0.7 !important;
+}
+.tb .tb-cred-auth span {
+  background: linear-gradient(90deg, #8b6a2f 0%, #8b6a2f 42%, #f4d47a 50%, #8b6a2f 58%, #8b6a2f 100%);
+  background-size: 260% 100%;
+  background-position: 130% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: tbCredShine 3.2s cubic-bezier(.22,.61,.36,1) 0.4s forwards;
+}
+.tb .tb-cred-auth .tb-year { font-weight: 700; }
+@keyframes tbCredShine {
+  0%   { background-position: 130% 0; }
+  100% { background-position: -30% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tb .tb-cred-auth span {
+    background: none;
+    color: #8b6a2f;
+    -webkit-text-fill-color: currentColor;
+    animation: none;
+  }
+}
+
+/* 8. Credibility strip — proof line kept quiet & compact. */
+.tb .tb-cred-proof {
+  color: #6a5040 !important;
+  font-weight: 400 !important;
+}
+.tb .tb-cred { gap: 5px !important; }
+@media (max-width: 640px) {
+  .tb .tb-cred { gap: 4px !important; }
+  .tb .tb-cred-story { font-size: 13px !important; }
+  .tb .tb-cred-auth { font-size: 11px !important; }
+  .tb .tb-cred-proof { font-size: 10.75px !important; }
+}
+
+/* 9. HEADER — revert Wave 22 desktop enlargement. Restore Wave 7ee compact
+      proportions everywhere. Selector uses `header:not(.mfoot)` to stay scoped
+      to the site header, not the footer's decorative brand-strip. */
+header {
+  padding: 12px 4vw !important;
+  min-height: 60px !important;
+}
+header .brand-logo,
+header > a.brand > img {
+  height: 24px !important;
+  width: auto !important;
+}
+header .hactions { gap: 8px !important; }
+header .hactions .ic {
+  width: 34px !important;
+  height: 34px !important;
+}
+header .hactions .ic svg {
+  width: 19px !important;
+  height: 19px !important;
+  stroke-width: 1.7 !important;
+}
+@media (max-width: 640px) {
+  header { padding: 10px 4vw !important; min-height: 54px !important; }
+  header .brand-logo,
+  header > a.brand > img { height: 22px !important; }
+}
+@media (min-width: 1024px) {
+  header { padding: 14px 4vw !important; min-height: 64px !important; }
+  header .brand-logo,
+  header > a.brand > img { height: 26px !important; }
+  header .hactions { gap: 12px !important; }
+  header .hactions .ic { width: 36px !important; height: 36px !important; }
+  header .hactions .ic svg { width: 20px !important; height: 20px !important; }
+}
+/* WAVE23-END */
 
 </style>
 </head>
@@ -2251,8 +2375,8 @@ body { overflow-x: clip !important; max-width: none !important; }
       </video>
       <div class="hero-copy hero-center">
         <h1 class="hero-title" dir="ltr" lang="en">
-          <span>Chocolate,</span>
-          <span>made to do more.</span>
+          <span>Chocolate</span>
+          <span>made to do more</span>
         </h1>
         <a class="hero-shop-cta" href="#formulas">SHOP NOW</a>
       </div>
@@ -2265,7 +2389,7 @@ body { overflow-x: clip !important; max-width: none !important; }
     <section class="tb" aria-label="אלוף עולם בשוקולד 2022">
       <div class="tb-in">
         <div class="tb-cred">
-          <p class="tb-cred-story">כדי ליצור את השוקולד המושלם, צריך אלוף עולם.</p>
+          <p class="tb-cred-story">כדי ליצור את המוצר המושלם, צריך אלוף עולם</p>
           <p class="tb-cred-auth"><span>רונן אפללו · אלוף העולם בשוקולד <b class="tb-year">2022</b></span></p>
           <p class="tb-cred-proof"><span>70% קקאו</span><span class="tb-sep">·</span><span>0 גרם סוכר</span><span class="tb-sep">·</span><span>פורמולה בוטנית</span><span class="tb-sep">·</span><span>כשר פרווה</span><span class="tb-sep">·</span><span>תוצרת ישראל</span></p>
         </div>
