@@ -1566,6 +1566,172 @@ html { overflow-x: clip !important; overflow-y: auto !important; }
 body { overflow-x: clip !important; max-width: none !important; }
 /* WAVE9-END */
 
+
+/* WAVE17-START — homepage compression pass, mobile-first */
+
+/* --- Product cards: micro-copy row + tighter aspect + next-card peek --- */
+@media (max-width: 899px) {
+  .products-w5 { padding-top: 22px !important; padding-bottom: 24px !important; }
+  .products-w5 .section-head { margin-bottom: 14px !important; }
+  .products-w5 .section-head h2 { font-size: 26px !important; margin-bottom: 6px !important; }
+  .pgrid.pgrid-w5 {
+    grid-auto-columns: 72% !important;
+    padding: 4px 14% 16px !important;
+    gap: 12px !important;
+  }
+  .pgrid-w5 .pc-media { aspect-ratio: 1 / 1.05 !important; }
+  .pgrid-w5 .pc-name { font-size: 20px !important; margin-top: 8px !important; }
+  .pgrid-w5 .pc-sub { font-size: 13px !important; margin: 3px 0 6px !important; }
+  .pgrid-w5 .pc-rate { font-size: 12px !important; margin-bottom: 8px !important; }
+  .pgrid-w5 .pc-cta { padding: 8px 18px !important; font-size: 13px !important; }
+  .pgrid-dots { margin-top: 10px !important; }
+}
+
+/* --- Ritual band: tighten vertical padding --- */
+@media (max-width: 899px) {
+  .ritual { padding: 28px 0 !important; min-height: 0 !important; }
+  .ritual .in { padding: 26px 5vw !important; }
+  .ritual h2 { margin: 6px 0 8px !important; font-size: 26px !important; line-height: 1.15 !important; }
+  .ritual p { margin: 0 0 14px !important; font-size: 14px !important; line-height: 1.5 !important; }
+}
+
+/* --- Moments strip: primary tile larger, side tiles narrower --- */
+@media (max-width: 899px) {
+  .moments { padding: 24px 0 20px !important; }
+  .moments-in { padding: 0 4vw !important; }
+  .moments-h { font-size: 22px !important; margin: 0 0 14px !important; }
+  .moments-strip {
+    display: grid !important;
+    grid-template-columns: none !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: 60% !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    padding: 0 20% !important;
+    scrollbar-width: none !important;
+    gap: 8px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .mom-tile { scroll-snap-align: center !important; }
+  .mom-tile.mom-active { grid-column: span 1 !important; }
+  .mom-tile img { border-radius: 12px !important; }
+}
+
+/* --- Reviews cards: horizontal swipe carousel on mobile --- */
+@media (max-width: 899px) {
+  .moments .rev-cards {
+    display: grid !important;
+    grid-template-columns: none !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: 85% !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    padding: 4px 8% 8px !important;
+    gap: 12px !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    margin-top: 14px !important;
+  }
+  .moments .rev-cards::-webkit-scrollbar { display: none !important; }
+  .moments .rev-card {
+    scroll-snap-align: center !important;
+    padding: 16px 16px 14px !important;
+    border-radius: 14px !important;
+  }
+  .moments .rev-quote { font-size: 14px !important; line-height: 1.45 !important; margin: 6px 0 10px !important; }
+  .moments .rev-by { font-size: 12px !important; }
+  /* Simple pagination-hint dots below the strip (visual only) */
+  .moments .rev-cards + .rev-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
+}
+
+/* --- Club: 2-col benefit grid, tighter CTA, quieter caption --- */
+.club-w5 .club-green {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: #2c1d16 !important;
+  font-family: 'Heebo','Assistant',sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  bottom: 12px !important;
+  right: 12px !important;
+  left: auto !important;
+  width: auto !important;
+  text-align: center !important;
+  box-shadow: 0 4px 12px -6px rgba(41, 25, 10, 0.28) !important;
+}
+.club-w5 .club-benefits {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px 14px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 14px 0 18px !important;
+}
+.club-w5 .club-benefits li {
+  padding: 4px 0 4px 0 !important;
+  font-size: 13.5px !important;
+  color: #f3e6cc !important;
+  line-height: 1.35 !important;
+}
+.club-w5 .club-benefits li::before {
+  content: "✓";
+  color: #b7ce88;
+  margin-inline-end: 6px;
+  font-weight: 700;
+}
+.club-w5 .club-cta {
+  display: inline-flex !important;
+  width: 80% !important;
+  max-width: 320px !important;
+  margin: 0 auto !important;
+  padding: 12px 22px !important;
+  height: auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+}
+.club-w5 .club-actions { text-align: center !important; }
+@media (max-width: 899px) {
+  .club-w5 { padding: 32px 4vw !important; }
+  .club-w5 .club-wrap { gap: 22px !important; }
+  .club-w5 .club-h { font-size: 24px !important; line-height: 1.2 !important; margin: 10px 0 8px !important; }
+  .club-w5 .club-eyebrow { font-size: 12px !important; }
+  .club-w5 .club-badge { font-size: 11px !important; padding: 3px 10px !important; }
+}
+
+/* --- FAQ: tighten spacing --- */
+@media (max-width: 899px) {
+  .faq-w5 { padding: 28px 5vw 36px !important; }
+  .faq-w5 .faq-h { font-size: 26px !important; margin: 0 0 16px !important; }
+  .faq-w5 .faq-item summary { padding: 12px 0 !important; font-size: 15px !important; }
+  .faq-w5 .faq-item[open] summary { padding-bottom: 8px !important; }
+  .faq-w5 .faq-item div { padding: 0 0 12px !important; font-size: 13.5px !important; line-height: 1.55 !important; }
+}
+
+/* --- Trust bar (Ronen credibility strip): keep compact --- */
+@media (max-width: 899px) {
+  .tb { padding: 16px 4vw !important; }
+  .tb-title { font-size: 15px !important; }
+  .tb-sub { font-size: 12px !important; margin-top: 4px !important; }
+}
+
+/* --- Global rhythm: shave big gaps between major sections --- */
+@media (max-width: 899px) {
+  section + section { margin-top: 0 !important; }
+}
+
+/* --- Desktop: gentle 8-12% compression on outer sections only --- */
+@media (min-width: 900px) {
+  .products-w5 { padding-top: 40px !important; padding-bottom: 44px !important; }
+  .ritual { padding: 60px 0 !important; }
+  .moments { padding: 50px 0 44px !important; }
+  .club-w5 { padding: 60px 4vw !important; }
+  .club-w5 .club-cta { width: auto !important; max-width: 260px !important; }
+  .faq-w5 { padding: 50px 5vw 60px !important; }
+}
+/* WAVE17-END */
+
 </style>
 </head>
 <body>
@@ -1604,7 +1770,7 @@ body { overflow-x: clip !important; max-width: none !important; }
           <span>Small piece.</span>
           <span>Real impact.</span>
         </h1>
-        <a class="hero-shop-cta" href="#formulas">Shop now</a>
+        <a class="hero-shop-cta" href="#formulas">בחרו את הרגע שלכם</a>
       </div>
     </section>
 
@@ -1633,7 +1799,7 @@ body { overflow-x: clip !important; max-width: none !important; }
             <img height="400" width="300" decoding="async" class="pc-life" src="home-assets/cx/mood-energy-lifestyle-new.jpg" alt="" loading="lazy">
           </div></a>
           <h3 class="pc-name">ENERGY</h3>
-          <p class="pc-sub">אנרגיה וחיוניות</p>
+          <p class="pc-sub">להיכנס לקצב.</p>
           <div class="pc-rate"><span class="pc-stars" aria-hidden="true">★★★★★</span><span class="pc-num">128 ביקורות</span></div>
           <a class="pc-cta" href="energy.html">קנו עכשיו</a>
         </article>
@@ -1643,7 +1809,7 @@ body { overflow-x: clip !important; max-width: none !important; }
             <img height="400" width="300" decoding="async" class="pc-life" src="home-assets/cx/mood-relax-lifestyle-new.jpg" alt="" loading="lazy">
           </div></a>
           <h3 class="pc-name">RELAX</h3>
-          <p class="pc-sub">הרפיה ושלווה</p>
+          <p class="pc-sub">להוריד הילוך.</p>
           <div class="pc-rate"><span class="pc-stars" aria-hidden="true">★★★★★</span><span class="pc-num">128 ביקורות</span></div>
           <a class="pc-cta" href="relax.html">קנו עכשיו</a>
         </article>
@@ -1653,7 +1819,7 @@ body { overflow-x: clip !important; max-width: none !important; }
             <img height="400" width="300" decoding="async" class="pc-life" src="home-assets/cx/mood-sleep-lifestyle-new.jpg" alt="" loading="lazy">
           </div></a>
           <h3 class="pc-name">SLEEP</h3>
-          <p class="pc-sub">שינה עמוקה</p>
+          <p class="pc-sub">לסגור את היום.</p>
           <div class="pc-rate"><span class="pc-stars" aria-hidden="true">★★★★★</span><span class="pc-num">128 ביקורות</span></div>
           <a class="pc-cta" href="sleep.html">קנו עכשיו</a>
         </article>
