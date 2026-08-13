@@ -2590,6 +2590,282 @@ body[data-page="full-day"] header nav { display: none !important; }
 }
 /* WAVE10-CSS-END */
 
+
+/* WAVE10-CSS-START — scoped to #mood-purchase-selector, no leakage */
+#mood-purchase-selector, #mood-purchase-selector *,
+#mood-purchase-selector *::before, #mood-purchase-selector *::after {
+  box-sizing: border-box;
+}
+#mood-purchase-selector {
+  direction: rtl;
+  font-family: 'Heebo','Assistant',sans-serif;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 4px 14px 0;
+  color: #171512;
+  text-align: right;
+  scroll-margin-top: 96px;
+  --mood-ps-accent: #b4c19b;
+  --mood-ps-accent-dark: #8fa080;
+  --mood-ps-cta-ink: #171512;
+  --mood-ps-cream: #fbf7ef;
+  --mood-ps-cream-2: #f6efe3;
+  --mood-ps-line: #ece3d0;
+  --mood-ps-ink: #171512;
+  --mood-ps-muted: #7a6a5c;
+  --mood-ps-sticky-h: 68px; /* 50 CTA + 8+8 pad + ~2 shadow */
+}
+
+/* Compact reassurance row, target ~46px */
+#mood-purchase-selector .mood-ps-trust {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: #f4ecdd;
+  border: 1px solid #ebe0c8;
+  border-radius: 12px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 12.5px; font-weight: 500;
+  color: #3d2c22;
+  margin: 0 auto 10px;
+  line-height: 1.35;
+}
+#mood-purchase-selector .mood-ps-trust svg { flex: none; color: #6f5a3a; }
+#mood-purchase-selector .mood-ps-trust b { font-weight: 700; }
+
+#mood-purchase-selector .mood-ps-cards {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+/* Compact selection ROW: [radio] [copy 1fr] [pouch auto] [price auto] */
+#mood-purchase-selector .mood-ps-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr minmax(64px, 100px) auto;
+  align-items: center;
+  column-gap: 10px;
+  padding: 9px 12px;
+  background: var(--mood-ps-cream);
+  border: 1px solid var(--mood-ps-line);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease;
+  min-height: 100px;
+}
+#mood-purchase-selector .mood-ps-card:hover { border-color: #d9cfb9; }
+#mood-purchase-selector .mood-ps-card input[type="radio"] {
+  position: absolute; opacity: 0; pointer-events: none; margin: 0;
+}
+
+/* Selection dot: small, thin, tinted */
+#mood-purchase-selector .mood-ps-radio {
+  display: inline-block; width: 18px; height: 18px;
+  border: 1.5px solid #c5b99f;
+  border-radius: 50%;
+  background: #fff;
+  position: relative;
+  flex: none;
+  transition: border-color .18s ease, background .18s ease;
+}
+#mood-purchase-selector .mood-ps-radio-dot {
+  position: absolute; inset: 3px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background .18s ease;
+}
+#mood-purchase-selector .mood-ps-card.selected .mood-ps-radio {
+  border-color: var(--mood-ps-accent);
+}
+#mood-purchase-selector .mood-ps-card.selected .mood-ps-radio-dot {
+  background: var(--mood-ps-accent);
+}
+
+#mood-purchase-selector .mood-ps-copy {
+  display: flex; flex-direction: column; gap: 3px; min-width: 0;
+  text-align: start;
+}
+#mood-purchase-selector .mood-ps-heading {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+#mood-purchase-selector .mood-ps-title {
+  font-family: 'Heebo',sans-serif;
+  font-size: 18px; font-weight: 700; margin: 0;
+  color: var(--mood-ps-ink); letter-spacing: -.2px; line-height: 1.1;
+}
+#mood-purchase-selector .mood-ps-sub {
+  font-family: 'Heebo',sans-serif;
+  font-size: 12.5px; font-weight: 500;
+  color: var(--mood-ps-muted); line-height: 1.3;
+}
+/* Full-day: stack the 3 SKU lines vertically */
+body[data-page="full-day"] #mood-purchase-selector .mood-ps-sub {
+  display: flex; flex-direction: column; gap: 1px; font-size: 11.5px; letter-spacing: -.1px;
+}
+body[data-page="full-day"] #mood-purchase-selector .mood-ps-sub .fd-line { white-space: nowrap; }
+
+/* Chips - small and quiet. הכי נמכר = warm cream; הכי משתלם = pale sage */
+#mood-purchase-selector .mood-ps-chip {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0; white-space: nowrap; line-height: 1.4;
+}
+#mood-purchase-selector .mood-ps-chip-best { background: #f0e6d2; color: #6b4a25; }
+#mood-purchase-selector .mood-ps-chip-value { background: #dfe8d2; color: #3b5027; }
+
+#mood-purchase-selector .mood-ps-media {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 72px;
+}
+#mood-purchase-selector .mood-ps-pouch {
+  display: block;
+  width: auto; height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(41, 25, 10, 0.12));
+}
+#mood-purchase-selector .mood-ps-pouch.pouch-1x { width: clamp(52px, 15vw, 60px); }
+#mood-purchase-selector .mood-ps-pouch.pouch-2x { width: clamp(68px, 20vw, 78px); }
+#mood-purchase-selector .mood-ps-pouch.pouch-3x { width: clamp(80px, 24vw, 92px); }
+/* Full-day fallback: crop the studio jpg to a compact tile */
+body[data-page="full-day"] #mood-purchase-selector .mood-ps-pouch {
+  width: 78px; height: 76px; object-fit: cover; border-radius: 6px;
+  filter: drop-shadow(0 4px 8px rgba(41, 25, 10, 0.10));
+}
+
+/* Price stack — sits at RTL end (physical left) */
+#mood-purchase-selector .mood-ps-price-stack {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 2px; min-width: 74px; text-align: end;
+}
+#mood-purchase-selector .mood-ps-price {
+  font-family: 'Fraunces', serif;
+  font-size: 24px; font-weight: 500;
+  color: var(--mood-ps-ink); letter-spacing: -.5px; line-height: 1;
+}
+#mood-purchase-selector .mood-ps-monthly {
+  font-family: 'Heebo',sans-serif;
+  font-size: 11.5px; font-weight: 500;
+  color: var(--mood-ps-muted);
+}
+#mood-purchase-selector .mood-ps-save {
+  font-family: 'Heebo',sans-serif;
+  font-size: 11px; font-weight: 700;
+  color: #3b5027; background: #e5edd8;
+  padding: 2px 8px; border-radius: 999px;
+}
+
+/* Selected — 1.25px SKU-tinted border + very subtle tonal bg. No heavy outline. */
+#mood-purchase-selector .mood-ps-card.selected {
+  border: 1.25px solid var(--mood-ps-accent);
+  background: var(--mood-ps-cream);
+  padding: 8.75px 11.75px;
+  box-shadow: 0 4px 16px -12px rgba(41, 25, 10, 0.25);
+}
+
+/* Sticky CTA — 50px tall on mobile, SKU-accent color */
+#mood-purchase-selector .mood-ps-sticky {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 120;
+  padding: 8px 14px calc(8px + env(safe-area-inset-bottom, 0px));
+  background: transparent;
+  pointer-events: none;
+}
+#mood-purchase-selector .mood-ps-cta {
+  pointer-events: auto;
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px;
+  width: 100%; max-width: 620px;
+  margin: 0 auto;
+  height: 50px;
+  padding: 0 22px;
+  background: var(--mood-ps-accent);
+  color: var(--mood-ps-cta-ink);
+  border: none;
+  border-radius: 999px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 15px; font-weight: 800;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px -12px rgba(41, 25, 10, 0.38);
+  transition: transform .12s ease, background .18s ease;
+}
+#mood-purchase-selector .mood-ps-cta:hover { background: var(--mood-ps-accent-dark); }
+#mood-purchase-selector .mood-ps-cta:active { transform: translateY(1px); }
+#mood-purchase-selector .mood-ps-cta-price {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: -.3px;
+}
+
+/* Desktop >=768: compact — cards keep vertical stack (matches gallery beside),
+   pouches slightly larger, sticky becomes an inline centered button. */
+@media (min-width: 768px) {
+  #mood-purchase-selector {
+    max-width: 640px;
+    padding: 4px 8px 20px;
+  }
+  #mood-purchase-selector .mood-ps-cards { gap: 8px; }
+  #mood-purchase-selector .mood-ps-card {
+    grid-template-columns: auto 1fr minmax(72px, 110px) auto;
+    padding: 11px 14px;
+    min-height: 110px;
+    column-gap: 12px;
+  }
+  #mood-purchase-selector .mood-ps-card.selected { padding: 10.75px 13.75px; }
+  #mood-purchase-selector .mood-ps-title { font-size: 19px; }
+  #mood-purchase-selector .mood-ps-price { font-size: 26px; }
+  #mood-purchase-selector .mood-ps-pouch.pouch-1x { width: clamp(56px, 5vw, 64px); }
+  #mood-purchase-selector .mood-ps-pouch.pouch-2x { width: clamp(72px, 7vw, 84px); }
+  #mood-purchase-selector .mood-ps-pouch.pouch-3x { width: clamp(84px, 8vw, 96px); }
+  #mood-purchase-selector .mood-ps-sticky {
+    position: static;
+    padding: 18px 0 0;
+    pointer-events: auto;
+  }
+  #mood-purchase-selector .mood-ps-cta { max-width: 420px; height: 52px; }
+}
+
+/* Hide the site-wide sticky bar on product pages — widget provides its own */
+body[data-page="energy"] .smb,
+body[data-page="relax"] .smb,
+body[data-page="sleep"] .smb,
+body[data-page="full-day"] .smb { display: none !important; }
+/* Reserve document space for the sticky CTA so it never covers content.
+   50px CTA + ~16px padding + env(safe-area-inset-bottom) + 24px breathing. */
+@media (max-width: 767px) {
+  body[data-page="energy"],
+  body[data-page="relax"],
+  body[data-page="sleep"],
+  body[data-page="full-day"] {
+    padding-bottom: calc(50px + 16px + env(safe-area-inset-bottom, 0px) + 24px) !important;
+  }
+}
+@media (min-width: 768px) {
+  body[data-page="energy"],
+  body[data-page="relax"],
+  body[data-page="sleep"],
+  body[data-page="full-day"] { padding-bottom: 0 !important; }
+}
+
+/* Header on product pages already uses the Wave 7ee 3-zone layout
+   (hactions | brand | hactions-end) with the .brand naturally centered
+   by flex. We only need to hide the desktop top-nav so the header
+   stays clean and matches the mayven homepage pattern; menu is still
+   reachable via the hamburger button. */
+body[data-page="energy"] header nav,
+body[data-page="relax"] header nav,
+body[data-page="sleep"] header nav,
+body[data-page="full-day"] header nav { display: none !important; }
+/* Tighter trust pill */
+#mood-purchase-selector .mood-ps-trust {
+  padding: 9px 14px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+/* WAVE10-CSS-END */
+
 </style>
 </head>
 <body data-page="relax">
@@ -2725,14 +3001,6 @@ body[data-page="full-day"] header nav { display: none !important; }
       <ul class="trust-chips">
         <li><span class="tchip">כשר פרווה</span></li><li><span class="tchip">0 גרם סוכר</span></li><li><span class="tchip">רכיבים טבעיים</span></li><li><span class="tchip">מיוצר בישראל</span></li>
       </ul>
-    </div>
-  </section>
-
-  <!-- WAVE 6: TRUST BAR -->
-  <section class="tb" aria-label="אלוף השוקולד העולמי 2022">
-    <div class="tb-in">
-      <h2 class="tb-title">פותח על ידי רונן אפללו · אלוף השוקולד העולמי <span class="tb-year">2022</span></h2>
-      <p class="tb-sub"><span>L-תיאנין ואשווגנדה</span><span class="tb-sep">|</span><span>0 סוכר</span><span class="tb-sep">·</span><span>כשר פרווה</span><span class="tb-sep">·</span><span>תוצרת ישראל</span></p>
     </div>
   </section>
 
@@ -3010,6 +3278,7 @@ body[data-page="full-day"] header nav { display: none !important; }
   document.querySelectorAll(selectors).forEach(el => io.observe(el));
 })();
 </script>
+
 
 
 
