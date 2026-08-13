@@ -2305,6 +2305,42 @@ header nav { display: none; }
 }
 /* WAVE24-END */
 
+
+/* WAVE25-START — chocolatier strip presence restoration */
+
+/* Wipe Wave 22 / 23 overrides that shrank the strip. */
+.tb .tb-cred,
+.tb .tb-cred-story,
+.tb .tb-cred-auth,
+.tb .tb-cred-proof { all: unset; }
+
+/* Give the strip its previous breathing room. */
+.tb {
+  padding: clamp(28px, 3.6vw, 44px) 24px !important;
+}
+.tb-in {
+  gap: 14px !important;
+}
+.tb-title {
+  font-size: clamp(15.5px, 1.6vw, 19px) !important;
+  gap: 16px !important;
+}
+.tb-title::before,
+.tb-title::after {
+  width: clamp(48px, 6vw, 96px) !important;
+}
+.tb-sub {
+  font-size: clamp(13.5px, 1.35vw, 16px) !important;
+  gap: 10px !important;
+}
+@media (max-width: 640px) {
+  .tb { padding: 22px 20px !important; }
+  .tb-title { font-size: 14px !important; gap: 10px !important; letter-spacing: -0.05px !important; }
+  .tb-title::before, .tb-title::after { width: 28px !important; }
+  .tb-sub { font-size: 12px !important; gap: 6px !important; flex-wrap: wrap !important; justify-content: center !important; }
+}
+/* WAVE25-END */
+
 </style>
 </head>
 <body>
@@ -2358,13 +2394,10 @@ header nav { display: none; }
     
     
     <!-- TRUST BAR (Wave 5a — Nadav spec) -->
-    <section class="tb" aria-label="אלוף עולם בשוקולד 2022">
+    <section class="tb" aria-label="אלוף העולם בשוקולד 2022">
       <div class="tb-in">
-        <div class="tb-cred">
-          <p class="tb-cred-story">כדי ליצור את המוצר המושלם, צריך אלוף עולם</p>
-          <p class="tb-cred-auth"><span>רונן אפללו · אלוף העולם בשוקולד <b class="tb-year">2022</b></span></p>
-          <p class="tb-cred-proof"><span>70% קקאו</span><span class="tb-sep">·</span><span>0 גרם סוכר</span><span class="tb-sep">·</span><span>פורמולה בוטנית</span><span class="tb-sep">·</span><span>כשר פרווה</span><span class="tb-sep">·</span><span>תוצרת ישראל</span></p>
-        </div>
+        <h2 class="tb-title"><span class="tb-title-text">השוקולד שלנו פותח עם אלוף העולם בשוקולד <span class="tb-year">2022</span></span></h2>
+        <p class="tb-sub"><span>70% קקאו</span><span class="tb-sep">·</span><span>0 גרם סוכר</span><span class="tb-sep">·</span><span>פורמולה בוטנית</span><span class="tb-sep">·</span><span>כשר פרווה</span><span class="tb-sep">·</span><span>תוצרת ישראל</span></p>
       </div>
     </section>
 
@@ -3094,5 +3127,26 @@ header nav { display: none; }
   });
 })();
 /* WAVE22-JS-END */
+</script>
+
+<script>
+/* WAVE25-JS-START — restore .shine trigger on chocolatier strip */
+(function(){
+  var el = document.querySelector('.tb-title-text');
+  if (!el) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) { el.classList.add('shine'); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) {
+        // Delay slightly so the shimmer reads once the section is settled.
+        setTimeout(function(){ el.classList.add('shine'); }, 260);
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.35 });
+  io.observe(el);
+})();
+/* WAVE25-JS-END */
 </script>
 </body></html>
