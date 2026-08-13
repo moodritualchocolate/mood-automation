@@ -2342,11 +2342,54 @@ header nav { display: none; }
 /* WAVE25-END */
 
 
-/* WAVE26-START — mobile hero: force exactly 2 lines */
+
+
+
+
+
+
+
+
+/* WAVE27-STRIP-START — mobile credibility strip forced to exactly 2 rows */
 @media (max-width: 767px) {
-  /* Both spans stack as full-width blocks; secondary never wraps. */
+  /* Row 1 headline: single line, no decorative hairlines to force overflow. */
+  .tb .tb-title,
+  .tb .tb-title-text {
+    white-space: nowrap !important;
+    letter-spacing: -0.15px !important;
+  }
+  .tb .tb-title {
+    gap: 0 !important;
+    font-size: clamp(11.5px, 3.4vw, 13.5px) !important;
+  }
+  .tb .tb-title::before,
+  .tb .tb-title::after {
+    display: none !important;
+  }
+  /* Row 2 supporting facts: single line, tight separators. */
+  .tb .tb-sub {
+    white-space: nowrap !important;
+    flex-wrap: nowrap !important;
+    gap: 5px !important;
+    font-size: clamp(10px, 2.9vw, 11.5px) !important;
+    letter-spacing: -0.2px !important;
+  }
+  .tb .tb-sub .tb-sep { opacity: .45 !important; }
+  .tb { padding: 18px 12px !important; }
+  .tb-in { gap: 8px !important; }
+}
+/* Extra-narrow devices (<=360px): nudge sizes to guarantee no wrap. */
+@media (max-width: 360px) {
+  .tb .tb-title { font-size: 11px !important; }
+  .tb .tb-sub { font-size: 9.5px !important; gap: 4px !important; }
+}
+/* WAVE27-STRIP-END */
+
+/* WAVE27-HERO-START — mobile hero final proportion polish */
+@media (max-width: 767px) {
+  /* Reduce Chocolate ~11%; secondary at ~72% of primary. */
   .hero .hero-copy.hero-center .hero-title {
-    font-size: clamp(38px, 11vw, 50px) !important;
+    font-size: clamp(34px, 9.8vw, 44px) !important;
     line-height: 0.96 !important;
     letter-spacing: -0.028em !important;
     max-width: 100% !important;
@@ -2356,38 +2399,40 @@ header nav { display: none; }
     display: block !important;
     width: 100% !important;
     text-align: center !important;
+    white-space: nowrap !important;
   }
   .hero .hero-copy.hero-center .hero-title span:first-child {
     font-size: 1em !important;
     font-weight: 780 !important;
     letter-spacing: -0.035em !important;
-    white-space: nowrap !important;
   }
   .hero .hero-copy.hero-center .hero-title span:last-child {
     font-size: 0.72em !important;
     font-weight: 620 !important;
     letter-spacing: -0.02em !important;
-    white-space: nowrap !important;   /* NON-NEGOTIABLE */
     margin-top: 2px !important;
     opacity: 0.98 !important;
   }
-  /* Give the .hero-copy enough inline width to host the nowrap secondary. */
-  .hero .hero-copy.hero-center {
-    width: min(94%, 430px) !important;
-    gap: 18px !important;
-  }
-  /* Slightly tighter distance to CTA. */
+  .hero .hero-copy.hero-center { gap: 16px !important; }
+
+  /* CTA smaller, ~55% viewport, tighter padding. */
   .hero .hero-copy.hero-center .hero-shop-cta {
+    width: 55% !important;
+    max-width: 240px !important;
+    min-width: 205px !important;
+    height: 46px !important;
+    padding: 0 18px !important;
+    font-size: 13.5px !important;
+    letter-spacing: 0.09em !important;
     margin-top: 0 !important;
   }
 }
-/* Very narrow devices (<=360px) — nudge secondary a hair smaller to keep
-   the two-line guarantee. */
 @media (max-width: 360px) {
-  .hero .hero-copy.hero-center .hero-title { font-size: 40px !important; }
-  .hero .hero-copy.hero-center .hero-title span:last-child { font-size: 0.68em !important; }
+  .hero .hero-copy.hero-center .hero-title { font-size: 34px !important; }
+  .hero .hero-copy.hero-center .hero-title span:last-child { font-size: 0.7em !important; }
+  .hero .hero-copy.hero-center .hero-shop-cta { width: 60% !important; height: 44px !important; font-size: 13px !important; }
 }
-/* WAVE26-END */
+/* WAVE27-HERO-END */
 
 </style>
 </head>
@@ -2407,8 +2452,8 @@ header nav { display: none; }
       <a href="mayven.html#formulas">מוצרים</a>
       <a href="full-day.html" class="nav-fd">היום המלא</a>
       <a href="mayven.html#story">הסיפור</a>
-      <a href="club.html">MOOD Club</a>
-      <a href="blog.html">Journal</a>
+      <a href="club.html">מועדון לקוחות</a>
+      <a href="blog.html">בלוג</a>
     </nav>
     <div class="hactions hactions-start">
       <button class="ic" aria-label="תפריט"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
