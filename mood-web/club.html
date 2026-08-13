@@ -1734,10 +1734,19 @@ header .brand img {
 .club-plan+.club-plan{border-inline-start:1px solid #d9dce2}.club-plan:hover{background:rgba(255,255,255,.42);box-shadow:none}
 .club-plan strong{order:3;color:#655e57;font-size:13px}.club-plan b{order:1;font-size:52px;letter-spacing:-.05em}.club-plan span{order:2;color:#17130f;font-size:13px}
 .club-offer-foot{max-width:900px;margin:26px auto 0;padding-top:20px;justify-content:center;border-top:1px solid #d9dce2}.club-offer-foot span{display:none}
+.club-offer-card::before{display:none}
+.club-hero-moods{display:flex!important;align-items:center;justify-content:center;gap:13px;margin-top:17px!important;direction:ltr;letter-spacing:.1em!important}
+.club-hero-moods b{font:800 9px/1 'DM Sans',sans-serif}.club-hero-moods b:nth-child(1){color:#d9682c}.club-hero-moods b:nth-child(2){color:#789068}.club-hero-moods b:nth-child(3){color:#6f86ae}
+.club-control-list{grid-template-columns:repeat(3,1fr)}
 
 @media(max-width:760px){
   .club-benefits{padding:32px 0 27px}.club-benefits-head{margin-bottom:26px;padding-inline:16px}.club-benefits-head h2{font-size:24px}.club-benefits .club-shell{width:min(100% - 24px,430px);padding:0;overflow:visible}.club-benefits-run{display:flex;flex-wrap:wrap;justify-content:center;gap:26px 6px;padding:0;min-width:0}.club-benefit{flex:0 0 calc(33.333% - 5px);min-width:0;min-height:88px;padding:23px 5px 9px;border-radius:34px}.club-benefit:last-child{width:auto}.club-benefit-icon{top:-15px;width:32px;height:32px}.club-benefit-icon svg{width:16px;height:16px}.club-benefit strong{font-size:10px}.club-benefit small{font-size:8px;line-height:1.25}
-  .club-offer{padding:29px 0}.club-offer-card{padding:0 6px}.club-offer-intro .club-kicker{margin-bottom:7px}.club-offer .club-heading{font-size:30px}.club-offer-intro .club-lede{display:block;margin:8px auto 0;font-size:11px}.club-plans{margin-top:20px}.club-plan,.club-plan:nth-child(1),.club-plan:nth-child(2),.club-plan:nth-child(3){min-height:90px;padding:7px 5px}.club-plan b{font-size:30px}.club-plan span{font-size:10px}.club-plan strong{font-size:9px}.club-offer-foot{margin-top:14px;padding-top:13px}.club-offer-foot .club-button{min-height:38px}
+  .club-offer{padding:29px 0}.club-offer-card{padding:0 6px}.club-offer-intro .club-kicker{margin-bottom:7px}.club-offer .club-heading{font-size:30px}.club-offer-intro .club-lede{display:block;margin:8px auto 0;font-size:11px}.club-plans{margin-top:20px}.club-plan,.club-plan:nth-child(1),.club-plan:nth-child(2),.club-plan:nth-child(3){min-height:90px;padding:7px 5px}.club-plan b{font-size:32px}.club-plan span{font-size:10px}.club-plan strong{font-size:9px}.club-offer-foot{margin-top:14px;padding-top:13px}.club-offer-foot .club-button{min-height:38px}
+}
+
+@media(max-width:760px){
+  .club-hero-media{height:230px}.club-hero-copy{padding:17px 18px 18px}.club-hero-copy h1{font-size:36px}.club-hero-copy p{margin-top:10px}.club-hero-moods{display:flex!important;margin-top:12px!important}.club-hero-moods b{font-size:8px}
+  .club-control-list{grid-template-columns:repeat(3,1fr);gap:8px}.club-control-list span{text-align:center;padding:6px 0;border:1px solid #d9dfe4;border-radius:999px}.club-control-list span::before{display:none}
 }
 
 </style>
@@ -1768,10 +1777,10 @@ header .brand img {
     <section class="club-hero" aria-label="MOOD CLUB — Your ritual. On repeat.">
       <div class="club-hero-copy">
         <p class="club-kicker">MOOD CLUB</p>
-        <h1>הריטואל שלכם.<br>במחיר חבר.</h1>
-        <p>מחיר חבר, משלוח חינם ואפשרות לשנות או לדלג מתי שרוצים.</p>
-        <a class="club-button" href="#club-offer">הצטרפו למועדון</a>
-        <span>YOUR RITUAL. ON REPEAT.</span>
+        <h1>יותר כיף<br>להיות בפנים.</h1>
+        <p>מחיר חבר · משלוח חינם · בלי התחייבות</p>
+        <a class="club-button" href="#club-offer">לבחירת הריטואל</a>
+        <span class="club-hero-moods"><b>ENERGY</b><b>RELAX</b><b>SLEEP</b></span>
       </div>
       <div class="club-hero-media"><img src="approved/assets/club-hero-lifestyle.webp" alt="חברי MOOD CLUB עם RELAX" fetchpriority="high"></div>
     </section>
@@ -1804,7 +1813,7 @@ header .brand img {
       <div class="club-shell club-moments-layout">
         <div class="club-moments-head">
           <p class="club-kicker">MOOD CLUB</p>
-          <h2 class="club-heading" id="club-moments-title">שלושה רגעים.<br>ריטואל אחד.</h2>
+          <h2 class="club-heading" id="club-moments-title">איזה mood<br>מתאים לכם?</h2>
           <p class="club-lede">ENERGY להתחיל, RELAX להוריד הילוך, SLEEP לסגור את היום.</p>
           <span class="club-secret">בוחרים את ה־mood שמתאים לרגע שלכם</span>
         </div>
@@ -1825,8 +1834,8 @@ header .brand img {
         <div class="club-offer-card">
           <div class="club-offer-intro">
             <p class="club-kicker">MOOD CLUB</p>
-            <h2 class="club-heading" id="club-offer-title">בחרו את הקצב שלכם.</h2>
-            <p class="club-lede">בחרו את גודל המארז שמתאים לשגרה שלכם.</p>
+            <h2 class="club-heading" id="club-offer-title">מחירי המועדון</h2>
+            <p class="club-lede">בחרו מארז של 30, 60 או 90 יחידות.</p>
           </div>
           <div class="club-plans" aria-label="מחירי המארזים">
             <a class="club-plan" href="energy.html#tiers"><strong>30 יום</strong><b>₪170</b><span>30 יחידות</span></a>
@@ -1858,7 +1867,7 @@ header .brand img {
             </span>
           </span>
         </div>
-        <div class="club-identity-copy"><p class="club-kicker">MEMBER CARD</p><h2 class="club-heading" id="club-identity-title">המועדון זז איתכם.</h2><p class="club-lede">כל השליטה בחברות נשארת אצלכם.</p><div class="club-control-list"><span>מדלגים על המשלוח הבא</span><span>משנים את תאריך המשלוח</span><span>מחליפים בין המוצרים</span><span>מסיימים את החברות</span><span>מצטרפים מחדש</span></div></div>
+        <div class="club-identity-copy"><p class="club-kicker">MEMBER CARD</p><h2 class="club-heading" id="club-identity-title">החברות בשליטה שלכם.</h2><p class="club-lede">משנים את הריטואל יחד עם השגרה.</p><div class="club-control-list"><span>מדלגים</span><span>מחליפים</span><span>מבטלים</span></div></div>
       </div>
     </section>
 
