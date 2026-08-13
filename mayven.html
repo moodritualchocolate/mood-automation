@@ -1845,6 +1845,77 @@ body { overflow-x: clip !important; max-width: none !important; }
 
 /* WAVE18-END */
 
+
+/* WAVE19-START — axis lock + FAQ collapse + club presence */
+
+/* --- Axis lock: horizontal carousels never absorb vertical touch --- */
+.pgrid.pgrid-w5,
+.moments-strip,
+.moments .rev-cards {
+  touch-action: pan-x !important;
+  overflow-y: hidden !important;
+  overscroll-behavior-y: auto !important;
+}
+/* Individual cards keep normal touch behaviour (tap, links) */
+.pgrid.pgrid-w5 .pc,
+.moments-strip .mom-tile,
+.moments .rev-cards .rev-card {
+  touch-action: manipulation !important;
+}
+
+/* --- Moments strip: center tile scales, sides shrink (existing rules
+       already handle this — we just make sure the transition remains
+       calm and section height stays stable) --- */
+.moments-strip .mom-tile {
+  transition: transform 260ms ease, opacity 260ms ease !important;
+  transform-origin: center center !important;
+  will-change: transform, opacity;
+}
+
+/* --- Reviews: reinforce stable card height so switching doesn't jump --- */
+@media (max-width: 899px) {
+  .moments .rev-cards { min-height: 200px !important; align-items: stretch !important; }
+  .moments .rev-cards .rev-card { min-height: 180px !important; }
+}
+
+/* --- Club: slightly more breathing room around the headline so the
+       section feels "want-to-belong" desirable without adding height --- */
+.club-w5 .club-h { margin: 8px 0 20px !important; }
+.club-w5 .club-benefits { margin: 6px 0 22px !important; gap: 10px 22px !important; }
+@media (max-width: 899px) {
+  .club-w5 .club-body { padding: 22px 22px 16px !important; }
+  .club-w5 .club-h { font-size: 26px !important; margin: 6px 0 16px !important; }
+  .club-w5 .club-benefits { margin: 4px 0 18px !important; gap: 8px 18px !important; }
+}
+
+/* --- FAQ progressive disclosure — first 4 questions visible; the rest
+       hidden until the user taps the toggle. All questions remain in DOM
+       (nothing is deleted). --- */
+.faq-w5 .faq-item.faq-more { display: none; }
+.faq-w5.faq-expanded .faq-item.faq-more { display: block; }
+.faq-w5 .faq-more-toggle {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid rgba(44, 29, 22, 0.35);
+  border-radius: 999px;
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: #2c1d16;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease;
+}
+.faq-w5 .faq-more-toggle:hover {
+  background: rgba(44, 29, 22, 0.05);
+  border-color: rgba(44, 29, 22, 0.55);
+}
+.faq-w5 .faq-more-toggle .arr { display: inline-block; margin-inline-start: 6px; transition: transform .2s ease; }
+.faq-w5.faq-expanded .faq-more-toggle .arr { transform: rotate(180deg); }
+
+/* WAVE19-END */
+
 </style>
 </head>
 <body>
@@ -2422,5 +2493,66 @@ body { overflow-x: clip !important; max-width: none !important; }
   window.addEventListener('orientationchange', reCenter);
 })();
 /* WAVE18-JS-END */
+</script>
+
+<script>
+/* WAVE19-JS-START — moments center-tile detection + FAQ progressive disclosure */
+(function(){
+  // -------- Moments strip: keep .mom-active on the tile closest to center --------
+  var strip = document.querySelector('.moments-strip');
+  if (strip && window.matchMedia && window.matchMedia('(max-width: 899px)').matches) {
+    var tiles = strip.querySelectorAll('.mom-tile');
+    if (tiles.length) {
+      var syncing = 0;
+      function centerActive() {
+        var stripRect = strip.getBoundingClientRect();
+        var containerCenter = stripRect.left + strip.clientWidth / 2;
+        var best = null, bestDist = 1e9;
+        tiles.forEach(function(t){
+          var r = t.getBoundingClientRect();
+          var d = Math.abs((r.left + r.width/2) - containerCenter);
+          if (d < bestDist) { bestDist = d; best = t; }
+        });
+        tiles.forEach(function(t){ t.classList.toggle('mom-active', t === best); });
+      }
+      strip.addEventListener('scroll', function(){
+        clearTimeout(syncing);
+        syncing = setTimeout(centerActive, 60);
+      }, {passive: true});
+      // Also trigger once shortly after load so any auto-centering call finishes first
+      setTimeout(centerActive, 120);
+      setTimeout(centerActive, 400);
+    }
+  }
+
+  // -------- FAQ progressive disclosure --------
+  var faq = document.querySelector('.faq-w5');
+  if (faq) {
+    var items = faq.querySelectorAll('.faq-item');
+    if (items.length > 4) {
+      // Mark items 5+ as "faq-more" so CSS hides them by default
+      for (var i = 4; i < items.length; i++) items[i].classList.add('faq-more');
+      // Inject a toggle button after item[3]
+      var btn = document.createElement('button');
+      btn.className = 'faq-more-toggle';
+      btn.type = 'button';
+      btn.setAttribute('aria-expanded', 'false');
+      var count = items.length - 4;
+      btn.innerHTML = '<span class="label">הציגו שאלות נוספות</span> <span class="arr" aria-hidden="true">↓</span>';
+      // Insert after the 4th item
+      items[3].parentNode.insertBefore(btn, items[3].nextSibling);
+      btn.addEventListener('click', function(){
+        var expanded = faq.classList.toggle('faq-expanded');
+        btn.setAttribute('aria-expanded', String(expanded));
+        btn.querySelector('.label').textContent = expanded ? 'הציגו פחות' : 'הציגו שאלות נוספות';
+        // Scroll button back into view if it moved
+        if (!expanded) {
+          setTimeout(function(){ btn.scrollIntoView({behavior:'smooth', block:'center'}); }, 60);
+        }
+      });
+    }
+  }
+})();
+/* WAVE19-JS-END */
 </script>
 </body></html>
