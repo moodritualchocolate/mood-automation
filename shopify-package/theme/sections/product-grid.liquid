@@ -1,0 +1,32 @@
+<section class="section products-w5" id="formulas">
+  {%- if section.settings.headline != blank -%}
+    <h2 class="section-h" style="text-align:center;font-family:'Heebo',sans-serif;font-weight:700;font-size:clamp(28px,3vw,44px);margin:0 0 26px">{{ section.settings.headline }}</h2>
+  {%- endif -%}
+
+  <div class="pgrid pgrid-w5">
+    {%- assign products_to_show = section.settings.collection.products | default: collections.all.products -%}
+    {%- for product in products_to_show limit: section.settings.count -%}
+      {%- render 'product-card', product: product -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="pgrid-dots" aria-hidden="true">
+    {%- for product in products_to_show limit: section.settings.count -%}
+      <span class="dot{% if forloop.first %} on{% endif %}"></span>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product grid",
+  "tag": "section",
+  "class": "products-section",
+  "settings": [
+    { "type": "text", "id": "headline", "label": "Headline", "default": "בחרו את הרגע שלכם." },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "count", "label": "Products to show", "min": 3, "max": 12, "step": 1, "default": 3 }
+  ],
+  "presets": [{ "name": "Product grid" }]
+}
+{% endschema %}

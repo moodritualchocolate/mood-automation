@@ -1,0 +1,16 @@
+{
+  "current": {
+    "ink_color": "#171512",
+    "paper_color": "#fdfaf3",
+    "gold_color": "#b98d3d",
+    "social_instagram": "https://instagram.com/mood_ritual_chocolate",
+    "social_tiktok": "https://tiktok.com/@mood_ritual_chocolate"
+  },
+  "presets": {
+    "MOOD default": {
+      "ink_color": "#171512",
+      "paper_color": "#fdfaf3",
+      "gold_color": "#b98d3d"
+    }
+  }
+}

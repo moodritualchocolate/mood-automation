@@ -1,0 +1,46 @@
+{
+  "general": {
+    "accessibility": { "skip_to_content": "דלגו לתוכן הראשי" },
+    "search": { "placeholder": "חפשו..." }
+  },
+  "accessibility": { "skip_to_content": "דלגו לתוכן הראשי" },
+  "sections": {
+    "header": {
+      "menu": "תפריט",
+      "search": "חיפוש",
+      "cart": "סל",
+      "desktop_nav": "ניווט ראשי"
+    }
+  },
+  "customer": {
+    "account": "חשבון",
+    "login": "התחברות",
+    "register": "הרשמה"
+  },
+  "newsletter": {
+    "email_placeholder": "האימייל שלכם",
+    "submit": "הצטרפו"
+  },
+  "footer": {
+    "made_in_israel": "תוצרת ישראל · באהבה"
+  },
+  "announcement": {
+    "aria_label": "הודעה חשובה"
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "הוסיפו לסל",
+      "sold_out": "אזל מהמלאי",
+      "unavailable": "לא זמין"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "הסל שלכם",
+      "empty": "הסל ריק",
+      "subtotal": "סה״כ ביניים",
+      "checkout": "מעבר לתשלום",
+      "update": "עדכון סל"
+    }
+  }
+}

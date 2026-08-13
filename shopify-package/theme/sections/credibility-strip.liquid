@@ -1,0 +1,43 @@
+<section class="tb" aria-label="{{ section.settings.aria_label }}">
+  <div class="tb-in">
+    <h2 class="tb-title"><span class="tb-title-text">{{ section.settings.headline }}</span></h2>
+    <p class="tb-sub">
+      {%- for block in section.blocks -%}
+        <span>{{ block.settings.text }}</span>{%- unless forloop.last -%}<span class="tb-sep">·</span>{%- endunless -%}
+      {%- endfor -%}
+    </p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Credibility strip",
+  "tag": "section",
+  "class": "credibility-section",
+  "settings": [
+    { "type": "text", "id": "aria_label", "label": "ARIA label", "default": "אלוף העולם בשוקולד 2022" },
+    { "type": "text", "id": "headline", "label": "Headline", "default": "השוקולד שלנו פותח עם אלוף העולם בשוקולד 2022" }
+  ],
+  "blocks": [
+    {
+      "type": "proof",
+      "name": "Proof fact",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "70% קקאו" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Credibility strip",
+      "blocks": [
+        { "type": "proof", "settings": { "text": "70% קקאו" } },
+        { "type": "proof", "settings": { "text": "0 גרם סוכר" } },
+        { "type": "proof", "settings": { "text": "פורמולה בוטנית" } },
+        { "type": "proof", "settings": { "text": "כשר פרווה" } },
+        { "type": "proof", "settings": { "text": "תוצרת ישראל" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

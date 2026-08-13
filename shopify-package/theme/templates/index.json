@@ -1,0 +1,45 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-video",
+      "settings": {
+        "video_desktop": "shopify://files/hero-desktop.mp4",
+        "video_mobile": "shopify://files/hero-mobile.mp4",
+        "title_line_1": "Chocolate",
+        "title_line_2": "made to do more",
+        "cta_text": "SHOP NOW",
+        "cta_link": "shopify://sections/product-grid"
+      }
+    },
+    "credibility": {
+      "type": "credibility-strip",
+      "settings": {
+        "aria_label": "אלוף העולם בשוקולד 2022",
+        "headline": "השוקולד שלנו פותח עם אלוף העולם בשוקולד 2022"
+      },
+      "blocks": {
+        "b1": { "type": "proof", "settings": { "text": "70% קקאו" } },
+        "b2": { "type": "proof", "settings": { "text": "0 גרם סוכר" } },
+        "b3": { "type": "proof", "settings": { "text": "פורמולה בוטנית" } },
+        "b4": { "type": "proof", "settings": { "text": "כשר פרווה" } },
+        "b5": { "type": "proof", "settings": { "text": "תוצרת ישראל" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4", "b5"]
+    },
+    "products": {
+      "type": "product-grid",
+      "settings": { "headline": "בחרו את הרגע שלכם.", "count": 3 }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": { "type": "qa", "settings": { "question": "כמה קפאין יש בקובייה?", "answer": "<p>ב-ENERGY כ-25 מ״ג קפאין טבעי לקובייה. RELAX ו-SLEEP ללא קפאין.</p>" } },
+        "q2": { "type": "qa", "settings": { "question": "מתי אוכלים את mood?", "answer": "<p>ENERGY לבוקר · RELAX לצהריים · SLEEP לערב. קובייה אחת ליום, בזמן שהכי מתאים.</p>" } },
+        "q3": { "type": "qa", "settings": { "question": "המוצרים כשרים?", "answer": "<p>כן — כשר פרווה, מתאים גם לטבעונים.</p>" } },
+        "q4": { "type": "qa", "settings": { "question": "כמה זמן לוקח למשלוח?", "answer": "<p>2-4 ימי עסקים לכל הארץ, במשלוח מבוקר.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4"]
+    }
+  },
+  "order": ["hero", "credibility", "products", "faq"]
+}

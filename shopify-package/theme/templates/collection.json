@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "banner": {
+      "type": "rich-text",
+      "blocks": {
+        "h": { "type": "heading", "settings": { "text": "{{ collection.title }}" } }
+      },
+      "block_order": ["h"],
+      "settings": { "padding_top": 40, "padding_bottom": 20 }
+    },
+    "grid": {
+      "type": "product-grid",
+      "settings": { "count": 12 }
+    }
+  },
+  "order": ["banner", "grid"]
+}

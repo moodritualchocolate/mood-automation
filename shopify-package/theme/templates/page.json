@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "rich-text",
+      "blocks": {
+        "h": { "type": "heading", "settings": { "text": "{{ page.title }}" } },
+        "body": { "type": "text", "settings": { "text": "{{ page.content }}" } }
+      },
+      "block_order": ["h", "body"]
+    }
+  },
+  "order": ["main"]
+}

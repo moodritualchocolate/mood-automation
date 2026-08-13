@@ -1,0 +1,32 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "MOOD Ritual",
+    "theme_version": "1.0.0",
+    "theme_author": "MOOD Ritual Chocolate",
+    "theme_documentation_url": "https://moodritualchocolate.github.io/mood-web/",
+    "theme_support_url": "mailto:hello@mood-chocolate.com"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      { "type": "image_picker", "id": "favicon", "label": "Favicon (32×32)" },
+      { "type": "color", "id": "ink_color", "label": "Ink (primary text)", "default": "#171512" },
+      { "type": "color", "id": "paper_color", "label": "Paper (background)", "default": "#fdfaf3" },
+      { "type": "color", "id": "gold_color", "label": "Gold accent", "default": "#b98d3d" }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      { "type": "paragraph", "content": "Fonts are hardcoded to DM Sans / Heebo / Assistant / Fraunces via Google Fonts. Edit theme.liquid to change." }
+    ]
+  },
+  {
+    "name": "Social",
+    "settings": [
+      { "type": "url", "id": "social_instagram", "label": "Instagram URL", "default": "https://instagram.com/mood_ritual_chocolate" },
+      { "type": "url", "id": "social_tiktok", "label": "TikTok URL", "default": "https://tiktok.com/@mood_ritual_chocolate" }
+    ]
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "rich-text",
+      "blocks": {
+        "h": { "type": "heading", "settings": { "text": "{{ article.title }}" } },
+        "body": { "type": "text", "settings": { "text": "{{ article.content }}" } }
+      },
+      "block_order": ["h", "body"],
+      "settings": { "max_width": 720, "padding_top": 40, "padding_bottom": 40 }
+    }
+  },
+  "order": ["main"]
+}

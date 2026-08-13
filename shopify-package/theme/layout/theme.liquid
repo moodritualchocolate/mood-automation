@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fbf7f1">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:wght@400;500;600;700&family=Heebo:wght@300;400;500;600;700;800&family=Assistant:wght@300;400;500;600;700;800&display=swap">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="icon" type="image/png" href="{{ 'favicon-32.png' | asset_url }}">
+  <link rel="apple-touch-icon" href="{{ 'apple-touch-icon.png' | asset_url }}">
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  <title>{{ page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}</title>
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  {%- render 'meta-tags' -%}
+
+  <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
+
+  {%- if settings.ink_color != blank -%}
+  <style>
+    :root {
+      --ink: {{ settings.ink_color }};
+      --paper: {{ settings.paper_color | default: '#fdfaf3' }};
+      --gold: {{ settings.gold_color | default: '#b98d3d' }};
+    }
+  </style>
+  {%- endif -%}
+
+  {{ content_for_header }}
+</head>
+<body class="template-{{ template.name | handle }}"{% if template.suffix %} data-page="{{ template.suffix }}"{% endif %}>
+  <a class="skip-link" href="#main">{{ 'accessibility.skip_to_content' | t }}</a>
+
+  {% sections 'header-group' %}
+
+  <main id="main" role="main">
+    {{ content_for_layout }}
+  </main>
+
+  {% sections 'footer-group' %}
+
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+</body>
+</html>

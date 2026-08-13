@@ -1,0 +1,78 @@
+<footer class="mfoot" role="contentinfo">
+  <div class="mfoot-in">
+    <div class="mfoot-brand">
+      <a class="brand" href="{{ routes.root_url }}"><img src="{{ 'logo-mood-400.png' | asset_url }}" alt="{{ shop.name }}" height="26"></a>
+      {%- if section.settings.tagline != blank -%}<p>{{ section.settings.tagline }}</p>{%- endif -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'menu' -%}
+        <div class="mfoot-col" {{ block.shopify_attributes }}>
+          <h4>{{ block.settings.title }}</h4>
+          <ul>
+            {%- for link in linklists[block.settings.menu].links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      {%- if block.type == 'newsletter' -%}
+        <div class="mfoot-col mfoot-news" {{ block.shopify_attributes }}>
+          <h4>{{ block.settings.title }}</h4>
+          <p>{{ block.settings.body }}</p>
+          {% form 'customer' %}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <input type="email" name="contact[email]" placeholder="{{ 'newsletter.email_placeholder' | t }}" required aria-label="{{ 'newsletter.email_placeholder' | t }}">
+            <button type="submit">{{ 'newsletter.submit' | t }}</button>
+          {% endform %}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="mfoot-strip">
+    <span>© {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
+    <span>{{ 'footer.made_in_israel' | t }}</span>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "tag": "section",
+  "class": "site-footer",
+  "settings": [
+    { "type": "text", "id": "tagline", "label": "Tagline under logo", "default": "Chocolate, made to do more." }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu column",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Column title", "default": "MOOD" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "הצטרפו לרשימה" },
+        { "type": "text", "id": "body", "label": "Body", "default": "עדכונים על פורמולות חדשות, ריטואלים ומבצעים." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        { "type": "menu", "settings": { "title": "MOOD" } },
+        { "type": "menu", "settings": { "title": "מוצרים" } },
+        { "type": "newsletter" }
+      ]
+    }
+  ],
+  "enabled_on": { "groups": ["footer"] }
+}
+{% endschema %}
