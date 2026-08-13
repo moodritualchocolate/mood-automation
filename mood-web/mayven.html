@@ -1994,6 +1994,74 @@ body { overflow-x: clip !important; max-width: none !important; }
 }
 /* WAVE20-END */
 
+
+/* WAVE21-START — hero typography refinement + SHOP NOW CTA */
+
+/* --- Desktop / default: reduce headline ~25-30% --- */
+.hero .hero-copy.hero-center .hero-title {
+  font-size: clamp(38px, 3.4vw, 58px) !important;
+  line-height: 0.96 !important;
+  letter-spacing: -0.025em !important;
+  font-weight: 750 !important;
+  max-width: 430px !important;
+  width: 100% !important;
+}
+
+/* Headline → CTA spacing */
+.hero .hero-copy.hero-center .hero-shop-cta {
+  margin-top: 22px !important;
+  min-width: 190px !important;
+  max-width: 210px !important;
+  width: auto !important;
+  height: 50px !important;
+  padding: 0 26px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  font-family: 'DM Sans', system-ui, -apple-system, "Segoe UI", sans-serif !important;
+}
+
+/* --- Tablet: deliberate intermediate scale --- */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .hero .hero-copy.hero-center .hero-title {
+    font-size: clamp(36px, 5vw, 46px) !important;
+    line-height: 0.97 !important;
+    letter-spacing: -0.025em !important;
+  }
+  .hero .hero-copy.hero-center .hero-shop-cta {
+    min-width: 200px !important;
+    max-width: 220px !important;
+    height: 52px !important;
+  }
+}
+
+/* --- Mobile: confident, still readable --- */
+@media (max-width: 767px) {
+  .hero .hero-copy.hero-center .hero-title {
+    font-size: clamp(38px, 11vw, 50px) !important;
+    line-height: 0.98 !important;
+    letter-spacing: -0.028em !important;
+    font-weight: 720 !important;
+    max-width: 100% !important;
+  }
+  .hero .hero-copy.hero-center {
+    gap: 22px !important;
+  }
+  .hero .hero-copy.hero-center .hero-shop-cta {
+    width: 70% !important;
+    max-width: 300px !important;
+    min-width: 0 !important;
+    height: 54px !important;
+    padding: 0 22px !important;
+    font-size: 15px !important;
+    letter-spacing: 0.08em !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* WAVE21-END */
+
 </style>
 </head>
 <body>
@@ -2032,7 +2100,7 @@ body { overflow-x: clip !important; max-width: none !important; }
           <span>Small piece.</span>
           <span>Real impact.</span>
         </h1>
-        <a class="hero-shop-cta" href="#formulas">בחרו את הרגע שלכם</a>
+        <a class="hero-shop-cta" href="#formulas">SHOP NOW</a>
       </div>
     </section>
 
