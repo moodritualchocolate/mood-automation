@@ -6689,6 +6689,36 @@ body[data-page="full-day"] #formula {
 }
 /* WAVE15-END */
 
+
+/* WAVE16-START */
+@media (max-width: 767px) {
+  #mood-purchase-selector .mood-ps-sticky {
+    padding: 0 !important;
+    left: 0 !important; right: 0 !important;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    background: transparent !important;
+    pointer-events: none !important;
+  }
+  #mood-purchase-selector .mood-ps-cta {
+    width: 85vw !important;
+    max-width: 335px !important;
+    margin: 0 auto !important;
+    height: 46px !important;
+    padding: 0 20px !important;
+    border-radius: 18px !important;
+    box-shadow: 0 6px 20px -10px rgba(41, 25, 10, 0.32) !important;
+    gap: 8px !important;
+    pointer-events: auto !important;
+  }
+  /* Kill the center divider entirely */
+  #mood-purchase-selector .mood-ps-cta-sep {
+    display: none !important;
+  }
+  /* Push label to the RTL start and price to the RTL end */
+  #mood-purchase-selector .mood-ps-cta-label { margin-inline-end: auto !important; }
+}
+/* WAVE16-END */
+
 </style>
 </head>
 <body data-page="energy">
