@@ -6753,40 +6753,140 @@ body[data-page="full-day"] header .brand-logo {
 
 
 
-/* WAVE23-START — header revert to compact + product-page consistency */
-header {
-  padding: 12px 4vw !important;
-  min-height: 60px !important;
+
+
+
+
+
+
+/* WAVE24-START — desktop header real responsive state (root-cause fix) */
+
+/* Neutralize the Wave 7ee blanket nav-hide. */
+header nav { display: none; }
+
+/* --------- MOBILE (<1024px): keep the approved mobile look --------- */
+@media (max-width: 1023.98px) {
+  header nav { display: none !important; }
+  /* mobile hamburger + account stay visible (existing markup) */
 }
-header .brand-logo,
-header > a.brand > img {
-  height: 24px !important;
-  width: auto !important;
-}
-header .hactions { gap: 8px !important; }
-header .hactions .ic {
-  width: 34px !important;
-  height: 34px !important;
-}
-header .hactions .ic svg {
-  width: 19px !important;
-  height: 19px !important;
-  stroke-width: 1.7 !important;
-}
-@media (max-width: 640px) {
-  header { padding: 10px 4vw !important; min-height: 54px !important; }
-  header .brand-logo,
-  header > a.brand > img { height: 22px !important; }
-}
+
+/* --------- DESKTOP (>=1024px): genuine desktop nav --------- */
 @media (min-width: 1024px) {
-  header { padding: 14px 4vw !important; min-height: 64px !important; }
+  /* Slim announcement bar (28–30px). */
+  .ann {
+    padding: 6px 4vw !important;
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+    letter-spacing: 0.02em !important;
+  }
+  .ann-in, .ann-rot, .ann-rot-msg { line-height: 1.35 !important; }
+
+  /* Header shell — thin, centered content up to 1280px. */
+  header {
+    padding: 0 max(32px, calc((100vw - 1280px) / 2)) !important;
+    min-height: 60px !important;
+    height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 40 !important;
+  }
+
+  /* Show the horizontal nav in the left slot. body[data-page] selectors on
+     product pages hide nav — match/exceed their specificity here. */
+  header nav,
+  body[data-page="energy"] header nav,
+  body[data-page="relax"] header nav,
+  body[data-page="sleep"] header nav,
+  body[data-page="full-day"] header nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 26px !important;
+    font-family: 'Heebo','Assistant',sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em !important;
+  }
+  header nav a {
+    color: var(--ink, #171512) !important;
+    text-decoration: none !important;
+    padding: 4px 0 !important;
+    transition: opacity 180ms ease, color 180ms ease !important;
+  }
+  header nav a:hover { opacity: 0.7 !important; }
+  header nav a.nav-fd { font-weight: 700 !important; }
+
+  /* Hide mobile hamburger + account (first .hactions cluster). */
+  header .hactions:not(.hactions-end) {
+    display: none !important;
+  }
+
+  /* Right cluster — clean, no circles, quiet icons. */
+  header .hactions.hactions-end {
+    gap: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  header .hactions.hactions-end .ic {
+    width: auto !important;
+    height: auto !important;
+    padding: 6px !important;
+    border: 0 !important;
+    outline: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--ink, #171512) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+  }
+  header .hactions.hactions-end button.ic { -webkit-appearance: none !important; appearance: none !important; }
+  header .hactions.hactions-end .ic:hover {
+    background: transparent !important;
+    opacity: 0.65 !important;
+  }
+  header .hactions.hactions-end .ic svg {
+    width: 20px !important;
+    height: 20px !important;
+    stroke-width: 1.6 !important;
+  }
+  header .hactions.hactions-end .bag b {
+    top: -4px !important;
+    left: -6px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+  }
+
+  /* Logo — compact, centered, no growth. */
+  header .brand {
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+  }
   header .brand-logo,
-  header > a.brand > img { height: 26px !important; }
-  header .hactions { gap: 12px !important; }
-  header .hactions .ic { width: 36px !important; height: 36px !important; }
-  header .hactions .ic svg { width: 20px !important; height: 20px !important; }
+  header > a.brand > img {
+    height: 24px !important;
+    width: auto !important;
+    object-fit: contain !important;
+  }
 }
-/* WAVE23-END */
+
+/* --------- LARGE DESKTOP (>=1440px): tiny breathing room only --------- */
+@media (min-width: 1440px) {
+  header {
+    padding: 0 max(48px, calc((100vw - 1360px) / 2)) !important;
+  }
+  header nav { gap: 30px !important; font-size: 14px !important; }
+}
+/* WAVE24-END */
 
 </style>
 </head>
