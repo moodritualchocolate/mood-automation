@@ -1807,6 +1807,24 @@ header .brand img {
   .club-faq{padding:42px 0}.club-faq-list{padding-inline:14px}.club-final{padding:54px 16px}
 }
 
+/* Restore the approved cinematic MOOD CLUB hero */
+.club-hero{min-height:520px;height:auto;display:grid;grid-template-columns:.68fr 1.32fr;gap:clamp(28px,5vw,76px);align-items:center;padding:46px max(22px,calc((100% - 1260px)/2)) 58px;background:#18324f;color:#fff;overflow:hidden}
+.club-hero::before,.club-hero::after{content:"";display:block;position:absolute;border-radius:50%;pointer-events:none}
+.club-hero::before{width:230px;height:230px;right:-110px;top:-90px;background:#ed9870}
+.club-hero::after{width:190px;height:190px;left:-90px;bottom:-90px;background:#a9b996}
+.club-hero-copy{order:1;position:relative;z-index:2;width:auto;height:auto;padding:0;display:flex;align-items:flex-start;justify-content:center;text-align:start;color:#fff;background:transparent}
+.club-hero-copy .club-kicker{color:#efbc57}.club-hero-copy h1{color:#fff;font-size:clamp(50px,5.6vw,76px);line-height:.92}.club-hero-copy p{margin:22px 0 0;color:#dce3ea;font-size:15px}.club-hero-copy .club-button{margin-top:25px;border:0;border-radius:999px;background:#fff;color:#17130f;box-shadow:none}
+.club-hero-reel{order:2;position:relative;z-index:2;height:auto;padding:9px;border:1px solid rgba(255,255,255,.24);border-radius:28px;background:#f4e9db;box-shadow:0 30px 85px rgba(5,15,27,.3)}
+.club-hero-reel::before{content:"MOOD CLUB";display:block;position:absolute;z-index:3;top:-17px;left:22px;padding:8px 14px;border-radius:999px;background:#efbc57;color:#17130f;font:800 10px/1 'DM Sans',sans-serif;letter-spacing:.12em}
+.club-hero-reel-frame{height:auto;border-radius:20px;aspect-ratio:864/496}.club-hero-reel .club-mood-orbit{inset:auto 22px -24px;transform:none;width:auto}.club-hero-reel .club-mood-chip{border:3px solid #f4e9db;background:#fff;box-shadow:none}
+
+@media(max-width:760px){
+  .club-hero{min-height:0;grid-template-columns:1fr;gap:22px;padding:31px 14px 48px;text-align:center}
+  .club-hero::before{width:130px;height:130px;right:-65px;top:-50px}.club-hero::after{width:110px;height:110px;left:-55px;bottom:-45px}
+  .club-hero-copy{order:1;align-items:center;text-align:center;padding:0}.club-hero-copy .club-kicker{margin-bottom:9px}.club-hero-copy h1{font-size:42px;line-height:.92}.club-hero-copy p{margin-top:12px;font-size:12px}.club-hero-copy .club-button{min-height:38px;margin-top:15px}
+  .club-hero-reel{order:2;height:auto;padding:6px;border-radius:21px}.club-hero-reel-frame{border-radius:15px}.club-hero-reel::before{top:-14px;left:13px;padding:7px 11px;font-size:8px}.club-hero-reel .club-video-toggle{left:10px;bottom:10px;width:36px;height:36px}.club-hero-reel .club-mood-orbit{inset:auto 8px -20px;transform:none;width:auto}.club-hero-reel .club-mood-chip{padding:8px 4px;border-width:3px;font-size:8px}
+}
+
 </style>
 </head>
 <body>
