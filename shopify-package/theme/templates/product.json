@@ -1,0 +1,7 @@
+{
+  "sections": {
+    "main": { "type": "main-product" },
+    "sticky": { "type": "sticky-buy" }
+  },
+  "order": ["main", "sticky"]
+}

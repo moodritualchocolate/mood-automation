@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "main": {
+      "type": "rich-text",
+      "blocks": {
+        "h": { "type": "heading", "settings": { "text": "תוצאות חיפוש" } }
+      },
+      "block_order": ["h"]
+    }
+  },
+  "order": ["main"]
+}

@@ -1,0 +1,32 @@
+<section class="faq faq-w5" id="faq">
+  {%- if section.settings.headline != blank -%}
+    <h2 style="text-align:center">{{ section.settings.headline }}</h2>
+  {%- endif -%}
+  {%- for block in section.blocks -%}
+    <details class="faq-item{% unless forloop.index0 < 4 %} faq-more{% endunless %}" {{ block.shopify_attributes }}>
+      <summary>{{ block.settings.question }}<span>+</span></summary>
+      <div class="faq-body">{{ block.settings.answer }}</div>
+    </details>
+  {%- endfor -%}
+</section>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "headline", "label": "Headline", "default": "שאלות שאולי נשארו." }
+  ],
+  "blocks": [
+    {
+      "type": "qa",
+      "name": "Q & A",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "כמה קפאין יש?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>ב-ENERGY כ-25 מ״ג קפאין טבעי לקובייה. RELAX ו-SLEEP ללא קפאין.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "FAQ" }]
+}
+{% endschema %}

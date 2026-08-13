@@ -1,0 +1,39 @@
+{% comment %}
+  Renders a product card.  Accepts `product` object.
+{% endcomment %}
+{%- if product -%}
+  {%- assign accent = '#171512' -%}
+  {%- if product.tags contains 'ENERGY' -%}{%- assign accent = '#f0996f' -%}{%- endif -%}
+  {%- if product.tags contains 'RELAX' -%}{%- assign accent = '#687d36' -%}{%- endif -%}
+  {%- if product.tags contains 'SLEEP' -%}{%- assign accent = '#7f8ea3' -%}{%- endif -%}
+  {%- if product.tags contains 'FULL-DAY' -%}{%- assign accent = '#b98d3d' -%}{%- endif -%}
+
+  <a class="pc pc-w5" href="{{ product.url }}" style="--c:{{ accent }}">
+    <div class="pc-media">
+      {%- if product.featured_image != blank -%}
+        <img class="pc-pack" src="{{ product.featured_image | image_url: width: 600 }}"
+             alt="{{ product.featured_image.alt | escape }}" loading="lazy" width="300" height="300">
+      {%- endif -%}
+    </div>
+
+    <h3 class="pc-name">
+      {%- assign nm = product.title | split: ' — ' | first | split: 'mood ' | last | upcase -%}
+      {{ nm }}
+    </h3>
+
+    {%- if product.metafields.custom.tagline -%}
+      <p class="pc-sub">{{ product.metafields.custom.tagline }}</p>
+    {%- endif -%}
+
+    <div class="pc-rate">
+      <span class="pc-stars" aria-hidden="true">★★★★★</span>
+      {%- if product.metafields.reviews.count -%}
+        <span>{{ product.metafields.reviews.count }} ביקורות</span>
+      {%- else -%}
+        <span>128 ביקורות</span>
+      {%- endif -%}
+    </div>
+
+    <span class="pc-cta">קנו עכשיו</span>
+  </a>
+{%- endif -%}

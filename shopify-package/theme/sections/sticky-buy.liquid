@@ -1,0 +1,22 @@
+<div class="sticky-buy" data-sticky-buy>
+  <a class="sticky-buy-cta" href="#mood-purchase-selector">
+    <span>{{ section.settings.label | default: 'קנו עכשיו' }}</span>
+  </a>
+</div>
+
+<style>
+  :root { --sticky-buy-height: 68px; }
+  body[data-page] { padding-bottom: calc(var(--sticky-buy-height) + env(safe-area-inset-bottom)); }
+</style>
+
+{% schema %}
+{
+  "name": "Sticky buy button",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Button label", "default": "קנו עכשיו" }
+  ],
+  "presets": [{ "name": "Sticky buy" }],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}

@@ -1,0 +1,40 @@
+<section class="hero">
+  {%- if section.settings.video_desktop != blank -%}
+    <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="auto"
+           disablepictureinpicture aria-hidden="true"
+           poster="{{ section.settings.poster | image_url }}">
+      {%- if section.settings.video_mobile != blank -%}
+        <source src="{{ section.settings.video_mobile }}" media="(max-width: 899px)" type="video/mp4">
+      {%- endif -%}
+      <source src="{{ section.settings.video_desktop }}" type="video/mp4">
+    </video>
+  {%- endif -%}
+
+  <div class="hero-copy hero-center">
+    <h1 class="hero-title" dir="ltr" lang="en">
+      <span>{{ section.settings.title_line_1 }}</span>
+      <span>{{ section.settings.title_line_2 }}</span>
+    </h1>
+    {%- if section.settings.cta_link != blank -%}
+      <a class="hero-shop-cta" href="{{ section.settings.cta_link }}">{{ section.settings.cta_text }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero video",
+  "tag": "section",
+  "class": "hero-section",
+  "settings": [
+    { "type": "url", "id": "video_desktop", "label": "Desktop video URL (MP4)" },
+    { "type": "url", "id": "video_mobile", "label": "Mobile video URL (MP4)" },
+    { "type": "image_picker", "id": "poster", "label": "Poster image" },
+    { "type": "text", "id": "title_line_1", "label": "Headline line 1", "default": "Chocolate" },
+    { "type": "text", "id": "title_line_2", "label": "Headline line 2", "default": "made to do more" },
+    { "type": "text", "id": "cta_text", "label": "CTA text", "default": "SHOP NOW" },
+    { "type": "url", "id": "cta_link", "label": "CTA link" }
+  ],
+  "presets": [{ "name": "Hero video" }]
+}
+{% endschema %}

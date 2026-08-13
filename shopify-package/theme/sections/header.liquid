@@ -1,0 +1,49 @@
+<header role="banner">
+  <nav aria-label="{{ 'sections.header.desktop_nav' | t }}">
+    {%- for link in linklists[section.settings.menu].links -%}
+      <a href="{{ link.url }}"{% if link.title contains 'היום המלא' %} class="nav-fd"{% endif %}>{{ link.title }}</a>
+    {%- endfor -%}
+  </nav>
+
+  <div class="hactions hactions-start">
+    <button class="ic" type="button" aria-label="{{ 'sections.header.menu' | t }}" data-menu-toggle>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a class="ic" href="{{ routes.account_url }}" aria-label="{{ 'customer.account' | t }}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 4-7 8-7s8 2.5 8 7"/></svg>
+    </a>
+  </div>
+
+  <a class="brand" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+    {%- if section.settings.logo != blank -%}
+      {{ section.settings.logo | image_url: width: 176 | image_tag: class: 'brand-logo', width: 88, height: 30, loading: 'eager', alt: shop.name }}
+    {%- else -%}
+      <img class="brand-logo" src="{{ 'logo-mood-400.png' | asset_url }}" alt="{{ shop.name }}" width="88" height="30" loading="eager">
+    {%- endif -%}
+  </a>
+
+  <div class="hactions hactions-end">
+    <button class="ic" type="button" aria-label="{{ 'sections.header.search' | t }}" data-search-toggle>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    </button>
+    <a class="ic bag" href="{{ routes.cart_url }}" aria-label="{{ 'sections.header.cart' | t }}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 8h11l-1 12h-9L6.5 8Z"/><path d="M9.2 8a2.8 2.8 0 0 1 5.6 0"/></svg>
+      <b data-cart-count>{{ cart.item_count }}</b>
+    </a>
+  </div>
+</header>
+
+{%- comment -%} Mobile drawer & search modal are rendered by theme.js on data-menu-toggle/data-search-toggle click {%- endcomment -%}
+
+{% schema %}
+{
+  "name": "Header",
+  "tag": "section",
+  "class": "site-header",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo image (SVG or PNG)" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" }
+  ],
+  "enabled_on": { "groups": ["header"] }
+}
+{% endschema %}

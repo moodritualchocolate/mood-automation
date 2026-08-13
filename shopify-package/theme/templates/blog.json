@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "rich-text",
+      "blocks": {
+        "h": { "type": "heading", "settings": { "text": "בלוג mood" } },
+        "intro": { "type": "text", "settings": { "text": "<p>מחשבות, ריטואלים ושיחות עם הצוות שמאחורי mood.</p>" } }
+      },
+      "block_order": ["h", "intro"]
+    }
+  },
+  "order": ["main"]
+}

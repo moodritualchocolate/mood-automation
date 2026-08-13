@@ -1,0 +1,44 @@
+{%- if section.settings.enable -%}
+<div class="ann" role="region" aria-label="{{ 'announcement.aria_label' | t }}">
+  <div class="ann-in">
+    <div class="ann-rot" aria-live="polite" aria-atomic="true">
+      {%- for block in section.blocks -%}
+        <span class="ann-rot-msg{% if forloop.first %} on{% endif %}">
+          {{ block.settings.message }}
+        </span>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "tag": "section",
+  "class": "ann-section",
+  "settings": [
+    { "type": "checkbox", "id": "enable", "label": "Enable announcement bar", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Announcement",
+      "settings": [
+        { "type": "richtext", "id": "message", "label": "Message", "default": "<p>משלוחים מהירים לכל הארץ · <b>משלוח בקירור עד הבית</b></p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar",
+      "blocks": [
+        { "type": "message", "settings": { "message": "<p>משלוחים מהירים לכל הארץ · <b>משלוח בקירור עד הבית</b></p>" } },
+        { "type": "message", "settings": { "message": "<p><b>אלפי לקוחות מרוצים</b> · דירוג ממוצע 4.9 ★</p>" } },
+        { "type": "message", "settings": { "message": "<p>משלוח חינם בהזמנה מעל <b>₪249</b></p>" } }
+      ]
+    }
+  ],
+  "enabled_on": { "groups": ["header"] }
+}
+{% endschema %}

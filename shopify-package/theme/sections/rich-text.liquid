@@ -1,0 +1,30 @@
+<section class="rich-text" style="padding:{{ section.settings.padding_top }}px 4vw {{ section.settings.padding_bottom }}px;text-align:center;max-width:{{ section.settings.max_width }}px;margin:0 auto">
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when 'heading' -%}
+        <h2 style="font-family:'Heebo',sans-serif;font-weight:700;font-size:clamp(24px,3vw,42px);margin:0 0 16px">{{ block.settings.text }}</h2>
+      {%- when 'text' -%}
+        <div style="font-size:16px;line-height:1.6">{{ block.settings.text }}</div>
+      {%- when 'button' -%}
+        <p><a class="pill pill-cta" href="{{ block.settings.link }}" style="display:inline-block;margin-top:16px">{{ block.settings.label }}</a></p>
+    {%- endcase -%}
+  {%- endfor -%}
+</section>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "tag": "section",
+  "settings": [
+    { "type": "range", "id": "padding_top", "min": 0, "max": 120, "step": 4, "default": 40, "label": "Padding top" },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 120, "step": 4, "default": 40, "label": "Padding bottom" },
+    { "type": "range", "id": "max_width", "min": 480, "max": 1280, "step": 20, "default": 780, "label": "Max width" }
+  ],
+  "blocks": [
+    { "type": "heading", "name": "Heading", "settings": [ { "type": "text", "id": "text", "label": "Text", "default": "כותרת" } ] },
+    { "type": "text", "name": "Text", "settings": [ { "type": "richtext", "id": "text", "label": "Text", "default": "<p>טקסט...</p>" } ] },
+    { "type": "button", "name": "Button", "settings": [ { "type": "text", "id": "label", "label": "Label", "default": "לחצו כאן" }, { "type": "url", "id": "link", "label": "Link" } ] }
+  ],
+  "presets": [{ "name": "Rich text" }]
+}
+{% endschema %}

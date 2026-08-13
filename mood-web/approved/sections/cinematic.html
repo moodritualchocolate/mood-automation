@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MOOD — שוקולד, רונן ווידאו</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1b1713;
+      --muted: #746b62;
+      --cream: #f7f3ed;
+      --warm: #eee4d8;
+      --orange: #e8812c;
+      --line: rgba(68, 46, 29, .12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      padding: 48px 18px 60px;
+      background: #f3efe9;
+      color: var(--ink);
+      font-family: Heebo, Arial, sans-serif;
+    }
+
+    .stage { width: min(1120px, 100%); margin: 0 auto; }
+
+    .mosaic {
+      direction: ltr;
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        "chocolate story"
+        "message video";
+      gap: 10px;
+      aspect-ratio: 1 / 1;
+      isolation: isolate;
+    }
+
+    .mosaic::after {
+      content: "";
+      position: absolute;
+      z-index: 8;
+      top: 50%;
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      border: 3px solid #e9e5de;
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 0 0 rgba(232, 129, 44, .36);
+      transform: translate(-50%, -50%);
+      animation: junctionPulse 2.8s ease-out infinite;
+      pointer-events: none;
+    }
+
+    .tile {
+      direction: rtl;
+      position: relative;
+      margin: 0;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      border-radius: 30px;
+      background: #fff;
+      box-shadow: 0 16px 42px rgba(58, 41, 29, .07);
+      opacity: 0;
+      transform: translateY(18px) scale(.985);
+      animation: tileReveal .72s cubic-bezier(.22, .8, .28, 1) forwards;
+      transition: transform .35s ease, box-shadow .35s ease;
+    }
+    .tile:nth-child(2) { animation-delay: .08s; }
+    .tile:nth-child(3) { animation-delay: .16s; }
+    .tile:nth-child(4) { animation-delay: .24s; }
+    .tile:hover { transform: translateY(-4px); box-shadow: 0 22px 54px rgba(58, 41, 29, .11); }
+
+    .chocolate { grid-area: chocolate; background: #eae2da; }
+    .chocolate-photo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center top;
+      filter: saturate(.92) contrast(1.02);
+      transform: scale(1.025);
+      animation: chocolateBreath 7s ease-in-out infinite alternate;
+    }
+    .chocolate::before {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      top: -30%;
+      bottom: -30%;
+      left: -42%;
+      width: 24%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .33), transparent);
+      transform: rotate(13deg);
+      animation: chocolateGlint 5.8s ease-in-out infinite 1.2s;
+      pointer-events: none;
+    }
+    .chocolate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 63%, rgba(34, 21, 14, .14));
+      pointer-events: none;
+    }
+    .image-chip {
+      position: absolute;
+      z-index: 2;
+      right: 24px;
+      bottom: 22px;
+      padding: 9px 14px;
+      border: 1px solid rgba(255, 255, 255, .55);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .82);
+      backdrop-filter: blur(10px);
+      color: #33251d;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .story {
+      grid-area: story;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(34px, 4.7vw, 74px);
+      background: var(--cream);
+    }
+    .eyebrow {
+      margin-bottom: 18px;
+      color: #8a6a4d;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .14em;
+    }
+    h2, p { margin-top: 0; }
+    .story h2 {
+      margin-bottom: 18px;
+      font-size: clamp(33px, 4vw, 58px);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+    .story-copy {
+      max-width: 430px;
+      margin-bottom: 27px;
+      color: var(--muted);
+      font-size: clamp(13px, 1.25vw, 17px);
+      line-height: 1.65;
+    }
+    .expert {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+    }
+    .expert img {
+      width: 58px;
+      height: 58px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center 22%;
+    }
+    .expert strong { display: block; font-size: 14px; }
+    .expert span { display: block; margin-top: 3px; color: #9a764f; font-size: 10px; }
+    .expert-quote {
+      margin: 12px 0 0;
+      color: #6e5a48;
+      font-size: 12px;
+      font-style: italic;
+      line-height: 1.45;
+    }
+
+    .message {
+      grid-area: message;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(34px, 4.7vw, 72px);
+      background: #fff;
+    }
+    .message h3 {
+      max-width: 430px;
+      margin: 0 0 24px;
+      font-size: clamp(34px, 4.25vw, 62px);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+    .message h3 span { color: var(--orange); }
+    .ritual-line {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: #776e65;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .ritual-line i { width: 24px; height: 1px; background: #cbb8a4; }
+    .moods {
+      display: flex;
+      gap: 8px;
+      margin-top: 28px;
+      direction: ltr;
+    }
+    .moods button {
+      min-width: 70px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: #5c534b;
+      text-align: center;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: color .22s ease, border-color .22s ease, background .22s ease, transform .22s ease;
+    }
+    .moods button:hover { transform: translateY(-2px); }
+    .moods button[aria-pressed="true"] { border-color: var(--active-accent, var(--orange)); background: var(--active-accent, var(--orange)); color: #fff; }
+
+    .video-tile { grid-area: video; background: #d8c8b3; }
+    .video-tile video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+    }
+    .video-tile::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(23, 15, 10, .02) 45%, rgba(23, 15, 10, .52));
+      pointer-events: none;
+    }
+    .video-ui {
+      position: absolute;
+      z-index: 2;
+      right: 25px;
+      left: 25px;
+      bottom: 23px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      color: #fff;
+    }
+    .video-ui strong { display: block; font-size: 17px; }
+    .video-ui small { display: block; margin-top: 2px; font-size: 10px; opacity: .85; }
+    .play {
+      width: 56px;
+      height: 56px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .74);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .92);
+      color: #40291c;
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .play:hover { transform: scale(1.045); background: #fff; }
+    .play svg { width: 17px; height: 17px; margin-left: 2px; fill: currentColor; }
+    .video-tile .mood-wash {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      background: color-mix(in srgb, var(--active-accent, var(--orange)) 16%, transparent);
+      mix-blend-mode: soft-light;
+      transition: background .45s ease;
+      pointer-events: none;
+    }
+    .mood-indicator {
+      position: absolute;
+      z-index: 3;
+      top: 21px;
+      left: 21px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border: 1px solid rgba(255,255,255,.58);
+      border-radius: 999px;
+      background: rgba(27, 18, 12, .22);
+      color: #fff;
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      backdrop-filter: blur(10px);
+    }
+    .mood-indicator::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--active-accent, var(--orange)); box-shadow: 0 0 0 4px rgba(255,255,255,.12); }
+
+    @keyframes tileReveal { to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes chocolateBreath { from { transform: scale(1.025) translate3d(0, 0, 0); } to { transform: scale(1.065) translate3d(-4px, -5px, 0); } }
+    @keyframes chocolateGlint { 0%, 58% { left: -42%; opacity: 0; } 68% { opacity: 1; } 84%, 100% { left: 122%; opacity: 0; } }
+    @keyframes junctionPulse { 0% { box-shadow: 0 0 0 0 rgba(232, 129, 44, .38); } 70%, 100% { box-shadow: 0 0 0 16px rgba(232, 129, 44, 0); } }
+
+    @media (max-width: 620px) {
+      body { padding: 12px 8px 28px; }
+      .mosaic { gap: 5px; }
+      .mosaic::after { width: 8px; height: 8px; border-width: 2px; }
+      .tile { border-radius: 16px; box-shadow: none; }
+      .image-chip { right: 10px; bottom: 9px; padding: 5px 8px; font-size: 7px; }
+      .story, .message { padding: 15px 13px; }
+      .eyebrow { margin-bottom: 8px; font-size: 6px; }
+      .story h2 { margin-bottom: 8px; font-size: clamp(18px, 5.7vw, 24px); }
+      .story-copy { margin-bottom: 9px; font-size: 8px; line-height: 1.45; }
+      .expert { gap: 7px; padding-top: 8px; }
+      .expert img { width: 29px; height: 29px; }
+      .expert strong { font-size: 8px; }
+      .expert span { margin-top: 0; font-size: 6px; }
+      .expert-quote { display: none; }
+      .message h3 { margin-bottom: 10px; font-size: clamp(19px, 6.2vw, 27px); }
+      .ritual-line { gap: 5px; font-size: 7px; }
+      .ritual-line i { width: 11px; }
+      .moods { gap: 3px; margin-top: 11px; }
+      .moods button { min-width: 0; flex: 1; padding: 4px 2px; font-size: 5.5px; }
+      .video-ui { right: 10px; left: 10px; bottom: 9px; gap: 7px; }
+      .video-ui strong { font-size: 9px; }
+      .video-ui small { font-size: 6px; }
+      .play { width: 30px; height: 30px; }
+      .play svg { width: 10px; height: 10px; }
+      .mood-indicator { top: 8px; left: 8px; gap: 4px; padding: 4px 6px; font-size: 5px; }
+      .mood-indicator::before { width: 4px; height: 4px; box-shadow: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <section class="mosaic" aria-label="הסיפור של השוקולד של MOOD">
+      <figure class="tile chocolate">
+        <img class="chocolate-photo" src="../assets/mood-harmonie-reference.jpg" alt="השוקולד הנכון של MOOD — Harmonie">
+        <figcaption class="image-chip">השוקולד של MOOD</figcaption>
+      </figure>
+
+      <article class="tile story">
+        <div class="eyebrow">DEVELOPED WITH A MASTER CHOCOLATIER</div>
+        <h2>פורמולה שמרגישים.<br>טעם שרוצים שוב.</h2>
+        <p class="story-copy">את השוקולד של MOOD פיתחנו עם רונן אפללו, כדי שכל ביס ירגיש קודם כול כמו שוקולד פרימיום — ורק אחר כך כמו ריטואל שעושה טוב.</p>
+        <div class="expert">
+          <img src="../assets/ronen-real.jpg" alt="רונן אפללו">
+          <div>
+            <strong>רונן אפללו · שוקולטייר</strong>
+            <span>זוכה פרסים בינלאומיים</span>
+            <p class="expert-quote">“רצינו ליצור שוקולד שתרצו לחזור אליו בכל יום.”</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="tile message">
+        <div class="eyebrow">ONE BITE. EVERY DAY.</div>
+        <h3>לא צריך לזכור.<br><span>רק לפתוח וליהנות.</span></h3>
+        <div class="ritual-line"><i></i> ביס יומי קטן, רגע שמרגישים</div>
+        <div class="moods" aria-label="בחירת מצב רוח">
+          <button type="button" data-mood="energy" aria-pressed="true">ENERGY</button>
+          <button type="button" data-mood="relax" aria-pressed="false">RELAX</button>
+          <button type="button" data-mood="sleep" aria-pressed="false">SLEEP</button>
+        </div>
+      </article>
+
+      <figure class="tile video-tile">
+        <video id="storyVideo" autoplay muted loop playsinline preload="metadata" poster="../assets/mood-video-poster.jpg">
+          <source src="../assets/mood-video-1.mp4" type="video/mp4">
+        </video>
+        <div class="mood-wash"></div>
+        <div class="mood-indicator" id="moodIndicator">ENERGY RITUAL</div>
+        <figcaption class="video-ui">
+          <div><strong id="videoTitle">להרגיש את האנרגיה בפעולה</strong><small>הריטואל זז יחד עם מצב הרוח שבחרתם</small></div>
+          <button class="play" type="button" aria-label="הפעלה או עצירה של הסרטון">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+        </figcaption>
+      </figure>
+    </section>
+  </main>
+  <script>
+    const video = document.querySelector('#storyVideo');
+    const button = document.querySelector('.play');
+    const mosaic = document.querySelector('.mosaic');
+    const videoTitle = document.querySelector('#videoTitle');
+    const moodIndicator = document.querySelector('#moodIndicator');
+    const moodButtons = [...document.querySelectorAll('[data-mood]')];
+    const moodData = {
+      energy: { accent: '#e8812c', title: 'להרגיש את האנרגיה בפעולה', label: 'ENERGY RITUAL', src: '../assets/mood-video-1.mp4' },
+      relax: { accent: '#71805c', title: 'להכניס רגע של רוגע ליום', label: 'RELAX RITUAL', src: '../assets/mood-video-2.mp4' },
+      sleep: { accent: '#4c74a6', title: 'לסיים את היום בקצב אחר', label: 'SLEEP RITUAL', src: '../assets/mood-video-3.mp4' }
+    };
+
+    button.addEventListener('click', () => video.paused ? video.play() : video.pause());
+    moodButtons.forEach(moodButton => moodButton.addEventListener('click', () => {
+      const mood = moodButton.dataset.mood;
+      const next = moodData[mood];
+      moodButtons.forEach(item => item.setAttribute('aria-pressed', String(item === moodButton)));
+      mosaic.style.setProperty('--active-accent', next.accent);
+      videoTitle.textContent = next.title;
+      moodIndicator.textContent = next.label;
+      if (!video.currentSrc.endsWith(next.src.split('/').pop())) {
+        video.src = next.src;
+        video.load();
+        video.play().catch(() => {});
+      }
+    }));
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => entry.isIntersecting ? video.play().catch(() => {}) : video.pause());
+    }, { threshold: .35 });
+    observer.observe(document.querySelector('.video-tile'));
+  </script>
+</body>
+</html>

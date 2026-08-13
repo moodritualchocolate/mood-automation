@@ -29,3 +29,20 @@ yarn-error.log*
 
 # vercel
 .vercel
+mood-web/__pycache__/
+
+# Diagnostic reports (published as Claude artifacts, no need to track)
+/vr-report.html
+/audit-report.html
+/final-state.html
+/card-ab.html
+/audit-package.html
+/MOOD-audit-package.html
+/audit-report-v2.html
+/final-p1-vr.html
+/snapshot-current.html
+/formula-ab.html
+/blue-photo-mockup.html
+/ronen-ab.html
+/final-snapshot.html
+/MOOD-final-snapshot.html

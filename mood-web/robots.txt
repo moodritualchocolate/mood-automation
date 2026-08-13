@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /store/
+
+Sitemap: https://moodritualchocolate.github.io/mood-automation/sitemap.xml

@@ -1,0 +1,44 @@
+{%- assign product = all_products[section.settings.product] | default: product -%}
+{%- if product == blank -%}{%- assign product = collections.all.products.first -%}{%- endif -%}
+
+<section id="mood-purchase-selector" class="section mood-ps-section">
+  <div class="mood-ps-in">
+    <h2 class="mood-ps-h">בחרו את החבילה שלכם</h2>
+
+    {%- if product -%}
+    {% form 'product', product, id: 'mood-ps-form' %}
+      <div class="mood-ps-cards" role="radiogroup" aria-label="בחרו גודל חבילה">
+        {%- for variant in product.variants -%}
+          {%- assign per_unit = variant.price | divided_by: variant.title | plus: 0 -%}
+          <label class="mood-ps-card{% if forloop.first %} is-active{% endif %}" data-variant-id="{{ variant.id }}">
+            <input type="radio" name="id" value="{{ variant.id }}"{% if forloop.first %} checked{% endif %}>
+            <span class="mood-ps-check" aria-hidden="true"></span>
+            <span class="mood-ps-title">{{ variant.title }}</span>
+            <span class="mood-ps-price">{{ variant.price | money_without_trailing_zeros }}</span>
+            {%- if variant.compare_at_price > variant.price -%}
+              <span class="mood-ps-save">חוסכים {{ variant.compare_at_price | minus: variant.price | money_without_trailing_zeros }}</span>
+            {%- endif -%}
+          </label>
+        {%- endfor -%}
+      </div>
+
+      <button type="submit" class="mood-ps-buy" data-add-to-cart>
+        <span data-label>הוסיפו לסל · <b data-price>{{ product.selected_or_first_available_variant.price | money_without_trailing_zeros }}</b></span>
+      </button>
+    {% endform %}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Purchase selector",
+  "tag": "section",
+  "class": "purchase-selector-section",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product (defaults to current)" }
+  ],
+  "presets": [{ "name": "Purchase selector" }],
+  "enabled_on": { "templates": ["product", "index", "page"] }
+}
+{% endschema %}

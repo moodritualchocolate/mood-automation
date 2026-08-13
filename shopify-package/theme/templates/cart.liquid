@@ -1,0 +1,36 @@
+<section class="cart-section" style="max-width:900px;margin:40px auto;padding:0 4vw">
+  <h1 style="font-family:'Heebo',sans-serif;font-weight:700;font-size:32px;margin:0 0 24px">הסל שלכם</h1>
+
+  {%- if cart.item_count == 0 -%}
+    <p>הסל ריק. <a href="{{ routes.root_url }}" style="color:var(--gold);text-decoration:underline">חזרה לחנות</a>.</p>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post">
+      <ul style="list-style:none;padding:0;margin:0 0 24px">
+        {%- for item in cart.items -%}
+          <li style="display:flex;gap:16px;padding:16px 0;border-bottom:1px solid #e6ddd0">
+            <img src="{{ item.image | image_url: width: 120 }}" alt="{{ item.title }}" width="80" height="80" style="border-radius:12px;object-fit:cover">
+            <div style="flex:1">
+              <a href="{{ item.url }}" style="font-weight:700;color:var(--ink)">{{ item.product.title }}</a>
+              <div style="color:#8b6a2f;font-size:13px">{{ item.variant.title }}</div>
+              <div>
+                <label>
+                  כמות
+                  <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" style="width:60px;margin-inline-start:8px">
+                </label>
+              </div>
+            </div>
+            <div style="font-weight:700">{{ item.final_line_price | money_without_trailing_zeros }}</div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-top:1px solid #e6ddd0">
+        <strong>סה״כ</strong>
+        <strong>{{ cart.total_price | money_without_trailing_zeros }}</strong>
+      </div>
+
+      <button type="submit" name="update" style="margin-inline-end:8px;padding:12px 24px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;font-weight:700;cursor:pointer">עדכון סל</button>
+      <button type="submit" name="checkout" style="padding:14px 32px;border-radius:999px;border:none;background:var(--ink);color:#fff;font-weight:800;cursor:pointer">מעבר לתשלום</button>
+    </form>
+  {%- endif -%}
+</section>

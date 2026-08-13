@@ -1,0 +1,25 @@
+<section class="main-product">
+  <div class="product-hero">
+    {%- if product.featured_image != blank -%}
+      <img class="product-image" src="{{ product.featured_image | image_url: width: 1200 }}"
+           alt="{{ product.featured_image.alt | escape }}" width="1200" height="1200">
+    {%- endif -%}
+    <div class="product-copy">
+      <h1 class="product-title">{{ product.title }}</h1>
+      {%- if product.metafields.custom.tagline -%}
+        <p class="product-tagline">{{ product.metafields.custom.tagline }}</p>
+      {%- endif -%}
+      <div class="product-desc">{{ product.description }}</div>
+    </div>
+  </div>
+
+  {% section 'purchase-selector' %}
+</section>
+
+{% schema %}
+{
+  "name": "Product",
+  "tag": "section",
+  "settings": []
+}
+{% endschema %}
