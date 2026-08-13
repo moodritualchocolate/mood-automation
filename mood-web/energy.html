@@ -5441,6 +5441,496 @@ body[data-page="full-day"] .mtimes .mtimes-in {
 
 /* WAVE10-CSS-END */
 
+
+/* WAVE10-CSS-START — scoped to #mood-purchase-selector, no leakage */
+#mood-purchase-selector, #mood-purchase-selector *,
+#mood-purchase-selector *::before, #mood-purchase-selector *::after {
+  box-sizing: border-box;
+}
+#mood-purchase-selector {
+  direction: rtl;
+  font-family: 'Heebo','Assistant',sans-serif;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 4px 14px 0;
+  color: #171512;
+  text-align: right;
+  scroll-margin-top: 96px;
+  --mood-ps-accent: #f0a37e;
+  --mood-ps-accent-dark: #d9865e;
+  --mood-ps-cta-ink: #171512;
+  --mood-ps-cream: #fbf7ef;
+  --mood-ps-cream-2: #f6efe3;
+  --mood-ps-line: #ece3d0;
+  --mood-ps-ink: #171512;
+  --mood-ps-muted: #7a6a5c;
+  --mood-ps-sticky-h: 68px; /* 50 CTA + 8+8 pad + ~2 shadow */
+}
+
+/* Compact reassurance row, target ~46px */
+#mood-purchase-selector .mood-ps-trust {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: #f4ecdd;
+  border: 1px solid #ebe0c8;
+  border-radius: 12px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 12.5px; font-weight: 500;
+  color: #3d2c22;
+  margin: 0 auto 10px;
+  line-height: 1.35;
+}
+#mood-purchase-selector .mood-ps-trust svg { flex: none; color: #6f5a3a; }
+#mood-purchase-selector .mood-ps-trust b { font-weight: 700; }
+
+#mood-purchase-selector .mood-ps-cards {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+/* Compact selection ROW: [radio] [copy 1fr] [pouch] [price fixed]
+   Fixed pouch + price columns so the inline "₪N לחודש · חוסכים ₪N" line
+   under the price never pushes the copy column narrow enough to wrap. */
+#mood-purchase-selector .mood-ps-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 88px 108px;
+  align-items: center;
+  column-gap: 8px;
+  padding: 9px 12px;
+  background: var(--mood-ps-cream);
+  border: 1px solid var(--mood-ps-line);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease;
+  min-height: 100px;
+}
+@media (max-width: 380px) {
+  #mood-purchase-selector .mood-ps-card {
+    grid-template-columns: 20px minmax(0, 1fr) 80px 100px;
+    column-gap: 6px;
+    padding: 9px 10px;
+  }
+}
+#mood-purchase-selector .mood-ps-card:hover { border-color: #d9cfb9; }
+#mood-purchase-selector .mood-ps-card input[type="radio"] {
+  position: absolute; opacity: 0; pointer-events: none; margin: 0;
+}
+
+/* Selection dot: small, thin, tinted */
+#mood-purchase-selector .mood-ps-radio {
+  display: inline-block; width: 18px; height: 18px;
+  border: 1.5px solid #c5b99f;
+  border-radius: 50%;
+  background: #fff;
+  position: relative;
+  flex: none;
+  transition: border-color .18s ease, background .18s ease;
+}
+#mood-purchase-selector .mood-ps-radio-dot {
+  position: absolute; inset: 3px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background .18s ease;
+}
+#mood-purchase-selector .mood-ps-card.selected .mood-ps-radio {
+  border-color: var(--mood-ps-accent);
+}
+#mood-purchase-selector .mood-ps-card.selected .mood-ps-radio-dot {
+  background: var(--mood-ps-accent);
+}
+
+#mood-purchase-selector .mood-ps-copy {
+  display: flex; flex-direction: column; gap: 3px; min-width: 0;
+  text-align: start;
+}
+#mood-purchase-selector .mood-ps-heading {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+#mood-purchase-selector .mood-ps-title {
+  font-family: 'Heebo',sans-serif;
+  font-size: 18px; font-weight: 700; margin: 0;
+  color: var(--mood-ps-ink); letter-spacing: -.2px; line-height: 1.1;
+}
+#mood-purchase-selector .mood-ps-sub {
+  font-family: 'Heebo',sans-serif;
+  font-size: 12.5px; font-weight: 500;
+  color: var(--mood-ps-muted); line-height: 1.3;
+}
+/* Full-day: stack the 3 SKU lines vertically */
+body[data-page="full-day"] #mood-purchase-selector .mood-ps-sub {
+  display: flex; flex-direction: column; gap: 1px; font-size: 11.5px; letter-spacing: -.1px;
+}
+body[data-page="full-day"] #mood-purchase-selector .mood-ps-sub .fd-line { white-space: nowrap; }
+
+/* Chips - small and quiet. הכי נמכר = warm cream; הכי משתלם = pale sage */
+/* Both chips use identical geometry — only colour + text change. */
+#mood-purchase-selector .mood-ps-chip {
+  display: inline-flex; align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0; white-space: nowrap; line-height: 1;
+}
+#mood-purchase-selector .mood-ps-chip-best  { background: #f0e6d2; color: #6b4a25; }
+#mood-purchase-selector .mood-ps-chip-value { background: #dfe8d2; color: #3b5027; }
+
+#mood-purchase-selector .mood-ps-media {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 72px;
+}
+#mood-purchase-selector .mood-ps-pouch {
+  display: block;
+  width: auto; height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(41, 25, 10, 0.12));
+}
+#mood-purchase-selector .mood-ps-pouch.pouch-1x { width: clamp(52px, 15vw, 60px); }
+#mood-purchase-selector .mood-ps-pouch.pouch-2x { width: clamp(68px, 20vw, 78px); }
+#mood-purchase-selector .mood-ps-pouch.pouch-3x { width: clamp(80px, 24vw, 92px); }
+/* Full-day fallback: crop the studio jpg to a compact tile */
+body[data-page="full-day"] #mood-purchase-selector .mood-ps-pouch {
+  width: 78px; height: 76px; object-fit: cover; border-radius: 6px;
+  filter: drop-shadow(0 4px 8px rgba(41, 25, 10, 0.10));
+}
+
+/* Price stack — sits at RTL end (physical left) */
+#mood-purchase-selector .mood-ps-price-stack {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 2px; text-align: end; min-width: 0;
+}
+#mood-purchase-selector .mood-ps-price {
+  font-family: 'Fraunces', serif;
+  font-size: 24px; font-weight: 500;
+  color: var(--mood-ps-ink); letter-spacing: -.5px; line-height: 1;
+}
+#mood-purchase-selector .mood-ps-monthly {
+  font-family: 'Heebo',sans-serif;
+  font-size: 11px; font-weight: 500;
+  color: var(--mood-ps-muted);
+  white-space: nowrap;
+  letter-spacing: -0.1px;
+}
+/* Saving is inline text (not a pill) — subtle muted-green emphasis */
+#mood-purchase-selector .mood-ps-monthly .mood-ps-save {
+  color: #3b5027; font-weight: 700;
+  padding: 0; background: transparent; border-radius: 0;
+  white-space: nowrap;
+}
+
+/* Selected — 1.25px SKU-tinted border + very subtle tonal bg. No heavy outline. */
+#mood-purchase-selector .mood-ps-card.selected {
+  border: 1.25px solid var(--mood-ps-accent);
+  background: var(--mood-ps-cream);
+  padding: 8.75px 11.75px;
+  box-shadow: 0 4px 16px -12px rgba(41, 25, 10, 0.25);
+}
+
+/* Sticky CTA — 50px tall on mobile, SKU-accent color, RTL-split content */
+#mood-purchase-selector .mood-ps-sticky {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 120;
+  padding: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
+  background: transparent;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .22s ease, transform .22s ease;
+}
+#mood-purchase-selector .mood-ps-sticky[data-armed="true"] {
+  opacity: 1; transform: translateY(0);
+}
+#mood-purchase-selector .mood-ps-cta {
+  pointer-events: auto;
+  display: flex; align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%; max-width: 620px;
+  margin: 0 auto;
+  height: 50px;
+  padding: 0 18px 0 20px;
+  background: var(--mood-ps-accent);
+  color: var(--mood-ps-cta-ink);
+  border: none;
+  border-radius: 16px;
+  font-family: 'Heebo',sans-serif;
+  font-size: 15px; font-weight: 800;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px -12px rgba(41, 25, 10, 0.38);
+  transition: transform .12s ease, background .18s ease, height .18s ease;
+}
+#mood-purchase-selector .mood-ps-cta:hover { background: var(--mood-ps-accent-dark); }
+#mood-purchase-selector .mood-ps-cta:active { transform: translateY(1px); }
+#mood-purchase-selector .mood-ps-cta-label {
+  font-family: 'Heebo',sans-serif;
+  font-weight: 800; font-size: 15px;
+}
+#mood-purchase-selector .mood-ps-cta-sep {
+  flex: 1; height: 1px; align-self: center;
+  background: currentColor; opacity: .18; margin: 0 6px;
+}
+#mood-purchase-selector .mood-ps-cta-price {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: -.3px;
+}
+/* Deep-scroll compressed state — smaller height while user reads
+   informational content below the widget */
+#mood-purchase-selector .mood-ps-sticky[data-compact="true"] .mood-ps-cta {
+  height: 46px;
+  font-size: 14.5px;
+  box-shadow: 0 6px 16px -12px rgba(41, 25, 10, 0.28);
+}
+
+/* Desktop >=768: compact — cards keep vertical stack (matches gallery beside),
+   pouches slightly larger, sticky becomes an inline centered button. */
+@media (min-width: 768px) {
+  #mood-purchase-selector {
+    max-width: 640px;
+    padding: 4px 8px 20px;
+  }
+  #mood-purchase-selector .mood-ps-cards { gap: 8px; }
+  #mood-purchase-selector .mood-ps-card {
+    grid-template-columns: auto 1fr minmax(72px, 110px) auto;
+    padding: 11px 14px;
+    min-height: 110px;
+    column-gap: 12px;
+  }
+  #mood-purchase-selector .mood-ps-card.selected { padding: 10.75px 13.75px; }
+  #mood-purchase-selector .mood-ps-title { font-size: 19px; }
+  #mood-purchase-selector .mood-ps-price { font-size: 26px; }
+  #mood-purchase-selector .mood-ps-pouch.pouch-1x { width: clamp(56px, 5vw, 64px); }
+  #mood-purchase-selector .mood-ps-pouch.pouch-2x { width: clamp(72px, 7vw, 84px); }
+  #mood-purchase-selector .mood-ps-pouch.pouch-3x { width: clamp(84px, 8vw, 96px); }
+  #mood-purchase-selector .mood-ps-sticky {
+    position: static;
+    padding: 18px 0 0;
+    pointer-events: auto;
+  }
+  #mood-purchase-selector .mood-ps-cta { max-width: 420px; height: 52px; }
+}
+
+/* Hide the site-wide sticky bar on product pages — widget provides its own */
+body[data-page="energy"] .smb,
+body[data-page="relax"] .smb,
+body[data-page="sleep"] .smb,
+body[data-page="full-day"] .smb { display: none !important; }
+/* Reserve document space for the sticky CTA so it never covers content.
+   50px CTA + ~16px padding + env(safe-area-inset-bottom) + 24px breathing. */
+@media (max-width: 767px) {
+  body[data-page="energy"],
+  body[data-page="relax"],
+  body[data-page="sleep"],
+  body[data-page="full-day"] {
+    padding-bottom: calc(50px + 16px + env(safe-area-inset-bottom, 0px) + 24px) !important;
+  }
+}
+@media (min-width: 768px) {
+  body[data-page="energy"],
+  body[data-page="relax"],
+  body[data-page="sleep"],
+  body[data-page="full-day"] { padding-bottom: 0 !important; }
+}
+
+/* Header on product pages already uses the Wave 7ee 3-zone layout
+   (hactions | brand | hactions-end) with the .brand naturally centered
+   by flex. We only need to hide the desktop top-nav so the header
+   stays clean and matches the mayven homepage pattern; menu is still
+   reachable via the hamburger button. */
+body[data-page="energy"] header nav,
+body[data-page="relax"] header nav,
+body[data-page="sleep"] header nav,
+body[data-page="full-day"] header nav { display: none !important; }
+/* Tighter trust pill */
+#mood-purchase-selector .mood-ps-trust {
+  padding: 9px 14px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+/* Trust chips (below the widget) — read as reassurance, not buttons.
+   Applied only on product pages so global .trust-chips elsewhere are
+   unaffected. */
+body[data-page="energy"] .trust-chips,
+body[data-page="relax"] .trust-chips,
+body[data-page="sleep"] .trust-chips,
+body[data-page="full-day"] .trust-chips {
+  margin: 10px 0 0 !important;
+  padding: 6px 0 0 !important;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 4px 10px;
+  list-style: none;
+  border-top: 1px solid rgba(122, 106, 92, 0.14);
+}
+body[data-page="energy"] .trust-chips .tchip,
+body[data-page="relax"] .trust-chips .tchip,
+body[data-page="sleep"] .trust-chips .tchip,
+body[data-page="full-day"] .trust-chips .tchip {
+  border: none !important;
+  background: transparent !important;
+  color: #7a6a5c !important;
+  padding: 2px 2px !important;
+  font-family: 'Heebo',sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+}
+body[data-page="energy"] .trust-chips li + li::before,
+body[data-page="relax"] .trust-chips li + li::before,
+body[data-page="sleep"] .trust-chips li + li::before,
+body[data-page="full-day"] .trust-chips li + li::before {
+  content: "·";
+  color: #b8ac93;
+  margin-inline-end: 6px;
+  align-self: center;
+}
+body[data-page="energy"] .trust-chips li,
+body[data-page="relax"] .trust-chips li,
+body[data-page="sleep"] .trust-chips li,
+body[data-page="full-day"] .trust-chips li { display: inline-flex; align-items: center; }
+
+/* Compress the bundle upsell on product pages */
+body[data-page="energy"] .bundle,
+body[data-page="relax"] .bundle,
+body[data-page="sleep"] .bundle,
+body[data-page="full-day"] .bundle {
+  padding: 10px 12px !important;
+  margin: 4px 0 !important;
+  min-height: 0 !important;
+  gap: 10px !important;
+}
+body[data-page="energy"] .bundle .bundle-media,
+body[data-page="relax"] .bundle .bundle-media,
+body[data-page="sleep"] .bundle .bundle-media,
+body[data-page="full-day"] .bundle .bundle-media { flex: none !important; width: 76px !important; }
+body[data-page="energy"] .bundle .bundle-media img,
+body[data-page="relax"] .bundle .bundle-media img,
+body[data-page="sleep"] .bundle .bundle-media img,
+body[data-page="full-day"] .bundle .bundle-media img { width: 76px !important; height: 76px !important; object-fit: cover !important; border-radius: 8px !important; }
+body[data-page="energy"] .bundle .bundle-body h4,
+body[data-page="relax"] .bundle .bundle-body h4,
+body[data-page="sleep"] .bundle .bundle-body h4,
+body[data-page="full-day"] .bundle .bundle-body h4 {
+  font-size: 15px !important; margin: 0 0 3px !important;
+}
+body[data-page="energy"] .bundle .bundle-body p,
+body[data-page="relax"] .bundle .bundle-body p,
+body[data-page="sleep"] .bundle .bundle-body p,
+body[data-page="full-day"] .bundle .bundle-body p {
+  font-size: 12.5px !important; margin: 0 0 6px !important; line-height: 1.35 !important;
+}
+body[data-page="energy"] .bundle .bundle-disc,
+body[data-page="relax"] .bundle .bundle-disc,
+body[data-page="sleep"] .bundle .bundle-disc,
+body[data-page="full-day"] .bundle .bundle-disc {
+  font-size: 11px !important; padding: 2px 8px !important;
+}
+body[data-page="energy"] .bundle .pill,
+body[data-page="relax"] .bundle .pill,
+body[data-page="sleep"] .bundle .pill,
+body[data-page="full-day"] .bundle .pill {
+  padding: 6px 12px !important; font-size: 12.5px !important;
+}
+
+/* Compress the pre-purchase story paragraph — kept SEO-visible via
+   line-clamp, no content deletion */
+body[data-page="energy"] .buy .story,
+body[data-page="relax"] .buy .story,
+body[data-page="sleep"] .buy .story,
+body[data-page="full-day"] .buy .story {
+  margin: 6px 0 12px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: #4a3f36 !important;
+}
+
+/* "מתי לוקחים" — full RTL fix. Two-column rows per chip: time | label.
+   Removes the inline "·" separator entirely, aligns times vertically. */
+body[data-page="energy"] .mtimes .mtimes-chips,
+body[data-page="relax"] .mtimes .mtimes-chips,
+body[data-page="sleep"] .mtimes .mtimes-chips,
+body[data-page="full-day"] .mtimes .mtimes-chips {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  align-items: stretch !important;
+  max-width: 320px;
+  margin: 12px auto 0;
+}
+body[data-page="energy"] .mtimes .mtimes-sep,
+body[data-page="relax"] .mtimes .mtimes-sep,
+body[data-page="sleep"] .mtimes .mtimes-sep,
+body[data-page="full-day"] .mtimes .mtimes-sep { display: none !important; }
+body[data-page="energy"] .mtimes .mtimes-chip,
+body[data-page="relax"] .mtimes .mtimes-chip,
+body[data-page="sleep"] .mtimes .mtimes-chip,
+body[data-page="full-day"] .mtimes .mtimes-chip {
+  display: grid !important;
+  grid-template-columns: 72px 1fr !important;
+  align-items: center !important;
+  column-gap: 14px !important;
+  padding: 8px 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(122, 106, 92, 0.14) !important;
+  min-height: 36px;
+}
+body[data-page="energy"] .mtimes .mtimes-chip:last-child,
+body[data-page="relax"] .mtimes .mtimes-chip:last-child,
+body[data-page="sleep"] .mtimes .mtimes-chip:last-child,
+body[data-page="full-day"] .mtimes .mtimes-chip:last-child { border-bottom: 0 !important; }
+body[data-page="energy"] .mtimes .mtimes-t,
+body[data-page="relax"] .mtimes .mtimes-t,
+body[data-page="sleep"] .mtimes .mtimes-t,
+body[data-page="full-day"] .mtimes .mtimes-t {
+  font-family: 'Heebo','Assistant',sans-serif !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+  font-size: 15px !important;
+  color: #2c1d16 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+  text-align: start !important;
+  direction: ltr !important;
+}
+body[data-page="energy"] .mtimes .mtimes-l,
+body[data-page="relax"] .mtimes .mtimes-l,
+body[data-page="sleep"] .mtimes .mtimes-l,
+body[data-page="full-day"] .mtimes .mtimes-l {
+  font-family: 'Heebo','Assistant',sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  color: #4a3f36 !important;
+  white-space: nowrap !important;
+  text-align: start !important;
+}
+body[data-page="energy"] .mtimes .mtimes-k,
+body[data-page="relax"] .mtimes .mtimes-k,
+body[data-page="sleep"] .mtimes .mtimes-k,
+body[data-page="full-day"] .mtimes .mtimes-k {
+  font-family: 'DM Sans','Heebo',sans-serif !important;
+  font-size: 11.5px !important;
+  letter-spacing: 1.2px !important;
+  text-transform: uppercase !important;
+  color: #7a6a5c !important;
+  display: block;
+  text-align: center;
+  margin: 0 0 4px;
+}
+body[data-page="energy"] .mtimes .mtimes-in,
+body[data-page="relax"] .mtimes .mtimes-in,
+body[data-page="sleep"] .mtimes .mtimes-in,
+body[data-page="full-day"] .mtimes .mtimes-in {
+  max-width: 640px !important; margin: 0 auto !important;
+  padding: 24px 20px !important;
+}
+
+/* WAVE10-CSS-END */
+
 </style>
 </head>
 <body data-page="energy">
@@ -5499,7 +5989,7 @@ body[data-page="full-day"] .mtimes .mtimes-in {
     <span><b>30 יום לנסות בראש שקט.</b> לא אהבתם? תקבלו את הכסף בחזרה.</span>
   </div>
   <div class="mood-ps-cards" role="radiogroup" aria-label="חבילות">
-      <label class="mood-ps-card " data-idx="0" data-price="170" data-days="30" data-sub="30 יחידות ENERGY">
+      <label class="mood-ps-card " data-idx="0" data-price="170" data-days="30" data-sub="30 יחידות">
         <input type="radio" name="mood-ps-tier" value="0"  tabindex="-1">
         <span class="mood-ps-radio" aria-hidden="true"><span class="mood-ps-radio-dot"></span></span>
         <div class="mood-ps-copy">
@@ -5507,7 +5997,7 @@ body[data-page="full-day"] .mtimes .mtimes-in {
             <h3 class="mood-ps-title">30 יום</h3>
             
           </div>
-          <div class="mood-ps-sub">30 יחידות ENERGY</div>
+          <div class="mood-ps-sub">30 יחידות</div>
         </div>
         <div class="mood-ps-media">
           <img class="mood-ps-pouch pouch-1x" src="home-assets/cx/pouch-energy-1x-dainty.png" alt="MOOD — 30 יום" loading="lazy" decoding="async">
@@ -5518,7 +6008,7 @@ body[data-page="full-day"] .mtimes .mtimes-in {
           
         </div>
       </label>
-      <label class="mood-ps-card selected" data-idx="1" data-price="310" data-days="60" data-sub="60 יחידות ENERGY">
+      <label class="mood-ps-card selected" data-idx="1" data-price="310" data-days="60" data-sub="60 יחידות">
         <input type="radio" name="mood-ps-tier" value="1" checked tabindex="-1">
         <span class="mood-ps-radio" aria-hidden="true"><span class="mood-ps-radio-dot"></span></span>
         <div class="mood-ps-copy">
@@ -5526,7 +6016,7 @@ body[data-page="full-day"] .mtimes .mtimes-in {
             <h3 class="mood-ps-title">60 יום</h3>
             <span class="mood-ps-chip mood-ps-chip-best">הכי נמכר</span>
           </div>
-          <div class="mood-ps-sub">60 יחידות ENERGY</div>
+          <div class="mood-ps-sub">60 יחידות</div>
         </div>
         <div class="mood-ps-media">
           <img class="mood-ps-pouch pouch-2x" src="home-assets/cx/pouch-energy-2x-dainty.png" alt="MOOD — 60 יום" loading="lazy" decoding="async">
@@ -5537,7 +6027,7 @@ body[data-page="full-day"] .mtimes .mtimes-in {
           
         </div>
       </label>
-      <label class="mood-ps-card " data-idx="2" data-price="420" data-days="90" data-sub="90 יחידות ENERGY">
+      <label class="mood-ps-card " data-idx="2" data-price="420" data-days="90" data-sub="90 יחידות">
         <input type="radio" name="mood-ps-tier" value="2"  tabindex="-1">
         <span class="mood-ps-radio" aria-hidden="true"><span class="mood-ps-radio-dot"></span></span>
         <div class="mood-ps-copy">
@@ -5545,7 +6035,7 @@ body[data-page="full-day"] .mtimes .mtimes-in {
             <h3 class="mood-ps-title">90 יום</h3>
             <span class="mood-ps-chip mood-ps-chip-value">הכי משתלם</span>
           </div>
-          <div class="mood-ps-sub">90 יחידות ENERGY</div>
+          <div class="mood-ps-sub">90 יחידות</div>
         </div>
         <div class="mood-ps-media">
           <img class="mood-ps-pouch pouch-3x" src="home-assets/cx/pouch-energy-3x-dainty.png" alt="MOOD — 90 יום" loading="lazy" decoding="async">
@@ -5857,6 +6347,7 @@ body[data-page="full-day"] .mtimes .mtimes-in {
   document.querySelectorAll(selectors).forEach(el => io.observe(el));
 })();
 </script>
+
 
 
 
