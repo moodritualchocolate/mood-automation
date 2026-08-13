@@ -1732,6 +1732,119 @@ body { overflow-x: clip !important; max-width: none !important; }
 }
 /* WAVE17-END */
 
+
+
+
+/* WAVE18-START — carousel stability + club contrast */
+
+/* --- Product carousel: hard snap + ~10% peek per side --- */
+@media (max-width: 899px) {
+  .pgrid.pgrid-w5 {
+    grid-auto-columns: 76% !important;
+    padding: 4px 12% 16px !important;
+    gap: 12px !important;
+    scroll-snap-type: x mandatory !important;
+    scroll-snap-stop: always !important;
+    scroll-padding-inline: 12% !important;
+    overscroll-behavior-x: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .pgrid.pgrid-w5 .pc {
+    scroll-snap-align: center !important;
+    scroll-snap-stop: always !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* --- Moments strip: hard snap + center peek --- */
+@media (max-width: 899px) {
+  .moments-strip {
+    scroll-snap-type: x mandatory !important;
+    scroll-snap-stop: always !important;
+    scroll-padding-inline: 20% !important;
+    overscroll-behavior-x: contain !important;
+  }
+  .moments-strip .mom-tile {
+    scroll-snap-align: center !important;
+    scroll-snap-stop: always !important;
+  }
+  .moments-strip .mom-tile.mom-active {
+    grid-column: span 1 !important;
+    transform: scale(1) !important;
+  }
+}
+
+/* --- Reviews carousel: uniform height + hard snap + 8-12% peek --- */
+@media (max-width: 899px) {
+  .moments .rev-cards {
+    grid-auto-columns: 82% !important;
+    padding: 4px 9% 8px !important;
+    gap: 12px !important;
+    scroll-snap-type: x mandatory !important;
+    scroll-snap-stop: always !important;
+    scroll-padding-inline: 9% !important;
+    overscroll-behavior-x: contain !important;
+    align-items: stretch !important;
+  }
+  .moments .rev-cards .rev-card {
+    scroll-snap-align: center !important;
+    scroll-snap-stop: always !important;
+    min-height: 168px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .moments .rev-cards .rev-quote {
+    flex: 1 1 auto !important;
+  }
+}
+
+/* --- Club section: reconnect image, quiet caption, stronger benefits --- */
+.club-w5 .club-wrap { gap: 12px !important; }
+.club-w5 .club-media { margin: 0 !important; }
+.club-w5 .club-body { padding-bottom: 10px !important; }
+.club-w5 .club-actions { margin: 4px 0 0 !important; }
+/* Stronger contrast on cream background — dark ink text + dark-green
+   check. Reads immediately, no washed-out pale green. */
+.club-w5 .club-benefits li {
+  color: #2c1d16 !important;
+  font-weight: 600 !important;
+  font-size: 14.5px !important;
+  padding-right: 22px !important;
+}
+.club-w5 .club-benefits li::before {
+  content: "✓" !important;
+  color: #2f5228 !important;
+  font-weight: 800 !important;
+  font-size: 14px !important;
+  right: 0 !important;
+}
+/* Quieter caption — smaller pill anchored bottom-inline-end */
+.club-w5 .club-green {
+  background: rgba(253, 250, 243, 0.92) !important;
+  color: #2c1d16 !important;
+  font-family: 'Heebo','Assistant',sans-serif !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  padding: 5px 10px !important;
+  border-radius: 999px !important;
+  bottom: 10px !important;
+  inset-inline-end: 10px !important;
+  left: auto !important;
+  right: auto !important;
+  width: auto !important;
+  max-width: 70% !important;
+  text-align: center !important;
+  box-shadow: 0 2px 8px -4px rgba(41, 25, 10, 0.35) !important;
+}
+@media (max-width: 899px) {
+  .club-w5 { padding: 30px 4vw 28px !important; }
+  .club-w5 .club-wrap { gap: 10px !important; }
+  .club-w5 .club-body { padding-bottom: 6px !important; }
+}
+
+/* WAVE18-END */
+
 </style>
 </head>
 <body>
@@ -2149,5 +2262,165 @@ body { overflow-x: clip !important; max-width: none !important; }
     menu.querySelectorAll('a[href]').forEach(function(a){ a.addEventListener('click', close); });
   }
 })();
+</script>
+
+<script>
+/* WAVE18-JS-START — center-on-load for homepage carousels + dot sync */
+(function(){
+  if (window.matchMedia && !window.matchMedia('(max-width: 899px)').matches) return;
+
+  function centerCard(container, target) {
+    if (!container || !target) return;
+    var cLeft = container.getBoundingClientRect().left;
+    var tRect = target.getBoundingClientRect();
+    var targetCenter = tRect.left + tRect.width / 2;
+    var containerCenter = cLeft + container.clientWidth / 2;
+    var delta = targetCenter - containerCenter;
+    container.scrollLeft += delta;
+  }
+
+  function initProducts() {
+    var wrap = document.querySelector('.pgrid.pgrid-w5');
+    if (!wrap) return;
+    var cards = wrap.querySelectorAll('.pc');
+    if (!cards.length) return;
+    // ENERGY is the first card in source order — center it on load.
+    // In RTL flex/grid the natural start is the RTL start, so we still
+    // need to explicitly center it to be robust across browsers.
+    requestAnimationFrame(function(){ centerCard(wrap, cards[0]); });
+
+    var dots = document.querySelectorAll('.pgrid-dots .dot');
+    if (!dots.length) return;
+    // Click a dot → smooth-center the matching card
+    dots.forEach(function(d, i){
+      d.addEventListener('click', function(){
+        var c = cards[i]; if (!c) return;
+        c.scrollIntoView({behavior: 'smooth', inline: 'center', block: 'nearest'});
+      });
+    });
+    // Scroll → sync active dot to whichever card is closest to center
+    var syncing;
+    wrap.addEventListener('scroll', function(){
+      clearTimeout(syncing);
+      syncing = setTimeout(function(){
+        var containerCenter = wrap.getBoundingClientRect().left + wrap.clientWidth / 2;
+        var best = 0, bestDist = 1e9;
+        cards.forEach(function(c, i){
+          var r = c.getBoundingClientRect();
+          var d = Math.abs((r.left + r.width/2) - containerCenter);
+          if (d < bestDist) { bestDist = d; best = i; }
+        });
+        dots.forEach(function(d, i){ d.classList.toggle('on', i === best); });
+      }, 80);
+    }, {passive: true});
+  }
+
+  function initMoments() {
+    var strip = document.querySelector('.moments-strip');
+    if (!strip) return;
+    var active = strip.querySelector('.mom-active') || strip.children[Math.floor(strip.children.length/2)];
+    requestAnimationFrame(function(){ centerCard(strip, active); });
+  }
+
+  function initReviews() {
+    var rc = document.querySelector('.moments .rev-cards');
+    if (!rc) return;
+    var cards = rc.querySelectorAll('.rev-card');
+    if (!cards.length) return;
+    requestAnimationFrame(function(){ centerCard(rc, cards[0]); });
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(function(){ initProducts(); initMoments(); initReviews(); }, 0);
+  } else {
+    document.addEventListener('DOMContentLoaded', function(){
+      initProducts(); initMoments(); initReviews();
+    });
+  }
+  // On resize between breakpoints, re-center
+  var reCenter = function(){ initProducts(); initMoments(); initReviews(); };
+  window.addEventListener('orientationchange', reCenter);
+})();
+/* WAVE18-JS-END */
+</script>
+
+<script>
+/* WAVE18-JS-START — center-on-load for homepage carousels + dot sync */
+(function(){
+  if (window.matchMedia && !window.matchMedia('(max-width: 899px)').matches) return;
+
+  function centerCard(container, target) {
+    if (!container || !target) return;
+    var cLeft = container.getBoundingClientRect().left;
+    var tRect = target.getBoundingClientRect();
+    var targetCenter = tRect.left + tRect.width / 2;
+    var containerCenter = cLeft + container.clientWidth / 2;
+    var delta = targetCenter - containerCenter;
+    container.scrollLeft += delta;
+  }
+
+  function initProducts() {
+    var wrap = document.querySelector('.pgrid.pgrid-w5');
+    if (!wrap) return;
+    var cards = wrap.querySelectorAll('.pc');
+    if (!cards.length) return;
+    // ENERGY is the first card in source order — center it on load.
+    // In RTL flex/grid the natural start is the RTL start, so we still
+    // need to explicitly center it to be robust across browsers.
+    requestAnimationFrame(function(){ centerCard(wrap, cards[0]); });
+
+    var dots = document.querySelectorAll('.pgrid-dots .dot');
+    if (!dots.length) return;
+    // Click a dot → smooth-center the matching card
+    dots.forEach(function(d, i){
+      d.addEventListener('click', function(){
+        var c = cards[i]; if (!c) return;
+        c.scrollIntoView({behavior: 'smooth', inline: 'center', block: 'nearest'});
+      });
+    });
+    // Scroll → sync active dot to whichever card is closest to center
+    var syncing;
+    wrap.addEventListener('scroll', function(){
+      clearTimeout(syncing);
+      syncing = setTimeout(function(){
+        var containerCenter = wrap.getBoundingClientRect().left + wrap.clientWidth / 2;
+        var best = 0, bestDist = 1e9;
+        cards.forEach(function(c, i){
+          var r = c.getBoundingClientRect();
+          var d = Math.abs((r.left + r.width/2) - containerCenter);
+          if (d < bestDist) { bestDist = d; best = i; }
+        });
+        dots.forEach(function(d, i){ d.classList.toggle('on', i === best); });
+      }, 80);
+    }, {passive: true});
+  }
+
+  function initMoments() {
+    var strip = document.querySelector('.moments-strip');
+    if (!strip) return;
+    var active = strip.querySelector('.mom-active') || strip.children[Math.floor(strip.children.length/2)];
+    requestAnimationFrame(function(){ centerCard(strip, active); });
+  }
+
+  function initReviews() {
+    var rc = document.querySelector('.moments .rev-cards');
+    if (!rc) return;
+    var cards = rc.querySelectorAll('.rev-card');
+    if (!cards.length) return;
+    requestAnimationFrame(function(){ centerCard(rc, cards[0]); });
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(function(){ initProducts(); initMoments(); initReviews(); }, 0);
+  } else {
+    document.addEventListener('DOMContentLoaded', function(){
+      initProducts(); initMoments(); initReviews();
+    });
+  }
+  // On resize between breakpoints, re-center
+  var reCenter = function(){ initProducts(); initMoments(); initReviews(); };
+  window.addEventListener('orientationchange', reCenter);
+})();
+/* WAVE18-JS-END */
 </script>
 </body></html>
