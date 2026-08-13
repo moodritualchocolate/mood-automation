@@ -2062,6 +2062,160 @@ body { overflow-x: clip !important; max-width: none !important; }
 
 /* WAVE21-END */
 
+
+
+
+/* WAVE22-START — hero hover + credibility 3-line + axis lock + desktop header */
+
+/* 1. Hero SHOP NOW — subtle warm hover on desktop only (no dark fill). */
+@media (hover: hover) and (pointer: fine) {
+  .hero .hero-copy.hero-center .hero-shop-cta {
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease,
+      transform 200ms ease !important;
+  }
+  .hero .hero-copy.hero-center .hero-shop-cta:hover {
+    background-color: rgba(53, 35, 26, 0.05) !important;
+    border-color: rgba(25, 20, 17, 0.65) !important;
+    box-shadow: 0 4px 14px rgba(40, 25, 18, 0.05) !important;
+    transform: translateY(-1px) !important;
+  }
+  .hero .hero-copy.hero-center .hero-shop-cta:active {
+    transform: translateY(0) scale(0.985) !important;
+    transition: transform 90ms ease !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero .hero-copy.hero-center .hero-shop-cta,
+  .hero .hero-copy.hero-center .hero-shop-cta:hover,
+  .hero .hero-copy.hero-center .hero-shop-cta:active {
+    transform: none !important;
+    transition: background-color 200ms ease, border-color 200ms ease !important;
+  }
+}
+
+/* 2. Credibility strip — 3-line hierarchy inside SAME compact footprint. */
+.tb .tb-cred {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.tb .tb-cred-story {
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-weight: 600;
+  font-size: clamp(14.5px, 1.5vw, 18px);
+  line-height: 1.35;
+  color: #2c1d16;
+  letter-spacing: -0.1px;
+  margin: 0;
+}
+.tb .tb-cred-auth {
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-weight: 500;
+  font-size: clamp(12.5px, 1.25vw, 15px);
+  line-height: 1.35;
+  color: #8b6a2f;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.tb .tb-cred-auth::before,
+.tb .tb-cred-auth::after {
+  content: "";
+  display: inline-block;
+  width: clamp(28px, 3.6vw, 60px);
+  height: 1px;
+  background: #b98d3d;
+  opacity: .65;
+}
+.tb .tb-cred-proof {
+  font-family: 'Heebo','Assistant',sans-serif;
+  font-weight: 400;
+  font-size: clamp(11.5px, 1.15vw, 13.5px);
+  line-height: 1.4;
+  color: #6a5040;
+  margin: 0;
+  letter-spacing: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 8px;
+}
+.tb .tb-cred-proof .tb-sep {
+  opacity: .45;
+  color: inherit;
+}
+@media (max-width: 640px) {
+  .tb { padding: 14px 18px !important; }
+  .tb .tb-cred { gap: 5px; }
+  .tb .tb-cred-story { font-size: 13.5px; letter-spacing: -0.15px; }
+  .tb .tb-cred-auth { font-size: 11.5px; gap: 8px; }
+  .tb .tb-cred-auth::before,
+  .tb .tb-cred-auth::after { width: 20px; }
+  .tb .tb-cred-proof { font-size: 10.75px; gap: 4px 6px; letter-spacing: -0.15px; }
+}
+/* Hide the legacy .tb-title/.tb-sub when the new .tb-cred is present */
+.tb .tb-cred ~ .tb-title,
+.tb .tb-title:has(+ .tb-cred),
+.tb .tb-cred + .tb-sub,
+.tb .tb-cred + .tb-title,
+.tb .tb-cred-legacy { display: none !important; }
+
+/* 3. Axis lock reinforcement — vertical touches always pass to page. */
+.pgrid.pgrid-w5,
+.moments-strip,
+.moments .rev-cards {
+  touch-action: pan-x !important;
+  overscroll-behavior: contain !important;
+  overflow-y: hidden !important;
+}
+
+/* 4. Video Play button — sits on active center card only. */
+.moments-strip .mom-tile .mom-play { opacity: 0; transition: opacity 220ms ease; }
+.moments-strip .mom-tile.mom-active .mom-play { opacity: 1; }
+.moments-strip .mom-tile.mom-playing .mom-play { opacity: 0 !important; }
+
+/* 5. DESKTOP HEADER — genuine desktop proportions at ≥1024px. */
+@media (min-width: 1024px) {
+  header {
+    padding: 18px 40px !important;
+    min-height: 76px !important;
+  }
+  header .brand-logo,
+  header .brand img {
+    height: 28px !important;
+    width: auto !important;
+  }
+  header .hactions { gap: 18px !important; }
+  header .hactions .ic {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  header .hactions .ic svg {
+    width: 22px !important;
+    height: 22px !important;
+    stroke-width: 1.6 !important;
+  }
+  header .hactions .bag b {
+    min-width: 18px !important;
+    height: 18px !important;
+    font-size: 10.5px !important;
+  }
+}
+@media (min-width: 1440px) {
+  header { padding: 20px 56px !important; min-height: 80px !important; }
+  header .brand-logo, header .brand img { height: 30px !important; }
+}
+
+/* WAVE22-END */
+
 </style>
 </head>
 <body>
@@ -2097,8 +2251,8 @@ body { overflow-x: clip !important; max-width: none !important; }
       </video>
       <div class="hero-copy hero-center">
         <h1 class="hero-title" dir="ltr" lang="en">
-          <span>Small piece.</span>
-          <span>Real impact.</span>
+          <span>Chocolate,</span>
+          <span>made to do more.</span>
         </h1>
         <a class="hero-shop-cta" href="#formulas">SHOP NOW</a>
       </div>
@@ -2110,8 +2264,11 @@ body { overflow-x: clip !important; max-width: none !important; }
     <!-- TRUST BAR (Wave 5a — Nadav spec) -->
     <section class="tb" aria-label="אלוף עולם בשוקולד 2022">
       <div class="tb-in">
-        <h2 class="tb-title"><span class="tb-title-text">פותח על ידי רונן אפללו · אלוף השוקולד העולמי <span class="tb-year">2022</span></span></h2>
-        <p class="tb-sub"><span>70% קקאו</span><span class="tb-sep">|</span><span>0 סוכר</span><span class="tb-sep">·</span><span>כשר פרווה</span><span class="tb-sep">·</span><span>תוצרת ישראל</span></p>
+        <div class="tb-cred">
+          <p class="tb-cred-story">כדי ליצור את השוקולד המושלם, צריך אלוף עולם.</p>
+          <p class="tb-cred-auth"><span>רונן אפללו · אלוף העולם בשוקולד <b class="tb-year">2022</b></span></p>
+          <p class="tb-cred-proof"><span>70% קקאו</span><span class="tb-sep">·</span><span>0 גרם סוכר</span><span class="tb-sep">·</span><span>פורמולה בוטנית</span><span class="tb-sep">·</span><span>כשר פרווה</span><span class="tb-sep">·</span><span>תוצרת ישראל</span></p>
+        </div>
       </div>
     </section>
 
@@ -2739,5 +2896,107 @@ body { overflow-x: clip !important; max-width: none !important; }
   });
 })();
 /* WAVE20-JS-END */
+</script>
+
+<script>
+/* WAVE22-JS-START — video Play attaches to active center tile */
+(function(){
+  var strip = document.querySelector('.moments-strip');
+  if (!strip) return;
+  var tiles = strip.querySelectorAll('.mom-tile');
+  if (!tiles.length) return;
+
+  // Collect and remove any inline .mom-play markup — we manage one shared node.
+  var play = strip.querySelector('.mom-play');
+  if (!play) {
+    play = document.createElement('span');
+    play.className = 'mom-play';
+    play.setAttribute('aria-hidden', 'true');
+    play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.55.83l10-6.5a1 1 0 0 0 0-1.66l-10-6.5A1 1 0 0 0 8 5.5z"/></svg>';
+  } else if (play.parentNode) {
+    play.parentNode.removeChild(play);
+  }
+
+  function moveToActive() {
+    var active = strip.querySelector('.mom-tile.mom-active');
+    if (!active) return;
+    if (play.parentNode !== active) {
+      active.appendChild(play);
+    }
+  }
+
+  // Move immediately, and again after any active-class change from other JS.
+  moveToActive();
+  var mo = new MutationObserver(moveToActive);
+  tiles.forEach(function(t){ mo.observe(t, {attributes:true, attributeFilter:['class']}); });
+  strip.addEventListener('scroll', function(){
+    setTimeout(moveToActive, 80);
+  }, {passive: true});
+  window.addEventListener('load', moveToActive);
+})();
+/* WAVE22-JS-END */
+</script>
+
+<script>
+/* WAVE22-JS-START — video Play attaches to active center tile */
+(function(){
+  var strip = document.querySelector('.moments-strip');
+  if (!strip) return;
+  var tiles = strip.querySelectorAll('.mom-tile');
+  if (!tiles.length) return;
+
+  // Collect and remove any inline .mom-play markup — we manage one shared node.
+  var play = strip.querySelector('.mom-play');
+  if (!play) {
+    play = document.createElement('span');
+    play.className = 'mom-play';
+    play.setAttribute('aria-hidden', 'true');
+    play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.55.83l10-6.5a1 1 0 0 0 0-1.66l-10-6.5A1 1 0 0 0 8 5.5z"/></svg>';
+  } else if (play.parentNode) {
+    play.parentNode.removeChild(play);
+  }
+
+  function moveToActive() {
+    var active = strip.querySelector('.mom-tile.mom-active');
+    if (!active) return;
+    if (play.parentNode !== active) {
+      active.appendChild(play);
+    }
+  }
+
+  // Move immediately, and again after any active-class change from other JS.
+  moveToActive();
+  var mo = new MutationObserver(moveToActive);
+  tiles.forEach(function(t){ mo.observe(t, {attributes:true, attributeFilter:['class']}); });
+  strip.addEventListener('scroll', function(){
+    setTimeout(moveToActive, 80);
+  }, {passive: true});
+  window.addEventListener('load', moveToActive);
+
+  // Delegated tap: only the currently-active tile launches the video.
+  strip.addEventListener('click', function(e){
+    var tile = e.target && e.target.closest && e.target.closest('.mom-tile');
+    if (!tile || !tile.classList.contains('mom-active')) return;
+    if (tile.classList.contains('mom-playing')) return;
+    if (tile.querySelector('video.mom-video')) return;
+    var v = document.createElement('video');
+    v.className = 'mom-video';
+    v.src = 'home-assets/cx/hero-mobile.mp4';
+    v.autoplay = true;
+    v.playsInline = true;
+    v.setAttribute('playsinline', '');
+    v.setAttribute('webkit-playsinline', '');
+    v.muted = true;
+    v.controls = true;
+    tile.appendChild(v);
+    tile.classList.add('mom-playing');
+    v.addEventListener('ended', function(){
+      tile.classList.remove('mom-playing');
+      v.remove();
+    });
+    e.preventDefault();
+  });
+})();
+/* WAVE22-JS-END */
 </script>
 </body></html>
