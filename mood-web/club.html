@@ -1719,6 +1719,27 @@ header .brand img {
   .club-final .club-heading{max-width:330px;margin-inline:auto;font-size:28px;line-height:1.05;direction:rtl}.club-final-signature{margin-top:12px;font-size:8px}
 }
 
+/* Scan-first benefits and pricing */
+.club-benefits{padding:46px 0 52px}.club-benefits-head{margin-bottom:30px}.club-benefits-head h2{font-size:34px}
+.club-benefits-run{gap:14px;align-items:stretch}
+.club-benefit{min-height:126px;padding:31px 12px 18px;border-radius:52px;display:flex;flex-direction:column;gap:5px;white-space:normal;overflow:visible}
+.club-benefit::before{display:none}.club-benefit-icon{position:absolute;top:-20px;left:50%;width:42px;height:42px;display:grid;place-items:center;transform:translateX(-50%);border:1px solid #d8d1c9;border-radius:50%;background:#fff;color:#a67825;font:800 14px/1 'DM Sans',sans-serif;box-shadow:0 3px 8px rgba(35,27,19,.04)}
+.club-benefit-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.club-benefit strong{font-size:14px;line-height:1.15}.club-benefit small{max-width:150px;color:#71685f;font-size:10px;line-height:1.35;font-weight:500}
+
+.club-offer{text-align:center;background:#f1f2f5}.club-offer-card{display:block;padding:46px 48px 34px;background:transparent;border:0;box-shadow:none}
+.club-offer-intro{max-width:620px;margin-inline:auto}.club-offer .club-heading{font-size:46px}.club-offer-intro .club-lede{margin-top:10px}
+.club-plans{max-width:900px;margin:38px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:0;overflow:visible;border-radius:0;background:transparent}
+.club-plan,.club-plan:nth-child(1),.club-plan:nth-child(2),.club-plan:nth-child(3){min-height:120px;padding:10px 24px;display:flex;flex-direction:column;justify-content:center;gap:7px;background:transparent;border:0;box-shadow:none;filter:none}
+.club-plan+.club-plan{border-inline-start:1px solid #d9dce2}.club-plan:hover{background:rgba(255,255,255,.42);box-shadow:none}
+.club-plan strong{order:3;color:#655e57;font-size:13px}.club-plan b{order:1;font-size:52px;letter-spacing:-.05em}.club-plan span{order:2;color:#17130f;font-size:13px}
+.club-offer-foot{max-width:900px;margin:26px auto 0;padding-top:20px;justify-content:center;border-top:1px solid #d9dce2}.club-offer-foot span{display:none}
+
+@media(max-width:760px){
+  .club-benefits{padding:32px 0 27px}.club-benefits-head{margin-bottom:26px;padding-inline:16px}.club-benefits-head h2{font-size:24px}.club-benefits .club-shell{width:min(100% - 24px,430px);padding:0;overflow:visible}.club-benefits-run{display:flex;flex-wrap:wrap;justify-content:center;gap:26px 6px;padding:0;min-width:0}.club-benefit{flex:0 0 calc(33.333% - 5px);min-width:0;min-height:88px;padding:23px 5px 9px;border-radius:34px}.club-benefit:last-child{width:auto}.club-benefit-icon{top:-15px;width:32px;height:32px}.club-benefit-icon svg{width:16px;height:16px}.club-benefit strong{font-size:10px}.club-benefit small{font-size:8px;line-height:1.25}
+  .club-offer{padding:29px 0}.club-offer-card{padding:0 6px}.club-offer-intro .club-kicker{margin-bottom:7px}.club-offer .club-heading{font-size:30px}.club-offer-intro .club-lede{display:block;margin:8px auto 0;font-size:11px}.club-plans{margin-top:20px}.club-plan,.club-plan:nth-child(1),.club-plan:nth-child(2),.club-plan:nth-child(3){min-height:90px;padding:7px 5px}.club-plan b{font-size:30px}.club-plan span{font-size:10px}.club-plan strong{font-size:9px}.club-offer-foot{margin-top:14px;padding-top:13px}.club-offer-foot .club-button{min-height:38px}
+}
+
 </style>
 </head>
 <body>
@@ -1759,7 +1780,11 @@ header .brand img {
       <div class="club-shell">
         <div class="club-benefits-head"><p class="club-kicker">MOOD CLUB</p><h2>מה מקבלים כחברי המועדון?</h2></div>
         <div class="club-benefits-run">
-          <div class="club-benefit">מחיר חבר</div><div class="club-benefit">משלוח חינם</div><div class="club-benefit">מדלגים על משלוח</div><div class="club-benefit">מחליפים בין המוצרים</div><div class="club-benefit">בלי התחייבות</div>
+          <div class="club-benefit"><span class="club-benefit-icon">₪</span><strong>מחיר חבר</strong><small>מחיר קבוע לחברי המועדון</small></div>
+          <div class="club-benefit"><span class="club-benefit-icon"><svg viewBox="0 0 24 24"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7zM7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg></span><strong>משלוח חינם</strong><small>בכל משלוח של המועדון</small></div>
+          <div class="club-benefit"><span class="club-benefit-icon"><svg viewBox="0 0 24 24"><path d="M6 4v4M18 4v4M4 9h16v11H4zM8 14h8"/></svg></span><strong>מדלגים על משלוח</strong><small>מדלגים על המשלוח הבא</small></div>
+          <div class="club-benefit"><span class="club-benefit-icon"><svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3M18 7l-3 3M6 17l3-3"/></svg></span><strong>מחליפים בין המוצרים</strong><small>ENERGY · RELAX · SLEEP</small></div>
+          <div class="club-benefit"><span class="club-benefit-icon"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9M12 7v5l3 2"/></svg></span><strong>בלי התחייבות</strong><small>מסיימים ומצטרפים מחדש</small></div>
         </div>
       </div>
     </section>
@@ -1801,7 +1826,7 @@ header .brand img {
           <div class="club-offer-intro">
             <p class="club-kicker">MOOD CLUB</p>
             <h2 class="club-heading" id="club-offer-title">בחרו את הקצב שלכם.</h2>
-            <p class="club-lede">שלושה גדלים. ריטואל אחד שמתאים לשגרה שלכם.</p>
+            <p class="club-lede">בחרו את גודל המארז שמתאים לשגרה שלכם.</p>
           </div>
           <div class="club-plans" aria-label="מחירי המארזים">
             <a class="club-plan" href="energy.html#tiers"><strong>30 יום</strong><b>₪170</b><span>30 יחידות</span></a>
