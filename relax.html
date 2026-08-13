@@ -6623,6 +6623,72 @@ body[data-page="full-day"] .rvs .rvs-in > div:has(.rvs-row) {
 }
 /* WAVE14-END */
 
+
+/* WAVE15-START */
+/* 1. Sticky CTA — lower profile, shorter divider, lifted off the edge */
+:root { --sticky-buy-height: 46px; }
+#mood-purchase-selector .mood-ps-sticky {
+  padding: 6px 12px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+}
+#mood-purchase-selector .mood-ps-cta {
+  height: 46px !important;
+  padding: 0 16px !important;
+  font-size: 14.5px !important;
+  border-radius: 14px !important;
+  gap: 8px !important;
+}
+#mood-purchase-selector .mood-ps-cta-sep {
+  flex: 0 0 14px !important;
+  margin: 0 4px !important;
+  opacity: 0.22 !important;
+}
+#mood-purchase-selector .mood-ps-cta-price { font-size: 16px !important; }
+
+/* 3. Trust line — 10% smaller + 10% tighter */
+body[data-page="energy"] .trust-chips,
+body[data-page="relax"] .trust-chips,
+body[data-page="sleep"] .trust-chips,
+body[data-page="full-day"] .trust-chips {
+  margin: 8px 0 0 !important;
+  padding: 5px 0 0 !important;
+  gap: 3px 8px !important;
+}
+body[data-page="energy"] .trust-chips .tchip,
+body[data-page="relax"] .trust-chips .tchip,
+body[data-page="sleep"] .trust-chips .tchip,
+body[data-page="full-day"] .trust-chips .tchip {
+  font-size: 10.5px !important;
+  padding: 1px 2px !important;
+}
+
+/* 4. Reduce vertical gap between trust line (end of .buy) and formula */
+body[data-page="energy"] .buy,
+body[data-page="relax"] .buy,
+body[data-page="sleep"] .buy,
+body[data-page="full-day"] .buy {
+  padding-bottom: 12px !important;
+}
+body[data-page="energy"] #formula,
+body[data-page="relax"] #formula,
+body[data-page="sleep"] #formula,
+body[data-page="full-day"] #formula {
+  padding-top: 18px !important;
+}
+
+/* 5. Save chip alignment — force identical geometry across cards */
+#mood-purchase-selector .mood-ps-monthly,
+#mood-purchase-selector .mood-ps-monthly .mood-ps-save {
+  font-size: 11.5px !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  vertical-align: baseline !important;
+}
+#mood-purchase-selector .mood-ps-monthly .mood-ps-save {
+  color: #3b5027 !important;
+  font-weight: 700 !important;
+}
+/* WAVE15-END */
+
 </style>
 </head>
 <body data-page="relax">
@@ -6754,7 +6820,7 @@ body[data-page="full-day"] .rvs .rvs-in > div:has(.rvs-row) {
         <div class="bundle-body">
           <span class="bundle-disc">חוסכים 20%</span>
           <h4>רוצים את שלושת הרגעים?</h4>
-          <p>10 ENERGY · 10 RELAX · 10 SLEEP — חבילת התנסות שלמה.</p>
+          <p>10 ENERGY · 10 RELAX · 10 SLEEP</p>
           <a class="pill" href="full-day.html">ליום המלא ←</a>
         </div>
       </div>
