@@ -1545,6 +1545,40 @@ header .brand img {
   .club-final{padding:38px 16px}.club-final .club-heading{font-size:32px}.club-final p{margin-top:9px;font-size:12px}.club-final .club-button{min-height:40px;margin-top:12px;padding-inline:20px;font-size:12px}
 }
 
+/* MOOD CLUB — final compact art direction */
+@keyframes clubCardAutoSpin{
+  0%,30%{transform:rotateY(0deg)}
+  46%,70%{transform:rotateY(180deg)}
+  86%,100%{transform:rotateY(360deg)}
+}
+.club-card-stage[data-auto-spin="true"]{cursor:default;pointer-events:none;transform:none}
+.club-card-stage[data-auto-spin="true"] .club-card-3d{animation:clubCardAutoSpin 9s cubic-bezier(.65,0,.35,1) infinite}
+.club-card-stage[data-auto-spin="true"]:hover .club-member-card{box-shadow:0 28px 70px rgba(9,24,41,.22)}
+
+@media(min-width:761px){
+  .club-hero-media{height:min(48vh,450px)}.club-hero-action{min-height:64px;padding-block:8px}.club-hero-action strong{font-size:18px}
+  .club-moments{padding:62px 0}.club-moments-layout{gap:50px}.club-moments .club-heading{font-size:60px}.club-moments .club-lede{margin-top:18px}.club-secret{margin-top:20px}
+  .club-offer{padding:44px 0}.club-offer-card{padding:28px 32px}.club-offer .club-heading{font-size:48px}.club-plan{min-height:116px;padding:18px}.club-plan b{font-size:30px}
+  .club-how{padding:40px 0}.club-how .club-heading{font-size:46px}.club-how-grid{margin-top:24px}.club-how-step{min-height:122px;padding:18px}.club-how-step h3{font-size:23px;margin-top:10px}
+  .club-identity{padding:40px 0}.club-identity-grid{grid-template-columns:.88fr 1.12fr;gap:46px}.club-card-stage,.club-card-3d{height:240px;min-height:240px}.club-identity-copy .club-heading{font-size:48px}.club-identity-copy .club-lede{margin-top:15px}
+  .club-proof{padding:42px 0}.club-proof .club-heading{font-size:48px}.club-proof-grid{margin-top:20px}.club-quote,.club-quote:first-child{padding:20px}.club-quote q,.club-quote:first-child q{font-size:16px;line-height:1.4;margin-top:10px}.club-quote footer{margin-top:12px!important}
+  .club-faq{padding:42px 0}.club-faq .club-heading{font-size:48px}.club-faq-list{margin-top:20px}.club-faq-item summary{padding-block:12px;font-size:16px}.club-faq-item p{padding-bottom:14px;font-size:14px}.club-faq-more{margin-top:12px}
+  .club-final{padding:54px 20px}.club-final .club-heading{font-size:48px}.club-final p{margin-top:12px}.club-final .club-button{margin-top:18px}
+}
+
+@media(max-width:760px){
+  .club-hero-media{height:202px;aspect-ratio:auto}.club-hero-media img{object-fit:cover;object-position:center}.club-hero-action{min-height:56px;padding:8px 14px}.club-hero-action strong{font-size:13px}.club-hero-action span{display:none}.club-hero-action .club-button{min-height:34px;padding-inline:12px;font-size:10px}
+  .club-benefits .club-shell,.club-benefits-run{min-height:44px}.club-benefits-run{min-height:44px}.club-benefit{padding-inline:15px;font-size:11px;gap:18px}
+  .club-moments{padding:54px 0 66px}.club-moments-layout{gap:23px}.club-moments .club-heading{font-size:42px}.club-moments .club-lede{margin-top:13px;font-size:13px}.club-secret{margin-top:14px;padding:8px 12px;font-size:11px}.club-reel{padding:7px}.club-mood-orbit{margin-bottom:-29px}
+  .club-offer{padding:22px 0}.club-offer-card{padding:14px 10px;gap:10px}.club-offer .club-kicker{margin-bottom:6px}.club-offer .club-heading{font-size:28px}.club-plans{gap:4px}.club-plan{min-height:88px;padding:8px 5px}.club-plan strong{font-size:11px}.club-plan b{font-size:19px}.club-plan span{font-size:8px}.club-offer-foot{padding-top:8px}.club-offer-foot span{font-size:9px}.club-offer-foot .club-button{min-height:36px;padding-inline:11px;font-size:10px}
+  .club-how{padding:24px 0}.club-how .club-heading{font-size:27px}.club-how-grid{margin-top:12px}.club-how-step{min-height:96px;padding:9px 5px}.club-how-step h3{font-size:14px}.club-how-step:nth-child(3) h3{font-size:12px}.club-how-step p{font-size:9px}
+  .club-identity{padding:24px 0}.club-identity-grid{grid-template-columns:.9fr 1.1fr;gap:10px}.club-identity-copy .club-heading{font-size:25px}.club-identity-copy .club-lede{margin-top:6px;font-size:10px}.club-card-stage,.club-card-3d{height:132px;min-height:132px}.club-member-card{padding:12px}.club-member-logo{font-size:18px}.club-symbol{width:24px;height:24px}.club-symbol svg{width:12px;height:12px}.club-member-meta{font-size:6px}.club-member-meta b{font-size:8px}
+  .club-proof{padding:24px 0}.club-proof .club-heading{font-size:27px}.club-proof-grid{margin-top:12px}.club-quote,.club-quote:first-child{flex-basis:calc(100vw - 102px);padding:13px}.club-quote q,.club-quote:first-child q{font-size:13px}.club-quote footer{font-size:9px!important}
+  .club-faq{padding:24px 0}.club-faq .club-heading{font-size:27px}.club-faq-list{margin-top:10px}.club-faq-item summary{padding-block:9px;font-size:12px}.club-faq-item p{font-size:11px}.club-faq-more{font-size:11px}
+  .club-final{padding:30px 14px}.club-final .club-heading{font-size:29px}.club-final p{font-size:11px}.club-final .club-button{min-height:36px;margin-top:10px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){.club-card-stage[data-auto-spin="true"] .club-card-3d{animation:none}}
+
 </style>
 </head>
 <body>
@@ -1638,7 +1672,7 @@ header .brand img {
 
     <section class="club-section club-identity" aria-labelledby="club-identity-title">
       <div class="club-shell club-identity-grid">
-        <button class="club-card-stage" type="button" aria-label="הפכו את כרטיס MOOD CLUB" aria-pressed="false">
+        <div class="club-card-stage" data-auto-spin="true" role="img" aria-label="כרטיס MOOD CLUB מסתובב">
           <span class="club-card-3d">
             <span class="club-member-card club-member-card--front">
               <span class="club-member-logo">mood club</span>
@@ -1655,8 +1689,8 @@ header .brand img {
               <span class="club-card-backline">MOOD CLUB · MEMBER</span>
             </span>
           </span>
-        </button>
-        <div class="club-identity-copy"><p class="club-kicker">MEMBER CARD</p><h2 class="club-heading" id="club-identity-title">החברות שלכם.<br> בקצב שלכם.</h2><p class="club-lede">כרטיס אחד שמחזיק את כל הריטואל. לחצו כדי להפוך אותו.</p></div>
+        </div>
+        <div class="club-identity-copy"><p class="club-kicker">MEMBER CARD</p><h2 class="club-heading" id="club-identity-title">החברות שלכם.<br> בקצב שלכם.</h2><p class="club-lede">כרטיס אחד שמחזיק את כל הריטואל.</p></div>
       </div>
     </section>
 
@@ -1841,6 +1875,7 @@ header .brand img {
   const stage = document.querySelector('.club-card-stage');
   const card = stage?.querySelector('.club-card-3d');
   if (!stage || !card) return;
+  if (stage.dataset.autoSpin === 'true') return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   stage.addEventListener('pointermove', (event) => {
     if (reduce || stage.getAttribute('aria-pressed') === 'true') return;
