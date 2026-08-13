@@ -1511,6 +1511,40 @@ header .brand img {
   .club-final{padding:50px 18px}.club-final .club-heading{font-size:38px}.club-final p{font-size:14px}.club-final .club-button{min-height:44px;margin-top:16px}
 }
 
+/* MOOD CLUB — site-rhythm correction: one hero moment, compact supporting sections */
+@media(min-width:761px){
+  .club-hero-media{height:min(72vh,720px);aspect-ratio:auto}.club-hero-action{min-height:82px;padding-block:15px}
+  .club-section{padding:58px 0}.club-heading{font-size:clamp(38px,4.4vw,60px)}
+  .club-moments{padding:76px 0}.club-moments .club-heading{font-size:clamp(48px,5.5vw,72px)}
+  .club-offer-card{padding:34px 38px;gap:30px}.club-plan{min-height:140px}.club-offer-foot{padding-top:20px}
+  .club-how{padding:56px 0}.club-how-grid{margin-top:30px}.club-how-step{min-height:150px;border-radius:28px}
+  .club-identity{padding:56px 0}.club-card-stage,.club-card-3d{height:290px;min-height:290px}
+  .club-proof{padding:56px 0}.club-proof-grid{margin-top:26px}.club-quote,.club-quote:first-child{padding:24px}.club-quote q,.club-quote:first-child q{font-size:18px;line-height:1.45;margin-top:14px}
+  .club-faq{padding:56px 0}.club-faq-list{margin-top:26px}.club-faq-item summary{padding-block:15px}
+  .club-final{padding:70px 20px}.club-final .club-heading{font-size:54px}
+}
+
+@media(max-width:760px){
+  .club-benefits .club-shell,.club-benefits-run{min-height:52px}.club-benefits-run{min-height:52px}
+
+  /* Offer becomes a compact selector, not three stacked cards. */
+  .club-offer{padding:28px 0}.club-offer-card{padding:18px 12px;gap:14px;border-radius:20px}.club-offer .club-heading{font-size:32px}.club-offer .club-heading br{display:none}.club-offer-intro .club-lede{display:none}
+  .club-plans{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.club-plan{display:flex;min-width:0;min-height:104px;padding:11px 7px;border-radius:14px;align-items:center;text-align:center;justify-content:center}.club-plan strong{font-size:13px}.club-plan span{font-size:9px}.club-plan b{font-size:21px}.club-plan:nth-child(1),.club-plan:nth-child(2),.club-plan:nth-child(3){transform:none}
+  .club-offer-foot{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding-top:11px}.club-offer-foot span{font-size:10px;line-height:1.35}.club-offer-foot .club-button{width:auto;min-height:40px;margin:0;padding-inline:14px;font-size:11px}
+
+  /* Three steps share one horizontal strip. */
+  .club-how{padding:30px 0}.club-how .club-kicker{margin-bottom:8px}.club-how .club-heading{font-size:30px}.club-how .club-heading br{display:none}.club-how-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:16px}.club-how-grid::before{display:none}.club-how-step{width:auto;min-width:0;min-height:116px;margin:0!important;padding:12px 7px;border-radius:15px;align-items:center;text-align:center;justify-content:center}.club-how-step h3{font-size:16px;line-height:1.05}.club-how-step p{font-size:10px;line-height:1.25}.club-how-step:nth-child(3) h3{font-size:14px}
+
+  /* Member identity behaves like a compact site band. */
+  .club-identity{padding:30px 0}.club-identity-grid{display:grid;grid-template-columns:.82fr 1.18fr;gap:12px;align-items:center}.club-identity-copy{order:0}.club-identity-copy .club-kicker{margin-bottom:7px}.club-identity-copy .club-heading{font-size:28px}.club-identity-copy .club-heading br{display:none}.club-identity-copy .club-lede{margin-top:9px;font-size:11px;line-height:1.4}.club-card-stage,.club-card-3d{min-height:150px;height:150px}.club-member-card{padding:14px;border-radius:16px}.club-member-logo{font-size:20px}.club-symbols{gap:4px}.club-symbol{width:27px;height:27px}.club-symbol svg{width:14px;height:14px}.club-member-meta{gap:8px;font-size:7px;letter-spacing:.1em}.club-member-meta b{margin-top:3px;font-size:9px}.club-card-perks{gap:5px 8px}.club-card-perks b{padding-top:5px;font-size:9px}.club-card-backline{font-size:7px}
+
+  /* Social proof is one quick swipe row. */
+  .club-proof{padding:30px 0}.club-proof .club-kicker{margin-bottom:7px}.club-proof .club-heading{font-size:30px}.club-proof .club-heading br{display:none}.club-proof-grid{margin-top:16px}.club-quote,.club-quote:first-child{flex-basis:calc(100vw - 86px);padding:15px}.club-stars{font-size:11px}.club-quote q,.club-quote:first-child q{font-size:14px;line-height:1.35;margin-top:8px}.club-quote footer{margin-top:9px!important;font-size:10px!important}
+
+  .club-faq{padding:30px 0}.club-faq .club-kicker{margin-bottom:7px}.club-faq .club-heading{font-size:30px}.club-faq .club-heading br{display:none}.club-faq-list{margin-top:14px}.club-faq-item summary{padding-block:11px;font-size:13px}.club-faq-item summary span{font-size:20px}.club-faq-item p{padding-bottom:12px;font-size:12px;line-height:1.45}.club-faq-more{margin-top:8px;font-size:12px}
+  .club-final{padding:38px 16px}.club-final .club-heading{font-size:32px}.club-final p{margin-top:9px;font-size:12px}.club-final .club-button{min-height:40px;margin-top:12px;padding-inline:20px;font-size:12px}
+}
+
 </style>
 </head>
 <body>
@@ -1578,7 +1612,7 @@ header .brand img {
         <div class="club-offer-card">
           <div class="club-offer-intro">
             <p class="club-kicker">MOOD CLUB</p>
-            <h2 class="club-heading" id="club-offer-title">פשוט לבחור.<br>קל להישאר.</h2>
+            <h2 class="club-heading" id="club-offer-title">פשוט לבחור.<br> קל להישאר.</h2>
             <p class="club-lede">בחרו את הקצב שמתאים לריטואל שלכם.</p>
           </div>
           <div class="club-plans" aria-label="מחירי המארזים">
@@ -1593,7 +1627,7 @@ header .brand img {
 
     <section class="club-section club-how" aria-labelledby="club-how-title">
       <div class="club-shell">
-        <p class="club-kicker">HOW IT WORKS</p><h2 class="club-heading" id="club-how-title">אתם בוחרים.<br>אנחנו זוכרים.</h2>
+        <p class="club-kicker">HOW IT WORKS</p><h2 class="club-heading" id="club-how-title">אתם בוחרים.<br> אנחנו זוכרים.</h2>
         <div class="club-how-grid">
           <div class="club-how-step"><span class="club-how-num">01</span><h3>בוחרים</h3><p>את הרגע ואת המארז.</p></div>
           <div class="club-how-step"><span class="club-how-num">02</span><h3>מקבלים</h3><p>את הריטואל במשלוח חינם.</p></div>
@@ -1622,13 +1656,13 @@ header .brand img {
             </span>
           </span>
         </button>
-        <div class="club-identity-copy"><p class="club-kicker">MEMBER CARD</p><h2 class="club-heading" id="club-identity-title">החברות שלכם.<br>בקצב שלכם.</h2><p class="club-lede">כרטיס אחד שמחזיק את כל הריטואל. לחצו כדי להפוך אותו.</p></div>
+        <div class="club-identity-copy"><p class="club-kicker">MEMBER CARD</p><h2 class="club-heading" id="club-identity-title">החברות שלכם.<br> בקצב שלכם.</h2><p class="club-lede">כרטיס אחד שמחזיק את כל הריטואל. לחצו כדי להפוך אותו.</p></div>
       </div>
     </section>
 
     <section class="club-section club-proof" aria-labelledby="club-proof-title">
       <div class="club-shell">
-        <p class="club-kicker">MEMBERS</p><h2 class="club-heading" id="club-proof-title">אנשים שנשארו<br>בריטואל.</h2>
+        <p class="club-kicker">MEMBERS</p><h2 class="club-heading" id="club-proof-title">אנשים שנשארו<br> בריטואל.</h2>
         <div class="club-proof-grid">
           <blockquote class="club-quote"><span class="club-stars" aria-label="5 כוכבים">★★★★★</span><q>החליף לי את הקפה השני של אחר הצהריים. סוף סוף משהו שאני באמת מחכה לו — טעים, ובאמת עוזר להתמקד בלי הרעד של הקפה.</q><footer>יעל א׳ · לקוחה מאומתת</footer></blockquote>
           <blockquote class="club-quote"><span class="club-stars" aria-label="5 כוכבים">★★★★★</span><q>הביס של אחרי הצהריים הפך לרגע ההוא של עצמי — משהו קטן שאני מחכה לו בין הילדים לשעת המקלחת. הראש נרגע והכתפיים יורדות.</q><footer>נועה ל׳ · לקוחה מאומתת</footer></blockquote>
@@ -1639,7 +1673,7 @@ header .brand img {
 
     <section class="club-section club-faq" id="faq" aria-labelledby="club-faq-title">
       <div class="club-shell">
-        <p class="club-kicker">MOOD CLUB</p><h2 class="club-heading" id="club-faq-title">כל מה שבאמת<br>צריך לדעת.</h2>
+        <p class="club-kicker">MOOD CLUB</p><h2 class="club-heading" id="club-faq-title">כל מה שבאמת<br> צריך לדעת.</h2>
         <div class="club-faq-list">
           <details class="club-faq-item"><summary>אפשר לדלג על חודש?<span>+</span></summary><p>באזור האישי בוחרים “דלג על משלוח החודש הבא”. אפשר גם להזיז את התאריך.</p></details>
           <details class="club-faq-item"><summary>אפשר להחליף בין ENERGY / RELAX / SLEEP?<span>+</span></summary><p>כן. באזור האישי אפשר להחליף בין ENERGY / RELAX / SLEEP או להוסיף SKU נוסף.</p></details>
