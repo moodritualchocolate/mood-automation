@@ -1696,6 +1696,29 @@ header .brand img {
   .club-benefits{padding:14px 0}.club-benefits .club-shell{width:100%;padding-inline:16px}.club-benefits-run{gap:8px}.club-benefit{min-width:148px;min-height:46px;font-size:10px}.club-benefit::before{width:5px;height:5px}
 }
 
+/* Clarity pass — every section answers one question */
+.club-hero-copy h1{font-family:'Heebo','DM Sans',sans-serif;letter-spacing:-.055em;direction:rtl}
+.club-benefits{padding:30px 0}.club-benefits-head{text-align:center;margin-bottom:20px}.club-benefits-head .club-kicker{margin-bottom:7px}.club-benefits-head h2{margin:0;color:#17130f;font:800 28px/1.05 'Heebo','DM Sans',sans-serif;letter-spacing:-.035em;opacity:1;transform:none}
+.club-benefits-run{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.club-benefit{padding-inline:10px;font-size:11px}
+.club-control-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-top:18px}.club-control-list span{position:relative;padding:7px 15px 7px 0;border-top:1px solid #d9dfe4;color:#3f4c59;font-size:12px;font-weight:700}.club-control-list span::before{content:"";position:absolute;inset-inline-start:0;top:12px;width:6px;height:6px;border-radius:50%;background:#a67825}
+.club-final-signature{display:block;position:relative;z-index:1;margin-top:16px;color:rgba(255,255,255,.58);font:700 10px/1 'DM Sans',sans-serif;letter-spacing:.12em;direction:ltr}
+
+@media(min-width:761px){
+  .club-benefits .club-shell{width:min(100% - 40px,1160px)}
+  .club-how{padding-top:46px}.club-moments{padding-top:54px}
+  .club-identity-grid{grid-template-columns:.82fr 1.18fr}.club-identity-copy .club-heading{font-size:43px}
+  .club-proof .club-heading{max-width:650px;margin-inline:auto;font-size:40px}
+}
+
+@media(max-width:760px){
+  .club-hero-copy h1{font-size:34px;letter-spacing:-.045em}.club-hero-copy p{max-width:300px}
+  .club-benefits{padding:22px 0}.club-benefits-head{margin-bottom:14px}.club-benefits-head h2{font-size:23px}.club-benefits-run{display:flex;grid-template:none}.club-benefit{min-width:152px}
+  .club-how{padding-top:38px}.club-how .club-heading{font-size:30px}
+  .club-identity{padding:22px 0}.club-identity-grid{grid-template-columns:1fr;gap:10px}.club-identity-copy{order:-1}.club-identity-copy .club-heading{font-size:26px}.club-identity-copy .club-lede{font-size:11px}.club-control-list{grid-template-columns:1fr 1fr;gap:0 10px;margin-top:9px}.club-control-list span{padding:4px 10px 4px 0;font-size:9px;line-height:1.2}.club-control-list span::before{top:8px;width:4px;height:4px}.club-card-stage,.club-card-3d{height:136px;min-height:136px}
+  .club-proof .club-heading{font-size:27px;line-height:1.05}
+  .club-final .club-heading{max-width:330px;margin-inline:auto;font-size:28px;line-height:1.05;direction:rtl}.club-final-signature{margin-top:12px;font-size:8px}
+}
+
 </style>
 </head>
 <body>
@@ -1724,18 +1747,30 @@ header .brand img {
     <section class="club-hero" aria-label="MOOD CLUB — Your ritual. On repeat.">
       <div class="club-hero-copy">
         <p class="club-kicker">MOOD CLUB</p>
-        <h1>Your ritual.<br>On repeat.</h1>
-        <p>מחיר חבר, משלוח חינם ומדלגים מתי שרוצים.</p>
+        <h1>הריטואל שלכם.<br>במחיר חבר.</h1>
+        <p>מחיר חבר, משלוח חינם ואפשרות לשנות או לדלג מתי שרוצים.</p>
         <a class="club-button" href="#club-offer">הצטרפו למועדון</a>
-        <span>ENERGY · RELAX · SLEEP</span>
+        <span>YOUR RITUAL. ON REPEAT.</span>
       </div>
       <div class="club-hero-media"><img src="approved/assets/club-hero-lifestyle.webp" alt="חברי MOOD CLUB עם RELAX" fetchpriority="high"></div>
     </section>
 
     <section class="club-benefits" aria-label="הטבות המועדון">
       <div class="club-shell">
+        <div class="club-benefits-head"><p class="club-kicker">MOOD CLUB</p><h2>מה מקבלים כחברי המועדון?</h2></div>
         <div class="club-benefits-run">
-          <div class="club-benefit">מחיר חבר</div><div class="club-benefit">משלוח חינם</div><div class="club-benefit">מדלגים מתי שרוצים</div><div class="club-benefit">בלי התחייבות</div>
+          <div class="club-benefit">מחיר חבר</div><div class="club-benefit">משלוח חינם</div><div class="club-benefit">מדלגים על משלוח</div><div class="club-benefit">מחליפים בין המוצרים</div><div class="club-benefit">בלי התחייבות</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="club-section club-how" aria-labelledby="club-how-title">
+      <div class="club-shell">
+        <p class="club-kicker">HOW IT WORKS</p><h2 class="club-heading" id="club-how-title">איך זה עובד?</h2>
+        <div class="club-how-grid">
+          <div class="club-how-step"><span class="club-how-num">01</span><h3>בוחרים</h3><p>את ה־mood ואת גודל המארז.</p></div>
+          <div class="club-how-step"><span class="club-how-num">02</span><h3>מקבלים</h3><p>את הריטואל במשלוח חינם.</p></div>
+          <div class="club-how-step"><span class="club-how-num">03</span><h3>שולטים בקצב</h3><p>מדלגים, מחליפים או מבטלים.</p></div>
         </div>
       </div>
     </section>
@@ -1744,9 +1779,9 @@ header .brand img {
       <div class="club-shell club-moments-layout">
         <div class="club-moments-head">
           <p class="club-kicker">MOOD CLUB</p>
-          <h2 class="club-heading" id="club-moments-title">שלושה moods.<br>חבורה אחת.</h2>
-          <p class="club-lede">ENERGY לבוקר, RELAX לאחר הצהריים, SLEEP לסוף היום — והרבה יותר כיף כשנכנסים לזה ביחד.</p>
-          <span class="club-secret">מה שקורה במועדון, נשאר במועדון</span>
+          <h2 class="club-heading" id="club-moments-title">שלושה רגעים.<br>ריטואל אחד.</h2>
+          <p class="club-lede">ENERGY להתחיל, RELAX להוריד הילוך, SLEEP לסגור את היום.</p>
+          <span class="club-secret">בוחרים את ה־mood שמתאים לרגע שלכם</span>
         </div>
         <div class="club-reel">
           <div class="club-reel-frame">
@@ -1765,8 +1800,8 @@ header .brand img {
         <div class="club-offer-card">
           <div class="club-offer-intro">
             <p class="club-kicker">MOOD CLUB</p>
-            <h2 class="club-heading" id="club-offer-title">פשוט לבחור.<br> קל להישאר.</h2>
-            <p class="club-lede">בחרו את הקצב שמתאים לריטואל שלכם.</p>
+            <h2 class="club-heading" id="club-offer-title">בחרו את הקצב שלכם.</h2>
+            <p class="club-lede">שלושה גדלים. ריטואל אחד שמתאים לשגרה שלכם.</p>
           </div>
           <div class="club-plans" aria-label="מחירי המארזים">
             <a class="club-plan" href="energy.html#tiers"><strong>30 יום</strong><b>₪170</b><span>30 יחידות</span></a>
@@ -1774,17 +1809,6 @@ header .brand img {
             <a class="club-plan" href="energy.html#tiers"><strong>90 יום</strong><b>₪420</b><span>90 יחידות</span></a>
           </div>
           <div class="club-offer-foot"><span>מחיר חבר · משלוח חינם · בלי התחייבות</span><a class="club-button" href="energy.html#tiers">לבחירת הריטואל</a></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="club-section club-how" aria-labelledby="club-how-title">
-      <div class="club-shell">
-        <p class="club-kicker">HOW IT WORKS</p><h2 class="club-heading" id="club-how-title">אתם בוחרים.<br> אנחנו זוכרים.</h2>
-        <div class="club-how-grid">
-          <div class="club-how-step"><span class="club-how-num">01</span><h3>בוחרים</h3><p>את הרגע ואת המארז.</p></div>
-          <div class="club-how-step"><span class="club-how-num">02</span><h3>מקבלים</h3><p>את הריטואל במשלוח חינם.</p></div>
-          <div class="club-how-step"><span class="club-how-num">03</span><h3>משנים מתי שרוצים</h3><p>מדלגים, מחליפים או מבטלים.</p></div>
         </div>
       </div>
     </section>
@@ -1809,13 +1833,13 @@ header .brand img {
             </span>
           </span>
         </div>
-        <div class="club-identity-copy"><p class="club-kicker">MEMBER CARD</p><h2 class="club-heading" id="club-identity-title">החברות שלכם.<br> בקצב שלכם.</h2><p class="club-lede">כרטיס אחד שמחזיק את כל הריטואל.</p></div>
+        <div class="club-identity-copy"><p class="club-kicker">MEMBER CARD</p><h2 class="club-heading" id="club-identity-title">המועדון זז איתכם.</h2><p class="club-lede">כל השליטה בחברות נשארת אצלכם.</p><div class="club-control-list"><span>מדלגים על המשלוח הבא</span><span>משנים את תאריך המשלוח</span><span>מחליפים בין המוצרים</span><span>מסיימים את החברות</span><span>מצטרפים מחדש</span></div></div>
       </div>
     </section>
 
     <section class="club-section club-proof" aria-labelledby="club-proof-title">
       <div class="club-shell">
-        <p class="club-kicker">MEMBERS</p><h2 class="club-heading" id="club-proof-title">אנשים שנשארו<br> בריטואל.</h2>
+        <p class="club-kicker">MEMBERS</p><h2 class="club-heading" id="club-proof-title">איך MOOD נכנס ליום שלהם.</h2>
         <div class="club-proof-grid">
           <blockquote class="club-quote"><span class="club-stars" aria-label="5 כוכבים">★★★★★</span><q>החליף לי את הקפה השני של אחר הצהריים. סוף סוף משהו שאני באמת מחכה לו — טעים, ובאמת עוזר להתמקד בלי הרעד של הקפה.</q><footer>יעל א׳ · לקוחה מאומתת</footer></blockquote>
           <blockquote class="club-quote"><span class="club-stars" aria-label="5 כוכבים">★★★★★</span><q>הביס של אחרי הצהריים הפך לרגע ההוא של עצמי — משהו קטן שאני מחכה לו בין הילדים לשעת המקלחת. הראש נרגע והכתפיים יורדות.</q><footer>נועה ל׳ · לקוחה מאומתת</footer></blockquote>
@@ -1828,9 +1852,9 @@ header .brand img {
       <div class="club-shell">
         <p class="club-kicker">MOOD CLUB</p><h2 class="club-heading" id="club-faq-title">כל מה שבאמת<br> צריך לדעת.</h2>
         <div class="club-faq-list">
+          <details class="club-faq-item"><summary>יש התחייבות?<span>+</span></summary><p>אין התחייבות. אפשר לסיים את החברות באזור האישי ולהצטרף מחדש מתי שרוצים.</p></details>
           <details class="club-faq-item"><summary>אפשר לדלג על חודש?<span>+</span></summary><p>באזור האישי בוחרים “דלג על משלוח החודש הבא”. אפשר גם להזיז את התאריך.</p></details>
           <details class="club-faq-item"><summary>אפשר להחליף בין ENERGY / RELAX / SLEEP?<span>+</span></summary><p>כן. באזור האישי אפשר להחליף בין ENERGY / RELAX / SLEEP או להוסיף SKU נוסף.</p></details>
-          <details class="club-faq-item"><summary>יש התחייבות?<span>+</span></summary><p>אין התחייבות. אפשר לסיים את החברות באזור האישי ולהצטרף מחדש מתי שרוצים.</p></details>
           <details class="club-faq-item" hidden><summary>מתי המארז מגיע?<span>+</span></summary><p>המשלוח יוצא ביום ה־1 בכל חודש ומגיע תוך 2–4 ימי עסקים. אפשר לבחור יום קבוע אחר מהאזור האישי.</p></details>
           <details class="club-faq-item" hidden><summary>מה קורה אם לא אהבתי?<span>+</span></summary><p>מדיניות ההחזר של המועדון חלה גם על מארז שנפתח. עד 30 יום — צרו קשר לקבלת החזר.</p></details>
           <details class="club-faq-item" hidden><summary>איך משלמים?<span>+</span></summary><p>כרטיס אשראי או PayPal. החיוב הראשון עם ההצטרפות, ואפשר לעדכן פרטי תשלום בכל עת.</p></details>
@@ -1840,7 +1864,7 @@ header .brand img {
     </section>
 
     <section class="club-final" aria-labelledby="club-final-title">
-      <p class="club-kicker">MOOD CLUB</p><h2 class="club-heading" id="club-final-title">Your ritual. On repeat.</h2><p>בוחרים פעם אחת. משנים מתי שרוצים.</p><a class="club-button club-button--light" href="energy.html#tiers">הצטרפו ל־MOOD CLUB</a>
+      <p class="club-kicker">MOOD CLUB</p><h2 class="club-heading" id="club-final-title">מוכנים להכניס את הריטואל לשגרה?</h2><p>מחיר חבר, משלוח חינם וגמישות לאורך הדרך.</p><a class="club-button club-button--light" href="energy.html#tiers">הצטרפו ל־MOOD CLUB</a><span class="club-final-signature">Your ritual. On repeat.</span>
     </section>
   </main>
   <!-- MOOD CLUB REBUILD END -->
