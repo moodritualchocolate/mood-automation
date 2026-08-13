@@ -1769,6 +1769,44 @@ header .brand img {
   .club-hero-reel .club-mood-orbit{display:flex!important;inset:auto 8px -20px;margin:0!important;gap:3px}.club-hero-reel .club-mood-chip{min-width:0;flex:1;padding:8px 4px;border-width:3px;font-size:8px}
 }
 
+/* Fillit model — one quiet system across every section */
+.club-main{background:#fff}
+.club-hero{min-height:470px;grid-template-columns:.9fr 1.1fr;gap:0;padding:0;background:#f1f2f5;color:#17130f}
+.club-hero::before,.club-hero::after{display:none}
+.club-hero-copy{height:100%;padding:48px clamp(32px,5vw,76px);align-items:center;justify-content:center;text-align:center;color:#17130f;background:#f1f2f5}
+.club-hero-copy .club-kicker{color:#a67825}.club-hero-copy h1{color:#17130f;font-size:clamp(48px,5vw,68px)}.club-hero-copy p{margin-inline:auto;color:#605a53}
+.club-hero-copy .club-button{border:1px solid #ddd7cf;border-radius:3px;background:#fff;box-shadow:0 4px 12px rgba(35,27,19,.045)}
+.club-hero-reel{height:470px;padding:0;border:0;border-radius:0;background:#172f4b;box-shadow:none}
+.club-hero-reel::before{display:none}.club-hero-reel-frame{height:100%;border-radius:0;aspect-ratio:auto}.club-hero-reel video{object-fit:cover}
+.club-hero-reel .club-mood-orbit{inset:auto 50% 18px auto;transform:translateX(50%);width:min(88%,430px)}
+.club-hero-reel .club-mood-chip{border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.9);box-shadow:0 4px 12px rgba(13,25,38,.12)}
+
+.club-benefits,.club-how,.club-proof,.club-faq{background:#fff;color:#17130f;border:0}
+.club-benefits{padding:60px 0 66px}.club-benefits-head{margin-bottom:40px}.club-benefits-run{gap:18px}
+.club-benefit{min-height:132px;border:1px solid #d9d9d9;border-radius:58px;background:#fff;box-shadow:0 6px 12px rgba(24,24,24,.07)}
+.club-benefit-icon{border-color:#d2d2d2;color:#b5b5b5;box-shadow:none}.club-benefit strong{color:#17130f}.club-benefit small{color:#5f5f5f}
+
+.club-how{padding:62px 0}.club-how-grid{margin-top:42px;gap:26px}.club-how-step{min-height:118px;border:1px solid #d9d9d9!important;border-bottom:1px solid #d9d9d9!important;border-radius:58px!important;box-shadow:0 6px 12px rgba(24,24,24,.07)}
+.club-how-num{top:-19px;width:38px;height:38px;color:#b5b5b5;border-color:#d2d2d2}.club-how-step h3{font-size:20px}.club-how-step p{font-size:12px}
+
+.club-offer{padding:70px 0;background:#f1f2f5}.club-offer-card{padding:0 36px}.club-offer .club-heading{font-size:44px}.club-plans{margin-top:44px}.club-plan b{font-size:58px}.club-offer-foot{margin-top:32px}
+
+.club-identity{padding:68px 0;background:#fff}.club-identity::before{display:none}.club-identity-grid{grid-template-columns:.86fr 1.14fr;gap:72px}.club-card-stage,.club-card-3d{height:260px;min-height:260px}.club-identity-copy{text-align:center}.club-identity-copy .club-heading{color:#17130f}.club-identity-copy .club-lede{margin-inline:auto}.club-control-list{max-width:520px;margin-inline:auto}.club-control-list span{background:#fff;border:1px solid #ddd;border-radius:999px;text-align:center;padding:12px}.club-control-list span::before{display:none}
+
+.club-proof{padding:66px 0}.club-proof-grid{grid-template-columns:repeat(3,1fr);grid-template-rows:none;gap:20px}.club-quote,.club-quote:first-child{grid-row:auto;display:block;padding:26px;border:1px solid #ddd;border-radius:18px;background:#fff;box-shadow:0 6px 14px rgba(24,24,24,.06)}.club-quote q,.club-quote:first-child q{font-size:15px;line-height:1.5}
+.club-faq{padding:62px 0;background:#f8f8f8}.club-faq-list{background:#fff;padding-inline:24px;border:1px solid #e1e1e1;border-radius:16px}.club-faq-item:first-child{border-top:0}
+.club-final{padding:74px 20px;background:#18324f}.club-final::before,.club-final::after{display:none}
+
+@media(max-width:760px){
+  .club-hero{grid-template-columns:1fr;padding:0;background:#f1f2f5}.club-hero-copy{order:2;padding:22px 18px 25px}.club-hero-copy h1{font-size:38px}.club-hero-reel{order:1;height:240px;border-radius:0}.club-hero-reel .club-mood-orbit{inset:auto 50% 10px auto;width:calc(100% - 28px)}.club-hero-reel .club-mood-chip{padding-block:7px}.club-hero-reel .club-video-toggle{bottom:52px}
+  .club-benefits{padding:43px 0 38px}.club-benefits-head{margin-bottom:31px}.club-benefits-run{gap:26px 7px}.club-benefit{min-height:92px;border-radius:42px}
+  .club-how{padding:44px 0}.club-how-grid{margin-top:32px;gap:8px}.club-how-step{min-height:94px;border-radius:38px!important}.club-how-num{top:-15px;width:30px;height:30px}.club-how-step h3{font-size:13px}.club-how-step p{font-size:8px}
+  .club-offer{padding:44px 0}.club-offer .club-heading{font-size:29px}.club-plans{margin-top:24px}.club-plan b{font-size:clamp(27px,8vw,33px);letter-spacing:-.07em}
+  .club-identity{padding:42px 0}.club-identity-grid{grid-template-columns:1fr;gap:18px}.club-card-stage,.club-card-3d{height:165px;min-height:165px}.club-control-list span{padding:8px 4px;font-size:9px}
+  .club-proof{padding:43px 0}.club-proof-grid{display:flex;gap:12px}.club-quote,.club-quote:first-child{flex:0 0 calc(100vw - 76px);padding:18px}
+  .club-faq{padding:42px 0}.club-faq-list{padding-inline:14px}.club-final{padding:54px 16px}
+}
+
 </style>
 </head>
 <body>
